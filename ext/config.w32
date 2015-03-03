@@ -1,0 +1,4 @@
+ARG_ENABLE("cassandra", "Enable Cassandra extension", "no");
+if (PHP_CASSANDRA != "no") {
+    EXTENSION("cassandra", "php_cassandra.c");
+}
