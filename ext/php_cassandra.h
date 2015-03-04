@@ -1,9 +1,13 @@
 #ifndef PHP_CASSANDRA_H
 #define PHP_CASSANDRA_H
+#include <cassandra.h>
 
 /* Define Extension Properties */
 #define PHP_CASSANDRA_EXTNAME   "cassandra"
 #define PHP_CASSANDRA_EXTVER    "0.1.0"
+
+/* Resources */
+#define PHP_CASSANDRA_CLUSTER_RES_NAME "Cassandra Cluster"
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -32,7 +36,7 @@ PHP_RINIT_FUNCTION(cassandra);
 PHP_RSHUTDOWN_FUNCTION(cassandra);
 PHP_MINFO_FUNCTION(cassandra);
 
-PHP_FUNCTION(example);
+PHP_FUNCTION(cassandra_cluster_new);
 
 ZEND_BEGIN_MODULE_GLOBALS(cassandra)
   /* globals go here */

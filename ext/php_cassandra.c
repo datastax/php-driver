@@ -5,7 +5,7 @@
 ZEND_DECLARE_MODULE_GLOBALS(cassandra)
 
 const zend_function_entry cassandra_functions[] = {
-  PHP_FE(example, NULL)
+  PHP_FE(cassandra_cluster_new, NULL)
   PHP_FE_END /* Must be the last line in cassandra_functions[] */
 };
 
@@ -30,9 +30,17 @@ zend_module_entry cassandra_module_entry = {
 ZEND_GET_MODULE(cassandra)
 #endif
 
+static int le_cassandra_cluster_res;
+
 PHP_MINIT_FUNCTION(cassandra)
 {
   // REGISTER_INI_ENTRIES();
+  le_cassandra_cluster_res = zend_register_list_destructors_ex(
+      NULL,
+      NULL,
+      PHP_CASSANDRA_CLUSTER_RES_NAME,
+      module_number
+    );
   return SUCCESS;
 }
 
@@ -52,7 +60,6 @@ PHP_RSHUTDOWN_FUNCTION(cassandra)
   return SUCCESS;
 }
 
-
 PHP_MINFO_FUNCTION(cassandra)
 {
   php_info_print_table_start( );
@@ -60,15 +67,13 @@ PHP_MINFO_FUNCTION(cassandra)
   php_info_print_table_end( );
 }
 
-PHP_FUNCTION(example)
+PHP_FUNCTION(cassandra_cluster_new)
 {
-  long number;
+  CassCluster* cluster = cass_cluster_new();
 
-  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &number) != SUCCESS) {
-    return;
-  }
-
-  number *= 2;
-
-  RETURN_LONG(number);
+  ZEND_REGISTER_RESOURCE(
+    return_value,
+    cluster,
+    le_cassandra_cluster_res
+  );
 }
