@@ -4,7 +4,7 @@ namespace Cassandra\Cluster;
 
 use Cassandra\Exception\InvalidArgumentException;
 
-final class StandardSSLContext implements SSLContext
+final class DefaultSSLContext implements SSLContext
 {
   /**
    * SSL Context resource

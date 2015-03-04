@@ -22,12 +22,12 @@ Feature: Simple Statements
     And the following example:
       """php
       <?php
-      use Cassandra
-
-      $cluster = Cassandra::cluster()
-                   ->build();
-      $session = $cluster->connect("simplex");
-      $result  = $session.execute("SELECT * FROM simplex.playlists");
+      $cluster   = Cassandra::cluster()
+                     ->withContactPoints(array('127.0.0.1'))
+                     ->build();
+      $session   = $cluster->connect("simplex");
+      $statement = new Cassandra\SimpleStatement("SELECT * FROM simplex.playlists");
+      $result    = $session->execute($statement);
       echo "Result contains " . count($result) . " rows";
       """
     When it is executed
