@@ -37,6 +37,7 @@ PHP_RSHUTDOWN_FUNCTION(cassandra);
 PHP_MINFO_FUNCTION(cassandra);
 
 PHP_FUNCTION(cassandra_cluster_new);
+PHP_FUNCTION(cassandra_cluster_free);
 
 ZEND_BEGIN_MODULE_GLOBALS(cassandra)
   /* globals go here */

@@ -21,9 +21,15 @@ if test "$PHP_CASSANDRA" != "no"; then
     AC_MSG_ERROR(Cannot find libcassandra)
   fi
 
+  if test -d "$CPP_DRIVER_DIR/lib64"; then
+    CPP_DRIVER_LIBDIR="$CPP_DRIVER_DIR/lib64"
+  else
+    CPP_DRIVER_LIBDIR="$CPP_DRIVER_DIR/lib"
+  fi
+
   case $CPP_DRIVER_DIR in
   /usr) ac_extra= ;;
-  *)    ac_extra=-L$CPP_DRIVER_DIR/lib64 ;;
+  *)    ac_extra=-L$CPP_DRIVER_LIBDIR ;;
   esac
 
   PHP_CHECK_LIBRARY(cassandra, cass_cluster_new,
@@ -38,7 +44,7 @@ if test "$PHP_CASSANDRA" != "no"; then
     ]
   )
 
-  PHP_ADD_LIBPATH($CPP_DRIVER_DIR/lib64, CASSANDRA_SHARED_LIBADD)
+  PHP_ADD_LIBPATH($CPP_DRIVER_LIBDIR, CASSANDRA_SHARED_LIBADD)
   PHP_ADD_LIBRARY(cassandra,, CASSANDRA_SHARED_LIBADD)
   PHP_ADD_INCLUDE($CPP_DRIVER_DIR/include)
 fi

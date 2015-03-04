@@ -6,6 +6,7 @@ ZEND_DECLARE_MODULE_GLOBALS(cassandra)
 
 const zend_function_entry cassandra_functions[] = {
   PHP_FE(cassandra_cluster_new, NULL)
+  PHP_FE(cassandra_cluster_free, NULL)
   PHP_FE_END /* Must be the last line in cassandra_functions[] */
 };
 
@@ -32,15 +33,25 @@ ZEND_GET_MODULE(cassandra)
 
 static int le_cassandra_cluster_res;
 
+static void
+php_cassandra_cluster_dtor(zend_rsrc_list_entry* rsrc TSRMLS_DC)
+{
+  CassCluster* cluster = (CassCluster*) rsrc->ptr;
+
+  if (cluster) {
+    cass_cluster_free(cluster);
+  }
+}
+
 PHP_MINIT_FUNCTION(cassandra)
 {
   // REGISTER_INI_ENTRIES();
   le_cassandra_cluster_res = zend_register_list_destructors_ex(
-      NULL,
-      NULL,
-      PHP_CASSANDRA_CLUSTER_RES_NAME,
-      module_number
-    );
+    php_cassandra_cluster_dtor,
+    NULL,
+    PHP_CASSANDRA_CLUSTER_RES_NAME,
+    module_number
+  );
   return SUCCESS;
 }
 
@@ -69,11 +80,31 @@ PHP_MINFO_FUNCTION(cassandra)
 
 PHP_FUNCTION(cassandra_cluster_new)
 {
-  CassCluster* cluster = cass_cluster_new();
+  CassCluster* cluster;
+  cluster = cass_cluster_new();
 
   ZEND_REGISTER_RESOURCE(
     return_value,
     cluster,
     le_cassandra_cluster_res
   );
+}
+
+PHP_FUNCTION(cassandra_cluster_free)
+{
+  CassCluster* cluster;
+  zval *cluster_resource;
+  char *data;
+  int data_len;
+
+  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "r", &cluster_resource) == FAILURE) {
+    RETURN_FALSE;
+  }
+
+  ZEND_FETCH_RESOURCE(cluster, CassCluster*, &cluster_resource, -1,
+    PHP_CASSANDRA_CLUSTER_RES_NAME, le_cassandra_cluster_res);
+
+  zend_list_delete(Z_RESVAL_P(cluster_resource));
+
+  RETURN_TRUE;
 }
