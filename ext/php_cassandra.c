@@ -5,19 +5,36 @@
 ZEND_DECLARE_MODULE_GLOBALS(cassandra)
 
 const zend_function_entry cassandra_functions[] = {
+  /* Util */
   PHP_FE(cassandra_error_message, NULL)
+  PHP_FE(cassanrda_rows_from_result, NULL)
   /* CassCluster */
   PHP_FE(cassandra_cluster_new, NULL)
   PHP_FE(cassandra_cluster_free, NULL)
+  PHP_FE(cassandra_cluster_set_load_balance_round_robin, NULL)
+  PHP_FE(cassandra_cluster_set_load_balance_dc_aware, NULL)
+  PHP_FE(cassandra_cluster_set_token_aware_routing, NULL)
+  PHP_FE(cassandra_cluster_set_credentials, NULL)
   PHP_FE(cassandra_cluster_set_contact_points, NULL)
   /* CassSession */
   PHP_FE(cassandra_session_new, NULL)
   PHP_FE(cassandra_session_free, NULL)
   PHP_FE(cassandra_session_connect, NULL)
+  PHP_FE(cassandra_session_connect_keyspace, NULL)
+  PHP_FE(cassandra_session_execute, NULL)
   /* CassFuture */
   PHP_FE(cassandra_future_free, NULL)
+  PHP_FE(cassandra_future_wait, NULL)
+  PHP_FE(cassandra_future_wait_timed, NULL)
   PHP_FE(cassandra_future_error_code, NULL)
   PHP_FE(cassandra_future_error_message, NULL)
+  PHP_FE(cassandra_future_get_result, NULL)
+  /* CassResult */
+  PHP_FE(cassandra_result_free, NULL)
+  PHP_FE(cassandra_result_row_count, NULL)
+  /* CassStatement */
+  PHP_FE(cassandra_statement_new, NULL)
+  PHP_FE(cassandra_statement_free, NULL)
   PHP_FE_END /* Must be the last line in cassandra_functions[] */
 };
 
@@ -50,6 +67,7 @@ php_cassandra_cluster_dtor(zend_rsrc_list_entry* rsrc TSRMLS_DC)
 
   if (cluster) {
     cass_cluster_free(cluster);
+    rsrc->ptr = NULL;
   }
 }
 
@@ -61,6 +79,7 @@ php_cassandra_session_dtor(zend_rsrc_list_entry* rsrc TSRMLS_DC)
 
   if (session) {
     cass_session_free(session);
+    rsrc->ptr = NULL;
   }
 }
 
@@ -72,6 +91,31 @@ php_cassandra_future_dtor(zend_rsrc_list_entry* rsrc TSRMLS_DC)
 
   if (future) {
     cass_future_free(future);
+    rsrc->ptr = NULL;
+  }
+}
+
+static int le_cassandra_result_res;
+static void
+php_cassandra_result_dtor(zend_rsrc_list_entry* rsrc TSRMLS_DC)
+{
+  CassResult* result = (CassResult*) rsrc->ptr;
+
+  if (result) {
+    cass_result_free(result);
+    rsrc->ptr = NULL;
+  }
+}
+
+static int le_cassandra_statement_res;
+static void
+php_cassandra_statement_dtor(zend_rsrc_list_entry* rsrc TSRMLS_DC)
+{
+  CassStatement* statement = (CassStatement*) rsrc->ptr;
+
+  if (statement) {
+    cass_statement_free(statement);
+    rsrc->ptr = NULL;
   }
 }
 
@@ -94,6 +138,18 @@ PHP_MINIT_FUNCTION(cassandra)
     php_cassandra_future_dtor,
     NULL,
     PHP_CASSANDRA_FUTURE_RES_NAME,
+    module_number
+  );
+  le_cassandra_result_res = zend_register_list_destructors_ex(
+    php_cassandra_result_dtor,
+    NULL,
+    PHP_CASSANDRA_RESULT_RES_NAME,
+    module_number
+  );
+  le_cassandra_statement_res = zend_register_list_destructors_ex(
+    php_cassandra_statement_dtor,
+    NULL,
+    PHP_CASSANDRA_STATEMENT_RES_NAME,
     module_number
   );
   return SUCCESS;
@@ -133,6 +189,54 @@ PHP_FUNCTION(cassandra_error_message)
   RETURN_STRING(cass_error_desc(code), true);
 }
 
+static zval* php_cassandra_value(const CassValue* value, CassValueType type);
+
+PHP_FUNCTION(cassanrda_rows_from_result)
+{
+  CassResult* result;
+  zval* result_resource;
+  zval* row_value;
+  CassIterator* iterator;
+  const CassRow* row;
+  cass_size_t columns_count;
+  CassString column_name;
+  CassValueType column_type;
+  const CassValue* column_value;
+  CassString output;
+  zval* php_value;
+
+  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "r", &result_resource) == FAILURE) {
+    RETURN_FALSE;
+  }
+
+  ZEND_FETCH_RESOURCE(result, CassResult*, &result_resource, -1,
+    PHP_CASSANDRA_RESULT_RES_NAME, le_cassandra_result_res);
+
+  array_init(return_value);
+
+  columns_count = cass_result_column_count(result);
+  iterator      = cass_iterator_from_result(result);
+
+  while (cass_iterator_next(iterator)) {
+    MAKE_STD_ZVAL(row_value);
+    array_init(row_value);
+    row = cass_iterator_get_row(iterator);
+
+    for (int i = 0; i < columns_count; i++) {
+      column_name  = cass_result_column_name(result, i);
+      column_type  = cass_result_column_type(result, i);
+      column_value = cass_row_get_column(row, i);
+      php_value    = php_cassandra_value(column_value, column_type);
+
+      add_assoc_zval_ex(row_value, column_name.data, column_name.length + 1, php_value);
+    }
+
+    add_next_index_zval(return_value, row_value);
+  }
+
+  cass_iterator_free(iterator);
+}
+
 PHP_FUNCTION(cassandra_cluster_new)
 {
   CassCluster* cluster;
@@ -158,6 +262,90 @@ PHP_FUNCTION(cassandra_cluster_free)
     PHP_CASSANDRA_CLUSTER_RES_NAME, le_cassandra_cluster_res);
 
   zend_list_delete(Z_RESVAL_P(cluster_resource));
+
+  RETURN_TRUE;
+}
+
+PHP_FUNCTION(cassandra_cluster_set_load_balance_round_robin)
+{
+  CassCluster* cluster;
+  zval* cluster_resource;
+
+  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "r", &cluster_resource) == FAILURE) {
+    RETURN_FALSE;
+  }
+
+  ZEND_FETCH_RESOURCE(cluster, CassCluster*, &cluster_resource, -1,
+    PHP_CASSANDRA_CLUSTER_RES_NAME, le_cassandra_cluster_res);
+
+  cass_cluster_set_load_balance_round_robin(cluster);
+
+  RETURN_TRUE;
+}
+
+PHP_FUNCTION(cassandra_cluster_set_load_balance_dc_aware)
+{
+  CassCluster* cluster;
+  zval* cluster_resource;
+  char* local_dc;
+  int local_dc_len;
+  char *name;
+  long used_hosts_per_remote_dc;
+  zend_bool allow_remote_dcs_for_local_cl;
+
+  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "rslb", &cluster_resource, &local_dc, &local_dc_len, &used_hosts_per_remote_dc, &allow_remote_dcs_for_local_cl) == FAILURE) {
+    RETURN_FALSE;
+  }
+
+  ZEND_FETCH_RESOURCE(cluster, CassCluster*, &cluster_resource, -1,
+    PHP_CASSANDRA_CLUSTER_RES_NAME, le_cassandra_cluster_res);
+
+  name = strndup(local_dc, local_dc_len);
+  RETVAL_LONG(cass_cluster_set_load_balance_dc_aware(cluster, name, used_hosts_per_remote_dc, allow_remote_dcs_for_local_cl));
+  free(name);
+}
+
+PHP_FUNCTION(cassandra_cluster_set_token_aware_routing)
+{
+  CassCluster* cluster;
+  zval* cluster_resource;
+  zend_bool enabled;
+
+  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "rb", &cluster_resource, &enabled) == FAILURE) {
+    RETURN_FALSE;
+  }
+
+  ZEND_FETCH_RESOURCE(cluster, CassCluster*, &cluster_resource, -1,
+    PHP_CASSANDRA_CLUSTER_RES_NAME, le_cassandra_cluster_res);
+
+  cass_cluster_set_token_aware_routing(cluster, enabled);
+
+  RETURN_TRUE;
+}
+
+PHP_FUNCTION(cassandra_cluster_set_credentials)
+{
+  CassCluster* cluster;
+  zval* cluster_resource;
+  char* username;
+  int username_len;
+  char* password;
+  int password_len;
+  char* username_dl;
+  char* password_dl;
+
+  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "rss", &cluster_resource, &username, &username_len, &password, &password_len) == FAILURE) {
+    RETURN_FALSE;
+  }
+
+  ZEND_FETCH_RESOURCE(cluster, CassCluster*, &cluster_resource, -1,
+    PHP_CASSANDRA_CLUSTER_RES_NAME, le_cassandra_cluster_res);
+
+  username_dl = strndup(username, username_len);
+  password_dl = strndup(password, password_len);
+  cass_cluster_set_credentials(cluster, username_dl, password_dl);
+  free(username_dl);
+  free(password_dl);
 
   RETURN_TRUE;
 }
@@ -239,6 +427,65 @@ PHP_FUNCTION(cassandra_session_connect)
   );
 }
 
+PHP_FUNCTION(cassandra_session_connect_keyspace)
+{
+  CassCluster* cluster;
+  CassSession* session;
+  CassFuture*  future;
+  zval* session_resource;
+  zval* cluster_resource;
+  char* keyspace;
+  int keyspace_len;
+  char* ks;
+
+  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "rrs", &session_resource, &cluster_resource, &keyspace, &keyspace_len) == FAILURE) {
+    RETURN_FALSE;
+  }
+
+  ZEND_FETCH_RESOURCE(session, CassSession*, &session_resource, -1,
+    PHP_CASSANDRA_SESSION_RES_NAME, le_cassandra_session_res);
+
+  ZEND_FETCH_RESOURCE(cluster, CassCluster*, &cluster_resource, -1,
+    PHP_CASSANDRA_CLUSTER_RES_NAME, le_cassandra_cluster_res);
+
+  ks     = strndup(keyspace, keyspace_len);
+  future = cass_session_connect_keyspace(session, cluster, ks);
+
+  ZEND_REGISTER_RESOURCE(
+    return_value,
+    future,
+    le_cassandra_future_res
+  );
+  free(ks);
+}
+
+PHP_FUNCTION(cassandra_session_execute)
+{
+  CassSession* session;
+  CassStatement* statement;
+  CassFuture*  future;
+  zval* session_resource;
+  zval* statement_resource;
+
+  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "rr", &session_resource, &statement_resource) == FAILURE) {
+    RETURN_FALSE;
+  }
+
+  ZEND_FETCH_RESOURCE(session, CassSession*, &session_resource, -1,
+    PHP_CASSANDRA_SESSION_RES_NAME, le_cassandra_session_res);
+
+  ZEND_FETCH_RESOURCE(statement, CassStatement*, &statement_resource, -1,
+    PHP_CASSANDRA_STATEMENT_RES_NAME, le_cassandra_statement_res);
+
+  future = cass_session_execute(session, statement);
+
+  ZEND_REGISTER_RESOURCE(
+    return_value,
+    future,
+    le_cassandra_future_res
+  );
+}
+
 PHP_FUNCTION(cassandra_future_free)
 {
   CassFuture* future;
@@ -249,11 +496,51 @@ PHP_FUNCTION(cassandra_future_free)
   }
 
   ZEND_FETCH_RESOURCE(future, CassFuture*, &future_resource, -1,
-    PHP_CASSANDRA_SESSION_RES_NAME, le_cassandra_future_res);
+    PHP_CASSANDRA_FUTURE_RES_NAME, le_cassandra_future_res);
 
   zend_list_delete(Z_RESVAL_P(future_resource));
 
   RETURN_TRUE;
+}
+
+PHP_FUNCTION(cassandra_future_wait)
+{
+  CassFuture* future;
+  zval* future_resource;
+
+  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "r", &future_resource) == FAILURE) {
+    RETURN_FALSE;
+  }
+
+  ZEND_FETCH_RESOURCE(future, CassFuture*, &future_resource, -1,
+    PHP_CASSANDRA_FUTURE_RES_NAME, le_cassandra_future_res);
+
+  cass_future_wait(future);
+
+  RETURN_TRUE;
+}
+
+PHP_FUNCTION(cassandra_future_wait_timed)
+{
+  CassFuture* future;
+  zval* future_resource;
+  double timeout;
+  int t;
+
+  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "rd", &future_resource, &timeout) == FAILURE) {
+    RETURN_FALSE;
+  }
+
+  ZEND_FETCH_RESOURCE(future, CassFuture*, &future_resource, -1,
+    PHP_CASSANDRA_FUTURE_RES_NAME, le_cassandra_future_res);
+
+  t = (int) ceil(timeout * 1000000);
+
+  if (cass_future_wait_timed(future, t)) {
+    RETURN_TRUE;
+  }
+
+  RETURN_FALSE;
 }
 
 PHP_FUNCTION(cassandra_future_error_code)
@@ -266,7 +553,7 @@ PHP_FUNCTION(cassandra_future_error_code)
   }
 
   ZEND_FETCH_RESOURCE(future, CassFuture*, &future_resource, -1,
-    PHP_CASSANDRA_SESSION_RES_NAME, le_cassandra_future_res);
+    PHP_CASSANDRA_FUTURE_RES_NAME, le_cassandra_future_res);
 
 
   RETURN_LONG(cass_future_error_code(future));
@@ -283,8 +570,146 @@ PHP_FUNCTION(cassandra_future_error_message)
   }
 
   ZEND_FETCH_RESOURCE(future, CassFuture*, &future_resource, -1,
-    PHP_CASSANDRA_SESSION_RES_NAME, le_cassandra_future_res);
+    PHP_CASSANDRA_FUTURE_RES_NAME, le_cassandra_future_res);
 
   message = cass_future_error_message(future);
   RETURN_STRINGL(message.data, message.length, true);
+}
+
+PHP_FUNCTION(cassandra_future_get_result)
+{
+  CassFuture* future;
+  zval* future_resource;
+  const CassResult* result;
+
+  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "r", &future_resource) == FAILURE) {
+    RETURN_FALSE;
+  }
+
+  ZEND_FETCH_RESOURCE(future, CassFuture*, &future_resource, -1,
+    PHP_CASSANDRA_FUTURE_RES_NAME, le_cassandra_future_res);
+
+  result = cass_future_get_result(future);
+
+  if (result == NULL) {
+    RETURN_NULL();
+  }
+
+  ZEND_REGISTER_RESOURCE(
+    return_value,
+    (void*) result,
+    le_cassandra_result_res
+  );
+}
+
+PHP_FUNCTION(cassandra_result_free)
+{
+  CassResult* result;
+  zval* result_resource;
+
+  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "r", &result_resource) == FAILURE) {
+    RETURN_FALSE;
+  }
+
+  ZEND_FETCH_RESOURCE(result, CassResult*, &result_resource, -1,
+    PHP_CASSANDRA_RESULT_RES_NAME, le_cassandra_result_res);
+
+  zend_list_delete(Z_RESVAL_P(result_resource));
+
+  RETURN_TRUE;
+}
+
+PHP_FUNCTION(cassandra_result_row_count)
+{
+  CassResult* result;
+  zval* result_resource;
+
+  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "r", &result_resource) == FAILURE) {
+    RETURN_FALSE;
+  }
+
+  ZEND_FETCH_RESOURCE(result, CassResult*, &result_resource, -1,
+    PHP_CASSANDRA_RESULT_RES_NAME, le_cassandra_result_res);
+
+  RETURN_LONG(cass_result_row_count(result));
+}
+
+PHP_FUNCTION(cassandra_statement_new)
+{
+  CassStatement* statement;
+  char* cql;
+  int cql_len;
+  long count;
+
+  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sl", &cql, &cql_len, &count) == FAILURE) {
+    RETURN_FALSE;
+  }
+
+  statement = cass_statement_new(cass_string_init2(cql, cql_len), count);
+
+  ZEND_REGISTER_RESOURCE(
+    return_value,
+    statement,
+    le_cassandra_statement_res
+  );
+}
+
+PHP_FUNCTION(cassandra_statement_free)
+{
+  CassStatement* statement;
+  zval* statement_resource;
+
+  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "r", &statement_resource) == FAILURE) {
+    RETURN_FALSE;
+  }
+
+  ZEND_FETCH_RESOURCE(statement, CassStatement*, &statement_resource, -1,
+    PHP_CASSANDRA_STATEMENT_RES_NAME, le_cassandra_statement_res);
+
+  zend_list_delete(Z_RESVAL_P(statement_resource));
+
+  RETURN_TRUE;
+}
+
+static zval*
+php_cassandra_value(const CassValue* value, CassValueType type)
+{
+  zval* return_value;
+  CassError rc;
+  CassString string;
+  MAKE_STD_ZVAL(return_value);
+
+  switch (type) {
+  case CASS_VALUE_TYPE_UNKNOWN:
+  case CASS_VALUE_TYPE_CUSTOM:
+    ZVAL_NULL(return_value);
+    break;
+  case CASS_VALUE_TYPE_VARCHAR:
+  case CASS_VALUE_TYPE_ASCII:
+    rc = cass_value_get_string(value, &string);
+    assert(rc == CASS_OK);
+    ZVAL_STRINGL(return_value, string.data, string.length, true);
+    break;
+  case CASS_VALUE_TYPE_BIGINT:
+  case CASS_VALUE_TYPE_BLOB:
+  case CASS_VALUE_TYPE_BOOLEAN:
+  case CASS_VALUE_TYPE_COUNTER:
+  case CASS_VALUE_TYPE_DECIMAL:
+  case CASS_VALUE_TYPE_DOUBLE:
+  case CASS_VALUE_TYPE_FLOAT:
+  case CASS_VALUE_TYPE_INT:
+  case CASS_VALUE_TYPE_TEXT:
+  case CASS_VALUE_TYPE_TIMESTAMP:
+  case CASS_VALUE_TYPE_UUID:
+  case CASS_VALUE_TYPE_VARINT:
+  case CASS_VALUE_TYPE_TIMEUUID:
+  case CASS_VALUE_TYPE_INET:
+  case CASS_VALUE_TYPE_LIST:
+  case CASS_VALUE_TYPE_MAP:
+  case CASS_VALUE_TYPE_SET:
+    ZVAL_NULL(return_value);
+    break;
+  }
+
+  return return_value;
 }

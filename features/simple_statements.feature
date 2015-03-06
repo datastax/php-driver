@@ -28,7 +28,7 @@ Feature: Simple Statements
       $session   = $cluster->connect("simplex");
       $statement = new Cassandra\SimpleStatement("SELECT * FROM simplex.playlists");
       $result    = $session->execute($statement);
-      echo "Result contains " . count($result) . " rows";
+      echo "Result contains " . $result->count() . " rows";
       """
     When it is executed
     Then its output should contain:

@@ -17,12 +17,6 @@ final class DefaultSSLContext implements SSLContext
     $this->resource = cassandra_ssl_new();
   }
 
-  public function __destruct()
-  {
-    cassandra_ssl_free($this->resource);
-    $this->resource = null;
-  }
-
   /**
    * {@inheritDoc}
    */

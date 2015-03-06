@@ -3,22 +3,88 @@
 namespace Cassandra\Cluster;
 
 use Cassandra\DefaultCluster;
+use Cassandra\Exception\InvalidArgumentException;
+use Cassandra\Util;
 
 final class Builder
 {
+    const LOAD_BALANCING_ROUND_ROBIN = 0;
+    const LOAD_BALANCING_DC_AWARE_ROUND_ROBIN = 1;
+
     /**
-     * Cluster resource
-     * @var resource
-     * @access private
+     * Contact points, defaults to "127.0.0.1"
+     * @var contactPoints
      */
-    private $resource;
+    private $contactPoints;
+
+    /**
+     * Either Builder::LOAD_BALANCING_ROUND_ROBIN or Builder::LOAD_BALANCING_DC_AWARE_ROUND_ROBIN
+     * @var integer
+     */
+    private $loadBalancingPolicy;
+
+    /**
+     * Name of the local datacenter
+     * @var string
+     */
+    private $localDatacenter;
+
+    /**
+     * Maximum number of hosts to try in remote datacenters
+     * @var integer
+     */
+    private $hostPerRemoteDatacenter;
+
+    /**
+     * Allow using hosts from remote datacenters to execute statements with local consistencies
+     * @var boolean
+     */
+    private $useRemoteDatacenterForLocalConsistencies;
+
+    /**
+     * Enable Token-aware routing
+     * @var boolean
+     */
+    private $useTokenAwareRouting;
+
+    /**
+     * Username for authentication
+     * @var string
+     */
+    private $username;
+
+    /**
+     * Password for authentication
+     * @var string
+     */
+    private $password;
+
+    /**
+     * Connection timeout
+     * @var float
+     */
+    private $connectTimeout;
+
+    /**
+     * Request timeout
+     * @var float
+     */
+    private $requestTimeout;
+
+    /**
+     * SSLContext
+     * @var Cassandra\Cluster\SSLContext
+     */
+    private $sslContext;
 
     /**
      * @access private
      */
     public function __construct()
     {
-        $this->resource = cassandra_cluster_new();
+        $this->contactPoints        = "127.0.0.1";
+        $this->loadBalancingPolicy  = self::LOAD_BALANCING_ROUND_ROBIN;
+        $this->useTokenAwareRouting = true;
     }
 
     /**
@@ -28,7 +94,38 @@ final class Builder
      */
     public function build()
     {
-        return new DefaultCluster($this->resource);
+        $cluster = cassandra_cluster_new();
+
+        switch($this->loadBalancingPolicy) {
+            case self::LOAD_BALANCING_ROUND_ROBIN:
+                cassandra_cluster_set_load_balance_round_robin($cluster);
+                break;
+            case self::LOAD_BALANCING_DC_AWARE_ROUND_ROBIN:
+                Util::assertNoError(cassandra_cluster_set_load_balance_dc_aware($cluster, $this->localDatacenter, $this->hostPerRemoteDatacenter, $this->useRemoteDatacenterForLocalConsistencies));
+                break;
+        }
+
+        cassandra_cluster_set_token_aware_routing($cluster, $this->useTokenAwareRouting);
+
+        if (!is_null($this->username) && !is_null($this->password)) {
+            Util::assertNoError(cassandra_cluster_set_credentials($cluster, $this->username, $this->password));
+        }
+
+        if (!is_null($this->connectTimeout)) {
+            Util::assertNoError(cassandra_cluster_set_connect_timeout($cluster, $this->connectTimeout));
+        }
+
+        if (!is_null($this->requestTimeout)) {
+            Util::assertNoError(cassandra_cluster_set_request_timeout($cluster, $this->requestTimeout));
+        }
+
+        if ($this->sslContext instanceof DefaultSSLContext) {
+            Util::assertNoError(cassandra_cluster_set_ssl($cluster, $context->resource()));
+        }
+
+        Util::assertNoError(cassandra_cluster_set_contact_points($cluster, $this->contactPoints));
+
+        return new DefaultCluster($cluster);
     }
 
     /**
@@ -38,8 +135,7 @@ final class Builder
      */
     public function withContactPoints(array $hosts)
     {
-        $code = cassandra_cluster_set_contact_points($this->resource, implode(',', $hosts));
-        \Cassandra::assertNoError($code);
+        $this->contactPoints = implode(',', $hosts);
         return $this;
     }
 
@@ -50,7 +146,7 @@ final class Builder
      */
     public function withRoundRobinLoadBalancingPolicy()
     {
-        cassandra_cluster_set_load_balance_round_robin($this->resource);
+        $this->loadBalancingPolicy = self::LOAD_BALANCING_ROUND_ROBIN;
         return $this;
     }
 
@@ -65,7 +161,18 @@ final class Builder
      */
     public function withDatacenterAwareRoundRobinLoadBalancingPolicy($localDatacenter, $hostPerRemoteDatacenter, $useRemoteDatacenterForLocalConsistencies)
     {
-        cassandra_cluster_set_load_balance_dc_aware($this->resource, (string) $localDatacenter, (integer) $hostPerRemoteDatacenter, (bool) $useRemoteDatacenterForLocalConsistencies);
+        $localDatacenter                          = (string) $localDatacenter;
+        $hostPerRemoteDatacenter                  = (int) $hostPerRemoteDatacenter;
+        $useRemoteDatacenterForLocalConsistencies = (bool) $useRemoteDatacenterForLocalConsistencies;
+
+        if ($hostPerRemoteDatacenter < 0) {
+            throw new InvalidArgumentException(sprintf("Number of hosts per remote datacenter cannot be negative, %s given", $hostPerRemoteDatacenter));
+        }
+
+        $this->loadBalancingPolicy                      = self::LOAD_BALANCING_DC_AWARE_ROUND_ROBIN;
+        $this->localDatacenter                          = $localDatacenter;
+        $this->hostPerRemoteDatacenter                  = $hostPerRemoteDatacenter;
+        $this->useRemoteDatacenterForLocalConsistencies = $useRemoteDatacenterForLocalConsistencies;
         return $this;
     }
 
@@ -78,7 +185,7 @@ final class Builder
      */
     public function withTokenAwareRouting($enabled = true)
     {
-        cassandra_cluster_set_token_aware_routing($this->resource, (bool) $enabled);
+        $this->useTokenAwareRouting = (bool) $enabled;
         return $this;
     }
 
@@ -92,7 +199,8 @@ final class Builder
      */
     public function withCredentials($username, $password)
     {
-        cassandra_cluster_set_credentials($this->resource, (string) $username, (string) $password);
+        $this->username = (string) $username;
+        $this->password = (string) $password;
         return $this;
     }
 
@@ -105,7 +213,7 @@ final class Builder
      */
     public function withConnectTimeout($timeout)
     {
-        cassandra_cluster_set_connect_timeout($this->resource, (float) $timeout);
+        $this->connectTimeout = (float) $timeout;
         return $this;
     }
 
@@ -118,7 +226,7 @@ final class Builder
      */
     public function withRequestTimeout($timeout)
     {
-        cassandra_cluster_set_request_timeout($this->resource, (float) $timeout);
+        $this->requestTimeout = (float) $timeout;
         return $this;
     }
 
@@ -128,10 +236,7 @@ final class Builder
      */
     public function withSSLContext(SSLContext $context)
     {
-        if ($context instanceof DefaultSSLContext) {
-            cassandra_cluster_set_ssl($this->resource, $context->resource());
-        }
-
+        $this->sslContext = $context;
         return $this;
     }
 }

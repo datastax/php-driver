@@ -7,12 +7,19 @@ use Behat\Gherkin\Node\TableNode;
 use Symfony\Component\Process\PhpExecutableFinder;
 use Symfony\Component\Process\Process;
 use Behat\Behat\Tester\Exception\PendingException;
+use Cassandra\SimpleStatement;
 
 /**
  * Defines application features from the specific context.
  */
 class FeatureContext implements Context, SnippetAcceptingContext
 {
+    private $workingDir;
+    private $phpBin;
+    private $process;
+    private $cluster;
+    private $session;
+
     /**
      * Initializes context.
      *
@@ -22,6 +29,8 @@ class FeatureContext implements Context, SnippetAcceptingContext
      */
     public function __construct()
     {
+        $this->cluster = \Cassandra::cluster()->build();
+        $this->session = $this->cluster->connect();
     }
 
     /**
@@ -61,6 +70,27 @@ class FeatureContext implements Context, SnippetAcceptingContext
     */
     public function theFollowingSchema(PyStringNode $string)
     {
+        $keyspaces = $this->session->execute(new SimpleStatement("SELECT keyspace_name FROM system.schema_keyspaces"));
+
+        foreach ($keyspaces as $row) {
+            $keyspace = $row['keyspace_name'];
+
+            if ($this->startsWith("system", $keyspace)) {
+                continue;
+            }
+
+            $this->session->execute(new SimpleStatement("DROP KEYSPACE $keyspace"));
+        }
+
+        foreach (explode(";", (string) $string) as $cql) {
+            $cql = trim($cql);
+
+            if (empty($cql)) {
+                continue;
+            }
+
+            $this->session->execute(new SimpleStatement($cql));
+        }
     }
 
     /**
@@ -119,6 +149,11 @@ class FeatureContext implements Context, SnippetAcceptingContext
         $autoload = realpath(__DIR__.'/../../vendor/autoload.php');
         $content  = preg_replace('/\<\?php/', "<?php include '$autoload';", $content, 1);
         file_put_contents($filename, $content);
+    }
+
+    private function startsWith($prefix, $string)
+    {
+        return substr($string, 0, strlen($prefix)) === $prefix;
     }
 
     private static function clearDirectory($path)
