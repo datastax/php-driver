@@ -21,8 +21,7 @@ final class SimpleStatement implements Statement
                     ));
                 }
 
-                cassandra_statement_bind($statement, $value->getType());
-                $value->bind($statement, $i);
+                cassandra_statement_bind($statement, $value, $i);
             }
         }
 

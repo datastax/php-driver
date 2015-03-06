@@ -34,11 +34,11 @@ class FeatureContext implements Context, SnippetAcceptingContext
     }
 
     /**
-    * Cleans test folders in the temporary directory.
-    *
-    * @BeforeSuite
-    * @AfterSuite
-    */
+     * Cleans test folders in the temporary directory.
+     *
+     * @BeforeSuite
+     * @AfterSuite
+     */
     public static function cleanTestFolders()
     {
         if (is_dir($dir = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'php-driver')) {
@@ -47,10 +47,10 @@ class FeatureContext implements Context, SnippetAcceptingContext
     }
 
     /**
-    * Prepares test folders in the temporary directory.
-    *
-    * @BeforeScenario
-    */
+     * Prepares test folders in the temporary directory.
+     *
+     * @BeforeScenario
+     */
     public function prepareTestFolders()
     {
         $dir = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'php-driver' . DIRECTORY_SEPARATOR .
@@ -66,8 +66,8 @@ class FeatureContext implements Context, SnippetAcceptingContext
     }
 
     /**
-    * @Given /^the following schema:$/
-    */
+     * @Given /^the following schema:$/
+     */
     public function theFollowingSchema(PyStringNode $string)
     {
         $keyspaces = $this->session->execute(new SimpleStatement("SELECT keyspace_name FROM system.schema_keyspaces"));
@@ -94,16 +94,16 @@ class FeatureContext implements Context, SnippetAcceptingContext
     }
 
     /**
-    * @Given /^the following example:$/
-    */
+     * @Given /^the following example:$/
+     */
     public function theFollowingExample(PyStringNode $string)
     {
         $this->createFile($this->workingDir . '/example.php', (string) $string);
     }
 
     /**
-    * @When /^it is executed$/
-    */
+     * @When /^it is executed$/
+     */
     public function itIsExecuted()
     {
         $this->process->setWorkingDirectory($this->workingDir);
@@ -121,8 +121,8 @@ class FeatureContext implements Context, SnippetAcceptingContext
     }
 
     /**
-    * @Then /^its output should contain:$/
-    */
+     * @Then /^its output should contain:$/
+     */
     public function itsOutputShouldContain(PyStringNode $string)
     {
         PHPUnit_Framework_Assert::assertContains((string) $string, $this->getOutput());
