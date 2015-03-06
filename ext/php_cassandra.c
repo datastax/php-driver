@@ -38,8 +38,23 @@ const zend_function_entry cassandra_functions[] = {
   PHP_FE_END /* Must be the last line in cassandra_functions[] */
 };
 
+#if ZEND_MODULE_API_NO >= 20050617
+static zend_module_dep php_cassandra_deps[] = {
+  ZEND_MOD_REQUIRED("mbstring")
+  ZEND_MOD_REQUIRED("bcmath")
+#ifdef ZEND_MOD_END
+  ZEND_MOD_END
+#else
+  {NULL,NULL,NULL}
+#endif
+};
+#endif
+
 zend_module_entry cassandra_module_entry = {
-#if ZEND_MODULE_API_NO >= 20010901
+#if ZEND_MODULE_API_NO >= 20050617
+  STANDARD_MODULE_HEADER_EX, NULL,
+  php_cassandra_deps,
+#elif ZEND_MODULE_API_NO >= 20010901
   STANDARD_MODULE_HEADER,
 #endif
   PHP_CASSANDRA_EXTNAME,
@@ -676,39 +691,120 @@ php_cassandra_value(const CassValue* value, CassValueType type)
 {
   zval* return_value;
   CassError rc;
-  CassString string;
+  CassString v_string;
+  CassBytes v_bytes;
+  CassUuid v_uuid;
+  CassInet v_inet;
+  CassDecimal v_decimal;
+  cass_int64_t v_int_64;
+  cass_int32_t v_int_32;
+  cass_bool_t v_boolean;
+  cass_double_t v_double;
+  cass_float_t v_float;
   MAKE_STD_ZVAL(return_value);
+
+  if (cass_value_is_null(value)) {
+    RETVAL_NULL();
+    return return_value;
+  }
 
   switch (type) {
   case CASS_VALUE_TYPE_UNKNOWN:
   case CASS_VALUE_TYPE_CUSTOM:
-    ZVAL_NULL(return_value);
+    RETVAL_NULL();
     break;
-  case CASS_VALUE_TYPE_VARCHAR:
   case CASS_VALUE_TYPE_ASCII:
-    rc = cass_value_get_string(value, &string);
-    assert(rc == CASS_OK);
-    ZVAL_STRINGL(return_value, string.data, string.length, true);
-    break;
-  case CASS_VALUE_TYPE_BIGINT:
-  case CASS_VALUE_TYPE_BLOB:
-  case CASS_VALUE_TYPE_BOOLEAN:
-  case CASS_VALUE_TYPE_COUNTER:
-  case CASS_VALUE_TYPE_DECIMAL:
-  case CASS_VALUE_TYPE_DOUBLE:
-  case CASS_VALUE_TYPE_FLOAT:
-  case CASS_VALUE_TYPE_INT:
   case CASS_VALUE_TYPE_TEXT:
-  case CASS_VALUE_TYPE_TIMESTAMP:
-  case CASS_VALUE_TYPE_UUID:
-  case CASS_VALUE_TYPE_VARINT:
-  case CASS_VALUE_TYPE_TIMEUUID:
-  case CASS_VALUE_TYPE_INET:
-  case CASS_VALUE_TYPE_LIST:
-  case CASS_VALUE_TYPE_MAP:
-  case CASS_VALUE_TYPE_SET:
-    ZVAL_NULL(return_value);
+  case CASS_VALUE_TYPE_VARCHAR:
+    rc = cass_value_get_string(value, &v_string);
+    assert(rc == CASS_OK);
+    RETVAL_STRINGL(v_string.data, v_string.length, true);
     break;
+  case CASS_VALUE_TYPE_INT:
+    rc = cass_value_get_int32(value, &v_int_32);
+    assert(rc == CASS_OK);
+    RETVAL_LONG(v_int_32);
+    break;
+  case CASS_VALUE_TYPE_COUNTER:
+  case CASS_VALUE_TYPE_BIGINT:
+    // TODO: implement Bigint
+    RETVAL_NULL();
+    break;
+    // rc = cass_value_get_int64(value, &v_int_64);
+    // assert(rc == CASS_OK);
+  case CASS_VALUE_TYPE_TIMESTAMP:
+    // TODO: implement Timestamp
+    RETVAL_NULL();
+    break;
+    // rc = cass_value_get_int64(value, &v_int_64);
+    // assert(rc == CASS_OK);
+  case CASS_VALUE_TYPE_BLOB:
+    // TODO: implement Blob
+    RETVAL_NULL();
+    break;
+    // rc = cass_value_get_bytes(value, &v_bytes);
+    // assert(rc == CASS_OK);
+  case CASS_VALUE_TYPE_VARINT:
+    // TODO: implement Varint
+    RETVAL_NULL();
+    break;
+    // rc = cass_value_get_bytes(value, &v_bytes);
+    // assert(rc == CASS_OK);
+  case CASS_VALUE_TYPE_UUID:
+    // TODO: implement Uuid
+    RETVAL_NULL();
+    break;
+    // rc = cass_value_get_uuid(value, &v_uuid);
+    // assert(rc == CASS_OK);
+  case CASS_VALUE_TYPE_TIMEUUID:
+    // TODO: implement Timeuuid
+    RETVAL_NULL();
+    break;
+    // rc = cass_value_get_uuid(value, &v_uuid);
+    // assert(rc == CASS_OK);
+  case CASS_VALUE_TYPE_BOOLEAN:
+    rc = cass_value_get_bool(value, &v_boolean);
+    assert(rc == CASS_OK);
+
+    if (v_boolean) {
+      RETVAL_TRUE;
+    } else {
+      RETVAL_FALSE;
+    }
+
+    break;
+  case CASS_VALUE_TYPE_INET:
+    // TODO: implement Inet
+    RETVAL_NULL();
+    break;
+    // rc = cass_value_get_inet(value, &v_inet);
+    // assert(rc == CASS_OK);
+  case CASS_VALUE_TYPE_DECIMAL:
+    // TODO: implement Decimal
+    RETVAL_NULL();
+    break;
+    // rc = cass_value_get_decimal(value, &v_decimal);
+    // assert(rc == CASS_OK);
+  case CASS_VALUE_TYPE_DOUBLE:
+    rc = cass_value_get_double(value, &v_double);
+    assert(rc == CASS_OK);
+    RETVAL_DOUBLE(v_double);
+    break;
+  case CASS_VALUE_TYPE_FLOAT:
+    rc = cass_value_get_float(value, &v_float);
+    assert(rc == CASS_OK);
+    RETVAL_DOUBLE(v_float);
+    break;
+  case CASS_VALUE_TYPE_LIST:
+    // TODO: implement List
+  case CASS_VALUE_TYPE_MAP:
+    // TODO: implement Map
+  case CASS_VALUE_TYPE_SET:
+    // TODO: implement Set
+    RETVAL_NULL();
+    break;
+  default:
+    RETVAL_NULL();
   }
 
   return return_value;
