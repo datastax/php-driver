@@ -717,54 +717,120 @@ php_cassandra_value(const CassValue* value, CassValueType type)
   case CASS_VALUE_TYPE_TEXT:
   case CASS_VALUE_TYPE_VARCHAR:
     rc = cass_value_get_string(value, &v_string);
-    assert(rc == CASS_OK);
+    if (rc != CASS_OK) {
+      php_error_docref(NULL TSRMLS_CC, E_WARNING,
+        "Decoding error: %s", cass_error_desc(rc)
+      );
+      RETVAL_NULL();
+      break;
+    }
     RETVAL_STRINGL(v_string.data, v_string.length, true);
     break;
   case CASS_VALUE_TYPE_INT:
     rc = cass_value_get_int32(value, &v_int_32);
-    assert(rc == CASS_OK);
+    if (rc != CASS_OK) {
+      php_error_docref(NULL TSRMLS_CC, E_WARNING,
+        "Decoding error: %s", cass_error_desc(rc)
+      );
+      RETVAL_NULL();
+      break;
+    }
     RETVAL_LONG(v_int_32);
     break;
   case CASS_VALUE_TYPE_COUNTER:
+    // TODO: implement Counter
+    RETVAL_NULL();
+    break;
+    // rc = cass_value_get_int64(value, &v_int_64);
+    // if (rc != CASS_OK) {
+    //   php_error_docref(NULL TSRMLS_CC, E_WARNING,
+    //     "Decoding error: %s", cass_error_desc(rc)
+    //   );
+    //   RETVAL_NULL();
+    //   break;
+    // }
   case CASS_VALUE_TYPE_BIGINT:
     // TODO: implement Bigint
     RETVAL_NULL();
     break;
     // rc = cass_value_get_int64(value, &v_int_64);
-    // assert(rc == CASS_OK);
+    // if (rc != CASS_OK) {
+    //   php_error_docref(NULL TSRMLS_CC, E_WARNING,
+    //     "Decoding error: %s", cass_error_desc(rc)
+    //   );
+    //   RETVAL_NULL();
+    //   break;
+    // }
   case CASS_VALUE_TYPE_TIMESTAMP:
     // TODO: implement Timestamp
     RETVAL_NULL();
     break;
     // rc = cass_value_get_int64(value, &v_int_64);
-    // assert(rc == CASS_OK);
+    // if (rc != CASS_OK) {
+    //   php_error_docref(NULL TSRMLS_CC, E_WARNING,
+    //     "Decoding error: %s", cass_error_desc(rc)
+    //   );
+    //   RETVAL_NULL();
+    //   break;
+    // }
   case CASS_VALUE_TYPE_BLOB:
     // TODO: implement Blob
     RETVAL_NULL();
     break;
     // rc = cass_value_get_bytes(value, &v_bytes);
-    // assert(rc == CASS_OK);
+    // if (rc != CASS_OK) {
+    //   php_error_docref(NULL TSRMLS_CC, E_WARNING,
+    //     "Decoding error: %s", cass_error_desc(rc)
+    //   );
+    //   RETVAL_NULL();
+    //   break;
+    // }
   case CASS_VALUE_TYPE_VARINT:
     // TODO: implement Varint
     RETVAL_NULL();
     break;
     // rc = cass_value_get_bytes(value, &v_bytes);
-    // assert(rc == CASS_OK);
+    // if (rc != CASS_OK) {
+    //   php_error_docref(NULL TSRMLS_CC, E_WARNING,
+    //     "Decoding error: %s", cass_error_desc(rc)
+    //   );
+    //   RETVAL_NULL();
+    //   break;
+    // }
   case CASS_VALUE_TYPE_UUID:
     // TODO: implement Uuid
     RETVAL_NULL();
     break;
     // rc = cass_value_get_uuid(value, &v_uuid);
-    // assert(rc == CASS_OK);
+    // if (rc != CASS_OK) {
+    //   php_error_docref(NULL TSRMLS_CC, E_WARNING,
+    //     "Decoding error: %s", cass_error_desc(rc)
+    //   );
+    //   RETVAL_NULL();
+    //   break;
+    // }
   case CASS_VALUE_TYPE_TIMEUUID:
     // TODO: implement Timeuuid
     RETVAL_NULL();
     break;
     // rc = cass_value_get_uuid(value, &v_uuid);
-    // assert(rc == CASS_OK);
+    // if (rc != CASS_OK) {
+    //   php_error_docref(NULL TSRMLS_CC, E_WARNING,
+    //     "Decoding error: %s", cass_error_desc(rc)
+    //   );
+    //   RETVAL_NULL();
+    //   break;
+    // }
   case CASS_VALUE_TYPE_BOOLEAN:
     rc = cass_value_get_bool(value, &v_boolean);
-    assert(rc == CASS_OK);
+
+    if (rc != CASS_OK) {
+      php_error_docref(NULL TSRMLS_CC, E_WARNING,
+        "Decoding error: %s", cass_error_desc(rc)
+      );
+      RETVAL_NULL();
+      break;
+    }
 
     if (v_boolean) {
       RETVAL_TRUE;
@@ -778,21 +844,49 @@ php_cassandra_value(const CassValue* value, CassValueType type)
     RETVAL_NULL();
     break;
     // rc = cass_value_get_inet(value, &v_inet);
-    // assert(rc == CASS_OK);
+    // if (rc != CASS_OK) {
+    //   php_error_docref(NULL TSRMLS_CC, E_WARNING,
+    //     "Decoding error: %s", cass_error_desc(rc)
+    //   );
+    //   RETVAL_NULL();
+    //   break;
+    // }
   case CASS_VALUE_TYPE_DECIMAL:
     // TODO: implement Decimal
     RETVAL_NULL();
     break;
     // rc = cass_value_get_decimal(value, &v_decimal);
-    // assert(rc == CASS_OK);
+    // if (rc != CASS_OK) {
+    //   php_error_docref(NULL TSRMLS_CC, E_WARNING,
+    //     "Decoding error: %s", cass_error_desc(rc)
+    //   );
+    //   RETVAL_NULL();
+    //   break;
+    // }
   case CASS_VALUE_TYPE_DOUBLE:
     rc = cass_value_get_double(value, &v_double);
-    assert(rc == CASS_OK);
+
+    if (rc != CASS_OK) {
+      php_error_docref(NULL TSRMLS_CC, E_WARNING,
+        "Decoding error: %s", cass_error_desc(rc)
+      );
+      RETVAL_NULL();
+      break;
+    }
+
     RETVAL_DOUBLE(v_double);
     break;
   case CASS_VALUE_TYPE_FLOAT:
     rc = cass_value_get_float(value, &v_float);
-    assert(rc == CASS_OK);
+
+    if (rc != CASS_OK) {
+      php_error_docref(NULL TSRMLS_CC, E_WARNING,
+        "Decoding error: %s", cass_error_desc(rc)
+      );
+      RETVAL_NULL();
+      break;
+    }
+
     RETVAL_DOUBLE(v_float);
     break;
   case CASS_VALUE_TYPE_LIST:
