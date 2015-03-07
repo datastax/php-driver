@@ -2,6 +2,9 @@
 #include "php_ini.h"
 #include "ext/standard/info.h"
 
+extern zend_class_entry *cassandra_ce_Bigint;
+extern zend_class_entry *cassandra_ce_Timestamp;
+
 ZEND_DECLARE_MODULE_GLOBALS(cassandra)
 
 const zend_function_entry cassandra_functions[] = {
@@ -40,6 +43,7 @@ const zend_function_entry cassandra_functions[] = {
 
 #if ZEND_MODULE_API_NO >= 20050617
 static zend_module_dep php_cassandra_deps[] = {
+  ZEND_MOD_REQUIRED("spl")
   ZEND_MOD_REQUIRED("mbstring")
   ZEND_MOD_REQUIRED("bcmath")
 #ifdef ZEND_MOD_END
@@ -167,6 +171,13 @@ PHP_MINIT_FUNCTION(cassandra)
     PHP_CASSANDRA_STATEMENT_RES_NAME,
     module_number
   );
+
+  cassandra_define_CassandraException(TSRMLS_C);
+  cassandra_define_CassandraInvalidArgumentException(TSRMLS_C);
+
+  cassandra_define_CassandraBigint(TSRMLS_C);
+  cassandra_define_CassandraTimestamp(TSRMLS_C);
+
   return SUCCESS;
 }
 
@@ -738,41 +749,48 @@ php_cassandra_value(const CassValue* value, CassValueType type)
     RETVAL_LONG(v_int_32);
     break;
   case CASS_VALUE_TYPE_COUNTER:
-    // TODO: implement Counter
-    RETVAL_NULL();
-    break;
-    // rc = cass_value_get_int64(value, &v_int_64);
-    // if (rc != CASS_OK) {
-    //   php_error_docref(NULL TSRMLS_CC, E_WARNING,
-    //     "Decoding error: %s", cass_error_desc(rc)
-    //   );
-    //   RETVAL_NULL();
-    //   break;
-    // }
   case CASS_VALUE_TYPE_BIGINT:
-    // TODO: implement Bigint
-    RETVAL_NULL();
+    rc = cass_value_get_int64(value, &v_int_64);
+    if (rc != CASS_OK) {
+      php_error_docref(NULL TSRMLS_CC, E_WARNING,
+        "Decoding error: %s", cass_error_desc(rc)
+      );
+    }
+    char *tmp_string;
+
+#ifdef WIN32
+    spprintf(&tmp_string, 0, "%I64d", v_int_64);
+#else
+    spprintf(&tmp_string, 0, "%lld", v_int_64);
+#endif
+
+    object_init_ex(return_value, cassandra_ce_Bigint);
+    zend_update_property_string(cassandra_ce_Bigint, return_value, "value", strlen("value"), tmp_string TSRMLS_CC);
+
+    efree(tmp_string);
     break;
-    // rc = cass_value_get_int64(value, &v_int_64);
-    // if (rc != CASS_OK) {
-    //   php_error_docref(NULL TSRMLS_CC, E_WARNING,
-    //     "Decoding error: %s", cass_error_desc(rc)
-    //   );
-    //   RETVAL_NULL();
-    //   break;
-    // }
   case CASS_VALUE_TYPE_TIMESTAMP:
-    // TODO: implement Timestamp
-    RETVAL_NULL();
+    rc = cass_value_get_int64(value, &v_int_64);
+    if (rc != CASS_OK) {
+      php_error_docref(NULL TSRMLS_CC, E_WARNING,
+        "Decoding error: %s", cass_error_desc(rc)
+      );
+      RETVAL_NULL();
+      break;
+    }
+
+    object_init_ex(return_value, cassandra_ce_Timestamp);
+
+    long sec  = (long) (v_int_64 / 1000);
+    long usec = (long) ((v_int_64 - (sec * 1000)) / 1000.00);
+
+    cassandra_timestamp* timestamp;
+
+    zend_update_property_long(cassandra_ce_Timestamp, return_value, "seconds", strlen("seconds"), sec TSRMLS_CC);
+    zend_update_property_long(cassandra_ce_Timestamp, return_value, "microseconds", strlen("microseconds"), usec TSRMLS_CC);
+    timestamp = (cassandra_timestamp*) zend_object_store_get_object(return_value TSRMLS_CC);
+    timestamp->timestamp = v_int_64;
     break;
-    // rc = cass_value_get_int64(value, &v_int_64);
-    // if (rc != CASS_OK) {
-    //   php_error_docref(NULL TSRMLS_CC, E_WARNING,
-    //     "Decoding error: %s", cass_error_desc(rc)
-    //   );
-    //   RETVAL_NULL();
-    //   break;
-    // }
   case CASS_VALUE_TYPE_BLOB:
     // TODO: implement Blob
     RETVAL_NULL();

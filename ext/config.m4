@@ -3,12 +3,23 @@ PHP_ARG_WITH(cassandra, Enable Cassandra extension,
 
 if test "$PHP_CASSANDRA" != "no"; then
   PHP_SUBST(CASSANDRA_SHARED_LIBADD)
-  PHP_NEW_EXTENSION(cassandra, php_cassandra.c, $ext_shared)
+  PHP_NEW_EXTENSION(cassandra, php_cassandra.c exceptions/exception.c exceptions/invalid_argument.c types/bigint.c types/timestamp.c, $ext_shared)
+
   ifdef([PHP_ADD_EXTENSION_DEP],
   [
+    PHP_ADD_EXTENSION_DEP(cassandra, spl)
     PHP_ADD_EXTENSION_DEP(cassandra, mbstring)
     PHP_ADD_EXTENSION_DEP(cassandra, bcmath)
   ])
+
+  PHP_ADD_BUILD_DIR([$ext_builddir/exceptions], 1)
+  PHP_ADD_INCLUDE([$ext_builddir/exceptions])
+  PHP_ADD_INCLUDE([$ext_srcdir/exceptions])
+
+  PHP_ADD_BUILD_DIR([$ext_builddir/types], 1)
+  PHP_ADD_INCLUDE([$ext_builddir/types])
+  PHP_ADD_INCLUDE([$ext_srcdir/types])
+
   if test "$PHP_CASSANDRA" != "yes"; then
     if test -f $PHP_CASSANDRA/include/cassandra.h; then
       CPP_DRIVER_DIR=$PHP_CASSANDRA

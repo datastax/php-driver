@@ -102,4 +102,14 @@ final class PagedResult implements Result
     public function nextPage()
     {
     }
+
+    /**
+    * {@inheritDoc}
+    */
+    public function first()
+    {
+        if (isset($this->rows[0])) {
+            return $this->rows[0];
+        }
+    }
 }

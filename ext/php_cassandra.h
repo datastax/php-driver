@@ -34,6 +34,11 @@ extern zend_module_entry cassandra_module_entry;
 #include "TSRM.h"
 #endif
 
+typedef struct {
+  zend_object  zval;
+  cass_int64_t timestamp;
+} cassandra_timestamp;
+
 PHP_MINIT_FUNCTION(cassandra);
 PHP_MSHUTDOWN_FUNCTION(cassandra);
 PHP_RINIT_FUNCTION(cassandra);
@@ -75,6 +80,14 @@ PHP_FUNCTION(cassandra_result_row_count);
 /* CassStatement */
 PHP_FUNCTION(cassandra_statement_new);
 PHP_FUNCTION(cassandra_statement_free);
+
+/* Exceptions */
+void cassandra_define_CassandraException(TSRMLS_D);
+void cassandra_define_CassandraInvalidArgumentException(TSRMLS_D);
+
+/* Types */
+void cassandra_define_CassandraBigint(TSRMLS_D);
+void cassandra_define_CassandraTimestamp(TSRMLS_D);
 
 ZEND_BEGIN_MODULE_GLOBALS(cassandra)
   /* globals go here */

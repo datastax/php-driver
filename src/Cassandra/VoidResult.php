@@ -79,4 +79,12 @@ final class VoidResult implements Result
     {
         return null;
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function first()
+    {
+        return null;
+    }
 }
