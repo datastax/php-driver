@@ -3,6 +3,7 @@
 #include "ext/standard/info.h"
 
 extern zend_class_entry *cassandra_ce_Bigint;
+extern zend_class_entry *cassandra_ce_Blob;
 extern zend_class_entry *cassandra_ce_Timestamp;
 
 ZEND_DECLARE_MODULE_GLOBALS(cassandra)
@@ -176,6 +177,7 @@ PHP_MINIT_FUNCTION(cassandra)
   cassandra_define_CassandraInvalidArgumentException(TSRMLS_C);
 
   cassandra_define_CassandraBigint(TSRMLS_C);
+  cassandra_define_CassandraBlob(TSRMLS_C);
   cassandra_define_CassandraTimestamp(TSRMLS_C);
 
   return SUCCESS;
@@ -782,7 +784,7 @@ php_cassandra_value(const CassValue* value, CassValueType type)
     object_init_ex(return_value, cassandra_ce_Timestamp);
 
     long sec  = (long) (v_int_64 / 1000);
-    long usec = (long) ((v_int_64 - (sec * 1000)) / 1000.00);
+    long usec = (long) ((v_int_64 - (sec * 1000)) * 1000);
 
     cassandra_timestamp* timestamp;
 
@@ -792,17 +794,18 @@ php_cassandra_value(const CassValue* value, CassValueType type)
     timestamp->timestamp = v_int_64;
     break;
   case CASS_VALUE_TYPE_BLOB:
-    // TODO: implement Blob
-    RETVAL_NULL();
+    rc = cass_value_get_bytes(value, &v_bytes);
+    if (rc != CASS_OK) {
+      php_error_docref(NULL TSRMLS_CC, E_WARNING,
+        "Decoding error: %s", cass_error_desc(rc)
+      );
+      RETVAL_NULL();
+      break;
+    }
+
+    object_init_ex(return_value, cassandra_ce_Blob);
+    zend_update_property_stringl(cassandra_ce_Blob, return_value, "bytes", strlen("bytes"), (const char *) v_bytes.data, v_bytes.size TSRMLS_CC);
     break;
-    // rc = cass_value_get_bytes(value, &v_bytes);
-    // if (rc != CASS_OK) {
-    //   php_error_docref(NULL TSRMLS_CC, E_WARNING,
-    //     "Decoding error: %s", cass_error_desc(rc)
-    //   );
-    //   RETVAL_NULL();
-    //   break;
-    // }
   case CASS_VALUE_TYPE_VARINT:
     // TODO: implement Varint
     RETVAL_NULL();

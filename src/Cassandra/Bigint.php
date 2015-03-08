@@ -2,13 +2,11 @@
 
 namespace Cassandra;
 
-use Cassandra\Exception\InvalidArgumentException;
-
 final class Bigint
 {
+    private $value;
+
     public function __construct($value);
-
     public function value();
-
     public function __toString();
 }

@@ -39,6 +39,11 @@ typedef struct {
   cass_int64_t timestamp;
 } cassandra_timestamp;
 
+typedef struct {
+  zend_object  zval;
+  CassBytes bytes;
+} cassandra_blob;
+
 PHP_MINIT_FUNCTION(cassandra);
 PHP_MSHUTDOWN_FUNCTION(cassandra);
 PHP_RINIT_FUNCTION(cassandra);
@@ -87,6 +92,7 @@ void cassandra_define_CassandraInvalidArgumentException(TSRMLS_D);
 
 /* Types */
 void cassandra_define_CassandraBigint(TSRMLS_D);
+void cassandra_define_CassandraBlob(TSRMLS_D);
 void cassandra_define_CassandraTimestamp(TSRMLS_D);
 
 ZEND_BEGIN_MODULE_GLOBALS(cassandra)
