@@ -74,7 +74,7 @@ PHP_METHOD(CassandraTimestamp, microtime)
   long sec    = (long) (timestamp->timestamp / 1000);
   double usec = (double) ((timestamp->timestamp - (sec * 1000)) / 1000.00);
   spprintf(&ret, 0, "%.8F %ld", usec, sec);
-  RETURN_STRING(ret, false);
+  RETURN_STRING(ret, 0);
 }
 /* }}} */
 
@@ -118,7 +118,7 @@ PHP_METHOD(CassandraTimestamp, __toString)
 
   char *ret;
   spprintf(&ret, 0, "%lld", timestamp->timestamp);
-  RETURN_STRING(ret, false);
+  RETURN_STRING(ret, 0);
 }
 /* }}} */
 

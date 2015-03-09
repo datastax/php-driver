@@ -10,7 +10,8 @@ zend_class_entry *cassandra_ce_Bigint = NULL;
 static int
 ctype_digit(const char *s, int len)
 {
-  for (int i = 0; i < len; i++) {
+  int i;
+  for (i = 0; i < len; i++) {
     if (!isdigit(s[i]))
       return 0;
   }
@@ -42,7 +43,7 @@ PHP_METHOD(CassandraBigint, __toString)
 {
   zval *zode = zend_read_property(cassandra_ce_Bigint, getThis(), "value", strlen("value"), 0 TSRMLS_CC);
 
-  RETURN_STRING(Z_STRVAL_P(zode), true);
+  RETURN_STRING(Z_STRVAL_P(zode), 1);
 }
 /* }}} */
 
@@ -51,7 +52,7 @@ PHP_METHOD(CassandraBigint, value)
 {
   zval *zode = zend_read_property(cassandra_ce_Bigint, getThis(), "value", strlen("value"), 0 TSRMLS_CC);
 
-  RETURN_STRING(Z_STRVAL_P(zode), true);
+  RETURN_STRING(Z_STRVAL_P(zode), 1);
 }
 /* }}} */
 

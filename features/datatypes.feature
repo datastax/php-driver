@@ -71,14 +71,20 @@ Feature: Datatypes
       Bigint: Cassandra\Bigint::__set_state(array(
         'value' => '765438000',
       ))
-      Decimal:
+      Decimal: Cassandra\Decimal::set_state(array(
+        'value' => '1313123123.234234234234234234123',
+      ))
       Double: 3.1415926535897931
       Float: 3.1400001049041748
       Int: 4
-      Varint:
+      Varint: Cassandra\Varint::__set_state(array(
+        'value' => '67890656781923123918798273492834712837198237',
+      ))
       Timestamp: Cassandra\Timestamp::__set_state(array(
         'seconds' => 1425691864,
         'microseconds' => 1000,
       ))
-      Blob:
+      Blob: Cassandra\Blob::__set_state(array(
+        'bytes' => '0x000000',
+      ))
       """

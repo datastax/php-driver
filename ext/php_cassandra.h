@@ -1,5 +1,6 @@
 #ifndef PHP_CASSANDRA_H
 #define PHP_CASSANDRA_H
+#include <gmp.h>
 #include <cassandra.h>
 
 /* Define Extension Properties */
@@ -40,9 +41,14 @@ typedef struct {
 } cassandra_timestamp;
 
 typedef struct {
-  zend_object  zval;
-  CassBytes bytes;
+  zend_object zval;
+  CassBytes   bytes;
 } cassandra_blob;
+
+typedef struct {
+  zend_object zval;
+  mpz_t       value;
+} cassandra_varint;
 
 PHP_MINIT_FUNCTION(cassandra);
 PHP_MSHUTDOWN_FUNCTION(cassandra);
@@ -94,6 +100,7 @@ void cassandra_define_CassandraInvalidArgumentException(TSRMLS_D);
 void cassandra_define_CassandraBigint(TSRMLS_D);
 void cassandra_define_CassandraBlob(TSRMLS_D);
 void cassandra_define_CassandraTimestamp(TSRMLS_D);
+void cassandra_define_CassandraVarint(TSRMLS_D);
 
 ZEND_BEGIN_MODULE_GLOBALS(cassandra)
   /* globals go here */

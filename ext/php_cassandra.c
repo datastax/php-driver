@@ -5,6 +5,7 @@
 extern zend_class_entry *cassandra_ce_Bigint;
 extern zend_class_entry *cassandra_ce_Blob;
 extern zend_class_entry *cassandra_ce_Timestamp;
+extern zend_class_entry *cassandra_ce_Varint;
 
 ZEND_DECLARE_MODULE_GLOBALS(cassandra)
 
@@ -179,6 +180,7 @@ PHP_MINIT_FUNCTION(cassandra)
   cassandra_define_CassandraBigint(TSRMLS_C);
   cassandra_define_CassandraBlob(TSRMLS_C);
   cassandra_define_CassandraTimestamp(TSRMLS_C);
+  cassandra_define_CassandraVarint(TSRMLS_C);
 
   return SUCCESS;
 }
@@ -214,7 +216,7 @@ PHP_FUNCTION(cassandra_error_message)
     RETURN_FALSE;
   }
 
-  RETURN_STRING(cass_error_desc(code), true);
+  RETURN_STRING(cass_error_desc(code), 1);
 }
 
 static zval* php_cassandra_value(const CassValue* value, CassValueType type);
@@ -232,6 +234,7 @@ PHP_FUNCTION(cassanrda_rows_from_result)
   const CassValue* column_value;
   CassString output;
   zval* php_value;
+  int i;
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "r", &result_resource) == FAILURE) {
     RETURN_FALSE;
@@ -250,7 +253,7 @@ PHP_FUNCTION(cassanrda_rows_from_result)
     array_init(row_value);
     row = cass_iterator_get_row(iterator);
 
-    for (int i = 0; i < columns_count; i++) {
+    for (i = 0; i < columns_count; i++) {
       column_name  = cass_result_column_name(result, i);
       column_type  = cass_result_column_type(result, i);
       column_value = cass_row_get_column(row, i);
@@ -601,7 +604,7 @@ PHP_FUNCTION(cassandra_future_error_message)
     PHP_CASSANDRA_FUTURE_RES_NAME, le_cassandra_future_res);
 
   message = cass_future_error_message(future);
-  RETURN_STRINGL(message.data, message.length, true);
+  RETURN_STRINGL(message.data, message.length, 1);
 }
 
 PHP_FUNCTION(cassandra_future_get_result)
@@ -737,7 +740,7 @@ php_cassandra_value(const CassValue* value, CassValueType type)
       RETVAL_NULL();
       break;
     }
-    RETVAL_STRINGL(v_string.data, v_string.length, true);
+    RETVAL_STRINGL(v_string.data, v_string.length, 1);
     break;
   case CASS_VALUE_TYPE_INT:
     rc = cass_value_get_int32(value, &v_int_32);
@@ -790,6 +793,7 @@ php_cassandra_value(const CassValue* value, CassValueType type)
 
     zend_update_property_long(cassandra_ce_Timestamp, return_value, "seconds", strlen("seconds"), sec TSRMLS_CC);
     zend_update_property_long(cassandra_ce_Timestamp, return_value, "microseconds", strlen("microseconds"), usec TSRMLS_CC);
+
     timestamp = (cassandra_timestamp*) zend_object_store_get_object(return_value TSRMLS_CC);
     timestamp->timestamp = v_int_64;
     break;
@@ -807,17 +811,34 @@ php_cassandra_value(const CassValue* value, CassValueType type)
     zend_update_property_stringl(cassandra_ce_Blob, return_value, "bytes", strlen("bytes"), (const char *) v_bytes.data, v_bytes.size TSRMLS_CC);
     break;
   case CASS_VALUE_TYPE_VARINT:
-    // TODO: implement Varint
-    RETVAL_NULL();
+    rc = cass_value_get_bytes(value, &v_bytes);
+    if (rc != CASS_OK) {
+      php_error_docref(NULL TSRMLS_CC, E_WARNING,
+        "Decoding error: %s", cass_error_desc(rc)
+      );
+      RETVAL_NULL();
+      break;
+    }
+    object_init_ex(return_value, cassandra_ce_Varint);
+    cassandra_varint* number = (cassandra_varint*) zend_object_store_get_object(return_value TSRMLS_CC);
+    mpz_init(number->value);
+    mpz_import(number->value, v_bytes.size, 1, sizeof(v_bytes.data[0]), 1, 0, v_bytes.data);
+    size_t num_len = mpz_sizeinbase(number->value, 10);
+    if (mpz_sgn(number->value) < 0)
+      num_len++;
+
+    char* tmp = (char*) emalloc((num_len + 1) * sizeof(char));
+    mpz_get_str(tmp, 10, number->value);
+
+    if (tmp[num_len - 1] == '\0') {
+      num_len--;
+    } else {
+      tmp[num_len] = '\0';
+    }
+
+    zend_update_property_stringl(cassandra_ce_Varint, return_value, "value", strlen("value"), tmp, num_len TSRMLS_CC);
+    efree(tmp);
     break;
-    // rc = cass_value_get_bytes(value, &v_bytes);
-    // if (rc != CASS_OK) {
-    //   php_error_docref(NULL TSRMLS_CC, E_WARNING,
-    //     "Decoding error: %s", cass_error_desc(rc)
-    //   );
-    //   RETVAL_NULL();
-    //   break;
-    // }
   case CASS_VALUE_TYPE_UUID:
     // TODO: implement Uuid
     RETVAL_NULL();
