@@ -50,6 +50,12 @@ typedef struct {
   mpz_t       value;
 } cassandra_varint;
 
+typedef struct {
+  zend_object zval;
+  mpf_t       value;
+  long        scale;
+} cassandra_decimal;
+
 PHP_MINIT_FUNCTION(cassandra);
 PHP_MSHUTDOWN_FUNCTION(cassandra);
 PHP_RINIT_FUNCTION(cassandra);

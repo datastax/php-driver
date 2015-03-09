@@ -586,7 +586,6 @@ PHP_FUNCTION(cassandra_future_error_code)
   ZEND_FETCH_RESOURCE(future, CassFuture*, &future_resource, -1,
     PHP_CASSANDRA_FUTURE_RES_NAME, le_cassandra_future_res);
 
-
   RETURN_LONG(cass_future_error_code(future));
 }
 
