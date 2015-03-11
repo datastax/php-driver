@@ -20,7 +20,9 @@ Feature: Datatypes
         int_value int,
         varint_value varint,
         timestamp_value timestamp,
-        blob_value blob
+        blob_value blob,
+        uuid_value uuid,
+        timeuuid_value timeuuid
       );
       INSERT INTO numbers (
         id,
@@ -31,7 +33,9 @@ Feature: Datatypes
         int_value,
         varint_value,
         timestamp_value,
-        blob_value
+        blob_value,
+        uuid_value,
+        timeuuid_value
       )
       VALUES (
         0,
@@ -42,7 +46,9 @@ Feature: Datatypes
         4,
         67890656781923123918798273492834712837198237,
         1425691864001,
-        varcharAsBlob('0x000000')
+        varcharAsBlob('0x000000'),
+        ab3352d9-4f7f-4007-a35a-e62aa7ab0b19,
+        maxTimeuuid('2015-03-11 14:47:10+0000')
       )
       """
     And the following example:
@@ -64,6 +70,8 @@ Feature: Datatypes
       echo "Varint: " . var_export($row['varint_value'], true) . "\n";
       echo "Timestamp: " . var_export($row['timestamp_value'], true) . "\n";
       echo "Blob: " . var_export($row['blob_value'], true) . "\n";
+      echo "Uuid: " . var_export($row['uuid_value'], true) . "\n";
+      echo "Timeuuid: " . var_export($row['timeuuid_value'], true) . "\n";
       """
     When it is executed
     Then its output should contain:
@@ -87,5 +95,13 @@ Feature: Datatypes
       ))
       Blob: Cassandra\Blob::__set_state(array(
          'bytes' => '0x3078303030303030',
+      ))
+      Uuid: Cassandra\Uuid::__set_state(array(
+         'uuid' => 'ab3352d9-4f7f-4007-a35a-e62aa7ab0b19',
+         'version' => 4,
+      ))
+      Timeuuid: Cassandra\Timeuuid::__set_state(array(
+         'uuid' => '7f0a920f-c7fd-11e4-7f7f-7f7f7f7f7f7f',
+         'version' => 1,
       ))
       """

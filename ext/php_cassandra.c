@@ -7,6 +7,8 @@ extern zend_class_entry* cassandra_ce_Bigint;
 extern zend_class_entry* cassandra_ce_Blob;
 extern zend_class_entry* cassandra_ce_Decimal;
 extern zend_class_entry* cassandra_ce_Timestamp;
+extern zend_class_entry* cassandra_ce_Uuid;
+extern zend_class_entry* cassandra_ce_Timeuuid;
 extern zend_class_entry* cassandra_ce_Varint;
 
 ZEND_DECLARE_MODULE_GLOBALS(cassandra)
@@ -208,7 +210,9 @@ PHP_MINIT_FUNCTION(cassandra)
   cassandra_define_CassandraBlob(TSRMLS_C);
   cassandra_define_CassandraDecimal(TSRMLS_C);
   cassandra_define_CassandraTimestamp(TSRMLS_C);
+  cassandra_define_CassandraUuidInterface(TSRMLS_C);
   cassandra_define_CassandraUuid(TSRMLS_C);
+  cassandra_define_CassandraTimeuuid(TSRMLS_C);
   cassandra_define_CassandraVarint(TSRMLS_C);
 
   return SUCCESS;
@@ -750,6 +754,7 @@ php_cassandra_value(const CassValue* value, CassValueType type)
   cass_bool_t v_boolean;
   cass_double_t v_double;
   cass_float_t v_float;
+  cassandra_uuid* uuid;
   MAKE_STD_ZVAL(return_value);
   char* string;
   int string_len;
@@ -869,29 +874,47 @@ php_cassandra_value(const CassValue* value, CassValueType type)
     efree(string);
     break;
   case CASS_VALUE_TYPE_UUID:
-    // TODO: implement Uuid
-    RETVAL_NULL();
+    object_init_ex(return_value, cassandra_ce_Uuid);
+    uuid = (cassandra_uuid*) zend_object_store_get_object(return_value TSRMLS_CC);
+
+    rc = cass_value_get_uuid(value, &uuid->uuid);
+    if (rc != CASS_OK) {
+      php_error_docref(NULL TSRMLS_CC, E_WARNING,
+        "Decoding error: %s", cass_error_desc(rc)
+      );
+      RETVAL_NULL();
+      break;
+    }
+
+    string = emalloc((CASS_UUID_STRING_LENGTH) * sizeof(char));
+    cass_uuid_string(uuid->uuid, string);
+
+    zend_update_property_stringl(cassandra_ce_Uuid, return_value, "uuid", strlen("uuid"), string, CASS_UUID_STRING_LENGTH - 1 TSRMLS_CC);
+    zend_update_property_long(cassandra_ce_Uuid, return_value, "version", strlen("version"), (long) cass_uuid_version(uuid->uuid) TSRMLS_CC);
+
+    efree(string);
     break;
-    // rc = cass_value_get_uuid(value, &v_uuid);
-    // if (rc != CASS_OK) {
-    //   php_error_docref(NULL TSRMLS_CC, E_WARNING,
-    //     "Decoding error: %s", cass_error_desc(rc)
-    //   );
-    //   RETVAL_NULL();
-    //   break;
-    // }
   case CASS_VALUE_TYPE_TIMEUUID:
-    // TODO: implement Timeuuid
-    RETVAL_NULL();
+    object_init_ex(return_value, cassandra_ce_Timeuuid);
+    uuid = (cassandra_uuid*) zend_object_store_get_object(return_value TSRMLS_CC);
+
+    rc = cass_value_get_uuid(value, &uuid->uuid);
+    if (rc != CASS_OK) {
+      php_error_docref(NULL TSRMLS_CC, E_WARNING,
+        "Decoding error: %s", cass_error_desc(rc)
+      );
+      RETVAL_NULL();
+      break;
+    }
+
+    string = emalloc((CASS_UUID_STRING_LENGTH) * sizeof(char));
+    cass_uuid_string(uuid->uuid, string);
+
+    zend_update_property_stringl(cassandra_ce_Timeuuid, return_value, "uuid", strlen("uuid"), string, CASS_UUID_STRING_LENGTH - 1 TSRMLS_CC);
+    zend_update_property_long(cassandra_ce_Timeuuid, return_value, "version", strlen("version"), (long) cass_uuid_version(uuid->uuid) TSRMLS_CC);
+
+    efree(string);
     break;
-    // rc = cass_value_get_uuid(value, &v_uuid);
-    // if (rc != CASS_OK) {
-    //   php_error_docref(NULL TSRMLS_CC, E_WARNING,
-    //     "Decoding error: %s", cass_error_desc(rc)
-    //   );
-    //   RETVAL_NULL();
-    //   break;
-    // }
   case CASS_VALUE_TYPE_BOOLEAN:
     rc = cass_value_get_bool(value, &v_boolean);
 

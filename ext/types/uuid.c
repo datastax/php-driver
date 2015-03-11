@@ -2,9 +2,11 @@
 #include <zend_exceptions.h>
 #include "../php_cassandra.h"
 #include "util/uuid_gen.h"
+#include "uuid_interface.h"
 #include "uuid.h"
 
-extern zend_class_entry *cassandra_ce_InvalidArgumentException;
+extern zend_class_entry* cassandra_ce_InvalidArgumentException;
+extern zend_class_entry* cassandra_ce_UuidInterface;
 
 zend_class_entry *cassandra_ce_Uuid = NULL;
 
@@ -115,7 +117,8 @@ cassandra_define_CassandraUuid(TSRMLS_D)
   zend_class_entry ce;
 
   INIT_CLASS_ENTRY(ce, "Cassandra\\Uuid", CassandraUuid_methods);
-  cassandra_ce_Uuid = zend_register_internal_class(&ce TSRMLS_CC);
+  cassandra_ce_Uuid = zend_register_internal_class(&ce TSRMLS_CC);  
+  zend_class_implements(cassandra_ce_Uuid TSRMLS_CC, 1, cassandra_ce_UuidInterface);
   cassandra_ce_Uuid->ce_flags |= ZEND_ACC_FINAL_CLASS;
   cassandra_ce_Uuid->create_object = php_cassandra_uuid_new;
 

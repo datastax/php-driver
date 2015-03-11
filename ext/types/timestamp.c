@@ -87,7 +87,7 @@ PHP_METHOD(CassandraTimestamp, toDateTime)
   char* str;
   int str_len;
 
-  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "") == FAILURE) {
+  if (zend_parse_parameters_none() == FAILURE) {
     return;
   }
 

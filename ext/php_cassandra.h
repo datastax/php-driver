@@ -112,7 +112,9 @@ void cassandra_define_CassandraBigint(TSRMLS_D);
 void cassandra_define_CassandraBlob(TSRMLS_D);
 void cassandra_define_CassandraDecimal(TSRMLS_D);
 void cassandra_define_CassandraTimestamp(TSRMLS_D);
+void cassandra_define_CassandraUuidInterface(TSRMLS_D);
 void cassandra_define_CassandraUuid(TSRMLS_D);
+void cassandra_define_CassandraTimeuuid(TSRMLS_D);
 void cassandra_define_CassandraVarint(TSRMLS_D);
 
 ZEND_BEGIN_MODULE_GLOBALS(cassandra)
