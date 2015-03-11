@@ -86,6 +86,6 @@ Feature: Datatypes
          'microseconds' => 1000,
       ))
       Blob: Cassandra\Blob::__set_state(array(
-         'bytes' => '0x000000',
+         'bytes' => '0x3078303030303030',
       ))
       """
