@@ -56,6 +56,11 @@ typedef struct {
   long        scale;
 } cassandra_decimal;
 
+typedef struct {
+  zend_object zval;
+  CassUuid    uuid;
+} cassandra_uuid;
+
 PHP_MINIT_FUNCTION(cassandra);
 PHP_MSHUTDOWN_FUNCTION(cassandra);
 PHP_RINIT_FUNCTION(cassandra);
@@ -107,10 +112,11 @@ void cassandra_define_CassandraBigint(TSRMLS_D);
 void cassandra_define_CassandraBlob(TSRMLS_D);
 void cassandra_define_CassandraDecimal(TSRMLS_D);
 void cassandra_define_CassandraTimestamp(TSRMLS_D);
+void cassandra_define_CassandraUuid(TSRMLS_D);
 void cassandra_define_CassandraVarint(TSRMLS_D);
 
 ZEND_BEGIN_MODULE_GLOBALS(cassandra)
-  /* globals go here */
+  CassUuidGen* uuid_gen;
 ZEND_END_MODULE_GLOBALS(cassandra)
 
 

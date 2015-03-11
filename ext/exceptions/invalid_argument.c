@@ -3,8 +3,8 @@
 #include "../php_cassandra.h"
 #include "exception.h"
 
-extern PHPAPI zend_class_entry *spl_ce_InvalidArgumentException;
-extern zend_class_entry *cassandra_ce_Exception;
+extern PHPAPI zend_class_entry* spl_ce_InvalidArgumentException;
+extern zend_class_entry* cassandra_ce_Exception;
 
 zend_class_entry *cassandra_ce_InvalidArgumentException = NULL;
 

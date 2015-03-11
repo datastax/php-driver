@@ -3,12 +3,12 @@
 #include "../php_cassandra.h"
 #include "bigint.h"
 
-extern zend_class_entry *cassandra_ce_InvalidArgumentException;
+extern zend_class_entry* cassandra_ce_InvalidArgumentException;
 
-zend_class_entry *cassandra_ce_Bigint = NULL;
+zend_class_entry* cassandra_ce_Bigint = NULL;
 
 static int
-ctype_digit(const char *s, int len)
+ctype_digit(const char* s, int len)
 {
   int i;
   for (i = 0; i < len; i++) {
@@ -22,7 +22,7 @@ ctype_digit(const char *s, int len)
 /* {{{ Cassandra\Bigint::__construct(string) */
 PHP_METHOD(CassandraBigint, __construct)
 {
-  char *value;
+  char* value;
   int value_len;
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &value, &value_len) == FAILURE) {
@@ -41,7 +41,7 @@ PHP_METHOD(CassandraBigint, __construct)
 /* {{{ Cassandra\Bigint::__toString() */
 PHP_METHOD(CassandraBigint, __toString)
 {
-  zval *zode = zend_read_property(cassandra_ce_Bigint, getThis(), "value", strlen("value"), 0 TSRMLS_CC);
+  zval* zode = zend_read_property(cassandra_ce_Bigint, getThis(), "value", strlen("value"), 0 TSRMLS_CC);
 
   RETURN_STRING(Z_STRVAL_P(zode), 1);
 }
@@ -50,7 +50,7 @@ PHP_METHOD(CassandraBigint, __toString)
 /* {{{ Cassandra\Bigint::value() */
 PHP_METHOD(CassandraBigint, value)
 {
-  zval *zode = zend_read_property(cassandra_ce_Bigint, getThis(), "value", strlen("value"), 0 TSRMLS_CC);
+  zval* zode = zend_read_property(cassandra_ce_Bigint, getThis(), "value", strlen("value"), 0 TSRMLS_CC);
 
   RETURN_STRING(Z_STRVAL_P(zode), 1);
 }
