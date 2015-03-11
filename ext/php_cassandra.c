@@ -1,6 +1,7 @@
 #include "php_cassandra.h"
 #include "php_ini.h"
 #include "ext/standard/info.h"
+#include "util/bytes.h"
 
 extern zend_class_entry *cassandra_ce_Bigint;
 extern zend_class_entry *cassandra_ce_Blob;
@@ -811,7 +812,12 @@ php_cassandra_value(const CassValue* value, CassValueType type)
     }
 
     object_init_ex(return_value, cassandra_ce_Blob);
-    zend_update_property_stringl(cassandra_ce_Blob, return_value, "bytes", strlen("bytes"), (const char *) v_bytes.data, v_bytes.size TSRMLS_CC);
+    char* hex;
+    int hex_len;
+    php_cassandra_bytes_to_hex(v_bytes.data, v_bytes.size, &hex, &hex_len);
+
+    zend_update_property_stringl(cassandra_ce_Blob, return_value, "bytes", strlen("bytes"), hex, hex_len TSRMLS_CC);
+    efree(hex);
     break;
   case CASS_VALUE_TYPE_VARINT:
     rc = cass_value_get_bytes(value, &v_bytes);

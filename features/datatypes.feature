@@ -69,23 +69,23 @@ Feature: Datatypes
     Then its output should contain:
       """
       Bigint: Cassandra\Bigint::__set_state(array(
-        'value' => '765438000',
+         'value' => '765438000',
       ))
-      Decimal: Cassandra\Decimal::set_state(array(
-        'value' => '1313123123234234234234234234123',
-        'scale' => 21,
+      Decimal: Cassandra\Decimal::__set_state(array(
+         'value' => '1313123123234234234234234234123',
+         'scale' => 21,
       ))
       Double: 3.1415926535897931
       Float: 3.1400001049041748
       Int: 4
       Varint: Cassandra\Varint::__set_state(array(
-        'value' => '67890656781923123918798273492834712837198237',
+         'value' => '67890656781923123918798273492834712837198237',
       ))
       Timestamp: Cassandra\Timestamp::__set_state(array(
-        'seconds' => 1425691864,
-        'microseconds' => 1000,
+         'seconds' => 1425691864,
+         'microseconds' => 1000,
       ))
       Blob: Cassandra\Blob::__set_state(array(
-        'bytes' => '0x000000',
+         'bytes' => '0x000000',
       ))
       """

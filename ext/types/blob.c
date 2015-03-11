@@ -1,35 +1,29 @@
 #include <php.h>
 #include <zend_exceptions.h>
 #include "../php_cassandra.h"
+#include "util/bytes.h"
 #include "blob.h"
 
 extern zend_class_entry *cassandra_ce_InvalidArgumentException;
 
 zend_class_entry *cassandra_ce_Blob = NULL;
 
-static int
-ctype_digit(const char *s, int len)
-{
-  int i;
-  for (i = 0; i < len; i++) {
-    if (!isdigit(s[i]))
-      return 0;
-    }
-
-    return 1;
-  }
-
-  /* {{{ Cassandra\Blob::__construct(string) */
-  PHP_METHOD(CassandraBlob, __construct)
+/* {{{ Cassandra\Blob::__construct(string) */
+PHP_METHOD(CassandraBlob, __construct)
 {
   char *bytes;
   int bytes_len;
 
-  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &bytes, &bytes) == FAILURE) {
+  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &bytes, &bytes_len) == FAILURE) {
     return;
   }
 
-  zend_update_property_stringl(cassandra_ce_Blob, getThis(), "bytes", strlen("bytes"), bytes, bytes_len TSRMLS_CC);
+  char* hex;
+  int hex_len;
+  php_cassandra_bytes_to_hex(bytes, bytes_len, &hex, &hex_len);
+
+  zend_update_property_stringl(cassandra_ce_Blob, getThis(), "bytes", strlen("bytes"), hex, hex_len TSRMLS_CC);
+  efree(hex);
 }
 /* }}} */
 

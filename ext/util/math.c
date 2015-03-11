@@ -4,7 +4,7 @@
 #include <errno.h>
 #include <stdlib.h>
 #include <gmp.h>
-#include "math.h"
+#include "util/math.h"
 
 extern zend_class_entry *cassandra_ce_InvalidArgumentException;
 

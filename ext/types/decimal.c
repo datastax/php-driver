@@ -1,7 +1,7 @@
 #include <php.h>
 #include <zend_exceptions.h>
 #include "../php_cassandra.h"
-#include "math.h"
+#include "util/math.h"
 #include "decimal.h"
 
 extern zend_class_entry *cassandra_ce_InvalidArgumentException;
@@ -22,8 +22,10 @@ PHP_METHOD(CassandraDecimal, __construct)
 
   number = (cassandra_decimal*) zend_object_store_get_object(getThis() TSRMLS_CC);
 
-  if (!php_cassandra_parse_decimal(value, value_len, &number->value, &number->scale))
+  if (!php_cassandra_parse_decimal(value, value_len, &number->value, &scale))
     return;
+
+  number->scale = scale;
 
   char* string;
   int string_len;

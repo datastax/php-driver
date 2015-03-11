@@ -1,7 +1,7 @@
 #include <php.h>
 #include <zend_exceptions.h>
 #include "../php_cassandra.h"
-#include "math.h"
+#include "util/math.h"
 #include "varint.h"
 
 extern zend_class_entry *cassandra_ce_InvalidArgumentException;
