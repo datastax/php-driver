@@ -52,7 +52,7 @@ typedef struct {
 
 typedef struct {
   zend_object zval;
-  mpf_t       value;
+  mpz_t       value;
   long        scale;
 } cassandra_decimal;
 
@@ -105,6 +105,7 @@ void cassandra_define_CassandraInvalidArgumentException(TSRMLS_D);
 /* Types */
 void cassandra_define_CassandraBigint(TSRMLS_D);
 void cassandra_define_CassandraBlob(TSRMLS_D);
+void cassandra_define_CassandraDecimal(TSRMLS_D);
 void cassandra_define_CassandraTimestamp(TSRMLS_D);
 void cassandra_define_CassandraVarint(TSRMLS_D);
 

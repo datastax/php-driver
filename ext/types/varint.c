@@ -1,66 +1,35 @@
 #include <php.h>
 #include <zend_exceptions.h>
 #include "../php_cassandra.h"
+#include "math.h"
 #include "varint.h"
 
 extern zend_class_entry *cassandra_ce_InvalidArgumentException;
 
 zend_class_entry *cassandra_ce_Varint = NULL;
 
-static int
-ctype_digit(const char *s, int len)
-{
-  int i;
-  for (i = 0; i < len; i++) {
-    if (!isdigit(s[i]))
-      return 0;
-    }
-
-    return 1;
-  }
-
-  /* {{{ Cassandra\Varint::__construct(string) */
+/* {{{ Cassandra\Varint::__construct(string) */
 PHP_METHOD(CassandraVarint, __construct)
 {
   char *value;
   int value_len;
   cassandra_varint* number;
-  size_t num_len;
-  char* tmp;
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &value, &value_len) == FAILURE) {
     return;
   }
 
-  if (!ctype_digit(value, value_len)) {
-    zend_throw_exception_ex(cassandra_ce_InvalidArgumentException, 0 TSRMLS_CC, "Invalid integer value \"%s\"", value);
-    return;
-  }
-
   number = (cassandra_varint*) zend_object_store_get_object(getThis() TSRMLS_CC);
-  char* string = strndup(value, value_len);
-  if (mpz_set_str(number->value, string, 10)) {
-    zend_throw_exception_ex(cassandra_ce_InvalidArgumentException, 0 TSRMLS_CC, "Invalid integer value");
-    free(string);
+
+  if (!php_cassandra_parse_integer(value, value_len, &number->value))
     return;
-  }
-  free(string);
 
-  num_len = mpz_sizeinbase(number->value, 10);
-  if (mpz_sgn(number->value) < 0)
-    num_len++;
+  char* string;
+  int string_len;
+  php_cassandra_format_integer(number->value, &string, &string_len);
 
-  tmp = (char*) emalloc((num_len + 1) * sizeof(char));
-  mpz_get_str(tmp, 10, number->value);
-
-  if (tmp[num_len - 1] == '\0') {
-    num_len--;
-  } else {
-    tmp[num_len] = '\0';
-  }
-
-  zend_update_property_stringl(cassandra_ce_Varint, getThis(), "value", strlen("value"), tmp, num_len TSRMLS_CC);
-  efree(tmp);
+  zend_update_property_stringl(cassandra_ce_Varint, getThis(), "value", strlen("value"), string, string_len TSRMLS_CC);
+  efree(string);
 }
 /* }}} */
 
@@ -92,7 +61,7 @@ static zend_function_entry CassandraVarint_methods[] = {
 static void
 php_cassandra_varint_free(void *object TSRMLS_DC)
 {
-  cassandra_varint* number = (cassandra_varint*) number;
+  cassandra_varint* number = (cassandra_varint*) object;
 
   mpz_clear(number->value);
   zend_object_std_dtor(&number->zval TSRMLS_CC);
@@ -126,6 +95,7 @@ void cassandra_define_CassandraVarint(TSRMLS_D)
   INIT_CLASS_ENTRY(ce, "Cassandra\\Varint", CassandraVarint_methods);
   cassandra_ce_Varint = zend_register_internal_class(&ce TSRMLS_CC);
   cassandra_ce_Varint->ce_flags |= ZEND_ACC_FINAL_CLASS;
+  cassandra_ce_Varint->create_object = php_cassandra_varint_new;
 
   /* fields */
   zend_declare_property_string(cassandra_ce_Varint, "value", strlen("value"), "", ZEND_ACC_PRIVATE TSRMLS_CC);

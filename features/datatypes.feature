@@ -72,7 +72,8 @@ Feature: Datatypes
         'value' => '765438000',
       ))
       Decimal: Cassandra\Decimal::set_state(array(
-        'value' => '1313123123.234234234234234234123',
+        'value' => '1313123123234234234234234234123',
+        'scale' => 21,
       ))
       Double: 3.1415926535897931
       Float: 3.1400001049041748

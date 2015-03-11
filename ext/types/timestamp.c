@@ -164,9 +164,9 @@ void cassandra_define_CassandraTimestamp(TSRMLS_D)
   zend_class_entry ce;
 
   INIT_CLASS_ENTRY(ce, "Cassandra\\Timestamp", CassandraTimestamp_methods);
-  ce.create_object = php_cassandra_timestamp_new;
   cassandra_ce_Timestamp = zend_register_internal_class(&ce TSRMLS_CC);
   cassandra_ce_Timestamp->ce_flags |= ZEND_ACC_FINAL_CLASS;
+  cassandra_ce_Timestamp->create_object = php_cassandra_timestamp_new;
 
   /* fields */
   zend_declare_property_string(cassandra_ce_Timestamp, "seconds", strlen("seconds"), "", ZEND_ACC_PRIVATE TSRMLS_CC);

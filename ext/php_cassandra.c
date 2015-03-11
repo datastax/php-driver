@@ -4,6 +4,7 @@
 
 extern zend_class_entry *cassandra_ce_Bigint;
 extern zend_class_entry *cassandra_ce_Blob;
+extern zend_class_entry *cassandra_ce_Decimal;
 extern zend_class_entry *cassandra_ce_Timestamp;
 extern zend_class_entry *cassandra_ce_Varint;
 
@@ -179,6 +180,7 @@ PHP_MINIT_FUNCTION(cassandra)
 
   cassandra_define_CassandraBigint(TSRMLS_C);
   cassandra_define_CassandraBlob(TSRMLS_C);
+  cassandra_define_CassandraDecimal(TSRMLS_C);
   cassandra_define_CassandraTimestamp(TSRMLS_C);
   cassandra_define_CassandraVarint(TSRMLS_C);
 
@@ -717,6 +719,8 @@ php_cassandra_value(const CassValue* value, CassValueType type)
   cass_double_t v_double;
   cass_float_t v_float;
   MAKE_STD_ZVAL(return_value);
+  char* string;
+  int string_len;
 
   if (cass_value_is_null(value)) {
     RETVAL_NULL();
@@ -819,24 +823,13 @@ php_cassandra_value(const CassValue* value, CassValueType type)
       break;
     }
     object_init_ex(return_value, cassandra_ce_Varint);
-    cassandra_varint* number = (cassandra_varint*) zend_object_store_get_object(return_value TSRMLS_CC);
-    mpz_init(number->value);
-    mpz_import(number->value, v_bytes.size, 1, sizeof(v_bytes.data[0]), 1, 0, v_bytes.data);
-    size_t num_len = mpz_sizeinbase(number->value, 10);
-    if (mpz_sgn(number->value) < 0)
-      num_len++;
+    cassandra_varint* varint_number = (cassandra_varint*) zend_object_store_get_object(return_value TSRMLS_CC);
+    mpz_import(varint_number->value, v_bytes.size, 1, sizeof(v_bytes.data[0]), 1, 0, v_bytes.data);
 
-    char* tmp = (char*) emalloc((num_len + 1) * sizeof(char));
-    mpz_get_str(tmp, 10, number->value);
+    php_cassandra_format_integer(varint_number->value, &string, &string_len);
 
-    if (tmp[num_len - 1] == '\0') {
-      num_len--;
-    } else {
-      tmp[num_len] = '\0';
-    }
-
-    zend_update_property_stringl(cassandra_ce_Varint, return_value, "value", strlen("value"), tmp, num_len TSRMLS_CC);
-    efree(tmp);
+    zend_update_property_stringl(cassandra_ce_Varint, return_value, "value", strlen("value"), string, string_len TSRMLS_CC);
+    efree(string);
     break;
   case CASS_VALUE_TYPE_UUID:
     // TODO: implement Uuid
@@ -893,17 +886,24 @@ php_cassandra_value(const CassValue* value, CassValueType type)
     //   break;
     // }
   case CASS_VALUE_TYPE_DECIMAL:
-    // TODO: implement Decimal
-    RETVAL_NULL();
+    rc = cass_value_get_decimal(value, &v_decimal);
+    if (rc != CASS_OK) {
+      php_error_docref(NULL TSRMLS_CC, E_WARNING,
+        "Decoding error: %s", cass_error_desc(rc)
+      );
+      RETVAL_NULL();
+      break;
+    }
+    object_init_ex(return_value, cassandra_ce_Decimal);
+    cassandra_decimal* decimal_number = (cassandra_decimal*) zend_object_store_get_object(return_value TSRMLS_CC);
+    mpz_import(decimal_number->value, v_decimal.varint.size, 1, sizeof(v_decimal.varint.data[0]), 1, 0, v_decimal.varint.data);
+    decimal_number->scale = v_decimal.scale;
+    php_cassandra_format_integer(decimal_number->value, &string, &string_len);
+
+    zend_update_property_stringl(cassandra_ce_Decimal, return_value, "value", strlen("value"), string, string_len TSRMLS_CC);
+    zend_update_property_long(cassandra_ce_Decimal, return_value, "scale", strlen("scale"), (long) v_decimal.scale);
+    efree(string);
     break;
-    // rc = cass_value_get_decimal(value, &v_decimal);
-    // if (rc != CASS_OK) {
-    //   php_error_docref(NULL TSRMLS_CC, E_WARNING,
-    //     "Decoding error: %s", cass_error_desc(rc)
-    //   );
-    //   RETVAL_NULL();
-    //   break;
-    // }
   case CASS_VALUE_TYPE_DOUBLE:
     rc = cass_value_get_double(value, &v_double);
 
