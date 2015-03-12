@@ -11,7 +11,7 @@ extern zend_class_entry* cassandra_ce_InvalidArgumentException;
 #define IPV6             2
 #define TOKEN_MAX_LEN    4
 #define IP_MAX_ADDRLEN   50
-#define UNEXPECTED_TOKEN(expected) \
+#define EXPECTING_TOKEN(expected) \
   ({ \
     zend_throw_exception_ex(cassandra_ce_InvalidArgumentException, 0 TSRMLS_CC, \
       "Unexpected %s at position %d in address \"%s\", expected " expected, \
@@ -156,7 +156,7 @@ php_cassandra_parse_ip_address(char* in, CassInet* inet)
 
       /* At this point, we expect an IP field. */
       if (type != TOKEN_HEX && type != TOKEN_DEC) {
-        UNEXPECTED_TOKEN("an address field or a colon");
+        EXPECTING_TOKEN("an address field or a colon");
       }
 
       /* The IP field will be handled by the FIELD state */
@@ -188,7 +188,7 @@ php_cassandra_parse_ip_address(char* in, CassInet* inet)
         state = STATE_FIELD;
         continue;
       } else {
-        UNEXPECTED_TOKEN("a colon");
+        EXPECTING_TOKEN("a colon");
       }
     }
 
@@ -206,7 +206,7 @@ php_cassandra_parse_ip_address(char* in, CassInet* inet)
       switch (type) {
       case TOKEN_HEX  : state = STATE_AFTERHEX;      break;
       case TOKEN_DEC  : state = STATE_AFTERDEC;      break;
-      default         : UNEXPECTED_TOKEN("an address field");
+      default         : EXPECTING_TOKEN("an address field");
       }
 
       /* Check for too many address bytes. */
@@ -232,7 +232,7 @@ php_cassandra_parse_ip_address(char* in, CassInet* inet)
         state = STATE_AFTERCOLON;
         continue;
       } else {
-        UNEXPECTED_TOKEN("a colon");
+        EXPECTING_TOKEN("a colon");
       }
     }
 
@@ -257,7 +257,7 @@ php_cassandra_parse_ip_address(char* in, CassInet* inet)
         ipv4_pos = 0;
         continue;
       } else {
-        UNEXPECTED_TOKEN("a colon or a dot");
+        EXPECTING_TOKEN("a colon or a dot");
       }
     }
 
@@ -308,7 +308,7 @@ php_cassandra_parse_ip_address(char* in, CassInet* inet)
         }
         continue;
       } else {
-        UNEXPECTED_TOKEN("an IPv4 address byte (0 - 255)");
+        EXPECTING_TOKEN("an IPv4 address byte (0 - 255)");
       }
     }
 
@@ -319,7 +319,7 @@ php_cassandra_parse_ip_address(char* in, CassInet* inet)
         state = STATE_IPV4BYTE;
         continue;
       } else {
-        UNEXPECTED_TOKEN("a dot");
+        EXPECTING_TOKEN("a dot");
       }
     }
 
@@ -330,7 +330,7 @@ php_cassandra_parse_ip_address(char* in, CassInet* inet)
       if (type == TOKEN_END)
         break;
       else
-        UNEXPECTED_TOKEN("the end of address");
+        EXPECTING_TOKEN("the end of address");
     }
   }
 
