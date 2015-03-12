@@ -58,8 +58,12 @@ PHP_METHOD(CassandraDecimal, value)
 }
 /* }}} */
 
+ZEND_BEGIN_ARG_INFO_EX(arginfo___construct, 0, ZEND_RETURN_VALUE, 1)
+  ZEND_ARG_INFO(0, value)
+ZEND_END_ARG_INFO()
+
 static zend_function_entry CassandraDecimal_methods[] = {
-  PHP_ME(CassandraDecimal, __construct, NULL, ZEND_ACC_CTOR|ZEND_ACC_PUBLIC)
+  PHP_ME(CassandraDecimal, __construct, arginfo___construct, ZEND_ACC_CTOR|ZEND_ACC_PUBLIC)
   PHP_ME(CassandraDecimal, __toString, NULL, ZEND_ACC_PUBLIC)
   PHP_ME(CassandraDecimal, value, NULL, ZEND_ACC_PUBLIC)
   PHP_FE_END

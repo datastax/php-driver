@@ -6,6 +6,7 @@
 extern zend_class_entry* cassandra_ce_Bigint;
 extern zend_class_entry* cassandra_ce_Blob;
 extern zend_class_entry* cassandra_ce_Decimal;
+extern zend_class_entry* cassandra_ce_Inet;
 extern zend_class_entry* cassandra_ce_Timestamp;
 extern zend_class_entry* cassandra_ce_Uuid;
 extern zend_class_entry* cassandra_ce_Timeuuid;
@@ -209,6 +210,7 @@ PHP_MINIT_FUNCTION(cassandra)
   cassandra_define_CassandraBigint(TSRMLS_C);
   cassandra_define_CassandraBlob(TSRMLS_C);
   cassandra_define_CassandraDecimal(TSRMLS_C);
+  cassandra_define_CassandraInet(TSRMLS_C);
   cassandra_define_CassandraTimestamp(TSRMLS_C);
   cassandra_define_CassandraUuidInterface(TSRMLS_C);
   cassandra_define_CassandraUuid(TSRMLS_C);
@@ -934,17 +936,24 @@ php_cassandra_value(const CassValue* value, CassValueType type)
 
     break;
   case CASS_VALUE_TYPE_INET:
-    // TODO: implement Inet
-    RETVAL_NULL();
+    object_init_ex(return_value, cassandra_ce_Inet);
+    cassandra_inet* inet = (cassandra_inet*) zend_object_store_get_object(return_value TSRMLS_CC);
+
+    rc = cass_value_get_inet(value, &inet->inet);
+    if (rc != CASS_OK) {
+      php_error_docref(NULL TSRMLS_CC, E_WARNING,
+        "Decoding error: %s", cass_error_desc(rc)
+      );
+      RETVAL_NULL();
+      break;
+    }
+
+    char* string;
+    php_cassandra_format_address(inet->inet, &string);
+
+    zend_update_property_string(cassandra_ce_Inet, return_value, "address", strlen("address"), string TSRMLS_CC);
+    efree(string);
     break;
-    // rc = cass_value_get_inet(value, &v_inet);
-    // if (rc != CASS_OK) {
-    //   php_error_docref(NULL TSRMLS_CC, E_WARNING,
-    //     "Decoding error: %s", cass_error_desc(rc)
-    //   );
-    //   RETVAL_NULL();
-    //   break;
-    // }
   case CASS_VALUE_TYPE_DECIMAL:
     rc = cass_value_get_decimal(value, &v_decimal);
     if (rc != CASS_OK) {

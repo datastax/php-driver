@@ -110,7 +110,7 @@ PHP_METHOD(CassandraTimestamp, __toString)
 {
   cassandra_timestamp* timestamp;
 
-  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "") == FAILURE) {
+  if (zend_parse_parameters_none() == FAILURE) {
     return;
   }
 
@@ -122,10 +122,19 @@ PHP_METHOD(CassandraTimestamp, __toString)
 }
 /* }}} */
 
+ZEND_BEGIN_ARG_INFO_EX(arginfo___construct, 0, ZEND_RETURN_VALUE, 0)
+  ZEND_ARG_INFO(0, seconds)
+  ZEND_ARG_INFO(0, microseconds)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_INFO_EX(arginfo_microtime, 0, ZEND_RETURN_VALUE, 0)
+  ZEND_ARG_INFO(0, get_as_float)
+ZEND_END_ARG_INFO()
+
 static zend_function_entry CassandraTimestamp_methods[] = {
-  PHP_ME(CassandraTimestamp, __construct, NULL, ZEND_ACC_CTOR|ZEND_ACC_PUBLIC)
+  PHP_ME(CassandraTimestamp, __construct, arginfo___construct, ZEND_ACC_CTOR|ZEND_ACC_PUBLIC)
   PHP_ME(CassandraTimestamp, time, NULL, ZEND_ACC_PUBLIC)
-  PHP_ME(CassandraTimestamp, microtime, NULL, ZEND_ACC_PUBLIC)
+  PHP_ME(CassandraTimestamp, microtime, arginfo_microtime, ZEND_ACC_PUBLIC)
   PHP_ME(CassandraTimestamp, toDateTime, NULL, ZEND_ACC_PUBLIC)
   PHP_ME(CassandraTimestamp, __toString, NULL, ZEND_ACC_PUBLIC)
   PHP_FE_END

@@ -45,8 +45,12 @@ PHP_METHOD(CassandraBlob, bytes)
 }
 /* }}} */
 
+ZEND_BEGIN_ARG_INFO_EX(arginfo___construct, 0, ZEND_RETURN_VALUE, 1)
+  ZEND_ARG_INFO(0, bytes)
+ZEND_END_ARG_INFO()
+
 static zend_function_entry CassandraBlob_methods[] = {
-  PHP_ME(CassandraBlob, __construct, NULL, ZEND_ACC_CTOR|ZEND_ACC_PUBLIC)
+  PHP_ME(CassandraBlob, __construct, arginfo___construct, ZEND_ACC_CTOR|ZEND_ACC_PUBLIC)
   PHP_ME(CassandraBlob, __toString, NULL, ZEND_ACC_PUBLIC)
   PHP_ME(CassandraBlob, bytes, NULL, ZEND_ACC_PUBLIC)
   PHP_FE_END

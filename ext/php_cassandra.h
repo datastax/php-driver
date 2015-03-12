@@ -61,6 +61,11 @@ typedef struct {
   CassUuid    uuid;
 } cassandra_uuid;
 
+typedef struct {
+  zend_object zval;
+  CassInet    inet;
+} cassandra_inet;
+
 PHP_MINIT_FUNCTION(cassandra);
 PHP_MSHUTDOWN_FUNCTION(cassandra);
 PHP_RINIT_FUNCTION(cassandra);
@@ -111,6 +116,7 @@ void cassandra_define_CassandraInvalidArgumentException(TSRMLS_D);
 void cassandra_define_CassandraBigint(TSRMLS_D);
 void cassandra_define_CassandraBlob(TSRMLS_D);
 void cassandra_define_CassandraDecimal(TSRMLS_D);
+void cassandra_define_CassandraInet(TSRMLS_D);
 void cassandra_define_CassandraTimestamp(TSRMLS_D);
 void cassandra_define_CassandraUuidInterface(TSRMLS_D);
 void cassandra_define_CassandraUuid(TSRMLS_D);

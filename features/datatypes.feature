@@ -22,7 +22,8 @@ Feature: Datatypes
         timestamp_value timestamp,
         blob_value blob,
         uuid_value uuid,
-        timeuuid_value timeuuid
+        timeuuid_value timeuuid,
+        inet_value inet
       );
       INSERT INTO numbers (
         id,
@@ -35,7 +36,8 @@ Feature: Datatypes
         timestamp_value,
         blob_value,
         uuid_value,
-        timeuuid_value
+        timeuuid_value,
+        inet_value
       )
       VALUES (
         0,
@@ -48,7 +50,8 @@ Feature: Datatypes
         1425691864001,
         varcharAsBlob('0x000000'),
         ab3352d9-4f7f-4007-a35a-e62aa7ab0b19,
-        maxTimeuuid('2015-03-11 14:47:10+0000')
+        maxTimeuuid('2015-03-11 14:47:10+0000'),
+        '200.199.198.197'
       )
       """
     And the following example:
@@ -72,6 +75,7 @@ Feature: Datatypes
       echo "Blob: " . var_export($row['blob_value'], true) . "\n";
       echo "Uuid: " . var_export($row['uuid_value'], true) . "\n";
       echo "Timeuuid: " . var_export($row['timeuuid_value'], true) . "\n";
+      echo "Inet: " . var_export($row['inet_value'], true) . "\n";
       """
     When it is executed
     Then its output should contain:
@@ -103,5 +107,8 @@ Feature: Datatypes
       Timeuuid: Cassandra\Timeuuid::__set_state(array(
          'uuid' => '7f0a920f-c7fd-11e4-7f7f-7f7f7f7f7f7f',
          'version' => 1,
+      ))
+      Inet: Cassandra\Inet::__set_state(array(
+         'address' => '200.199.198.197',
       ))
       """

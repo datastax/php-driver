@@ -56,8 +56,12 @@ PHP_METHOD(CassandraBigint, value)
 }
 /* }}} */
 
+ZEND_BEGIN_ARG_INFO_EX(arginfo___construct, 0, ZEND_RETURN_VALUE, 1)
+  ZEND_ARG_INFO(0, value)
+ZEND_END_ARG_INFO()
+
 static zend_function_entry CassandraBigint_methods[] = {
-  PHP_ME(CassandraBigint, __construct, NULL, ZEND_ACC_CTOR|ZEND_ACC_PUBLIC)
+  PHP_ME(CassandraBigint, __construct, arginfo___construct, ZEND_ACC_CTOR|ZEND_ACC_PUBLIC)
   PHP_ME(CassandraBigint, __toString, NULL, ZEND_ACC_PUBLIC)
   PHP_ME(CassandraBigint, value, NULL, ZEND_ACC_PUBLIC)
   PHP_FE_END

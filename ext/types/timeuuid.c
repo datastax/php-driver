@@ -107,8 +107,12 @@ PHP_METHOD(CassandraTimeuuid, toDateTime)
 }
 /* }}} */
 
+ZEND_BEGIN_ARG_INFO_EX(arginfo___construct, 0, ZEND_RETURN_VALUE, 0)
+  ZEND_ARG_INFO(0, timestamp)
+ZEND_END_ARG_INFO()
+
 static zend_function_entry CassandraTimeuuid_methods[] = {
-  PHP_ME(CassandraTimeuuid, __construct, NULL, ZEND_ACC_CTOR|ZEND_ACC_PUBLIC)
+  PHP_ME(CassandraTimeuuid, __construct, arginfo___construct, ZEND_ACC_CTOR|ZEND_ACC_PUBLIC)
   PHP_ME(CassandraTimeuuid, __toString, NULL, ZEND_ACC_PUBLIC)
   PHP_ME(CassandraTimeuuid, uuid, NULL, ZEND_ACC_PUBLIC)
   PHP_ME(CassandraTimeuuid, version, NULL, ZEND_ACC_PUBLIC)

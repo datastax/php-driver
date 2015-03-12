@@ -3,7 +3,7 @@ PHP_ARG_WITH(cassandra, Enable Cassandra extension,
 
 if test "$PHP_CASSANDRA" != "no"; then
   PHP_SUBST(CASSANDRA_SHARED_LIBADD)
-  PHP_NEW_EXTENSION(cassandra, php_cassandra.c exceptions/exception.c exceptions/invalid_argument.c util/bytes.c util/math.c util/uuid_gen.c types/bigint.c types/blob.c types/decimal.c types/uuid_interface.c types/uuid.c types/timestamp.c types/timeuuid.c types/varint.c, $ext_shared)
+  PHP_NEW_EXTENSION(cassandra, php_cassandra.c exceptions/exception.c exceptions/invalid_argument.c util/bytes.c util/inet.c util/math.c util/uuid_gen.c types/bigint.c types/blob.c types/decimal.c types/inet.c types/uuid_interface.c types/uuid.c types/timestamp.c types/timeuuid.c types/varint.c, $ext_shared)
 
   ifdef([PHP_ADD_EXTENSION_DEP],
   [
