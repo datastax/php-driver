@@ -61,8 +61,12 @@ php_cassandra_parse_integer(char* in, int in_len, mpz_t* number)
     return 1;
   }
 
+  if (base != 10) {
+    point += 2;
+  }
+
   if (mpz_set_str(*number, &in[point], base) == -1) {
-    zend_throw_exception_ex(cassandra_ce_InvalidArgumentException, 0 TSRMLS_CC, "Invalid integer value: \"%s\"", in);
+    zend_throw_exception_ex(cassandra_ce_InvalidArgumentException, 0 TSRMLS_CC, "Invalid integer value: \"%s\", base: %d", in, base);
     return 0;
   }
 
@@ -120,6 +124,10 @@ php_cassandra_parse_decimal(char* in, int in_len, mpz_t* number, int* scale)
     start++;
     point++;
     negative = 1;
+  }
+
+  if (in[point] == '0' && (in[point + 1] == 'b' || (in[point + 1] == 'x'))) {
+    point += 2;
   }
 
   //  Check each character looking for the decimal point and the
