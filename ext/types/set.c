@@ -7,7 +7,6 @@
 #include "decimal.h"
 
 extern zend_class_entry* spl_ce_Countable;
-extern zend_class_entry* zend_ce_arrayaccess;
 extern zend_class_entry* zend_ce_iterator;
 extern zend_class_entry* cassandra_ce_RuntimeException;
 extern zend_class_entry* cassandra_ce_InvalidArgumentException;
@@ -298,11 +297,6 @@ static zend_function_entry CassandraSet_methods[] = {
   PHP_ME(CassandraSet, next, arginfo_none, ZEND_ACC_PUBLIC)
   PHP_ME(CassandraSet, valid, arginfo_none, ZEND_ACC_PUBLIC)
   PHP_ME(CassandraSet, rewind, arginfo_none, ZEND_ACC_PUBLIC)
-  /* ArrayAccess */
-  // PHP_ME(CassandraSet, offsetExists, arginfo_one, ZEND_ACC_PUBLIC)
-  // PHP_ME(CassandraSet, offsetGet, arginfo_one, ZEND_ACC_PUBLIC)
-  // PHP_ME(CassandraSet, offsetSet, arginfo_one, ZEND_ACC_PUBLIC)
-  // PHP_ME(CassandraSet, offsetUnset, arginfo_one, ZEND_ACC_PUBLIC)
   PHP_FE_END
 };
 

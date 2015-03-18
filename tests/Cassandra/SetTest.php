@@ -104,6 +104,33 @@ class SetTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($numbers, $set->toArray());
     }
 
+    /**
+     * @dataProvider sampleNumbers
+     */
+    public function testResumesIterationAfterConvertingToArray($numbers)
+    {
+        $set = new Set('int');
+
+        foreach ($numbers as $number) {
+            $set->add($number);
+        }
+
+        $this->assertEquals(1, $set->current());
+        $set->next();
+        $this->assertEquals(2, $set->current());
+        $set->next();
+        $this->assertEquals(3, $set->current());
+
+        $set->toArray();
+
+        $set->next();
+        $this->assertEquals(4, $set->current());
+        $set->next();
+        $this->assertEquals(5, $set->current());
+        $set->next();
+        $this->assertEquals(6, $set->current());
+    }
+
     public function sampleNumbers()
     {
         return array(

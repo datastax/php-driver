@@ -2,7 +2,7 @@
 
 namespace Cassandra
 
-final class Set implements \Countable, \ArrayAccess, \IteratorAggregate
+final class Set implements \Countable, \IteratorAggregate
 {
     public static function of(Type $type);
     public function __toString();
