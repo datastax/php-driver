@@ -205,16 +205,18 @@ PHP_MINIT_FUNCTION(cassandra)
   );
 
   cassandra_define_CassandraException(TSRMLS_C);
+  cassandra_define_CassandraRuntimeException(TSRMLS_C);
   cassandra_define_CassandraInvalidArgumentException(TSRMLS_C);
 
   cassandra_define_CassandraBigint(TSRMLS_C);
   cassandra_define_CassandraBlob(TSRMLS_C);
   cassandra_define_CassandraDecimal(TSRMLS_C);
   cassandra_define_CassandraInet(TSRMLS_C);
+  cassandra_define_CassandraSet(TSRMLS_C);
   cassandra_define_CassandraTimestamp(TSRMLS_C);
   cassandra_define_CassandraUuidInterface(TSRMLS_C);
-  cassandra_define_CassandraUuid(TSRMLS_C);
   cassandra_define_CassandraTimeuuid(TSRMLS_C);
+  cassandra_define_CassandraUuid(TSRMLS_C);
   cassandra_define_CassandraVarint(TSRMLS_C);
 
   return SUCCESS;

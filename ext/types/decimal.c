@@ -40,12 +40,22 @@ PHP_METHOD(CassandraDecimal, __construct)
 /* {{{ Cassandra\Decimal::__toString() */
 PHP_METHOD(CassandraDecimal, __toString)
 {
-  zval *value = zend_read_property(cassandra_ce_Decimal, getThis(), "value", strlen("value"), 0 TSRMLS_CC);
-  zval *scale = zend_read_property(cassandra_ce_Decimal, getThis(), "scale", strlen("scale"), 0 TSRMLS_CC);
+  // zval *zode = zend_read_property(cassandra_ce_Decimal, getThis(), "value", strlen("value"), 0 TSRMLS_CC);
+  // number = (cassandra_decimal*) zend_object_store_get_object(getThis() TSRMLS_CC);
+  //
+  // char* string = emalloc((Z_STRLEN_P(value) + 1) * sizeof(char));
+  //
+  // if (number->scale > 0) {
+  //   memcpy(string, Z_STRVAL_P(value), Z_STRLEN_P(value) - number->scale);
+  //   memcpy(&string[number->scale], &(Z_STRVAL_P(value)[number->scale + 1]), Z_STRLEN_P(value) - number->scale - 1);
+  // } else {
+  //   memcpy(string, Z_STRVAL_P(value), Z_STRLEN_P(value));
+  // }
+  //
+  // RETURN_STRING(Z_STRVAL_P(string), 1);
+  zval *zode = zend_read_property(cassandra_ce_Decimal, getThis(), "value", strlen("value"), 0 TSRMLS_CC);
 
-
-
-  RETURN_STRING(Z_STRVAL_P(value), 1);
+  RETURN_STRING(Z_STRVAL_P(zode), 1);
 }
 /* }}} */
 

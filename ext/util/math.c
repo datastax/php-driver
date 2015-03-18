@@ -33,6 +33,8 @@ php_cassandra_parse_integer(char* in, int in_len, mpz_t* number)
     case 'x':
       base = 16;
       break;
+    case '.':
+      break;
     default:
       base = 8;
       break;
@@ -126,8 +128,13 @@ php_cassandra_parse_decimal(char* in, int in_len, mpz_t* number, int* scale)
     negative = 1;
   }
 
-  if (in[point] == '0' && (in[point + 1] == 'b' || (in[point + 1] == 'x'))) {
-    point += 2;
+  if (in[point] == '0') {
+    if (in[point + 1] == 'b')
+      point += 2;
+    else if (in[point + 1] == 'x')
+      point += 2;
+    else if (in[point + 1] == '.')
+      start++;
   }
 
   //  Check each character looking for the decimal point and the

@@ -66,6 +66,13 @@ typedef struct {
   CassInet    inet;
 } cassandra_inet;
 
+typedef struct {
+  zend_object   zval;
+  CassValueType type;
+  HashTable     values;
+  int           pos;
+} cassandra_set;
+
 PHP_MINIT_FUNCTION(cassandra);
 PHP_MSHUTDOWN_FUNCTION(cassandra);
 PHP_RINIT_FUNCTION(cassandra);

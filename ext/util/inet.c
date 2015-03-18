@@ -2,7 +2,6 @@
 #include <zend_exceptions.h>
 #include "../php_cassandra.h"
 #include <stdlib.h>
-#include <gmp.h>
 #include "util/inet.h"
 
 extern zend_class_entry* cassandra_ce_InvalidArgumentException;
