@@ -2,7 +2,7 @@
 #include <zend_exceptions.h>
 #include "../php_cassandra.h"
 #include <stdlib.h>
-#include "util/hash.h"
+#include "util/collections.h"
 
 #define EXPECTING_VALUE(expected) \
   ({ \
@@ -35,6 +35,85 @@ extern zend_class_entry* cassandra_ce_Timestamp;
 extern zend_class_entry* cassandra_ce_Timeuuid;
 extern zend_class_entry* cassandra_ce_Uuid;
 extern zend_class_entry* cassandra_ce_Varint;
+
+int
+php_cassandra_validate_object(zval* object, CassValueType type)
+{
+  char* class_name = NULL;
+  zend_uint class_name_len;
+
+  if (Z_TYPE_P(object) == IS_NULL)
+    return 1;
+
+  switch (type) {
+  case CASS_VALUE_TYPE_ASCII:
+  case CASS_VALUE_TYPE_VARCHAR:
+  case CASS_VALUE_TYPE_TEXT:
+    if (Z_TYPE_P(object) != IS_STRING)
+      EXPECTING_VALUE("a string");
+
+    return 1;
+  case CASS_VALUE_TYPE_FLOAT:
+  case CASS_VALUE_TYPE_DOUBLE:
+    if (Z_TYPE_P(object) != IS_DOUBLE)
+      EXPECTING_VALUE("a float");
+
+    return 1;
+  case CASS_VALUE_TYPE_INT:
+    if (Z_TYPE_P(object) != IS_LONG)
+      EXPECTING_VALUE("an int");
+
+    return 1;
+  case CASS_VALUE_TYPE_BOOLEAN:
+    if (Z_TYPE_P(object) != IS_BOOL)
+      EXPECTING_VALUE("a boolean");
+
+    return 1;
+  case CASS_VALUE_TYPE_COUNTER:
+  case CASS_VALUE_TYPE_BIGINT:
+    if (!INSTANCE_OF(cassandra_ce_Bigint))
+      EXPECTING_VALUE("an instance of Cassandra\\Bigint");
+
+    return 1;
+  case CASS_VALUE_TYPE_BLOB:
+    if (!INSTANCE_OF(cassandra_ce_Blob))
+      EXPECTING_VALUE("an instance of Cassandra\\Blob");
+
+    return 1;
+  case CASS_VALUE_TYPE_DECIMAL:
+    if (!INSTANCE_OF(cassandra_ce_Decimal))
+      EXPECTING_VALUE("an instance of Cassandra\\Decimal");
+
+    return 1;
+  case CASS_VALUE_TYPE_TIMESTAMP:
+    if (!INSTANCE_OF(cassandra_ce_Timestamp))
+      EXPECTING_VALUE("an instance of Cassandra\\Timestamp");
+
+    return 1;
+  case CASS_VALUE_TYPE_UUID:
+    if (!INSTANCE_OF(cassandra_ce_Uuid))
+      EXPECTING_VALUE("an instance of Cassandra\\Uuid");
+
+    return 1;
+  case CASS_VALUE_TYPE_VARINT:
+    if (!INSTANCE_OF(cassandra_ce_Varint))
+      EXPECTING_VALUE("an instance of Cassandra\\Varint");
+
+    return 1;
+  case CASS_VALUE_TYPE_TIMEUUID:
+    if (!INSTANCE_OF(cassandra_ce_Timeuuid))
+      EXPECTING_VALUE("an instance of Cassandra\\Timeuuid");
+
+    return 1;
+  case CASS_VALUE_TYPE_INET:
+    if (!INSTANCE_OF(cassandra_ce_Inet))
+      EXPECTING_VALUE("an instance of Cassandra\\Inet");
+
+    return 1;
+  }
+
+  return 0;
+}
 
 int
 php_cassandra_hash_object(zval* object, CassValueType type, char** key, int* len)
@@ -152,4 +231,89 @@ php_cassandra_hash_object(zval* object, CassValueType type, char** key, int* len
   }
 
   return 0;
+}
+
+int
+php_cassandra_value_type(char* type, CassValueType* value_type)
+{
+  if (strcmp("ascii", type) == 0) {
+    *value_type = CASS_VALUE_TYPE_ASCII;
+  } else if (strcmp("bigint", type) == 0) {
+    *value_type = CASS_VALUE_TYPE_BIGINT;
+  } else if (strcmp("blob", type) == 0) {
+    *value_type = CASS_VALUE_TYPE_BLOB;
+  } else if (strcmp("boolean", type) == 0) {
+    *value_type = CASS_VALUE_TYPE_BOOLEAN;
+  } else if (strcmp("counter", type) == 0) {
+    *value_type = CASS_VALUE_TYPE_COUNTER;
+  } else if (strcmp("decimal", type) == 0) {
+    *value_type = CASS_VALUE_TYPE_DECIMAL;
+  } else if (strcmp("double", type) == 0) {
+    *value_type = CASS_VALUE_TYPE_DOUBLE;
+  } else if (strcmp("float", type) == 0) {
+    *value_type = CASS_VALUE_TYPE_FLOAT;
+  } else if (strcmp("int", type) == 0) {
+    *value_type = CASS_VALUE_TYPE_INT;
+  } else if (strcmp("text", type) == 0) {
+    *value_type = CASS_VALUE_TYPE_TEXT;
+  } else if (strcmp("timestamp", type) == 0) {
+    *value_type = CASS_VALUE_TYPE_TIMESTAMP;
+  } else if (strcmp("uuid", type) == 0) {
+    *value_type = CASS_VALUE_TYPE_UUID;
+  } else if (strcmp("varchar", type) == 0) {
+    *value_type = CASS_VALUE_TYPE_VARCHAR;
+  } else if (strcmp("varint", type) == 0) {
+    *value_type = CASS_VALUE_TYPE_VARINT;
+  } else if (strcmp("timeuuid", type) == 0) {
+    *value_type = CASS_VALUE_TYPE_TIMEUUID;
+  } else if (strcmp("inet", type) == 0) {
+    *value_type = CASS_VALUE_TYPE_INET;
+  } else {
+    zend_throw_exception_ex(cassandra_ce_InvalidArgumentException, 0 TSRMLS_CC,
+      "Unsupported type '%s'", type);
+    return 0;
+  }
+
+  return 1;
+}
+
+const char*
+php_cassandra_type_name(CassValueType value_type)
+{
+  switch (value_type) {
+  case CASS_VALUE_TYPE_TEXT:
+    return "text";
+  case CASS_VALUE_TYPE_ASCII:
+    return "ascii";
+  case CASS_VALUE_TYPE_VARCHAR:
+    return "varchar";
+  case CASS_VALUE_TYPE_BIGINT:
+    return "bigint";
+  case CASS_VALUE_TYPE_BLOB:
+    return "blob";
+  case CASS_VALUE_TYPE_BOOLEAN:
+    return "boolean";
+  case CASS_VALUE_TYPE_COUNTER:
+    return "counter";
+  case CASS_VALUE_TYPE_DECIMAL:
+    return "decimal";
+  case CASS_VALUE_TYPE_DOUBLE:
+    return "double";
+  case CASS_VALUE_TYPE_FLOAT:
+    return "float";
+  case CASS_VALUE_TYPE_INT:
+    return "int";
+  case CASS_VALUE_TYPE_TIMESTAMP:
+    return "timestamp";
+  case CASS_VALUE_TYPE_UUID:
+    return "uuid";
+  case CASS_VALUE_TYPE_VARINT:
+    return "varint";
+  case CASS_VALUE_TYPE_TIMEUUID:
+    return "timeuuid";
+  case CASS_VALUE_TYPE_INET:
+    return "inet";
+  default:
+    return "unknown";
+  }
 }

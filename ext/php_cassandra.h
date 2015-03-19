@@ -73,6 +73,20 @@ typedef struct {
   int           pos;
 } cassandra_set;
 
+typedef struct {
+  zend_object   zval;
+  CassValueType key_type;
+  HashTable     keys;
+  CassValueType value_type;
+  HashTable     values;
+} cassandra_map;
+
+typedef struct {
+  zend_object   zval;
+  CassValueType type;
+  HashTable     values;
+} cassandra_list;
+
 PHP_MINIT_FUNCTION(cassandra);
 PHP_MSHUTDOWN_FUNCTION(cassandra);
 PHP_RINIT_FUNCTION(cassandra);

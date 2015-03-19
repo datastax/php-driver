@@ -4,13 +4,10 @@ namespace Cassandra
 
 final class Set implements \Countable, \IteratorAggregate
 {
-    public static function of(Type $type);
-    public function __toString();
+    public function __construct($type);
     public function type();
-    public function toArray();
+    public function values();
     public function add($value);
     public function remove($value);
+    public function has($value);
 }
-
-new Cassandra\Set('123', '456', '789');
-Cassandra\Set(Cassandra\Varchar())->create('123', '456', '789');

@@ -101,7 +101,7 @@ class SetTest extends \PHPUnit_Framework_TestCase
             $set->add($number);
         }
 
-        $this->assertEquals($numbers, $set->toArray());
+        $this->assertEquals($numbers, $set->values());
     }
 
     /**
@@ -121,7 +121,7 @@ class SetTest extends \PHPUnit_Framework_TestCase
         $set->next();
         $this->assertEquals(3, $set->current());
 
-        $set->toArray();
+        $set->values();
 
         $set->next();
         $this->assertEquals(4, $set->current());
