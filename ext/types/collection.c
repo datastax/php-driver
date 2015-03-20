@@ -174,8 +174,6 @@ PHP_METHOD(CassandraCollection, find)
 
   if (php_cassandra_collection_find(collection, object, &index))
     RETURN_LONG(index);
-
-  RETURN_FALSE;
 }
 /* }}} */
 
