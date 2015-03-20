@@ -14,6 +14,7 @@ extern zend_class_entry* cassandra_ce_Varint;
 
 extern zend_class_entry* cassandra_ce_Set;
 extern zend_class_entry* cassandra_ce_Map;
+extern zend_class_entry* cassandra_ce_Collection;
 
 ZEND_DECLARE_MODULE_GLOBALS(cassandra)
 
@@ -223,6 +224,7 @@ PHP_MINIT_FUNCTION(cassandra)
 
   cassandra_define_CassandraSet(TSRMLS_C);
   cassandra_define_CassandraMap(TSRMLS_C);
+  cassandra_define_CassandraCollection(TSRMLS_C);
 
   return SUCCESS;
 }
@@ -1008,9 +1010,18 @@ php_cassandra_value(const CassValue* value, CassValueType type)
     RETVAL_DOUBLE(v_float);
     break;
   case CASS_VALUE_TYPE_LIST:
-    // TODO: implement List
-    RETVAL_NULL();
-    break;
+  object_init_ex(return_value, cassandra_ce_Collection);
+  cassandra_collection* collection = (cassandra_collection*) zend_object_store_get_object(return_value TSRMLS_CC);
+  collection->type = cass_value_primary_sub_type(value);
+
+  iterator = cass_iterator_from_collection(value);
+
+  while (cass_iterator_next(iterator)) {
+    php_cassandra_collection_add(collection, php_cassandra_value(cass_iterator_get_value(iterator), collection->type));
+  }
+
+  cass_iterator_free(iterator);
+  break;
   case CASS_VALUE_TYPE_MAP:
     object_init_ex(return_value, cassandra_ce_Map);
     cassandra_map* map = (cassandra_map*) zend_object_store_get_object(return_value TSRMLS_CC);

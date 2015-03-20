@@ -1,9 +1,8 @@
-@wip
 Feature: Datatypes
 
   PHP Driver supports all Cassandra datatypes
 
-  Scenario: Cassandra bigint is represented as Cassandra\Bigint
+  Scenario: Using Cassandra value types
     Given the following schema:
       """cql
       CREATE KEYSPACE simplex WITH replication = {
@@ -11,7 +10,7 @@ Feature: Datatypes
         'replication_factor': 1
       };
       USE simplex;
-      CREATE TABLE numbers (
+      CREATE TABLE values (
         id int PRIMARY KEY,
         bigint_value bigint,
         decimal_value decimal,
@@ -25,7 +24,7 @@ Feature: Datatypes
         timeuuid_value timeuuid,
         inet_value inet
       );
-      INSERT INTO numbers (
+      INSERT INTO values (
         id,
         bigint_value,
         decimal_value,
@@ -61,7 +60,7 @@ Feature: Datatypes
                      ->withContactPoints(array('127.0.0.1'))
                      ->build();
       $session   = $cluster->connect("simplex");
-      $statement = new Cassandra\SimpleStatement("SELECT * FROM simplex.numbers");
+      $statement = new Cassandra\SimpleStatement("SELECT * FROM values");
       $result    = $session->execute($statement);
       $row       = $result->first();
 
@@ -110,5 +109,90 @@ Feature: Datatypes
       ))
       Inet: Cassandra\Inet::__set_state(array(
          'address' => '200.199.198.197',
+      ))
+      """
+
+  @wip
+  Scenario: Using Cassandra collection types
+    Given the following schema:
+      """cql
+      CREATE KEYSPACE simplex WITH replication = {
+        'class': 'SimpleStrategy',
+        'replication_factor': 1
+      };
+      USE simplex;
+      CREATE TABLE user (
+        id int PRIMARY KEY,
+        logins List<timestamp>,
+        locations Map<timestamp, double>,
+        ip_addresses Set<inet>
+      );
+      INSERT INTO user (id, logins, locations, ip_addresses)
+      VALUES (
+        0,
+        ['2014-09-11 10:09:08+0000', '2014-09-12 10:09:00+0000'],
+        {'2014-09-11 10:09:08+0000': 37.397357},
+        {'200.199.198.197', '192.168.1.15'}
+      )
+      """
+    And the following example:
+      """php
+      <?php
+      $cluster   = Cassandra::cluster()
+                     ->withContactPoints(array('127.0.0.1'))
+                     ->build();
+      $session   = $cluster->connect("simplex");
+      $statement = new Cassandra\SimpleStatement("SELECT * FROM user");
+      $result    = $session->execute($statement);
+      $row       = $result->first();
+
+      echo "Logins: " . var_export($row['logins'], true) . "\n";
+      echo "Locations: " . var_export($row['locations'], true) . "\n";
+      echo "Ip Addresses: " . var_export($row['ip_addresses'], true) . "\n";
+      """
+    When it is executed
+    Then its output should contain:
+      """
+      Logins: Cassandra\Collection::__set_state(array(
+         'values' =>
+        array (
+          0 =>
+          Cassandra\Timestamp::__set_state(array(
+             'seconds' => 1410430148,
+             'microseconds' => 0,
+          )),
+          1 =>
+          Cassandra\Timestamp::__set_state(array(
+             'seconds' => 1410516540,
+             'microseconds' => 0,
+          )),
+        ),
+      ))
+      Locations: Cassandra\Map::__set_state(array(
+         'keys' =>
+        array (
+          0 =>
+          Cassandra\Timestamp::__set_state(array(
+             'seconds' => 1410430148,
+             'microseconds' => 0,
+          )),
+        ),
+         'values' =>
+        array (
+          0 => 37.397357,
+        ),
+      ))
+      Ip Addresses: Cassandra\Set::__set_state(array(
+         'values' =>
+        array (
+          0 =>
+          Cassandra\Inet::__set_state(array(
+             'address' => '192.168.1.15',
+          )),
+          1 =>
+          Cassandra\Inet::__set_state(array(
+             'address' => '200.199.198.197',
+          )),
+        ),
       ))
       """

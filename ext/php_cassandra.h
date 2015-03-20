@@ -84,8 +84,8 @@ typedef struct {
 typedef struct {
   zend_object   zval;
   CassValueType type;
-  HashTable     values;
-} cassandra_list;
+  HashTable*    values;
+} cassandra_collection;
 
 PHP_MINIT_FUNCTION(cassandra);
 PHP_MSHUTDOWN_FUNCTION(cassandra);
