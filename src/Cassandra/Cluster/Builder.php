@@ -3,12 +3,13 @@
 namespace Cassandra\Cluster;
 
 use Cassandra\DefaultCluster;
+use Cassandra\ExecutionOptions;
 use Cassandra\Exception\InvalidArgumentException;
 use Cassandra\Util;
 
 final class Builder
 {
-    const LOAD_BALANCING_ROUND_ROBIN = 0;
+    const LOAD_BALANCING_ROUND_ROBIN          = 0;
     const LOAD_BALANCING_DC_AWARE_ROUND_ROBIN = 1;
 
     /**
@@ -78,13 +79,38 @@ final class Builder
     private $sslContext;
 
     /**
+     * Default consistency for requests
+     * One of Cassandra::CONSISTENCY_*
+     * Default: Cassandra::CONSISTENCY_ONE
+     * @var int
+     */
+    private $defaultConsistency;
+
+    /**
+     * Default results page size
+     * Default: 10000
+     * @var int
+     */
+    private $defaultPageSize;
+
+    /**
+     * Default timeout for future resolution in blocking operations
+     * Default: null
+     * @var float
+     */
+    private $defaultTimeout;
+
+    /**
      * @access private
      */
     public function __construct()
     {
-        $this->contactPoints        = "127.0.0.1";
-        $this->loadBalancingPolicy  = self::LOAD_BALANCING_ROUND_ROBIN;
-        $this->useTokenAwareRouting = true;
+        $this->contactPoints            = "127.0.0.1";
+        $this->loadBalancingPolicy      = self::LOAD_BALANCING_ROUND_ROBIN;
+        $this->useTokenAwareRouting     = true;
+        $this->defaultConsistency       = \Cassandra::CONSISTENCY_ONE;
+        $this->defaultPageSize          = 10000;
+        $this->defaultTimeout           = null;
     }
 
     /**
@@ -94,7 +120,13 @@ final class Builder
      */
     public function build()
     {
+
+        $options = new ExecutionOptions();
         $cluster = cassandra_cluster_new();
+
+        $options->consistency       = $this->defaultConsistency;
+        $options->pageSize          = $this->defaultPageSize;
+        $options->timeout           = $this->defaultTimeout;
 
         switch($this->loadBalancingPolicy) {
             case self::LOAD_BALANCING_ROUND_ROBIN:
@@ -125,13 +157,78 @@ final class Builder
 
         Util::assertNoError(cassandra_cluster_set_contact_points($cluster, $this->contactPoints));
 
-        return new DefaultCluster($cluster);
+        return new DefaultCluster($cluster, $options);
+    }
+
+    /**
+     * Configures default consistency for all requests
+     * @param int $consistency A consistency level, must be one of Cassandra::CONSISTENCY_* values
+     * @return Cassandra\Cluster\Builder self
+     */
+    public function withDefaultConsistency($consistency)
+    {
+        if (!in_array($consistency, array(
+                \Cassandra::CONSISTENCY_ANY,
+                \Cassandra::CONSISTENCY_ONE,
+                \Cassandra::CONSISTENCY_TWO,
+                \Cassandra::CONSISTENCY_THREE,
+                \Cassandra::CONSISTENCY_QUORUM,
+                \Cassandra::CONSISTENCY_ALL,
+                \Cassandra::CONSISTENCY_LOCAL_QUORUM,
+                \Cassandra::CONSISTENCY_EACH_QUORUM,
+                \Cassandra::CONSISTENCY_SERIAL,
+                \Cassandra::CONSISTENCY_LOCAL_SERIAL,
+                \Cassandra::CONSISTENCY_LOCAL_ONE))) {
+            throw new InvalidArgumentException(sprintf(
+                "Invalid consistency, must be one of " .
+                "Cassandra::CONSISTENCY_*, %s given",
+                var_export($consistency, true)
+            ));
+        }
+
+        $this->defaultConsistency = $consistency;
+        return $this;
+    }
+
+    /**
+     * Configures default page size for all results.
+     * Set to -1 to disable paging altogether.
+     * @param int $pageSize default page size
+     */
+    public function withDefaultPageSize($pageSize)
+    {
+      if (!(is_numeric($pageSize) && ($pageSize === -1 || $pageSize > 0))) {
+          throw new InvalidArgumentException(sprintf(
+              "Page size must be a positive integer or exactly -1, %s given",
+              var_export($pageSize, true)
+          ));
+      }
+
+      $this->defaultPageSize = $pageSize;
+    }
+
+    /**
+     * Configures default timeout for future resolution in blocking operations
+     * Set to null to disable (default)
+     * @param int|null $timeout timeout value
+     */
+    public function withDefaultTimeout($timeout)
+    {
+      if (!(is_null($timeout) || is_numeric($timeout) && $timeout > 0)) {
+          throw new InvalidArgumentException(sprintf(
+              "Page size must be a positive integer or exactly -1, %s given",
+              var_export($timeout, true)
+          ));
+      }
+
+      $this->defaultTimeout = $timeout;
     }
 
     /**
      * Configures the initial endpoints. Note that the driver will automatically discover and connect to the rest of the cluster
      *
      * @param array $hosts an array of stings of ip addresses
+     * @return Cassandra\Cluster\Builder self
      */
     public function withContactPoints(array $hosts)
     {

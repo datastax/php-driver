@@ -2,7 +2,6 @@
 
 namespace Cassandra;
 
-use Cassandra\DefaultSession;
 use Cassandra\Exception\LogicException;
 
 final class DefaultCluster implements Cluster
@@ -13,13 +12,16 @@ final class DefaultCluster implements Cluster
      */
     private $resource;
 
+    private $defaults;
+
     /**
      * @access private
      * @param resource $resource Cluster resource
      */
-    public function __construct($resource)
+    public function __construct($resource, ExecutionOptions $defaults)
     {
         $this->resource = $resource;
+        $this->defaults = $defaults;
     }
 
     /**
@@ -27,10 +29,11 @@ final class DefaultCluster implements Cluster
      */
     public function connect($keyspace = null)
     {
-        if (is_null($this->resource)) {
-            throw new LogicException("Cluster is already closed");
-        }
+        return $this->connectAsync($keyspace)->get();
+    }
 
+    public function connectAsync($keyspace = null)
+    {
         $session = cassandra_session_new();
 
         if (is_null($keyspace)) {
@@ -39,27 +42,6 @@ final class DefaultCluster implements Cluster
             $future = cassandra_session_connect_keyspace($session, $this->resource, $keyspace);
         }
 
-        $code = cassandra_future_error_code($future);
-
-        if ($code === 0) {
-            return new DefaultSession($session);
-        }
-
-        Util::throwException($code, cassandra_future_error_message($future));
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function close()
-    {
-        if (is_null($this->resource)) {
-            throw new LogicException("Cluster is already closed");
-        }
-
-        cassandra_cluster_free($this->resource);
-        $this->resource = null;
-
-        return $this;
+        return new FutureSession($future, new DefaultSession($session, $this->defaults));
     }
 }

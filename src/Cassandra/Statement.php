@@ -9,5 +9,5 @@ interface Statement
      *
      * @return resource  Actual statement resource
      */
-    function resource();
+    function resource(array $arguments = null);
 }

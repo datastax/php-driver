@@ -2,7 +2,7 @@
 
 namespace Cassandra;
 
-final class PagedResult implements Result
+final class Rows implements \Countable, \ArrayAccess, \IteratorAggregate
 {
     private $resource;
     private $iterator;
@@ -90,22 +90,22 @@ final class PagedResult implements Result
     }
 
     /**
-     * {@inheritDoc}
+     * @return  boolean  whether this is the last page or not
      */
     public function isLastPage()
     {
     }
 
     /**
-     * {@inheritDoc}
+     * @return  Cassandra\Result|null  loads and returns next result page
      */
     public function nextPage()
     {
     }
 
     /**
-    * {@inheritDoc}
-    */
+     * @return  Cassandra\Row|null  returns first row if any
+     */
     public function first()
     {
         if (isset($this->rows[0])) {

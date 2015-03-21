@@ -13,6 +13,7 @@
 #define PHP_CASSANDRA_FUTURE_RES_NAME     "Cassandra Future"
 #define PHP_CASSANDRA_STATEMENT_RES_NAME  "Cassandra Statement"
 #define PHP_CASSANDRA_RESULT_RES_NAME     "Cassandra Result"
+#define PHP_CASSANDRA_PREPARED_RES_NAME   "Cassandra Prepared Statement"
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -34,6 +35,11 @@ extern zend_module_entry cassandra_module_entry;
 #ifdef ZTS
 #include "TSRM.h"
 #endif
+
+typedef struct {
+  zend_object  zval;
+  cass_int64_t value;
+} cassandra_bigint;
 
 typedef struct {
   zend_object  zval;
@@ -112,6 +118,7 @@ PHP_FUNCTION(cassandra_session_free);
 PHP_FUNCTION(cassandra_session_connect);
 PHP_FUNCTION(cassandra_session_connect_keyspace);
 PHP_FUNCTION(cassandra_session_execute);
+PHP_FUNCTION(cassandra_session_prepare);
 
 /* CassFuture */
 PHP_FUNCTION(cassandra_future_free);
@@ -120,6 +127,7 @@ PHP_FUNCTION(cassandra_future_wait_timed);
 PHP_FUNCTION(cassandra_future_error_code);
 PHP_FUNCTION(cassandra_future_error_message);
 PHP_FUNCTION(cassandra_future_get_result);
+PHP_FUNCTION(cassandra_future_get_prepared);
 
 /* CassResult */
 PHP_FUNCTION(cassandra_result_free);
@@ -128,6 +136,12 @@ PHP_FUNCTION(cassandra_result_row_count);
 /* CassStatement */
 PHP_FUNCTION(cassandra_statement_new);
 PHP_FUNCTION(cassandra_statement_free);
+PHP_FUNCTION(cassandra_statement_bind);
+PHP_FUNCTION(cassandra_statement_bind_by_name);
+
+/* CassPrepared */
+PHP_FUNCTION(cassandra_prepared_free);
+PHP_FUNCTION(cassandra_prepared_bind);
 
 /* Exceptions */
 void cassandra_define_CassandraException(TSRMLS_D);

@@ -2,24 +2,18 @@
 
 namespace Cassandra;
 
-use Cassandra\Value;
-
-final class SimpleStatement implements Statement
+final class PreparedStatement implements Statement
 {
-    private $cql;
+    private $resource;
 
-    public function __construct($cql)
+    public function __construct($resource)
     {
-        $this->cql = $cql;
+        $this->resource = $resource;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function resource(array $arguments = null)
     {
-        $count     = count($arguments);
-        $statement = cassandra_statement_new($this->cql, $count);
+        $resource = cassandra_prepared_bind($this->resource);
 
         if ((isset($arguments))) {
             foreach ($arguments as $name => $argument) {
@@ -31,6 +25,6 @@ final class SimpleStatement implements Statement
             }
         }
 
-        return $statement;
+        return $resource;
     }
 }

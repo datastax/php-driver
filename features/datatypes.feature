@@ -112,7 +112,6 @@ Feature: Datatypes
       ))
       """
 
-  @wip
   Scenario: Using Cassandra collection types
     Given the following schema:
       """cql

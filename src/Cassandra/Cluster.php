@@ -12,11 +12,4 @@ interface Cluster
      * @return  Cassandra\Session  Session instance
      */
     public function connect($keyspace = null);
-
-    /**
-     * Terminate the cluster instance and all of its sessions
-     *
-     * @return  Cassandra\Cluster  self
-     */
-    public function close();
 }

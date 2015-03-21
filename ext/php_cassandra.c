@@ -36,6 +36,7 @@ const zend_function_entry cassandra_functions[] = {
   PHP_FE(cassandra_session_connect, NULL)
   PHP_FE(cassandra_session_connect_keyspace, NULL)
   PHP_FE(cassandra_session_execute, NULL)
+  PHP_FE(cassandra_session_prepare, NULL)
   /* CassFuture */
   PHP_FE(cassandra_future_free, NULL)
   PHP_FE(cassandra_future_wait, NULL)
@@ -43,12 +44,18 @@ const zend_function_entry cassandra_functions[] = {
   PHP_FE(cassandra_future_error_code, NULL)
   PHP_FE(cassandra_future_error_message, NULL)
   PHP_FE(cassandra_future_get_result, NULL)
+  PHP_FE(cassandra_future_get_prepared, NULL)
   /* CassResult */
   PHP_FE(cassandra_result_free, NULL)
   PHP_FE(cassandra_result_row_count, NULL)
   /* CassStatement */
   PHP_FE(cassandra_statement_new, NULL)
   PHP_FE(cassandra_statement_free, NULL)
+  PHP_FE(cassandra_statement_bind, NULL)
+  PHP_FE(cassandra_statement_bind_by_name, NULL)
+  /* CassPrepared */
+  PHP_FE(cassandra_prepared_free, NULL)
+  PHP_FE(cassandra_prepared_bind, NULL)
   PHP_FE_END /* Must be the last line in cassandra_functions[] */
 };
 
@@ -137,6 +144,18 @@ php_cassandra_result_dtor(zend_rsrc_list_entry* rsrc TSRMLS_DC)
   }
 }
 
+static int le_cassandra_prepared_res;
+static void
+php_cassandra_prepared_dtor(zend_rsrc_list_entry* rsrc TSRMLS_DC)
+{
+  CassPrepared* prepared = (CassPrepared*) rsrc->ptr;
+
+  if (prepared) {
+    cass_prepared_free(prepared);
+    rsrc->ptr = NULL;
+  }
+}
+
 static int le_cassandra_statement_res;
 static void
 php_cassandra_statement_dtor(zend_rsrc_list_entry* rsrc TSRMLS_DC)
@@ -199,6 +218,12 @@ PHP_MINIT_FUNCTION(cassandra)
     php_cassandra_result_dtor,
     NULL,
     PHP_CASSANDRA_RESULT_RES_NAME,
+    module_number
+  );
+  le_cassandra_prepared_res = zend_register_list_destructors_ex(
+    php_cassandra_prepared_dtor,
+    NULL,
+    PHP_CASSANDRA_PREPARED_RES_NAME,
     module_number
   );
   le_cassandra_statement_res = zend_register_list_destructors_ex(
@@ -566,6 +591,31 @@ PHP_FUNCTION(cassandra_session_execute)
   );
 }
 
+PHP_FUNCTION(cassandra_session_prepare)
+{
+  CassSession* session;
+  CassStatement* statement;
+  CassFuture*  future;
+  zval* session_resource;
+  char* cql;
+  int cql_len;
+
+  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "zs", &session_resource, &cql, &cql_len) == FAILURE) {
+    RETURN_FALSE;
+  }
+
+  ZEND_FETCH_RESOURCE(session, CassSession*, &session_resource, -1,
+    PHP_CASSANDRA_SESSION_RES_NAME, le_cassandra_session_res);
+
+  future = cass_session_prepare(session, cass_string_init2(cql, cql_len));
+
+  ZEND_REGISTER_RESOURCE(
+    return_value,
+    future,
+    le_cassandra_future_res
+  );
+}
+
 PHP_FUNCTION(cassandra_future_free)
 {
   CassFuture* future;
@@ -681,6 +731,32 @@ PHP_FUNCTION(cassandra_future_get_result)
   );
 }
 
+PHP_FUNCTION(cassandra_future_get_prepared)
+{
+  CassFuture* future;
+  zval* future_resource;
+  const CassPrepared* prepared;
+
+  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "r", &future_resource) == FAILURE) {
+    RETURN_FALSE;
+  }
+
+  ZEND_FETCH_RESOURCE(future, CassFuture*, &future_resource, -1,
+    PHP_CASSANDRA_FUTURE_RES_NAME, le_cassandra_future_res);
+
+  prepared = cass_future_get_prepared(future);
+
+  if (prepared == NULL) {
+    RETURN_NULL();
+  }
+
+  ZEND_REGISTER_RESOURCE(
+    return_value,
+    (void*) prepared,
+    le_cassandra_prepared_res
+  );
+}
+
 PHP_FUNCTION(cassandra_result_free)
 {
   CassResult* result;
@@ -748,6 +824,92 @@ PHP_FUNCTION(cassandra_statement_free)
   zend_list_delete(Z_RESVAL_P(statement_resource));
 
   RETURN_TRUE;
+}
+
+PHP_FUNCTION(cassandra_statement_bind)
+{
+  CassStatement* statement;
+  zval* statement_resource;
+  zval* value;
+  long  index;
+
+  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "rlz", &statement_resource, &index, &value) == FAILURE) {
+    RETURN_FALSE;
+  }
+
+  ZEND_FETCH_RESOURCE(statement, CassStatement*, &statement_resource, -1,
+    PHP_CASSANDRA_STATEMENT_RES_NAME, le_cassandra_statement_res);
+
+  if (Z_TYPE_P(value) == IS_NULL)
+    RETURN_LONG(cass_statement_bind_null(statement, (cass_size_t) index));
+
+  if (Z_TYPE_P(value) == IS_STRING)
+    RETURN_LONG(cass_statement_bind_string(statement, (cass_size_t) index,
+      cass_string_init2(Z_STRVAL_P(value), Z_STRLEN_P(value))));
+
+  if (Z_TYPE_P(value) == IS_DOUBLE)
+    RETURN_LONG(cass_statement_bind_double(statement, (cass_size_t) index, Z_DVAL_P(value)));
+
+  if (Z_TYPE_P(value) == IS_LONG)
+    RETURN_LONG(cass_statement_bind_int32(statement, (cass_size_t) index, Z_LVAL_P(value)));
+
+  if (Z_TYPE_P(value) == IS_BOOL)
+    RETURN_LONG(cass_statement_bind_bool(statement, (cass_size_t) index, Z_BVAL_P(value)));
+
+  if (Z_TYPE_P(value) == IS_OBJECT) {
+    if (instanceof_function(Z_OBJCE_P(value), cassandra_ce_Bigint TSRMLS_CC)) {
+      cassandra_bigint* bigint_number = (cassandra_bigint*) zend_object_store_get_object(value TSRMLS_CC);
+      RETURN_LONG(cass_statement_bind_int64(statement, (cass_size_t) index, bigint_number->value));
+    }
+
+    // TODO implement binding the rest of the data types
+  }
+
+  RETURN_FALSE;
+}
+
+PHP_FUNCTION(cassandra_statement_bind_by_name)
+{
+
+}
+
+PHP_FUNCTION(cassandra_prepared_free)
+{
+  CassPrepared* prepared;
+  zval* prepared_resource;
+
+  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "r", &prepared_resource) == FAILURE) {
+    RETURN_FALSE;
+  }
+
+  ZEND_FETCH_RESOURCE(prepared, CassPrepared*, &prepared_resource, -1,
+    PHP_CASSANDRA_PREPARED_RES_NAME, le_cassandra_prepared_res);
+
+  zend_list_delete(Z_RESVAL_P(prepared_resource));
+
+  RETURN_TRUE;
+}
+
+PHP_FUNCTION(cassandra_prepared_bind)
+{
+  CassPrepared* prepared;
+  CassStatement* statement;
+  zval* prepared_resource;
+
+  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "r", &prepared_resource) == FAILURE) {
+    RETURN_FALSE;
+  }
+
+  ZEND_FETCH_RESOURCE(prepared, CassPrepared*, &prepared_resource, -1,
+    PHP_CASSANDRA_PREPARED_RES_NAME, le_cassandra_prepared_res);
+
+  statement = cass_prepared_bind(prepared);
+
+  ZEND_REGISTER_RESOURCE(
+    return_value,
+    statement,
+    le_cassandra_statement_res
+  );
 }
 
 static zval*
@@ -822,6 +984,8 @@ php_cassandra_value(const CassValue* value, CassValueType type)
 #endif
 
     object_init_ex(return_value, cassandra_ce_Bigint);
+    cassandra_bigint* bigint_number = (cassandra_bigint*) zend_object_store_get_object(return_value TSRMLS_CC);
+    bigint_number->value = v_int_64;
     zend_update_property_string(cassandra_ce_Bigint, return_value, "value", strlen("value"), tmp_string TSRMLS_CC);
 
     efree(tmp_string);
