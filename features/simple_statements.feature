@@ -38,7 +38,6 @@ Feature: Simple Statements
       Result contains 0 rows
       """
 
-  @wip
   Scenario: Inserting and selecting rows
     Given the following example:
       """php
@@ -82,10 +81,21 @@ Feature: Simple Statements
 
       $statement = new Cassandra\SimpleStatement("SELECT * FROM simplex.playlists");
       $result    = $session->execute($statement);
-      echo "Result contains " . $result->count() . " rows";
+
+      foreach ($result as $row) {
+        echo $row['artist'] . ": " . $row['title'] . " / " . $row['album'] . "\n";
+      }
       """
     When it is executed
     Then its output should contain:
       """
-      Result contains 3 rows
+      Joséphine Baker: La Petite Tonkinoise / Bye Bye Blackbird
+      """
+    And its output should contain:
+      """
+      Willi Ostermann: Die Mösch / In Gold
+      """
+    And its output should contain:
+      """
+      Mick Jager: Memo From Turner / Performance
       """

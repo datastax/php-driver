@@ -23,31 +23,32 @@ PHP_METHOD(CassandraVarint, __construct)
 
   if (!php_cassandra_parse_integer(value, value_len, &number->value))
     return;
-
-  char* string;
-  int string_len;
-  php_cassandra_format_integer(number->value, &string, &string_len);
-
-  zend_update_property_stringl(cassandra_ce_Varint, getThis(), "value", strlen("value"), string, string_len TSRMLS_CC);
-  efree(string);
 }
 /* }}} */
 
 /* {{{ Cassandra\Varint::__toString() */
 PHP_METHOD(CassandraVarint, __toString)
 {
-  zval *zode = zend_read_property(cassandra_ce_Varint, getThis(), "value", strlen("value"), 0 TSRMLS_CC);
+  cassandra_varint* number = (cassandra_varint*) zend_object_store_get_object(getThis() TSRMLS_CC);
 
-  RETURN_STRING(Z_STRVAL_P(zode), 1);
+  char* string;
+  int string_len;
+  php_cassandra_format_integer(number->value, &string, &string_len);
+
+  RETURN_STRINGL(string, string_len, 0);
 }
 /* }}} */
 
 /* {{{ Cassandra\Varint::value() */
 PHP_METHOD(CassandraVarint, value)
 {
-  zval *zode = zend_read_property(cassandra_ce_Varint, getThis(), "value", strlen("value"), 0 TSRMLS_CC);
+  cassandra_varint* number = (cassandra_varint*) zend_object_store_get_object(getThis() TSRMLS_CC);
 
-  RETURN_STRING(Z_STRVAL_P(zode), 1);
+  char* string;
+  int string_len;
+  php_cassandra_format_integer(number->value, &string, &string_len);
+
+  RETURN_STRINGL(string, string_len, 0);
 }
 /* }}} */
 
@@ -61,6 +62,27 @@ static zend_function_entry CassandraVarint_methods[] = {
   PHP_ME(CassandraVarint, value, NULL, ZEND_ACC_PUBLIC)
   PHP_FE_END
 };
+
+static zend_object_handlers cassandra_varint_handlers;
+
+static HashTable*
+php_cassandra_varint_properties(zval *object TSRMLS_DC)
+{
+  cassandra_varint* number = (cassandra_varint*) zend_object_store_get_object(object TSRMLS_CC);
+  HashTable*        props  = zend_std_get_properties(object TSRMLS_CC);
+
+  zval* value;
+  char* string;
+  int string_len;
+  php_cassandra_format_integer(number->value, &string, &string_len);
+
+  MAKE_STD_ZVAL(value);
+  ZVAL_STRINGL(value, string, string_len, 0);
+
+  zend_hash_update(props, "value", sizeof("value"), &value, sizeof(zval), NULL);
+
+  return props;
+}
 
 static void
 php_cassandra_varint_free(void *object TSRMLS_DC)
@@ -86,8 +108,8 @@ php_cassandra_varint_new(zend_class_entry* class_type TSRMLS_DC)
   zend_object_std_init(&number->zval, class_type TSRMLS_CC);
   object_properties_init(&number->zval, class_type TSRMLS_CC);
 
-  retval.handle = zend_objects_store_put(number, (zend_objects_store_dtor_t) zend_objects_destroy_object, php_cassandra_varint_free, NULL TSRMLS_CC);
-  retval.handlers = zend_get_std_object_handlers();
+  retval.handle   = zend_objects_store_put(number, (zend_objects_store_dtor_t) zend_objects_destroy_object, php_cassandra_varint_free, NULL TSRMLS_CC);
+  retval.handlers = &cassandra_varint_handlers;
 
   return retval;
 }
@@ -98,9 +120,8 @@ void cassandra_define_CassandraVarint(TSRMLS_D)
 
   INIT_CLASS_ENTRY(ce, "Cassandra\\Varint", CassandraVarint_methods);
   cassandra_ce_Varint = zend_register_internal_class(&ce TSRMLS_CC);
+  memcpy(&cassandra_varint_handlers, zend_get_std_object_handlers(), sizeof(zend_object_handlers));
+  cassandra_varint_handlers.get_properties = php_cassandra_varint_properties;
   cassandra_ce_Varint->ce_flags |= ZEND_ACC_FINAL_CLASS;
   cassandra_ce_Varint->create_object = php_cassandra_varint_new;
-
-  /* fields */
-  zend_declare_property_string(cassandra_ce_Varint, "value", strlen("value"), "", ZEND_ACC_PRIVATE TSRMLS_CC);
 }

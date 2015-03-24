@@ -21,36 +21,30 @@ PHP_METHOD(CassandraInet, __construct)
 
   inet = (cassandra_inet*) zend_object_store_get_object(getThis() TSRMLS_CC);
 
-  char* tmp = strndup(address, address_len);
-  if (!php_cassandra_parse_ip_address(tmp, &inet->inet)) {
-    free(tmp);
+  if (!php_cassandra_parse_ip_address(address, &inet->inet))
     return;
-  }
-  free(tmp);
-
-  char* string;
-  php_cassandra_format_address(inet->inet, &string);
-
-  zend_update_property_string(cassandra_ce_Inet, getThis(), "address", strlen("address"), string TSRMLS_CC);
-  efree(string);
 }
 /* }}} */
 
 /* {{{ Cassandra\Inet::__toString() */
 PHP_METHOD(CassandraInet, __toString)
 {
-  zval *zode = zend_read_property(cassandra_ce_Inet, getThis(), "address", strlen("address"), 0 TSRMLS_CC);
+  cassandra_inet* inet = (cassandra_inet*) zend_object_store_get_object(getThis() TSRMLS_CC);
+  char* string;
+  php_cassandra_format_address(inet->inet, &string);
 
-  RETURN_STRING(Z_STRVAL_P(zode), 1);
+  RETURN_STRING(string, 0);
 }
 /* }}} */
 
 /* {{{ Cassandra\Inet::address() */
 PHP_METHOD(CassandraInet, address)
 {
-  zval *zode = zend_read_property(cassandra_ce_Inet, getThis(), "address", strlen("address"), 0 TSRMLS_CC);
+  cassandra_inet* inet = (cassandra_inet*) zend_object_store_get_object(getThis() TSRMLS_CC);
+  char* string;
+  php_cassandra_format_address(inet->inet, &string);
 
-  RETURN_STRING(Z_STRVAL_P(zode), 1);
+  RETURN_STRING(string, 0);
 }
 /* }}} */
 
@@ -58,12 +52,35 @@ ZEND_BEGIN_ARG_INFO_EX(arginfo___construct, 0, ZEND_RETURN_VALUE, 1)
   ZEND_ARG_INFO(0, address)
 ZEND_END_ARG_INFO()
 
+ZEND_BEGIN_ARG_INFO_EX(arginfo_none, 0, ZEND_RETURN_VALUE, 0)
+ZEND_END_ARG_INFO()
+
 static zend_function_entry CassandraInet_methods[] = {
   PHP_ME(CassandraInet, __construct, arginfo___construct, ZEND_ACC_CTOR|ZEND_ACC_PUBLIC)
-  PHP_ME(CassandraInet, __toString, NULL, ZEND_ACC_PUBLIC)
-  PHP_ME(CassandraInet, address, NULL, ZEND_ACC_PUBLIC)
+  PHP_ME(CassandraInet, __toString, arginfo_none, ZEND_ACC_PUBLIC)
+  PHP_ME(CassandraInet, address, arginfo_none, ZEND_ACC_PUBLIC)
   PHP_FE_END
 };
+
+static zend_object_handlers cassandra_inet_handlers;
+
+static HashTable*
+php_cassandra_inet_properties(zval *object TSRMLS_DC)
+{
+  cassandra_inet* inet  = (cassandra_inet*) zend_object_store_get_object(object TSRMLS_CC);
+  HashTable*      props = zend_std_get_properties(object TSRMLS_CC);
+
+  zval* value;
+  char* string;
+  php_cassandra_format_address(inet->inet, &string);
+
+  MAKE_STD_ZVAL(value);
+  ZVAL_STRING(value, string, 0);
+
+  zend_hash_update(props, "address", sizeof("address"), &value, sizeof(zval), NULL);
+
+  return props;
+}
 
 static void
 php_cassandra_inet_free(void *object TSRMLS_DC)
@@ -87,8 +104,8 @@ php_cassandra_inet_new(zend_class_entry* class_type TSRMLS_DC)
   zend_object_std_init(&inet->zval, class_type TSRMLS_CC);
   object_properties_init(&inet->zval, class_type TSRMLS_CC);
 
-  retval.handle = zend_objects_store_put(inet, (zend_objects_store_dtor_t) zend_objects_destroy_object, php_cassandra_inet_free, NULL TSRMLS_CC);
-  retval.handlers = zend_get_std_object_handlers();
+  retval.handle   = zend_objects_store_put(inet, (zend_objects_store_dtor_t) zend_objects_destroy_object, php_cassandra_inet_free, NULL TSRMLS_CC);
+  retval.handlers = &cassandra_inet_handlers;
 
   return retval;
 }
@@ -99,9 +116,8 @@ void cassandra_define_CassandraInet(TSRMLS_D)
 
   INIT_CLASS_ENTRY(ce, "Cassandra\\Inet", CassandraInet_methods);
   cassandra_ce_Inet = zend_register_internal_class(&ce TSRMLS_CC);
+  memcpy(&cassandra_inet_handlers, zend_get_std_object_handlers(), sizeof(zend_object_handlers));
+  cassandra_inet_handlers.get_properties = php_cassandra_inet_properties;
   cassandra_ce_Inet->ce_flags |= ZEND_ACC_FINAL_CLASS;
   cassandra_ce_Inet->create_object = php_cassandra_inet_new;
-
-  /* fields */
-  zend_declare_property_string(cassandra_ce_Inet, "address", strlen("address"), "", ZEND_ACC_PRIVATE TSRMLS_CC);
 }

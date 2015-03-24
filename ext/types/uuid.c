@@ -26,52 +26,44 @@ PHP_METHOD(CassandraUuid, __construct)
   if (ZEND_NUM_ARGS() == 0)
     php_cassandra_uuid_generate_random(&uuid->uuid);
   else {
-    char* str = strndup(value, value_len);
-    int rc = cass_uuid_from_string(str, &uuid->uuid);
-
-    if (rc != CASS_OK) {
-      zend_throw_exception_ex(cassandra_ce_InvalidArgumentException, 0 TSRMLS_CC, "Invalid uuid value: \"%s\"", str);
-      free(str);
+    if (cass_uuid_from_string(value, &uuid->uuid) != CASS_OK) {
+      zend_throw_exception_ex(cassandra_ce_InvalidArgumentException, 0 TSRMLS_CC, "Invalid uuid value: \"%s\"", value);
       return;
     }
-
-    free(str);
   }
-
-  char* string = emalloc((CASS_UUID_STRING_LENGTH) * sizeof(char));
-  cass_uuid_string(uuid->uuid, string);
-
-  zend_update_property_stringl(cassandra_ce_Uuid, getThis(), "uuid", strlen("uuid"), string, CASS_UUID_STRING_LENGTH - 1 TSRMLS_CC);
-  zend_update_property_long(cassandra_ce_Uuid, getThis(), "version", strlen("version"), (long) cass_uuid_version(uuid->uuid) TSRMLS_CC);
-
-  efree(string);
 }
 /* }}} */
 
 /* {{{ Cassandra\Uuid::__toString() */
 PHP_METHOD(CassandraUuid, __toString)
 {
-  zval *zode = zend_read_property(cassandra_ce_Uuid, getThis(), "uuid", strlen("uuid"), 0 TSRMLS_CC);
+  cassandra_uuid* uuid   = (cassandra_uuid*) zend_object_store_get_object(getThis() TSRMLS_CC);
+  char*           string = emalloc((CASS_UUID_STRING_LENGTH) * sizeof(char));
 
-  RETURN_STRING(Z_STRVAL_P(zode), 1);
+  cass_uuid_string(uuid->uuid, string);
+
+  RETURN_STRING(string, 0);
 }
 /* }}} */
 
 /* {{{ Cassandra\Uuid::value() */
 PHP_METHOD(CassandraUuid, uuid)
 {
-  zval *zode = zend_read_property(cassandra_ce_Uuid, getThis(), "uuid", strlen("uuid"), 0 TSRMLS_CC);
+  cassandra_uuid* uuid   = (cassandra_uuid*) zend_object_store_get_object(getThis() TSRMLS_CC);
+  char*           string = emalloc((CASS_UUID_STRING_LENGTH) * sizeof(char));
 
-  RETURN_STRING(Z_STRVAL_P(zode), 1);
+  cass_uuid_string(uuid->uuid, string);
+
+  RETURN_STRING(string, 0);
 }
 /* }}} */
 
 /* {{{ Cassandra\Uuid::value() */
 PHP_METHOD(CassandraUuid, version)
 {
-  zval *zode = zend_read_property(cassandra_ce_Uuid, getThis(), "version", strlen("version"), 0 TSRMLS_CC);
+  cassandra_uuid* uuid = (cassandra_uuid*) zend_object_store_get_object(getThis() TSRMLS_CC);
 
-  RETURN_LONG(Z_LVAL_P(zode));
+  RETURN_LONG((long) cass_uuid_version(uuid->uuid));
 }
 /* }}} */
 
@@ -79,13 +71,42 @@ ZEND_BEGIN_ARG_INFO_EX(arginfo___construct, 0, ZEND_RETURN_VALUE, 0)
   ZEND_ARG_INFO(0, uuid)
 ZEND_END_ARG_INFO()
 
+ZEND_BEGIN_ARG_INFO_EX(arginfo_none, 0, ZEND_RETURN_VALUE, 0)
+ZEND_END_ARG_INFO()
+
 static zend_function_entry CassandraUuid_methods[] = {
   PHP_ME(CassandraUuid, __construct, arginfo___construct, ZEND_ACC_CTOR|ZEND_ACC_PUBLIC)
-  PHP_ME(CassandraUuid, __toString, NULL, ZEND_ACC_PUBLIC)
-  PHP_ME(CassandraUuid, uuid, NULL, ZEND_ACC_PUBLIC)
-  PHP_ME(CassandraUuid, version, NULL, ZEND_ACC_PUBLIC)
+  PHP_ME(CassandraUuid, __toString, arginfo_none, ZEND_ACC_PUBLIC)
+  PHP_ME(CassandraUuid, uuid, arginfo_none, ZEND_ACC_PUBLIC)
+  PHP_ME(CassandraUuid, version, arginfo_none, ZEND_ACC_PUBLIC)
   PHP_FE_END
 };
+
+static zend_object_handlers cassandra_uuid_handlers;
+
+static HashTable*
+php_cassandra_uuid_properties(zval *object TSRMLS_DC)
+{
+  cassandra_uuid* uuid  = (cassandra_uuid*) zend_object_store_get_object(object TSRMLS_CC);
+  HashTable*      props = zend_std_get_properties(object TSRMLS_CC);
+
+  zval* uuid_str;
+  zval* version;
+
+  char* string = emalloc((CASS_UUID_STRING_LENGTH) * sizeof(char));
+
+  cass_uuid_string(uuid->uuid, string);
+
+  MAKE_STD_ZVAL(uuid_str);
+  ZVAL_STRING(uuid_str, string, 0);
+  MAKE_STD_ZVAL(version);
+  ZVAL_LONG(version, (long) cass_uuid_version(uuid->uuid));
+
+  zend_hash_update(props, "uuid", sizeof("uuid"), &uuid_str, sizeof(zval), NULL);
+  zend_hash_update(props, "version", sizeof("version"), &version, sizeof(zval), NULL);
+
+  return props;
+}
 
 static void
 php_cassandra_uuid_free(void *object TSRMLS_DC)
@@ -109,8 +130,8 @@ php_cassandra_uuid_new(zend_class_entry* class_type TSRMLS_DC)
   zend_object_std_init(&uuid->zval, class_type TSRMLS_CC);
   object_properties_init(&uuid->zval, class_type TSRMLS_CC);
 
-  retval.handle = zend_objects_store_put(uuid, (zend_objects_store_dtor_t) zend_objects_destroy_object, php_cassandra_uuid_free, NULL TSRMLS_CC);
-  retval.handlers = zend_get_std_object_handlers();
+  retval.handle   = zend_objects_store_put(uuid, (zend_objects_store_dtor_t) zend_objects_destroy_object, php_cassandra_uuid_free, NULL TSRMLS_CC);
+  retval.handlers = &cassandra_uuid_handlers;
 
   return retval;
 }
@@ -123,10 +144,8 @@ cassandra_define_CassandraUuid(TSRMLS_D)
   INIT_CLASS_ENTRY(ce, "Cassandra\\Uuid", CassandraUuid_methods);
   cassandra_ce_Uuid = zend_register_internal_class(&ce TSRMLS_CC);
   zend_class_implements(cassandra_ce_Uuid TSRMLS_CC, 1, cassandra_ce_UuidInterface);
+  memcpy(&cassandra_uuid_handlers, zend_get_std_object_handlers(), sizeof(zend_object_handlers));
+  cassandra_uuid_handlers.get_properties = php_cassandra_uuid_properties;
   cassandra_ce_Uuid->ce_flags |= ZEND_ACC_FINAL_CLASS;
   cassandra_ce_Uuid->create_object = php_cassandra_uuid_new;
-
-  /* fields */
-  zend_declare_property_string(cassandra_ce_Uuid, "uuid", strlen("uuid"), "", ZEND_ACC_PRIVATE TSRMLS_CC);
-  zend_declare_property_long(cassandra_ce_Uuid, "version", strlen("version"), 0, ZEND_ACC_PRIVATE TSRMLS_CC);
 }

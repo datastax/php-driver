@@ -4,6 +4,7 @@
 #include <errno.h>
 #include <stdlib.h>
 #include <gmp.h>
+#include <math.h>
 #include "util/math.h"
 
 extern zend_class_entry *cassandra_ce_InvalidArgumentException;
@@ -48,6 +49,9 @@ php_cassandra_parse_integer(char* in, int in_len, mpz_t* number)
 
     n = strtol(&in[point], &end, base);
 
+    if (negative)
+      n = n * -1;
+
     if (errno) {
       zend_throw_exception_ex(cassandra_ce_InvalidArgumentException, 0 TSRMLS_CC, "Invalid integer value: %s", in);
       return 0;
@@ -72,6 +76,9 @@ php_cassandra_parse_integer(char* in, int in_len, mpz_t* number)
     return 0;
   }
 
+  if (negative)
+    mpz_neg(*number, *number);
+
   return 1;
 }
 
@@ -88,7 +95,7 @@ php_cassandra_parse_decimal(char* in, int in_len, mpz_t* number, int* scale)
   int dot = -1;
   //  out will be storing the string representation of the integer part
   //  of the decimal value
-  char* out = (char*) calloc(in_len + 1, sizeof(char));
+  char* out = (char*) emalloc((in_len + 1) * sizeof(char));
   //  holds length of the formatted integer number
   int out_len = 0;
 
@@ -133,8 +140,6 @@ php_cassandra_parse_decimal(char* in, int in_len, mpz_t* number, int* scale)
       point += 2;
     else if (in[point + 1] == 'x')
       point += 2;
-    else if (in[point + 1] == '.')
-      start++;
   }
 
   //  Check each character looking for the decimal point and the
@@ -172,8 +177,9 @@ php_cassandra_parse_decimal(char* in, int in_len, mpz_t* number, int* scale)
     // If there was a decimal we must combine the two parts that
     // contain only digits and we must set the scale properly.
     memcpy(&out[negative], &in[start], dot - start);
-    memcpy(&out[dot - start], &in[dot + 1], point - dot - 1);
-    out_len = point - start - 1;
+    memcpy(&out[negative + dot - start], &in[dot + 1], point - dot);
+
+    out_len = point - start;
     *scale = point - 1 - dot;
   } else {
     // If there was no decimal then the unscaled value is just the number
@@ -191,11 +197,11 @@ php_cassandra_parse_decimal(char* in, int in_len, mpz_t* number, int* scale)
   int ok = php_cassandra_parse_integer(out, out_len, number);
 
   if (!ok) {
-    free(out);
+    efree(out);
     zend_throw_exception_ex(cassandra_ce_InvalidArgumentException, 0 TSRMLS_CC, "Unable to extract integer part of decimal value: \"%s\", %s", in, out);
     return 0;
   }
-  free(out);
+  efree(out);
 
   // Now parse exponent.
   // If point < end that means we broke out of the previous loop when we
@@ -226,7 +232,7 @@ php_cassandra_parse_decimal(char* in, int in_len, mpz_t* number, int* scale)
   return 1;
 }
 
-char*
+void
 php_cassandra_format_integer(mpz_t number, char** out, int* out_len)
 {
   size_t len;
@@ -247,4 +253,141 @@ php_cassandra_format_integer(mpz_t number, char** out, int* out_len)
 
   *out     = tmp;
   *out_len = len;
+}
+
+
+void
+php_cassandra_format_decimal(mpz_t number, long scale, char** out, int* out_len)
+{
+  if (scale == 0) {
+    php_cassandra_format_integer(number, out, out_len);
+    return;
+  }
+
+  char* tmp;
+  size_t total = 0;
+  size_t len   = mpz_sizeinbase(number, 10);
+  int negative = 0;
+
+  if (mpz_sgn(number) < 0)
+    negative = 1;
+
+  int point = len - scale;
+
+  if (scale >= 0 && (point - 1) >= -6) {
+    if (point <= 0) {
+      // current position
+      int i = 0;
+      // absolute length + negative sign + point sign + leading zeroes
+      total = len + negative + 2 + (point * -1);
+      tmp   = (char*) emalloc((total + 1) * sizeof(char));
+
+      if (negative)
+        tmp[i++] = '-';
+
+      tmp[i++] = '0';
+      tmp[i++] = '.';
+
+      while (point < 0) {
+        tmp[i++] = '0';
+        point++;
+      }
+
+      mpz_get_str(&(tmp[i]), 10, number);
+
+      if (tmp[i + len + negative - 1] == '\0') {
+        len--;
+        total--;
+      }
+
+      if (negative)
+        memmove(&(tmp[i]), &(tmp[i + 1]), len);
+
+      tmp[total] = '\0';
+    } else {
+      // absolute length + negative sign + point sign
+      total = len + negative + 1;
+      point = point + negative;
+      tmp   = (char*) emalloc((total + 1) * sizeof(char));
+
+      mpz_get_str(tmp, 10, number);
+
+      if (tmp[len + negative - 1] == '\0') {
+        len--;
+        total--;
+      }
+
+      memmove(&(tmp[point + 1]), &(tmp[point]), len - point);
+
+      tmp[point] = '.';
+      tmp[total] = '\0';
+    }
+  } else {
+    // absolute length + negative sign + exponent modifier and sign
+    total = len + negative + 2;
+    // (optional) point sign
+    if (len > 1)
+      total++;
+
+    // exponent value
+    int exponent      = point - 1;
+    int exponent_size = (int) ceil(log10(abs(exponent) + 2)) + 1;
+
+    total = total + exponent_size;
+    tmp   = (char*) emalloc((total + 1) * sizeof(char));
+
+    mpz_get_str(tmp, 10, number);
+
+    if (tmp[len + negative - 1] == '\0') {
+      len--;
+      total--;
+    }
+
+    int i = 1;
+    if (negative)
+      i++;
+
+    memmove(&(tmp[i + 1]), &(tmp[i]), len - i);
+    tmp[i] = '.';
+    tmp[len + i++] = 'E';
+
+    snprintf(&(tmp[len + i]), exponent_size, "%+d", exponent);
+
+    tmp[total] = '\0';
+  }
+
+  *out     = tmp;
+  *out_len = total;
+}
+
+void
+import_twos_complement(cass_byte_t* data, cass_size_t size, mpz_t* number)
+{
+  int i;
+
+  mpz_import(*number, size, 1, sizeof(cass_byte_t), 1, 0, data);
+
+  // negative value
+  if ((data[0] & 0x80) == 0x80) {
+    // invert bits
+    mpz_com(*number, *number);
+    // add one
+    mpz_add_ui(*number, *number, 1);
+    // negate the value
+    mpz_neg(*number, *number);
+  }
+}
+
+cass_byte_t*
+export_twos_complement(mpz_t number, cass_size_t* size)
+{
+  // negative, do two's complement
+  if (mpz_sgn(number) == -1) {
+    // invert bits
+    mpz_com(number, number);
+    // add one
+    mpz_add_ui(number, number, 1);
+  }
+
+  return (cass_byte_t*) mpz_export(NULL, size, 1, sizeof(cass_byte_t), 1, 0, number);
 }

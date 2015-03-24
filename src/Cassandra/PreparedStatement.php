@@ -17,11 +17,7 @@ final class PreparedStatement implements Statement
 
         if ((isset($arguments))) {
             foreach ($arguments as $name => $argument) {
-                if (is_string($name)) {
-                    cassandra_statement_bind_by_name($resource, $name, $argument);
-                } else {
-                    cassandra_statement_bind($resource, $name, $argument);
-                }
+                cassandra_statement_bind($resource, $name, $argument);
             }
         }
 

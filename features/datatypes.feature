@@ -40,7 +40,7 @@ Feature: Datatypes
       )
       VALUES (
         0,
-        765438000,
+        -765438000,
         1313123123.234234234234234234123,
         3.141592653589793,
         3.14,
@@ -80,14 +80,16 @@ Feature: Datatypes
     Then its output should contain:
       """
       Bigint: Cassandra\Bigint::__set_state(array(
-         'value' => '765438000',
+         'value' => '-765438000',
       ))
       Decimal: Cassandra\Decimal::__set_state(array(
          'value' => '1313123123234234234234234234123',
          'scale' => 21,
       ))
       Double: 3.1415926535897931
-      Float: 3.1400001049041748
+      Float: Cassandra\Float::__set_state(array(
+         'value' => '3.14000010490417',
+      ))
       Int: 4
       Varint: Cassandra\Varint::__set_state(array(
          'value' => '67890656781923123918798273492834712837198237',

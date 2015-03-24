@@ -38,6 +38,11 @@ extern zend_module_entry cassandra_module_entry;
 
 typedef struct {
   zend_object  zval;
+  cass_float_t value;
+} cassandra_float;
+
+typedef struct {
+  zend_object  zval;
   cass_int64_t value;
 } cassandra_bigint;
 
@@ -47,13 +52,14 @@ typedef struct {
 } cassandra_timestamp;
 
 typedef struct {
-  zend_object zval;
-  CassBytes   bytes;
+  zend_object  zval;
+  cass_byte_t* data;
+  cass_size_t  size;
 } cassandra_blob;
 
 typedef struct {
-  zend_object zval;
-  mpz_t       value;
+  zend_object  zval;
+  mpz_t        value;
 } cassandra_varint;
 
 typedef struct {
@@ -90,7 +96,7 @@ typedef struct {
 typedef struct {
   zend_object   zval;
   CassValueType type;
-  HashTable*    values;
+  HashTable     values;
 } cassandra_collection;
 
 PHP_MINIT_FUNCTION(cassandra);
@@ -137,7 +143,6 @@ PHP_FUNCTION(cassandra_result_row_count);
 PHP_FUNCTION(cassandra_statement_new);
 PHP_FUNCTION(cassandra_statement_free);
 PHP_FUNCTION(cassandra_statement_bind);
-PHP_FUNCTION(cassandra_statement_bind_by_name);
 
 /* CassPrepared */
 PHP_FUNCTION(cassandra_prepared_free);
