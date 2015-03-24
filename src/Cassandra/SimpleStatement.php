@@ -18,8 +18,8 @@ final class SimpleStatement implements Statement
      */
     public function resource(array $arguments = null)
     {
-        $count     = count($arguments);
-        $statement = cassandra_statement_new($this->cql, $count);
+        $count    = count($arguments);
+        $resource = cassandra_statement_new($this->cql, $count);
 
         if ((isset($arguments))) {
             foreach ($arguments as $name => $argument) {
@@ -27,6 +27,6 @@ final class SimpleStatement implements Statement
             }
         }
 
-        return $statement;
+        return $resource;
     }
 }

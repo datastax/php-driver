@@ -1,6 +1,7 @@
-Feature: Simple Statements
+Feature: Prepared Statements
 
-  PHP Driver supports simple statements.
+  PHP Driver supports prepared statements. Prepared statements must be
+  initialized using `Cassandra\Session::prepare()`.
 
   Background:
     Given the following schema:
@@ -20,7 +21,7 @@ Feature: Simple Statements
       );
       """
 
-  Scenario: Simple statements are initialized with a CQL string
+  Scenario: Prepared statements support named arguments
     Given the following example:
       """php
       <?php
@@ -28,54 +29,36 @@ Feature: Simple Statements
                      ->withContactPoints(array('127.0.0.1'))
                      ->build();
       $session   = $cluster->connect("simplex");
-      $statement = new Cassandra\SimpleStatement("SELECT * FROM playlists");
-      $result    = $session->execute($statement);
-      echo "Result contains " . $result->count() . " rows";
-      """
-    When it is executed
-    Then its output should contain:
-      """
-      Result contains 0 rows
-      """
-
-  Scenario: Simple statements only support positional arguments
-    Given the following example:
-      """php
-      <?php
-      $cluster   = Cassandra::cluster()
-                     ->withContactPoints(array('127.0.0.1'))
-                     ->build();
-      $session   = $cluster->connect("simplex");
-      $statement = new Cassandra\SimpleStatement(
+      $insert    = $session->prepare(
                      "INSERT INTO playlists (id, song_id, artist, title, album) " .
                      "VALUES (62c36092-82a1-3a00-93d1-46196ee77204, ?, ?, ?, ?)"
                    );
 
       $songs = array(
           array(
-              new Cassandra\Uuid('756716f7-2e54-4715-9f00-91dcbea6cf50'),
-              'Joséphine Baker',
-              'La Petite Tonkinoise',
-              'Bye Bye Blackbird'
+              'song_id' => new Cassandra\Uuid('756716f7-2e54-4715-9f00-91dcbea6cf50'),
+              'title'   => 'La Petite Tonkinoise',
+              'album'   => 'Bye Bye Blackbird',
+              'artist'  => 'Joséphine Baker'
           ),
           array(
-              new Cassandra\Uuid('f6071e72-48ec-4fcb-bf3e-379c8a696488'),
-              'Willi Ostermann',
-              'Die Mösch',
-              'In Gold'
+              'song_id' => new Cassandra\Uuid('f6071e72-48ec-4fcb-bf3e-379c8a696488'),
+              'title'   => 'Die Mösch',
+              'album'   => 'In Gold',
+              'artist'  => 'Willi Ostermann'
           ),
           array(
-              new Cassandra\Uuid('fbdf82ed-0063-4796-9c7c-a3d4f47b4b25'),
-              'Mick Jager',
-              'Memo From Turner',
-              'Performance'
+              'song_id' => new Cassandra\Uuid('fbdf82ed-0063-4796-9c7c-a3d4f47b4b25'),
+              'title'   => 'Memo From Turner',
+              'album'   => 'Performance',
+              'artist'  => 'Mick Jager'
           ),
       );
 
       foreach ($songs as $song) {
           $options = new Cassandra\ExecutionOptions();
           $options->arguments = $song;
-          $session->execute($statement, $options);
+          $session->execute($insert, $options);
       }
 
       $statement = new Cassandra\SimpleStatement("SELECT * FROM simplex.playlists");
