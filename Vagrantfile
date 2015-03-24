@@ -13,6 +13,10 @@ Vagrant.configure("2") do |config|
   sudo apt-get update
   sudo apt-get install -y g++ make cmake libuv-dev libssl-dev libgmp-dev php5 php5-dev
   sudo apt-get install -y python-pip default-jdk
+  sudo apt-get install -y git valgrind
+
+  sudo su - vagrant
+
   sudo pip install virtualenv
   virtualenv venv
   source venv/bin/activate
@@ -33,7 +37,6 @@ Vagrant.configure("2") do |config|
   ccm populate -n 1 -i 127.0.0.
   ccm start --verbose
 
-  sudo apt-get install -y git valgrind
   pushd /usr/local/src/php-driver/lib/cpp-driver
   cmake .
   make
@@ -44,6 +47,7 @@ Vagrant.configure("2") do |config|
   ./configure --with-cassandra
   make
   sudo make install
+  sudo sh -c 'echo "extension=cassandra.so" > /etc/php5/cli/conf.d/100-cassandra.ini'
   popd
   pushd /usr/local/src/php-driver/
   curl -sS https://getcomposer.org/installer | php
