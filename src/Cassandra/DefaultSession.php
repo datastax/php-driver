@@ -2,6 +2,9 @@
 
 namespace Cassandra;
 
+use Cassandra\Exception\InvalidArgumentException;
+use Cassandra\Exception\LogicException;
+
 final class DefaultSession implements Session
 {
     private $resource;
@@ -12,17 +15,6 @@ final class DefaultSession implements Session
         $this->resource = $resource;
         $this->defaults = $defaults;
     }
-    //
-    // public function close()
-    // {
-    //     if (is_null($this->resource)) {
-    //         throw new LogicException("Session is already closed");
-    //     }
-    //
-    //     cassandra_session_free($this->resource);
-    //     $this->resource = null;
-    //     $this->defaults = null;
-    // }
 
     /**
      * {@inheritDoc}
@@ -176,7 +168,28 @@ final class DefaultSession implements Session
         }
 
         return new FuturePreparedStatement(cassandra_session_prepare(
-          $this->resource, (string) $cql
+            $this->resource, (string) $cql
         ));
+    }
+
+    public function close($timeout = null)
+    {
+        if (is_null($this->resource)) {
+            throw new LogicException("Session is already closed");
+        }
+
+        $this->closeAsync()->get($timeout);
+    }
+
+    public function closeAsync()
+    {
+        if (is_null($this->resource)) {
+            return new FutureException(new LogicException("Session is already closed"));
+        }
+
+        return new FutureClose(
+            cassandra_session_close($this->resource),
+            $this->resource
+        );
     }
 }

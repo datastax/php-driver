@@ -126,6 +126,7 @@ PHP_FUNCTION(cassandra_session_connect_keyspace);
 PHP_FUNCTION(cassandra_session_execute);
 PHP_FUNCTION(cassandra_session_prepare);
 PHP_FUNCTION(cassandra_session_execute_batch);
+PHP_FUNCTION(cassandra_session_close);
 
 /* CassFuture */
 PHP_FUNCTION(cassandra_future_free);

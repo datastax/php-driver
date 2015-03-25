@@ -1,4 +1,3 @@
-@wip
 Feature: Batch statements
 
   PHP Driver supports batch statements. There are three types of batch statements:

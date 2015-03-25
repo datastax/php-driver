@@ -141,6 +141,7 @@ const zend_function_entry cassandra_functions[] = {
   PHP_FE(cassandra_session_execute, NULL)
   PHP_FE(cassandra_session_prepare, NULL)
   PHP_FE(cassandra_session_execute_batch, NULL)
+  PHP_FE(cassandra_session_close, NULL)
   /* CassFuture */
   PHP_FE(cassandra_future_free, NULL)
   PHP_FE(cassandra_future_wait, NULL)
@@ -757,6 +758,28 @@ PHP_FUNCTION(cassandra_session_execute_batch)
     PHP_CASSANDRA_BATCH_RES_NAME, le_cassandra_batch_res);
 
   future = cass_session_execute_batch(session, batch);
+
+  ZEND_REGISTER_RESOURCE(
+    return_value,
+    future,
+    le_cassandra_future_res
+  );
+}
+
+PHP_FUNCTION(cassandra_session_close)
+{
+  CassSession* session;
+  zval* session_resource;
+  CassFuture*  future;
+
+  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "r", &session_resource) == FAILURE) {
+    RETURN_FALSE;
+  }
+
+  ZEND_FETCH_RESOURCE(session, CassSession*, &session_resource, -1,
+    PHP_CASSANDRA_SESSION_RES_NAME, le_cassandra_session_res);
+
+  future = cass_session_close(session);
 
   ZEND_REGISTER_RESOURCE(
     return_value,

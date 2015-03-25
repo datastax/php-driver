@@ -59,18 +59,20 @@ interface Session
      * @return Cassandra\Future  statement
      */
     function prepareAsync($cql, ExecutionOptions $options = null);
-    //
-    // /**
-    //  * Closes current session and all of its connections
-    //  *
-    //  * @return void
-    //  */
-    // function close();
-    //
-    // /**
-    //  * Asynchronously closes current session once all pending requests have finished
-    //  *
-    //  * @return Cassandra\Future  future
-    //  */
-    // function closeAsync();
+
+    /**
+     * Closes current session and all of its connections
+     *
+     * @param float|null Timeout to wait for closure in seconds
+     *
+     * @return void
+     */
+    function close($timeout = null);
+
+    /**
+     * Asynchronously closes current session once all pending requests have finished
+     *
+     * @return Cassandra\Future  future
+     */
+    function closeAsync();
 }
