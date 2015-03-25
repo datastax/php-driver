@@ -18,10 +18,11 @@ final class DefaultCluster implements Cluster
      * @access private
      * @param resource $resource Cluster resource
      */
-    public function __construct($resource, ExecutionOptions $defaults)
+    public function __construct($resource, ExecutionOptions $defaults, $ssl = null)
     {
         $this->resource = $resource;
         $this->defaults = $defaults;
+        $this->ssl      = $ssl;
     }
 
     /**

@@ -1,7 +1,7 @@
 <?php
 
-use Cassandra\Cluster\Builder;
-use Cassandra\Exception\LibraryException;
+use Cassandra\Cluster\Builder as ClusterBuilder;
+use Cassandra\SSLOptions\Builder as SSLOptionsBuilder;
 
 final class Cassandra
 {
@@ -17,6 +17,10 @@ final class Cassandra
     const CONSISTENCY_LOCAL_SERIAL = 9;
     const CONSISTENCY_LOCAL_ONE    = 10;
 
+    const SSL_VERIFY_NONE          = 0;
+    const SSL_VERIFY_PEER_CERT     = 1;
+    const SSL_VERIFY_PEER_IDENTITY = 2;
+
     /**
      * Returns a builder for customizing the cluster
      *
@@ -24,6 +28,16 @@ final class Cassandra
      */
     public static function cluster()
     {
-        return new Builder();
+        return new ClusterBuilder();
+    }
+
+    /**
+     * Returns a builder for ssl options
+     *
+     * @return Cassanrda\SSLOptions\Builder a SSLOptions Builder instance
+     */
+    public static function ssl()
+    {
+        return new SSLOptionsBuilder();
     }
 }

@@ -5,7 +5,6 @@ namespace Cassandra\Cluster;
 use Cassandra\DefaultCluster;
 use Cassandra\ExecutionOptions;
 use Cassandra\Exception\InvalidArgumentException;
-use Cassandra\Util;
 
 final class Builder
 {
@@ -73,10 +72,10 @@ final class Builder
     private $requestTimeout;
 
     /**
-     * SSLContext
-     * @var Cassandra\Cluster\SSLContext
+     * sslOptions
+     * @var Cassandra\SSLOptions
      */
-    private $sslContext;
+    private $sslOptions;
 
     /**
      * Default consistency for requests
@@ -123,6 +122,7 @@ final class Builder
 
         $options = new ExecutionOptions();
         $cluster = cassandra_cluster_new();
+        $ssl     = null;
 
         $options->consistency       = $this->defaultConsistency;
         $options->pageSize          = $this->defaultPageSize;
@@ -151,13 +151,33 @@ final class Builder
             cassandra_cluster_set_request_timeout($cluster, $this->requestTimeout);
         }
 
-        if ($this->sslContext instanceof DefaultSSLContext) {
-            cassandra_cluster_set_ssl($cluster, $context->resource());
+        if (!is_null($this->sslOptions)) {
+            $ssl = cassandra_ssl_new();
+
+            if (is_array($options->trustedCerts)) {
+                foreach($options->trustedCerts as $path) {
+                    cassandra_ssl_add_trusted_cert($ssl, file_get_contents($path));
+                }
+            }
+
+            if (!is_null($options->clientCert)) {
+                cassandra_ssl_set_cert($ssl, file_get_contents($options->clientCert));
+            }
+
+            if (!is_null($options->privateKey)) {
+                cassandra_ssl_set_private_key($ssl, file_get_contents($path), $options->passphrase);
+            }
+
+            if (!is_null($options->verifyFlags)) {
+                cassandra_ssl_set_verify_flags($ssl, $options->verifyFlags);
+            }
+
+            cassandra_cluster_set_ssl($ssl);
         }
 
         cassandra_cluster_set_contact_points($cluster, $this->contactPoints);
 
-        return new DefaultCluster($cluster, $options);
+        return new DefaultCluster($cluster, $options, $ssl);
     }
 
     /**
@@ -329,11 +349,11 @@ final class Builder
 
     /**
      * Set up ssl context
-     * @param SSLContext $context a preconfigured ssl context
+     * @param SSLOptions $context a preconfigured ssl context
      */
-    public function withSSLContext(SSLContext $context)
+    public function withSSL(SSLOptions $options)
     {
-        $this->sslContext = $context;
+        $this->sslOptions = $options;
         return $this;
     }
 }
