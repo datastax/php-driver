@@ -2,26 +2,24 @@
 
 namespace Cassandra;
 
-final class Rows implements \Countable, \ArrayAccess, \IteratorAggregate
+use Cassandra\Exception\DomainException;
+
+/**
+ * Rows represent a result of statement execution.
+ */
+final class Rows implements \Iterator, \Countable, \ArrayAccess
 {
-    private $resource;
-    private $iterator;
+    /**
+     * @access private
+     */
+    private $rows;
 
     /**
      * @access private
      */
-    public function __construct($resource)
+    public function __construct(array $rows)
     {
-        $this->resource = $resource;
-        $this->rows     = array();
-
-        foreach (cassanrda_rows_from_result($resource) as $i => $row) {
-            $this->rows[$i] = new Row($row);
-        }
-
-        $this->count    = count($this->rows);
-
-        $this->iterator = new \ArrayIterator($this->rows);
+        $this->rows = $rows;
     }
 
     /**
@@ -29,7 +27,51 @@ final class Rows implements \Countable, \ArrayAccess, \IteratorAggregate
      */
     public function count()
     {
-        return $this->count;
+        return count($this->rows);
+    }
+
+    /**
+     * Resets the values iterator
+     * @return void
+     */
+    public function rewind()
+    {
+        reset($this->rows);
+    }
+
+    /**
+     * Returns current column's value
+     * @return mixed value
+     */
+    public function current()
+    {
+        return current($this->rows);
+    }
+
+    /**
+     * Returns current column's name
+     * @return string name
+     */
+    public function key()
+    {
+        return key($this->rows);
+    }
+
+    /**
+     * Advances the values iterator by one
+     * @return void
+     */
+    public function next()
+    {
+        next($this->rows);
+    }
+
+    /**
+     * @return boolean whether there are more values available for iteration
+     */
+    public function valid()
+    {
+        return key($this->rows) !== null;
     }
 
     /**
@@ -79,14 +121,6 @@ final class Rows implements \Countable, \ArrayAccess, \IteratorAggregate
             "Cannot delete row at offset: %s, results are immutable",
             var_export($offset, true)
         ));
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getIterator()
-    {
-        return $this->iterator;
     }
 
     /**

@@ -2,8 +2,7 @@
 
 namespace Cassandra;
 
-use Cassandra\Exception\LogicException;
-use Cassandra\Exception\LibraryException;
+use Cassandra\Exception\InvalidArgumentException;
 
 final class FutureRows implements Future
 {
@@ -33,7 +32,12 @@ final class FutureRows implements Future
             cassandra_future_wait_timed($this->resource, $timeout);
         }
 
-        $this->rows     = new Rows(cassandra_future_get_result($this->resource));
+        $rows   = array();
+        foreach (cassanrda_rows_from_result(cassandra_future_get_result($this->resource)) as $row) {
+            $rows[]= new Row($row);
+        }
+
+        $this->rows     = new Rows($rows);
         $this->resource = null;
         return $this->rows;
     }

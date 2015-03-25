@@ -4,6 +4,23 @@ namespace Cassandra;
 
 use Cassandra\Exception\InvalidArgumentException;
 
+/**
+ * Batch statements are used to execute a series of simple or prepared statements.
+ * There are 3 types of batch statements:
+ *  * `Cassandra::BATCH_LOGGED`   - this is the default batch type. This batch
+ *     gurantees that either all or none of its statements will be executed.
+ *     This behavior is achieved by writing a batch log on the coordinator, which
+ *     slows down the execution somewhat.
+ *   * `Cassandra::BATCH_UNLOGGED` - this batch will not be verified when executed,
+ *     which makes it faster than a `LOGGED` batch, but means that some of its statements
+ *     might fail, while others - succeed.
+ *   * `Cassandra::BATCH_COUNTER`  - this batch is used for counter updates, which
+ *     are, unlike other writes, not idempotent.
+ *
+ * @see Cassandra::BATCH_LOGGED
+ * @see Cassandra::BATCH_UNLOGGED
+ * @see Cassandra::BATCH_COUNTER
+ */
 final class BatchStatement implements Statement
 {
     /**
@@ -39,6 +56,11 @@ final class BatchStatement implements Statement
         $this->statements = array();
     }
 
+    /**
+     * Adds a statement to this batch
+     * @param Cassandra\Statement $statement the statement to add
+     * @param array|null          $arguments positional or named arguments
+     */
     public function add(Statement $statement, array $arguments = null)
     {
         if (!($statement instanceOf SimpleStatement
@@ -58,12 +80,15 @@ final class BatchStatement implements Statement
         return $this;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function resource(array $arguments = null, $consistency = null, $serialConsistency = null, $pageSize = null)
     {
         if (!is_null($arguments)) {
             throw new InvalidArgumentException(
-                "Batch statement does not allow arguments, specify them for " .
-                "each individual statement using BatchStatement::add()"
+                "Batch statements do not allow arguments, specify them for " .
+                "each individual statement when calling BatchStatement::add()"
             );
         }
 
