@@ -31,6 +31,8 @@ final class Cassandra
     const BATCH_UNLOGGED = 1;
     const BATCH_COUNTER  = 2;
 
+    const VERSION = '1.0.0.alpha';
+
     /**
      * Returns a Cluster Builder
      *
