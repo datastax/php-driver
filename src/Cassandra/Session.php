@@ -2,6 +2,11 @@
 
 namespace Cassandra;
 
+/**
+ * A session is used to prepare and execute statements.
+ *
+ * @see Cassandra\Cluster::connect()
+ */
 interface Session
 {
     /**
@@ -54,4 +59,18 @@ interface Session
      * @return Cassandra\Future  statement
      */
     function prepareAsync($cql, ExecutionOptions $options = null);
+    //
+    // /**
+    //  * Closes current session and all of its connections
+    //  *
+    //  * @return void
+    //  */
+    // function close();
+    //
+    // /**
+    //  * Asynchronously closes current session once all pending requests have finished
+    //  *
+    //  * @return Cassandra\Future  future
+    //  */
+    // function closeAsync();
 }

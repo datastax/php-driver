@@ -2,6 +2,9 @@
 
 namespace Cassandra;
 
+/**
+ * Cluster object is used to create Sessions
+ */
 interface Cluster
 {
     /**

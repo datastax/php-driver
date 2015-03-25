@@ -3,6 +3,12 @@
 use Cassandra\Cluster\Builder as ClusterBuilder;
 use Cassandra\SSLOptions\Builder as SSLOptionsBuilder;
 
+/**
+ * The main entry point to the PHP Driver for Apache Cassandra
+ *
+ * Use Cassandra::cluster() to build a cluster instance.
+ * Use Cassandra::ssl() to build SSL options instance.
+ */
 final class Cassandra
 {
     const CONSISTENCY_ANY          = 0;
@@ -21,8 +27,12 @@ final class Cassandra
     const SSL_VERIFY_PEER_CERT     = 1;
     const SSL_VERIFY_PEER_IDENTITY = 2;
 
+    const BATCH_LOGGED   = 0;
+    const BATCH_UNLOGGED = 1;
+    const BATCH_COUNTER  = 2;
+
     /**
-     * Returns a builder for customizing the cluster
+     * Returns a Cluster Builder
      *
      * @return Cassandra\Cluster\Builder a Cluster Builder instance
      */
@@ -32,7 +42,7 @@ final class Cassandra
     }
 
     /**
-     * Returns a builder for ssl options
+     * Returns SSL Options Builder
      *
      * @return Cassanrda\SSLOptions\Builder a SSLOptions Builder instance
      */

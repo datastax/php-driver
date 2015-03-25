@@ -9,5 +9,5 @@ interface Statement
      *
      * @return resource  Actual statement resource
      */
-    function resource($consistency, $serialConsistency, $pageSize, array $arguments = null);
+    function resource(array $arguments = null, $consistency = null, $serialConsistency = null, $pageSize = null);
 }

@@ -126,10 +126,19 @@ final class DefaultSession implements Session
             }
         }
 
-        return new FutureRows(cassandra_session_execute(
-            $this->resource,
-            $statement->resource($consistency, $serialConsistency, $pageSize, $arguments)
-        ));
+        try {
+            $resource = $statement->resource($arguments, $consistency, $serialConsistency, $pageSize);
+        } catch (Exception $e) {
+            return new FutureException($e);
+        }
+
+        if ($statement instanceOf BatchStatement) {
+            $future = cassandra_session_execute_batch($this->resource, $resource);
+        } else {
+            $future = cassandra_session_execute($this->resource, $resource);
+        }
+
+        return new FutureRows($future);
     }
 
     /**

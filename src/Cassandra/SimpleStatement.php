@@ -16,7 +16,7 @@ final class SimpleStatement implements Statement
     /**
      * {@inheritDoc}
      */
-    public function resource($consistency, $serialConsistency, $pageSize, array $arguments = null)
+    public function resource(array $arguments = null, $consistency = null, $serialConsistency = null, $pageSize = null)
     {
         $count    = count($arguments);
         $resource = cassandra_statement_new($this->cql, $count);
@@ -25,10 +25,10 @@ final class SimpleStatement implements Statement
         cassandra_statement_set_paging_size($resource, $pageSize);
 
         if (!is_null($serialConsistency)) {
-          cassandra_statement_set_serial_consistency($resource, $serialConsistency);
+            cassandra_statement_set_serial_consistency($resource, $serialConsistency);
         }
 
-        if ((isset($arguments))) {
+        if (!is_null($arguments)) {
             foreach ($arguments as $name => $argument) {
                 cassandra_statement_bind($resource, $name, $argument);
             }

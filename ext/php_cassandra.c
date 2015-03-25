@@ -140,6 +140,7 @@ const zend_function_entry cassandra_functions[] = {
   PHP_FE(cassandra_session_connect_keyspace, NULL)
   PHP_FE(cassandra_session_execute, NULL)
   PHP_FE(cassandra_session_prepare, NULL)
+  PHP_FE(cassandra_session_execute_batch, NULL)
   /* CassFuture */
   PHP_FE(cassandra_future_free, NULL)
   PHP_FE(cassandra_future_wait, NULL)
@@ -159,6 +160,11 @@ const zend_function_entry cassandra_functions[] = {
   /* CassPrepared */
   PHP_FE(cassandra_prepared_free, NULL)
   PHP_FE(cassandra_prepared_bind, NULL)
+  /* CassBatch */
+  PHP_FE(cassandra_batch_new, NULL)
+  PHP_FE(cassandra_batch_free, NULL)
+  PHP_FE(cassandra_batch_set_consistency, NULL)
+  PHP_FE(cassandra_batch_add_statement, NULL)
   PHP_FE_END /* Must be the last line in cassandra_functions[] */
 };
 
@@ -271,6 +277,18 @@ php_cassandra_statement_dtor(zend_rsrc_list_entry* rsrc TSRMLS_DC)
   }
 }
 
+static int le_cassandra_batch_res;
+static void
+php_cassandra_batch_dtor(zend_rsrc_list_entry* rsrc TSRMLS_DC)
+{
+  CassBatch* batch = (CassBatch*) rsrc->ptr;
+
+  if (batch) {
+    cass_batch_free(batch);
+    rsrc->ptr = NULL;
+  }
+}
+
 static void
 php_cassandra_globals_ctor(zend_cassandra_globals* cassandra_globals TSRMLS_DC)
 {
@@ -333,6 +351,12 @@ PHP_MINIT_FUNCTION(cassandra)
     php_cassandra_statement_dtor,
     NULL,
     PHP_CASSANDRA_STATEMENT_RES_NAME,
+    module_number
+  );
+  le_cassandra_batch_res = zend_register_list_destructors_ex(
+    php_cassandra_batch_dtor,
+    NULL,
+    PHP_CASSANDRA_BATCH_RES_NAME,
     module_number
   );
 
@@ -706,6 +730,33 @@ PHP_FUNCTION(cassandra_session_prepare)
     PHP_CASSANDRA_SESSION_RES_NAME, le_cassandra_session_res);
 
   future = cass_session_prepare(session, cass_string_init2(cql, cql_len));
+
+  ZEND_REGISTER_RESOURCE(
+    return_value,
+    future,
+    le_cassandra_future_res
+  );
+}
+
+PHP_FUNCTION(cassandra_session_execute_batch)
+{
+  CassSession* session;
+  CassBatch* batch;
+  CassFuture*  future;
+  zval* session_resource;
+  zval* batch_resource;
+
+  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "rr", &session_resource, &batch_resource) == FAILURE) {
+    RETURN_FALSE;
+  }
+
+  ZEND_FETCH_RESOURCE(session, CassSession*, &session_resource, -1,
+    PHP_CASSANDRA_SESSION_RES_NAME, le_cassandra_session_res);
+
+  ZEND_FETCH_RESOURCE(batch, CassBatch*, &batch_resource, -1,
+    PHP_CASSANDRA_BATCH_RES_NAME, le_cassandra_batch_res);
+
+  future = cass_session_execute_batch(session, batch);
 
   ZEND_REGISTER_RESOURCE(
     return_value,
@@ -1230,6 +1281,86 @@ PHP_FUNCTION(cassandra_prepared_bind)
     statement,
     le_cassandra_statement_res
   );
+}
+
+/* CassBatch */
+
+PHP_FUNCTION(cassandra_batch_new)
+{
+  CassBatch* batch;
+  long type;
+
+  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &type) == FAILURE) {
+    RETURN_FALSE;
+  }
+
+  if (type != CASS_BATCH_TYPE_LOGGED &&
+      type != CASS_BATCH_TYPE_UNLOGGED &&
+      type != CASS_BATCH_TYPE_COUNTER) {
+    zend_throw_exception_ex(cassandra_ce_InvalidArgumentException, 0 TSRMLS_CC,
+      "Invalid batch type");
+  }
+
+  batch = cass_batch_new((CassBatchType) type);
+
+  ZEND_REGISTER_RESOURCE(
+    return_value,
+    batch,
+    le_cassandra_batch_res
+  );
+}
+
+PHP_FUNCTION(cassandra_batch_free)
+{
+  CassBatch* batch;
+  zval* batch_resource;
+
+  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "r", &batch_resource) == FAILURE) {
+    RETURN_FALSE;
+  }
+
+  ZEND_FETCH_RESOURCE(batch, CassBatch*, &batch_resource, -1,
+    PHP_CASSANDRA_BATCH_RES_NAME, le_cassandra_batch_res);
+
+  zend_list_delete(Z_RESVAL_P(batch_resource));
+
+  RETURN_TRUE;
+}
+
+PHP_FUNCTION(cassandra_batch_set_consistency)
+{
+  CassBatch* batch;
+  zval* batch_resource;
+  long consistency;
+
+  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "rl", &batch_resource, &consistency) == FAILURE) {
+    RETURN_FALSE;
+  }
+
+  ZEND_FETCH_RESOURCE(batch, CassBatch*, &batch_resource, -1,
+    PHP_CASSANDRA_BATCH_RES_NAME, le_cassandra_batch_res);
+
+  CHECK_RESULT(cass_batch_set_consistency(batch, consistency));
+}
+
+PHP_FUNCTION(cassandra_batch_add_statement)
+{
+  CassBatch* batch;
+  zval* batch_resource;
+  CassStatement* statement;
+  zval* statement_resource;
+
+  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "rr", &batch_resource, &statement_resource) == FAILURE) {
+    RETURN_FALSE;
+  }
+
+  ZEND_FETCH_RESOURCE(batch, CassBatch*, &batch_resource, -1,
+    PHP_CASSANDRA_BATCH_RES_NAME, le_cassandra_batch_res);
+
+  ZEND_FETCH_RESOURCE(statement, CassStatement*, &statement_resource, -1,
+    PHP_CASSANDRA_STATEMENT_RES_NAME, le_cassandra_statement_res);
+
+  CHECK_RESULT(cass_batch_add_statement(batch, statement));
 }
 
 static zval*

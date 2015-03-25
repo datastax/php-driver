@@ -14,6 +14,7 @@
 #define PHP_CASSANDRA_STATEMENT_RES_NAME  "Cassandra Statement"
 #define PHP_CASSANDRA_RESULT_RES_NAME     "Cassandra Result"
 #define PHP_CASSANDRA_PREPARED_RES_NAME   "Cassandra Prepared Statement"
+#define PHP_CASSANDRA_BATCH_RES_NAME      "Cassandra Batch Statement"
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -124,6 +125,7 @@ PHP_FUNCTION(cassandra_session_connect);
 PHP_FUNCTION(cassandra_session_connect_keyspace);
 PHP_FUNCTION(cassandra_session_execute);
 PHP_FUNCTION(cassandra_session_prepare);
+PHP_FUNCTION(cassandra_session_execute_batch);
 
 /* CassFuture */
 PHP_FUNCTION(cassandra_future_free);
@@ -147,6 +149,12 @@ PHP_FUNCTION(cassandra_statement_set_serial_consistency);
 /* CassPrepared */
 PHP_FUNCTION(cassandra_prepared_free);
 PHP_FUNCTION(cassandra_prepared_bind);
+
+/* CassBatch */
+PHP_FUNCTION(cassandra_batch_new);
+PHP_FUNCTION(cassandra_batch_free);
+PHP_FUNCTION(cassandra_batch_set_consistency);
+PHP_FUNCTION(cassandra_batch_add_statement);
 
 ZEND_BEGIN_MODULE_GLOBALS(cassandra)
   CassUuidGen* uuid_gen;

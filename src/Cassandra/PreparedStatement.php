@@ -11,7 +11,7 @@ final class PreparedStatement implements Statement
         $this->resource = $resource;
     }
 
-    public function resource($consistency, $serialConsistency, $pageSize, array $arguments = null)
+    public function resource(array $arguments = null, $consistency = null, $serialConsistency = null, $pageSize = null)
     {
         $resource = cassandra_prepared_bind($this->resource);
 
