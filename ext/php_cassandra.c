@@ -1158,51 +1158,39 @@ PHP_FUNCTION(cassandra_statement_set_consistency)
   ZEND_FETCH_RESOURCE(statement, CassStatement*, &statement_resource, -1,
     PHP_CASSANDRA_STATEMENT_RES_NAME, le_cassandra_statement_res);
 
-  switch(consistency) {
-  case 0:
-    CHECK_RESULT(cass_statement_set_consistency(statement, CASS_CONSISTENCY_ANY));
-    break;
-  case 1:
-    CHECK_RESULT(cass_statement_set_consistency(statement, CASS_CONSISTENCY_ONE));
-    break;
-  case 2:
-    CHECK_RESULT(cass_statement_set_consistency(statement, CASS_CONSISTENCY_TWO));
-    break;
-  case 3:
-    CHECK_RESULT(cass_statement_set_consistency(statement, CASS_CONSISTENCY_THREE));
-    break;
-  case 4:
-    CHECK_RESULT(cass_statement_set_consistency(statement, CASS_CONSISTENCY_QUORUM));
-    break;
-  case 5:
-    CHECK_RESULT(cass_statement_set_consistency(statement, CASS_CONSISTENCY_ALL));
-    break;
-  case 6:
-    CHECK_RESULT(cass_statement_set_consistency(statement, CASS_CONSISTENCY_LOCAL_QUORUM));
-    break;
-  case 7:
-    CHECK_RESULT(cass_statement_set_consistency(statement, CASS_CONSISTENCY_EACH_QUORUM));
-    break;
-  case 8:
-    CHECK_RESULT(cass_statement_set_consistency(statement, CASS_CONSISTENCY_SERIAL));
-    break;
-  case 9:
-    CHECK_RESULT(cass_statement_set_consistency(statement, CASS_CONSISTENCY_LOCAL_SERIAL));
-    break;
-  case 10:
-    CHECK_RESULT(cass_statement_set_consistency(statement, CASS_CONSISTENCY_LOCAL_ONE));
-    break;
-  }
+  CHECK_RESULT(cass_statement_set_consistency(statement, consistency));
 }
 
 PHP_FUNCTION(cassandra_statement_set_paging_size)
 {
+  CassStatement* statement;
+  zval* statement_resource;
+  long page_size;
 
+  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "rl", &statement_resource, &page_size) == FAILURE) {
+    RETURN_FALSE;
+  }
+
+  ZEND_FETCH_RESOURCE(statement, CassStatement*, &statement_resource, -1,
+    PHP_CASSANDRA_STATEMENT_RES_NAME, le_cassandra_statement_res);
+
+  CHECK_RESULT(cass_statement_set_paging_size(statement, (int) page_size));
 }
 
 PHP_FUNCTION(cassandra_statement_set_serial_consistency)
 {
+  CassStatement* statement;
+  zval* statement_resource;
+  long consistency;
 
+  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "rl", &statement_resource, &consistency) == FAILURE) {
+    RETURN_FALSE;
+  }
+
+  ZEND_FETCH_RESOURCE(statement, CassStatement*, &statement_resource, -1,
+    PHP_CASSANDRA_STATEMENT_RES_NAME, le_cassandra_statement_res);
+
+  CHECK_RESULT(cass_statement_set_serial_consistency(statement, consistency));
 }
 
 PHP_FUNCTION(cassandra_prepared_free)
