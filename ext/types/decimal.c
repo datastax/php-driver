@@ -1,5 +1,3 @@
-#include <php.h>
-#include <zend_exceptions.h>
 #include "../php_cassandra.h"
 #include "util/math.h"
 #include "decimal.h"

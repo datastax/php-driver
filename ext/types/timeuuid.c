@@ -1,10 +1,8 @@
-#include <php.h>
-#include <zend_exceptions.h>
 #include "../php_cassandra.h"
 #include "util/uuid_gen.h"
 #include "uuid_interface.h"
 #include "timeuuid.h"
-#include <ext/date/php_date.h>
+#include "ext/date/php_date.h"
 
 extern zend_class_entry* cassandra_ce_InvalidArgumentException;
 extern zend_class_entry* cassandra_ce_UuidInterface;

@@ -1,5 +1,3 @@
-#include <php.h>
-#include <zend_exceptions.h>
 #include "../php_cassandra.h"
 #include "util/bytes.h"
 #include "blob.h"
@@ -31,7 +29,7 @@ PHP_METHOD(CassandraBlob, __toString)
   cassandra_blob* blob = (cassandra_blob*) zend_object_store_get_object(getThis() TSRMLS_CC);
   char* hex;
   int hex_len;
-  php_cassandra_bytes_to_hex(blob->data, blob->size, &hex, &hex_len);
+  php_cassandra_bytes_to_hex((const char *) blob->data, blob->size, &hex, &hex_len);
 
   RETURN_STRINGL(hex, hex_len, 0);
 }
@@ -43,7 +41,7 @@ PHP_METHOD(CassandraBlob, bytes)
   cassandra_blob* blob = (cassandra_blob*) zend_object_store_get_object(getThis() TSRMLS_CC);
   char* hex;
   int hex_len;
-  php_cassandra_bytes_to_hex(blob->data, blob->size, &hex, &hex_len);
+  php_cassandra_bytes_to_hex((const char *) blob->data, blob->size, &hex, &hex_len);
 
   RETURN_STRINGL(hex, hex_len, 0);
 }
@@ -74,7 +72,7 @@ php_cassandra_blob_properties(zval *object TSRMLS_DC)
   zval* bytes;
   char* hex;
   int hex_len;
-  php_cassandra_bytes_to_hex(blob->data, blob->size, &hex, &hex_len);
+  php_cassandra_bytes_to_hex((const char *) blob->data, blob->size, &hex, &hex_len);
 
   MAKE_STD_ZVAL(bytes);
   ZVAL_STRINGL(bytes, hex, hex_len, 0);

@@ -2,6 +2,11 @@
 #include "php_ini.h"
 #include "ext/standard/info.h"
 #include "util/bytes.h"
+#include "util/math.h"
+#include "util/collections.h"
+#include "types/collection.h"
+#include "types/map.h"
+#include "types/set.h"
 
 extern zend_class_entry* cassandra_ce_RuntimeException;
 extern zend_class_entry* cassandra_ce_TimeoutException;
@@ -108,6 +113,8 @@ exception_class(CassError rc)
     return cassandra_ce_AlreadyExistsException;
   case CASS_ERROR_SERVER_UNPREPARED:
     return cassandra_ce_UnpreparedException;
+  default:
+    return cassandra_ce_RuntimeException;
   }
 }
 
@@ -1486,7 +1493,7 @@ php_cassandra_value(const CassValue* value, CassValueType type)
     }
     object_init_ex(return_value, cassandra_ce_Varint);
     cassandra_varint* varint_number = (cassandra_varint*) zend_object_store_get_object(return_value TSRMLS_CC);
-    import_twos_complement(v_bytes.data, v_bytes.size, &varint_number->value);
+    import_twos_complement((cass_byte_t*) v_bytes.data, v_bytes.size, &varint_number->value);
     break;
   case CASS_VALUE_TYPE_UUID:
     object_init_ex(return_value, cassandra_ce_Uuid);
@@ -1555,7 +1562,7 @@ php_cassandra_value(const CassValue* value, CassValueType type)
     }
     object_init_ex(return_value, cassandra_ce_Decimal);
     cassandra_decimal* decimal_number = (cassandra_decimal*) zend_object_store_get_object(return_value TSRMLS_CC);
-    import_twos_complement(v_decimal.varint.data, v_decimal.varint.size, &decimal_number->value);
+    import_twos_complement((cass_byte_t*) v_decimal.varint.data, v_decimal.varint.size, &decimal_number->value);
     decimal_number->scale = v_decimal.scale;
     break;
   case CASS_VALUE_TYPE_DOUBLE:

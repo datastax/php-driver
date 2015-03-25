@@ -1,7 +1,7 @@
 #ifndef PHP_CASSANDRA_COLLECTION_H
 #define PHP_CASSANDRA_COLLECTION_H
 
-int php_cassandra_collection_push(cassandra_collection* collection, zval* object);
+int php_cassandra_collection_add(cassandra_collection* collection, zval* object);
 
 PHP_METHOD(CassandraCollection, __construct);
 PHP_METHOD(CassandraCollection, type);

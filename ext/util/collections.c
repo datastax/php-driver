@@ -1,8 +1,8 @@
-#include <php.h>
-#include <zend_exceptions.h>
 #include "../php_cassandra.h"
 #include <stdlib.h>
 #include "util/collections.h"
+#include "util/bytes.h"
+#include "util/math.h"
 
 #define EXPECTING_VALUE(expected) \
   ({ \
@@ -125,9 +125,11 @@ php_cassandra_validate_object(zval* object, CassValueType type)
       EXPECTING_VALUE("an instance of Cassandra\\Inet");
 
     return 1;
-  }
+  default:
+    EXPECTING_VALUE("a simple Cassandra value");
 
-  return 0;
+    return 0;
+  }
 }
 
 int
@@ -205,7 +207,7 @@ php_cassandra_hash_object(zval* object, CassValueType type, char** key, int* len
     }
 
     cassandra_blob* blob = (cassandra_blob*) zend_object_store_get_object(object TSRMLS_CC);
-    php_cassandra_bytes_to_hex(blob->data, blob->size, &string, &string_len);
+    php_cassandra_bytes_to_hex((const char*) blob->data, blob->size, &string, &string_len);
 
     *len = spprintf(key, 0, "C:BLOB:%s", string);
     efree(string);
@@ -284,6 +286,10 @@ php_cassandra_hash_object(zval* object, CassValueType type, char** key, int* len
       );
 
     return 1;
+  default:
+    EXPECTING_VALUE("a simple Cassandra value");
+
+    return 0;
   }
 
   return 0;

@@ -21,6 +21,7 @@
 #endif
 
 #include "php.h"
+#include "zend_exceptions.h"
 
 extern zend_module_entry cassandra_module_entry;
 #define phpext_cassandra_ptr &cassandra_module_entry
@@ -156,6 +157,29 @@ PHP_FUNCTION(cassandra_batch_new);
 PHP_FUNCTION(cassandra_batch_free);
 PHP_FUNCTION(cassandra_batch_set_consistency);
 PHP_FUNCTION(cassandra_batch_add_statement);
+
+/* Exceptions */
+void cassandra_define_CassandraException(TSRMLS_D);
+void cassandra_define_CassandraInvalidArgumentException(TSRMLS_D);
+void cassandra_define_CassandraLogicException(TSRMLS_D);
+void cassandra_define_CassandraRuntimeException(TSRMLS_D);
+void cassandra_define_CassandraServerException(TSRMLS_D);
+void cassandra_define_CassandraTimeoutException(TSRMLS_D);
+
+/* Types */
+void cassandra_define_CassandraBigint(TSRMLS_D);
+void cassandra_define_CassandraBlob(TSRMLS_D);
+void cassandra_define_CassandraCollection(TSRMLS_D);
+void cassandra_define_CassandraDecimal(TSRMLS_D);
+void cassandra_define_CassandraFloat(TSRMLS_D);
+void cassandra_define_CassandraInet(TSRMLS_D);
+void cassandra_define_CassandraMap(TSRMLS_D);
+void cassandra_define_CassandraSet(TSRMLS_D);
+void cassandra_define_CassandraTimestamp(TSRMLS_D);
+void cassandra_define_CassandraUuidInterface(TSRMLS_D);
+void cassandra_define_CassandraUuid(TSRMLS_D);
+void cassandra_define_CassandraTimeuuid(TSRMLS_D);
+void cassandra_define_CassandraVarint(TSRMLS_D);
 
 ZEND_BEGIN_MODULE_GLOBALS(cassandra)
   CassUuidGen* uuid_gen;
