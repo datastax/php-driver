@@ -12,7 +12,17 @@ final class DefaultCluster implements Cluster
      */
     private $resource;
 
+    /**
+     * Default cluster-wide execution options
+     * @var ExecutionOptions
+     */
     private $defaults;
+
+    /**
+     * Holds a reference to SSLContext resource if was configured with SSL
+     * @var resource|null
+     */
+    private $ssl;
 
     /**
      * @access private
