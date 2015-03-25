@@ -9,19 +9,16 @@ use Cassandra\Exception\TimeoutException;
 final class FuturePreparedStatement implements Future
 {
     private $resource;
+    private $statement;
 
     public function __construct($resource)
     {
         $this->resource  = $resource;
-        $this->exception = null;
         $this->statement = null;
     }
 
     public function get($timeout = null)
     {
-        if (!is_null($this->exception)) {
-            throw $this->exception;
-        }
 
         if (!is_null($this->statement)) {
             return $this->statement;
@@ -35,23 +32,11 @@ final class FuturePreparedStatement implements Future
                 var_export($timeout, true)
             ));
         } else {
-            if (!cassandra_future_wait_timed($this->resource, $timeout)) {
-                throw new TimeoutException(sprintf(
-                    "Unable to resolve future within %d seconds", $timeout
-                ));
-            }
+            cassandra_future_wait_timed($this->resource, $timeout);
         }
 
-        $code = cassandra_future_error_code($this->resource);
-
-        if ($code === 0) {
-            $this->statement = new PreparedStatement(cassandra_future_get_prepared($this->resource));
-            $this->resource  = null;
-            return $this->statement;
-        }
-
-        $this->exception = new LibraryException(cassandra_future_error_message($this->resource), $code);
+        $this->statement = new PreparedStatement(cassandra_future_get_prepared($this->resource));
         $this->resource  = null;
-        throw $this->exception;
+        return $this->statement;
     }
 }

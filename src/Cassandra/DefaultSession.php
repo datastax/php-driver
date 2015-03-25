@@ -128,7 +128,7 @@ final class DefaultSession implements Session
 
         return new FutureRows(cassandra_session_execute(
             $this->resource,
-            $statement->resource($arguments)
+            $statement->resource($consistency, $serialConsistency, $pageSize, $arguments)
         ));
     }
 

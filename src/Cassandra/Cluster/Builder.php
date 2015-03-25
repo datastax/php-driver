@@ -133,29 +133,29 @@ final class Builder
                 cassandra_cluster_set_load_balance_round_robin($cluster);
                 break;
             case self::LOAD_BALANCING_DC_AWARE_ROUND_ROBIN:
-                Util::assertNoError(cassandra_cluster_set_load_balance_dc_aware($cluster, $this->localDatacenter, $this->hostPerRemoteDatacenter, $this->useRemoteDatacenterForLocalConsistencies));
+                cassandra_cluster_set_load_balance_dc_aware($cluster, $this->localDatacenter, $this->hostPerRemoteDatacenter, $this->useRemoteDatacenterForLocalConsistencies);
                 break;
         }
 
         cassandra_cluster_set_token_aware_routing($cluster, $this->useTokenAwareRouting);
 
         if (!is_null($this->username) && !is_null($this->password)) {
-            Util::assertNoError(cassandra_cluster_set_credentials($cluster, $this->username, $this->password));
+            cassandra_cluster_set_credentials($cluster, $this->username, $this->password);
         }
 
         if (!is_null($this->connectTimeout)) {
-            Util::assertNoError(cassandra_cluster_set_connect_timeout($cluster, $this->connectTimeout));
+            cassandra_cluster_set_connect_timeout($cluster, $this->connectTimeout);
         }
 
         if (!is_null($this->requestTimeout)) {
-            Util::assertNoError(cassandra_cluster_set_request_timeout($cluster, $this->requestTimeout));
+            cassandra_cluster_set_request_timeout($cluster, $this->requestTimeout);
         }
 
         if ($this->sslContext instanceof DefaultSSLContext) {
-            Util::assertNoError(cassandra_cluster_set_ssl($cluster, $context->resource()));
+            cassandra_cluster_set_ssl($cluster, $context->resource());
         }
 
-        Util::assertNoError(cassandra_cluster_set_contact_points($cluster, $this->contactPoints));
+        cassandra_cluster_set_contact_points($cluster, $this->contactPoints);
 
         return new DefaultCluster($cluster, $options);
     }

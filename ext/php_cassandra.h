@@ -106,7 +106,6 @@ PHP_RSHUTDOWN_FUNCTION(cassandra);
 PHP_MINFO_FUNCTION(cassandra);
 
 /* Util */
-PHP_FUNCTION(cassandra_error_message);
 PHP_FUNCTION(cassanrda_rows_from_result);
 
 /* CassCluster */
@@ -130,8 +129,6 @@ PHP_FUNCTION(cassandra_session_prepare);
 PHP_FUNCTION(cassandra_future_free);
 PHP_FUNCTION(cassandra_future_wait);
 PHP_FUNCTION(cassandra_future_wait_timed);
-PHP_FUNCTION(cassandra_future_error_code);
-PHP_FUNCTION(cassandra_future_error_message);
 PHP_FUNCTION(cassandra_future_get_result);
 PHP_FUNCTION(cassandra_future_get_prepared);
 
@@ -143,25 +140,13 @@ PHP_FUNCTION(cassandra_result_row_count);
 PHP_FUNCTION(cassandra_statement_new);
 PHP_FUNCTION(cassandra_statement_free);
 PHP_FUNCTION(cassandra_statement_bind);
+PHP_FUNCTION(cassandra_statement_set_consistency);
+PHP_FUNCTION(cassandra_statement_set_paging_size);
+PHP_FUNCTION(cassandra_statement_set_serial_consistency);
 
 /* CassPrepared */
 PHP_FUNCTION(cassandra_prepared_free);
 PHP_FUNCTION(cassandra_prepared_bind);
-
-/* Exceptions */
-void cassandra_define_CassandraException(TSRMLS_D);
-void cassandra_define_CassandraInvalidArgumentException(TSRMLS_D);
-
-/* Types */
-void cassandra_define_CassandraBigint(TSRMLS_D);
-void cassandra_define_CassandraBlob(TSRMLS_D);
-void cassandra_define_CassandraDecimal(TSRMLS_D);
-void cassandra_define_CassandraInet(TSRMLS_D);
-void cassandra_define_CassandraTimestamp(TSRMLS_D);
-void cassandra_define_CassandraUuidInterface(TSRMLS_D);
-void cassandra_define_CassandraUuid(TSRMLS_D);
-void cassandra_define_CassandraTimeuuid(TSRMLS_D);
-void cassandra_define_CassandraVarint(TSRMLS_D);
 
 ZEND_BEGIN_MODULE_GLOBALS(cassandra)
   CassUuidGen* uuid_gen;
