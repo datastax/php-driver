@@ -4,14 +4,26 @@ namespace Cassandra;
 
 use Cassandra\Exception\InvalidArgumentException;
 
+/**
+ * This future results is resolved with Cassandra\Rows
+ * @see Cassandra\Rows
+ */
 final class FutureRows implements Future
 {
+    /**
+     * Result future resource
+     * @var resource
+     */
     private $resource;
+    private $session;
+    private $statement;
     private $rows;
 
-    public function __construct($resource)
+    public function __construct($resource, $session, $statement)
     {
         $this->resource  = $resource;
+        $this->session   = $session;
+        $this->statement = $statement;
         $this->rows      = null;
     }
 
@@ -32,13 +44,14 @@ final class FutureRows implements Future
             cassandra_future_wait_timed($this->resource, $timeout);
         }
 
-        $rows   = array();
-        foreach (cassanrda_rows_from_result(cassandra_future_get_result($this->resource)) as $row) {
-            $rows[]= new Row($row);
-        }
+        $this->rows = new Rows(
+                          cassandra_future_get_result($this->resource),
+                          $this->session, $this->statement
+                      );
+        $this->resource  = null;
+        $this->session   = null;
+        $this->statement = null;
 
-        $this->rows     = new Rows($rows);
-        $this->resource = null;
         return $this->rows;
     }
 }

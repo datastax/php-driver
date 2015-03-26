@@ -13,7 +13,8 @@ Feature: Batch statements
       are, unlike other writes, not idempotent.
 
   Background:
-    Given the following schema:
+    Given a running Cassandra cluster
+    And the following schema:
       """cql
       CREATE KEYSPACE simplex WITH replication = {
         'class': 'SimpleStrategy',

@@ -3,7 +3,8 @@ Feature: Simple Statements
   PHP Driver supports simple statements.
 
   Background:
-    Given the following schema:
+    Given a running Cassandra cluster
+    And the following schema:
       """cql
       CREATE KEYSPACE simplex WITH replication = {
         'class': 'SimpleStrategy',

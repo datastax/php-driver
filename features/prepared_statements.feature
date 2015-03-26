@@ -4,7 +4,8 @@ Feature: Prepared Statements
   initialized using `Cassandra\Session::prepare()`.
 
   Background:
-    Given the following schema:
+    Given a running Cassandra cluster
+    And the following schema:
       """cql
       CREATE KEYSPACE simplex WITH replication = {
         'class': 'SimpleStrategy',

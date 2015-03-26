@@ -10,16 +10,27 @@ use Cassandra\Exception\DomainException;
 final class Rows implements \Iterator, \Countable, \ArrayAccess
 {
     /**
-     * @access private
+     * Result resource
+     * @var resource
      */
+    private $resource;
+    private $session;
+    private $statement;
     private $rows;
 
     /**
      * @access private
      */
-    public function __construct(array $rows)
+    public function __construct($resource, $session, $statement)
     {
-        $this->rows = $rows;
+        $this->resource  = $resource;
+        $this->session   = $session;
+        $this->statement = $statement;
+        $this->rows      = array();
+
+        foreach (cassanrda_rows_from_result($this->resource) as $row) {
+            $this->rows[] = new Row($row);
+        }
     }
 
     /**
@@ -31,7 +42,7 @@ final class Rows implements \Iterator, \Countable, \ArrayAccess
     }
 
     /**
-     * Resets the values iterator
+     * Resets the rows iterator
      * @return void
      */
     public function rewind()
@@ -40,7 +51,7 @@ final class Rows implements \Iterator, \Countable, \ArrayAccess
     }
 
     /**
-     * Returns current column's value
+     * Returns current row
      * @return mixed value
      */
     public function current()
@@ -49,7 +60,7 @@ final class Rows implements \Iterator, \Countable, \ArrayAccess
     }
 
     /**
-     * Returns current column's name
+     * Returns current index
      * @return string name
      */
     public function key()
@@ -58,7 +69,7 @@ final class Rows implements \Iterator, \Countable, \ArrayAccess
     }
 
     /**
-     * Advances the values iterator by one
+     * Advances the rows iterator by one
      * @return void
      */
     public function next()
@@ -67,7 +78,7 @@ final class Rows implements \Iterator, \Countable, \ArrayAccess
     }
 
     /**
-     * @return boolean whether there are more values available for iteration
+     * @return boolean whether there are more rows available for iteration
      */
     public function valid()
     {
@@ -128,13 +139,32 @@ final class Rows implements \Iterator, \Countable, \ArrayAccess
      */
     public function isLastPage()
     {
+        return !cassandra_result_has_more_pages($this->resource);
     }
 
     /**
      * @return  Cassandra\Result|null  loads and returns next result page
      */
-    public function nextPage()
+    public function nextPage($timeout = null)
     {
+        return $this->nextPageAsync()->get($timeout);
+    }
+
+    /**
+     * @return  Cassandra\Future  returns future of the next result page
+     */
+    public function nextPageAsync()
+    {
+        try {
+            cassandra_statement_set_paging_state($this->statement, $this->resource);
+        } catch (Exception $e) {
+            return new FutureException($e);
+        }
+
+        return new FutureRows(
+            cassandra_session_execute($this->session, $this->statement),
+            $this->session, $this->statement
+        );
     }
 
     /**

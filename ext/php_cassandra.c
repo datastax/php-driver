@@ -158,6 +158,7 @@ const zend_function_entry cassandra_functions[] = {
   /* CassResult */
   PHP_FE(cassandra_result_free, NULL)
   PHP_FE(cassandra_result_row_count, NULL)
+  PHP_FE(cassandra_result_has_more_pages, NULL)
   /* CassStatement */
   PHP_FE(cassandra_statement_new, NULL)
   PHP_FE(cassandra_statement_free, NULL)
@@ -165,6 +166,7 @@ const zend_function_entry cassandra_functions[] = {
   PHP_FE(cassandra_statement_set_consistency, NULL)
   PHP_FE(cassandra_statement_set_paging_size, NULL)
   PHP_FE(cassandra_statement_set_serial_consistency, NULL)
+  PHP_FE(cassandra_statement_set_paging_state, NULL)
   /* CassPrepared */
   PHP_FE(cassandra_prepared_free, NULL)
   PHP_FE(cassandra_prepared_bind, NULL)
@@ -958,6 +960,24 @@ PHP_FUNCTION(cassandra_result_row_count)
   RETURN_LONG(cass_result_row_count(result));
 }
 
+PHP_FUNCTION(cassandra_result_has_more_pages)
+{
+  CassResult* result;
+  zval* result_resource;
+
+  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "r", &result_resource) == FAILURE) {
+    RETURN_FALSE;
+  }
+
+  ZEND_FETCH_RESOURCE(result, CassResult*, &result_resource, -1,
+    PHP_CASSANDRA_RESULT_RES_NAME, le_cassandra_result_res);
+
+  if (cass_result_has_more_pages(result))
+    RETURN_TRUE;
+
+  RETURN_FALSE;
+}
+
 PHP_FUNCTION(cassandra_statement_new)
 {
   CassStatement* statement;
@@ -1272,6 +1292,26 @@ PHP_FUNCTION(cassandra_statement_set_serial_consistency)
     PHP_CASSANDRA_STATEMENT_RES_NAME, le_cassandra_statement_res);
 
   CHECK_RESULT(cass_statement_set_serial_consistency(statement, consistency));
+}
+
+PHP_FUNCTION(cassandra_statement_set_paging_state)
+{
+  CassStatement* statement;
+  zval* statement_resource;
+  CassResult* result;
+  zval* result_resource;
+
+  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "rr", &statement_resource, &result_resource) == FAILURE) {
+    RETURN_FALSE;
+  }
+
+  ZEND_FETCH_RESOURCE(statement, CassStatement*, &statement_resource, -1,
+    PHP_CASSANDRA_STATEMENT_RES_NAME, le_cassandra_statement_res);
+
+  ZEND_FETCH_RESOURCE(result, CassResult*, &result_resource, -1,
+    PHP_CASSANDRA_RESULT_RES_NAME, le_cassandra_result_res);
+
+  CHECK_RESULT(cass_statement_set_paging_state(statement, result));
 }
 
 PHP_FUNCTION(cassandra_prepared_free)

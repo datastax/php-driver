@@ -2,6 +2,8 @@
 
 namespace Cassandra;
 
+use Cassandra\Exception\InvalidArgumentException;
+
 final class ExecutionOptions
 {
     /**
@@ -37,4 +39,35 @@ final class ExecutionOptions
      * @var array
      */
     public $arguments;
+
+    public function __construct(array $options = null)
+    {
+        if (!is_null($options)) {
+            foreach ($options as $key => $value) {
+                switch ($key) {
+                    case 'consistency':
+                        $this->consistency = $value;
+                        break;
+                    case 'serial_consistency':
+                        $this->serialConsistency = $value;
+                        break;
+                    case 'page_size':
+                        $this->pageSize = $value;
+                        break;
+                    case 'timeout':
+                        $this->timeout = $value;
+                        break;
+                    case 'arguments':
+                        $this->arguments = $value;
+                        break;
+                    default:
+                        throw new InvalidArgumentException(sprintf(
+                            "Unexpected option '%s', supported options are: " .
+                            "'consistency', 'serial_consistency', 'page_size', " .
+                            "'timeout' and 'arguments'", $key
+                        ));
+                }
+            }
+        }
+    }
 }

@@ -130,7 +130,7 @@ final class DefaultSession implements Session
             $future = cassandra_session_execute($this->resource, $resource);
         }
 
-        return new FutureRows($future);
+        return new FutureRows($future, $this->resource, $resource);
     }
 
     /**

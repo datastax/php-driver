@@ -2,6 +2,9 @@ Feature: Session management
 
   Each PHP Driver session can be explicitly closed to cleanup its resources.
 
+  Background:
+    Given a running Cassandra cluster
+
   Scenario: Session can only be closed once
     Given the following example:
       """php

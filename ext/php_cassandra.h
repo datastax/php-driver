@@ -139,6 +139,7 @@ PHP_FUNCTION(cassandra_future_get_prepared);
 /* CassResult */
 PHP_FUNCTION(cassandra_result_free);
 PHP_FUNCTION(cassandra_result_row_count);
+PHP_FUNCTION(cassandra_result_has_more_pages);
 
 /* CassStatement */
 PHP_FUNCTION(cassandra_statement_new);
@@ -147,6 +148,7 @@ PHP_FUNCTION(cassandra_statement_bind);
 PHP_FUNCTION(cassandra_statement_set_consistency);
 PHP_FUNCTION(cassandra_statement_set_paging_size);
 PHP_FUNCTION(cassandra_statement_set_serial_consistency);
+PHP_FUNCTION(cassandra_statement_set_paging_state);
 
 /* CassPrepared */
 PHP_FUNCTION(cassandra_prepared_free);

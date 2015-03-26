@@ -2,6 +2,9 @@ Feature: Datatypes
 
   PHP Driver supports all Cassandra datatypes
 
+  Background:
+    Given a running Cassandra cluster
+
   Scenario: Using Cassandra value types
     Given the following schema:
       """cql

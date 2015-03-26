@@ -2,3 +2,5 @@
 /vendor/
 /bin/
 /.vagrant/
+/venv/
+/tmp/*
