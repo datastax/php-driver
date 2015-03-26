@@ -31,6 +31,14 @@ final class Cassandra
     const BATCH_UNLOGGED = 1;
     const BATCH_COUNTER  = 2;
 
+    const LOG_DISABLED = 0;
+    const LOG_CRITICAL = 1;
+    const LOG_ERROR    = 2;
+    const LOG_WARN     = 3;
+    const LOG_INFO     = 4;
+    const LOG_DEBUG    = 5;
+    const LOG_TRACE    = 6;
+
     const VERSION = '1.0.0.alpha';
 
     /**
@@ -51,5 +59,16 @@ final class Cassandra
     public static function ssl()
     {
         return new SSLOptionsBuilder();
+    }
+
+    /**
+     * Sets log severity
+     *
+     * @param  int  $level  log severity, must be one of Cassandra::LOG_* constants.
+     * @return void
+     */
+    public static function setLogLevel($level)
+    {
+        cassandra_set_log_level($level);
     }
 }

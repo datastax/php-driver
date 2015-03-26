@@ -107,6 +107,11 @@ PHP_RINIT_FUNCTION(cassandra);
 PHP_RSHUTDOWN_FUNCTION(cassandra);
 PHP_MINFO_FUNCTION(cassandra);
 
+/* Log */
+PHP_FUNCTION(cassandra_set_log_level);
+// PHP_FUNCTION(cassandra_set_log_callback);
+// PHP_FUNCTION(cassandra_get_log_callback);
+
 /* Util */
 PHP_FUNCTION(cassanrda_rows_from_result);
 
@@ -184,9 +189,10 @@ void cassandra_define_CassandraTimeuuid(TSRMLS_D);
 void cassandra_define_CassandraVarint(TSRMLS_D);
 
 ZEND_BEGIN_MODULE_GLOBALS(cassandra)
-  CassUuidGen* uuid_gen;
+  CassUuidGen*          uuid_gen;
+  CassLogLevel          log_level;
+  zval*                 log_callback;
 ZEND_END_MODULE_GLOBALS(cassandra)
-
 
 #ifdef ZTS
 #define CASSANDRA_G(v) TSRMG(cassandra_globals_id, zend_cassandra_globals *, v)
