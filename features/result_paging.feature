@@ -70,18 +70,18 @@ Feature: Result paging
       """
       entries in page: 5
       key: a, value: 0
-      key: b, value: 1
       key: c, value: 2
-      key: d, value: 3
-      key: e, value: 4
-      entries in page: 5
+      key: m, value: 12
       key: f, value: 5
       key: g, value: 6
+      entries in page: 5
+      key: e, value: 4
+      key: d, value: 3
       key: h, value: 7
-      key: i, value: 8
+      key: l, value: 11
       key: j, value: 9
       entries in page: 3
+      key: i, value: 8
       key: k, value: 10
-      key: l, value: 11
-      key: m, value: 12
+      key: b, value: 1
       """
