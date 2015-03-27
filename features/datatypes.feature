@@ -60,7 +60,7 @@ Feature: Datatypes
       """php
       <?php
       $cluster   = Cassandra::cluster()
-                     ->withContactPoints(array('127.0.0.1'))
+                     ->withContactPoints('127.0.0.1')
                      ->build();
       $session   = $cluster->connect("simplex");
       $statement = new Cassandra\SimpleStatement("SELECT * FROM values");
@@ -143,7 +143,7 @@ Feature: Datatypes
       """php
       <?php
       $cluster   = Cassandra::cluster()
-                     ->withContactPoints(array('127.0.0.1'))
+                     ->withContactPoints('127.0.0.1')
                      ->build();
       $session   = $cluster->connect("simplex");
       $statement = new Cassandra\SimpleStatement("SELECT * FROM user");

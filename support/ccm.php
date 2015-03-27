@@ -55,7 +55,7 @@ class CCM
     {
         $this->run('start', '--wait-other-notice', '--wait-for-binary-proto');
         $builder = Cassandra::cluster()
-                       ->withContactPoints(array('127.0.0.1'));
+                       ->withContactPoints('127.0.0.1');
 
         if ($this->ssl || $this->clientAuth) {
             $sslOptions = Cassandra::ssl()

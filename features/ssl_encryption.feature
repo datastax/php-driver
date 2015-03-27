@@ -8,7 +8,7 @@ Feature: SSL encryption
       """php
       <?php
       $cluster = Cassandra::cluster()
-                     ->withContactPoints(array('127.0.0.1'))
+                     ->withContactPoints('127.0.0.1')
                      ->build();
 
       try {
@@ -32,7 +32,7 @@ Feature: SSL encryption
                      ->withVerifyFlags(Cassandra::VERIFY_NONE)
                      ->build();
       $cluster = Cassandra::cluster()
-                     ->withContactPoints(array('127.0.0.1'))
+                     ->withContactPoints('127.0.0.1')
                      ->withSSL($ssl)
                      ->build();
 
@@ -59,7 +59,7 @@ Feature: SSL encryption
                      ->withTrustedCerts(getenv('SERVER_CERT'))
                      ->build();
       $cluster = Cassandra::cluster()
-                     ->withContactPoints(array('127.0.0.1'))
+                     ->withContactPoints('127.0.0.1')
                      ->withSSL($ssl)
                      ->build();
 
@@ -88,7 +88,7 @@ Feature: SSL encryption
                      ->withPrivateKey(getenv('PRIVATE_KEY'), getenv('PASSPHRASE'))
                      ->build();
       $cluster = Cassandra::cluster()
-                     ->withContactPoints(array('127.0.0.1'))
+                     ->withContactPoints('127.0.0.1')
                      ->withSSL($ssl)
                      ->build();
 

@@ -246,14 +246,16 @@ final class Builder
     }
 
     /**
-     * Configures the initial endpoints. Note that the driver will automatically discover and connect to the rest of the cluster
+     * Configures the initial endpoints. Note that the driver will
+     * automatically discover and connect to the rest of the cluster
      *
-     * @param array $hosts an array of stings of ip addresses
+     * @param  string $host  an ip address string
+     * @param  string ...    additional addresses
      * @return Cassandra\Cluster\Builder self
      */
-    public function withContactPoints(array $hosts)
+    public function withContactPoints($host)
     {
-        $this->contactPoints = implode(',', $hosts);
+        $this->contactPoints = implode(',', func_get_args());
         return $this;
     }
 
