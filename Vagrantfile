@@ -21,21 +21,6 @@ Vagrant.configure("2") do |config|
   virtualenv venv
   source venv/bin/activate
   pip install ccm
-  ccm create -v binary:2.1.3 -b php-driver-cluster
-
-  ccm updateconf --rt 1000 'read_request_timeout_in_ms: 1000'         \
-    'write_request_timeout_in_ms: 1000' 'request_timeout_in_ms: 1000' \
-    'phi_convict_threshold: 16' 'hinted_handoff_enabled: false'       \
-    'dynamic_snitch_update_interval_in_ms: 1000'                      \
-    'cas_contention_timeout_in_ms: 10000' 'file_cache_size_in_mb: 0'  \
-    'native_transport_max_threads: 1' 'rpc_min_threads: 1'            \
-    'rpc_max_threads: 1' 'concurrent_reads: 2' 'concurrent_writes: 2' \
-    'concurrent_compactors: 1' 'compaction_throughput_mb_per_sec: 0'  \
-    'key_cache_size_in_mb: 0' 'key_cache_save_period: 0'              \
-    'memtable_flush_writers: 1' 'max_hints_delivery_threads: 1'
-
-  ccm populate -n 1 -i 127.0.0.
-  ccm start --verbose
 
   pushd /usr/local/src/php-driver/lib/cpp-driver
   cmake .
