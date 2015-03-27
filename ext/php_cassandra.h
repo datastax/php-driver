@@ -191,7 +191,6 @@ void cassandra_define_CassandraVarint(TSRMLS_D);
 ZEND_BEGIN_MODULE_GLOBALS(cassandra)
   CassUuidGen*          uuid_gen;
   CassLogLevel          log_level;
-  zval*                 log_callback;
 ZEND_END_MODULE_GLOBALS(cassandra)
 
 #ifdef ZTS

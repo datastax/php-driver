@@ -222,51 +222,10 @@ ZEND_GET_MODULE(cassandra)
 static void
 php_cassandra_log(const CassLogMessage* message, void *data)
 {
-  if (CASSANDRA_G(log_level) < message->severity) {
-    return;
-  }
-
-  if (CASSANDRA_G(log_callback)) {
-    zval** params[3];
-    zval*  zseverity;
-    zval*  zmessage;
-    zval*  zsource;
-    zval*  zresult = NULL;
-    char*  source_str;
-    int    source_len;
-
-    MAKE_STD_ZVAL(zseverity);
-    MAKE_STD_ZVAL(zmessage);
-    MAKE_STD_ZVAL(zsource);
-
-    ZVAL_STRING(zseverity, cass_log_level_string(message->severity), 1);
-    params[0] = &zseverity;
-
-    ZVAL_STRING(zmessage, message->message, 1);
-    params[1] = &zmessage;
-
-    source_len = spprintf(&source_str, 0, "%s:%d", message->file, message->line);
-    ZVAL_STRINGL(zsource, source_str, source_len, 0);
-    params[2] = &zsource;
-
-    if (call_user_function_ex(EG(function_table), NULL, CASSANDRA_G(log_callback),
-          &zresult, 3, params, 0, NULL TSRMLS_CC) == FAILURE) {
-      php_error(E_WARNING, "Custom Cassandra log callback failed");
-    }
-
-    if (zresult) {
-      zval_ptr_dtor(&zresult);
-    }
-
-    zval_ptr_dtor(&zseverity);
-    zval_ptr_dtor(&zmessage);
-    zval_ptr_dtor(&zsource);
-  } else {
-    php_error(E_NOTICE, "[%s] %s (%s:%d)",
-      cass_log_level_string(message->severity), message->message,
-      message->file, message->line
-    );
-  }
+  fprintf(stderr, "php-driver | [%s] %s (%s:%d)\n",
+    cass_log_level_string(message->severity), message->message,
+    message->file, message->line
+  );
 }
 
 static int le_cassandra_cluster_res;
@@ -358,24 +317,19 @@ php_cassandra_globals_ctor(zend_cassandra_globals* cassandra_globals TSRMLS_DC)
 {
   cassandra_globals->uuid_gen  = cass_uuid_gen_new();
   cassandra_globals->log_level = CASS_LOG_ERROR;
+  cass_log_set_callback(php_cassandra_log, NULL);
 }
 
 static void
 php_cassandra_globals_dtor(zend_cassandra_globals* cassandra_globals TSRMLS_DC)
 {
   cass_uuid_gen_free(cassandra_globals->uuid_gen);
-  if (cassandra_globals->log_callback) {
-    zval_ptr_dtor(&cassandra_globals->log_callback);
-    cassandra_globals->log_callback = NULL;
-  }
-
   cassandra_globals->uuid_gen = NULL;
 }
 
 PHP_MINIT_FUNCTION(cassandra)
 {
   // REGISTER_INI_ENTRIES();
-  cass_log_set_callback(php_cassandra_log, NULL);
 #ifdef ZTS
   ts_allocate_id(
     &cassandra_globals_id,
@@ -458,8 +412,6 @@ PHP_MINIT_FUNCTION(cassandra)
 PHP_MSHUTDOWN_FUNCTION(cassandra)
 {
   // UNREGISTER_INI_ENTRIES();
-  cass_log_cleanup();
-
 #ifndef ZTS
   php_cassandra_globals_dtor(&cassandra_globals TSRMLS_CC);
 #endif
@@ -1765,7 +1717,7 @@ php_cassandra_value(const CassValue* value, CassValueType type)
     iterator = cass_iterator_from_collection(value);
 
     while (cass_iterator_next(iterator)) {
-      php_cassandra_collection_add(collection, php_cassandra_value(cass_iterator_get_value(iterator), collection->type));
+      php_cassandra_collection_add(collection, php_cassandra_value(cass_iterator_get_value(iterator), collection->type) TSRMLS_CC);
     }
 
     cass_iterator_free(iterator);
@@ -1782,7 +1734,7 @@ php_cassandra_value(const CassValue* value, CassValueType type)
       zval* k = php_cassandra_value(cass_iterator_get_map_key(iterator), map->key_type);
       zval* v = php_cassandra_value(cass_iterator_get_map_value(iterator), map->value_type);
 
-      php_cassandra_map_set(map, k, v);
+      php_cassandra_map_set(map, k, v TSRMLS_CC);
     }
 
     cass_iterator_free(iterator);
@@ -1795,7 +1747,7 @@ php_cassandra_value(const CassValue* value, CassValueType type)
     iterator = cass_iterator_from_collection(value);
 
     while (cass_iterator_next(iterator)) {
-      php_cassandra_set_add(set, php_cassandra_value(cass_iterator_get_value(iterator), set->type));
+      php_cassandra_set_add(set, php_cassandra_value(cass_iterator_get_value(iterator), set->type) TSRMLS_CC);
     }
 
     cass_iterator_free(iterator);
