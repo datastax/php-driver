@@ -38,7 +38,6 @@ Feature: Result paging
       INSERT INTO entries (key, value) VALUES ('m', 12);
       """
 
-  @wip
   Scenario: Paging through results synchronously
     Given the following example:
       """php
