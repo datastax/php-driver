@@ -51,7 +51,9 @@ final class Builder
     }
 
     /**
-     * Set client-side certificate chain. This is used to authenticate the client on the server-side. This should contain the entire Certificate chain starting with the certificate itself.
+     * Set client-side certificate chain. This is used to authenticate the
+     * client on the server-side. This should contain the entire Certificate
+     * chain starting with the certificate itself.
      *
      * @param [type] $path path to a file containing a PEM formatted certificate.
      *
@@ -70,7 +72,8 @@ final class Builder
     }
 
     /**
-     * Set client-side private key. This is used to authenticate the client on the server-side.
+     * Set client-side private key. This is used to authenticate the client on
+     * the server-side.
      *
      * @param string $path       Path to the private key file
      * @param string $passphrase Passphrase for the private key, if any (default: `null`)
