@@ -10,7 +10,7 @@ extern zend_class_entry* cassandra_ce_InvalidArgumentException;
 zend_class_entry *cassandra_ce_Collection = NULL;
 
 int
-php_cassandra_collection_add(cassandra_collection* collection, zval* object)
+php_cassandra_collection_add(cassandra_collection* collection, zval* object TSRMLS_DC)
 {
   if (zend_hash_next_index_insert(&collection->values, (void*) &object, sizeof(zval*), NULL) == SUCCESS) {
     Z_ADDREF_P(object);
@@ -41,7 +41,7 @@ php_cassandra_collection_find(cassandra_collection* collection, zval* object, lo
   zval        compare;
   ulong       idx;
 
-  if (!php_cassandra_validate_object(object, collection->type))
+  if (!php_cassandra_validate_object(object, collection->type TSRMLS_CC))
     return 0;
 
   zend_hash_get_pointer(&collection->values, &ptr);
@@ -131,12 +131,12 @@ PHP_METHOD(CassandraCollection, add)
   cassandra_collection* collection = (cassandra_collection*) zend_object_store_get_object(getThis() TSRMLS_CC);
 
   for (i = 0; i < argc; i++) {
-    if (!php_cassandra_validate_object(*args[i], collection->type))
+    if (!php_cassandra_validate_object(*args[i], collection->type TSRMLS_CC))
       RETURN_FALSE;
   }
 
   for (i = 0; i < argc; i++)
-    php_cassandra_collection_add(collection, *args[i]);
+    php_cassandra_collection_add(collection, *args[i] TSRMLS_CC);
 
   efree(args);
   RETVAL_LONG(zend_hash_num_elements(&collection->values));

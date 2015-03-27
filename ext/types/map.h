@@ -1,7 +1,7 @@
 #ifndef PHP_CASSANDRA_MAP_H
 #define PHP_CASSANDRA_MAP_H
 
-int php_cassandra_map_set(cassandra_map* map, zval* zkey, zval* zvalue);
+int php_cassandra_map_set(cassandra_map* map, zval* zkey, zval* zvalue TSRMLS_DC);
 
 PHP_METHOD(CassandraMap, __construct);
 PHP_METHOD(CassandraMap, keyType);

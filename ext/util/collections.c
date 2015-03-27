@@ -48,7 +48,7 @@ extern zend_class_entry* cassandra_ce_Uuid;
 extern zend_class_entry* cassandra_ce_Varint;
 
 int
-php_cassandra_validate_object(zval* object, CassValueType type)
+php_cassandra_validate_object(zval* object, CassValueType type TSRMLS_DC)
 {
   char* class_name = NULL;
   zend_uint class_name_len;
@@ -133,7 +133,7 @@ php_cassandra_validate_object(zval* object, CassValueType type)
 }
 
 int
-php_cassandra_hash_object(zval* object, CassValueType type, char** key, int* len)
+php_cassandra_hash_object(zval* object, CassValueType type, char** key, int* len TSRMLS_DC)
 {
   zval* value;
   zval* scale;

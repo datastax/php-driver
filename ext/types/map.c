@@ -16,18 +16,18 @@ typedef struct {
 } cassandra_map_entry;
 
 int
-php_cassandra_map_set(cassandra_map* map, zval* zkey, zval* zvalue)
+php_cassandra_map_set(cassandra_map* map, zval* zkey, zval* zvalue TSRMLS_DC)
 {
   char* key;
   int   key_len;
   int   result = 0;
 
-  if (!php_cassandra_hash_object(zkey, map->key_type, &key, &key_len)) {
+  if (!php_cassandra_hash_object(zkey, map->key_type, &key, &key_len TSRMLS_CC)) {
     zend_throw_exception_ex(cassandra_ce_InvalidArgumentException, 0 TSRMLS_CC, "Invalid key");
     return 0;
   }
 
-  if (!php_cassandra_validate_object(zvalue, map->value_type)) {
+  if (!php_cassandra_validate_object(zvalue, map->value_type TSRMLS_CC)) {
     zend_throw_exception_ex(cassandra_ce_InvalidArgumentException, 0 TSRMLS_CC, "Invalid value");
     return 0;
   }
@@ -51,7 +51,7 @@ php_cassandra_map_get(cassandra_map* map, zval* zkey, zval** zvalue)
   int   result = 0;
   zval** value;
 
-  if (!php_cassandra_hash_object(zkey, map->key_type, &key, &key_len)) {
+  if (!php_cassandra_hash_object(zkey, map->key_type, &key, &key_len TSRMLS_CC)) {
     zend_throw_exception_ex(cassandra_ce_InvalidArgumentException, 0 TSRMLS_CC, "Invalid key");
     return 0;
   }
@@ -72,7 +72,7 @@ php_cassandra_map_del(cassandra_map* map, zval* zkey)
   int   key_len;
   int   result = 0;
 
-  if (!php_cassandra_hash_object(zkey, map->key_type, &key, &key_len)) {
+  if (!php_cassandra_hash_object(zkey, map->key_type, &key, &key_len TSRMLS_CC)) {
     zend_throw_exception_ex(cassandra_ce_InvalidArgumentException, 0 TSRMLS_CC, "Invalid key");
     return 0;
   }
@@ -93,7 +93,7 @@ php_cassandra_map_has(cassandra_map* map, zval* zkey)
   int   key_len;
   int   result = 0;
 
-  if (!php_cassandra_hash_object(zkey, map->key_type, &key, &key_len))
+  if (!php_cassandra_hash_object(zkey, map->key_type, &key, &key_len TSRMLS_CC))
     return 0;
 
   result = zend_hash_exists(&map->keys, key, key_len);
@@ -219,7 +219,7 @@ PHP_METHOD(CassandraMap, set)
 
   cassandra_map* map = (cassandra_map*) zend_object_store_get_object(getThis() TSRMLS_CC);
 
-  if (php_cassandra_map_set(map, key, value))
+  if (php_cassandra_map_set(map, key, value TSRMLS_CC))
     RETURN_TRUE;
 
   RETURN_FALSE;
@@ -323,7 +323,7 @@ PHP_METHOD(CassandraMap, offsetSet)
 
   cassandra_map* map = (cassandra_map*) zend_object_store_get_object(getThis() TSRMLS_CC);
 
-  php_cassandra_map_set(map, key, value);
+  php_cassandra_map_set(map, key, value TSRMLS_CC);
 }
 
 PHP_METHOD(CassandraMap, offsetGet)

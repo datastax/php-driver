@@ -10,13 +10,13 @@ extern zend_class_entry* cassandra_ce_InvalidArgumentException;
 zend_class_entry *cassandra_ce_Set = NULL;
 
 int
-php_cassandra_set_add(cassandra_set* set, zval* object)
+php_cassandra_set_add(cassandra_set* set, zval* object TSRMLS_DC)
 {
   char* key;
   int   key_len;
   int   result = 0;
 
-  if (!php_cassandra_hash_object(object, set->type, &key, &key_len))
+  if (!php_cassandra_hash_object(object, set->type, &key, &key_len TSRMLS_CC))
     return 0;
 
   if (zend_hash_add(&set->values, key, key_len, (void*) &object, sizeof(zval*), NULL) == SUCCESS) {
@@ -35,7 +35,7 @@ php_cassandra_set_del(cassandra_set* set, zval* object)
   int   key_len;
   int   result = 0;
 
-  if (!php_cassandra_hash_object(object, set->type, &key, &key_len))
+  if (!php_cassandra_hash_object(object, set->type, &key, &key_len TSRMLS_CC))
     return 0;
 
   if (zend_hash_del(&set->values, key, key_len) == SUCCESS)
@@ -52,7 +52,7 @@ php_cassandra_set_has(cassandra_set* set, zval* object)
   int   key_len;
   int   result = 0;
 
-  if (!php_cassandra_hash_object(object, set->type, &key, &key_len))
+  if (!php_cassandra_hash_object(object, set->type, &key, &key_len TSRMLS_CC))
     return 0;
 
   result = zend_hash_exists(&set->values, key, key_len);
@@ -126,7 +126,7 @@ PHP_METHOD(CassandraSet, add)
 
   cassandra_set* set = (cassandra_set*) zend_object_store_get_object(getThis() TSRMLS_CC);
 
-  if (php_cassandra_set_add(set, object))
+  if (php_cassandra_set_add(set, object TSRMLS_CC))
     RETURN_TRUE;
 
   RETURN_FALSE;
