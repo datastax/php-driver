@@ -1,5 +1,10 @@
 PHP_ARG_WITH(cassandra, Enable Cassandra extension,
-[--with-cassandra[=DIR] Enable the Cassandra extension.])
+[  --with-cassandra[=DIR] Enable the Cassandra extension.])
+
+if test -z "$PHP_GMP"; then
+  PHP_ARG_WITH(gmp, GNU MP install dir,
+  [  --with-gmp=DIR Specify GNU MP install dir.])
+fi
 
 if test "$PHP_CASSANDRA" != "no"; then
   PHP_SUBST(CASSANDRA_SHARED_LIBADD)
@@ -14,8 +19,6 @@ if test "$PHP_CASSANDRA" != "no"; then
   ifdef([PHP_ADD_EXTENSION_DEP],
   [
     PHP_ADD_EXTENSION_DEP(cassandra, spl)
-    PHP_ADD_EXTENSION_DEP(cassandra, mbstring)
-    PHP_ADD_EXTENSION_DEP(cassandra, gmp)
   ])
 
   PHP_ADD_BUILD_DIR([$ext_builddir/exceptions], 1)
@@ -26,32 +29,62 @@ if test "$PHP_CASSANDRA" != "no"; then
   PHP_ADD_INCLUDE([$ext_builddir/types])
   PHP_ADD_INCLUDE([$ext_srcdir/types])
 
+  if test "$PHP_GMP" != "no"; then
+    if test -f $PHP_GMP/include/gmp.h; then
+      GMP_DIR=$PHP_GMP
+    fi
+  else
+    for i in /usr/local /usr; do
+      if test -f $i/include/gmp.h; then
+        GMP_DIR=$i
+      fi
+    done
+  fi
+
+  $as_echo_n $GMP_DIR >&5
+
+  if test -z "$GMP_DIR"; then
+    ac_extra=
+  else
+    ac_extra=-L$GMP_DIR/$PHP_LIBDIR
+  fi
+
+  PHP_CHECK_LIBRARY(gmp, __gmp_version,
+    [
+      AC_DEFINE(HAVE_GMPLIB,1,[ ])
+    ],
+    [
+      AC_MSG_ERROR([Unable to load libgmp])
+    ],
+    [
+      $ac_extra
+    ]
+  )
+
+  if test -n "$GMP_DIR"; then
+    PHP_ADD_LIBPATH($GMP_DIR/$PHP_LIBDIR, CASSANDRA_SHARED_LIBADD)
+    PHP_ADD_INCLUDE($GMP_DIR/include)
+  fi
+
+  PHP_ADD_LIBRARY(gmp,, CASSANDRA_SHARED_LIBADD)
+
   if test "$PHP_CASSANDRA" != "yes"; then
     if test -f $PHP_CASSANDRA/include/cassandra.h; then
       CPP_DRIVER_DIR=$PHP_CASSANDRA
     fi
   else
     for i in /usr/local /usr; do
-    if test -f $i/include/cassandra.h; then
-      CPP_DRIVER_DIR=$i
-    fi
+      if test -f $i/include/cassandra.h; then
+        CPP_DRIVER_DIR=$i
+      fi
     done
   fi
 
   if test -z "$CPP_DRIVER_DIR"; then
-    AC_MSG_ERROR(Cannot find libcassandra)
-  fi
-
-  if test -d "$CPP_DRIVER_DIR/lib64"; then
-    CPP_DRIVER_LIBDIR="$CPP_DRIVER_DIR/lib64"
+    ac_extra=
   else
-    CPP_DRIVER_LIBDIR="$CPP_DRIVER_DIR/lib"
+    ac_extra=-L$CPP_DRIVER_DIR/$PHP_LIBDIR
   fi
-
-  case $CPP_DRIVER_DIR in
-  /usr) ac_extra= ;;
-  *)    ac_extra=-L$CPP_DRIVER_LIBDIR ;;
-  esac
 
   PHP_CHECK_LIBRARY(cassandra, cass_cluster_new,
     [
@@ -65,9 +98,10 @@ if test "$PHP_CASSANDRA" != "no"; then
     ]
   )
 
-  PHP_ADD_LIBPATH($CPP_DRIVER_LIBDIR, CASSANDRA_SHARED_LIBADD)
-  PHP_ADD_INCLUDE($CPP_DRIVER_DIR/include)
-  PHP_ADD_LIBRARY(cassandra,, CASSANDRA_SHARED_LIBADD)
+  if test -n "$CPP_DRIVER_DIR"; then
+    PHP_ADD_LIBPATH($CPP_DRIVER_DIR/$PHP_LIBDIR, CASSANDRA_SHARED_LIBADD)
+    PHP_ADD_INCLUDE($CPP_DRIVER_DIR/include)
+  fi
 
-  PHP_ADD_LIBRARY(gmp,, CASSANDRA_SHARED_LIBADD)
+  PHP_ADD_LIBRARY(cassandra,, CASSANDRA_SHARED_LIBADD)
 fi

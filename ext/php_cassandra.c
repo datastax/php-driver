@@ -191,8 +191,6 @@ const zend_function_entry cassandra_functions[] = {
 #if ZEND_MODULE_API_NO >= 20050617
 static zend_module_dep php_cassandra_deps[] = {
   ZEND_MOD_REQUIRED("spl")
-  ZEND_MOD_REQUIRED("mbstring")
-  ZEND_MOD_REQUIRED("bcmath")
 #ifdef ZEND_MOD_END
   ZEND_MOD_END
 #else
