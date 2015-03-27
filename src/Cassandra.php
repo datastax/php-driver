@@ -23,9 +23,9 @@ final class Cassandra
     const CONSISTENCY_LOCAL_SERIAL = 9;
     const CONSISTENCY_LOCAL_ONE    = 10;
 
-    const SSL_VERIFY_NONE          = 0;
-    const SSL_VERIFY_PEER_CERT     = 1;
-    const SSL_VERIFY_PEER_IDENTITY = 2;
+    const VERIFY_NONE          = 0;
+    const VERIFY_PEER_CERT     = 1;
+    const VERIFY_PEER_IDENTITY = 2;
 
     const BATCH_LOGGED   = 0;
     const BATCH_UNLOGGED = 1;

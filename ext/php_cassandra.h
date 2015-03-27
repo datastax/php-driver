@@ -9,6 +9,7 @@
 
 /* Resources */
 #define PHP_CASSANDRA_CLUSTER_RES_NAME    "Cassandra Cluster"
+#define PHP_CASSANDRA_SSL_RES_NAME        "Cassandra Ssl"
 #define PHP_CASSANDRA_SESSION_RES_NAME    "Cassandra Session"
 #define PHP_CASSANDRA_FUTURE_RES_NAME     "Cassandra Future"
 #define PHP_CASSANDRA_STATEMENT_RES_NAME  "Cassandra Statement"
@@ -109,8 +110,6 @@ PHP_MINFO_FUNCTION(cassandra);
 
 /* Log */
 PHP_FUNCTION(cassandra_set_log_level);
-// PHP_FUNCTION(cassandra_set_log_callback);
-// PHP_FUNCTION(cassandra_get_log_callback);
 
 /* Util */
 PHP_FUNCTION(cassanrda_rows_from_result);
@@ -123,6 +122,15 @@ PHP_FUNCTION(cassandra_cluster_set_load_balance_dc_aware);
 PHP_FUNCTION(cassandra_cluster_set_token_aware_routing);
 PHP_FUNCTION(cassandra_cluster_set_credentials);
 PHP_FUNCTION(cassandra_cluster_set_contact_points);
+PHP_FUNCTION(cassandra_cluster_set_ssl);
+
+/* CassSsl */
+PHP_FUNCTION(cassandra_ssl_new);
+PHP_FUNCTION(cassandra_ssl_free);
+PHP_FUNCTION(cassandra_ssl_add_trusted_cert);
+PHP_FUNCTION(cassandra_ssl_set_cert);
+PHP_FUNCTION(cassandra_ssl_set_private_key);
+PHP_FUNCTION(cassandra_ssl_set_verify_flags);
 
 /* CassSession */
 PHP_FUNCTION(cassandra_session_new);

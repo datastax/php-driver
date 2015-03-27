@@ -10,14 +10,18 @@ class CCM
     private $process;
     private $cluster;
     private $session;
+    private $ssl;
+    private $clientAuth;
 
     public function __construct($name, $version)
     {
-        $this->name    = $name;
-        $this->version = $version;
-        $this->process = new Process(null);
-        $this->cluster = null;
-        $this->session = null;
+        $this->name       = $name;
+        $this->version    = $version;
+        $this->process    = new Process(null);
+        $this->cluster    = null;
+        $this->session    = null;
+        $this->ssl        = false;
+        $this->clientAuth = false;
     }
 
     public function setupSchema($schema)
@@ -49,13 +53,35 @@ class CCM
 
     public function start()
     {
-        $this->setup();
-        $this->run('start');
-        $this->cluster = Cassandra::cluster()->build();
+        $this->run('start', '--wait-other-notice', '--wait-for-binary-proto');
+        $builder = Cassandra::cluster()
+                       ->withContactPoints(array('127.0.0.1'));
+
+        if ($this->ssl || $this->clientAuth) {
+            $sslOptions = Cassandra::ssl()
+                              ->withTrustedCerts(realpath(__DIR__ . '/ssl/cassandra.pem'))
+                              ->withVerifyFlags(Cassandra::VERIFY_PEER_CERT)
+                              ->withClientCert(realpath(__DIR__ . '/ssl/driver.pem'))
+                              ->withPrivateKey(realpath(__DIR__ . '/ssl/driver.key'), 'php-driver')
+                              ->build();
+            $builder->withSSL($sslOptions);
+        }
+
+        $this->cluster = $builder->build();
         $this->session = $this->cluster->connect();
     }
 
-    private function setup()
+    public function stop()
+    {
+        if ($this->session) {
+            $this->session->close();
+            $this->session = null;
+            $this->cluster = null;
+        }
+        $this->run('stop');
+    }
+
+    public function setup()
     {
         $clusters = array();
         foreach (explode("\n", $this->run('list')) as $cluster) {
@@ -65,53 +91,91 @@ class CCM
             $clusters[] = substr($cluster, 2, strlen($cluster) - 2);
         }
 
-        if (isset($active) && $clusters[$active] == $this->name) {
-            return;
+        if (!(isset($active) && $clusters[$active] == $this->name)) {
+            if (in_array($this->name, $clusters)) {
+                $this->run('switch', $this->name);
+            } else {
+                $this->run('create', '-v', 'binary:' . $this->version, '-b', $this->name);
+
+                $params = array(
+                  'updateconf', '--rt', '1000', 'read_request_timeout_in_ms: 1000',
+                  'write_request_timeout_in_ms: 1000', 'request_timeout_in_ms: 1000',
+                  'phi_convict_threshold: 16', 'hinted_handoff_enabled: false',
+                  'dynamic_snitch_update_interval_in_ms: 1000',
+                );
+
+                if (substr($this->version, 0, 4) == '1.2.') {
+                    $params[] = 'reduce_cache_sizes_at: 0';
+                    $params[] = 'reduce_cache_capacity_to: 0';
+                    $params[] = 'flush_largest_memtables_at: 0';
+                    $params[] = 'index_interval: 512';
+                } else {
+                    $params[] = 'cas_contention_timeout_in_ms: 10000';
+                    $params[] = 'file_cache_size_in_mb: 0';
+                }
+
+                $params[] = 'native_transport_max_threads: 1';
+                $params[] = 'rpc_min_threads: 1';
+                $params[] = 'rpc_max_threads: 1';
+                $params[] = 'concurrent_reads: 2';
+                $params[] = 'concurrent_writes: 2';
+                $params[] = 'concurrent_compactors: 1';
+                $params[] = 'compaction_throughput_mb_per_sec: 0';
+
+                if (strcmp($this->version, '2.1') < 0) {
+                    $params[] = 'in_memory_compaction_limit_in_mb: 1';
+                }
+
+                $params[] = 'key_cache_size_in_mb: 0';
+                $params[] = 'key_cache_save_period: 0';
+                $params[] = 'memtable_flush_writers: 1';
+                $params[] = 'max_hints_delivery_threads: 1';
+
+                call_user_func_array(array($this, 'run'), $params);
+                $this->run('populate', '-n', '1', '-i', '127.0.0.');
+            }
         }
 
-        if (in_array($this->name, $clusters)) {
-            $this->run('switch', $this->name);
-            return;
+        if ($this->ssl || $this->clientAuth) {
+            $this->stop();
+            $this->run('updateconf',
+                'client_encryption_options.enabled: false',
+                'client_encryption_options.require_client_auth: false'
+            );
+            $this->ssl        = false;
+            $this->clientAuth = false;
         }
+    }
 
-        $this->run('create', '-v', 'binary:' . $this->version, '-b', $this->name);
-
-        $params = array(
-          'updateconf', '--rt', '1000', 'read_request_timeout_in_ms: 1000',
-          'write_request_timeout_in_ms: 1000', 'request_timeout_in_ms: 1000',
-          'phi_convict_threshold: 16', 'hinted_handoff_enabled: false',
-          'dynamic_snitch_update_interval_in_ms: 1000'
-        );
-
-        if (substr($this->version, 0, 4) == '1.2.') {
-            $params[] = 'reduce_cache_sizes_at: 0';
-            $params[] = 'reduce_cache_capacity_to: 0';
-            $params[] = 'flush_largest_memtables_at: 0';
-            $params[] = 'index_interval: 512';
-        } else {
-            $params[] = 'cas_contention_timeout_in_ms: 10000';
-            $params[] = 'file_cache_size_in_mb: 0';
+    public function setupSSL()
+    {
+        if (!$this->ssl) {
+            $this->setup();
+            $this->stop();
+            $this->run('updateconf',
+                'client_encryption_options.enabled: true',
+                'client_encryption_options.keystore: ' . realpath(__DIR__ . '/ssl/.keystore'),
+                'client_encryption_options.keystore_password: php-driver'
+            );
+            $this->ssl = true;
         }
+    }
 
-        $params[] = 'native_transport_max_threads: 1';
-        $params[] = 'rpc_min_threads: 1';
-        $params[] = 'rpc_max_threads: 1';
-        $params[] = 'concurrent_reads: 2';
-        $params[] = 'concurrent_writes: 2';
-        $params[] = 'concurrent_compactors: 1';
-        $params[] = 'compaction_throughput_mb_per_sec: 0';
-
-        if (strcmp($this->version, '2.1') < 0) {
-            $params[] = 'in_memory_compaction_limit_in_mb: 1';
+    public function setupClientVerification()
+    {
+        if (!$this->clientAuth) {
+            $this->setup();
+            $this->stop();
+            $this->run('updateconf',
+                'client_encryption_options.enabled: true',
+                'client_encryption_options.keystore: ' . realpath(__DIR__ . '/ssl/.keystore'),
+                'client_encryption_options.keystore_password: php-driver',
+                'client_encryption_options.require_client_auth: true',
+                'client_encryption_options.truststore: ' . realpath(__DIR__ . '/ssl/.truststore'),
+                'client_encryption_options.truststore_password: php-driver'
+            );
+            $this->clientAuth = true;
         }
-
-        $params[] = 'key_cache_size_in_mb: 0';
-        $params[] = 'key_cache_save_period: 0';
-        $params[] = 'memtable_flush_writers: 1';
-        $params[] = 'max_hints_delivery_threads: 1';
-
-        call_user_func_array(array($this, 'run'), $params);
-        $this->run('populate', '-n', '1', '-i', '127.0.0.');
     }
 
     private function isActive($clusterName)
@@ -128,7 +192,7 @@ class CCM
     {
         $args = func_get_args();
         foreach ($args as $i => $arg) {
-          $args[$i] = escapeshellarg($arg);
+            $args[$i] = escapeshellarg($arg);
         }
 
         $command = sprintf('ccm %s', implode(' ', $args));

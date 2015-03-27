@@ -29,7 +29,7 @@ final class SSLOptions
    */
   public $passphrase = null;
   /**
-   * A bitmask of Cassandra::SSL_VERIFY_* constants
+   * A bitmask of Cassandra::VERIFY_* constants
    * @var int|null
    */
   public $verifyFlags = null;

@@ -15,18 +15,24 @@ final class Builder
 
     public function __construct()
     {
-        $this->verifyFlags = 0;
+        $this->trustedCerts = null;
+        $this->verifyFlags  = null;
+        $this->clientCert   = null;
+        $this->privateKey   = null;
+        $this->passphrase   = null;
     }
 
     /**
      * Adds a trusted certificate. This is used to verify node's identity.
      *
      * @param string $path path to a file containing a PEM formatted certificate.
+     * @param string ...   additional paths
      *
      * @return Cassandra\SSLOptions\Builder self
      */
-    public function withTrustedCert(array $paths)
+    public function withTrustedCerts($path)
     {
+        $paths = func_get_args();
         foreach ($paths as $path) {
             if (!file_exists($path) || !is_file($path) || !is_readable($path)) {
                 throw new InvalidArgumentException(sprintf(
@@ -104,5 +110,23 @@ final class Builder
     public function build()
     {
         $options = new SSLOptions();
+
+        if (!is_null($this->trustedCerts)) {
+            $options->trustedCerts = $this->trustedCerts;
+        }
+        if (!is_null($this->verifyFlags)) {
+            $options->verifyFlags = $this->verifyFlags;
+        }
+        if (!is_null($this->clientCert)) {
+            $options->clientCert = $this->clientCert;
+        }
+        if (!is_null($this->privateKey)) {
+            $options->privateKey = $this->privateKey;
+        }
+        if (!is_null($this->passphrase)) {
+            $options->passphrase = $this->passphrase;
+        }
+
+        return $options;
     }
 }

@@ -70,7 +70,26 @@ class FeatureContext implements Context, SnippetAcceptingContext
      */
     public function aRunningCassandraCluster()
     {
+        $this->ccm->setup();
         $this->ccm->start();
+    }
+
+    /**
+     * @Given a running cassandra cluster with SSL encryption
+     */
+    public function aRunningCassandraClusterWithSslEncryption()
+    {
+        $this->ccm->setupSSL();
+        $this->ccm->start();
+    }
+
+    /**
+     * @Given a running cassandra cluster with client certificate verification
+     */
+    public function aRunningCassandraClusterWithClientCertificateVerification()
+    {
+      $this->ccm->setupClientVerification();
+      $this->ccm->start();
     }
 
     /**
@@ -104,6 +123,49 @@ class FeatureContext implements Context, SnippetAcceptingContext
             $env['LANG'] = 'en'; // Ensures that the default language is en, whatever the OS locale is.
             $this->process->setEnv($env);
         }
+        $this->process->start();
+        $this->process->wait();
+    }
+
+    /**
+     * @When it is executed with trusted cert in the env
+     */
+    public function itIsExecutedWithTrustedCertInTheEnv()
+    {
+      $this->process->setWorkingDirectory($this->workingDir);
+      $this->process->setCommandLine(sprintf(
+          '%s %s', $this->phpBin, 'example.php'
+      ));
+      $env = $this->process->getEnv();
+      $env['SERVER_CERT'] = realpath(__DIR__ . '/../../support/ssl/cassandra.pem');
+      // Don't reset the LANG variable on HHVM, because it breaks HHVM itself
+      if (!defined('HHVM_VERSION')) {
+          $env['LANG'] = 'en'; // Ensures that the default language is en, whatever the OS locale is.
+      }
+      $this->process->setEnv($env);
+      $this->process->start();
+      $this->process->wait();
+    }
+
+    /**
+     * @When it is executed with trusted and client certs, private key and passphrase in the env
+     */
+    public function itIsExecutedWithTrustedAndClientCertsPrivateKeyAndPassphraseInTheEnv()
+    {
+        $this->process->setWorkingDirectory($this->workingDir);
+        $this->process->setCommandLine(sprintf(
+            '%s %s', $this->phpBin, 'example.php'
+        ));
+        $env = $this->process->getEnv();
+        $env['SERVER_CERT'] = realpath(__DIR__ . '/../../support/ssl/cassandra.pem');
+        $env['CLIENT_CERT'] = realpath(__DIR__ . '/../../support/ssl/driver.pem');
+        $env['PRIVATE_KEY'] = realpath(__DIR__ . '/../../support/ssl/driver.key');
+        $env['PASSPHRASE']  = 'php-driver';
+        // Don't reset the LANG variable on HHVM, because it breaks HHVM itself
+        if (!defined('HHVM_VERSION')) {
+            $env['LANG'] = 'en'; // Ensures that the default language is en, whatever the OS locale is.
+        }
+        $this->process->setEnv($env);
         $this->process->start();
         $this->process->wait();
     }

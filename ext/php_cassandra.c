@@ -132,8 +132,6 @@ ZEND_DECLARE_MODULE_GLOBALS(cassandra)
 const zend_function_entry cassandra_functions[] = {
   /* Log */
   PHP_FE(cassandra_set_log_level, NULL)
-  // PHP_FE(cassandra_set_log_callback, NULL)
-  // PHP_FE(cassandra_get_log_callback, NULL)
   /* Util */
   PHP_FE(cassanrda_rows_from_result, NULL)
   /* CassCluster */
@@ -144,6 +142,14 @@ const zend_function_entry cassandra_functions[] = {
   PHP_FE(cassandra_cluster_set_token_aware_routing, NULL)
   PHP_FE(cassandra_cluster_set_credentials, NULL)
   PHP_FE(cassandra_cluster_set_contact_points, NULL)
+  PHP_FE(cassandra_cluster_set_ssl, NULL)
+  /* CassSsl */
+  PHP_FE(cassandra_ssl_new, NULL)
+  PHP_FE(cassandra_ssl_free, NULL)
+  PHP_FE(cassandra_ssl_add_trusted_cert, NULL)
+  PHP_FE(cassandra_ssl_set_cert, NULL)
+  PHP_FE(cassandra_ssl_set_private_key, NULL)
+  PHP_FE(cassandra_ssl_set_verify_flags, NULL)
   /* CassSession */
   PHP_FE(cassandra_session_new, NULL)
   PHP_FE(cassandra_session_free, NULL)
@@ -236,6 +242,18 @@ php_cassandra_cluster_dtor(zend_rsrc_list_entry* rsrc TSRMLS_DC)
 
   if (cluster) {
     cass_cluster_free(cluster);
+    rsrc->ptr = NULL;
+  }
+}
+
+static int le_cassandra_ssl_res;
+static void
+php_cassandra_ssl_dtor(zend_rsrc_list_entry* rsrc TSRMLS_DC)
+{
+  CassSsl* ssl = (CassSsl*) rsrc->ptr;
+
+  if (ssl) {
+    cass_ssl_free(ssl);
     rsrc->ptr = NULL;
   }
 }
@@ -345,6 +363,12 @@ PHP_MINIT_FUNCTION(cassandra)
     php_cassandra_cluster_dtor,
     NULL,
     PHP_CASSANDRA_CLUSTER_RES_NAME,
+    module_number
+  );
+  le_cassandra_ssl_res = zend_register_list_destructors_ex(
+    php_cassandra_ssl_dtor,
+    NULL,
+    PHP_CASSANDRA_SSL_RES_NAME,
     module_number
   );
   le_cassandra_session_res = zend_register_list_destructors_ex(
@@ -463,46 +487,6 @@ PHP_FUNCTION(cassandra_set_log_level)
 
   RETURN_TRUE;
 }
-
-// PHP_FUNCTION(cassandra_set_log_callback)
-// {
-//   zend_fcall_info       fci      = empty_fcall_info;
-//   zend_fcall_info_cache cache    = empty_fcall_info_cache;
-//   zval**                callback;
-//
-//   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "f!", &fci, &cache) == FAILURE) {
-//     RETURN_FALSE;
-//   }
-//
-//   callback = &CASSANDRA_G(log_callback);
-//
-//   if (*callback) {
-//     zval_ptr_dtor(callback);
-//     *callback = NULL;
-//   }
-//
-//   ALLOC_ZVAL(*callback);
-//   **callback = *fci.function_name;
-//   INIT_PZVAL(*callback);
-//   zval_copy_ctor(*callback);
-//   Z_ADDREF_P(*callback);
-//
-//   RETURN_TRUE;
-// }
-//
-//
-// PHP_FUNCTION(cassandra_get_log_callback)
-// {
-//   if (zend_parse_parameters_none() == FAILURE) {
-//     return;
-//   }
-//
-//   if (CASSANDRA_G(log_callback)) {
-//     RETURN_ZVAL(CASSANDRA_G(log_callback), 1, 0);
-//   } else {
-//     RETURN_FALSE;
-//   }
-// }
 
 PHP_FUNCTION(cassanrda_rows_from_result)
 {
@@ -685,6 +669,134 @@ PHP_FUNCTION(cassandra_cluster_set_contact_points)
   CassError rc = cass_cluster_set_contact_points(cluster, hosts);
   free(hosts);
   CHECK_RESULT(rc);
+}
+
+PHP_FUNCTION(cassandra_cluster_set_ssl)
+{
+  CassCluster* cluster;
+  zval* cluster_resource;
+  CassSsl* ssl;
+  zval* ssl_resource;
+
+  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "rr", &cluster_resource, &ssl_resource) == FAILURE) {
+    RETURN_FALSE;
+  }
+
+  ZEND_FETCH_RESOURCE(cluster, CassCluster*, &cluster_resource, -1,
+    PHP_CASSANDRA_CLUSTER_RES_NAME, le_cassandra_cluster_res);
+
+  ZEND_FETCH_RESOURCE(ssl, CassSsl*, &ssl_resource, -1,
+    PHP_CASSANDRA_SSL_RES_NAME, le_cassandra_ssl_res);
+
+  cass_cluster_set_ssl(cluster, ssl);
+
+  RETURN_TRUE;
+}
+
+PHP_FUNCTION(cassandra_ssl_new)
+{
+  CassSsl* ssl;
+  ssl = cass_ssl_new();
+
+  ZEND_REGISTER_RESOURCE(
+    return_value,
+    ssl,
+    le_cassandra_ssl_res
+  );
+}
+
+PHP_FUNCTION(cassandra_ssl_free)
+{
+  CassSsl* ssl;
+  zval* ssl_resource;
+
+  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "r", &ssl_resource) == FAILURE) {
+    RETURN_FALSE;
+  }
+
+  ZEND_FETCH_RESOURCE(ssl, CassSsl*, &ssl_resource, -1,
+    PHP_CASSANDRA_SSL_RES_NAME, le_cassandra_ssl_res);
+
+  zend_list_delete(Z_RESVAL_P(ssl_resource));
+
+  RETURN_TRUE;
+}
+
+PHP_FUNCTION(cassandra_ssl_add_trusted_cert)
+{
+  CassSsl* ssl;
+  zval* ssl_resource;
+  char* cert;
+  int cert_len;
+
+  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "rs", &ssl_resource, &cert, &cert_len) == FAILURE) {
+    RETURN_FALSE;
+  }
+
+  ZEND_FETCH_RESOURCE(ssl, CassSsl*, &ssl_resource, -1,
+    PHP_CASSANDRA_SSL_RES_NAME, le_cassandra_ssl_res);
+
+  CHECK_RESULT(cass_ssl_add_trusted_cert(ssl, cass_string_init2(cert, cert_len)));
+
+  RETURN_TRUE;
+}
+
+PHP_FUNCTION(cassandra_ssl_set_cert)
+{
+  CassSsl* ssl;
+  zval* ssl_resource;
+  char* cert;
+  int cert_len;
+
+  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "rs", &ssl_resource, &cert, &cert_len) == FAILURE) {
+    RETURN_FALSE;
+  }
+
+  ZEND_FETCH_RESOURCE(ssl, CassSsl*, &ssl_resource, -1,
+    PHP_CASSANDRA_SSL_RES_NAME, le_cassandra_ssl_res);
+
+  CHECK_RESULT(cass_ssl_set_cert(ssl, cass_string_init2(cert, cert_len)));
+
+  RETURN_TRUE;
+}
+
+PHP_FUNCTION(cassandra_ssl_set_private_key)
+{
+  CassSsl* ssl;
+  zval* ssl_resource;
+  char* key;
+  int key_len;
+  char* passphrase = NULL;
+  int passphrase_len;
+
+  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "rs|s", &ssl_resource, &key, &key_len, &passphrase, &passphrase_len) == FAILURE) {
+    RETURN_FALSE;
+  }
+
+  ZEND_FETCH_RESOURCE(ssl, CassSsl*, &ssl_resource, -1,
+    PHP_CASSANDRA_SSL_RES_NAME, le_cassandra_ssl_res);
+
+  CHECK_RESULT(cass_ssl_set_private_key(ssl, cass_string_init2(key, key_len), passphrase));
+
+  RETURN_TRUE;
+}
+
+PHP_FUNCTION(cassandra_ssl_set_verify_flags)
+{
+  CassSsl* ssl;
+  zval* ssl_resource;
+  long flags;
+
+  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "rl", &ssl_resource, &flags) == FAILURE) {
+    RETURN_FALSE;
+  }
+
+  ZEND_FETCH_RESOURCE(ssl, CassSsl*, &ssl_resource, -1,
+    PHP_CASSANDRA_SSL_RES_NAME, le_cassandra_ssl_res);
+
+  cass_ssl_set_verify_flags(ssl, (int) flags);
+
+  RETURN_TRUE;
 }
 
 PHP_FUNCTION(cassandra_session_new)
