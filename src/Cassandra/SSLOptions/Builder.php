@@ -36,7 +36,7 @@ final class Builder
         foreach ($paths as $path) {
             if (!file_exists($path) || !is_file($path) || !is_readable($path)) {
                 throw new InvalidArgumentException(sprintf(
-                    "Trusted cert path %s doesn't exist or is not readable",
+                    "Trusted cert path '%s' doesn't exist or is not readable",
                     $path
                 ));
             }
@@ -69,7 +69,7 @@ final class Builder
     {
         if (!file_exists($path) || !is_file($path) || !is_readable($path)) {
             throw new InvalidArgumentException(sprintf(
-                "Client cert path %s doesn't exist or is not readable",
+                "Client cert path '%s' doesn't exist or is not readable",
                 $path
             ));
         }
@@ -90,7 +90,7 @@ final class Builder
     {
         if (!file_exists($path) || !is_file($path) || !is_readable($path)) {
             throw new InvalidArgumentException(sprintf(
-                "Client cert path %s doesn't exist or is not readable",
+                "Client cert path '%s' doesn't exist or is not readable",
                 $path
             ));
         }
