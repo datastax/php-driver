@@ -11,7 +11,7 @@ Vagrant.configure("2") do |config|
   config.vm.provision "shell", inline: <<-SHELL
   echo "Installing all necessary packages"
   sudo apt-get update
-  sudo apt-get install -y g++ make cmake libuv-dev libssl-dev libgmp-dev php5 php5-dev
+  sudo apt-get install -y g++ make cmake libuv-dev libssl-dev libgmp-dev php5 php5-dev openssl
   sudo apt-get install -y python-pip default-jdk
   sudo apt-get install -y git valgrind
 
