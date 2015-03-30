@@ -7,7 +7,7 @@ if test -z "$PHP_GMP"; then
 fi
 
 if test "$PHP_CASSANDRA" != "no"; then
-  PHP_SUBST(CASSANDRA_SHARED_LIBADD)
+  PHP_SUBST(CASSANDRA_LIBS)
   PHP_NEW_EXTENSION(cassandra, php_cassandra.c exceptions/exception.c \
     exceptions/invalid_argument.c exceptions/runtime.c exceptions/timeout.c \
     exceptions/logic.c exceptions/server.c util/bytes.c util/collections.c \
@@ -41,8 +41,6 @@ if test "$PHP_CASSANDRA" != "no"; then
     done
   fi
 
-  $as_echo_n $GMP_DIR >&5
-
   if test -z "$GMP_DIR"; then
     ac_extra=
   else
@@ -62,11 +60,11 @@ if test "$PHP_CASSANDRA" != "no"; then
   )
 
   if test -n "$GMP_DIR"; then
-    PHP_ADD_LIBPATH($GMP_DIR/$PHP_LIBDIR, CASSANDRA_SHARED_LIBADD)
+    PHP_ADD_LIBPATH($GMP_DIR/$PHP_LIBDIR, CASSANDRA_LIBS)
     PHP_ADD_INCLUDE($GMP_DIR/include)
   fi
 
-  PHP_ADD_LIBRARY(gmp,, CASSANDRA_SHARED_LIBADD)
+  PHP_ADD_LIBRARY(gmp,, CASSANDRA_LIBS)
 
   if test "$PHP_CASSANDRA" != "yes"; then
     if test -f $PHP_CASSANDRA/include/cassandra.h; then
@@ -94,14 +92,14 @@ if test "$PHP_CASSANDRA" != "no"; then
       AC_MSG_ERROR([Unable to load libcassandra])
     ],
     [
-      $ac_extra
+      $ac_extra -fno-common
     ]
   )
 
   if test -n "$CPP_DRIVER_DIR"; then
-    PHP_ADD_LIBPATH($CPP_DRIVER_DIR/$PHP_LIBDIR, CASSANDRA_SHARED_LIBADD)
+    PHP_ADD_LIBPATH($CPP_DRIVER_DIR/$PHP_LIBDIR, CASSANDRA_LIBS)
     PHP_ADD_INCLUDE($CPP_DRIVER_DIR/include)
   fi
 
-  PHP_ADD_LIBRARY(cassandra,, CASSANDRA_SHARED_LIBADD)
+  PHP_ADD_LIBRARY(cassandra,, CASSANDRA_LIBS)
 fi
