@@ -3,13 +3,28 @@
 basedir=$(cd $(dirname $0); pwd)
 
 check_executable () {
+  executable=$1
+
   command -v $executable >/dev/null 2>&1 || {
-    echo >&2 "Unable to find '$1', it is either not installed or not in the PATH.  Aborting."
+    echo >&2 "Unable to find '$executable', it is either not installed or not in the PATH.  Aborting."
     exit 1
   }
 }
 
+download_archive () {
+  url=$1
+  md5=$2
+  file=$(basename $url)
+  wget $url
+
+  if [ $md5 != $(md5sum $file | cut -f 1 -d " ") ]; then
+    echo "Bad file '$file', md5 sums mismatch.  Aborting."
+    exit 1
+  fi
+}
+
 check_executable wget
+check_executable md5sum
 check_executable libtool
 check_executable cmake
 check_executable xz
@@ -23,7 +38,7 @@ mkdir build
 builddir=$(cd build; pwd)
 
 echo "Compiling libuv..."
-wget http://libuv.org/dist/v1.4.2/libuv-v1.4.2.tar.gz
+download_archive http://libuv.org/dist/v1.4.2/libuv-v1.4.2.tar.gz "d116fbe695157b799fb8805477e24eff"
 tar -xzvf libuv-v1.4.2.tar.gz
 
 pushd libuv-v1.4.2
@@ -47,7 +62,7 @@ rm -Rf cpp-driver
 mv build/lib/libcassandra_static.a build/lib/libcassandra.a
 
 echo "Compiling gmp..."
-wget https://ftp.gnu.org/gnu/gmp/gmp-6.0.0a.tar.xz
+download_archive https://ftp.gnu.org/gnu/gmp/gmp-6.0.0a.tar.xz "1e6da4e434553d2811437aa42c7f7c76"
 unxz gmp-6.0.0a.tar.xz
 tar -xf gmp-6.0.0a.tar
 
@@ -65,18 +80,5 @@ echo "Compiling extension..."
 phpize
 ./configure --with-cassandra=/tmp/php-driver-installation/build --with-gmp=/tmp/php-driver-installation/build --with-libdir=lib CFLAGS="-pthread" LDFLAGS=-L$builddir/lib LIBS="-luv -lstdc++"
 make
-
-
-
-
-# brew install libuv cmake gmp
-#
-# echo "Installing cpp-driver..."
-# brew install https://raw.githubusercontent.com/datastax/cpp-driver/master/packaging/homebrew/cassandra-cpp-driver.rb
-#
-# echo "Compiling extension..."
-# phpize
-# ./configure --with-cassandra
-# make
-# make test
-# make install
+sudo make install
+sudo echo "# DataStax PHP Driver\nextension=cassandra.so" >> `php --ini | grep "Loaded Configuration" | sed -e "s|.*:\s*||"`
