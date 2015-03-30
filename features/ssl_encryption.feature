@@ -12,7 +12,7 @@ Feature: SSL encryption
                      ->build();
 
       try {
-          $session = $cluster->connect("simplex");
+          $session = $cluster->connect();
       } catch (Cassandra\Exception\RuntimeException $e) {
           echo "Connection failure\n";
       }
@@ -37,7 +37,7 @@ Feature: SSL encryption
                      ->build();
 
       try {
-          $session = $cluster->connect("simplex");
+          $session = $cluster->connect();
           echo "Connection success\n";
       } catch (Cassandra\Exception\RuntimeException $e) {
           echo "Connection failure\n";
@@ -64,7 +64,7 @@ Feature: SSL encryption
                      ->build();
 
       try {
-          $session = $cluster->connect("simplex");
+          $session = $cluster->connect();
           echo "Connection success\n";
       } catch (Cassandra\Exception\RuntimeException $e) {
           echo "Connection failure\n";
@@ -93,7 +93,7 @@ Feature: SSL encryption
                      ->build();
 
       try {
-          $session = $cluster->connect("simplex");
+          $session = $cluster->connect();
           echo "Connection success\n";
       } catch (Cassandra\Exception\RuntimeException $e) {
           echo "Connection failure\n";
