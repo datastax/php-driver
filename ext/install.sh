@@ -9,7 +9,7 @@ check_executable () {
   }
 }
 
-check_executable autoconf
+check_executable wget
 check_executable libtool
 check_executable cmake
 check_executable xz
@@ -50,11 +50,13 @@ rm -Rf gmp-6.0.0 gmp-6.0.0a.tar gmp-6.0.0a.tar.xz
 echo "Compiling cpp-driver..."
 mkdir cpp-driver
 pushd cpp-driver
-CMAKE_PREFIX_PATH=$PWD/../build cmake -DCMAKE_INSTALL_PREFIX:PATH=/ -DCMAKE_BUILD_TYPE=RELEASE -DCMAKE_INSTALL_LIBDIR:PATH=lib $basedir/../lib/cpp-driver/
+CMAKE_PREFIX_PATH=$PWD/../build cmake -DCMAKE_INSTALL_PREFIX:PATH=/ -DCASS_BUILD_STATIC=ON -DCASS_BUILD_SHARED=OFF -DCMAKE_BUILD_TYPE=RELEASE -DCMAKE_INSTALL_LIBDIR:PATH=lib $basedir/../lib/cpp-driver/
 make
 make install DESTDIR=$PWD/../build
 popd
 rm -Rf cpp-driver
+
+mv build/lib/libcassandra_static.a build/lib/libcassandra.a
 
 popd
 
