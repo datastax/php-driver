@@ -20,6 +20,7 @@ mkdir /tmp/php-driver-installation
 pushd /tmp/php-driver-installation
 
 mkdir build
+builddir=$(cd build; pwd)
 
 echo "Compiling libuv..."
 wget http://libuv.org/dist/v1.4.2/libuv-v1.4.2.tar.gz
@@ -27,12 +28,23 @@ tar -xzvf libuv-v1.4.2.tar.gz
 
 pushd libuv-v1.4.2
 sh autogen.sh
-./configure --disable-shared --prefix=/
+./configure --disable-shared --prefix=$builddir
 make
-make install DESTDIR=$PWD/../build
+make install
 popd
 
 rm -Rf libuv-v1.4.2 libuv-v1.4.2.tar.gz
+
+echo "Compiling cpp-driver..."
+mkdir cpp-driver
+pushd cpp-driver
+LIBUV_ROOT_DIR=$builddir CMAKE_PREFIX_PATH=$builddir cmake -DCMAKE_INSTALL_PREFIX:PATH=$builddir -DCASS_BUILD_STATIC=ON -DCASS_BUILD_SHARED=OFF -DCMAKE_BUILD_TYPE=RELEASE -DCMAKE_INSTALL_LIBDIR:PATH=lib $basedir/../lib/cpp-driver/
+make
+make install
+popd
+rm -Rf cpp-driver
+
+mv build/lib/libcassandra_static.a build/lib/libcassandra.a
 
 echo "Compiling gmp..."
 wget https://ftp.gnu.org/gnu/gmp/gmp-6.0.0a.tar.xz
@@ -40,29 +52,18 @@ unxz gmp-6.0.0a.tar.xz
 tar -xf gmp-6.0.0a.tar
 
 pushd gmp-6.0.0
-./configure --disable-shared --prefix=/
+./configure --disable-shared --prefix=$builddir
 make
-make install DESTDIR=$PWD/../build
+make install
 popd
 
 rm -Rf gmp-6.0.0 gmp-6.0.0a.tar gmp-6.0.0a.tar.xz
-
-echo "Compiling cpp-driver..."
-mkdir cpp-driver
-pushd cpp-driver
-CMAKE_PREFIX_PATH=$PWD/../build cmake -DCMAKE_INSTALL_PREFIX:PATH=/ -DCASS_BUILD_STATIC=ON -DCASS_BUILD_SHARED=OFF -DCMAKE_BUILD_TYPE=RELEASE -DCMAKE_INSTALL_LIBDIR:PATH=lib $basedir/../lib/cpp-driver/
-make
-make install DESTDIR=$PWD/../build
-popd
-rm -Rf cpp-driver
-
-mv build/lib/libcassandra_static.a build/lib/libcassandra.a
 
 popd
 
 echo "Compiling extension..."
 phpize
-./configure --with-cassandra=/tmp/php-driver-installation/build --with-gmp=/tmp/php-driver-installation/build --with-libdir=lib
+./configure --with-cassandra=/tmp/php-driver-installation/build --with-gmp=/tmp/php-driver-installation/build --with-libdir=lib CFLAGS="-pthread" LDFLAGS=-L$builddir/lib LIBS="-luv -lstdc++"
 make
 
 
