@@ -67,8 +67,16 @@ class CCM
             $builder->withSSL($sslOptions);
         }
 
-        $this->cluster = $builder->build();
-        $this->session = $this->cluster->connect();
+        for ($retries = 1; $retries <= 10; $retries++) {
+            try {
+                $this->cluster = $builder->build();
+                $this->session = $this->cluster->connect();
+            } catch (Cassandra\Exception\RuntimeException $e) {
+                $this->cluster = null;
+                $this->session = null;
+                sleep($retries * 0.4);
+            }
+        }
     }
 
     public function stop()
