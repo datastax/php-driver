@@ -37,7 +37,7 @@ popd
 ## Install the PHP extension
 
 ```bash
-git clone https://github.com/riptano/php-driver.git
+git clone https://github.com/datastax/php-driver.git
 cd php-driver
 git submodule update --init
 cd ext

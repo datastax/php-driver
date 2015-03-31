@@ -1,6 +1,14 @@
-# PHP Cassandra - A PHP Driver for Apache Cassandra
+# DataStax PHP Driver for Apache Cassandra
 
-This is a wrapper around the DataStax C/C++ driver.
+This is a wrapper around the DataStax C/C++ driver for Apache Cassandra. This
+driver works exclusively with the Cassandra Query Language version 3 (CQL3) and
+Cassandra's native protocol.
+
+* Code: [https://github.com/datastax/php-driver](https://github.com/datastax/php-driver)
+* Jira: [https://datastax-oss.atlassian.net/browse/PHP](https://datastax-oss.atlassian.net/browse/PHP)
+* Mailing List: [https://groups.google.com/a/lists.datastax.com/forum/#!forum/php-driver-user](https://groups.google.com/a/lists.datastax.com/forum/#!forum/php-driver-user)
+* IRC: #datastax-drivers on [irc.freenode.net](http://freenode.net>)
+* Twitter: Follow the latest news about DataStax Drivers - [@avalanche123](http://twitter.com/avalanche123), [@mfiguiere](http://twitter.com/mfiguiere), [@al3xandru](https://twitter.com/al3xandru)
 
 ## Quick Start
 
@@ -63,6 +71,13 @@ Features:
 * [SSL encryption](feature/ssl_encryption.feature).
 * [Credentials authentication](src/Cassandra/Cluster/Builder.php#L312-L320).
 
+## Code examples
+
+The DataStax PHP Driver uses the amazing [Behat Framework](http://docs.behat.org/)
+for both end-to-end, or acceptance, testing and documentation. All of the features
+supported by the driver have appropriate acceptance tests with easy-to-copy code
+examples in the `features/`` directory.
+
 ## Running tests
 
 The DataStax PHP Driver uses the awesome Behat and PHPUnit testing frameworks.
@@ -83,3 +98,12 @@ cd /usr/local/src/php-driver
 ./bin/behat
 ./bin/phpunit
 ```
+## Copyright
+
+Copyright 2015 DataStax, Inc.
+
+Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at
+
+[http://www.apache.org/licenses/LICENSE-2.0](http://www.apache.org/licenses/LICENSE-2.0)
+
+Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
