@@ -39,6 +39,23 @@ final class Cassandra
     const LOG_DEBUG    = 5;
     const LOG_TRACE    = 6;
 
+    const TYPE_TEXT      = "text";
+    const TYPE_ASCII     = "ascii";
+    const TYPE_VARCHAR   = "varchar";
+    const TYPE_BIGINT    = "bigint";
+    const TYPE_BLOB      = "blob";
+    const TYPE_BOOLEAN   = "boolean";
+    const TYPE_COUNTER   = "counter";
+    const TYPE_DECIMAL   = "decimal";
+    const TYPE_DOUBLE    = "double";
+    const TYPE_FLOAT     = "float";
+    const TYPE_INT       = "int";
+    const TYPE_TIMESTAMP = "timestamp";
+    const TYPE_UUID      = "uuid";
+    const TYPE_VARINT    = "varint";
+    const TYPE_TIMEUUID  = "timeuuid";
+    const TYPE_INET      = "inet";
+
     const VERSION = '1.0.0-alpha';
 
     /**

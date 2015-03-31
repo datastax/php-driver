@@ -6,7 +6,7 @@ class SetTest extends \PHPUnit_Framework_TestCase
 {
     public function testContainsUniqueValues()
     {
-        $set = new Set('varint');
+        $set = new Set(\Cassandra::TYPE_VARINT);
         $this->assertEquals(0, count($set));
         $set->add(new Varint('123'));
         $this->assertEquals(1, count($set));
@@ -43,22 +43,22 @@ class SetTest extends \PHPUnit_Framework_TestCase
     public function cassandraTypes()
     {
         return array(
-            array("ascii"),
-            array("bigint"),
-            array("blob"),
-            array("boolean"),
-            array("counter"),
-            array("decimal"),
-            array("double"),
-            array("float"),
-            array("int"),
-            array("text"),
-            array("timestamp"),
-            array("uuid"),
-            array("varchar"),
-            array("varint"),
-            array("timeuuid"),
-            array("inet"),
+            array(\Cassandra::TYPE_ASCII),
+            array(\Cassandra::TYPE_BIGINT),
+            array(\Cassandra::TYPE_BLOB),
+            array(\Cassandra::TYPE_BOOLEAN),
+            array(\Cassandra::TYPE_COUNTER),
+            array(\Cassandra::TYPE_DECIMAL),
+            array(\Cassandra::TYPE_DOUBLE),
+            array(\Cassandra::TYPE_FLOAT),
+            array(\Cassandra::TYPE_INT),
+            array(\Cassandra::TYPE_TEXT),
+            array(\Cassandra::TYPE_TIMESTAMP),
+            array(\Cassandra::TYPE_UUID),
+            array(\Cassandra::TYPE_VARCHAR),
+            array(\Cassandra::TYPE_VARINT),
+            array(\Cassandra::TYPE_TIMEUUID),
+            array(\Cassandra::TYPE_INET),
         );
     }
 
@@ -68,7 +68,7 @@ class SetTest extends \PHPUnit_Framework_TestCase
      */
     public function testValidatesTypesOfElements()
     {
-        $set = new Set('varint');
+        $set = new Set(\Cassandra::TYPE_VARINT);
         $set->add(new Decimal('123'));
     }
 
@@ -77,7 +77,7 @@ class SetTest extends \PHPUnit_Framework_TestCase
      */
     public function testSupportsIteration($numbers)
     {
-        $set = new Set('int');
+        $set = new Set(\Cassandra::TYPE_INT);
 
         foreach ($numbers as $number) {
             $set->add($number);
@@ -95,7 +95,7 @@ class SetTest extends \PHPUnit_Framework_TestCase
      */
     public function testSupportsConversionToArray($numbers)
     {
-        $set = new Set('int');
+        $set = new Set(\Cassandra::TYPE_INT);
 
         foreach ($numbers as $number) {
             $set->add($number);
@@ -109,7 +109,7 @@ class SetTest extends \PHPUnit_Framework_TestCase
      */
     public function testResumesIterationAfterConvertingToArray($numbers)
     {
-        $set = new Set('int');
+        $set = new Set(\Cassandra::TYPE_INT);
 
         foreach ($numbers as $number) {
             $set->add($number);

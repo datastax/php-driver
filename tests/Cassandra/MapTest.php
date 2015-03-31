@@ -6,7 +6,7 @@ class MapTest extends \PHPUnit_Framework_TestCase
 {
     public function testSupportsKeyBasedAccess()
     {
-        $map = new Map('varint', 'varchar');
+        $map = new Map(\Cassandra::TYPE_VARINT, \Cassandra::TYPE_VARCHAR);
         $this->assertEquals(0, count($map));
         $map->set(new Varint('123'), 'value');
         $this->assertEquals(1, count($map));
@@ -23,7 +23,7 @@ class MapTest extends \PHPUnit_Framework_TestCase
      */
     public function testSupportsOnlyCassandraTypesForKeys()
     {
-        new Map('custom type', 'varint');
+        new Map('custom type', \Cassandra::TYPE_VARINT);
     }
 
     /**
@@ -32,6 +32,6 @@ class MapTest extends \PHPUnit_Framework_TestCase
      */
     public function testSupportsOnlyCassandraTypesForValues()
     {
-        new Map('varint', 'another custom type');
+        new Map(\Cassandra::TYPE_VARINT, 'another custom type');
     }
 }

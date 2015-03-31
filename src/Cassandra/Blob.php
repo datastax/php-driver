@@ -2,13 +2,28 @@
 
 namespace Cassandra;
 
+/**
+ * A PHP representation of the CQL `blob` datatype
+ */
 final class Blob
 {
-    private $bytes;
+    /**
+     * Creates a new bytes array
+     * @param string $bytes any bytes
+     */
+    public function __construct($bytes) {}
 
-    public function __construct($bytes);
-    public function bytes();
-    public function __toString();
+    /**
+     * Returns bytes as a hex string
+     * @return string bytes as hexadecimal string
+     */
+    public function bytes() {}
+
+    /**
+     * Returns bytes as a hex string
+     * @return string bytes as hexadecimal string
+     */
+    public function __toString() {}
     /*
     public function toAscii();
     public function toText();
@@ -26,4 +41,4 @@ final class Blob
     public function toUuid();
     public function toTimeuuid();
     */
-  }
+}
