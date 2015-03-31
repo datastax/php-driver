@@ -85,6 +85,9 @@ For your convenience a `Vagrantfile` with configuration ready for testing is ava
 To execute tests, clone this repository, change into its root dir, and run the following:
 
 ```bash
+git clone https://github.com/datastax/php-driver.git
+cd php-driver
+git submodule update --init
 vagrant up
 vagrant ssh
 ```
