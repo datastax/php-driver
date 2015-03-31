@@ -58,17 +58,17 @@ final class DefaultSession implements Session
         if ($options) {
             if (isset($options->consistency)) {
                 if (!in_array($options->consistency, array(
-                        Cassandra::CONSISTENCY_ANY,
-                        Cassandra::CONSISTENCY_ONE,
-                        Cassandra::CONSISTENCY_TWO,
-                        Cassandra::CONSISTENCY_THREE,
-                        Cassandra::CONSISTENCY_QUORUM,
-                        Cassandra::CONSISTENCY_ALL,
-                        Cassandra::CONSISTENCY_LOCAL_QUORUM,
-                        Cassandra::CONSISTENCY_EACH_QUORUM,
-                        Cassandra::CONSISTENCY_SERIAL,
-                        Cassandra::CONSISTENCY_LOCAL_SERIAL,
-                        Cassandra::CONSISTENCY_LOCAL_ONE))) {
+                        \Cassandra::CONSISTENCY_ANY,
+                        \Cassandra::CONSISTENCY_ONE,
+                        \Cassandra::CONSISTENCY_TWO,
+                        \Cassandra::CONSISTENCY_THREE,
+                        \Cassandra::CONSISTENCY_QUORUM,
+                        \Cassandra::CONSISTENCY_ALL,
+                        \Cassandra::CONSISTENCY_LOCAL_QUORUM,
+                        \Cassandra::CONSISTENCY_EACH_QUORUM,
+                        \Cassandra::CONSISTENCY_SERIAL,
+                        \Cassandra::CONSISTENCY_LOCAL_SERIAL,
+                        \Cassandra::CONSISTENCY_LOCAL_ONE))) {
                     return new FutureException(new InvalidArgumentException(sprintf(
                         "Invalid consistency, must be one of " .
                         "Cassandra::CONSISTENCY_*, %s given",
@@ -81,8 +81,8 @@ final class DefaultSession implements Session
 
             if (isset($options->serialConsistency)) {
                 if (!in_array($options->serialConsistency, array(
-                        Cassandra::CONSISTENCY_SERIAL,
-                        Cassandra::CONSISTENCY_LOCAL_SERIAL))) {
+                        \Cassandra::CONSISTENCY_SERIAL,
+                        \Cassandra::CONSISTENCY_LOCAL_SERIAL))) {
                     return new FutureException(new InvalidArgumentException(sprintf(
                         "Invalid serial consistency, must be " .
                         "Cassandra::CONSISTENCY_SERIAL or " .
