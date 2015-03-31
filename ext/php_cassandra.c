@@ -339,6 +339,7 @@ php_cassandra_globals_ctor(zend_cassandra_globals* cassandra_globals TSRMLS_DC)
 static void
 php_cassandra_globals_dtor(zend_cassandra_globals* cassandra_globals TSRMLS_DC)
 {
+  cass_log_cleanup();
   cass_uuid_gen_free(cassandra_globals->uuid_gen);
   cassandra_globals->uuid_gen = NULL;
 }
