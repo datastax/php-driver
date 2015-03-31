@@ -62,3 +62,24 @@ Features:
 * [Results paging](feature/result_paging.feature).
 * [SSL encryption](feature/ssl_encryption.feature).
 * [Credentials authentication](src/Cassandra/Cluster/Builder.php#L312-L320).
+
+## Running tests
+
+The DataStax PHP Driver uses the awesome Behat and PHPUnit testing frameworks.
+For your convenience a `Vagrantfile` with configuration ready for testing is available.
+To execute tests, clone this repository, change into its root dir, and run the following:
+
+```bash
+vagrant up
+vagrant ssh
+```
+
+Once you've logged in to the vagrant vm, run:
+
+```bash
+source venv/bin/activate
+pip install ccm
+cd /usr/local/src/php-driver
+./bin/behat
+./bin/phpunit
+```
