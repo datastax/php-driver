@@ -25,18 +25,18 @@ foreach ($result as $row) {                       // results and rows implement 
 
 **NOTE**: You must first [install and enable the `cassandra.so` PHP extension](ext/README.md).
 
-* [Get composer](https://getcomposer.org/).
-* Add the following to your `composer.json`:
+* First, [get composer](https://getcomposer.org/).
+* Then, add the following to your `composer.json`:
 
 ```json
 {
     "require": {
-        "datastax/php-driver": "~@1.0"
+        "datastax/php-driver": "1.0.*@alpha"
     }
 }
 ```
 
-* Install DataStax PHP Driver for Apache Cassandra:
+* Finally, install the DataStax PHP Driver for Apache Cassandra:
 
 ```bash
 composer install
