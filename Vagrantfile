@@ -22,18 +22,36 @@ Vagrant.configure("2") do |config|
   source venv/bin/activate
   pip install ccm
 
-  pushd /usr/local/src/php-driver/lib/cpp-driver
-  cmake .
+  rm -Rf /tmp/php-driver-installation/
+  mkdir /tmp/php-driver-installation
+  pushd /tmp/php-driver-installation
+
+  mkdir build
+  builddir=$(cd build; pwd)
+
+  echo "Compiling cpp-driver..."
+  mkdir cpp-driver
+  pushd cpp-driver
+  cmake -DCMAKE_INSTALL_PREFIX:PATH=$builddir -DCASS_BUILD_STATIC=ON -DCASS_BUILD_SHARED=OFF -DCMAKE_BUILD_TYPE=RELEASE -DCMAKE_INSTALL_LIBDIR:PATH=lib -DCASS_USE_ZLIB=ON /usr/local/src/php-driver/lib/cpp-driver
   make
-  sudo make install
+  make install
   popd
+  rm -Rf cpp-driver
+
+  mv build/lib/libcassandra_static.a build/lib/libcassandra.a
+  popd
+
+  echo "Compiling and installing the extension..."
   pushd /usr/local/src/php-driver/ext
   phpize
-  ./configure --with-cassandra
+  CFLAGS="-pthread" LDFLAGS="-L$builddir/lib" LIBS="-lssl -lz -luv -lgmp -lstdc++" ./configure --with-cassandra=/tmp/php-driver-installation/build --with-gmp=/tmp/php-driver-installation/build --with-libdir=lib
   make
   sudo make install
   sudo sh -c 'echo "extension=cassandra.so" > /etc/php5/cli/conf.d/100-cassandra.ini'
   popd
+  rm -Rf /tmp/php-driver-installation/
+
+  echo "Installing composer and php-drivr dependencies..."
   pushd /usr/local/src/php-driver/
   curl -sS https://getcomposer.org/installer | php
   php composer.phar install
