@@ -82,6 +82,24 @@ php_cassandra_blob_properties(zval *object TSRMLS_DC)
   return props;
 }
 
+static int
+php_cassandra_blob_compare(zval *obj1, zval *obj2 TSRMLS_DC)
+{
+  if (Z_OBJCE_P(obj1) != Z_OBJCE_P(obj2))
+    return 1; /* different classes */
+
+  cassandra_blob* blob1 = (cassandra_blob*) zend_object_store_get_object(obj1 TSRMLS_CC);
+  cassandra_blob* blob2 = (cassandra_blob*) zend_object_store_get_object(obj2 TSRMLS_CC);
+
+  if (blob1->size == blob2->size) {
+    return memcmp((const char*) blob1->data, (const char*) blob2->data, blob1->size);
+  } else if (blob1->size < blob2->size) {
+    return -1;
+  } else {
+    return 1;
+  }
+}
+
 static void
 php_cassandra_blob_free(void *object TSRMLS_DC)
 {
@@ -119,6 +137,7 @@ void cassandra_define_CassandraBlob(TSRMLS_D)
   cassandra_ce_Blob = zend_register_internal_class(&ce TSRMLS_CC);
   memcpy(&cassandra_blob_handlers, zend_get_std_object_handlers(), sizeof(zend_object_handlers));
   cassandra_blob_handlers.get_properties = php_cassandra_blob_properties;
+  cassandra_blob_handlers.compare_objects = php_cassandra_blob_compare;
   cassandra_ce_Blob->ce_flags |= ZEND_ACC_FINAL_CLASS;
   cassandra_ce_Blob->create_object = php_cassandra_blob_new;
 }

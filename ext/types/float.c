@@ -95,6 +95,23 @@ php_cassandra_float_properties(zval *object TSRMLS_DC)
   return props;
 }
 
+static int
+php_cassandra_float_compare(zval *obj1, zval *obj2 TSRMLS_DC)
+{
+  if (Z_OBJCE_P(obj1) != Z_OBJCE_P(obj2))
+    return 1; /* different classes */
+
+  cassandra_float* number1 = (cassandra_float*) zend_object_store_get_object(obj1 TSRMLS_CC);
+  cassandra_float* number2 = (cassandra_float*) zend_object_store_get_object(obj2 TSRMLS_CC);
+
+  if (number1->value == number2->value)
+    return 0;
+  else if (number1->value < number2->value)
+    return -1;
+  else
+    return 1;
+}
+
 static void
 php_cassandra_float_free(void *object TSRMLS_DC)
 {
@@ -131,6 +148,7 @@ void cassandra_define_CassandraFloat(TSRMLS_D)
   cassandra_ce_Float = zend_register_internal_class(&ce TSRMLS_CC);
   memcpy(&cassandra_float_handlers, zend_get_std_object_handlers(), sizeof(zend_object_handlers));
   cassandra_float_handlers.get_properties = php_cassandra_float_properties;
+  cassandra_float_handlers.compare_objects = php_cassandra_float_compare;
   cassandra_ce_Float->ce_flags |= ZEND_ACC_FINAL_CLASS;
   cassandra_ce_Float->create_object = php_cassandra_float_new;
 }

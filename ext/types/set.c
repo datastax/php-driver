@@ -266,6 +266,21 @@ php_cassandra_set_properties(zval *object TSRMLS_DC)
   return props;
 }
 
+static int
+php_cassandra_set_compare(zval *obj1, zval *obj2 TSRMLS_DC)
+{
+  if (Z_OBJCE_P(obj1) != Z_OBJCE_P(obj2))
+    return 1; /* different classes */
+
+  cassandra_set* set1 = (cassandra_set*) zend_object_store_get_object(obj1 TSRMLS_CC);
+  cassandra_set* set2 = (cassandra_set*) zend_object_store_get_object(obj2 TSRMLS_CC);
+
+  if (set1->type != set2->type)
+    return 1;
+
+  return zend_compare_symbol_tables_i(&set1->values, &set2->values TSRMLS_CC);
+}
+
 static void
 php_cassandra_set_free(void *object TSRMLS_DC)
 {
@@ -306,6 +321,7 @@ void cassandra_define_CassandraSet(TSRMLS_D)
   cassandra_ce_Set = zend_register_internal_class(&ce TSRMLS_CC);
   memcpy(&cassandra_set_handlers, zend_get_std_object_handlers(), sizeof(zend_object_handlers));
   cassandra_set_handlers.get_properties = php_cassandra_set_properties;
+  cassandra_set_handlers.compare_objects = php_cassandra_set_compare;
   cassandra_ce_Set->ce_flags |= ZEND_ACC_FINAL_CLASS;
   cassandra_ce_Set->create_object = php_cassandra_set_new;
   zend_class_implements(cassandra_ce_Set TSRMLS_CC, 2, spl_ce_Countable, zend_ce_iterator);

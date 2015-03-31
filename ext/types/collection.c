@@ -34,7 +34,7 @@ php_cassandra_collection_get(cassandra_collection* collection, ulong index, zval
 }
 
 static int
-php_cassandra_collection_find(cassandra_collection* collection, zval* object, long* index)
+php_cassandra_collection_find(cassandra_collection* collection, zval* object, long* index TSRMLS_DC)
 {
   HashPointer ptr;
   zval**      current;
@@ -170,7 +170,7 @@ PHP_METHOD(CassandraCollection, find)
 
   cassandra_collection* collection = (cassandra_collection*) zend_object_store_get_object(getThis() TSRMLS_CC);
 
-  if (php_cassandra_collection_find(collection, object, &index))
+  if (php_cassandra_collection_find(collection, object, &index TSRMLS_CC))
     RETURN_LONG(index);
 }
 /* }}} */
@@ -282,6 +282,21 @@ php_cassandra_collection_properties(zval *object TSRMLS_DC)
   return props;
 }
 
+static int
+php_cassandra_collection_compare(zval *obj1, zval *obj2 TSRMLS_DC)
+{
+  if (Z_OBJCE_P(obj1) != Z_OBJCE_P(obj2))
+    return 1; /* different classes */
+
+  cassandra_collection* collection1 = (cassandra_collection*) zend_object_store_get_object(obj1 TSRMLS_CC);
+  cassandra_collection* collection2 = (cassandra_collection*) zend_object_store_get_object(obj2 TSRMLS_CC);
+
+  if (collection1->type != collection2->type)
+    return 1;
+
+  return zend_compare_symbol_tables_i(&collection1->values, &collection2->values TSRMLS_CC);
+}
+
 static void
 php_cassandra_collection_free(void *object TSRMLS_DC)
 {
@@ -321,7 +336,8 @@ void cassandra_define_CassandraCollection(TSRMLS_D)
   INIT_CLASS_ENTRY(ce, "Cassandra\\Collection", CassandraCollection_methods);
   cassandra_ce_Collection = zend_register_internal_class(&ce TSRMLS_CC);
   memcpy(&cassandra_collection_handlers, zend_get_std_object_handlers(), sizeof(zend_object_handlers));
-  cassandra_collection_handlers.get_properties = php_cassandra_collection_properties;
+  cassandra_collection_handlers.get_properties  = php_cassandra_collection_properties;
+  cassandra_collection_handlers.compare_objects = php_cassandra_collection_compare;
   cassandra_ce_Collection->ce_flags |= ZEND_ACC_FINAL_CLASS;
   cassandra_ce_Collection->create_object = php_cassandra_collection_new;
   zend_class_implements(cassandra_ce_Collection TSRMLS_CC, 2, spl_ce_Countable, zend_ce_iterator);

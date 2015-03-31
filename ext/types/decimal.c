@@ -100,6 +100,24 @@ php_cassandra_decimal_properties(zval *object TSRMLS_DC)
   return props;
 }
 
+static int
+php_cassandra_decimal_compare(zval *obj1, zval *obj2 TSRMLS_DC)
+{
+  if (Z_OBJCE_P(obj1) != Z_OBJCE_P(obj2))
+    return 1; /* different classes */
+
+  cassandra_decimal* decimal1 = (cassandra_decimal*) zend_object_store_get_object(obj1 TSRMLS_CC);
+  cassandra_decimal* decimal2 = (cassandra_decimal*) zend_object_store_get_object(obj2 TSRMLS_CC);
+
+  if (decimal1->scale == decimal2->scale) {
+    return mpz_cmp(decimal1->value, decimal2->value);
+  } else if (decimal1->scale < decimal2->scale) {
+    return -1;
+  } else {
+    return 1;
+  }
+}
+
 static void
 php_cassandra_decimal_free(void *object TSRMLS_DC)
 {
@@ -139,6 +157,7 @@ void cassandra_define_CassandraDecimal(TSRMLS_D)
   cassandra_ce_Decimal = zend_register_internal_class(&ce TSRMLS_CC);
   memcpy(&cassandra_decimal_handlers, zend_get_std_object_handlers(), sizeof(zend_object_handlers));
   cassandra_decimal_handlers.get_properties = php_cassandra_decimal_properties;
+  cassandra_decimal_handlers.compare_objects = php_cassandra_decimal_compare;
   cassandra_ce_Decimal->ce_flags |= ZEND_ACC_FINAL_CLASS;
   cassandra_ce_Decimal->create_object = php_cassandra_decimal_new;
 }

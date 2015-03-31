@@ -146,6 +146,29 @@ php_cassandra_timeuuid_properties(zval *object TSRMLS_DC)
   return props;
 }
 
+static int
+php_cassandra_timeuuid_compare(zval *obj1, zval *obj2 TSRMLS_DC)
+{
+  if (Z_OBJCE_P(obj1) != Z_OBJCE_P(obj2))
+    return 1; /* different classes */
+
+  cassandra_uuid* uuid1 = (cassandra_uuid*) zend_object_store_get_object(obj1 TSRMLS_CC);
+  cassandra_uuid* uuid2 = (cassandra_uuid*) zend_object_store_get_object(obj2 TSRMLS_CC);
+
+  if (uuid1->uuid.time_and_version == uuid2->uuid.time_and_version) {
+    if (uuid1->uuid.clock_seq_and_node == uuid2->uuid.clock_seq_and_node)
+      return 0;
+    else if (uuid1->uuid.clock_seq_and_node < uuid2->uuid.clock_seq_and_node)
+      return -1;
+    else
+      return 1;
+  } else if (uuid1->uuid.time_and_version < uuid2->uuid.time_and_version) {
+    return -1;
+  } else {
+    return 1;
+  }
+}
+
 static void
 php_cassandra_timeuuid_free(void *object TSRMLS_DC)
 {
@@ -184,6 +207,7 @@ cassandra_define_CassandraTimeuuid(TSRMLS_D)
   zend_class_implements(cassandra_ce_Timeuuid TSRMLS_CC, 1, cassandra_ce_UuidInterface);
   memcpy(&cassandra_timeuuid_handlers, zend_get_std_object_handlers(), sizeof(zend_object_handlers));
   cassandra_timeuuid_handlers.get_properties = php_cassandra_timeuuid_properties;
+  cassandra_timeuuid_handlers.compare_objects = php_cassandra_timeuuid_compare;
   cassandra_ce_Timeuuid->ce_flags |= ZEND_ACC_FINAL_CLASS;
   cassandra_ce_Timeuuid->create_object = php_cassandra_timeuuid_new;
 }

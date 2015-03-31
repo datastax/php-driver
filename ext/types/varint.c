@@ -82,6 +82,18 @@ php_cassandra_varint_properties(zval *object TSRMLS_DC)
   return props;
 }
 
+static int
+php_cassandra_varint_compare(zval *obj1, zval *obj2 TSRMLS_DC)
+{
+  if (Z_OBJCE_P(obj1) != Z_OBJCE_P(obj2))
+    return 1; /* different classes */
+
+  cassandra_varint* varint1 = (cassandra_varint*) zend_object_store_get_object(obj1 TSRMLS_CC);
+  cassandra_varint* varint2 = (cassandra_varint*) zend_object_store_get_object(obj2 TSRMLS_CC);
+
+  return mpz_cmp(varint1->value, varint2->value);
+}
+
 static void
 php_cassandra_varint_free(void *object TSRMLS_DC)
 {
@@ -120,6 +132,7 @@ void cassandra_define_CassandraVarint(TSRMLS_D)
   cassandra_ce_Varint = zend_register_internal_class(&ce TSRMLS_CC);
   memcpy(&cassandra_varint_handlers, zend_get_std_object_handlers(), sizeof(zend_object_handlers));
   cassandra_varint_handlers.get_properties = php_cassandra_varint_properties;
+  cassandra_varint_handlers.compare_objects = php_cassandra_varint_compare;
   cassandra_ce_Varint->ce_flags |= ZEND_ACC_FINAL_CLASS;
   cassandra_ce_Varint->create_object = php_cassandra_varint_new;
 }
