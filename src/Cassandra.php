@@ -39,7 +39,7 @@ final class Cassandra
     const LOG_DEBUG    = 5;
     const LOG_TRACE    = 6;
 
-    const VERSION = '1.0.0.alpha';
+    const VERSION = '1.0.0-alpha';
 
     /**
      * Returns a Cluster Builder
