@@ -4,9 +4,12 @@
 
 zend_class_entry *cassandra_ce_UuidInterface = NULL;
 
+ZEND_BEGIN_ARG_INFO_EX(arginfo_none, 0, ZEND_RETURN_VALUE, 0)
+ZEND_END_ARG_INFO()
+
 static zend_function_entry CassandraUuidInterface_methods[] = {
-  PHP_ABSTRACT_ME(CassandraUuidInterface, uuid, NULL)
-  PHP_ABSTRACT_ME(CassandraUuidInterface, version, NULL)
+  PHP_ABSTRACT_ME(CassandraUuidInterface, uuid, arginfo_none)
+  PHP_ABSTRACT_ME(CassandraUuidInterface, version, arginfo_none)
   PHP_FE_END
 };
 
