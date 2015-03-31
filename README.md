@@ -76,7 +76,7 @@ Features:
 The DataStax PHP Driver uses the amazing [Behat Framework](http://docs.behat.org/)
 for both end-to-end, or acceptance, testing and documentation. All of the features
 supported by the driver have appropriate acceptance tests with easy-to-copy code
-examples in the `features/`` directory.
+examples in the `features/` directory.
 
 ## Running tests
 
