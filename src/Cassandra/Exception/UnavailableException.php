@@ -16,28 +16,12 @@
  * limitations under the License.
  */
 
-namespace Cassandra;
+namespace Cassandra\Exception;
 
 /**
- * A PHP representation of the CQL `float` datatype
+ * UnavailableException is raised when coordinator detected that there aren't
+ * enough replica nodes available to fulfill the request. Request has not even
+ * been forwarded to the replica nodes in this case.
+ * @see https://github.com/apache/cassandra/blob/trunk/doc/native_protocol_v1.spec#L667-L677 Description of the Unavailable error in the native protocol v1 spec.
  */
-final class Float
-{
-    /**
-     * Creates a new float
-     * @param string $value float value as a string
-     */
-    public function __construct($value) {}
-
-    /**
-     * Returns the float value
-     * @return string float value
-     */
-    public function value() {}
-
-    /**
-     * Returns string representation of the float value
-     * @return string float value
-     */
-    public function __toString() {}
-}
+class UnavailableException extends ExecutionException {}

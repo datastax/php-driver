@@ -1,5 +1,21 @@
 <?php
 
+/**
+ * Copyright 2015 DataStax, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 namespace Cassandra;
 
 use Cassandra\Exception\DomainException;
@@ -10,16 +26,35 @@ use Cassandra\Exception\DomainException;
 final class Rows implements \Iterator, \Countable, \ArrayAccess
 {
     /**
-     * Result resource
+     * Result resource, used for paging
      * @var resource
      */
     private $resource;
+
+    /**
+     * Session resource, used for paging
+     * @var resource
+     */
     private $session;
+
+    /**
+     * Statement resource, used for paging
+     * @var resource
+     */
     private $statement;
+
+    /**
+     * Actual rows contained in this page of the result
+     * @var array
+     */
     private $rows;
 
     /**
+     * Creates a new instance of rows.
      * @access private
+     * @param resource $resource  Result resource, used for paging
+     * @param resource $session   Session resource, used for paging
+     * @param resource $statement Statement resource, used for paging
      */
     public function __construct($resource, $session, $statement)
     {

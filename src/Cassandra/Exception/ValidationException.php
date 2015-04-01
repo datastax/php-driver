@@ -16,28 +16,16 @@
  * limitations under the License.
  */
 
-namespace Cassandra;
+namespace Cassandra\Exception;
 
 /**
- * A PHP representation of the CQL `float` datatype
+ * ValidationException is raised on invalid request, before even attempting to
+ * execute it.
+ * @see Cassandra\Exception\InvalidSyntaxException
+ * @see Cassandra\Exception\UnauthorizedException
+ * @see Cassandra\Exception\InvalidQueryException
+ * @see Cassandra\Exception\ConfigurationException
+ * @see Cassandra\Exception\AlreadyExistsException
+ * @see Cassandra\Exception\UnpreparedException
  */
-final class Float
-{
-    /**
-     * Creates a new float
-     * @param string $value float value as a string
-     */
-    public function __construct($value) {}
-
-    /**
-     * Returns the float value
-     * @return string float value
-     */
-    public function value() {}
-
-    /**
-     * Returns string representation of the float value
-     * @return string float value
-     */
-    public function __toString() {}
-}
+class ValidationException extends ServerException {}

@@ -16,28 +16,11 @@
  * limitations under the License.
  */
 
-namespace Cassandra;
+namespace Cassandra\Exception;
 
 /**
- * A PHP representation of the CQL `float` datatype
+ * UnpreparedException is raised when a given prepared statement id does not
+ * exist on the server. The driver should be automatically re-preparing the
+ * statement in this case. Seeing this error could be considered a bug.
  */
-final class Float
-{
-    /**
-     * Creates a new float
-     * @param string $value float value as a string
-     */
-    public function __construct($value) {}
-
-    /**
-     * Returns the float value
-     * @return string float value
-     */
-    public function value() {}
-
-    /**
-     * Returns string representation of the float value
-     * @return string float value
-     */
-    public function __toString() {}
-}
+class UnpreparedException extends ValidationException {}

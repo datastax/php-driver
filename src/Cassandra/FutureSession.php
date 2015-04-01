@@ -1,19 +1,55 @@
 <?php
 
+/**
+ * Copyright 2015 DataStax, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 namespace Cassandra;
 
 use Cassandra\Exception\InvalidArgumentException;
-use Cassandra\Exception\TimeoutException;
-use Cassandra\Exception\LogicException;
-use Cassandra\Exception\LibraryException;
 
+/**
+ * A future that resolves with `Cassandra\Session`.
+ * @see Cassandra\Cluster::connectAsync()
+ */
 final class FutureSession implements Future
 {
+    /**
+     * Session instance that this future will resolve with.
+     * @var Cassandra\Session
+     */
     private $session;
-    private $resource;
-    private $resolved;
-    private $exception;
 
+    /**
+     * Actual future resource.
+     * @var resource
+     */
+    private $resource;
+
+    /**
+     * Whether this future has been resolved or not.
+     * @var boolean
+     */
+    private $resolved;
+
+    /**
+     * Creates a new session future.
+     * @access private
+     * @param resource          $resource Actual future resource
+     * @param Cassandra\Session $session  A session that will be connected
+     */
     public function __construct($resource, Session $session)
     {
         $this->resource  = $resource;
@@ -21,6 +57,9 @@ final class FutureSession implements Future
         $this->resolved  = false;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function get($timeout = null)
     {
         if ($this->resolved) {

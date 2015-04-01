@@ -1,12 +1,28 @@
 <?php
 
+/**
+ * Copyright 2015 DataStax, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 namespace Cassandra;
 
 use Cassandra\Exception\InvalidArgumentException;
 
 /**
- * This future results is resolved with Cassandra\Rows
- * @see Cassandra\Rows
+ * This future results is resolved with `Cassandra\Rows`.
+ * @see Cassandra\Session::executeAsync()
  */
 final class FutureRows implements Future
 {
@@ -15,10 +31,32 @@ final class FutureRows implements Future
      * @var resource
      */
     private $resource;
+
+    /**
+     * Session resource
+     * @var resource
+     */
     private $session;
+
+    /**
+     * Statement resource
+     * @var resource
+     */
     private $statement;
+
+    /**
+     * Rows that this future will resolve with
+     * @var Cassandra\Rows
+     */
     private $rows;
 
+    /**
+     * Creates new rows future.
+     * @access private
+     * @param resource $resource  actual future resource
+     * @param resource $session   a session resource (used for paging)
+     * @param resource $statement a statement resource (used for paging)
+     */
     public function __construct($resource, $session, $statement)
     {
         $this->resource  = $resource;
@@ -27,6 +65,9 @@ final class FutureRows implements Future
         $this->rows      = null;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function get($timeout = null)
     {
         if (!is_null($this->rows)) {

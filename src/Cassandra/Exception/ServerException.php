@@ -16,28 +16,11 @@
  * limitations under the License.
  */
 
-namespace Cassandra;
+namespace Cassandra\Exception;
 
 /**
- * A PHP representation of the CQL `float` datatype
+ * Server exception is raised when something unexpected happend on the server.
+ * This exception is most likely due to an Apache Cassandra bug.
+ * **NOTE** This exception and all its children are generated on the server.
  */
-final class Float
-{
-    /**
-     * Creates a new float
-     * @param string $value float value as a string
-     */
-    public function __construct($value) {}
-
-    /**
-     * Returns the float value
-     * @return string float value
-     */
-    public function value() {}
-
-    /**
-     * Returns string representation of the float value
-     * @return string float value
-     */
-    public function __toString() {}
-}
+class ServerException extends RuntimeException {}

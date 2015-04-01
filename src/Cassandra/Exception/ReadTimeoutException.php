@@ -16,28 +16,11 @@
  * limitations under the License.
  */
 
-namespace Cassandra;
+namespace Cassandra\Exception;
 
 /**
- * A PHP representation of the CQL `float` datatype
+ * ReadTimeoutException is raised when coordinator failed to receive acks from
+ * the required number of replica nodes in time during a read.
+ * @see https://github.com/apache/cassandra/blob/trunk/doc/native_protocol_v1.spec#L709-L726 Description of ReadTimeout error in the native protocol spec
  */
-final class Float
-{
-    /**
-     * Creates a new float
-     * @param string $value float value as a string
-     */
-    public function __construct($value) {}
-
-    /**
-     * Returns the float value
-     * @return string float value
-     */
-    public function value() {}
-
-    /**
-     * Returns string representation of the float value
-     * @return string float value
-     */
-    public function __toString() {}
-}
+class ReadTimeoutException extends ExecutionException {}

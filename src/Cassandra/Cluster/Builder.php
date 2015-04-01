@@ -1,5 +1,21 @@
 <?php
 
+/**
+ * Copyright 2015 DataStax, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 namespace Cassandra\Cluster;
 
 use Cassandra\SSLOptions;
@@ -7,11 +23,12 @@ use Cassandra\DefaultCluster;
 use Cassandra\ExecutionOptions;
 use Cassandra\Exception\InvalidArgumentException;
 
+/**
+ * Cluster builder allows fluent configuration of the cluster instance.
+ * @see Cassandra::cluster()
+ */
 final class Builder
 {
-    const LOAD_BALANCING_ROUND_ROBIN          = 0;
-    const LOAD_BALANCING_DC_AWARE_ROUND_ROBIN = 1;
-
     /**
      * Contact points, defaults to "127.0.0.1"
      * @var contactPoints
@@ -19,7 +36,7 @@ final class Builder
     private $contactPoints;
 
     /**
-     * Either Builder::LOAD_BALANCING_ROUND_ROBIN or Builder::LOAD_BALANCING_DC_AWARE_ROUND_ROBIN
+     * Either Cassandra::LOAD_BALANCING_ROUND_ROBIN or Cassandra::LOAD_BALANCING_DC_AWARE_ROUND_ROBIN
      * @var integer
      */
     private $loadBalancingPolicy;
@@ -106,7 +123,7 @@ final class Builder
     public function __construct()
     {
         $this->contactPoints            = "127.0.0.1";
-        $this->loadBalancingPolicy      = self::LOAD_BALANCING_ROUND_ROBIN;
+        $this->loadBalancingPolicy      = \Cassandra::LOAD_BALANCING_ROUND_ROBIN;
         $this->useTokenAwareRouting     = true;
         $this->defaultConsistency       = \Cassandra::CONSISTENCY_ONE;
         $this->defaultPageSize          = 10000;
@@ -130,10 +147,10 @@ final class Builder
         $options->timeout           = $this->defaultTimeout;
 
         switch($this->loadBalancingPolicy) {
-            case self::LOAD_BALANCING_ROUND_ROBIN:
+            case \Cassandra::LOAD_BALANCING_ROUND_ROBIN:
                 cassandra_cluster_set_load_balance_round_robin($cluster);
                 break;
-            case self::LOAD_BALANCING_DC_AWARE_ROUND_ROBIN:
+            case \Cassandra::LOAD_BALANCING_DC_AWARE_ROUND_ROBIN:
                 cassandra_cluster_set_load_balance_dc_aware($cluster, $this->localDatacenter, $this->hostPerRemoteDatacenter, $this->useRemoteDatacenterForLocalConsistencies);
                 break;
         }
@@ -266,7 +283,7 @@ final class Builder
      */
     public function withRoundRobinLoadBalancingPolicy()
     {
-        $this->loadBalancingPolicy = self::LOAD_BALANCING_ROUND_ROBIN;
+        $this->loadBalancingPolicy = \Cassandra::LOAD_BALANCING_ROUND_ROBIN;
         return $this;
     }
 
@@ -289,7 +306,7 @@ final class Builder
             throw new InvalidArgumentException(sprintf("Number of hosts per remote datacenter cannot be negative, %s given", $hostPerRemoteDatacenter));
         }
 
-        $this->loadBalancingPolicy                      = self::LOAD_BALANCING_DC_AWARE_ROUND_ROBIN;
+        $this->loadBalancingPolicy                      = \Cassandra::LOAD_BALANCING_DC_AWARE_ROUND_ROBIN;
         $this->localDatacenter                          = $localDatacenter;
         $this->hostPerRemoteDatacenter                  = $hostPerRemoteDatacenter;
         $this->useRemoteDatacenterForLocalConsistencies = $useRemoteDatacenterForLocalConsistencies;
