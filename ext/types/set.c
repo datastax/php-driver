@@ -266,6 +266,8 @@ php_cassandra_set_properties(zval *object TSRMLS_DC)
   return props;
 }
 
+int zend_compare_symbol_tables_i(HashTable *ht1, HashTable *ht2 TSRMLS_DC);
+
 static int
 php_cassandra_set_compare(zval *obj1, zval *obj2 TSRMLS_DC)
 {
