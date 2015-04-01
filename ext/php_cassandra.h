@@ -176,6 +176,7 @@ PHP_FUNCTION(cassandra_batch_add_statement);
 /* Exceptions */
 void cassandra_define_CassandraException(TSRMLS_D);
 void cassandra_define_CassandraInvalidArgumentException(TSRMLS_D);
+void cassandra_define_CassandraDomainException(TSRMLS_D);
 void cassandra_define_CassandraLogicException(TSRMLS_D);
 void cassandra_define_CassandraRuntimeException(TSRMLS_D);
 void cassandra_define_CassandraServerException(TSRMLS_D);

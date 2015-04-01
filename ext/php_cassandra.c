@@ -409,6 +409,7 @@ PHP_MINIT_FUNCTION(cassandra)
 
   cassandra_define_CassandraException(TSRMLS_C);
   cassandra_define_CassandraInvalidArgumentException(TSRMLS_C);
+  cassandra_define_CassandraDomainException(TSRMLS_C);
   cassandra_define_CassandraRuntimeException(TSRMLS_C);
   cassandra_define_CassandraTimeoutException(TSRMLS_C);
   cassandra_define_CassandraLogicException(TSRMLS_C);
