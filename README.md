@@ -61,6 +61,8 @@ Cassandra's native protocol. The current version works with:
 
 __NOTE__: Apache Cassandra 2.1 support is limited to the Cassandra 2.0 API, e.g. no user-defined types.
 
+__NOTE__: Windows support is planned for a later, more stable release.
+
 ## What's new in v1.0.0.alpha
 
 Features:
