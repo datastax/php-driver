@@ -81,9 +81,8 @@ examples in the `features/` directory.
 
 ## Running tests
 
-The DataStax PHP Driver uses the awesome Behat and PHPUnit testing frameworks.
-For your convenience a `Vagrantfile` with configuration ready for testing is available.
-To execute tests, clone this repository, change into its root dir, and run the following:
+For your convenience a `Vagrantfile` with configuration ready for testing is
+available. To execute tests, run the following:
 
 ```bash
 git clone https://github.com/datastax/php-driver.git
