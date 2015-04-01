@@ -27,12 +27,12 @@ php_cassandra_parse_integer(char* in, int in_len, mpz_t* number)
   if (in[point] == '0') {
     switch(in[point + 1]) {
     case 'b':
+      point += 2;
       base = 2;
       break;
     case 'x':
+      point += 2;
       base = 16;
-      break;
-    case '.':
       break;
     default:
       base = 8;
@@ -52,6 +52,11 @@ php_cassandra_parse_integer(char* in, int in_len, mpz_t* number)
 
     if (errno) {
       zend_throw_exception_ex(cassandra_ce_InvalidArgumentException, 0 TSRMLS_CC, "Invalid integer value: %s", in);
+      return 0;
+    }
+
+    if (end != &in[in_len]) {
+      zend_throw_exception_ex(cassandra_ce_InvalidArgumentException, 0 TSRMLS_CC, "Non digit characters were found in value: '%s'", in);
       return 0;
     }
 
@@ -93,7 +98,7 @@ php_cassandra_parse_decimal(char* in, int in_len, mpz_t* number, int* scale)
   int dot = -1;
   //  out will be storing the string representation of the integer part
   //  of the decimal value
-  char* out = (char*) emalloc((in_len + 1) * sizeof(char));
+  char* out = (char*) ecalloc((in_len + 1), sizeof(char));
   //  holds length of the formatted integer number
   int out_len = 0;
 
@@ -158,9 +163,9 @@ php_cassandra_parse_decimal(char* in, int in_len, mpz_t* number, int* scale)
     else if (c == 'e' || c == 'E')
       break;
     // Throw an exception if the character was not a decimal or an
-    // exponent and is not a digit.
-    else if (!isdigit(c)) {
-      zend_throw_exception_ex(cassandra_ce_InvalidArgumentException, 0 TSRMLS_CC, "Unrecognized character at %d: %c", point, c);
+    // exponent and is not a hexadecimal digit.
+    else if (!isxdigit(c)) {
+      zend_throw_exception_ex(cassandra_ce_InvalidArgumentException, 0 TSRMLS_CC, "Unrecognized character '%c' at %d", c, point);
       return 0;
     }
 
@@ -177,13 +182,13 @@ php_cassandra_parse_decimal(char* in, int in_len, mpz_t* number, int* scale)
     memcpy(&out[negative], &in[start], dot - start);
     memcpy(&out[negative + dot - start], &in[dot + 1], point - dot);
 
-    out_len = point - start;
+    out_len = point - start + negative;
     *scale = point - 1 - dot;
   } else {
     // If there was no decimal then the unscaled value is just the number
     // formed from all the digits and the scale is zero.
     memcpy(&out[negative], &in[start], point - start);
-    out_len = point - start;
+    out_len = point - start + negative;
     *scale = 0;
   }
 
@@ -195,8 +200,8 @@ php_cassandra_parse_decimal(char* in, int in_len, mpz_t* number, int* scale)
   int ok = php_cassandra_parse_integer(out, out_len, number);
 
   if (!ok) {
-    efree(out);
     zend_throw_exception_ex(cassandra_ce_InvalidArgumentException, 0 TSRMLS_CC, "Unable to extract integer part of decimal value: \"%s\", %s", in, out);
+    efree(out);
     return 0;
   }
   efree(out);
