@@ -1,5 +1,5 @@
 {
-  "name": "datastax/driver",
+  "name": "datastax/php-driver",
   "type": "library",
   "description": "PHP Driver for Apache Cassandra",
   "keywords": [
