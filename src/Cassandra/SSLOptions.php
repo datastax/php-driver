@@ -31,7 +31,7 @@ final class SSLOptions
     private $trustedCerts = null;
 
     /**
-     * Client cert
+     * Path to client cert
      * @var string|null
      */
     private $clientCert = null;
@@ -59,11 +59,11 @@ final class SSLOptions
      * Don't instantiate directly, use Cassandra\SSLOptions\Builder instead.
      *
      * @access private
-     * @param array|null $trustedCerts Trusted certificate paths
-     * @param int|null   $verifyFlags  A bitmask of Cassandra::VERIFY_* constants
-     * @param string     $clientCert   Client cert
-     * @param string     $privateKey   Path to private key
-     * @param string     $passphrase   Passphrase for the private key if any
+     * @param array|null  $trustedCerts Trusted certificate paths
+     * @param int|null    $verifyFlags  A bitmask of Cassandra::VERIFY_* constants
+     * @param string|null $clientCert   Path to client cert
+     * @param string|null $privateKey   Path to private key
+     * @param string|null $passphrase   Passphrase for the private key if any
      */
     public function __construct($trustedCerts, $verifyFlags, $clientCert, $privateKey, $passphrase)
     {
