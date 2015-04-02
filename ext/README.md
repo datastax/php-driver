@@ -36,7 +36,7 @@ popd
 
 [Refer to the official documentation](http://datastax.github.io/cpp-driver/topics/building/)
 for the DataStax C/C++ Driver for Apache Cassandra in case you're having issues
-installing any of the dependencies.
+installing any of its dependencies.
 
 ## Install the PHP extension
 
