@@ -1,6 +1,6 @@
 # Cassandra PHP Extension
 
-This extension is a wrapped around the [DataStax C/C++ driver for Apache
+This extension is a wrapper around the [DataStax C/C++ driver for Apache
 Cassandra](http://datastax.github.io/cpp-driver/). In order to install it, you
 must install the C/C++ driver and its dependencies, as well as the [The GNU
 Multiple Precision Arithmetic Library](https://gmplib.org/).
@@ -34,6 +34,10 @@ popd
 popd
 ```
 
+[Refer to the official documentation](http://datastax.github.io/cpp-driver/topics/building/)
+for the DataStax C/C++ Driver for Apache Cassandra in case you're having issues
+installing any of the dependencies.
+
 ## Install the PHP extension
 
 ```bash
@@ -45,6 +49,11 @@ cd ext
 ```
 
 **Note** In the future, a PECL installation will be provided.
+
+**Note** [The install.sh script](install.sh#L25-L35) will also compile and
+statically link into the extension a submoduled version of the DataStax C/C++
+driver for Apache Cassandra. To use a version of cpp driver that you already
+have on your system, run `phpize`, `./configure` and `make install`.
 
 ## Enable the PHP extension
 
