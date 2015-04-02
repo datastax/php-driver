@@ -39,12 +39,15 @@ final class DefaultCluster implements Cluster
     private $defaults;
 
     /**
-     * Holds a reference to SSLContext resource if was configured with SSL
+     * Holds a reference to SSLContext resource if was configured with SSL.
+     * This is necessary to prevent GC from destroying it before the cluster.
      * @var resource|null
      */
     private $ssl;
 
     /**
+     * Note that while the $ssl property is not used, it is necessary to keep
+     * a reference to it to prevent GC from destroying it before the cluster.
      * @access private
      * @param resource $resource Cluster resource
      */
