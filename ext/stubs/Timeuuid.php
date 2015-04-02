@@ -56,7 +56,7 @@ final class Timeuuid
 
     /**
      * Converts current timeuuid to PHP DateTime
-     * @return DateTime
+     * @return \DateTime
      */
     public function toDateTime() {}
 }

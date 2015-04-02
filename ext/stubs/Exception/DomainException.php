@@ -18,6 +18,8 @@
 
 namespace Cassandra\Exception;
 
+use Cassandra\Exception;
+
 /**
  * Cassandra-specific domain exception
  */
