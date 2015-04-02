@@ -78,7 +78,9 @@ class CCM
             }
         }
 
-        throw new RuntimeException("Unable to initialize a Session, check cassandra logs");
+        if (!isset($this->session)) {
+            throw new RuntimeException("Unable to initialize a Session, check cassandra logs");
+        }
     }
 
     public function stop()
