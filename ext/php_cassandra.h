@@ -112,7 +112,7 @@ PHP_MINFO_FUNCTION(cassandra);
 PHP_FUNCTION(cassandra_set_log_level);
 
 /* Util */
-PHP_FUNCTION(cassanrda_rows_from_result);
+PHP_FUNCTION(cassandra_rows_from_result);
 
 /* CassCluster */
 PHP_FUNCTION(cassandra_cluster_new);
