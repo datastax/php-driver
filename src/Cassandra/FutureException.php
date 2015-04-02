@@ -31,7 +31,7 @@ final class FutureException implements Future
 
     /**
      * Creates a future exception.
-     * @param Exception $exception an exception to resolve this futuer with.
+     * @param \Exception $exception an exception to resolve this future with.
      */
     public function __construct(\Exception $exception)
     {

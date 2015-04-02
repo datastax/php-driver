@@ -96,7 +96,8 @@ final class Row implements \Iterator, \Countable, \ArrayAccess
 
     /**
      * Rows are read-only so this method throws an exception and doesn't do anything.
-     * @throws Cassandra\Exception\DomainException
+     *
+     * @throws DomainException
      * @param string $offset
      * @param mixed  $value
      */
@@ -109,7 +110,7 @@ final class Row implements \Iterator, \Countable, \ArrayAccess
 
     /**
      * Rows are read-only so this method throws an exception and doesn't do anything.
-     * @throws Cassandra\Exception\DomainException
+     * @throws DomainException
      * @param string $offset
      */
     public function offsetUnset($offset) {

@@ -132,7 +132,7 @@ final class Rows implements \Iterator, \Countable, \ArrayAccess
             ));
         }
 
-        return $offset >= 0 && $offset < $this->count;
+        return $offset >= 0 && $offset < count($this->rows);
     }
 
     /**
@@ -178,7 +178,9 @@ final class Rows implements \Iterator, \Countable, \ArrayAccess
     }
 
     /**
-     * @return  Cassandra\Result|null  loads and returns next result page
+     * @param int|null $timeout
+     *
+     * @return  Rows|null  loads and returns next result page
      */
     public function nextPage($timeout = null)
     {
@@ -186,7 +188,7 @@ final class Rows implements \Iterator, \Countable, \ArrayAccess
     }
 
     /**
-     * @return  Cassandra\Future  returns future of the next result page
+     * @return  Future  returns future of the next result page
      */
     public function nextPageAsync()
     {
@@ -203,7 +205,7 @@ final class Rows implements \Iterator, \Countable, \ArrayAccess
     }
 
     /**
-     * @return  Cassandra\Row|null  returns first row if any
+     * @return  Row|null  returns first row if any
      */
     public function first()
     {

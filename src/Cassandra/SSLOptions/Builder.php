@@ -76,7 +76,7 @@ final class Builder
      * @param string $path path to a file containing a PEM formatted certificate.
      * @param string ...   additional paths
      *
-     * @return Cassandra\SSLOptions\Builder self
+     * @return Builder self
      */
     public function withTrustedCerts($path)
     {
@@ -96,7 +96,9 @@ final class Builder
     /**
      * Disable certificate verification
      *
-     * @return Cassandra\SSLOptions\Builder self
+     * @param int $flags
+     *
+     * @return self
      */
     public function withVerifyFlags($flags)
     {
@@ -105,13 +107,14 @@ final class Builder
     }
 
     /**
-     * Set client-side certificate chain. This is used to authenticate the
-     * client on the server-side. This should contain the entire Certificate
+     * Set client-side certificate chain.
+     *
+     * This is used to authenticate the client on the server-side. This should contain the entire Certificate
      * chain starting with the certificate itself.
      *
-     * @param [type] $path path to a file containing a PEM formatted certificate.
+     * @param string $path path to a file containing a PEM formatted certificate.
      *
-     * @return Cassandra\SSLOptions\Builder self
+     * @return self
      */
     public function withClientCert($path)
     {
@@ -130,9 +133,9 @@ final class Builder
      * the server-side.
      *
      * @param string $path       Path to the private key file
-     * @param string $passphrase Passphrase for the private key, if any (default: `null`)
+     * @param string|null $passphrase Passphrase for the private key, if any (default: `null`)
      *
-     * @return Cassandra\SSLOptions\Builder self
+     * @return self
      */
     function withPrivateKey($path, $passphrase = null)
     {
@@ -153,7 +156,7 @@ final class Builder
 
     /**
      * Builds SSL options
-     * @return Cassandra\SSLOptions ssl options configured accordingly.
+     * @return SSLOptions ssl options configured accordingly.
      */
     public function build()
     {

@@ -28,7 +28,7 @@ final class FutureSession implements Future
 {
     /**
      * Session instance that this future will resolve with.
-     * @var Cassandra\Session
+     * @var Session
      */
     private $session;
 
@@ -48,7 +48,7 @@ final class FutureSession implements Future
      * Creates a new session future.
      * @access private
      * @param resource          $resource Actual future resource
-     * @param Cassandra\Session $session  A session that will be connected
+     * @param Session $session  A session that will be connected
      */
     public function __construct($resource, Session $session)
     {
