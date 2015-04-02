@@ -31,4 +31,13 @@ interface Cluster
      * @return  Session  Session instance
      */
     public function connect($keyspace = null);
+
+    /**
+     * Creates a new Session instance
+     *
+     * @param  string  $keyspace  Optional keyspace name
+     *
+     * @return  Cassandra\Future  A Future Session instance
+     */
+    public function connectAsync($keyspace = null);
 }

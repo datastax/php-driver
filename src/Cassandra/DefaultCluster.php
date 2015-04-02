@@ -69,6 +69,9 @@ final class DefaultCluster implements Cluster
         return $this->connectAsync($keyspace)->get();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function connectAsync($keyspace = null)
     {
         $session = cassandra_session_new();

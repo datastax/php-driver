@@ -21,6 +21,7 @@ namespace Cassandra;
 /**
  * Futures are returns from asynchronous methods.
  *
+ * @see Cassandra\Cluster::connectAsync()
  * @see Cassandra\Session::executeAsync()
  * @see Cassandra\Session::prepareAsync()
  * @see Cassandra\Session::closeAsync()
