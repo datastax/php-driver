@@ -56,20 +56,10 @@ foreach ($result as $row) {                       // results and rows implement 
 **NOTE**: You must first [install and enable the `cassandra.so` PHP extension](ext/README.md).
 
 * First, [get composer](https://getcomposer.org/).
-* Then, add the following to your `composer.json`:
-
-```json
-{
-    "require": {
-        "datastax/php-driver": "1.0.0-alpha"
-    }
-}
-```
-
-* Finally, install the DataStax PHP Driver for Apache Cassandra:
+* Then, install the DataStax PHP Driver for Apache Cassandra:
 
 ```bash
-composer install
+composer require datastax/php-driver 1.0.0-alpha
 ```
 
 ## Compatibility
