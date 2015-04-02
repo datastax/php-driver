@@ -102,8 +102,6 @@ vagrant ssh
 Once you've logged in to the vagrant vm, run:
 
 ```bash
-source venv/bin/activate
-pip install ccm
 cd /usr/local/src/php-driver
 ./bin/behat
 ./bin/phpunit
