@@ -17,10 +17,7 @@ Vagrant.configure("2") do |config|
 
   sudo su - vagrant
 
-  sudo pip install virtualenv
-  virtualenv venv
-  source venv/bin/activate
-  pip install ccm
+  sudo pip install ccm
 
   rm -Rf /tmp/php-driver-installation/
   mkdir /tmp/php-driver-installation
