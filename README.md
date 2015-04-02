@@ -15,7 +15,7 @@ Cassandra's native protocol.
 The current release is an early alpha. This means that it lacks some features
 and stability, but should be enough to start testing and working with Apache
 Cassandra. Below, you'll find a list of functionality that is already supported
-as well as what's plan for the upcoming releases.
+as well as what's planned for the upcoming releases.
 
 ## Features
 
