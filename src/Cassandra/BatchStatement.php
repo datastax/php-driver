@@ -40,19 +40,22 @@ use Cassandra\Exception\InvalidArgumentException;
 final class BatchStatement implements Statement
 {
     /**
-     * The type of this statement, one of Cassandra::BATCH_*
+     * The type of this statement, one of Cassandra::BATCH_*.
+     *
      * @var int
      */
     private $type;
 
     /**
-     * A collection of statements and their arguments
+     * A collection of statements and their arguments.
+     *
      * @var array
      */
     private $statements;
 
     /**
-     * Creates a new batch statement
+     * Creates a new batch statement.
+     *
      * @param int $type must be one of Cassandra::BATCH_*
      */
     public function __construct($type = \Cassandra::BATCH_LOGGED)
@@ -60,11 +63,11 @@ final class BatchStatement implements Statement
         if (!in_array($type, array(
                 \Cassandra::BATCH_LOGGED,
                 \Cassandra::BATCH_UNLOGGED,
-                \Cassandra::BATCH_COUNTER
-            ))) {
+                \Cassandra::BATCH_COUNTER,
+        ))) {
             throw new InvalidArgumentException(sprintf(
-                "Invalid batch type, must be one of " .
-                "Cassandra::BATCH_*, %s given",
+                'Invalid batch type, must be one of '.
+                'Cassandra::BATCH_*, %s given',
                 var_export($type, true)
             ));
         }
@@ -73,20 +76,20 @@ final class BatchStatement implements Statement
     }
 
     /**
-     * Adds a statement to this batch
+     * Adds a statement to this batch.
      *
-     * @param Statement $statement the statement to add
-     * @param array|null          $arguments positional or named arguments
+     * @param Statement  $statement the statement to add
+     * @param array|null $arguments positional or named arguments
      *
      * @return self
      */
     public function add(Statement $statement, array $arguments = null)
     {
-        if (!($statement instanceOf SimpleStatement
-           || $statement instanceOf PreparedStatement)) {
+        if (!($statement instanceof SimpleStatement
+           || $statement instanceof PreparedStatement)) {
             throw new InvalidArgumentException(sprintf(
-                "Batch statements can contain only simple and prepared " .
-                "statements, %s given", var_export($statement, true)
+                'Batch statements can contain only simple and prepared '.
+                'statements, %s given', var_export($statement, true)
             ));
         }
 
@@ -106,8 +109,8 @@ final class BatchStatement implements Statement
     {
         if (!is_null($arguments)) {
             throw new InvalidArgumentException(
-                "Batch statements do not allow arguments, specify them for " .
-                "each individual statement when calling BatchStatement::add()"
+                'Batch statements do not allow arguments, specify them for '.
+                'each individual statement when calling BatchStatement::add()'
             );
         }
 

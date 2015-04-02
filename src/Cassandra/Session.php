@@ -26,69 +26,68 @@ namespace Cassandra;
 interface Session
 {
     /**
-     * Executes a given statement and returns a result
+     * Executes a given statement and returns a result.
      *
-     * @param  Statement        $statement statement to be executed
-     * @param  ExecutionOptions $options   execution options
+     * @param Statement        $statement statement to be executed
+     * @param ExecutionOptions $options   execution options
      *
      * @throws Exception
      *
-     * @return Rows               execution result
+     * @return Rows execution result
      */
-    function execute(Statement $statement, ExecutionOptions $options = null);
+    public function execute(Statement $statement, ExecutionOptions $options = null);
 
     /**
-     * Executes a given statement and returns a future result
+     * Executes a given statement and returns a future result.
      *
      * Note that this method ignores ExecutionOptions::$timeout option, you can
      * provide one to Future::get() instead.
      *
-     * @param  Statement $statement statement to be executed
-     * @param  ExecutionOptions|null     $options   execution options
+     * @param Statement             $statement statement to be executed
+     * @param ExecutionOptions|null $options   execution options
      *
-     * @return Future     future result
+     * @return Future future result
      */
-    function executeAsync(Statement $statement, ExecutionOptions $options = null);
+    public function executeAsync(Statement $statement, ExecutionOptions $options = null);
 
     /**
-     * Creates a prepared statement from a given CQL string
+     * Creates a prepared statement from a given CQL string.
      *
      * Note that this method only uses the ExecutionOptions::$timeout option,
      * all other options will be ignored.
      *
-     * @param  string $cql        CQL statement string
-     * @param  ExecutionOptions|null  $options    execution options
+     * @param string                $cql     CQL statement string
+     * @param ExecutionOptions|null $options execution options
      *
      * @throws Exception
      *
-     * @return PreparedStatement  prepared statement
+     * @return PreparedStatement prepared statement
      */
-    function prepare($cql, ExecutionOptions $options = null);
+    public function prepare($cql, ExecutionOptions $options = null);
 
     /**
-     * Asynchronously prepares a statement and returns a future prepared statement
+     * Asynchronously prepares a statement and returns a future prepared statement.
      *
      * Note that all options passed to this method will be ignored.
      *
-     * @param  string $cql       CQL string to be prepared
-     * @param  ExecutionOptions|null  $options   preparation options
-     * @return Future  statement
+     * @param string                $cql     CQL string to be prepared
+     * @param ExecutionOptions|null $options preparation options
+     *
+     * @return Future statement
      */
-    function prepareAsync($cql, ExecutionOptions $options = null);
+    public function prepareAsync($cql, ExecutionOptions $options = null);
 
     /**
-     * Closes current session and all of its connections
+     * Closes current session and all of its connections.
      *
      * @param float|null Timeout to wait for closure in seconds
-     *
-     * @return void
      */
-    function close($timeout = null);
+    public function close($timeout = null);
 
     /**
-     * Asynchronously closes current session once all pending requests have finished
+     * Asynchronously closes current session once all pending requests have finished.
      *
-     * @return Future  future
+     * @return Future future
      */
-    function closeAsync();
+    public function closeAsync();
 }

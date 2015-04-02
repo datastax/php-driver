@@ -25,72 +25,84 @@ use Cassandra\Exception\InvalidArgumentException;
 
 /**
  * Cluster builder allows fluent configuration of the cluster instance.
+ *
  * @see Cassandra::cluster()
  */
 final class Builder
 {
     /**
-     * Contact points, defaults to "127.0.0.1"
+     * Contact points, defaults to "127.0.0.1".
+     *
      * @var string
      */
     private $contactPoints;
 
     /**
-     * Either Cassandra::LOAD_BALANCING_ROUND_ROBIN or Cassandra::LOAD_BALANCING_DC_AWARE_ROUND_ROBIN
-     * @var integer
+     * Either Cassandra::LOAD_BALANCING_ROUND_ROBIN or Cassandra::LOAD_BALANCING_DC_AWARE_ROUND_ROBIN.
+     *
+     * @var int
      */
     private $loadBalancingPolicy;
 
     /**
-     * Name of the local datacenter
+     * Name of the local datacenter.
+     *
      * @var string
      */
     private $localDatacenter;
 
     /**
-     * Maximum number of hosts to try in remote datacenters
-     * @var integer
+     * Maximum number of hosts to try in remote datacenters.
+     *
+     * @var int
      */
     private $hostPerRemoteDatacenter;
 
     /**
-     * Allow using hosts from remote datacenters to execute statements with local consistencies
-     * @var boolean
+     * Allow using hosts from remote datacenters to execute statements with local consistencies.
+     *
+     * @var bool
      */
     private $useRemoteDatacenterForLocalConsistencies;
 
     /**
-     * Enable Token-aware routing
-     * @var boolean
+     * Enable Token-aware routing.
+     *
+     * @var bool
      */
     private $useTokenAwareRouting;
 
     /**
-     * Username for authentication
+     * Username for authentication.
+     *
      * @var string
      */
     private $username;
 
     /**
-     * Password for authentication
+     * Password for authentication.
+     *
      * @var string
      */
     private $password;
 
     /**
-     * Connection timeout
+     * Connection timeout.
+     *
      * @var float
      */
     private $connectTimeout;
 
     /**
-     * Request timeout
+     * Request timeout.
+     *
      * @var float
      */
     private $requestTimeout;
 
     /**
-     * sslOptions
+     * sslOptions.
+     *
      * @var SSLOptions
      */
     private $sslOptions;
@@ -98,21 +110,24 @@ final class Builder
     /**
      * Default consistency for requests
      * One of Cassandra::CONSISTENCY_*
-     * Default: Cassandra::CONSISTENCY_ONE
+     * Default: Cassandra::CONSISTENCY_ONE.
+     *
      * @var int
      */
     private $defaultConsistency;
 
     /**
      * Default results page size
-     * Default: 10000
+     * Default: 10000.
+     *
      * @var int
      */
     private $defaultPageSize;
 
     /**
      * Default timeout for future resolution in blocking operations
-     * Default: null
+     * Default: null.
+     *
      * @var float
      */
     private $defaultTimeout;
@@ -122,7 +137,7 @@ final class Builder
      */
     public function __construct()
     {
-        $this->contactPoints            = "127.0.0.1";
+        $this->contactPoints            = '127.0.0.1';
         $this->loadBalancingPolicy      = \Cassandra::LOAD_BALANCING_ROUND_ROBIN;
         $this->useTokenAwareRouting     = true;
         $this->defaultConsistency       = \Cassandra::CONSISTENCY_ONE;
@@ -131,13 +146,12 @@ final class Builder
     }
 
     /**
-     * Returns a Cluster Instance
+     * Returns a Cluster Instance.
      *
      * @return \Cassandra\Cluster Cluster instance
      */
     public function build()
     {
-
         $options = new ExecutionOptions();
         $cluster = cassandra_cluster_new();
         $ssl     = null;
@@ -146,7 +160,7 @@ final class Builder
         $options->pageSize          = $this->defaultPageSize;
         $options->timeout           = $this->defaultTimeout;
 
-        switch($this->loadBalancingPolicy) {
+        switch ($this->loadBalancingPolicy) {
             case \Cassandra::LOAD_BALANCING_ROUND_ROBIN:
                 cassandra_cluster_set_load_balance_round_robin($cluster);
                 break;
@@ -180,8 +194,10 @@ final class Builder
     }
 
     /**
-     * Configures default consistency for all requests
+     * Configures default consistency for all requests.
+     *
      * @param int $consistency A consistency level, must be one of Cassandra::CONSISTENCY_* values
+     *
      * @return self
      */
     public function withDefaultConsistency($consistency)
@@ -197,71 +213,77 @@ final class Builder
                 \Cassandra::CONSISTENCY_EACH_QUORUM,
                 \Cassandra::CONSISTENCY_SERIAL,
                 \Cassandra::CONSISTENCY_LOCAL_SERIAL,
-                \Cassandra::CONSISTENCY_LOCAL_ONE))) {
+                \Cassandra::CONSISTENCY_LOCAL_ONE,
+            ))) {
             throw new InvalidArgumentException(sprintf(
-                "Invalid consistency, must be one of " .
-                "Cassandra::CONSISTENCY_*, %s given",
+                'Invalid consistency, must be one of '.
+                'Cassandra::CONSISTENCY_*, %s given',
                 var_export($consistency, true)
             ));
         }
 
         $this->defaultConsistency = $consistency;
+
         return $this;
     }
 
     /**
      * Configures default page size for all results.
      * Set to -1 to disable paging altogether.
+     *
      * @param int $pageSize default page size
      *
      * @return self
      */
     public function withDefaultPageSize($pageSize)
     {
-      if (!(is_numeric($pageSize) && ($pageSize === -1 || $pageSize > 0))) {
-          throw new InvalidArgumentException(sprintf(
-              "Page size must be a positive integer or exactly -1, %s given",
-              var_export($pageSize, true)
-          ));
-      }
+        if (!(is_numeric($pageSize) && ($pageSize === -1 || $pageSize > 0))) {
+            throw new InvalidArgumentException(sprintf(
+                'Page size must be a positive integer or exactly -1, %s given',
+                var_export($pageSize, true)
+            ));
+        }
 
-      $this->defaultPageSize = $pageSize;
+        $this->defaultPageSize = $pageSize;
 
         return $this;
     }
 
     /**
      * Configures default timeout for future resolution in blocking operations
-     * Set to null to disable (default)
+     * Set to null to disable (default).
+     *
      * @param int|null $timeout timeout value
      *
      * @return self
      */
     public function withDefaultTimeout($timeout)
     {
-      if (!(is_null($timeout) || is_numeric($timeout) && $timeout > 0)) {
-          throw new InvalidArgumentException(sprintf(
-              "Page size must be a positive integer or exactly -1, %s given",
-              var_export($timeout, true)
-          ));
-      }
+        if (!(is_null($timeout) || is_numeric($timeout) && $timeout > 0)) {
+            throw new InvalidArgumentException(sprintf(
+                'Page size must be a positive integer or exactly -1, %s given',
+                var_export($timeout, true)
+            ));
+        }
 
-      $this->defaultTimeout = $timeout;
+        $this->defaultTimeout = $timeout;
 
         return $this;
     }
 
     /**
      * Configures the initial endpoints. Note that the driver will
-     * automatically discover and connect to the rest of the cluster
+     * automatically discover and connect to the rest of the cluster.
      *
-     * @param  string $host  an ip address string
-     * @param  string ...    additional addresses
+     * @param string $host an ip address string
+     * @param string ...   additional addresses
+     *
      * @return self
      */
     public function withContactPoints($host)
     {
         $this->contactPoints = implode(',', func_get_args());
+
         return $this;
     }
 
@@ -273,15 +295,16 @@ final class Builder
     public function withRoundRobinLoadBalancingPolicy()
     {
         $this->loadBalancingPolicy = \Cassandra::LOAD_BALANCING_ROUND_ROBIN;
+
         return $this;
     }
 
     /**
      * Configures this cluster to use a datacenter aware round robin load balancing policy.
      *
-     * @param string  $localDatacenter                          Name of the local datacenter
-     * @param integer $hostPerRemoteDatacenter                  Maximum number of hosts to try in remote datacenters
-     * @param boolean $useRemoteDatacenterForLocalConsistencies Allow using hosts from remote datacenters to execute statements with local consistencies
+     * @param string $localDatacenter                          Name of the local datacenter
+     * @param int    $hostPerRemoteDatacenter                  Maximum number of hosts to try in remote datacenters
+     * @param bool   $useRemoteDatacenterForLocalConsistencies Allow using hosts from remote datacenters to execute statements with local consistencies
      *
      * @return self
      */
@@ -292,31 +315,33 @@ final class Builder
         $useRemoteDatacenterForLocalConsistencies = (bool) $useRemoteDatacenterForLocalConsistencies;
 
         if ($hostPerRemoteDatacenter < 0) {
-            throw new InvalidArgumentException(sprintf("Number of hosts per remote datacenter cannot be negative, %s given", $hostPerRemoteDatacenter));
+            throw new InvalidArgumentException(sprintf('Number of hosts per remote datacenter cannot be negative, %s given', $hostPerRemoteDatacenter));
         }
 
         $this->loadBalancingPolicy                      = \Cassandra::LOAD_BALANCING_DC_AWARE_ROUND_ROBIN;
         $this->localDatacenter                          = $localDatacenter;
         $this->hostPerRemoteDatacenter                  = $hostPerRemoteDatacenter;
         $this->useRemoteDatacenterForLocalConsistencies = $useRemoteDatacenterForLocalConsistencies;
+
         return $this;
     }
 
     /**
-     * Enable token aware routing
+     * Enable token aware routing.
      *
-     * @param boolean $enabled Whether to enable token aware routing (default: `true`)
+     * @param bool $enabled Whether to enable token aware routing (default: `true`)
      *
      * @return self
      */
     public function withTokenAwareRouting($enabled = true)
     {
         $this->useTokenAwareRouting = (bool) $enabled;
+
         return $this;
     }
 
     /**
-     * Configures cassandra authentication
+     * Configures cassandra authentication.
      *
      * @param string $username Username
      * @param string $password Password
@@ -327,11 +352,12 @@ final class Builder
     {
         $this->username = (string) $username;
         $this->password = (string) $password;
+
         return $this;
     }
 
     /**
-     * Timeout used for establishing TCP connections
+     * Timeout used for establishing TCP connections.
      *
      * @param float $timeout Timeout value in seconds, can be fractional
      *
@@ -340,11 +366,12 @@ final class Builder
     public function withConnectTimeout($timeout)
     {
         $this->connectTimeout = (float) $timeout;
+
         return $this;
     }
 
     /**
-     * Timeout used for waiting for a response from a node
+     * Timeout used for waiting for a response from a node.
      *
      * @param float $timeout Timeout value in seconds, can be fractional
      *
@@ -353,11 +380,12 @@ final class Builder
     public function withRequestTimeout($timeout)
     {
         $this->requestTimeout = (float) $timeout;
+
         return $this;
     }
 
     /**
-     * Set up ssl context
+     * Set up ssl context.
      *
      * @param SSLOptions $options a preconfigured ssl context
      *
@@ -366,6 +394,7 @@ final class Builder
     public function withSSL(SSLOptions $options)
     {
         $this->sslOptions = $options;
+
         return $this;
     }
 }

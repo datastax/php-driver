@@ -22,7 +22,8 @@ use Cassandra\Exception\InvalidArgumentException;
 use Cassandra\Exception\LogicException;
 
 /**
- * Actual session implementation
+ * Actual session implementation.
+ *
  * @see Cassandra\Session
  */
 final class DefaultSession implements Session
@@ -42,7 +43,7 @@ final class DefaultSession implements Session
     public function execute(Statement $statement, ExecutionOptions $options = null)
     {
         if (is_null($this->resource)) {
-            throw new LogicException("Session is already closed");
+            throw new LogicException('Session is already closed');
         }
 
         $timeout = $this->defaults->timeout;
@@ -50,7 +51,7 @@ final class DefaultSession implements Session
         if ($options && isset($options->timeout)) {
             if (!(is_numeric($options->timeout) || $options->timeout > 0)) {
                 throw new InvalidArgumentException(sprintf(
-                    "Timeout must be positive number, %s given",
+                    'Timeout must be positive number, %s given',
                     var_export($options->timeout, true)
                 ));
             }
@@ -67,7 +68,7 @@ final class DefaultSession implements Session
     public function executeAsync(Statement $statement, ExecutionOptions $options = null)
     {
         if (is_null($this->resource)) {
-            return new FutureException(new LogicException("Session is already closed"));
+            return new FutureException(new LogicException('Session is already closed'));
         }
 
         $consistency       = $this->defaults->consistency;
@@ -88,10 +89,11 @@ final class DefaultSession implements Session
                         \Cassandra::CONSISTENCY_EACH_QUORUM,
                         \Cassandra::CONSISTENCY_SERIAL,
                         \Cassandra::CONSISTENCY_LOCAL_SERIAL,
-                        \Cassandra::CONSISTENCY_LOCAL_ONE))) {
+                        \Cassandra::CONSISTENCY_LOCAL_ONE,
+                ))) {
                     return new FutureException(new InvalidArgumentException(sprintf(
-                        "Invalid consistency, must be one of " .
-                        "Cassandra::CONSISTENCY_*, %s given",
+                        'Invalid consistency, must be one of '.
+                        'Cassandra::CONSISTENCY_*, %s given',
                         var_export($options->consistency, true)
                     )));
                 }
@@ -102,11 +104,12 @@ final class DefaultSession implements Session
             if (isset($options->serialConsistency)) {
                 if (!in_array($options->serialConsistency, array(
                         \Cassandra::CONSISTENCY_SERIAL,
-                        \Cassandra::CONSISTENCY_LOCAL_SERIAL))) {
+                        \Cassandra::CONSISTENCY_LOCAL_SERIAL,
+                ))) {
                     return new FutureException(new InvalidArgumentException(sprintf(
-                        "Invalid serial consistency, must be " .
-                        "Cassandra::CONSISTENCY_SERIAL or " .
-                        "Cassandra::CONSISTENCY_LOCAL_SERIAL, %s given",
+                        'Invalid serial consistency, must be '.
+                        'Cassandra::CONSISTENCY_SERIAL or '.
+                        'Cassandra::CONSISTENCY_LOCAL_SERIAL, %s given',
                         var_export($options->serialConsistency, true)
                     )));
                 }
@@ -118,7 +121,7 @@ final class DefaultSession implements Session
                 if (!(is_numeric($options->pageSize) &&
                     ($options->pageSize === -1 || $options->pageSize > 0))) {
                     return new FutureException(new InvalidArgumentException(sprintf(
-                        "Page size must be a positive integer or exactly -1, %s given",
+                        'Page size must be a positive integer or exactly -1, %s given',
                         var_export($options->pageSize, true)
                     )));
                 }
@@ -129,7 +132,7 @@ final class DefaultSession implements Session
             if (isset($options->arguments)) {
                 if (!is_array($options->arguments)) {
                     return new FutureException(new InvalidArgumentException(sprintf(
-                        "Arguments must be an array, %s given",
+                        'Arguments must be an array, %s given',
                         var_export($options->arguments, true)
                     )));
                 }
@@ -144,7 +147,7 @@ final class DefaultSession implements Session
             return new FutureException($e);
         }
 
-        if ($statement instanceOf BatchStatement) {
+        if ($statement instanceof BatchStatement) {
             $future = cassandra_session_execute_batch($this->resource, $resource);
         } else {
             $future = cassandra_session_execute($this->resource, $resource);
@@ -159,7 +162,7 @@ final class DefaultSession implements Session
     public function prepare($cql, ExecutionOptions $options = null)
     {
         if (is_null($this->resource)) {
-            throw new LogicException("Session is already closed");
+            throw new LogicException('Session is already closed');
         }
 
         $timeout = $this->defaults->timeout;
@@ -167,7 +170,7 @@ final class DefaultSession implements Session
         if ($options && isset($options->timeout)) {
             if (!(is_numeric($options->timeout) || $options->timeout > 0)) {
                 throw new InvalidArgumentException(sprintf(
-                    "Timeout must be positive number, %s given",
+                    'Timeout must be positive number, %s given',
                     var_export($options->timeout, true)
                 ));
             }
@@ -184,7 +187,7 @@ final class DefaultSession implements Session
     public function prepareAsync($cql, ExecutionOptions $options = null)
     {
         if (is_null($this->resource)) {
-            return new FutureException(new LogicException("Session is already closed"));
+            return new FutureException(new LogicException('Session is already closed'));
         }
 
         return new FuturePreparedStatement(cassandra_session_prepare(
@@ -195,7 +198,7 @@ final class DefaultSession implements Session
     public function close($timeout = null)
     {
         if (is_null($this->resource)) {
-            throw new LogicException("Session is already closed");
+            throw new LogicException('Session is already closed');
         }
 
         $this->closeAsync()->get($timeout);
@@ -204,7 +207,7 @@ final class DefaultSession implements Session
     public function closeAsync()
     {
         if (is_null($this->resource)) {
-            return new FutureException(new LogicException("Session is already closed"));
+            return new FutureException(new LogicException('Session is already closed'));
         }
 
         return new FutureClose(

@@ -19,25 +19,25 @@
 namespace Cassandra;
 
 /**
- * Cluster object is used to create Sessions
+ * Cluster object is used to create Sessions.
  */
 interface Cluster
 {
     /**
-     * Creates a new Session instance
+     * Creates a new Session instance.
      *
-     * @param  string  $keyspace  Optional keyspace name
+     * @param string $keyspace Optional keyspace name
      *
-     * @return  Session  Session instance
+     * @return Session Session instance
      */
     public function connect($keyspace = null);
 
     /**
-     * Creates a new Session instance
+     * Creates a new Session instance.
      *
-     * @param  string  $keyspace  Optional keyspace name
+     * @param string $keyspace Optional keyspace name
      *
-     * @return  Future  A Future Session instance
+     * @return Future A Future Session instance
      */
     public function connectAsync($keyspace = null);
 }

@@ -18,22 +18,24 @@
 
 namespace Cassandra;
 
-use Cassandra\Exception\LogicException;
 
 /**
- * Default cluster implementation/
+ * Default cluster implementation.
+ *
  * @see Cassandra\Cluster
  */
 final class DefaultCluster implements Cluster
 {
     /**
-     * Cluster resource
+     * Cluster resource.
+     *
      * @var resource
      */
     private $resource;
 
     /**
-     * Default cluster-wide execution options
+     * Default cluster-wide execution options.
+     *
      * @var ExecutionOptions
      */
     private $defaults;
@@ -41,7 +43,9 @@ final class DefaultCluster implements Cluster
     /**
      * Holds a reference to SSLContext resource if was configured with SSL.
      * This is necessary to prevent GC from destroying it before the cluster.
+     *
      * @see https://datastax-oss.atlassian.net/projects/PHP/issues/PHP-5
+     *
      * @var resource|null
      */
     private $ssl;
@@ -49,10 +53,12 @@ final class DefaultCluster implements Cluster
     /**
      * Note that while the $ssl property is not used, it is necessary to keep
      * a reference to it to prevent GC from destroying it before the cluster.
+     *
      * @access private
-     * @param resource $resource Cluster resource
+     *
+     * @param resource         $resource Cluster resource
      * @param ExecutionOptions $defaults
-     * @param resource $ssl
+     * @param resource         $ssl
      */
     public function __construct($resource, ExecutionOptions $defaults, $ssl = null)
     {

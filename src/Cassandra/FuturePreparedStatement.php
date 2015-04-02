@@ -18,32 +18,35 @@
 
 namespace Cassandra;
 
-use Cassandra\Exception\LibraryException;
 use Cassandra\Exception\InvalidArgumentException;
-use Cassandra\Exception\TimeoutException;
 
 /**
  * A future returned from `Cassandra\Session::prepareAsync()`
  * This future will resolve with a `Cassandra\PreparedStatement` or an exception.
+ *
  * @see Cassandra\Session::prepareAsync()
  */
 final class FuturePreparedStatement implements Future
 {
     /**
-     * Actual future resource
+     * Actual future resource.
+     *
      * @var resource
      */
     private $resource;
     /**
-     * The prepared statement that this future will resolve with
+     * The prepared statement that this future will resolve with.
+     *
      * @var PreparedStatement
      */
     private $statement;
 
     /**
-     * Creates a new future prepared statement
+     * Creates a new future prepared statement.
+     *
      * @access private
-     * @param  resource  $resource  actual future resource
+     *
+     * @param resource $resource actual future resource
      */
     public function __construct($resource)
     {
@@ -64,7 +67,7 @@ final class FuturePreparedStatement implements Future
             cassandra_future_wait($this->resource);
         } elseif (!is_numeric($timeout) || $timeout <= 0) {
             throw new InvalidArgumentException(sprintf(
-                "Timeout must be positive number, %s given",
+                'Timeout must be positive number, %s given',
                 var_export($timeout, true)
             ));
         } else {
@@ -73,6 +76,7 @@ final class FuturePreparedStatement implements Future
 
         $this->statement = new PreparedStatement(cassandra_future_get_prepared($this->resource));
         $this->resource  = null;
+
         return $this->statement;
     }
 }
