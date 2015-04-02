@@ -142,7 +142,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
             '%s %s', $this->phpBin, 'example.php'
         ));
         if (!empty($env)) {
-            $this->process->setEnv(array_replace($this->process->getEnv(), $env));
+            $this->process->setEnv(array_replace((array) $this->process->getEnv(), $env));
         }
         $this->process->run();
     }
