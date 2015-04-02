@@ -3,12 +3,10 @@
 use Behat\Behat\Context\Context;
 use Behat\Behat\Context\SnippetAcceptingContext;
 use Behat\Gherkin\Node\PyStringNode;
-use Behat\Gherkin\Node\TableNode;
 use Symfony\Component\Process\PhpExecutableFinder;
 use Symfony\Component\Process\Process;
-use Behat\Behat\Tester\Exception\PendingException;
 
-require_once __DIR__ . '/../../support/ccm.php';
+require_once __DIR__.'/../../support/ccm.php';
 
 /**
  * Defines application features from the specific context.
@@ -40,7 +38,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
      */
     public static function cleanTestFolders()
     {
-        if (is_dir($dir = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'php-driver')) {
+        if (is_dir($dir = sys_get_temp_dir().DIRECTORY_SEPARATOR.'php-driver')) {
             self::clearDirectory($dir);
         }
     }
@@ -52,9 +50,8 @@ class FeatureContext implements Context, SnippetAcceptingContext
      */
     public function prepareTestFolders()
     {
-        $dir = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'php-driver' . DIRECTORY_SEPARATOR .
-        md5(microtime() * rand(0, 10000));
-        mkdir($dir . '/features/bootstrap/i18n', 0777, true);
+        $dir = sys_get_temp_dir().DIRECTORY_SEPARATOR.'php-driver'.DIRECTORY_SEPARATOR.
+            md5(microtime() * rand(0, 10000));
         $phpFinder = new PhpExecutableFinder();
         if (false === $php = $phpFinder->find()) {
             throw new \RuntimeException('Unable to find the PHP executable.');
@@ -87,8 +84,8 @@ class FeatureContext implements Context, SnippetAcceptingContext
      */
     public function aRunningCassandraClusterWithClientCertificateVerification()
     {
-      $this->ccm->setupClientVerification();
-      $this->ccm->start();
+        $this->ccm->setupClientVerification();
+        $this->ccm->start();
     }
 
     /**
@@ -104,7 +101,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
      */
     public function theFollowingExample(PyStringNode $string)
     {
-        $this->createFile($this->workingDir . '/example.php', (string) $string);
+        $this->createFile($this->workingDir.'/example.php', (string) $string);
     }
 
     /**
@@ -112,18 +109,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
      */
     public function itIsExecuted()
     {
-        $this->process->setWorkingDirectory($this->workingDir);
-        $this->process->setCommandLine(sprintf(
-            '%s %s', $this->phpBin, 'example.php'
-        ));
-        // Don't reset the LANG variable on HHVM, because it breaks HHVM itself
-        if (!defined('HHVM_VERSION')) {
-            $env = $this->process->getEnv();
-            $env['LANG'] = 'en'; // Ensures that the default language is en, whatever the OS locale is.
-            $this->process->setEnv($env);
-        }
-        $this->process->start();
-        $this->process->wait();
+        $this->execute();
     }
 
     /**
@@ -131,19 +117,9 @@ class FeatureContext implements Context, SnippetAcceptingContext
      */
     public function itIsExecutedWithTrustedCertInTheEnv()
     {
-      $this->process->setWorkingDirectory($this->workingDir);
-      $this->process->setCommandLine(sprintf(
-          '%s %s', $this->phpBin, 'example.php'
-      ));
-      $env = $this->process->getEnv();
-      $env['SERVER_CERT'] = realpath(__DIR__ . '/../../support/ssl/cassandra.pem');
-      // Don't reset the LANG variable on HHVM, because it breaks HHVM itself
-      if (!defined('HHVM_VERSION')) {
-          $env['LANG'] = 'en'; // Ensures that the default language is en, whatever the OS locale is.
-      }
-      $this->process->setEnv($env);
-      $this->process->start();
-      $this->process->wait();
+        $this->execute(array(
+            'SERVER_CERT' => realpath(__DIR__.'/../../support/ssl/cassandra.pem'),
+        ));
     }
 
     /**
@@ -151,22 +127,24 @@ class FeatureContext implements Context, SnippetAcceptingContext
      */
     public function itIsExecutedWithTrustedAndClientCertsPrivateKeyAndPassphraseInTheEnv()
     {
+        $this->execute(array(
+            'SERVER_CERT' => realpath(__DIR__.'/../../support/ssl/cassandra.pem'),
+            'CLIENT_CERT' => realpath(__DIR__.'/../../support/ssl/driver.pem'),
+            'PRIVATE_KEY' => realpath(__DIR__.'/../../support/ssl/driver.key'),
+            'PASSPHRASE' => 'php-driver',
+        ));
+    }
+
+    private function execute(array $env = array())
+    {
         $this->process->setWorkingDirectory($this->workingDir);
         $this->process->setCommandLine(sprintf(
             '%s %s', $this->phpBin, 'example.php'
         ));
-        $env = $this->process->getEnv();
-        $env['SERVER_CERT'] = realpath(__DIR__ . '/../../support/ssl/cassandra.pem');
-        $env['CLIENT_CERT'] = realpath(__DIR__ . '/../../support/ssl/driver.pem');
-        $env['PRIVATE_KEY'] = realpath(__DIR__ . '/../../support/ssl/driver.key');
-        $env['PASSPHRASE']  = 'php-driver';
-        // Don't reset the LANG variable on HHVM, because it breaks HHVM itself
-        if (!defined('HHVM_VERSION')) {
-            $env['LANG'] = 'en'; // Ensures that the default language is en, whatever the OS locale is.
+        if (!empty($env)) {
+            $this->process->setEnv(array_replace($this->process->getEnv(), $env));
         }
-        $this->process->setEnv($env);
-        $this->process->start();
-        $this->process->wait();
+        $this->process->run();
     }
 
     /**
@@ -179,14 +157,13 @@ class FeatureContext implements Context, SnippetAcceptingContext
 
     private function getOutput()
     {
-        $output = $this->process->getErrorOutput() . $this->process->getOutput();
+        $output = $this->process->getErrorOutput().$this->process->getOutput();
         // Normalize the line endings in the output
         if ("\n" !== PHP_EOL) {
             $output = str_replace(PHP_EOL, "\n", $output);
         }
-        // Replace wrong warning message of HHVM
-        $output = str_replace('Notice: Undefined index: ', 'Notice: Undefined offset: ', $output);
-        return trim(preg_replace("/ +$/m", '', $output));
+
+        return trim(preg_replace('/ +$/m', '', $output));
     }
 
     private function createFile($filename, $content)
@@ -206,7 +183,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
         array_shift($files);
         array_shift($files);
         foreach ($files as $file) {
-            $file = $path . DIRECTORY_SEPARATOR . $file;
+            $file = $path.DIRECTORY_SEPARATOR.$file;
             if (is_dir($file)) {
                 self::clearDirectory($file);
             } else {
