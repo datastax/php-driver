@@ -61,7 +61,7 @@ foreach ($result as $row) {                       // results and rows implement 
 ```json
 {
     "require": {
-        "datastax/php-driver": "1.0.*@alpha"
+        "datastax/php-driver": "1.0.0-alpha"
     }
 }
 ```
