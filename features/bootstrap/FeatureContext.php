@@ -7,7 +7,6 @@ use Behat\Gherkin\Node\TableNode;
 use Symfony\Component\Process\PhpExecutableFinder;
 use Symfony\Component\Process\Process;
 use Behat\Behat\Tester\Exception\PendingException;
-use Cassandra\SimpleStatement;
 
 require_once __DIR__ . '/../../support/ccm.php';
 
