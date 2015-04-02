@@ -31,7 +31,7 @@ final class Builder
 {
     /**
      * Contact points, defaults to "127.0.0.1"
-     * @var contactPoints
+     * @var string
      */
     private $contactPoints;
 
@@ -91,7 +91,7 @@ final class Builder
 
     /**
      * sslOptions
-     * @var Cassandra\SSLOptions
+     * @var SSLOptions
      */
     private $sslOptions;
 
@@ -133,7 +133,7 @@ final class Builder
     /**
      * Returns a Cluster Instance
      *
-     * @return Cassandra\Cluster Cluster instance
+     * @return \Cassandra\Cluster Cluster instance
      */
     public function build()
     {
@@ -182,7 +182,7 @@ final class Builder
     /**
      * Configures default consistency for all requests
      * @param int $consistency A consistency level, must be one of Cassandra::CONSISTENCY_* values
-     * @return Cassandra\Cluster\Builder self
+     * @return self
      */
     public function withDefaultConsistency($consistency)
     {
@@ -213,6 +213,8 @@ final class Builder
      * Configures default page size for all results.
      * Set to -1 to disable paging altogether.
      * @param int $pageSize default page size
+     *
+     * @return self
      */
     public function withDefaultPageSize($pageSize)
     {
@@ -224,12 +226,16 @@ final class Builder
       }
 
       $this->defaultPageSize = $pageSize;
+
+        return $this;
     }
 
     /**
      * Configures default timeout for future resolution in blocking operations
      * Set to null to disable (default)
      * @param int|null $timeout timeout value
+     *
+     * @return self
      */
     public function withDefaultTimeout($timeout)
     {
@@ -241,6 +247,8 @@ final class Builder
       }
 
       $this->defaultTimeout = $timeout;
+
+        return $this;
     }
 
     /**
@@ -249,7 +257,7 @@ final class Builder
      *
      * @param  string $host  an ip address string
      * @param  string ...    additional addresses
-     * @return Cassandra\Cluster\Builder self
+     * @return self
      */
     public function withContactPoints($host)
     {
@@ -260,7 +268,7 @@ final class Builder
     /**
      * Configures this cluster to use a round robin load balancing policy.
      *
-     * @return Cassandra\Cluster\Builder self
+     * @return self
      */
     public function withRoundRobinLoadBalancingPolicy()
     {
@@ -275,7 +283,7 @@ final class Builder
      * @param integer $hostPerRemoteDatacenter                  Maximum number of hosts to try in remote datacenters
      * @param boolean $useRemoteDatacenterForLocalConsistencies Allow using hosts from remote datacenters to execute statements with local consistencies
      *
-     * @return Cassandra\Cluster\Builder self
+     * @return self
      */
     public function withDatacenterAwareRoundRobinLoadBalancingPolicy($localDatacenter, $hostPerRemoteDatacenter, $useRemoteDatacenterForLocalConsistencies)
     {
@@ -299,7 +307,7 @@ final class Builder
      *
      * @param boolean $enabled Whether to enable token aware routing (default: `true`)
      *
-     * @return Cassandra\Cluster\Builder self
+     * @return self
      */
     public function withTokenAwareRouting($enabled = true)
     {
@@ -313,7 +321,7 @@ final class Builder
      * @param string $username Username
      * @param string $password Password
      *
-     * @return Cassandra\Cluster\Builder self
+     * @return self
      */
     public function withCredentials($username, $password)
     {
@@ -327,7 +335,7 @@ final class Builder
      *
      * @param float $timeout Timeout value in seconds, can be fractional
      *
-     * @return Cassandra\Cluster\Builder self
+     * @return self
      */
     public function withConnectTimeout($timeout)
     {
@@ -340,7 +348,7 @@ final class Builder
      *
      * @param float $timeout Timeout value in seconds, can be fractional
      *
-     * @return Cassandra\Cluster\Builder self
+     * @return self
      */
     public function withRequestTimeout($timeout)
     {
@@ -350,7 +358,10 @@ final class Builder
 
     /**
      * Set up ssl context
-     * @param SSLOptions $context a preconfigured ssl context
+     *
+     * @param SSLOptions $options a preconfigured ssl context
+     *
+     * @return self
      */
     public function withSSL(SSLOptions $options)
     {

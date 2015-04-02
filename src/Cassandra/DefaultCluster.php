@@ -41,6 +41,7 @@ final class DefaultCluster implements Cluster
     /**
      * Holds a reference to SSLContext resource if was configured with SSL.
      * This is necessary to prevent GC from destroying it before the cluster.
+     * @see https://datastax-oss.atlassian.net/projects/PHP/issues/PHP-5
      * @var resource|null
      */
     private $ssl;
@@ -50,6 +51,8 @@ final class DefaultCluster implements Cluster
      * a reference to it to prevent GC from destroying it before the cluster.
      * @access private
      * @param resource $resource Cluster resource
+     * @param ExecutionOptions $defaults
+     * @param resource $ssl
      */
     public function __construct($resource, ExecutionOptions $defaults, $ssl = null)
     {

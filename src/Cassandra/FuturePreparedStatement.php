@@ -36,7 +36,7 @@ final class FuturePreparedStatement implements Future
     private $resource;
     /**
      * The prepared statement that this future will resolve with
-     * @var Cassandra\PreparedStatement
+     * @var PreparedStatement
      */
     private $statement;
 

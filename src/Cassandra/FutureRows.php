@@ -46,7 +46,7 @@ final class FutureRows implements Future
 
     /**
      * Rows that this future will resolve with
-     * @var Cassandra\Rows
+     * @var Rows
      */
     private $rows;
 

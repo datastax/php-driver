@@ -28,7 +28,7 @@ interface Cluster
      *
      * @param  string  $keyspace  Optional keyspace name
      *
-     * @return  Cassandra\Session  Session instance
+     * @return  Session  Session instance
      */
     public function connect($keyspace = null);
 }

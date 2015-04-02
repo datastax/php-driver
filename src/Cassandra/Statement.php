@@ -19,7 +19,7 @@
 namespace Cassandra;
 
 /**
- * All statements implmement this common interface.
+ * All statements implement this common interface.
  * @see Cassandra\SimpleStatement
  * @see Cassandra\PreparedStatement
  * @see Cassandra\BatchStatement
@@ -28,6 +28,11 @@ interface Statement
 {
     /**
      * @access private
+     *
+     * @param array|null $arguments
+     * @param int|null  $consistency One of the \Cassandra::CONSISTENCY_* constants
+     * @param int|null  $serialConsistency One of the \Cassandra::CONSISTENCY_* constants
+     * @param int|null  $pageSize
      *
      * @return resource  Actual statement resource
      */

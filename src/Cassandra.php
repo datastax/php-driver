@@ -80,7 +80,7 @@ final class Cassandra
     /**
      * Returns a Cluster Builder
      *
-     * @return Cassandra\Cluster\Builder a Cluster Builder instance
+     * @return \Cassandra\Cluster\Builder a Cluster Builder instance
      */
     public static function cluster()
     {
@@ -90,7 +90,7 @@ final class Cassandra
     /**
      * Returns SSL Options Builder
      *
-     * @return Cassanrda\SSLOptions\Builder a SSLOptions Builder instance
+     * @return \Cassandra\SSLOptions\Builder a SSLOptions Builder instance
      */
     public static function ssl()
     {
@@ -101,7 +101,6 @@ final class Cassandra
      * Sets log severity
      *
      * @param  int  $level  log severity, must be one of Cassandra::LOG_* constants.
-     * @return void
      */
     public static function setLogLevel($level)
     {

@@ -31,9 +31,9 @@ interface Session
      * @param  Statement        $statement statement to be executed
      * @param  ExecutionOptions $options   execution options
      *
-     * @throws Cassandra\Exception
+     * @throws Exception
      *
-     * @return Result               execution result
+     * @return Rows               execution result
      */
     function execute(Statement $statement, ExecutionOptions $options = null);
 
@@ -44,9 +44,9 @@ interface Session
      * provide one to Future::get() instead.
      *
      * @param  Statement $statement statement to be executed
-     * @param  array     $options   execution options
+     * @param  ExecutionOptions|null     $options   execution options
      *
-     * @return Cassandra\Future     future result
+     * @return Future     future result
      */
     function executeAsync(Statement $statement, ExecutionOptions $options = null);
 
@@ -57,9 +57,9 @@ interface Session
      * all other options will be ignored.
      *
      * @param  string $cql        CQL statement string
-     * @param  array  $options    execution options
+     * @param  ExecutionOptions|null  $options    execution options
      *
-     * @throws Cassandra\Exception
+     * @throws Exception
      *
      * @return PreparedStatement  prepared statement
      */
@@ -71,8 +71,8 @@ interface Session
      * Note that all options passed to this method will be ignored.
      *
      * @param  string $cql       CQL string to be prepared
-     * @param  array  $options   preparation options
-     * @return Cassandra\Future  statement
+     * @param  ExecutionOptions|null  $options   preparation options
+     * @return Future  statement
      */
     function prepareAsync($cql, ExecutionOptions $options = null);
 
@@ -88,7 +88,7 @@ interface Session
     /**
      * Asynchronously closes current session once all pending requests have finished
      *
-     * @return Cassandra\Future  future
+     * @return Future  future
      */
     function closeAsync();
 }
