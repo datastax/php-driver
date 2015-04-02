@@ -170,26 +170,7 @@ final class Builder
         }
 
         if (!is_null($this->sslOptions)) {
-            $ssl = cassandra_ssl_new();
-
-            if (is_array($this->sslOptions->trustedCerts)) {
-                foreach($this->sslOptions->trustedCerts as $path) {
-                    cassandra_ssl_add_trusted_cert($ssl, file_get_contents($path));
-                }
-            }
-
-            if (!is_null($this->sslOptions->clientCert)) {
-                cassandra_ssl_set_cert($ssl, file_get_contents($this->sslOptions->clientCert));
-            }
-
-            if (!is_null($this->sslOptions->privateKey)) {
-                cassandra_ssl_set_private_key($ssl, file_get_contents($this->sslOptions->privateKey), $this->sslOptions->passphrase);
-            }
-
-            if (!is_null($this->sslOptions->verifyFlags)) {
-                cassandra_ssl_set_verify_flags($ssl, $this->sslOptions->verifyFlags);
-            }
-
+            $ssl = $this->sslOptions->resource();
             cassandra_cluster_set_ssl($cluster, $ssl);
         }
 
