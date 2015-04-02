@@ -10,6 +10,28 @@ Cassandra's native protocol.
 * IRC: #datastax-drivers on [irc.freenode.net](http://freenode.net>)
 * Twitter: Follow the latest news about DataStax Drivers - [@avalanche123](http://twitter.com/avalanche123), [@mfiguiere](http://twitter.com/mfiguiere), [@al3xandru](https://twitter.com/al3xandru)
 
+## Status of v1.0.0.alpha
+
+The current release is an early alpha. This means that it lacks some features
+and stability, but should be enough to start testing and working with Apache
+Cassandra. Below, you'll find a list of functionality that is already supported
+as well as what's plan for the upcoming releases.
+
+## Features
+
+* [All pre 2.1 Cassandra datatypes, including sets, lists and maps](features/datatypes.feature).
+* [Simple](features/simple_statements.feature), [prepared](features/prepared_statements.feature) and [batch statements](features/batch_statements.feature).
+* [Results paging](feature/result_paging.feature).
+* [Asynchronous IO](src/Cassandra/Session.php#L24-L35).
+* [SSL encryption](feature/ssl_encryption.feature).
+* [Credentials authentication](src/Cassandra/Cluster/Builder.php#L312-L320).
+
+## Planned
+
+* Windows support.
+* Expose [Schema Metadata](http://datastax.github.io/cpp-driver/api/struct_cass_session/#1afc51badec695483e4cde43ae0fc1e876).
+* Add arithmetic functions to numeric types.
+
 ## Quick Start
 
 ```php
@@ -62,28 +84,6 @@ Cassandra's native protocol. The current version works with:
 __NOTE__: Apache Cassandra 2.1 support is limited to the Cassandra 2.0 API, e.g. no user-defined types.
 
 __NOTE__: Windows support is planned for a later, more stable release.
-
-## Status of v1.0.0.alpha
-
-The current release is an early alpha. This means that it lacks some features
-and stability, but should be enough to start testing and working with Apache
-Cassandra. Below, you'll find a list of functionality that is already supported
-as well as what's plan for the upcoming releases.
-
-Features:
-
-* [All pre 2.1 Cassandra datatypes, including sets, lists and maps](features/datatypes.feature).
-* [Simple](features/simple_statements.feature), [prepared](features/prepared_statements.feature) and [batch statements](features/batch_statements.feature).
-* [Results paging](feature/result_paging.feature).
-* [Asynchronous IO](src/Cassandra/Session.php#L24-L35).
-* [SSL encryption](feature/ssl_encryption.feature).
-* [Credentials authentication](src/Cassandra/Cluster/Builder.php#L312-L320).
-
-Planned:
-
-* Windows support.
-* Expose [Schema Metadata](http://datastax.github.io/cpp-driver/api/struct_cass_session/#1afc51badec695483e4cde43ae0fc1e876).
-* Add arithmetic functions to numeric types.
 
 ## Contributing
 
