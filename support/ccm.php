@@ -77,6 +77,8 @@ class CCM
                 sleep($retries * 0.4);
             }
         }
+
+        throw new RuntimeException("Unable to initialize a Session, check cassandra logs");
     }
 
     public function stop()
