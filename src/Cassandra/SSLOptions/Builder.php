@@ -157,24 +157,12 @@ final class Builder
      */
     public function build()
     {
-        $options = new SSLOptions();
-
-        if (!is_null($this->trustedCerts)) {
-            $options->trustedCerts = $this->trustedCerts;
-        }
-        if (!is_null($this->verifyFlags)) {
-            $options->verifyFlags = $this->verifyFlags;
-        }
-        if (!is_null($this->clientCert)) {
-            $options->clientCert = $this->clientCert;
-        }
-        if (!is_null($this->privateKey)) {
-            $options->privateKey = $this->privateKey;
-        }
-        if (!is_null($this->passphrase)) {
-            $options->passphrase = $this->passphrase;
-        }
-
-        return $options;
+        return new SSLOptions(
+            $this->trustedCerts,
+            $this->verifyFlags,
+            $this->clientCert,
+            $this->privateKey,
+            $this->passphrase
+        );
     }
 }
