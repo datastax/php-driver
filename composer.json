@@ -33,7 +33,6 @@
     "phpunit/phpunit": "4.5.*",
     "symfony/process": "~2.1"
   },
-  "minimum-stability": "dev",
   "config": {
     "bin-dir": "bin/"
   },
