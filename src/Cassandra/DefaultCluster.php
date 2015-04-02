@@ -39,20 +39,13 @@ final class DefaultCluster implements Cluster
     private $defaults;
 
     /**
-     * Holds a reference to SSLContext resource if was configured with SSL
-     * @var resource|null
-     */
-    private $ssl;
-
-    /**
      * @access private
      * @param resource $resource Cluster resource
      */
-    public function __construct($resource, ExecutionOptions $defaults, $ssl = null)
+    public function __construct($resource, ExecutionOptions $defaults)
     {
         $this->resource = $resource;
         $this->defaults = $defaults;
-        $this->ssl      = $ssl;
     }
 
     /**

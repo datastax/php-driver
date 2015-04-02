@@ -176,7 +176,7 @@ final class Builder
 
         cassandra_cluster_set_contact_points($cluster, $this->contactPoints);
 
-        return new DefaultCluster($cluster, $options, $ssl);
+        return new DefaultCluster($cluster, $options);
     }
 
     /**
