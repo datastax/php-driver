@@ -21,9 +21,9 @@ as well as what's plan for the upcoming releases.
 
 * [All pre 2.1 Cassandra datatypes, including sets, lists and maps](features/datatypes.feature).
 * [Simple](features/simple_statements.feature), [prepared](features/prepared_statements.feature) and [batch statements](features/batch_statements.feature).
-* [Results paging](feature/result_paging.feature).
+* [Results paging](features/result_paging.feature).
 * [Asynchronous IO](src/Cassandra/Session.php#L24-L35).
-* [SSL encryption](feature/ssl_encryption.feature).
+* [SSL encryption](features/ssl_encryption.feature).
 * [Credentials authentication](src/Cassandra/Cluster/Builder.php#L312-L320).
 
 ## Planned
