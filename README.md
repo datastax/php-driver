@@ -63,7 +63,12 @@ __NOTE__: Apache Cassandra 2.1 support is limited to the Cassandra 2.0 API, e.g.
 
 __NOTE__: Windows support is planned for a later, more stable release.
 
-## What's new in v1.0.0.alpha
+## Status of v1.0.0.alpha
+
+The current release is an early alpha. This means that it lacks some features
+and stability, but should be enough to start testing and working with Apache
+Cassandra. Below, you'll find a list of functionality that is already supported
+as well as what's plan for the upcoming releases.
 
 Features:
 
@@ -73,6 +78,16 @@ Features:
 * [Asynchronous IO](src/Cassandra/Session.php#L24-L35).
 * [SSL encryption](feature/ssl_encryption.feature).
 * [Credentials authentication](src/Cassandra/Cluster/Builder.php#L312-L320).
+
+Planned:
+
+* Windows support.
+* Expose [Schema Metadata](http://datastax.github.io/cpp-driver/api/struct_cass_session/#1afc51badec695483e4cde43ae0fc1e876).
+* Add arithmetic functions to numeric types.
+
+## Contributing
+
+[Read our contribution policy](CONTRIBUTING.md) for a detailed description of the process.
 
 ## Code examples
 
