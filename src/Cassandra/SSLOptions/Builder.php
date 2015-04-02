@@ -22,44 +22,50 @@ use Cassandra\SSLOptions;
 use Cassandra\Exception\InvalidArgumentException;
 
 /**
- * SSLOptions builder allows fluent configuration of ssl options
+ * SSLOptions builder allows fluent configuration of ssl options.
+ *
  * @see Cassandra::ssl()
  * @see Cassandra\Cluster\Builder::withSSL()
  */
 final class Builder
 {
     /**
-     * A list of paths to trusted certificates (server certs)
+     * A list of paths to trusted certificates (server certs).
+     *
      * @var array|null
      */
     private $trustedCerts;
 
     /**
-     * Verification flags, a bitwise combination of one or more values of `Cassandra::VERIFY_*`
+     * Verification flags, a bitwise combination of one or more values of `Cassandra::VERIFY_*`.
+     *
      * @var int|null
      */
     private $verifyFlags;
 
     /**
      * Path to client cert for client ssl authentication.
+     *
      * @var string|null
      */
     private $clientCert;
 
     /**
      * Path to private key for client ssl authentication.
+     *
      * @var string|null
      */
     private $privateKey;
 
     /**
      * Private key passphrase if any.
+     *
      * @var string|null
      */
     private $passphrase;
 
     /**
-     * Creates new SSL Options builder
+     * Creates new SSL Options builder.
      */
     public function __construct()
     {
@@ -90,11 +96,12 @@ final class Builder
             }
         }
         $this->trustedCerts = $paths;
+
         return $this;
     }
 
     /**
-     * Disable certificate verification
+     * Disable certificate verification.
      *
      * @param int $flags
      *
@@ -103,6 +110,7 @@ final class Builder
     public function withVerifyFlags($flags)
     {
         $this->verifyFlags = (int) $flags;
+
         return $this;
     }
 
@@ -125,6 +133,7 @@ final class Builder
             ));
         }
         $this->clientCert = $path;
+
         return $this;
     }
 
@@ -132,12 +141,12 @@ final class Builder
      * Set client-side private key. This is used to authenticate the client on
      * the server-side.
      *
-     * @param string $path       Path to the private key file
+     * @param string      $path       Path to the private key file
      * @param string|null $passphrase Passphrase for the private key, if any (default: `null`)
      *
      * @return self
      */
-    function withPrivateKey($path, $passphrase = null)
+    public function withPrivateKey($path, $passphrase = null)
     {
         if (!file_exists($path) || !is_file($path) || !is_readable($path)) {
             throw new InvalidArgumentException(sprintf(
@@ -155,7 +164,8 @@ final class Builder
     }
 
     /**
-     * Builds SSL options
+     * Builds SSL options.
+     *
      * @return SSLOptions ssl options configured accordingly.
      */
     public function build()

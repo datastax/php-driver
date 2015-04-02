@@ -22,37 +22,44 @@ use Cassandra\Exception\InvalidArgumentException;
 
 /**
  * This future results is resolved with `Cassandra\Rows`.
+ *
  * @see Cassandra\Session::executeAsync()
  */
 final class FutureRows implements Future
 {
     /**
-     * Result future resource
+     * Result future resource.
+     *
      * @var resource
      */
     private $resource;
 
     /**
-     * Session resource
+     * Session resource.
+     *
      * @var resource
      */
     private $session;
 
     /**
-     * Statement resource
+     * Statement resource.
+     *
      * @var resource
      */
     private $statement;
 
     /**
-     * Rows that this future will resolve with
+     * Rows that this future will resolve with.
+     *
      * @var Rows
      */
     private $rows;
 
     /**
      * Creates new rows future.
+     *
      * @access private
+     *
      * @param resource $resource  actual future resource
      * @param resource $session   a session resource (used for paging)
      * @param resource $statement a statement resource (used for paging)
@@ -78,7 +85,7 @@ final class FutureRows implements Future
             cassandra_future_wait($this->resource);
         } elseif (!is_numeric($timeout) || $timeout <= 0) {
             throw new InvalidArgumentException(sprintf(
-                "Timeout must be positive number, %s given",
+                'Timeout must be positive number, %s given',
                 var_export($timeout, true)
             ));
         } else {

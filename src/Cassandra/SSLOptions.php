@@ -20,36 +20,42 @@ namespace Cassandra;
 
 /**
  * SSL options for Cassandra\Cluster.
+ *
  * @see Cassandra\SSLOptions\Builder
  */
 final class SSLOptions
 {
     /**
      * Trusted certificate paths. This is used to verify node's identity.
+     *
      * @var array|null
      */
     private $trustedCerts;
 
     /**
-     * Path to client cert
+     * Path to client cert.
+     *
      * @var string|null
      */
     private $clientCert;
 
     /**
      * Path to private key, this is used to verify client's identity.
+     *
      * @var string|null
      */
     private $privateKey;
 
     /**
-     * Optional passphrase for the private key
+     * Optional passphrase for the private key.
+     *
      * @var string|null
      */
     private $passphrase;
 
     /**
-     * A bitmask of Cassandra::VERIFY_* constants
+     * A bitmask of Cassandra::VERIFY_* constants.
+     *
      * @var int|null
      */
     private $verifyFlags;
@@ -59,6 +65,7 @@ final class SSLOptions
      * Don't instantiate directly, use Cassandra\SSLOptions\Builder instead.
      *
      * @access private
+     *
      * @param array|null  $trustedCerts Trusted certificate paths
      * @param int|null    $verifyFlags  A bitmask of Cassandra::VERIFY_* constants
      * @param string|null $clientCert   Path to client cert
@@ -75,8 +82,10 @@ final class SSLOptions
     }
 
     /**
-     * Creates ssl context resource
+     * Creates ssl context resource.
+     *
      * @access private
+     *
      * @return resource ssl context
      */
     public function resource()
@@ -84,7 +93,7 @@ final class SSLOptions
         $resource = cassandra_ssl_new();
 
         if (is_array($this->trustedCerts)) {
-            foreach($this->trustedCerts as $path) {
+            foreach ($this->trustedCerts as $path) {
                 cassandra_ssl_add_trusted_cert($resource, file_get_contents($path));
             }
         }

@@ -21,7 +21,8 @@ namespace Cassandra;
 use Cassandra\Exception\InvalidArgumentException;
 
 /**
- * A future returned from `Cassandra\Session::closeAsync()`
+ * A future returned from `Cassandra\Session::closeAsync()`.
+ *
  * @see Cassandra\Session::closeAsync()
  */
 final class FutureClose implements Future
@@ -33,7 +34,7 @@ final class FutureClose implements Future
     public function __construct($resource, &$session)
     {
         $this->resource =  $resource;
-        $this->session  =& $session;
+        $this->session  = &$session;
         $this->resolved =  false;
     }
 
@@ -47,7 +48,7 @@ final class FutureClose implements Future
             cassandra_future_wait($this->resource);
         } elseif (!is_numeric($timeout) || $timeout <= 0) {
             throw new InvalidArgumentException(sprintf(
-                "Timeout must be positive number, %s given",
+                'Timeout must be positive number, %s given',
                 var_export($timeout, true)
             ));
         } else {

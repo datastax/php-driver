@@ -22,33 +22,39 @@ use Cassandra\Exception\InvalidArgumentException;
 
 /**
  * A future that resolves with `Cassandra\Session`.
+ *
  * @see Cassandra\Cluster::connectAsync()
  */
 final class FutureSession implements Future
 {
     /**
      * Session instance that this future will resolve with.
+     *
      * @var Session
      */
     private $session;
 
     /**
      * Actual future resource.
+     *
      * @var resource
      */
     private $resource;
 
     /**
      * Whether this future has been resolved or not.
-     * @var boolean
+     *
+     * @var bool
      */
     private $resolved;
 
     /**
      * Creates a new session future.
+     *
      * @access private
-     * @param resource          $resource Actual future resource
-     * @param Session $session  A session that will be connected
+     *
+     * @param resource $resource Actual future resource
+     * @param Session  $session  A session that will be connected
      */
     public function __construct($resource, Session $session)
     {
@@ -70,7 +76,7 @@ final class FutureSession implements Future
             cassandra_future_wait($this->resource);
         } elseif (!is_numeric($timeout) || $timeout <= 0) {
             throw new InvalidArgumentException(sprintf(
-                "Timeout must be positive number, %s given",
+                'Timeout must be positive number, %s given',
                 var_export($timeout, true)
             ));
         } else {
@@ -79,6 +85,7 @@ final class FutureSession implements Future
 
         $this->resolved = true;
         $this->resource = null;
+
         return $this->session;
     }
 }

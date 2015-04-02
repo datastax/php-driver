@@ -26,32 +26,38 @@ use Cassandra\Exception\DomainException;
 final class Rows implements \Iterator, \Countable, \ArrayAccess
 {
     /**
-     * Result resource, used for paging
+     * Result resource, used for paging.
+     *
      * @var resource
      */
     private $resource;
 
     /**
-     * Session resource, used for paging
+     * Session resource, used for paging.
+     *
      * @var resource
      */
     private $session;
 
     /**
-     * Statement resource, used for paging
+     * Statement resource, used for paging.
+     *
      * @var resource
      */
     private $statement;
 
     /**
-     * Actual rows contained in this page of the result
+     * Actual rows contained in this page of the result.
+     *
      * @var array
      */
     private $rows;
 
     /**
      * Creates a new instance of rows.
+     *
      * @access private
+     *
      * @param resource $resource  Result resource, used for paging
      * @param resource $session   Session resource, used for paging
      * @param resource $statement Statement resource, used for paging
@@ -77,8 +83,7 @@ final class Rows implements \Iterator, \Countable, \ArrayAccess
     }
 
     /**
-     * Resets the rows iterator
-     * @return void
+     * Resets the rows iterator.
      */
     public function rewind()
     {
@@ -86,7 +91,8 @@ final class Rows implements \Iterator, \Countable, \ArrayAccess
     }
 
     /**
-     * Returns current row
+     * Returns current row.
+     *
      * @return mixed value
      */
     public function current()
@@ -95,7 +101,8 @@ final class Rows implements \Iterator, \Countable, \ArrayAccess
     }
 
     /**
-     * Returns current index
+     * Returns current index.
+     *
      * @return string name
      */
     public function key()
@@ -104,8 +111,7 @@ final class Rows implements \Iterator, \Countable, \ArrayAccess
     }
 
     /**
-     * Advances the rows iterator by one
-     * @return void
+     * Advances the rows iterator by one.
      */
     public function next()
     {
@@ -113,7 +119,7 @@ final class Rows implements \Iterator, \Countable, \ArrayAccess
     }
 
     /**
-     * @return boolean whether there are more rows available for iteration
+     * @return bool whether there are more rows available for iteration
      */
     public function valid()
     {
@@ -127,7 +133,7 @@ final class Rows implements \Iterator, \Countable, \ArrayAccess
     {
         if (!is_int($offset)) {
             throw new DomainException(sprintf(
-                "Unsupported offset: %s, offset must be an integer",
+                'Unsupported offset: %s, offset must be an integer',
                 var_export($offset, true)
             ));
         }
@@ -153,7 +159,7 @@ final class Rows implements \Iterator, \Countable, \ArrayAccess
     public function offsetSet($offset, $value)
     {
         throw new DomainException(sprintf(
-            "Cannot overwrite row at offset: %s with value: %s, results are immutable",
+            'Cannot overwrite row at offset: %s with value: %s, results are immutable',
             var_export($offset, true), var_export($value, true)
         ));
     }
@@ -164,13 +170,13 @@ final class Rows implements \Iterator, \Countable, \ArrayAccess
     public function offsetUnset($offset)
     {
         throw new DomainException(sprintf(
-            "Cannot delete row at offset: %s, results are immutable",
+            'Cannot delete row at offset: %s, results are immutable',
             var_export($offset, true)
         ));
     }
 
     /**
-     * @return  boolean  whether this is the last page or not
+     * @return bool whether this is the last page or not
      */
     public function isLastPage()
     {
@@ -180,7 +186,7 @@ final class Rows implements \Iterator, \Countable, \ArrayAccess
     /**
      * @param int|null $timeout
      *
-     * @return  Rows|null  loads and returns next result page
+     * @return Rows|null loads and returns next result page
      */
     public function nextPage($timeout = null)
     {
@@ -188,7 +194,7 @@ final class Rows implements \Iterator, \Countable, \ArrayAccess
     }
 
     /**
-     * @return  Future  returns future of the next result page
+     * @return Future returns future of the next result page
      */
     public function nextPageAsync()
     {
@@ -205,7 +211,7 @@ final class Rows implements \Iterator, \Countable, \ArrayAccess
     }
 
     /**
-     * @return  Row|null  returns first row if any
+     * @return Row|null returns first row if any
      */
     public function first()
     {

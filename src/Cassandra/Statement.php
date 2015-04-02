@@ -20,6 +20,7 @@ namespace Cassandra;
 
 /**
  * All statements implement this common interface.
+ *
  * @see Cassandra\SimpleStatement
  * @see Cassandra\PreparedStatement
  * @see Cassandra\BatchStatement
@@ -30,11 +31,11 @@ interface Statement
      * @access private
      *
      * @param array|null $arguments
-     * @param int|null  $consistency One of the \Cassandra::CONSISTENCY_* constants
-     * @param int|null  $serialConsistency One of the \Cassandra::CONSISTENCY_* constants
-     * @param int|null  $pageSize
+     * @param int|null   $consistency       One of the \Cassandra::CONSISTENCY_* constants
+     * @param int|null   $serialConsistency One of the \Cassandra::CONSISTENCY_* constants
+     * @param int|null   $pageSize
      *
-     * @return resource  Actual statement resource
+     * @return resource Actual statement resource
      */
-    function resource(array $arguments = null, $consistency = null, $serialConsistency = null, $pageSize = null);
+    public function resource(array $arguments = null, $consistency = null, $serialConsistency = null, $pageSize = null);
 }

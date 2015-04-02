@@ -31,14 +31,17 @@ namespace Cassandra;
 final class PreparedStatement implements Statement
 {
     /**
-     * Actual prepared statement resource
+     * Actual prepared statement resource.
+     *
      * @var resource
      */
     private $resource;
 
     /**
-     * Creates a new prepared statement
+     * Creates a new prepared statement.
+     *
      * @access private
+     *
      * @param resource $resource actual prepared statement resource
      */
     public function __construct($resource)
@@ -57,7 +60,7 @@ final class PreparedStatement implements Statement
         cassandra_statement_set_paging_size($resource, $pageSize);
 
         if (!is_null($serialConsistency)) {
-          cassandra_statement_set_serial_consistency($resource, $serialConsistency);
+            cassandra_statement_set_serial_consistency($resource, $serialConsistency);
         }
 
         if ((isset($arguments))) {

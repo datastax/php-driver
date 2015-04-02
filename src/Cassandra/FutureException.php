@@ -24,13 +24,15 @@ namespace Cassandra;
 final class FutureException implements Future
 {
     /**
-     * Actual exception to resolve this future with
+     * Actual exception to resolve this future with.
+     *
      * @var Exception
      */
     private $exception;
 
     /**
      * Creates a future exception.
+     *
      * @param \Exception $exception an exception to resolve this future with.
      */
     public function __construct(\Exception $exception)

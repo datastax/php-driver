@@ -29,7 +29,7 @@ namespace Cassandra;
 interface Future
 {
     /**
-     * Waits for a given future resource to resolve and throws errors if any
+     * Waits for a given future resource to resolve and throws errors if any.
      *
      * @throws \Cassandra\Exception\InvalidArgumentException
      * @throws \Cassandra\Exception\TimeoutException
@@ -38,5 +38,5 @@ interface Future
      *
      * @return mixed a value that the future has been resolved with
      */
-    function get($timeout = null);
+    public function get($timeout = null);
 }
