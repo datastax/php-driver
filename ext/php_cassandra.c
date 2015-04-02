@@ -133,7 +133,7 @@ const zend_function_entry cassandra_functions[] = {
   /* Log */
   PHP_FE(cassandra_set_log_level, NULL)
   /* Util */
-  PHP_FE(cassanrda_rows_from_result, NULL)
+  PHP_FE(cassandra_rows_from_result, NULL)
   /* CassCluster */
   PHP_FE(cassandra_cluster_new, NULL)
   PHP_FE(cassandra_cluster_free, NULL)
@@ -488,7 +488,7 @@ PHP_FUNCTION(cassandra_set_log_level)
   RETURN_TRUE;
 }
 
-PHP_FUNCTION(cassanrda_rows_from_result)
+PHP_FUNCTION(cassandra_rows_from_result)
 {
   CassResult* result;
   zval* result_resource;

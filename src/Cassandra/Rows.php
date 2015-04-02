@@ -63,7 +63,7 @@ final class Rows implements \Iterator, \Countable, \ArrayAccess
         $this->statement = $statement;
         $this->rows      = array();
 
-        foreach (cassanrda_rows_from_result($this->resource) as $row) {
+        foreach (cassandra_rows_from_result($this->resource) as $row) {
             $this->rows[] = new Row($row);
         }
     }
