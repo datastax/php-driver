@@ -28,31 +28,31 @@ final class SSLOptions
      * Trusted certificate paths. This is used to verify node's identity.
      * @var array|null
      */
-    private $trustedCerts = null;
+    private $trustedCerts;
 
     /**
      * Path to client cert
      * @var string|null
      */
-    private $clientCert = null;
+    private $clientCert;
 
     /**
      * Path to private key, this is used to verify client's identity.
      * @var string|null
      */
-    private $privateKey = null;
+    private $privateKey;
 
     /**
      * Optional passphrase for the private key
      * @var string|null
      */
-    private $passphrase = null;
+    private $passphrase;
 
     /**
      * A bitmask of Cassandra::VERIFY_* constants
      * @var int|null
      */
-    private $verifyFlags = null;
+    private $verifyFlags;
 
     /**
      * Constructs SSLOptions instance
