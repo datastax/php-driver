@@ -460,7 +460,7 @@ PHP_MINFO_FUNCTION(cassandra)
   php_info_print_table_end( );
 }
 
-static zval* php_cassandra_value(const CassValue* value, CassValueType type);
+static zval* php_cassandra_value(const CassValue* value, CassValueType type TSRMLS_DC);
 
 PHP_FUNCTION(cassandra_set_log_level)
 {
@@ -524,7 +524,7 @@ PHP_FUNCTION(cassandra_rows_from_result)
       column_name  = cass_result_column_name(result, i);
       column_type  = cass_result_column_type(result, i);
       column_value = cass_row_get_column(row, i);
-      php_value    = php_cassandra_value(column_value, column_type);
+      php_value    = php_cassandra_value(column_value, column_type TSRMLS_CC);
 
       add_assoc_zval_ex(row_value, column_name.data, column_name.length + 1, php_value);
     }
@@ -1625,7 +1625,7 @@ PHP_FUNCTION(cassandra_batch_add_statement)
 }
 
 static zval*
-php_cassandra_value(const CassValue* value, CassValueType type)
+php_cassandra_value(const CassValue* value, CassValueType type TSRMLS_DC)
 {
   zval* return_value;
   CassError rc;
@@ -1829,7 +1829,7 @@ php_cassandra_value(const CassValue* value, CassValueType type)
     iterator = cass_iterator_from_collection(value);
 
     while (cass_iterator_next(iterator)) {
-      php_cassandra_collection_add(collection, php_cassandra_value(cass_iterator_get_value(iterator), collection->type) TSRMLS_CC);
+      php_cassandra_collection_add(collection, php_cassandra_value(cass_iterator_get_value(iterator), collection->type TSRMLS_CC) TSRMLS_CC);
     }
 
     cass_iterator_free(iterator);
@@ -1843,8 +1843,8 @@ php_cassandra_value(const CassValue* value, CassValueType type)
     iterator = cass_iterator_from_map(value);
 
     while (cass_iterator_next(iterator)) {
-      zval* k = php_cassandra_value(cass_iterator_get_map_key(iterator), map->key_type);
-      zval* v = php_cassandra_value(cass_iterator_get_map_value(iterator), map->value_type);
+      zval* k = php_cassandra_value(cass_iterator_get_map_key(iterator), map->key_type TSRMLS_CC);
+      zval* v = php_cassandra_value(cass_iterator_get_map_value(iterator), map->value_type TSRMLS_CC);
 
       php_cassandra_map_set(map, k, v TSRMLS_CC);
     }
@@ -1859,7 +1859,7 @@ php_cassandra_value(const CassValue* value, CassValueType type)
     iterator = cass_iterator_from_collection(value);
 
     while (cass_iterator_next(iterator)) {
-      php_cassandra_set_add(set, php_cassandra_value(cass_iterator_get_value(iterator), set->type) TSRMLS_CC);
+      php_cassandra_set_add(set, php_cassandra_value(cass_iterator_get_value(iterator), set->type TSRMLS_CC) TSRMLS_CC);
     }
 
     cass_iterator_free(iterator);
