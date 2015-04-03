@@ -22,13 +22,13 @@ PHP_METHOD(CassandraTimeuuid, __construct)
   uuid = (cassandra_uuid*) zend_object_store_get_object(getThis() TSRMLS_CC);
 
   if (ZEND_NUM_ARGS() == 0) {
-    php_cassandra_uuid_generate_time(&uuid->uuid);
+    php_cassandra_uuid_generate_time(&uuid->uuid TSRMLS_CC);
   } else {
     if (timestamp < 0) {
       zend_throw_exception_ex(cassandra_ce_InvalidArgumentException, 0 TSRMLS_CC, "Timestamp must be a positive integer, \"%d\" given", timestamp);
       return;
     }
-    php_cassandra_uuid_generate_from_time(timestamp, &uuid->uuid);
+    php_cassandra_uuid_generate_from_time(timestamp, &uuid->uuid TSRMLS_CC);
   }
 }
 /* }}} */
@@ -189,7 +189,7 @@ php_cassandra_timeuuid_new(zend_class_entry* class_type TSRMLS_DC)
   memset(uuid, 0, sizeof(cassandra_uuid));
 
   zend_object_std_init(&uuid->zval, class_type TSRMLS_CC);
-  object_properties_init(&uuid->zval, class_type TSRMLS_CC);
+  object_properties_init(&uuid->zval, class_type);
 
   retval.handle   = zend_objects_store_put(uuid, (zend_objects_store_dtor_t) zend_objects_destroy_object, php_cassandra_timeuuid_free, NULL TSRMLS_CC);
   retval.handlers = &cassandra_timeuuid_handlers;

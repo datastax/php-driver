@@ -1293,7 +1293,7 @@ PHP_FUNCTION(cassandra_statement_bind)
       if (instanceof_function(Z_OBJCE_P(value), cassandra_ce_Set TSRMLS_CC)) {
         CassCollection* collection;
         cassandra_set* set = (cassandra_set*) zend_object_store_get_object(value TSRMLS_CC);
-        if (!php_cassandra_collection_from_set(set, &collection))
+        if (!php_cassandra_collection_from_set(set, &collection TSRMLS_CC))
           RETURN_FALSE;
 
         CassError rc = cass_statement_bind_collection(statement, (cass_size_t) Z_LVAL_P(index), collection);
@@ -1305,7 +1305,7 @@ PHP_FUNCTION(cassandra_statement_bind)
       if (instanceof_function(Z_OBJCE_P(value), cassandra_ce_Map TSRMLS_CC)) {
         CassCollection* collection;
         cassandra_map* map = (cassandra_map*) zend_object_store_get_object(value TSRMLS_CC);
-        if (!php_cassandra_collection_from_map(map, &collection))
+        if (!php_cassandra_collection_from_map(map, &collection TSRMLS_CC))
           RETURN_FALSE;
 
         CassError rc = cass_statement_bind_collection(statement, (cass_size_t) Z_LVAL_P(index), collection);
@@ -1317,7 +1317,7 @@ PHP_FUNCTION(cassandra_statement_bind)
       if (instanceof_function(Z_OBJCE_P(value), cassandra_ce_Collection TSRMLS_CC)) {
         CassCollection* collection;
         cassandra_collection* coll = (cassandra_collection*) zend_object_store_get_object(value TSRMLS_CC);
-        if (!php_cassandra_collection_from_collection(coll, &collection))
+        if (!php_cassandra_collection_from_collection(coll, &collection TSRMLS_CC))
           RETURN_FALSE;
 
         CassError rc = cass_statement_bind_collection(statement, (cass_size_t) Z_LVAL_P(index), collection);
@@ -1399,7 +1399,7 @@ PHP_FUNCTION(cassandra_statement_bind)
       if (instanceof_function(Z_OBJCE_P(value), cassandra_ce_Set TSRMLS_CC)) {
         CassCollection* collection;
         cassandra_set* set = (cassandra_set*) zend_object_store_get_object(value TSRMLS_CC);
-        if (!php_cassandra_collection_from_set(set, &collection))
+        if (!php_cassandra_collection_from_set(set, &collection TSRMLS_CC))
           RETURN_FALSE;
 
         CassError rc = cass_statement_bind_collection_by_name(statement, Z_STRVAL_P(index), collection);
@@ -1411,7 +1411,7 @@ PHP_FUNCTION(cassandra_statement_bind)
       if (instanceof_function(Z_OBJCE_P(value), cassandra_ce_Map TSRMLS_CC)) {
         CassCollection* collection;
         cassandra_map* map = (cassandra_map*) zend_object_store_get_object(value TSRMLS_CC);
-        if (!php_cassandra_collection_from_map(map, &collection))
+        if (!php_cassandra_collection_from_map(map, &collection TSRMLS_CC))
           RETURN_FALSE;
 
         CassError rc = cass_statement_bind_collection_by_name(statement, Z_STRVAL_P(index), collection);
@@ -1423,7 +1423,7 @@ PHP_FUNCTION(cassandra_statement_bind)
       if (instanceof_function(Z_OBJCE_P(value), cassandra_ce_Collection TSRMLS_CC)) {
         CassCollection* collection;
         cassandra_collection* coll = (cassandra_collection*) zend_object_store_get_object(value TSRMLS_CC);
-        if (!php_cassandra_collection_from_collection(coll, &collection))
+        if (!php_cassandra_collection_from_collection(coll, &collection TSRMLS_CC))
           RETURN_FALSE;
 
         CassError rc = cass_statement_bind_collection_by_name(statement, Z_STRVAL_P(index), collection);

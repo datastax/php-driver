@@ -29,7 +29,7 @@ php_cassandra_set_add(cassandra_set* set, zval* object TSRMLS_DC)
 }
 
 static int
-php_cassandra_set_del(cassandra_set* set, zval* object)
+php_cassandra_set_del(cassandra_set* set, zval* object TSRMLS_DC)
 {
   char* key;
   int   key_len;
@@ -46,7 +46,7 @@ php_cassandra_set_del(cassandra_set* set, zval* object)
 }
 
 static int
-php_cassandra_set_has(cassandra_set* set, zval* object)
+php_cassandra_set_has(cassandra_set* set, zval* object TSRMLS_DC)
 {
   char* key;
   int   key_len;
@@ -95,7 +95,7 @@ PHP_METHOD(CassandraSet, __construct)
 
   set = (cassandra_set*) zend_object_store_get_object(getThis() TSRMLS_CC);
 
-  php_cassandra_value_type(type, &set->type);
+  php_cassandra_value_type(type, &set->type TSRMLS_CC);
 }
 /* }}} */
 
@@ -142,7 +142,7 @@ PHP_METHOD(CassandraSet, remove)
 
   cassandra_set* set = (cassandra_set*) zend_object_store_get_object(getThis() TSRMLS_CC);
 
-  if (php_cassandra_set_del(set, object))
+  if (php_cassandra_set_del(set, object TSRMLS_CC))
     RETURN_TRUE;
 
   RETURN_FALSE;
@@ -158,7 +158,7 @@ PHP_METHOD(CassandraSet, has)
 
   cassandra_set* set = (cassandra_set*) zend_object_store_get_object(getThis() TSRMLS_CC);
 
-  if (php_cassandra_set_has(set, object))
+  if (php_cassandra_set_has(set, object TSRMLS_CC))
     RETURN_TRUE;
 
   RETURN_FALSE;
@@ -305,7 +305,7 @@ php_cassandra_set_new(zend_class_entry* class_type TSRMLS_DC)
 
   zend_hash_init(&set->values, 0, NULL, ZVAL_PTR_DTOR, 0);
   zend_object_std_init(&set->zval, class_type TSRMLS_CC);
-  object_properties_init(&set->zval, class_type TSRMLS_CC);
+  object_properties_init(&set->zval, class_type);
 
   retval.handle   = zend_objects_store_put(set,
                       (zend_objects_store_dtor_t) zend_objects_destroy_object,

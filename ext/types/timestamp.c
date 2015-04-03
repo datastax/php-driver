@@ -198,7 +198,7 @@ php_cassandra_timestamp_new(zend_class_entry* class_type TSRMLS_DC)
   memset(timestamp, 0, sizeof(cassandra_timestamp));
 
   zend_object_std_init(&timestamp->zval, class_type TSRMLS_CC);
-  object_properties_init(&timestamp->zval, class_type TSRMLS_CC);
+  object_properties_init(&timestamp->zval, class_type);
 
   retval.handle   = zend_objects_store_put(timestamp, (zend_objects_store_dtor_t) zend_objects_destroy_object, php_cassandra_timestamp_free, NULL TSRMLS_CC);
   retval.handlers = &cassandra_timestamp_handlers;

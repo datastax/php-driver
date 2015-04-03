@@ -97,7 +97,7 @@ PHP_METHOD(CassandraCollection, __construct)
 
   collection = (cassandra_collection*) zend_object_store_get_object(getThis() TSRMLS_CC);
 
-  php_cassandra_value_type(type, &collection->type);
+  php_cassandra_value_type(type, &collection->type TSRMLS_CC);
 }
 /* }}} */
 
@@ -321,7 +321,7 @@ php_cassandra_collection_new(zend_class_entry* class_type TSRMLS_DC)
 
   zend_hash_init(&collection->values, 0, NULL, ZVAL_PTR_DTOR, 0);
   zend_object_std_init(&collection->zval, class_type TSRMLS_CC);
-  object_properties_init(&collection->zval, class_type TSRMLS_CC);
+  object_properties_init(&collection->zval, class_type);
 
   retval.handle   = zend_objects_store_put(collection,
                       (zend_objects_store_dtor_t) zend_objects_destroy_object,

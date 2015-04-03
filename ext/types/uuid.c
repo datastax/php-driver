@@ -24,7 +24,7 @@ PHP_METHOD(CassandraUuid, __construct)
   uuid = (cassandra_uuid*) zend_object_store_get_object(getThis() TSRMLS_CC);
 
   if (ZEND_NUM_ARGS() == 0)
-    php_cassandra_uuid_generate_random(&uuid->uuid);
+    php_cassandra_uuid_generate_random(&uuid->uuid TSRMLS_CC);
   else {
     if (cass_uuid_from_string(value, &uuid->uuid) != CASS_OK) {
       zend_throw_exception_ex(cassandra_ce_InvalidArgumentException, 0 TSRMLS_CC, "Invalid uuid value: \"%s\"", value);
@@ -151,7 +151,7 @@ php_cassandra_uuid_new(zend_class_entry* class_type TSRMLS_DC)
   memset(uuid, 0, sizeof(cassandra_uuid));
 
   zend_object_std_init(&uuid->zval, class_type TSRMLS_CC);
-  object_properties_init(&uuid->zval, class_type TSRMLS_CC);
+  object_properties_init(&uuid->zval, class_type);
 
   retval.handle   = zend_objects_store_put(uuid, (zend_objects_store_dtor_t) zend_objects_destroy_object, php_cassandra_uuid_free, NULL TSRMLS_CC);
   retval.handlers = &cassandra_uuid_handlers;

@@ -20,7 +20,7 @@ PHP_METHOD(CassandraDecimal, __construct)
 
   number = (cassandra_decimal*) zend_object_store_get_object(getThis() TSRMLS_CC);
 
-  if (!php_cassandra_parse_decimal(value, value_len, &number->value, &scale))
+  if (!php_cassandra_parse_decimal(value, value_len, &number->value, &scale TSRMLS_CC))
     return;
 
   number->scale = scale;
@@ -140,7 +140,7 @@ php_cassandra_decimal_new(zend_class_entry* class_type TSRMLS_DC)
 
   mpz_init(number->value);
   zend_object_std_init(&number->zval, class_type TSRMLS_CC);
-  object_properties_init(&number->zval, class_type TSRMLS_CC);
+  object_properties_init(&number->zval, class_type);
   number->scale = 0;
 
   retval.handle   = zend_objects_store_put(number, (zend_objects_store_dtor_t) zend_objects_destroy_object, php_cassandra_decimal_free, NULL TSRMLS_CC);

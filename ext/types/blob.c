@@ -121,7 +121,7 @@ php_cassandra_blob_new(zend_class_entry* class_type TSRMLS_DC)
   memset(blob, 0, sizeof(cassandra_blob));
 
   zend_object_std_init(&blob->zval, class_type TSRMLS_CC);
-  object_properties_init(&blob->zval, class_type TSRMLS_CC);
+  object_properties_init(&blob->zval, class_type);
 
   retval.handle   = zend_objects_store_put(blob, (zend_objects_store_dtor_t) zend_objects_destroy_object, php_cassandra_blob_free, NULL TSRMLS_CC);
   retval.handlers = &cassandra_blob_handlers;
