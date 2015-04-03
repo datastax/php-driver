@@ -204,9 +204,9 @@ php_cassandra_hash_object(zval* object, CassValueType type, char** key, int* len
 
     cassandra_bigint* bigint = (cassandra_bigint*) zend_object_store_get_object(object TSRMLS_CC);
 #ifdef WIN32
-    *len = spprintf(key, 0, "C:BIGINT:%I64d", bigint->value);
+    *len = spprintf(key, 0, "C:BIGINT:%I64d", (long long int) bigint->value);
 #else
-    *len = spprintf(key, 0, "C:BIGINT:%lld", bigint->value);
+    *len = spprintf(key, 0, "C:BIGINT:%lld", (long long int) bigint->value);
 #endif
     return 1;
   case CASS_VALUE_TYPE_BLOB:
@@ -239,9 +239,9 @@ php_cassandra_hash_object(zval* object, CassValueType type, char** key, int* len
     cassandra_timestamp* timestamp = (cassandra_timestamp*) zend_object_store_get_object(object TSRMLS_CC);
 
 #ifdef WIN32
-    *len = spprintf(key, 0, "C:TIMESTAMP:%I64d", timestamp->timestamp);
+    *len = spprintf(key, 0, "C:TIMESTAMP:%I64d", (long long int) timestamp->timestamp);
 #else
-    *len = spprintf(key, 0, "C:TIMESTAMP:%lld", timestamp->timestamp);
+    *len = spprintf(key, 0, "C:TIMESTAMP:%lld", (long long int) timestamp->timestamp);
 #endif
     return 1;
   case CASS_VALUE_TYPE_UUID:
@@ -252,9 +252,9 @@ php_cassandra_hash_object(zval* object, CassValueType type, char** key, int* len
 
     cassandra_uuid* uuid = (cassandra_uuid*) zend_object_store_get_object(object TSRMLS_CC);
 #ifdef WIN32
-    *len = spprintf(key, 0, "C:UUID:%I64d:%I64d", uuid->uuid.time_and_version, uuid->uuid.clock_seq_and_node);
+    *len = spprintf(key, 0, "C:UUID:%I64d:%I64d", (long long int) uuid->uuid.time_and_version, (long long int) uuid->uuid.clock_seq_and_node);
 #else
-    *len = spprintf(key, 0, "C:UUID:%lld:%lld", uuid->uuid.time_and_version, uuid->uuid.clock_seq_and_node);
+    *len = spprintf(key, 0, "C:UUID:%lld:%lld", (long long int) uuid->uuid.time_and_version, (long long int) uuid->uuid.clock_seq_and_node);
 #endif
     return 1;
   case CASS_VALUE_TYPE_VARINT:

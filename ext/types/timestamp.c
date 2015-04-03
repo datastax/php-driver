@@ -113,7 +113,7 @@ PHP_METHOD(CassandraTimestamp, __toString)
   timestamp = (cassandra_timestamp*) zend_object_store_get_object(getThis() TSRMLS_CC);
 
   char *ret;
-  spprintf(&ret, 0, "%lld", timestamp->timestamp);
+  spprintf(&ret, 0, "%lld", (long long int) timestamp->timestamp);
   RETURN_STRING(ret, 0);
 }
 /* }}} */

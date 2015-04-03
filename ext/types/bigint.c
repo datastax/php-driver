@@ -88,9 +88,9 @@ PHP_METHOD(CassandraBigint, __toString)
   char* string;
   cassandra_bigint* number = (cassandra_bigint*) zend_object_store_get_object(getThis() TSRMLS_CC);
 #ifdef WIN32
-  spprintf(&string, 0, "%I64d", number->value);
+  spprintf(&string, 0, "%I64d", (long long int) number->value);
 #else
-  spprintf(&string, 0, "%lld", number->value);
+  spprintf(&string, 0, "%lld", (long long int) number->value);
 #endif
   RETURN_STRING(string, 0);
 }
@@ -102,9 +102,9 @@ PHP_METHOD(CassandraBigint, value)
   char* string;
   cassandra_bigint* number = (cassandra_bigint*) zend_object_store_get_object(getThis() TSRMLS_CC);
 #ifdef WIN32
-  spprintf(&string, 0, "%I64d", number->value);
+  spprintf(&string, 0, "%I64d", (long long int) number->value);
 #else
-  spprintf(&string, 0, "%lld", number->value);
+  spprintf(&string, 0, "%lld", (long long int) number->value);
 #endif
   RETURN_STRING(string, 0);
 }
@@ -137,9 +137,9 @@ php_cassandra_bigint_properties(zval *object TSRMLS_DC)
   int string_len;
 
 #ifdef WIN32
-  string_len = spprintf(&string, 0, "%I64d", number->value);
+  string_len = spprintf(&string, 0, "%I64d", (long long int) number->value);
 #else
-  string_len = spprintf(&string, 0, "%lld", number->value);
+  string_len = spprintf(&string, 0, "%lld", (long long int) number->value);
 #endif
 
   MAKE_STD_ZVAL(value);
