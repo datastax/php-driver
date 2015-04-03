@@ -11,7 +11,7 @@
       if (class_name) { \
         zend_throw_exception_ex(cassandra_ce_InvalidArgumentException, 0 TSRMLS_CC, \
           "Expected " expected ", an instance of %s given", class_name); \
-        efree(class_name); \
+        efree((void *) class_name); \
       } else { \
         zend_throw_exception_ex(cassandra_ce_InvalidArgumentException, 0 TSRMLS_CC, \
           "Expected " expected ", an instance of Unknown Class given"); \
@@ -50,7 +50,11 @@ extern zend_class_entry* cassandra_ce_Varint;
 int
 php_cassandra_validate_object(zval* object, CassValueType type TSRMLS_DC)
 {
+#if ZEND_MODULE_API_NO >= 20100525
+  const char* class_name = NULL;
+#else
   char* class_name = NULL;
+#endif
   zend_uint class_name_len;
 
   if (Z_TYPE_P(object) == IS_NULL)
@@ -137,7 +141,11 @@ php_cassandra_hash_object(zval* object, CassValueType type, char** key, int* len
 {
   zval* value;
   zval* scale;
+#if ZEND_MODULE_API_NO >= 20100525
+  const char* class_name = NULL;
+#else
   char* class_name = NULL;
+#endif
   zend_uint class_name_len;
   char* string;
   int string_len;
