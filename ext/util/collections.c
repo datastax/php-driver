@@ -7,7 +7,7 @@
 #define EXPECTING_VALUE(expected) \
   ({ \
     if (Z_TYPE_P(object) == IS_OBJECT) { \
-      Z_OBJ_HANDLER_P(object, get_class_name)(object, (const char**) &class_name, &class_name_len, 0 TSRMLS_CC); \
+      Z_OBJ_HANDLER_P(object, get_class_name)(object, &class_name, &class_name_len, 0 TSRMLS_CC); \
       if (class_name) { \
         zend_throw_exception_ex(cassandra_ce_InvalidArgumentException, 0 TSRMLS_CC, \
           "Expected " expected ", an instance of %s given", class_name); \
