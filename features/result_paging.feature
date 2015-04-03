@@ -84,3 +84,35 @@ Feature: Result paging
       key: k, value: 10
       key: b, value: 1
       """
+
+  Scenario: Accessing page info after loading next one
+    Given the following example:
+      """php
+      <?php
+      $cluster   = Cassandra::cluster()
+                     ->withContactPoints('127.0.0.1')
+                     ->build();
+      $session   = $cluster->connect("simplex");
+      $statement = new Cassandra\SimpleStatement("SELECT * FROM entries");
+      $options   = new Cassandra\ExecutionOptions(array('page_size' => 10));
+      $rows      = $session->execute($statement, $options);
+
+      $firstPageRows = $session->execute($statement, $options);
+      echo $firstPageRows->isLastPage() ? "1: last\n" : "1: not last\n";
+
+      $secondPageRows = $firstPageRows->nextPage();
+      echo $firstPageRows->isLastPage() ? "1: last\n" : "1: not last\n";
+      echo $secondPageRows->isLastPage() ? "2: last\n" : "2: not last\n";
+
+      echo "entries in page 1: " . $firstPageRows->count() . "\n";
+      echo "entries in page 2: " . $secondPageRows->count() . "\n";
+      """
+    When it is executed
+    Then its output should contain:
+      """
+      1: not last
+      1: not last
+      2: last
+      entries in page 1: 10
+      entries in page 2: 3
+      """
