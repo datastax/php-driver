@@ -1763,10 +1763,11 @@ php_cassandra_value(const CassValue* value, CassValueType type TSRMLS_DC)
       break;
     }
 
-    if (v_boolean)
+    if (v_boolean) {
       RETVAL_TRUE;
-    else
+    } else {
       RETVAL_FALSE;
+    }
 
     break;
   case CASS_VALUE_TYPE_INET:
