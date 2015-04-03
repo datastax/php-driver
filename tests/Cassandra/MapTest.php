@@ -2,6 +2,9 @@
 
 namespace Cassandra;
 
+/**
+ * @requires extension cassandra
+ */
 class MapTest extends \PHPUnit_Framework_TestCase
 {
     public function testSupportsKeyBasedAccess()
