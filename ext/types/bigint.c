@@ -187,7 +187,11 @@ php_cassandra_bigint_new(zend_class_entry* class_type TSRMLS_DC)
   memset(number, 0, sizeof(cassandra_bigint));
 
   zend_object_std_init(&number->zval, class_type TSRMLS_CC);
+#if ZEND_MODULE_API_NO >= 20100525
   object_properties_init(&number->zval, class_type);
+#else
+  zend_hash_copy(number->std.properties, &class_type->default_properties, (copy_ctor_func_t) zval_add_ref, (void*) NULL, sizeof(zval*));
+#endif
 
   retval.handle   = zend_objects_store_put(number, (zend_objects_store_dtor_t) zend_objects_destroy_object, php_cassandra_bigint_free, NULL TSRMLS_CC);
   retval.handlers = &cassandra_bigint_handlers;

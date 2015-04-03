@@ -151,7 +151,11 @@ php_cassandra_uuid_new(zend_class_entry* class_type TSRMLS_DC)
   memset(uuid, 0, sizeof(cassandra_uuid));
 
   zend_object_std_init(&uuid->zval, class_type TSRMLS_CC);
+#if ZEND_MODULE_API_NO >= 20100525
   object_properties_init(&uuid->zval, class_type);
+#else
+  zend_hash_copy(uuid->std.properties, &class_type->default_properties, (copy_ctor_func_t) zval_add_ref, (void*) NULL, sizeof(zval*));
+#endif
 
   retval.handle   = zend_objects_store_put(uuid, (zend_objects_store_dtor_t) zend_objects_destroy_object, php_cassandra_uuid_free, NULL TSRMLS_CC);
   retval.handlers = &cassandra_uuid_handlers;
