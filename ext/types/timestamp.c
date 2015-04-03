@@ -201,7 +201,7 @@ php_cassandra_timestamp_new(zend_class_entry* class_type TSRMLS_DC)
 #if ZEND_MODULE_API_NO >= 20100525
   object_properties_init(&timestamp->zval, class_type);
 #else
-  zend_hash_copy(timestamp->std.properties, &class_type->default_properties, (copy_ctor_func_t) zval_add_ref, (void*) NULL, sizeof(zval*));
+  zend_hash_copy(timestamp->zval.properties, &class_type->default_properties, (copy_ctor_func_t) zval_add_ref, (void*) NULL, sizeof(zval*));
 #endif
 
   retval.handle   = zend_objects_store_put(timestamp, (zend_objects_store_dtor_t) zend_objects_destroy_object, php_cassandra_timestamp_free, NULL TSRMLS_CC);

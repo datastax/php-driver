@@ -192,7 +192,7 @@ php_cassandra_timeuuid_new(zend_class_entry* class_type TSRMLS_DC)
 #if ZEND_MODULE_API_NO >= 20100525
   object_properties_init(&uuid->zval, class_type);
 #else
-  zend_hash_copy(uuid->std.properties, &class_type->default_properties, (copy_ctor_func_t) zval_add_ref, (void*) NULL, sizeof(zval*));
+  zend_hash_copy(uuid->zval.properties, &class_type->default_properties, (copy_ctor_func_t) zval_add_ref, (void*) NULL, sizeof(zval*));
 #endif
 
   retval.handle   = zend_objects_store_put(uuid, (zend_objects_store_dtor_t) zend_objects_destroy_object, php_cassandra_timeuuid_free, NULL TSRMLS_CC);

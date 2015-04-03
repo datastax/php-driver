@@ -481,7 +481,7 @@ php_cassandra_map_new(zend_class_entry* class_type TSRMLS_DC)
 #if ZEND_MODULE_API_NO >= 20100525
   object_properties_init(&map->zval, class_type);
 #else
-  zend_hash_copy(map->std.properties, &class_type->default_properties, (copy_ctor_func_t) zval_add_ref, (void*) NULL, sizeof(zval*));
+  zend_hash_copy(map->zval.properties, &class_type->default_properties, (copy_ctor_func_t) zval_add_ref, (void*) NULL, sizeof(zval*));
 #endif
 
   retval.handle   = zend_objects_store_put(map,
