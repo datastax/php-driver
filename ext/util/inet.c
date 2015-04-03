@@ -104,7 +104,7 @@ ip_address_tokenize(char* address, char* token, int* token_len, char** next_toke
 }
 
 int
-php_cassandra_parse_ip_address(char* in, CassInet* inet)
+php_cassandra_parse_ip_address(char* in, CassInet* inet TSRMLS_DC)
 {
   char              token[TOKEN_MAX_LEN + 1];
   int               token_len                    = -1;

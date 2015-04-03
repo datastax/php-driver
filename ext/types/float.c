@@ -132,7 +132,7 @@ php_cassandra_float_new(zend_class_entry* class_type TSRMLS_DC)
   memset(number, 0, sizeof(cassandra_float));
 
   zend_object_std_init(&number->zval, class_type TSRMLS_CC);
-  object_properties_init(&number->zval, class_type TSRMLS_CC);
+  object_properties_init(&number->zval, class_type);
 
   retval.handle   = zend_objects_store_put(number, (zend_objects_store_dtor_t) zend_objects_destroy_object, php_cassandra_float_free, NULL TSRMLS_CC);
   retval.handlers = &cassandra_float_handlers;

@@ -19,7 +19,7 @@ PHP_METHOD(CassandraVarint, __construct)
 
   number = (cassandra_varint*) zend_object_store_get_object(getThis() TSRMLS_CC);
 
-  if (!php_cassandra_parse_integer(value, value_len, &number->value))
+  if (!php_cassandra_parse_integer(value, value_len, &number->value TSRMLS_CC))
     return;
 }
 /* }}} */
@@ -116,7 +116,7 @@ php_cassandra_varint_new(zend_class_entry* class_type TSRMLS_DC)
 
   mpz_init(number->value);
   zend_object_std_init(&number->zval, class_type TSRMLS_CC);
-  object_properties_init(&number->zval, class_type TSRMLS_CC);
+  object_properties_init(&number->zval, class_type);
 
   retval.handle   = zend_objects_store_put(number, (zend_objects_store_dtor_t) zend_objects_destroy_object, php_cassandra_varint_free, NULL TSRMLS_CC);
   retval.handlers = &cassandra_varint_handlers;

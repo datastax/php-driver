@@ -8,7 +8,7 @@
 extern zend_class_entry *cassandra_ce_InvalidArgumentException;
 
 int
-php_cassandra_parse_integer(char* in, int in_len, mpz_t* number)
+php_cassandra_parse_integer(char* in, int in_len, mpz_t* number TSRMLS_DC)
 {
   int point = 0;
   int base = 10;
@@ -86,7 +86,7 @@ php_cassandra_parse_integer(char* in, int in_len, mpz_t* number)
 }
 
 int
-php_cassandra_parse_decimal(char* in, int in_len, mpz_t* number, int* scale)
+php_cassandra_parse_decimal(char* in, int in_len, mpz_t* number, int* scale TSRMLS_DC)
 {
   //  start is the index into the char array where the significand starts
   int start = 0;
@@ -197,7 +197,7 @@ php_cassandra_parse_decimal(char* in, int in_len, mpz_t* number, int* scale)
     return 0;
   }
 
-  int ok = php_cassandra_parse_integer(out, out_len, number);
+  int ok = php_cassandra_parse_integer(out, out_len, number TSRMLS_CC);
 
   if (!ok) {
     zend_throw_exception_ex(cassandra_ce_InvalidArgumentException, 0 TSRMLS_CC, "Unable to extract integer part of decimal value: \"%s\", %s", in, out);
