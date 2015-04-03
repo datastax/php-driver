@@ -2,6 +2,9 @@
 
 namespace Cassandra;
 
+/**
+ * @requires extension cassandra
+ */
 class VarintTest extends \PHPUnit_Framework_TestCase
 {
     /**

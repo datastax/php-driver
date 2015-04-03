@@ -2,6 +2,9 @@
 
 namespace Cassandra;
 
+/**
+ * @requires extension cassandra
+ */
 class BigintTest extends \PHPUnit_Framework_TestCase
 {
     /**
