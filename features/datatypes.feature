@@ -69,7 +69,7 @@ Feature: Datatypes
 
       echo "Bigint: " . var_export($row['bigint_value'], true) . "\n";
       echo "Decimal: " . var_export($row['decimal_value'], true) . "\n";
-      echo "Double: " . var_export($row['double_value'], true) . "\n";
+      echo "Double: " . sprintf('%.13f', $row['double_value']) . "\n";
       echo "Float: " . var_export($row['float_value'], true) . "\n";
       echo "Int: " . var_export($row['int_value'], true) . "\n";
       echo "Varint: " . var_export($row['varint_value'], true) . "\n";
@@ -89,7 +89,7 @@ Feature: Datatypes
          'value' => '1313123123234234234234234234123',
          'scale' => 21,
       ))
-      Double: 3.1415926535897931
+      Double: 3.1415926535898
       Float: Cassandra\Float::__set_state(array(
          'value' => '3.14000010490417',
       ))
