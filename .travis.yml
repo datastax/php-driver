@@ -16,7 +16,7 @@ env:
 
 before_install:
   # Build the extension
-   # TODO: ask Travis to whitelist libuv-dev for the container-based infrastructure
+  # TODO: ask Travis to whitelist libuv-dev for the container-based infrastructure
   - sudo apt-add-repository ppa:linuxjedi/ppa -y
   - sudo apt-get update
   - sudo apt-get install -y libuv-dev libssl-dev
