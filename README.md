@@ -1,5 +1,7 @@
 # DataStax PHP Driver for Apache Cassandra
 
+[![Build Status](https://travis-ci.org/datastax/php-driver.svg)](https://travis-ci.org/datastax/php-driver)
+
 This is a wrapper around the DataStax C/C++ driver for Apache Cassandra. This
 driver works exclusively with the Cassandra Query Language version 3 (CQL3) and
 Cassandra's native protocol.
