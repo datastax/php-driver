@@ -43,7 +43,7 @@ $cluster   = Cassandra::cluster()                 // connects to localhost by de
 $keyspace  = 'system';
 $session   = $cluster->connect($system);          // create session, optionally scoped to a keyspace
 $statement = new Cassandra\SimpleStatement(       // also supports prepared and batch statements
-  'SELECT keyspace_name, columnfamily_name FROM schema_columnfamilies'
+    'SELECT keyspace_name, columnfamily_name FROM schema_columnfamilies'
 );
 $future    = $session->executeAsync($statement);  // fully asynchronous and easy parallel execution
 $result    = $future->get();                      // wait for result to become available, optionally set a timeout
