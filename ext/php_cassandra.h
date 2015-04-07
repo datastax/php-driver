@@ -35,6 +35,10 @@ extern zend_module_entry cassandra_module_entry;
 #    define PHP_CASSANDRA_API
 #endif
 
+#ifndef PHP_FE_END
+#define PHP_FE_END { NULL, NULL, NULL, 0, 0 }
+#endif
+
 #ifdef ZTS
 #include "TSRM.h"
 #endif
