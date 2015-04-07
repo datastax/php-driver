@@ -198,6 +198,10 @@ final class Rows implements \Iterator, \Countable, \ArrayAccess
      */
     public function nextPageAsync()
     {
+        if (isLastPage()) {
+            return new FutureValue(null);
+        }
+
         try {
             cassandra_statement_set_paging_state($this->statement, $this->resource);
         } catch (Exception $e) {
