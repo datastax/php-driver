@@ -198,7 +198,7 @@ final class Rows implements \Iterator, \Countable, \ArrayAccess
      */
     public function nextPageAsync()
     {
-        if (isLastPage()) {
+        if ($this->isLastPage()) {
             return new FutureValue(null);
         }
 
