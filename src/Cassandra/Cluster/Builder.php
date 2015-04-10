@@ -185,11 +185,11 @@ final class Builder
         }
 
         if (!is_null($this->connectTimeout)) {
-            cassandra_cluster_set_connect_timeout($cluster, $this->connectTimeout);
+            cassandra_cluster_set_connect_timeout($cluster, ceil($this->connectTimeout * 1000));
         }
 
         if (!is_null($this->requestTimeout)) {
-            cassandra_cluster_set_request_timeout($cluster, $this->requestTimeout);
+            cassandra_cluster_set_request_timeout($cluster, ceil($this->requestTimeout * 1000));
         }
 
         if (!is_null($this->sslOptions)) {

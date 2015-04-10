@@ -143,6 +143,8 @@ const zend_function_entry cassandra_functions[] = {
   PHP_FE(cassandra_cluster_set_credentials, NULL)
   PHP_FE(cassandra_cluster_set_contact_points, NULL)
   PHP_FE(cassandra_cluster_set_port, NULL)
+  PHP_FE(cassandra_cluster_set_connect_timeout, NULL)
+  PHP_FE(cassandra_cluster_set_request_timeout, NULL)
   PHP_FE(cassandra_cluster_set_ssl, NULL)
   /* CassSsl */
   PHP_FE(cassandra_ssl_new, NULL)
@@ -678,7 +680,7 @@ PHP_FUNCTION(cassandra_cluster_set_port)
   long port;
   zval* cluster_resource;
 
-  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &port) == FAILURE) {
+  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "rl", &cluster_resource, &port) == FAILURE) {
     RETURN_FALSE;
   }
 
@@ -686,6 +688,44 @@ PHP_FUNCTION(cassandra_cluster_set_port)
     PHP_CASSANDRA_CLUSTER_RES_NAME, le_cassandra_cluster_res);
 
   CassError rc = cass_cluster_set_port(cluster, (int)port);
+  CHECK_RESULT(rc);
+}
+
+PHP_FUNCTION(cassandra_cluster_set_connect_timeout)
+{
+  CassCluster* cluster;
+  long timeout_ms;
+  zval* cluster_resource;
+
+  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "rl", &cluster_resource, &timeout_ms) == FAILURE) {
+    RETURN_FALSE;
+  }
+
+  ZEND_FETCH_RESOURCE(cluster, CassCluster*, &cluster_resource, -1,
+    PHP_CASSANDRA_CLUSTER_RES_NAME, le_cassandra_cluster_res);
+
+  // This is void return.
+  cass_cluster_set_connect_timeout(cluster, (unsigned int)timeout_ms);
+  CassError rc = CASS_OK;
+  CHECK_RESULT(rc);
+}
+
+PHP_FUNCTION(cassandra_cluster_set_request_timeout)
+{
+  CassCluster* cluster;
+  long timeout_ms;
+  zval* cluster_resource;
+
+  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "rl", &cluster_resource, &timeout_ms) == FAILURE) {
+    RETURN_FALSE;
+  }
+
+  ZEND_FETCH_RESOURCE(cluster, CassCluster*, &cluster_resource, -1,
+    PHP_CASSANDRA_CLUSTER_RES_NAME, le_cassandra_cluster_res);
+
+  // This is a void return.
+  cass_cluster_set_request_timeout(cluster, (unsigned int)timeout_ms);
+  CassError rc = CASS_OK;
   CHECK_RESULT(rc);
 }
 
