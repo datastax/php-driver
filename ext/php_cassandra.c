@@ -142,6 +142,7 @@ const zend_function_entry cassandra_functions[] = {
   PHP_FE(cassandra_cluster_set_token_aware_routing, NULL)
   PHP_FE(cassandra_cluster_set_credentials, NULL)
   PHP_FE(cassandra_cluster_set_contact_points, NULL)
+  PHP_FE(cassandra_cluster_set_port, NULL)
   PHP_FE(cassandra_cluster_set_ssl, NULL)
   /* CassSsl */
   PHP_FE(cassandra_ssl_new, NULL)
@@ -668,6 +669,23 @@ PHP_FUNCTION(cassandra_cluster_set_contact_points)
 
   CassError rc = cass_cluster_set_contact_points(cluster, hosts);
   free(hosts);
+  CHECK_RESULT(rc);
+}
+
+PHP_FUNCTION(cassandra_cluster_set_port)
+{
+  CassCluster* cluster;
+  long port;
+  zval* cluster_resource;
+
+  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &port) == FAILURE) {
+    RETURN_FALSE;
+  }
+
+  ZEND_FETCH_RESOURCE(cluster, CassCluster*, &cluster_resource, -1,
+    PHP_CASSANDRA_CLUSTER_RES_NAME, le_cassandra_cluster_res);
+
+  CassError rc = cass_cluster_set_port(cluster, (int)port);
   CHECK_RESULT(rc);
 }
 
