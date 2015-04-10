@@ -127,6 +127,8 @@ PHP_FUNCTION(cassandra_cluster_set_token_aware_routing);
 PHP_FUNCTION(cassandra_cluster_set_credentials);
 PHP_FUNCTION(cassandra_cluster_set_contact_points);
 PHP_FUNCTION(cassandra_cluster_set_port);
+PHP_FUNCTION(cassandra_cluster_set_connect_timeout);
+PHP_FUNCTION(cassandra_cluster_set_request_timeout);
 PHP_FUNCTION(cassandra_cluster_set_ssl);
 
 /* CassSsl */
