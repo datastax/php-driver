@@ -133,6 +133,14 @@ final class Builder
     private $defaultTimeout;
 
     /**
+     * Default port for connection.
+     * Default: 9042
+     *
+     * @var int
+     */
+    private $port;
+
+    /**
      * @access private
      */
     public function __construct()
@@ -143,6 +151,7 @@ final class Builder
         $this->defaultConsistency       = \Cassandra::CONSISTENCY_ONE;
         $this->defaultPageSize          = 10000;
         $this->defaultTimeout           = null;
+        $this->port                     = 9042;
     }
 
     /**
@@ -189,6 +198,10 @@ final class Builder
         }
 
         cassandra_cluster_set_contact_points($cluster, $this->contactPoints);
+
+        if (!is_null($this->port) && $this->port != 9042) {
+            cassandra_cluster_set_port($cluster, $this->port);
+        }
 
         return new DefaultCluster($cluster, $options, $ssl);
     }
@@ -283,6 +296,20 @@ final class Builder
     public function withContactPoints($host)
     {
         $this->contactPoints = implode(',', func_get_args());
+
+        return $this;
+    }
+
+    /**
+     * Configures the port for endpoints.
+     *
+     * @param int $port an ip address string
+     *
+     * @return self
+     */
+    public function withPort($port)
+    {
+        $this->port = $port;
 
         return $this;
     }

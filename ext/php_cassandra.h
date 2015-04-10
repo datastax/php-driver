@@ -126,6 +126,7 @@ PHP_FUNCTION(cassandra_cluster_set_load_balance_dc_aware);
 PHP_FUNCTION(cassandra_cluster_set_token_aware_routing);
 PHP_FUNCTION(cassandra_cluster_set_credentials);
 PHP_FUNCTION(cassandra_cluster_set_contact_points);
+PHP_FUNCTION(cassandra_cluster_set_port);
 PHP_FUNCTION(cassandra_cluster_set_ssl);
 
 /* CassSsl */
