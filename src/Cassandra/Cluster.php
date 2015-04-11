@@ -40,4 +40,23 @@ interface Cluster
      * @return Future A Future Session instance
      */
     public function connectAsync($keyspace = null);
+
+    /**
+     * Creates a new Session instance or fetches a persistent Session instance.
+     *
+     * @param string $keyspace Optional keyspace name
+     *
+     * @return Session Session instance
+     */
+    public function pconnect($keyspace = null);
+
+    /**
+     * Creates a new Session instance or fetches a persistent Session instance.
+     *
+     * @param string $keyspace Optional keyspace name
+     *
+     * @return Future|Session A Future Session instance if the persistent Session does
+     *                        not yet exist, otherwise the persistent Session if it does.
+     */
+    public function pconnectAsync($keyspace = null);
 }
