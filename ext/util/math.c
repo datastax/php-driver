@@ -8,7 +8,64 @@
 extern zend_class_entry *cassandra_ce_InvalidArgumentException;
 
 int
-php_cassandra_parse_integer(char* in, int in_len, mpz_t* number TSRMLS_DC)
+php_cassandra_parse_bigint(char* in, int in_len, cass_int64_t* number TSRMLS_DC)
+{
+  int point = 0;
+  int base = 10;
+
+  //  Determine the sign of the number.
+  int negative = 0;
+  if (in[point] == '+') {
+    point++;
+  } else if (in[point] == '-') {
+    point++;
+    negative = 1;
+  }
+
+  if (in[point] == '0') {
+    switch(in[point + 1]) {
+    case 'b':
+      point += 2;
+      base = 2;
+      break;
+    case 'x':
+      point += 2;
+      base = 16;
+      break;
+    default:
+      base = 8;
+      break;
+    }
+  }
+
+  char* end;
+  errno = 0;
+
+  *number = (cass_int64_t) strtoll(&(in[point]), &end, base);
+
+  if (negative)
+    *number = *number * -1;
+
+  if (errno) {
+    zend_throw_exception_ex(cassandra_ce_InvalidArgumentException, 0 TSRMLS_CC, "Invalid integer value: '%s'", in);
+    return 0;
+  }
+
+  if (end != &in[in_len]) {
+    zend_throw_exception_ex(cassandra_ce_InvalidArgumentException, 0 TSRMLS_CC, "Non digit characters were found in value: '%s'", in);
+    return 0;
+  }
+
+  if (end == &in[point]) {
+    zend_throw_exception_ex(cassandra_ce_InvalidArgumentException, 0 TSRMLS_CC, "No digits were found in value: '%s'", in);
+    return 0;
+  }
+
+  return 1;
+}
+
+int
+php_cassandra_parse_varint(char* in, int in_len, mpz_t* number TSRMLS_DC)
 {
   int point = 0;
   int base = 10;
@@ -197,7 +254,7 @@ php_cassandra_parse_decimal(char* in, int in_len, mpz_t* number, int* scale TSRM
     return 0;
   }
 
-  int ok = php_cassandra_parse_integer(out, out_len, number TSRMLS_CC);
+  int ok = php_cassandra_parse_varint(out, out_len, number TSRMLS_CC);
 
   if (!ok) {
     zend_throw_exception_ex(cassandra_ce_InvalidArgumentException, 0 TSRMLS_CC, "Unable to extract integer part of decimal value: \"%s\", %s", in, out);
