@@ -1,5 +1,5 @@
 #include "../php_cassandra.h"
-#include "bigint.h"
+#include "float.h"
 
 extern zend_class_entry* cassandra_ce_InvalidArgumentException;
 

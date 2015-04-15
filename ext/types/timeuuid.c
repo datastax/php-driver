@@ -1,6 +1,6 @@
 #include "../php_cassandra.h"
 #include "util/uuid_gen.h"
-#include "uuid_interface.h"
+#include "types/uuid_interface.h"
 #include "timeuuid.h"
 #include "ext/date/php_date.h"
 
