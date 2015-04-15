@@ -7,27 +7,40 @@ if test -z "$PHP_GMP"; then
 fi
 
 if test "$PHP_CASSANDRA" != "no"; then
+  CASSANDRA_CLASSES="\
+    src/Cassandra/Cluster.c \
+    src/Cassandra/Cluster/Builder.c \
+    src/Cassandra/DefaultCluster.c \
+    src/Cassandra/SSLOptions.c \
+  ";
+
+  CASSANDRA_TYPES="\
+    types/float.c \
+    types/bigint.c \
+    types/blob.c \
+    types/decimal.c \
+    types/inet.c \
+    types/uuid_interface.c \
+    types/uuid.c \
+    types/timestamp.c \
+    types/timeuuid.c \
+    types/varint.c \
+    types/set.c \
+    types/map.c \
+    types/collection.c \
+  ";
+
   PHP_SUBST(CASSANDRA_SHARED_LIBADD)
   PHP_NEW_EXTENSION(cassandra, php_cassandra.c exceptions/exception.c \
     exceptions/invalid_argument.c exceptions/runtime.c exceptions/timeout.c \
     exceptions/logic.c exceptions/domain.c exceptions/server.c util/bytes.c \
-    util/collections.c util/inet.c util/math.c util/uuid_gen.c types/float.c \
-    types/bigint.c types/blob.c types/decimal.c types/inet.c \
-    types/uuid_interface.c types/uuid.c types/timestamp.c types/timeuuid.c \
-    types/varint.c types/set.c types/map.c types/collection.c, $ext_shared)
+    util/collections.c util/inet.c util/math.c util/uuid_gen.c \
+    $CASSANDRA_TYPES $CASSANDRA_CLASSES, $ext_shared)
 
   ifdef([PHP_ADD_EXTENSION_DEP],
   [
     PHP_ADD_EXTENSION_DEP(cassandra, spl)
   ])
-
-  PHP_ADD_BUILD_DIR([$ext_builddir/exceptions], 1)
-  PHP_ADD_INCLUDE([$ext_builddir/exceptions])
-  PHP_ADD_INCLUDE([$ext_srcdir/exceptions])
-
-  PHP_ADD_BUILD_DIR([$ext_builddir/types], 1)
-  PHP_ADD_INCLUDE([$ext_builddir/types])
-  PHP_ADD_INCLUDE([$ext_srcdir/types])
 
   if test "$PHP_GMP" != "no"; then
     if test -f $PHP_GMP/include/gmp.h; then

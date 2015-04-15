@@ -1,6 +1,6 @@
 #include "php_cassandra.h"
-#include "php_ini.h"
-#include "ext/standard/info.h"
+#include <php_ini.h>
+#include <ext/standard/info.h>
 #include "util/bytes.h"
 #include "util/math.h"
 #include "util/collections.h"
@@ -8,46 +8,7 @@
 #include "types/map.h"
 #include "types/set.h"
 
-extern zend_class_entry* cassandra_ce_RuntimeException;
-extern zend_class_entry* cassandra_ce_TimeoutException;
-extern zend_class_entry* cassandra_ce_LogicException;
-extern zend_class_entry* cassandra_ce_InvalidArgumentException;
-extern zend_class_entry* cassandra_ce_ServerException;
-
-extern zend_class_entry* cassandra_ce_OverloadedException;
-extern zend_class_entry* cassandra_ce_IsBootstrappingException;
-
-extern zend_class_entry* cassandra_ce_TruncateException;
-extern zend_class_entry* cassandra_ce_WriteTimeoutException;
-extern zend_class_entry* cassandra_ce_ReadTimeoutException;
-extern zend_class_entry* cassandra_ce_TruncateException;
-extern zend_class_entry* cassandra_ce_UnavailableException;
-
-extern zend_class_entry* cassandra_ce_InvalidSyntaxException;
-extern zend_class_entry* cassandra_ce_UnauthorizedException;
-extern zend_class_entry* cassandra_ce_InvalidQueryException;
-extern zend_class_entry* cassandra_ce_ConfigurationException;
-extern zend_class_entry* cassandra_ce_AlreadyExistsException;
-extern zend_class_entry* cassandra_ce_UnpreparedException;
-
-extern zend_class_entry* cassandra_ce_ProtocolException;
-extern zend_class_entry* cassandra_ce_AuthenticationException;
-
-extern zend_class_entry* cassandra_ce_Bigint;
-extern zend_class_entry* cassandra_ce_Blob;
-extern zend_class_entry* cassandra_ce_Decimal;
-extern zend_class_entry* cassandra_ce_Float;
-extern zend_class_entry* cassandra_ce_Inet;
-extern zend_class_entry* cassandra_ce_Timestamp;
-extern zend_class_entry* cassandra_ce_Uuid;
-extern zend_class_entry* cassandra_ce_Timeuuid;
-extern zend_class_entry* cassandra_ce_Varint;
-
-extern zend_class_entry* cassandra_ce_Set;
-extern zend_class_entry* cassandra_ce_Map;
-extern zend_class_entry* cassandra_ce_Collection;
-
-static zend_class_entry*
+zend_class_entry*
 exception_class(CassError rc)
 {
   switch (rc) {
@@ -233,6 +194,11 @@ php_cassandra_log(const CassLogMessage* message, void *data)
 }
 
 static int le_cassandra_cluster_res;
+int
+php_le_cassandra_cluster()
+{
+  return le_cassandra_cluster_res;
+}
 static void
 php_cassandra_cluster_dtor(zend_rsrc_list_entry* rsrc TSRMLS_DC)
 {
@@ -240,6 +206,7 @@ php_cassandra_cluster_dtor(zend_rsrc_list_entry* rsrc TSRMLS_DC)
 
   if (cluster) {
     cass_cluster_free(cluster);
+    CASSANDRA_G(persistent_clusters)--;
     rsrc->ptr = NULL;
   }
 }
@@ -331,8 +298,9 @@ php_cassandra_batch_dtor(zend_rsrc_list_entry* rsrc TSRMLS_DC)
 static void
 php_cassandra_globals_ctor(zend_cassandra_globals* cassandra_globals TSRMLS_DC)
 {
-  cassandra_globals->uuid_gen  = cass_uuid_gen_new();
-  cassandra_globals->log_level = CASS_LOG_ERROR;
+  cassandra_globals->uuid_gen            = cass_uuid_gen_new();
+  cassandra_globals->log_level           = CASS_LOG_ERROR;
+  cassandra_globals->persistent_clusters = 0;
   cass_log_set_callback(php_cassandra_log, NULL);
 }
 
@@ -359,8 +327,8 @@ PHP_MINIT_FUNCTION(cassandra)
 #endif
 
   le_cassandra_cluster_res = zend_register_list_destructors_ex(
-    php_cassandra_cluster_dtor,
     NULL,
+    php_cassandra_cluster_dtor,
     PHP_CASSANDRA_CLUSTER_RES_NAME,
     module_number
   );
@@ -430,6 +398,11 @@ PHP_MINIT_FUNCTION(cassandra)
   cassandra_define_CassandraMap(TSRMLS_C);
   cassandra_define_CassandraCollection(TSRMLS_C);
 
+  PHP_MINIT(Cluster)(INIT_FUNC_ARGS_PASSTHRU);
+  PHP_MINIT(ClusterBuilder)(INIT_FUNC_ARGS_PASSTHRU);
+  PHP_MINIT(DefaultCluster)(INIT_FUNC_ARGS_PASSTHRU);
+  PHP_MINIT(SSLOptions)(INIT_FUNC_ARGS_PASSTHRU);
+
   return SUCCESS;
 }
 
@@ -455,9 +428,14 @@ PHP_RSHUTDOWN_FUNCTION(cassandra)
 
 PHP_MINFO_FUNCTION(cassandra)
 {
-  php_info_print_table_start( );
+  char buf[256];
+  php_info_print_table_start();
   php_info_print_table_header(2, "Cassandra support", "enabled");
-  php_info_print_table_end( );
+
+  snprintf(buf, sizeof(buf), "%d", CASSANDRA_G(persistent_clusters));
+  php_info_print_table_row(2, "Persistent Clusters", buf);
+
+  php_info_print_table_end();
 }
 
 static zval* php_cassandra_value(const CassValue* value, CassValueType type TSRMLS_DC);
