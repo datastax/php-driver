@@ -35,18 +35,6 @@
     } \
   })
 
-extern zend_class_entry* cassandra_ce_RuntimeException;
-extern zend_class_entry* cassandra_ce_InvalidArgumentException;
-extern zend_class_entry* cassandra_ce_Bigint;
-extern zend_class_entry* cassandra_ce_Blob;
-extern zend_class_entry* cassandra_ce_Decimal;
-extern zend_class_entry* cassandra_ce_Float;
-extern zend_class_entry* cassandra_ce_Inet;
-extern zend_class_entry* cassandra_ce_Timestamp;
-extern zend_class_entry* cassandra_ce_Timeuuid;
-extern zend_class_entry* cassandra_ce_Uuid;
-extern zend_class_entry* cassandra_ce_Varint;
-
 int
 php_cassandra_validate_object(zval* object, CassValueType type TSRMLS_DC)
 {
