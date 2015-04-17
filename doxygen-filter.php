@@ -1,71 +1,57 @@
-#!/usr/bin/php
+#!/usr/bin/env php
 <?php
 
 // Input
 $source = file_get_contents($argv[1]);
-
-// support short array syntax
-$regexp = '#((var|public|protected|private)(\s+static)?)\s+(\$[^\s;=]+)\s+\=\s+\[([\s\S]*?)\]\;#';
-$replace = '$1 $4 = array( $5 );';
-$source = preg_replace($regexp, $replace, $source);
-
-// add class member type hints
-$regexp = '#\@(var|type)\s+([^\s]+)([^/]+)/\s+(var|public|protected|private)(\s+static)?\s+(\$[^\s;=]+)#';
-$replace = '$3 */ $4 $5 $2 $6';
-$source = preg_replace($regexp, $replace, $source);
-
-// add type hinting to methods
-$regexp = '#(\/\*\*[\s\S]*?@return\s+([^\s]*)[\s\S]*?\*\/[\s\S]*?)((public|protected|private)(\s+static)?)\s+function\s+([\S]*?)\s*?\(#';
-$replace = '$1 $3 $2 function $6(';
-$source = preg_replace($regexp, $replace, $source);
-
-// change "@return $this" to '@return [ClassName]'
 $tokens = token_get_all($source);
-$classes = [];
-foreach($tokens as $key => $token)
-{
-    if($token[0] == T_CLASS)
-        $classes[] = $tokens[$key+2][1];
-}
+$buffer = '';
+foreach ($tokens as $token) {
+    if (is_string($token)) {
+        if (!empty($buffer) && $token == ';') {
+            echo $buffer;
+            $buffer = '';
+        }
+        echo $token;
+    } else {
+        list($id, $text) = $token;
+        switch ($id) {
+        case T_DOC_COMMENT :
+            // replace @return with @retval
+            $text  = preg_replace('#@return\s#', '@retval ', $text);
+            // replace starting namespace separator
+            $text  = preg_replace('#(\s)\\\\([A-Z]\w+)#ms', '$1$2', $text);
+            $count = 0;
+            do {
+                // replace backslash in comment
+                $text = preg_replace('#(\*\s*[^*]*?\b\w+[^\n\r ]+)\\\\([A-Z])#ms', '$1::$2', $text, 1, $count);
+            } while ($count);
+            // optimize @var tags
+            if (preg_match('#@var\s+[^\$]*\*/#ms', $text)) {
+                $buffer = preg_replace('#(@var\s+[^\n\r]+)(\n\r?.*\*/)#ms',
+                    '$1 \$\$\$$2', $text);
+            } else {
+                echo $text;
+            }
+            break;
 
-if(!empty($classes))
-{
-    list($source, $tail) = explode('class ' . $classes[0], $source, 2);
-    $class_code = '';
-    for($i = 1; $i < count($classes); $i++)
-    {
-        list($class_code, $tail) = explode('class ' . $classes[$i], $tail, 2);
-        $class_code = str_replace('@return $this', '@return ' . $classes[$i-1], $class_code);
-        $source .= 'class ' . $classes[$i-1] . $class_code;
+        case T_VARIABLE :
+            if ((! empty($buffer))) {
+                echo str_replace('$$$', $text, $buffer);
+                unset($buffer);
+            }
+            echo $text;
+            break;
+
+        default:
+            if (!empty($buffer)) {
+                $buffer .= $text;
+            } else {
+                echo $text;
+            }
+            break;
+        }
     }
-    $class_code = str_replace('@return $this', '@return ' . $classes[count($classes)-1], $tail);
-    $source .= 'class ' . $classes[count($classes)-1] . $class_code;
 }
-
-// class_exists support
-list($head,$tail) = preg_split('/.*if\(!class_exists\(.+/', $source, 2);
-
-$openingBracePos = strpos($tail,'{');
-$closingBracePos = strrpos($tail,'}');
-
-if($openingBracePos !== false && $closingBracePos !== false)
-    $source = $head . substr($tail,$openingBracePos+1,
-                             $closingBracePos-$openingBracePos-1);
-
-// make traits to classes
-$regexp = '#trait([\s]+[\S]+[\s]*){#';
-$replace = 'class$1{';
-$source = preg_replace($regexp, $replace, $source);
-
-// use traits by extending them (classes that not extending a class)
-$regexp = '#class([\s]+[\S]+[\s]*){[\s]+use([^;]+);#';
-$replace = 'class$1 extends $2 {';
-$source = preg_replace($regexp, $replace, $source);
-
-// use traits by extending them (classes that already extending a class)
-$regexp = '#class([\s]+[\S]+[\s]+extends[\s]+[\S]+[\s]*){[\s]+use([^;]+);#';
-$replace = 'class$1, $2 {';
-$source = preg_replace($regexp, $replace, $source);
-
-// Output
-echo $source;
+if (!empty($buffer)) {
+    echo $buffer;
+}
