@@ -65,18 +65,6 @@ final class Builder
     private $passphrase;
 
     /**
-     * Creates new SSL Options builder.
-     */
-    public function __construct()
-    {
-        $this->trustedCerts = null;
-        $this->verifyFlags  = null;
-        $this->clientCert   = null;
-        $this->privateKey   = null;
-        $this->passphrase   = null;
-    }
-
-    /**
      * Adds a trusted certificate. This is used to verify node's identity.
      *
      * @param string $path path to a file containing a PEM formatted certificate.
@@ -84,21 +72,7 @@ final class Builder
      *
      * @return Builder self
      */
-    public function withTrustedCerts($path)
-    {
-        $paths = func_get_args();
-        foreach ($paths as $path) {
-            if (!file_exists($path) || !is_file($path) || !is_readable($path)) {
-                throw new InvalidArgumentException(sprintf(
-                    "Trusted cert path '%s' doesn't exist or is not readable",
-                    $path
-                ));
-            }
-        }
-        $this->trustedCerts = $paths;
-
-        return $this;
-    }
+    public function withTrustedCerts($path) {}
 
     /**
      * Disable certificate verification.
@@ -107,13 +81,7 @@ final class Builder
      *
      * @return self
      */
-    public function withVerifyFlags($flags)
-    {
-        $this->verifyFlags = (int) $flags;
-
-        return $this;
-    }
-
+    public function withVerifyFlags($flags) {}
     /**
      * Set client-side certificate chain.
      *
@@ -124,19 +92,7 @@ final class Builder
      *
      * @return self
      */
-    public function withClientCert($path)
-    {
-        if (!file_exists($path) || !is_file($path) || !is_readable($path)) {
-            throw new InvalidArgumentException(sprintf(
-                "Client cert path '%s' doesn't exist or is not readable",
-                $path
-            ));
-        }
-        $this->clientCert = $path;
-
-        return $this;
-    }
-
+    public function withClientCert($path) {}
     /**
      * Set client-side private key. This is used to authenticate the client on
      * the server-side.
@@ -146,36 +102,11 @@ final class Builder
      *
      * @return self
      */
-    public function withPrivateKey($path, $passphrase = null)
-    {
-        if (!file_exists($path) || !is_file($path) || !is_readable($path)) {
-            throw new InvalidArgumentException(sprintf(
-                "Client cert path '%s' doesn't exist or is not readable",
-                $path
-            ));
-        }
-        $this->privateKey = $path;
-
-        if (!is_null($passphrase)) {
-            $this->passphrase = (string) $passphrase;
-        }
-
-        return $this;
-    }
-
+    public function withPrivateKey($path, $passphrase = null) {}
     /**
      * Builds SSL options.
      *
      * @return SSLOptions ssl options configured accordingly.
      */
-    public function build()
-    {
-        return new SSLOptions(
-            $this->trustedCerts,
-            $this->verifyFlags,
-            $this->clientCert,
-            $this->privateKey,
-            $this->passphrase
-        );
-    }
+    public function build() {}
 }

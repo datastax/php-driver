@@ -65,7 +65,7 @@ PHP_METHOD(ClusterBuilder, build)
   cass_cluster_set_request_timeout(cluster->cluster, builder->request_timeout);
 
   if (builder->ssl_options) {
-    cassandra_ssl_options* options = (cassandra_ssl_options*) zend_object_store_get_object(builder->ssl_options TSRMLS_CC);
+    cassandra_ssl* options = (cassandra_ssl*) zend_object_store_get_object(builder->ssl_options TSRMLS_CC);
     cass_cluster_set_ssl(cluster->cluster, options->ssl);
   }
 
@@ -360,7 +360,7 @@ PHP_METHOD(ClusterBuilder, withSSL)
 {
   zval *ssl_options;
 
-  if(zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "O", &ssl_options, cassandra_ssl_options_ce) == FAILURE) {
+  if(zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "O", &ssl_options, cassandra_ssl_ce) == FAILURE) {
     return;
   }
 

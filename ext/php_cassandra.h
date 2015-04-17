@@ -63,15 +63,15 @@ static zend_uint _cls_len;
       Z_OBJ_HANDLER_P(object, get_class_name)(object, &_cls_name, &_cls_len, 0 TSRMLS_CC); \
       if (_cls_name) { \
         zend_throw_exception_ex(cassandra_ce_InvalidArgumentException, 0 TSRMLS_CC, \
-          #object " must be " expected ", an instance of %.*s given", _cls_len, _cls_name); \
+          "Argument " #object " must be " expected ", an instance of %.*s given", _cls_len, _cls_name); \
         efree((void *) _cls_name); \
       } else { \
         zend_throw_exception_ex(cassandra_ce_InvalidArgumentException, 0 TSRMLS_CC, \
-          #object " must be " expected ", an instance of Unknown Class given"); \
+          "Argument " #object " must be " expected ", an instance of Unknown Class given"); \
       } \
     } else { \
       zend_throw_exception_ex(cassandra_ce_InvalidArgumentException, 0 TSRMLS_CC, \
-        #object " must be " expected ", %Z given", object); \
+        "Argument " #object " must be " expected ", '%Z' given", object); \
     } \
     return; \
   })
@@ -80,7 +80,7 @@ static zend_uint _cls_len;
   ({ \
     if (rc != CASS_OK) {\
       zend_throw_exception_ex(exception_class(rc), rc TSRMLS_CC, \
-        "%s", cass_error_desc(rc)); \
+        cass_error_desc(rc)); \
       return; \
     } \
   })

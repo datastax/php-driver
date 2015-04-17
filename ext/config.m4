@@ -16,6 +16,7 @@ if test "$PHP_CASSANDRA" != "no"; then
     src/Cassandra/Session.c \
     src/Cassandra/DefaultSession.c \
     src/Cassandra/SSLOptions.c \
+    src/Cassandra/SSLOptions/Builder.c \
   ";
 
   CASSANDRA_TYPES="\

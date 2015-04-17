@@ -124,7 +124,17 @@ typedef struct {
 typedef struct {
   zend_object     zval;
   CassSsl*        ssl;
-} cassandra_ssl_options;
+} cassandra_ssl;
+
+typedef struct {
+  zend_object zval;
+  int         flags;
+  char**      trusted_certs;
+  int         trusted_certs_cnt;
+  char*       client_cert;
+  char*       private_key;
+  char*       passphrase;
+} cassandra_ssl_builder;
 
 extern PHP_CASSANDRA_API zend_class_entry* cassandra_ce_RuntimeException;
 extern PHP_CASSANDRA_API zend_class_entry* cassandra_ce_TimeoutException;
@@ -194,7 +204,7 @@ void cassandra_define_CassandraVarint(TSRMLS_D);
 extern PHP_CASSANDRA_API zend_class_entry* cassandra_cluster_ce;
 extern PHP_CASSANDRA_API zend_class_entry* cassandra_default_cluster_ce;
 extern PHP_CASSANDRA_API zend_class_entry* cassandra_cluster_builder_ce;
-extern PHP_CASSANDRA_API zend_class_entry* cassandra_ssl_options_ce;
+extern PHP_CASSANDRA_API zend_class_entry* cassandra_ssl_ce;
 extern PHP_CASSANDRA_API zend_class_entry* cassandra_future_ce;
 extern PHP_CASSANDRA_API zend_class_entry* cassandra_future_session_ce;
 extern PHP_CASSANDRA_API zend_class_entry* cassandra_session_ce;
@@ -208,6 +218,7 @@ PHP_MINIT_FUNCTION(FutureSession);
 PHP_MINIT_FUNCTION(Session);
 PHP_MINIT_FUNCTION(DefaultSession);
 PHP_MINIT_FUNCTION(SSLOptions);
+void cassandra_define_SSLOptionsBuilder(TSRMLS_D);
 
 extern int php_le_cassandra_cluster();
 extern int php_le_cassandra_session();
