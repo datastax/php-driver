@@ -43,8 +43,8 @@ final class Collection implements \Countable, \IteratorAggregate
 
     /**
      * Adds one or more values to this collection
-     * @param mixed $value Value to add
-     * @param mixed ...    More values to add
+     * @param mixed $value     Value to add
+     * @param mixed $value,... More values to add
      * @return int total number of values in this collection
      */
     public function add($value) {}
