@@ -15,7 +15,7 @@ foreach ($tokens as $token) {
     } else {
         list($id, $text) = $token;
         switch ($id) {
-        case T_DOC_COMMENT :
+        case T_DOC_COMMENT:
             // replace @return with @retval
             $text  = preg_replace('#@return\s#', '@retval ', $text);
             // replace starting namespace separator
@@ -34,14 +34,21 @@ foreach ($tokens as $token) {
             }
             break;
 
-        case T_VARIABLE :
-            if ((! empty($buffer))) {
+        case T_VARIABLE:
+            if (!empty($buffer)) {
                 echo str_replace('$$$', $text, $buffer);
                 unset($buffer);
             }
             echo $text;
             break;
 
+        case T_NS_SEPARATOR:
+            if (!empty($buffer)) {
+                $buffer .= '::';
+            } else {
+                echo '::';
+            }
+            break;
         default:
             if (!empty($buffer)) {
                 $buffer .= $text;
