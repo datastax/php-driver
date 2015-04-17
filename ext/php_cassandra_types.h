@@ -70,6 +70,8 @@ typedef struct {
   int             default_page_size;
   zval*           default_timeout;
   cass_bool_t     persist;
+  char*           hash_key;
+  int             hash_key_len;
 } cassandra_cluster;
 
 typedef enum {
@@ -94,8 +96,30 @@ typedef struct {
   CassConsistency          default_consistency;
   int                      default_page_size;
   zval*                    default_timeout;
-  cass_bool_t              use_persistent_sessions;
+  cass_bool_t              persist;
 } cassandra_cluster_builder;
+
+typedef struct {
+  zend_object       zval;
+  CassFuture*       future;
+  CassSession*      session;
+  cass_bool_t       persist;
+  char*             hash_key;
+  int               hash_key_len;
+  char*             exception_message;
+  CassError         exception_code;
+} cassandra_future_session;
+
+typedef struct {
+  CassFuture*  future;
+  CassSession* session;
+} cassandra_psession;
+
+typedef struct {
+  zend_object  zval;
+  CassSession* session;
+  cass_bool_t  persist;
+} cassandra_session;
 
 typedef struct {
   zend_object     zval;
@@ -171,10 +195,18 @@ extern PHP_CASSANDRA_API zend_class_entry* cassandra_cluster_ce;
 extern PHP_CASSANDRA_API zend_class_entry* cassandra_default_cluster_ce;
 extern PHP_CASSANDRA_API zend_class_entry* cassandra_cluster_builder_ce;
 extern PHP_CASSANDRA_API zend_class_entry* cassandra_ssl_options_ce;
+extern PHP_CASSANDRA_API zend_class_entry* cassandra_future_ce;
+extern PHP_CASSANDRA_API zend_class_entry* cassandra_future_session_ce;
+extern PHP_CASSANDRA_API zend_class_entry* cassandra_session_ce;
+extern PHP_CASSANDRA_API zend_class_entry* cassandra_default_session_ce;
 
 PHP_MINIT_FUNCTION(Cluster);
 PHP_MINIT_FUNCTION(ClusterBuilder);
 PHP_MINIT_FUNCTION(DefaultCluster);
+PHP_MINIT_FUNCTION(Future);
+PHP_MINIT_FUNCTION(FutureSession);
+PHP_MINIT_FUNCTION(Session);
+PHP_MINIT_FUNCTION(DefaultSession);
 PHP_MINIT_FUNCTION(SSLOptions);
 
 extern int php_le_cassandra_cluster();

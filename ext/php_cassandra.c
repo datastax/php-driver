@@ -227,13 +227,21 @@ php_cassandra_ssl_dtor(zend_rsrc_list_entry* rsrc TSRMLS_DC)
 }
 
 static int le_cassandra_session_res;
+int
+php_le_cassandra_session()
+{
+  return le_cassandra_session_res;
+}
 static void
 php_cassandra_session_dtor(zend_rsrc_list_entry* rsrc TSRMLS_DC)
 {
-  CassSession* session = (CassSession*) rsrc->ptr;
+  cassandra_psession* psession = (cassandra_psession*) rsrc->ptr;
 
-  if (session) {
-    cass_session_free(session);
+  if (psession) {
+    cass_future_free(psession->future);
+    cass_session_free(psession->session);
+    pefree(psession, 1);
+    CASSANDRA_G(persistent_sessions)--;
     rsrc->ptr = NULL;
   }
 }
@@ -304,6 +312,7 @@ php_cassandra_globals_ctor(zend_cassandra_globals* cassandra_globals TSRMLS_DC)
   cassandra_globals->uuid_gen            = cass_uuid_gen_new();
   cassandra_globals->log_level           = CASS_LOG_ERROR;
   cassandra_globals->persistent_clusters = 0;
+  cassandra_globals->persistent_sessions = 0;
   cass_log_set_callback(php_cassandra_log, NULL);
 }
 
@@ -342,8 +351,8 @@ PHP_MINIT_FUNCTION(cassandra)
     module_number
   );
   le_cassandra_session_res = zend_register_list_destructors_ex(
-    php_cassandra_session_dtor,
     NULL,
+    php_cassandra_session_dtor,
     PHP_CASSANDRA_SESSION_RES_NAME,
     module_number
   );
@@ -404,6 +413,10 @@ PHP_MINIT_FUNCTION(cassandra)
   PHP_MINIT(Cluster)(INIT_FUNC_ARGS_PASSTHRU);
   PHP_MINIT(ClusterBuilder)(INIT_FUNC_ARGS_PASSTHRU);
   PHP_MINIT(DefaultCluster)(INIT_FUNC_ARGS_PASSTHRU);
+  PHP_MINIT(Future)(INIT_FUNC_ARGS_PASSTHRU);
+  PHP_MINIT(FutureSession)(INIT_FUNC_ARGS_PASSTHRU);
+  PHP_MINIT(Session)(INIT_FUNC_ARGS_PASSTHRU);
+  PHP_MINIT(DefaultSession)(INIT_FUNC_ARGS_PASSTHRU);
   PHP_MINIT(SSLOptions)(INIT_FUNC_ARGS_PASSTHRU);
 
   return SUCCESS;
@@ -437,6 +450,9 @@ PHP_MINFO_FUNCTION(cassandra)
 
   snprintf(buf, sizeof(buf), "%d", CASSANDRA_G(persistent_clusters));
   php_info_print_table_row(2, "Persistent Clusters", buf);
+
+  snprintf(buf, sizeof(buf), "%d", CASSANDRA_G(persistent_sessions));
+  php_info_print_table_row(2, "Persistent Sessions", buf);
 
   php_info_print_table_end();
 }

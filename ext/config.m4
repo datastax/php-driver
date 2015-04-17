@@ -11,6 +11,10 @@ if test "$PHP_CASSANDRA" != "no"; then
     src/Cassandra/Cluster.c \
     src/Cassandra/Cluster/Builder.c \
     src/Cassandra/DefaultCluster.c \
+    src/Cassandra/Future.c \
+    src/Cassandra/FutureSession.c \
+    src/Cassandra/Session.c \
+    src/Cassandra/DefaultSession.c \
     src/Cassandra/SSLOptions.c \
   ";
 

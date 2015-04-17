@@ -44,6 +44,8 @@ extern zend_module_entry cassandra_module_entry;
               zend_hash_copy(*value.properties, &class_entry->default_properties, (copy_ctor_func_t) zval_add_ref, NULL, sizeof(zval *));
 #endif
 
+#define SAFE_STR(a) ((a)?a:"")
+
 #ifdef ZTS
 #    include "TSRM.h"
 #endif
@@ -165,6 +167,7 @@ ZEND_BEGIN_MODULE_GLOBALS(cassandra)
   CassUuidGen*          uuid_gen;
   CassLogLevel          log_level;
   unsigned int          persistent_clusters;
+  unsigned int          persistent_sessions;
 ZEND_END_MODULE_GLOBALS(cassandra)
 
 #ifdef ZTS

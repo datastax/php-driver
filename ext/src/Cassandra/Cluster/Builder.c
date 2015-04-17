@@ -1,8 +1,6 @@
 #include "php_cassandra.h"
 #include <ext/standard/php_smart_str.h>
 
-#define SAFE_STR(a) ((a)?a:"")
-
 zend_class_entry *cassandra_cluster_builder_ce = NULL;
 
 ZEND_EXTERN_MODULE_GLOBALS(cassandra)
@@ -16,14 +14,15 @@ PHP_METHOD(ClusterBuilder, build)
     (cassandra_cluster_builder*) zend_object_store_get_object(getThis() TSRMLS_CC);
 
   object_init_ex(return_value, cassandra_default_cluster_ce);
-  cassandra_cluster* cluster = (cassandra_cluster*) zend_object_store_get_object(return_value TSRMLS_CC);
+  cassandra_cluster* cluster =
+    (cassandra_cluster*) zend_object_store_get_object(return_value TSRMLS_CC);
 
-  cluster->persist                 = builder->use_persistent_sessions;
+  cluster->persist                 = builder->persist;
   cluster->default_consistency     = builder->default_consistency;
   cluster->default_page_size       = builder->default_page_size;
   cluster->default_timeout         = builder->default_timeout;
 
-  if (builder->use_persistent_sessions) {
+  if (builder->persist) {
     zend_rsrc_list_entry *le;
 
     hash_key_len = spprintf(&hash_key, 0,
@@ -33,6 +32,9 @@ PHP_METHOD(ClusterBuilder, build)
       builder->use_token_aware_routing, SAFE_STR(builder->username),
       SAFE_STR(builder->password), builder->connect_timeout,
       builder->request_timeout);
+
+    cluster->hash_key     = hash_key;
+    cluster->hash_key_len = hash_key_len;
 
     if (zend_hash_find(&EG(persistent_list), hash_key, hash_key_len + 1, (void **)&le) == SUCCESS) {
       if (Z_TYPE_P(le) == php_le_cassandra_cluster()) {
@@ -70,7 +72,7 @@ PHP_METHOD(ClusterBuilder, build)
   ASSERT_SUCCESS(cass_cluster_set_contact_points(cluster->cluster, builder->contact_points));
   ASSERT_SUCCESS(cass_cluster_set_port(cluster->cluster, builder->port));
 
-  if (builder->use_persistent_sessions) {
+  if (builder->persist) {
     zend_rsrc_list_entry le;
     le.type = php_le_cassandra_cluster();
     le.ptr  = cluster->cluster;
@@ -78,8 +80,6 @@ PHP_METHOD(ClusterBuilder, build)
     if (zend_hash_update(&EG(persistent_list), hash_key, hash_key_len + 1, &le, sizeof(zend_rsrc_list_entry), NULL) == SUCCESS) {
       CASSANDRA_G(persistent_clusters)++;
     }
-
-    efree(hash_key);
   }
 }
 
@@ -387,7 +387,7 @@ PHP_METHOD(ClusterBuilder, withPersistentSessions)
   cassandra_cluster_builder* builder =
     (cassandra_cluster_builder*) zend_object_store_get_object(getThis() TSRMLS_CC);
 
-  builder->use_persistent_sessions = enabled;
+  builder->persist = enabled;
 
   RETURN_ZVAL(getThis(), 1, 0);
 }
@@ -539,7 +539,7 @@ php_cassandra_cluster_builder_properties(zval *object TSRMLS_DC)
   }
 
   MAKE_STD_ZVAL(usePersistentSessions);
-  ZVAL_BOOL(usePersistentSessions, builder->use_persistent_sessions);
+  ZVAL_BOOL(usePersistentSessions, builder->persist);
 
   zend_hash_update(props, "contactPoints", sizeof("contactPoints"),
     &contactPoints, sizeof(zval), NULL);
@@ -634,7 +634,7 @@ php_cassandra_cluster_builder_new(zend_class_entry* class_type TSRMLS_DC)
   builder->default_consistency = CASS_CONSISTENCY_ONE;
   builder->default_page_size = 10000;
   builder->default_timeout = NULL;
-  builder->use_persistent_sessions = 1;
+  builder->persist = 1;
 
   retval.handle   = zend_objects_store_put(builder,
                       (zend_objects_store_dtor_t) zend_objects_destroy_object,
