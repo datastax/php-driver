@@ -80,7 +80,7 @@ interface Session
     /**
      * Closes current session and all of its connections.
      *
-     * @param float|null Timeout to wait for closure in seconds
+     * @param float|null $timeout Timeout to wait for closure in seconds
      */
     public function close($timeout = null);
 
