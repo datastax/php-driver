@@ -53,8 +53,8 @@ PHP_METHOD(FutureSession, get)
     CassString message = cass_future_error_message(future->future);
 
     if (future->persist) {
-      spprintf(&future->exception_message, 0, "%.*s", (int) message.length, message.data);
-      future->exception_code = rc;
+      future->exception_message = estrndup(message.data, message.length);
+      future->exception_code    = rc;
 
       if (zend_hash_del(&EG(persistent_list), future->hash_key, future->hash_key_len + 1) == SUCCESS) {
         future->session = NULL;
@@ -67,7 +67,7 @@ PHP_METHOD(FutureSession, get)
     }
 
     zend_throw_exception_ex(exception_class(rc), rc TSRMLS_CC,
-      "%.*s", message.length, message.data);
+      "%.*s", (int) message.length, message.data);
     return;
   }
 

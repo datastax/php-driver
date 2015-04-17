@@ -53,14 +53,15 @@ PHP_METHOD(DefaultCluster, connect)
   if (rc != CASS_OK) {
     CassString message = cass_future_error_message(future);
 
-    cass_future_free(future);
     if (cluster->persist) {
       efree(hash_key);
       cass_session_free(session->session);
       session->session = NULL;
     }
     zend_throw_exception_ex(exception_class(rc), rc TSRMLS_CC,
-      "%.*s", message.length, message.data);
+      "%.*s", (int) message.length, message.data);
+
+    cass_future_free(future);
     return;
   }
 
