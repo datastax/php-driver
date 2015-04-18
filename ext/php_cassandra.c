@@ -476,6 +476,7 @@ PHP_FUNCTION(cassandra_set_log_level)
   case CASS_LOG_INFO:
   case CASS_LOG_DEBUG:
   case CASS_LOG_TRACE:
+    cass_log_set_level(level);
     break;
   default:
     RETURN_FALSE;
