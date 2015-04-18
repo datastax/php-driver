@@ -17,6 +17,7 @@ file_get_contents(char* path, char** output, int* len TSRMLS_DC)
 
   *len = php_stream_copy_to_mem(stream, output, PHP_STREAM_COPY_ALL, 0);
 
+  php_stream_close(stream);
   return 1;
 }
 
