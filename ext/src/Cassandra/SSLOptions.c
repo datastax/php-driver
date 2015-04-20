@@ -57,8 +57,7 @@ php_cassandra_ssl_new(zend_class_entry* class_type TSRMLS_DC)
   return retval;
 }
 
-/* {{{ PHP_MINIT_FUNCTION */
-PHP_MINIT_FUNCTION(SSLOptions)
+void cassandra_define_SSLOptions(TSRMLS_D)
 {
   zend_class_entry ce;
 
@@ -70,6 +69,4 @@ PHP_MINIT_FUNCTION(SSLOptions)
   memcpy(&cassandra_ssl_handlers, zend_get_std_object_handlers(), sizeof(zend_object_handlers));
   cassandra_ssl_handlers.get_properties  = php_cassandra_ssl_properties;
   cassandra_ssl_handlers.compare_objects = php_cassandra_ssl_compare;
-
-  return SUCCESS;
 }

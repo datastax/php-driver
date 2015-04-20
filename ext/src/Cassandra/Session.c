@@ -29,14 +29,11 @@ static zend_function_entry cassandra_session_methods[] = {
   PHP_FE_END
 };
 
-/* {{{ PHP_MINIT_FUNCTION */
-PHP_MINIT_FUNCTION(Session)
+void cassandra_define_Session(TSRMLS_D)
 {
   zend_class_entry ce;
 
   INIT_CLASS_ENTRY(ce, "Cassandra\\Session", cassandra_session_methods);
   cassandra_session_ce = zend_register_internal_class(&ce TSRMLS_CC);
   cassandra_session_ce->ce_flags |= ZEND_ACC_INTERFACE;
-
-  return SUCCESS;
 }

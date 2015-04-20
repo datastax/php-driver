@@ -389,16 +389,20 @@ PHP_MINIT_FUNCTION(cassandra)
   cassandra_define_CassandraMap(TSRMLS_C);
   cassandra_define_CassandraCollection(TSRMLS_C);
 
-  PHP_MINIT(Cluster)(INIT_FUNC_ARGS_PASSTHRU);
-  PHP_MINIT(ClusterBuilder)(INIT_FUNC_ARGS_PASSTHRU);
-  PHP_MINIT(DefaultCluster)(INIT_FUNC_ARGS_PASSTHRU);
-  PHP_MINIT(Future)(INIT_FUNC_ARGS_PASSTHRU);
-  PHP_MINIT(FutureSession)(INIT_FUNC_ARGS_PASSTHRU);
-  PHP_MINIT(Session)(INIT_FUNC_ARGS_PASSTHRU);
-  PHP_MINIT(DefaultSession)(INIT_FUNC_ARGS_PASSTHRU);
-  PHP_MINIT(SSLOptions)(INIT_FUNC_ARGS_PASSTHRU);
+  cassandra_define_Cluster(TSRMLS_C);
+  cassandra_define_ClusterBuilder(TSRMLS_C);
+  cassandra_define_DefaultCluster(TSRMLS_C);
+  cassandra_define_Future(TSRMLS_C);
+  cassandra_define_FutureSession(TSRMLS_C);
+  cassandra_define_Session(TSRMLS_C);
+  cassandra_define_DefaultSession(TSRMLS_C);
+  cassandra_define_SSLOptions(TSRMLS_C);
   cassandra_define_SSLOptionsBuilder(TSRMLS_C);
-  cassandra_define_Cassandra(TSRMLS_C);
+  cassandra_define_Statement(TSRMLS_C);
+  cassandra_define_SimpleStatement(TSRMLS_C);
+  cassandra_define_PreparedStatement(TSRMLS_C);
+  cassandra_define_BatchStatement(TSRMLS_C);
+  cassandra_define_ExecuteOptions(TSRMLS_C);
 
   return SUCCESS;
 }
@@ -1585,4 +1589,30 @@ php_cassandra_value(const CassValue* value, CassValueType type TSRMLS_DC)
   }
 
   return return_value;
+}
+
+void throw_invalid_argument(zval* object,
+                            const char* object_name,
+                            const char* expected_type TSRMLS_DC)
+{
+  if (Z_TYPE_P(object) == IS_OBJECT) {
+    const char* cls_name = NULL;
+    zend_uint cls_len;
+
+    Z_OBJ_HANDLER_P(object, get_class_name)(object, &cls_name, &cls_len, 0 TSRMLS_CC);
+    if (cls_name) {
+      zend_throw_exception_ex(cassandra_invalid_argument_exception_ce, 0 TSRMLS_CC,
+                              "%s must be %s an instance of %.*s given",
+                              object_name, expected_type, cls_len, cls_name);
+      efree((void *)cls_name);
+    } else {
+      zend_throw_exception_ex(cassandra_invalid_argument_exception_ce, 0 TSRMLS_CC,
+                              "%s must be %s, an instance of Unknown Class given",
+                              object_name, expected_type);
+    }
+  } else {
+    zend_throw_exception_ex(cassandra_invalid_argument_exception_ce, 0 TSRMLS_CC,
+                            "%s must be expected %s, %Z given",
+                            object_name, expected_type, object);
+  }
 }

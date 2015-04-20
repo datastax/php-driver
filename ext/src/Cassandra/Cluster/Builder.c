@@ -644,8 +644,7 @@ php_cassandra_cluster_builder_new(zend_class_entry* class_type TSRMLS_DC)
   return retval;
 }
 
-/* {{{ PHP_MINIT_FUNCTION */
-PHP_MINIT_FUNCTION(ClusterBuilder)
+void cassandra_define_ClusterBuilder(TSRMLS_D)
 {
   zend_class_entry ce;
 
@@ -657,6 +656,4 @@ PHP_MINIT_FUNCTION(ClusterBuilder)
   memcpy(&cassandra_cluster_builder_handlers, zend_get_std_object_handlers(), sizeof(zend_object_handlers));
   cassandra_cluster_builder_handlers.get_properties  = php_cassandra_cluster_builder_properties;
   cassandra_cluster_builder_handlers.compare_objects = php_cassandra_cluster_builder_compare;
-
-  return SUCCESS;
 }

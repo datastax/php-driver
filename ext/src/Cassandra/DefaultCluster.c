@@ -217,8 +217,7 @@ php_cassandra_default_cluster_new(zend_class_entry* class_type TSRMLS_DC)
   return retval;
 }
 
-/* {{{ PHP_MINIT_FUNCTION */
-PHP_MINIT_FUNCTION(DefaultCluster)
+void cassandra_define_DefaultCluster(TSRMLS_D)
 {
   zend_class_entry ce;
 
@@ -231,6 +230,4 @@ PHP_MINIT_FUNCTION(DefaultCluster)
   memcpy(&cassandra_default_cluster_handlers, zend_get_std_object_handlers(), sizeof(zend_object_handlers));
   cassandra_default_cluster_handlers.get_properties  = php_cassandra_default_cluster_properties;
   cassandra_default_cluster_handlers.compare_objects = php_cassandra_default_cluster_compare;
-
-  return SUCCESS;
 }

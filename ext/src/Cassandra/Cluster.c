@@ -12,14 +12,11 @@ static zend_function_entry cassandra_cluster_methods[] = {
   PHP_FE_END
 };
 
-/* {{{ PHP_MINIT_FUNCTION */
-PHP_MINIT_FUNCTION(Cluster)
+void cassandra_define_Cluster(TSRMLS_D)
 {
   zend_class_entry ce;
 
   INIT_CLASS_ENTRY(ce, "Cassandra\\Cluster", cassandra_cluster_methods);
   cassandra_cluster_ce = zend_register_internal_class(&ce TSRMLS_CC);
   cassandra_cluster_ce->ce_flags |= ZEND_ACC_INTERFACE;
-
-  return SUCCESS;
 }

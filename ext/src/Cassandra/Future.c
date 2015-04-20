@@ -11,14 +11,11 @@ static zend_function_entry cassandra_future_methods[] = {
   PHP_FE_END
 };
 
-/* {{{ PHP_MINIT_FUNCTION */
-PHP_MINIT_FUNCTION(Future)
+void cassandra_define_Future(TSRMLS_D)
 {
   zend_class_entry ce;
 
   INIT_CLASS_ENTRY(ce, "Cassandra\\Future", cassandra_future_methods);
   cassandra_future_ce = zend_register_internal_class(&ce TSRMLS_CC);
   cassandra_future_ce->ce_flags |= ZEND_ACC_INTERFACE;
-
-  return SUCCESS;
 }

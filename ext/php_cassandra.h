@@ -49,40 +49,24 @@ extern zend_module_entry cassandra_module_entry;
 #    include "TSRM.h"
 #endif
 
-#if ZEND_MODULE_API_NO >= 20100525
-static const char* _cls_name = NULL;
-#else
-static char* _cls_name = NULL;
-#endif
-static zend_uint _cls_len;
+void throw_invalid_argument(zval* object,
+                            const char* object_name,
+                            const char* expected_type TSRMLS_DC);
 
 #define INVALID_ARGUMENT(object, expected) \
-  ({ \
-    if (Z_TYPE_P(object) == IS_OBJECT) { \
-      Z_OBJ_HANDLER_P(object, get_class_name)(object, &_cls_name, &_cls_len, 0 TSRMLS_CC); \
-      if (_cls_name) { \
-        zend_throw_exception_ex(cassandra_invalid_argument_exception_ce, 0 TSRMLS_CC, \
-          "Argument " #object " must be " expected ", an instance of %.*s given", _cls_len, _cls_name); \
-        efree((void *) _cls_name); \
-      } else { \
-        zend_throw_exception_ex(cassandra_invalid_argument_exception_ce, 0 TSRMLS_CC, \
-          "Argument " #object " must be " expected ", an instance of Unknown Class given"); \
-      } \
-    } else { \
-      zend_throw_exception_ex(cassandra_invalid_argument_exception_ce, 0 TSRMLS_CC, \
-        "Argument " #object " must be " expected ", '%Z' given", object); \
-    } \
-    return; \
-  })
+{ \
+  throw_invalid_argument(object, #object, #expected TSRMLS_CC); \
+  return; \
+}
 
 #define ASSERT_SUCCESS(rc) \
-  ({ \
-    if (rc != CASS_OK) {\
-      zend_throw_exception_ex(exception_class(rc), rc TSRMLS_CC, \
-        cass_error_desc(rc)); \
-      return; \
-    } \
-  })
+{ \
+  if (rc != CASS_OK) { \
+    zend_throw_exception_ex(exception_class(rc), rc TSRMLS_CC, \
+                            "%s", cass_error_desc(rc)); \
+    return; \
+  } \
+}
 
 #include "php_cassandra_types.h"
 

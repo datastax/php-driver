@@ -151,8 +151,7 @@ php_cassandra_future_session_new(zend_class_entry* class_type TSRMLS_DC)
   return retval;
 }
 
-/* {{{ PHP_MINIT_FUNCTION */
-PHP_MINIT_FUNCTION(FutureSession)
+void cassandra_define_FutureSession(TSRMLS_D)
 {
   zend_class_entry ce;
 
@@ -165,6 +164,4 @@ PHP_MINIT_FUNCTION(FutureSession)
   memcpy(&cassandra_future_session_handlers, zend_get_std_object_handlers(), sizeof(zend_object_handlers));
   cassandra_future_session_handlers.get_properties  = php_cassandra_future_session_properties;
   cassandra_future_session_handlers.compare_objects = php_cassandra_future_session_compare;
-
-  return SUCCESS;
 }
