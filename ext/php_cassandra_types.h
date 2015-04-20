@@ -186,7 +186,7 @@ void cassandra_define_LogicException(TSRMLS_D);
 void cassandra_define_RuntimeException(TSRMLS_D);
 void cassandra_define_TimeoutException(TSRMLS_D);
 void cassandra_define_ExecutionException(TSRMLS_D);
-void cassandra_define_ReadTimeout(TSRMLS_D);
+void cassandra_define_ReadTimeoutException(TSRMLS_D);
 void cassandra_define_WriteTimeoutException(TSRMLS_D);
 void cassandra_define_UnavailableException(TSRMLS_D);
 void cassandra_define_TruncateException(TSRMLS_D);
