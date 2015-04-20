@@ -136,33 +136,6 @@ typedef struct {
   char*       passphrase;
 } cassandra_ssl_builder;
 
-extern PHP_CASSANDRA_API zend_class_entry* cassandra_runtime_exception_ce;
-extern PHP_CASSANDRA_API zend_class_entry* cassandra_timeout_exception_ce;
-extern PHP_CASSANDRA_API zend_class_entry* cassandra_logic_exception_ce;
-extern PHP_CASSANDRA_API zend_class_entry* cassandra_invalid_argument_exception_ce;
-extern PHP_CASSANDRA_API zend_class_entry* cassandra_server_exception_ce;
-
-extern PHP_CASSANDRA_API zend_class_entry* cassandra_overloaded_exception_ce;
-extern PHP_CASSANDRA_API zend_class_entry* cassandra_is_bootstrapping_exception_ce;
-
-extern PHP_CASSANDRA_API zend_class_entry* cassandra_execution_exception_ce;
-extern PHP_CASSANDRA_API zend_class_entry* cassandra_truncate_exception_ce;
-extern PHP_CASSANDRA_API zend_class_entry* cassandra_write_timeout_exception_ce;
-extern PHP_CASSANDRA_API zend_class_entry* cassandra_read_timeout_exception_ce;
-extern PHP_CASSANDRA_API zend_class_entry* cassandra_truncate_exception_ce;
-extern PHP_CASSANDRA_API zend_class_entry* cassandra_unavailable_exception_ce;
-
-extern PHP_CASSANDRA_API zend_class_entry* cassandra_validation_exception_ce;
-extern PHP_CASSANDRA_API zend_class_entry* cassandra_invalid_syntax_exception_ce;
-extern PHP_CASSANDRA_API zend_class_entry* cassandra_unauthorized_exception_ce;
-extern PHP_CASSANDRA_API zend_class_entry* cassandra_invalid_query_exception_ce;
-extern PHP_CASSANDRA_API zend_class_entry* cassandra_configuration_exception_ce;
-extern PHP_CASSANDRA_API zend_class_entry* cassandra_already_exists_exception_ce;
-extern PHP_CASSANDRA_API zend_class_entry* cassandra_unprepared_exception_ce;
-
-extern PHP_CASSANDRA_API zend_class_entry* cassandra_protocol_exception_ce;
-extern PHP_CASSANDRA_API zend_class_entry* cassandra_authentication_exception_ce;
-
 extern PHP_CASSANDRA_API zend_class_entry* cassandra_ce_Bigint;
 extern PHP_CASSANDRA_API zend_class_entry* cassandra_ce_Blob;
 extern PHP_CASSANDRA_API zend_class_entry* cassandra_ce_Decimal;
@@ -224,11 +197,34 @@ extern PHP_CASSANDRA_API zend_class_entry* cassandra_cluster_ce;
 extern PHP_CASSANDRA_API zend_class_entry* cassandra_default_cluster_ce;
 extern PHP_CASSANDRA_API zend_class_entry* cassandra_cluster_builder_ce;
 extern PHP_CASSANDRA_API zend_class_entry* cassandra_ssl_ce;
+extern PHP_CASSANDRA_API zend_class_entry* cassandra_ssl_builder_ce;
 extern PHP_CASSANDRA_API zend_class_entry* cassandra_future_ce;
 extern PHP_CASSANDRA_API zend_class_entry* cassandra_future_session_ce;
 extern PHP_CASSANDRA_API zend_class_entry* cassandra_session_ce;
 extern PHP_CASSANDRA_API zend_class_entry* cassandra_default_session_ce;
 extern PHP_CASSANDRA_API zend_class_entry* cassandra_exception_ce;
+extern PHP_CASSANDRA_API zend_class_entry* cassandra_runtime_exception_ce;
+extern PHP_CASSANDRA_API zend_class_entry* cassandra_timeout_exception_ce;
+extern PHP_CASSANDRA_API zend_class_entry* cassandra_logic_exception_ce;
+extern PHP_CASSANDRA_API zend_class_entry* cassandra_invalid_argument_exception_ce;
+extern PHP_CASSANDRA_API zend_class_entry* cassandra_server_exception_ce;
+extern PHP_CASSANDRA_API zend_class_entry* cassandra_overloaded_exception_ce;
+extern PHP_CASSANDRA_API zend_class_entry* cassandra_is_bootstrapping_exception_ce;
+extern PHP_CASSANDRA_API zend_class_entry* cassandra_execution_exception_ce;
+extern PHP_CASSANDRA_API zend_class_entry* cassandra_truncate_exception_ce;
+extern PHP_CASSANDRA_API zend_class_entry* cassandra_write_timeout_exception_ce;
+extern PHP_CASSANDRA_API zend_class_entry* cassandra_read_timeout_exception_ce;
+extern PHP_CASSANDRA_API zend_class_entry* cassandra_truncate_exception_ce;
+extern PHP_CASSANDRA_API zend_class_entry* cassandra_unavailable_exception_ce;
+extern PHP_CASSANDRA_API zend_class_entry* cassandra_validation_exception_ce;
+extern PHP_CASSANDRA_API zend_class_entry* cassandra_invalid_syntax_exception_ce;
+extern PHP_CASSANDRA_API zend_class_entry* cassandra_unauthorized_exception_ce;
+extern PHP_CASSANDRA_API zend_class_entry* cassandra_invalid_query_exception_ce;
+extern PHP_CASSANDRA_API zend_class_entry* cassandra_configuration_exception_ce;
+extern PHP_CASSANDRA_API zend_class_entry* cassandra_already_exists_exception_ce;
+extern PHP_CASSANDRA_API zend_class_entry* cassandra_unprepared_exception_ce;
+extern PHP_CASSANDRA_API zend_class_entry* cassandra_protocol_exception_ce;
+extern PHP_CASSANDRA_API zend_class_entry* cassandra_authentication_exception_ce;
 
 PHP_MINIT_FUNCTION(Cluster);
 PHP_MINIT_FUNCTION(ClusterBuilder);
