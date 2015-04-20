@@ -56,7 +56,7 @@ PHP_METHOD(SSLOptionsBuilder, build)
     if (!file_get_contents(builder->client_cert, &contents, &len TSRMLS_CC))
       return;
 
-    rc = cass_ssl_add_trusted_cert(ssl->ssl, cass_string_init2(contents, len));
+    rc = cass_ssl_set_cert(ssl->ssl, cass_string_init2(contents, len));
     efree(contents);
     ASSERT_SUCCESS(rc);
   }
