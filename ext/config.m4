@@ -8,6 +8,7 @@ fi
 
 if test "$PHP_CASSANDRA" != "no"; then
   CASSANDRA_CLASSES="\
+    src/Cassandra.c \
     src/Cassandra/Cluster.c \
     src/Cassandra/Cluster/Builder.c \
     src/Cassandra/DefaultCluster.c \

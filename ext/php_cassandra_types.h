@@ -219,6 +219,7 @@ void cassandra_define_CassandraTimeuuid(TSRMLS_D);
 void cassandra_define_CassandraVarint(TSRMLS_D);
 
 /* Classes */
+extern PHP_CASSANDRA_API zend_class_entry* cassandra_ce;
 extern PHP_CASSANDRA_API zend_class_entry* cassandra_cluster_ce;
 extern PHP_CASSANDRA_API zend_class_entry* cassandra_default_cluster_ce;
 extern PHP_CASSANDRA_API zend_class_entry* cassandra_cluster_builder_ce;
@@ -238,9 +239,9 @@ PHP_MINIT_FUNCTION(Session);
 PHP_MINIT_FUNCTION(DefaultSession);
 PHP_MINIT_FUNCTION(SSLOptions);
 void cassandra_define_SSLOptionsBuilder(TSRMLS_D);
+void cassandra_define_Cassandra(TSRMLS_D);
 
 extern int php_le_cassandra_cluster();
 extern int php_le_cassandra_session();
-extern int php_le_cassandra_ssl();
 
 #endif /* PHP_CASSANDRA_TYPES_H */

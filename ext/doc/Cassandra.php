@@ -16,9 +16,6 @@
  * limitations under the License.
  */
 
-use Cassandra\Cluster\Builder as ClusterBuilder;
-use Cassandra\SSLOptions\Builder as SSLOptionsBuilder;
-
 /**
  * The main entry point to the PHP Driver for Apache Cassandra.
  *
@@ -82,28 +79,19 @@ final class Cassandra
      *
      * @return \Cassandra\Cluster\Builder a Cluster Builder instance
      */
-    public static function cluster()
-    {
-        return new ClusterBuilder();
-    }
+    public static function cluster() {}
 
     /**
      * Returns SSL Options Builder.
      *
      * @return \Cassandra\SSLOptions\Builder a SSLOptions Builder instance
      */
-    public static function ssl()
-    {
-        return new SSLOptionsBuilder();
-    }
+    public static function ssl() {}
 
     /**
      * Sets log severity.
      *
      * @param int $level log severity, must be one of Cassandra::LOG_* constants.
      */
-    public static function setLogLevel($level)
-    {
-        cassandra_set_log_level($level);
-    }
+    public static function setLogLevel($level) {}
 }

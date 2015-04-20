@@ -398,6 +398,7 @@ PHP_MINIT_FUNCTION(cassandra)
   PHP_MINIT(DefaultSession)(INIT_FUNC_ARGS_PASSTHRU);
   PHP_MINIT(SSLOptions)(INIT_FUNC_ARGS_PASSTHRU);
   cassandra_define_SSLOptionsBuilder(TSRMLS_C);
+  cassandra_define_Cassandra(TSRMLS_C);
 
   return SUCCESS;
 }
