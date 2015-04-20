@@ -2,7 +2,7 @@
 #include "util/math.h"
 #include "bigint.h"
 
-extern zend_class_entry* cassandra_ce_InvalidArgumentException;
+extern zend_class_entry* cassandra_invalid_argument_exception_ce;
 
 zend_class_entry* cassandra_ce_Bigint = NULL;
 

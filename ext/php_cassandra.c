@@ -24,7 +24,7 @@ exception_class(CassError rc)
   case CASS_ERROR_SSL_NO_PEER_CERT:
   case CASS_ERROR_SSL_INVALID_PEER_CERT:
   case CASS_ERROR_SSL_IDENTITY_MISMATCH:
-    return cassandra_ce_InvalidArgumentException;
+    return cassandra_invalid_argument_exception_ce;
   case CASS_ERROR_LIB_NO_STREAMS:
   case CASS_ERROR_LIB_UNABLE_TO_INIT:
   case CASS_ERROR_LIB_MESSAGE_ENCODE:
@@ -38,44 +38,44 @@ exception_class(CassError rc)
   case CASS_ERROR_LIB_UNABLE_TO_DETERMINE_PROTOCOL:
   case CASS_ERROR_LIB_UNABLE_TO_CONNECT:
   case CASS_ERROR_LIB_UNABLE_TO_CLOSE:
-    return cassandra_ce_RuntimeException;
+    return cassandra_runtime_exception_ce;
   case CASS_ERROR_LIB_REQUEST_TIMED_OUT:
-    return cassandra_ce_TimeoutException;
+    return cassandra_timeout_exception_ce;
   case CASS_ERROR_LIB_CALLBACK_ALREADY_SET:
   case CASS_ERROR_LIB_NOT_IMPLEMENTED:
-    return cassandra_ce_LogicException;
+    return cassandra_logic_exception_ce;
   case CASS_ERROR_SERVER_SERVER_ERROR:
-    return cassandra_ce_ServerException;
+    return cassandra_server_exception_ce;
   case CASS_ERROR_SERVER_PROTOCOL_ERROR:
-    return cassandra_ce_ProtocolException;
+    return cassandra_protocol_exception_ce;
   case CASS_ERROR_SERVER_BAD_CREDENTIALS:
-    return cassandra_ce_AuthenticationException;
+    return cassandra_authentication_exception_ce;
   case CASS_ERROR_SERVER_UNAVAILABLE:
-    return cassandra_ce_UnavailableException;
+    return cassandra_unavailable_exception_ce;
   case CASS_ERROR_SERVER_OVERLOADED:
-    return cassandra_ce_OverloadedException;
+    return cassandra_overloaded_exception_ce;
   case CASS_ERROR_SERVER_IS_BOOTSTRAPPING:
-    return cassandra_ce_IsBootstrappingException;
+    return cassandra_is_bootstrapping_exception_ce;
   case CASS_ERROR_SERVER_TRUNCATE_ERROR:
-    return cassandra_ce_TruncateException;
+    return cassandra_truncate_exception_ce;
   case CASS_ERROR_SERVER_WRITE_TIMEOUT:
-    return cassandra_ce_WriteTimeoutException;
+    return cassandra_write_timeout_exception_ce;
   case CASS_ERROR_SERVER_READ_TIMEOUT:
-    return cassandra_ce_ReadTimeoutException;
+    return cassandra_read_timeout_exception_ce;
   case CASS_ERROR_SERVER_SYNTAX_ERROR:
-    return cassandra_ce_InvalidSyntaxException;
+    return cassandra_invalid_syntax_exception_ce;
   case CASS_ERROR_SERVER_UNAUTHORIZED:
-    return cassandra_ce_UnauthorizedException;
+    return cassandra_unauthorized_exception_ce;
   case CASS_ERROR_SERVER_INVALID_QUERY:
-    return cassandra_ce_InvalidQueryException;
+    return cassandra_invalid_query_exception_ce;
   case CASS_ERROR_SERVER_CONFIG_ERROR:
-    return cassandra_ce_ConfigurationException;
+    return cassandra_configuration_exception_ce;
   case CASS_ERROR_SERVER_ALREADY_EXISTS:
-    return cassandra_ce_AlreadyExistsException;
+    return cassandra_already_exists_exception_ce;
   case CASS_ERROR_SERVER_UNPREPARED:
-    return cassandra_ce_UnpreparedException;
+    return cassandra_unprepared_exception_ce;
   default:
-    return cassandra_ce_RuntimeException;
+    return cassandra_runtime_exception_ce;
   }
 }
 
@@ -350,13 +350,29 @@ PHP_MINIT_FUNCTION(cassandra)
     module_number
   );
 
-  cassandra_define_CassandraException(TSRMLS_C);
-  cassandra_define_CassandraInvalidArgumentException(TSRMLS_C);
-  cassandra_define_CassandraDomainException(TSRMLS_C);
-  cassandra_define_CassandraRuntimeException(TSRMLS_C);
-  cassandra_define_CassandraTimeoutException(TSRMLS_C);
-  cassandra_define_CassandraLogicException(TSRMLS_C);
-  cassandra_define_CassandraServerException(TSRMLS_C);
+  cassandra_define_Exception(TSRMLS_C);
+  cassandra_define_InvalidArgumentException(TSRMLS_C);
+  cassandra_define_DomainException(TSRMLS_C);
+  cassandra_define_RuntimeException(TSRMLS_C);
+  cassandra_define_TimeoutException(TSRMLS_C);
+  cassandra_define_LogicException(TSRMLS_C);
+  cassandra_define_ExecutionException(TSRMLS_C);
+  cassandra_define_ReadTimeout(TSRMLS_C);
+  cassandra_define_WriteTimeoutException(TSRMLS_C);
+  cassandra_define_UnavailableException(TSRMLS_C);
+  cassandra_define_TruncateException(TSRMLS_C);
+  cassandra_define_ValidationException(TSRMLS_C);
+  cassandra_define_InvalidQueryException(TSRMLS_C);
+  cassandra_define_InvalidSyntaxException(TSRMLS_C);
+  cassandra_define_UnauthorizedException(TSRMLS_C);
+  cassandra_define_UnpreparedException(TSRMLS_C);
+  cassandra_define_ConfigurationException(TSRMLS_C);
+  cassandra_define_AlreadyExistsException(TSRMLS_C);
+  cassandra_define_AuthenticationException(TSRMLS_C);
+  cassandra_define_ProtocolException(TSRMLS_C);
+  cassandra_define_ServerException(TSRMLS_C);
+  cassandra_define_IsBootstrappingException(TSRMLS_C);
+  cassandra_define_OverloadedException(TSRMLS_C);
 
   cassandra_define_CassandraBigint(TSRMLS_C);
   cassandra_define_CassandraBlob(TSRMLS_C);
@@ -745,7 +761,7 @@ PHP_FUNCTION(cassandra_future_wait_timed)
   t = (int) ceil(timeout * 1000000);
 
   if (!cass_future_wait_timed(future, t)) {
-    zend_throw_exception_ex(cassandra_ce_TimeoutException, 0 TSRMLS_CC,
+    zend_throw_exception_ex(cassandra_timeout_exception_ce, 0 TSRMLS_CC,
       "Unable to resolve future within %d seconds", timeout);
     return;
   }
@@ -777,7 +793,7 @@ PHP_FUNCTION(cassandra_future_get_result)
   result = cass_future_get_result(future);
 
   if (result == NULL) {
-    zend_throw_exception_ex(cassandra_ce_InvalidArgumentException, 0 TSRMLS_CC,
+    zend_throw_exception_ex(cassandra_invalid_argument_exception_ce, 0 TSRMLS_CC,
       "Invalid result future");
     return;
   }
@@ -805,7 +821,7 @@ PHP_FUNCTION(cassandra_future_get_prepared)
   prepared = cass_future_get_prepared(future);
 
   if (prepared == NULL) {
-    zend_throw_exception_ex(cassandra_ce_InvalidArgumentException, 0 TSRMLS_CC,
+    zend_throw_exception_ex(cassandra_invalid_argument_exception_ce, 0 TSRMLS_CC,
       "Invalid prepared statement future");
     return;
   }
@@ -1256,7 +1272,7 @@ PHP_FUNCTION(cassandra_batch_new)
   if (type != CASS_BATCH_TYPE_LOGGED &&
       type != CASS_BATCH_TYPE_UNLOGGED &&
       type != CASS_BATCH_TYPE_COUNTER) {
-    zend_throw_exception_ex(cassandra_ce_InvalidArgumentException, 0 TSRMLS_CC,
+    zend_throw_exception_ex(cassandra_invalid_argument_exception_ce, 0 TSRMLS_CC,
       "Invalid batch type");
   }
 

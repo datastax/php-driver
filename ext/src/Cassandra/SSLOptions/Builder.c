@@ -10,7 +10,7 @@ file_get_contents(char* path, char** output, int* len TSRMLS_DC)
                          USE_PATH|REPORT_ERRORS|ENFORCE_SAFE_MODE, NULL);
 
   if (!stream) {
-    zend_throw_exception_ex(cassandra_ce_RuntimeException, 0 TSRMLS_CC,
+    zend_throw_exception_ex(cassandra_runtime_exception_ce, 0 TSRMLS_CC,
       "The path '%s' doesn't exist or is not readable", path);
     return 0;
   }
@@ -92,7 +92,7 @@ PHP_METHOD(SSLOptionsBuilder, withTrustedCerts)
     php_stat(Z_STRVAL_P(path), Z_STRLEN_P(path), FS_IS_R, &readable TSRMLS_CC);
 
     if (!Z_LVAL(readable)) {
-      zend_throw_exception_ex(cassandra_ce_InvalidArgumentException, 0 TSRMLS_CC,
+      zend_throw_exception_ex(cassandra_invalid_argument_exception_ce, 0 TSRMLS_CC,
         "The path '%s' doesn't exist or is not readable", Z_STRVAL_P(path));
       return;
     }
@@ -149,7 +149,7 @@ PHP_METHOD(SSLOptionsBuilder, withClientCert)
   php_stat(client_cert, client_cert_len, FS_IS_R, &readable TSRMLS_CC);
 
   if (!Z_LVAL(readable)) {
-    zend_throw_exception_ex(cassandra_ce_InvalidArgumentException, 0 TSRMLS_CC,
+    zend_throw_exception_ex(cassandra_invalid_argument_exception_ce, 0 TSRMLS_CC,
       "The path '%s' doesn't exist or is not readable", client_cert);
     return;
   }
@@ -179,7 +179,7 @@ PHP_METHOD(SSLOptionsBuilder, withPrivateKey)
   php_stat(private_key, private_key_len, FS_IS_R, &readable TSRMLS_CC);
 
   if (!Z_LVAL(readable)) {
-    zend_throw_exception_ex(cassandra_ce_InvalidArgumentException, 0 TSRMLS_CC,
+    zend_throw_exception_ex(cassandra_invalid_argument_exception_ce, 0 TSRMLS_CC,
       "The path '%s' doesn't exist or is not readable", private_key);
     return;
   }

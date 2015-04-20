@@ -36,10 +36,10 @@ PHP_METHOD(FutureSession, get)
 
       if (!cass_future_wait_timed(future->future, timeout_us)) {
         if (Z_TYPE_P(timeout) == IS_LONG) {
-          zend_throw_exception_ex(cassandra_ce_TimeoutException, 0 TSRMLS_CC,
+          zend_throw_exception_ex(cassandra_timeout_exception_ce, 0 TSRMLS_CC,
             "Unable to resolve future within %d seconds", Z_LVAL_P(timeout));
         } else {
-          zend_throw_exception_ex(cassandra_ce_TimeoutException, 0 TSRMLS_CC,
+          zend_throw_exception_ex(cassandra_timeout_exception_ce, 0 TSRMLS_CC,
             "Unable to resolve future within %f seconds", Z_DVAL_P(timeout));
         }
         return;

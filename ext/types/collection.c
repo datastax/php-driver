@@ -4,8 +4,8 @@
 
 extern zend_class_entry* spl_ce_Countable;
 extern zend_class_entry* zend_ce_iterator;
-extern zend_class_entry* cassandra_ce_RuntimeException;
-extern zend_class_entry* cassandra_ce_InvalidArgumentException;
+extern zend_class_entry* cassandra_runtime_exception_ce;
+extern zend_class_entry* cassandra_invalid_argument_exception_ce;
 
 zend_class_entry *cassandra_ce_Collection = NULL;
 

@@ -4,7 +4,7 @@
 #include "timestamp.h"
 #include <ext/date/php_date.h>
 
-extern zend_class_entry *cassandra_ce_InvalidArgumentException;
+extern zend_class_entry *cassandra_invalid_argument_exception_ce;
 zend_class_entry *cassandra_ce_Timestamp = NULL;
 
 /* {{{ Cassandra\Timestamp::__construct(string) */

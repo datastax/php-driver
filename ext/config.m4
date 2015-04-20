@@ -11,6 +11,29 @@ if test "$PHP_CASSANDRA" != "no"; then
     src/Cassandra/Cluster.c \
     src/Cassandra/Cluster/Builder.c \
     src/Cassandra/DefaultCluster.c \
+    src/Cassandra/Exception.c \
+    src/Cassandra/Exception/DomainException.c \
+    src/Cassandra/Exception/InvalidArgumentException.c \
+    src/Cassandra/Exception/LogicException.c \
+    src/Cassandra/Exception/RuntimeException.c \
+    src/Cassandra/Exception/TimeoutException.c \
+    src/Cassandra/Exception/ExecutionException.c \
+    src/Cassandra/Exception/ReadTimeout.c \
+    src/Cassandra/Exception/WriteTimeoutException.c \
+    src/Cassandra/Exception/UnavailableException.c \
+    src/Cassandra/Exception/TruncateException.c \
+    src/Cassandra/Exception/ValidationException.c \
+    src/Cassandra/Exception/InvalidQueryException.c \
+    src/Cassandra/Exception/InvalidSyntaxException.c \
+    src/Cassandra/Exception/UnauthorizedException.c \
+    src/Cassandra/Exception/UnpreparedException.c \
+    src/Cassandra/Exception/ConfigurationException.c \
+    src/Cassandra/Exception/AlreadyExistsException.c \
+    src/Cassandra/Exception/AuthenticationException.c \
+    src/Cassandra/Exception/ProtocolException.c \
+    src/Cassandra/Exception/ServerException.c \
+    src/Cassandra/Exception/IsBootstrappingException.c \
+    src/Cassandra/Exception/OverloadedException.c \
     src/Cassandra/Future.c \
     src/Cassandra/FutureSession.c \
     src/Cassandra/Session.c \
@@ -20,6 +43,11 @@ if test "$PHP_CASSANDRA" != "no"; then
   ";
 
   CASSANDRA_TYPES="\
+    util/bytes.c \
+    util/collections.c \
+    util/inet.c \
+    util/math.c \
+    util/uuid_gen.c \
     types/float.c \
     types/bigint.c \
     types/blob.c \
@@ -36,11 +64,8 @@ if test "$PHP_CASSANDRA" != "no"; then
   ";
 
   PHP_SUBST(CASSANDRA_SHARED_LIBADD)
-  PHP_NEW_EXTENSION(cassandra, php_cassandra.c exceptions/exception.c \
-    exceptions/invalid_argument.c exceptions/runtime.c exceptions/timeout.c \
-    exceptions/logic.c exceptions/domain.c exceptions/server.c util/bytes.c \
-    util/collections.c util/inet.c util/math.c util/uuid_gen.c \
-    $CASSANDRA_TYPES $CASSANDRA_CLASSES, $ext_shared)
+  PHP_NEW_EXTENSION(cassandra, php_cassandra.c $CASSANDRA_CLASSES \
+    $CASSANDRA_TYPES, $ext_shared)
 
   ifdef([PHP_ADD_EXTENSION_DEP],
   [
