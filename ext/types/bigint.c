@@ -1,8 +1,8 @@
-#include <errno.h>
 #include "../php_cassandra.h"
+#include "util/math.h"
 #include "bigint.h"
 
-extern zend_class_entry* cassandra_ce_InvalidArgumentException;
+extern zend_class_entry* cassandra_invalid_argument_exception_ce;
 
 zend_class_entry* cassandra_ce_Bigint = NULL;
 
@@ -29,56 +29,9 @@ PHP_METHOD(CassandraBigint, __construct)
   }
 
   cassandra_bigint* number = (cassandra_bigint*) zend_object_store_get_object(getThis() TSRMLS_CC);
-  int point = 0;
-  int base = 10;
 
-  //  Determine the sign of the number.
-  int negative = 0;
-  if (value[point] == '+') {
-    point++;
-  } else if (value[point] == '-') {
-    point++;
-    negative = 1;
-  }
-
-  if (value[point] == '0') {
-    switch(value[point + 1]) {
-    case 'b':
-      point += 2;
-      base = 2;
-      break;
-    case 'x':
-      point += 2;
-      base = 16;
-      break;
-    default:
-      base = 8;
-      break;
-    }
-  }
-
-  char* end;
-  errno = 0;
-
-  number->value = strtoll(&(value[point]), &end, base);
-
-  if (negative)
-    number->value = number->value * -1;
-
-  if (errno) {
-    zend_throw_exception_ex(cassandra_ce_InvalidArgumentException, 0 TSRMLS_CC, "Invalid integer value: '%s'", value);
+  if (!php_cassandra_parse_bigint(value, value_len, &number->value TSRMLS_CC))
     return;
-  }
-
-  if (end != &value[value_len]) {
-    zend_throw_exception_ex(cassandra_ce_InvalidArgumentException, 0 TSRMLS_CC, "Non digit characters were found in value: '%s'", value);
-    return;
-  }
-
-  if (end == &value[point]) {
-    zend_throw_exception_ex(cassandra_ce_InvalidArgumentException, 0 TSRMLS_CC, "No digits were found in value: '%s'", value);
-    return;
-  }
 }
 /* }}} */
 

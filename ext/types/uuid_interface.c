@@ -1,6 +1,6 @@
 #include <php.h>
 #include "../php_cassandra.h"
-#include "uuid_interface.h"
+#include "types/uuid_interface.h"
 
 zend_class_entry *cassandra_ce_UuidInterface = NULL;
 

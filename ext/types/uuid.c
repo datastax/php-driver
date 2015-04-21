@@ -2,10 +2,10 @@
 #include <zend_exceptions.h>
 #include "../php_cassandra.h"
 #include "util/uuid_gen.h"
-#include "uuid_interface.h"
-#include "uuid.h"
+#include "types/uuid_interface.h"
+#include "types/uuid.h"
 
-extern zend_class_entry* cassandra_ce_InvalidArgumentException;
+extern zend_class_entry* cassandra_invalid_argument_exception_ce;
 extern zend_class_entry* cassandra_ce_UuidInterface;
 
 zend_class_entry *cassandra_ce_Uuid = NULL;
@@ -27,7 +27,7 @@ PHP_METHOD(CassandraUuid, __construct)
     php_cassandra_uuid_generate_random(&uuid->uuid TSRMLS_CC);
   else {
     if (cass_uuid_from_string(value, &uuid->uuid) != CASS_OK) {
-      zend_throw_exception_ex(cassandra_ce_InvalidArgumentException, 0 TSRMLS_CC, "Invalid uuid value: \"%s\"", value);
+      zend_throw_exception_ex(cassandra_invalid_argument_exception_ce, 0 TSRMLS_CC, "Invalid uuid value: \"%s\"", value);
       return;
     }
   }

@@ -7,27 +7,76 @@ if test -z "$PHP_GMP"; then
 fi
 
 if test "$PHP_CASSANDRA" != "no"; then
+  CASSANDRA_CLASSES="\
+    src/Cassandra.c \
+    src/Cassandra/Cluster.c \
+    src/Cassandra/Cluster/Builder.c \
+    src/Cassandra/DefaultCluster.c \
+    src/Cassandra/Exception.c \
+    src/Cassandra/Exception/DomainException.c \
+    src/Cassandra/Exception/InvalidArgumentException.c \
+    src/Cassandra/Exception/LogicException.c \
+    src/Cassandra/Exception/RuntimeException.c \
+    src/Cassandra/Exception/TimeoutException.c \
+    src/Cassandra/Exception/ExecutionException.c \
+    src/Cassandra/Exception/ReadTimeout.c \
+    src/Cassandra/Exception/WriteTimeoutException.c \
+    src/Cassandra/Exception/UnavailableException.c \
+    src/Cassandra/Exception/TruncateException.c \
+    src/Cassandra/Exception/ValidationException.c \
+    src/Cassandra/Exception/InvalidQueryException.c \
+    src/Cassandra/Exception/InvalidSyntaxException.c \
+    src/Cassandra/Exception/UnauthorizedException.c \
+    src/Cassandra/Exception/UnpreparedException.c \
+    src/Cassandra/Exception/ConfigurationException.c \
+    src/Cassandra/Exception/AlreadyExistsException.c \
+    src/Cassandra/Exception/AuthenticationException.c \
+    src/Cassandra/Exception/ProtocolException.c \
+    src/Cassandra/Exception/ServerException.c \
+    src/Cassandra/Exception/IsBootstrappingException.c \
+    src/Cassandra/Exception/OverloadedException.c \
+    src/Cassandra/Future.c \
+    src/Cassandra/FutureSession.c \
+    src/Cassandra/Session.c \
+    src/Cassandra/DefaultSession.c \
+    src/Cassandra/SSLOptions.c \
+    src/Cassandra/SSLOptions/Builder.c \
+    src/Cassandra/Statement.c \
+    src/Cassandra/ExecuteOptions.c \
+    src/Cassandra/SimpleStatement.c \
+    src/Cassandra/PreparedStatement.c \
+    src/Cassandra/BatchStatement.c \
+  ";
+
+  CASSANDRA_TYPES="\
+    util/bytes.c \
+    util/collections.c \
+    util/inet.c \
+    util/math.c \
+    util/uuid_gen.c \
+    types/float.c \
+    types/bigint.c \
+    types/blob.c \
+    types/decimal.c \
+    types/inet.c \
+    types/uuid_interface.c \
+    types/uuid.c \
+    types/timestamp.c \
+    types/timeuuid.c \
+    types/varint.c \
+    types/set.c \
+    types/map.c \
+    types/collection.c \
+  ";
+
   PHP_SUBST(CASSANDRA_SHARED_LIBADD)
-  PHP_NEW_EXTENSION(cassandra, php_cassandra.c exceptions/exception.c \
-    exceptions/invalid_argument.c exceptions/runtime.c exceptions/timeout.c \
-    exceptions/logic.c exceptions/domain.c exceptions/server.c util/bytes.c \
-    util/collections.c util/inet.c util/math.c util/uuid_gen.c types/float.c \
-    types/bigint.c types/blob.c types/decimal.c types/inet.c \
-    types/uuid_interface.c types/uuid.c types/timestamp.c types/timeuuid.c \
-    types/varint.c types/set.c types/map.c types/collection.c, $ext_shared)
+  PHP_NEW_EXTENSION(cassandra, php_cassandra.c $CASSANDRA_CLASSES \
+    $CASSANDRA_TYPES, $ext_shared)
 
   ifdef([PHP_ADD_EXTENSION_DEP],
   [
     PHP_ADD_EXTENSION_DEP(cassandra, spl)
   ])
-
-  PHP_ADD_BUILD_DIR([$ext_builddir/exceptions], 1)
-  PHP_ADD_INCLUDE([$ext_builddir/exceptions])
-  PHP_ADD_INCLUDE([$ext_srcdir/exceptions])
-
-  PHP_ADD_BUILD_DIR([$ext_builddir/types], 1)
-  PHP_ADD_INCLUDE([$ext_builddir/types])
-  PHP_ADD_INCLUDE([$ext_srcdir/types])
 
   if test "$PHP_GMP" != "no"; then
     if test -f $PHP_GMP/include/gmp.h; then

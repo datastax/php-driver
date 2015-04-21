@@ -1,7 +1,14 @@
 #ifndef PHP_CASSANDRA_H
 #define PHP_CASSANDRA_H
+
+#ifdef HAVE_CONFIG_H
+#    include "config.h"
+#endif
+
 #include <gmp.h>
 #include <cassandra.h>
+#include <php.h>
+#include <Zend/zend_exceptions.h>
 
 /* Define Extension Properties */
 #define PHP_CASSANDRA_EXTNAME   "cassandra"
@@ -9,20 +16,12 @@
 
 /* Resources */
 #define PHP_CASSANDRA_CLUSTER_RES_NAME    "Cassandra Cluster"
-#define PHP_CASSANDRA_SSL_RES_NAME        "Cassandra Ssl"
 #define PHP_CASSANDRA_SESSION_RES_NAME    "Cassandra Session"
 #define PHP_CASSANDRA_FUTURE_RES_NAME     "Cassandra Future"
 #define PHP_CASSANDRA_STATEMENT_RES_NAME  "Cassandra Statement"
 #define PHP_CASSANDRA_RESULT_RES_NAME     "Cassandra Result"
 #define PHP_CASSANDRA_PREPARED_RES_NAME   "Cassandra Prepared Statement"
 #define PHP_CASSANDRA_BATCH_RES_NAME      "Cassandra Batch Statement"
-
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
-
-#include "php.h"
-#include "zend_exceptions.h"
 
 extern zend_module_entry cassandra_module_entry;
 #define phpext_cassandra_ptr &cassandra_module_entry
@@ -36,75 +35,42 @@ extern zend_module_entry cassandra_module_entry;
 #endif
 
 #ifndef PHP_FE_END
-#define PHP_FE_END { NULL, NULL, NULL, 0, 0 }
+#    define PHP_FE_END { NULL, NULL, NULL, 0, 0 }
 #endif
+
+#if ZEND_MODULE_API_NO < 20100525
+#    define object_properties_init(value, class_entry) \
+              zend_hash_copy(*value.properties, &class_entry->default_properties, (copy_ctor_func_t) zval_add_ref, NULL, sizeof(zval *));
+#endif
+
+#define SAFE_STR(a) ((a)?a:"")
 
 #ifdef ZTS
-#include "TSRM.h"
+#    include "TSRM.h"
 #endif
 
-typedef struct {
-  zend_object  zval;
-  cass_float_t value;
-} cassandra_float;
+void throw_invalid_argument(zval* object,
+                            const char* object_name,
+                            const char* expected_type TSRMLS_DC);
 
-typedef struct {
-  zend_object  zval;
-  cass_int64_t value;
-} cassandra_bigint;
+#define INVALID_ARGUMENT(object, expected) \
+{ \
+  throw_invalid_argument(object, #object, #expected TSRMLS_CC); \
+  return; \
+}
 
-typedef struct {
-  zend_object  zval;
-  cass_int64_t timestamp;
-} cassandra_timestamp;
+#define ASSERT_SUCCESS(rc) \
+{ \
+  if (rc != CASS_OK) { \
+    zend_throw_exception_ex(exception_class(rc), rc TSRMLS_CC, \
+                            "%s", cass_error_desc(rc)); \
+    return; \
+  } \
+}
 
-typedef struct {
-  zend_object  zval;
-  cass_byte_t* data;
-  cass_size_t  size;
-} cassandra_blob;
+#include "php_cassandra_types.h"
 
-typedef struct {
-  zend_object  zval;
-  mpz_t        value;
-} cassandra_varint;
-
-typedef struct {
-  zend_object zval;
-  mpz_t       value;
-  long        scale;
-} cassandra_decimal;
-
-typedef struct {
-  zend_object zval;
-  CassUuid    uuid;
-} cassandra_uuid;
-
-typedef struct {
-  zend_object zval;
-  CassInet    inet;
-} cassandra_inet;
-
-typedef struct {
-  zend_object   zval;
-  CassValueType type;
-  HashTable     values;
-  int           pos;
-} cassandra_set;
-
-typedef struct {
-  zend_object   zval;
-  CassValueType key_type;
-  HashTable     keys;
-  CassValueType value_type;
-  HashTable     values;
-} cassandra_map;
-
-typedef struct {
-  zend_object   zval;
-  CassValueType type;
-  HashTable     values;
-} cassandra_collection;
+zend_class_entry* exception_class(CassError rc);
 
 PHP_MINIT_FUNCTION(cassandra);
 PHP_MSHUTDOWN_FUNCTION(cassandra);
@@ -117,27 +83,6 @@ PHP_FUNCTION(cassandra_set_log_level);
 
 /* Util */
 PHP_FUNCTION(cassandra_rows_from_result);
-
-/* CassCluster */
-PHP_FUNCTION(cassandra_cluster_new);
-PHP_FUNCTION(cassandra_cluster_free);
-PHP_FUNCTION(cassandra_cluster_set_load_balance_round_robin);
-PHP_FUNCTION(cassandra_cluster_set_load_balance_dc_aware);
-PHP_FUNCTION(cassandra_cluster_set_token_aware_routing);
-PHP_FUNCTION(cassandra_cluster_set_credentials);
-PHP_FUNCTION(cassandra_cluster_set_contact_points);
-PHP_FUNCTION(cassandra_cluster_set_port);
-PHP_FUNCTION(cassandra_cluster_set_connect_timeout);
-PHP_FUNCTION(cassandra_cluster_set_request_timeout);
-PHP_FUNCTION(cassandra_cluster_set_ssl);
-
-/* CassSsl */
-PHP_FUNCTION(cassandra_ssl_new);
-PHP_FUNCTION(cassandra_ssl_free);
-PHP_FUNCTION(cassandra_ssl_add_trusted_cert);
-PHP_FUNCTION(cassandra_ssl_set_cert);
-PHP_FUNCTION(cassandra_ssl_set_private_key);
-PHP_FUNCTION(cassandra_ssl_set_verify_flags);
 
 /* CassSession */
 PHP_FUNCTION(cassandra_session_new);
@@ -180,39 +125,17 @@ PHP_FUNCTION(cassandra_batch_free);
 PHP_FUNCTION(cassandra_batch_set_consistency);
 PHP_FUNCTION(cassandra_batch_add_statement);
 
-/* Exceptions */
-void cassandra_define_CassandraException(TSRMLS_D);
-void cassandra_define_CassandraInvalidArgumentException(TSRMLS_D);
-void cassandra_define_CassandraDomainException(TSRMLS_D);
-void cassandra_define_CassandraLogicException(TSRMLS_D);
-void cassandra_define_CassandraRuntimeException(TSRMLS_D);
-void cassandra_define_CassandraServerException(TSRMLS_D);
-void cassandra_define_CassandraTimeoutException(TSRMLS_D);
-
-/* Types */
-void cassandra_define_CassandraBigint(TSRMLS_D);
-void cassandra_define_CassandraBlob(TSRMLS_D);
-void cassandra_define_CassandraCollection(TSRMLS_D);
-void cassandra_define_CassandraDecimal(TSRMLS_D);
-void cassandra_define_CassandraFloat(TSRMLS_D);
-void cassandra_define_CassandraInet(TSRMLS_D);
-void cassandra_define_CassandraMap(TSRMLS_D);
-void cassandra_define_CassandraSet(TSRMLS_D);
-void cassandra_define_CassandraTimestamp(TSRMLS_D);
-void cassandra_define_CassandraUuidInterface(TSRMLS_D);
-void cassandra_define_CassandraUuid(TSRMLS_D);
-void cassandra_define_CassandraTimeuuid(TSRMLS_D);
-void cassandra_define_CassandraVarint(TSRMLS_D);
-
 ZEND_BEGIN_MODULE_GLOBALS(cassandra)
   CassUuidGen*          uuid_gen;
   CassLogLevel          log_level;
+  unsigned int          persistent_clusters;
+  unsigned int          persistent_sessions;
 ZEND_END_MODULE_GLOBALS(cassandra)
 
 #ifdef ZTS
-#define CASSANDRA_G(v) TSRMG(cassandra_globals_id, zend_cassandra_globals *, v)
+#    define CASSANDRA_G(v) TSRMG(cassandra_globals_id, zend_cassandra_globals *, v)
 #else
-#define CASSANDRA_G(v) (cassandra_globals.v)
+#    define CASSANDRA_G(v) (cassandra_globals.v)
 #endif
 
 #endif /* PHP_CASSANDRA_H */
