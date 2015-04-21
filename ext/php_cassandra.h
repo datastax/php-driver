@@ -55,13 +55,13 @@ void throw_invalid_argument(zval* object,
 
 #define INVALID_ARGUMENT(object, expected) \
 { \
-  throw_invalid_argument(object, #object, #expected TSRMLS_CC); \
+  throw_invalid_argument(object, #object, expected TSRMLS_CC); \
   return; \
 }
 
 #define INVALID_ARGUMENT_VALUE(object, expected, failed_value) \
 { \
-  throw_invalid_argument(object, #object, #expected TSRMLS_CC); \
+  throw_invalid_argument(object, #object, expected TSRMLS_CC); \
   return failed_value; \
 }
 

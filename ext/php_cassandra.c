@@ -1609,7 +1609,7 @@ void throw_invalid_argument(zval* object,
     Z_OBJ_HANDLER_P(object, get_class_name)(object, &cls_name, &cls_len, 0 TSRMLS_CC);
     if (cls_name) {
       zend_throw_exception_ex(cassandra_invalid_argument_exception_ce, 0 TSRMLS_CC,
-                              "%s must be %s an instance of %.*s given",
+                              "%s must be %s, an instance of %.*s given",
                               object_name, expected_type, cls_len, cls_name);
       efree((void *)cls_name);
     } else {
@@ -1619,7 +1619,7 @@ void throw_invalid_argument(zval* object,
     }
   } else {
     zend_throw_exception_ex(cassandra_invalid_argument_exception_ce, 0 TSRMLS_CC,
-                            "%s must be expected %s, %Z given",
+                            "%s must be %s, '%Z' given",
                             object_name, expected_type, object);
   }
 }
