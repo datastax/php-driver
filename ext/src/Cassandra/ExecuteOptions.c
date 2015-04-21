@@ -68,7 +68,7 @@ PHP_METHOD(ExecuteOptions, __construct)
 }
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo__construct, 0, ZEND_RETURN_VALUE, 0)
-  ZEND_ARG_ARRAY_INFO(0, options)
+  ZEND_ARG_ARRAY_INFO(0, options, 1)
 ZEND_END_ARG_INFO()
 
 static zend_function_entry cassandra_execute_options_methods[] = {
@@ -140,7 +140,6 @@ void cassandra_define_ExecuteOptions(TSRMLS_D)
 
   INIT_CLASS_ENTRY(ce, "Cassandra\\ExecuteOptions", cassandra_execute_options_methods);
   cassandra_execute_options_ce = zend_register_internal_class(&ce TSRMLS_CC);
-  zend_class_implements(cassandra_execute_options_ce TSRMLS_CC, 1, cassandra_execute_options_ce);
   cassandra_execute_options_ce->ce_flags     |= ZEND_ACC_FINAL_CLASS;
   cassandra_execute_options_ce->create_object = php_cassandra_execute_options_new;
 

@@ -84,7 +84,7 @@ void cassandra_define_BatchStatement(TSRMLS_D)
 
   INIT_CLASS_ENTRY(ce, "Cassandra\\BatchStatement", cassandra_batch_statement_methods);
   cassandra_batch_statement_ce = zend_register_internal_class(&ce TSRMLS_CC);
-  zend_class_implements(cassandra_batch_statement_ce TSRMLS_CC, 1, cassandra_batch_statement_ce);
+  zend_class_implements(cassandra_batch_statement_ce TSRMLS_CC, 1, cassandra_statement_ce);
   cassandra_batch_statement_ce->ce_flags     |= ZEND_ACC_FINAL_CLASS;
   cassandra_batch_statement_ce->create_object = php_cassandra_batch_statement_new;
 

@@ -92,7 +92,7 @@ void cassandra_define_SimpleStatement(TSRMLS_D)
 
   INIT_CLASS_ENTRY(ce, "Cassandra\\SimpleStatement", cassandra_simple_statement_methods);
   cassandra_simple_statement_ce = zend_register_internal_class(&ce TSRMLS_CC);
-  zend_class_implements(cassandra_simple_statement_ce TSRMLS_CC, 1, cassandra_simple_statement_ce);
+  zend_class_implements(cassandra_simple_statement_ce TSRMLS_CC, 1, cassandra_statement_ce);
   cassandra_simple_statement_ce->ce_flags     |= ZEND_ACC_FINAL_CLASS;
   cassandra_simple_statement_ce->create_object = php_cassandra_simple_statement_new;
 
