@@ -1599,7 +1599,11 @@ void throw_invalid_argument(zval* object,
                             const char* expected_type TSRMLS_DC)
 {
   if (Z_TYPE_P(object) == IS_OBJECT) {
+#if ZEND_MODULE_API_NO >= 20100525
     const char* cls_name = NULL;
+#else
+    char* cls_name = NULL;
+#endif
     zend_uint cls_len;
 
     Z_OBJ_HANDLER_P(object, get_class_name)(object, &cls_name, &cls_len, 0 TSRMLS_CC);
