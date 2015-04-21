@@ -389,6 +389,7 @@ PHP_MINIT_FUNCTION(cassandra)
   cassandra_define_CassandraMap(TSRMLS_C);
   cassandra_define_CassandraCollection(TSRMLS_C);
 
+  cassandra_define_Cassandra(TSRMLS_C);
   cassandra_define_Cluster(TSRMLS_C);
   cassandra_define_ClusterBuilder(TSRMLS_C);
   cassandra_define_DefaultCluster(TSRMLS_C);

@@ -270,6 +270,7 @@ extern PHP_CASSANDRA_API zend_class_entry* cassandra_simple_statement_ce;
 extern PHP_CASSANDRA_API zend_class_entry* cassandra_prepared_statement_ce;
 extern PHP_CASSANDRA_API zend_class_entry* cassandra_batch_statement_ce;
 
+void cassandra_define_Cassandra(TSRMLS_D);
 void cassandra_define_Cluster(TSRMLS_D);
 void cassandra_define_ClusterBuilder(TSRMLS_D);
 void cassandra_define_DefaultCluster(TSRMLS_D);
@@ -279,7 +280,6 @@ void cassandra_define_Session(TSRMLS_D);
 void cassandra_define_DefaultSession(TSRMLS_D);
 void cassandra_define_SSLOptions(TSRMLS_D);
 void cassandra_define_SSLOptionsBuilder(TSRMLS_D);
-void cassandra_define_Cassandra(TSRMLS_D);
 void cassandra_define_Statement(TSRMLS_D);
 void cassandra_define_SimpleStatement(TSRMLS_D);
 void cassandra_define_PreparedStatement(TSRMLS_D);
