@@ -22,7 +22,7 @@ PHP_METHOD(SimpleStatement, __construct)
   self->cql = estrndup(Z_STRVAL_P(cql), Z_STRLEN_P(cql));
 }
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo__construct, 0, ZEND_RETURN_VALUE, 0)
+ZEND_BEGIN_ARG_INFO_EX(arginfo__construct, 0, ZEND_RETURN_VALUE, 1)
   ZEND_ARG_INFO(0, cql)
 ZEND_END_ARG_INFO()
 
