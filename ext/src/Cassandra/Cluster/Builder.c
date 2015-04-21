@@ -1,4 +1,5 @@
 #include "php_cassandra.h"
+#include "util/consistency.h"
 #include <ext/standard/php_smart_str.h>
 
 zend_class_entry *cassandra_cluster_builder_ce = NULL;
@@ -91,31 +92,12 @@ PHP_METHOD(ClusterBuilder, withDefaultConsistency)
     return;
   }
 
-  if (Z_TYPE_P(consistency) == IS_LONG) {
-    switch (Z_LVAL_P(consistency)) {
-    case CASS_CONSISTENCY_ANY:
-    case CASS_CONSISTENCY_ONE:
-    case CASS_CONSISTENCY_TWO:
-    case CASS_CONSISTENCY_THREE:
-    case CASS_CONSISTENCY_QUORUM:
-    case CASS_CONSISTENCY_ALL:
-    case CASS_CONSISTENCY_LOCAL_QUORUM:
-    case CASS_CONSISTENCY_EACH_QUORUM:
-    case CASS_CONSISTENCY_SERIAL:
-    case CASS_CONSISTENCY_LOCAL_SERIAL:
-    case CASS_CONSISTENCY_LOCAL_ONE:
-      break;
-    default:
-      INVALID_ARGUMENT(consistency, "one of Cassandra::CONSISTENCY_*");
-    }
-  } else {
-    INVALID_ARGUMENT(consistency, "one of Cassandra::CONSISTENCY_*");
-  }
-
   cassandra_cluster_builder* builder =
     (cassandra_cluster_builder*) zend_object_store_get_object(getThis() TSRMLS_CC);
 
-  builder->default_consistency = (CassConsistency) Z_LVAL_P(consistency);
+  if (php_cassandra_get_consistency(consistency, &builder->default_consistency) == FAILURE) {
+    return;
+  }
 
   RETURN_ZVAL(getThis(), 1, 0);
 }
@@ -155,12 +137,12 @@ PHP_METHOD(ClusterBuilder, withDefaultTimeout)
 
   if (Z_TYPE_P(timeout) == IS_NULL) {
     if (builder->default_timeout)
-      Z_DELREF_P(builder->default_timeout);
+      zval_ptr_dtor(&builder->default_timeout);
     builder->default_timeout = NULL;
   } else if ((Z_TYPE_P(timeout) == IS_LONG && Z_LVAL_P(timeout) > 0) ||
              (Z_TYPE_P(timeout) == IS_DOUBLE && Z_DVAL_P(timeout) > 0)) {
     if (builder->default_timeout)
-      Z_DELREF_P(builder->default_timeout);
+      zval_ptr_dtor(&builder->default_timeout);
     Z_ADDREF_P(timeout);
     builder->default_timeout = timeout;
   } else {
@@ -368,7 +350,7 @@ PHP_METHOD(ClusterBuilder, withSSL)
     (cassandra_cluster_builder*) zend_object_store_get_object(getThis() TSRMLS_CC);
 
   if (builder->ssl_options)
-    Z_DELREF_P(builder->ssl_options);
+    zval_ptr_dtor(&builder->ssl_options);
 
   Z_ADDREF_P(ssl_options);
   builder->ssl_options = ssl_options;
@@ -600,10 +582,10 @@ php_cassandra_cluster_builder_free(void *object TSRMLS_DC)
     efree(builder->password);
 
   if (builder->ssl_options)
-    Z_DELREF_P(builder->ssl_options);
+    zval_ptr_dtor(&builder->ssl_options);
 
   if (builder->default_timeout)
-    Z_DELREF_P(builder->default_timeout);
+    zval_ptr_dtor(&builder->default_timeout);
 
   efree(builder);
 }

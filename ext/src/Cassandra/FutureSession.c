@@ -1,5 +1,7 @@
 #include "php_cassandra.h"
 
+#include "util/future.h"
+
 zend_class_entry *cassandra_future_session_ce = NULL;
 
 ZEND_EXTERN_MODULE_GLOBALS(cassandra)
@@ -7,10 +9,15 @@ ZEND_EXTERN_MODULE_GLOBALS(cassandra)
 PHP_METHOD(FutureSession, get)
 {
   zval* timeout = NULL;
-  cass_duration_t timeout_us;
 
   cassandra_future_session* future =
     (cassandra_future_session*) zend_object_store_get_object(getThis() TSRMLS_CC);
+
+  if (future->default_session) {
+    *return_value = *future->default_session;
+    Z_ADDREF_P(return_value);
+    return;
+  }
 
   if (future->exception_message) {
     zend_throw_exception_ex(exception_class(future->exception_code),
@@ -22,29 +29,8 @@ PHP_METHOD(FutureSession, get)
     return;
   }
 
-  if (!cass_future_ready(future->future)) {
-    if (timeout == NULL || Z_TYPE_P(timeout) == IS_NULL) {
-      cass_future_wait(future->future);
-    } else {
-      if ((Z_TYPE_P(timeout) == IS_LONG && Z_LVAL_P(timeout) > 0)) {
-        timeout_us = Z_LVAL_P(timeout) * 1000000;
-      } else if ((Z_TYPE_P(timeout) == IS_DOUBLE && Z_DVAL_P(timeout) > 0)) {
-        timeout_us = ceil(Z_DVAL_P(timeout) * 1000000);
-      } else {
-        INVALID_ARGUMENT(timeout, "an positive number of seconds or null");
-      }
-
-      if (!cass_future_wait_timed(future->future, timeout_us)) {
-        if (Z_TYPE_P(timeout) == IS_LONG) {
-          zend_throw_exception_ex(cassandra_timeout_exception_ce, 0 TSRMLS_CC,
-            "Unable to resolve future within %d seconds", Z_LVAL_P(timeout));
-        } else {
-          zend_throw_exception_ex(cassandra_timeout_exception_ce, 0 TSRMLS_CC,
-            "Unable to resolve future within %f seconds", Z_DVAL_P(timeout));
-        }
-        return;
-      }
-    }
+  if (php_cassandra_future_wait_timed(future->future, timeout) == FAILURE) {
+    return;
   }
 
   CassError rc = cass_future_error_code(future->future);
@@ -72,6 +58,8 @@ PHP_METHOD(FutureSession, get)
   }
 
   object_init_ex(return_value, cassandra_default_session_ce);
+  future->default_session = return_value;
+  Z_ADDREF_P(future->default_session);
   cassandra_session* session =
     (cassandra_session*) zend_object_store_get_object(return_value TSRMLS_CC);
   session->session = future->session;

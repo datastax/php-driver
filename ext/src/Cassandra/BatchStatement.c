@@ -32,7 +32,7 @@ static HashTable*
 php_cassandra_batch_statement_properties(zval *object TSRMLS_DC)
 {
   cassandra_batch_statement* statement = (cassandra_batch_statement*) zend_object_store_get_object(object TSRMLS_CC);
-  HashTable*         props   = zend_std_get_properties(object TSRMLS_CC);
+  HashTable*                     props = zend_std_get_properties(object TSRMLS_CC);
 
   return props;
 }

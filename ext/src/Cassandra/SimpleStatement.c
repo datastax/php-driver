@@ -56,9 +56,8 @@ php_cassandra_simple_statement_free(void *object TSRMLS_DC)
 {
   cassandra_simple_statement* statement = (cassandra_simple_statement*) object;
 
-  if (statement->cql) {
+  if (statement->cql)
     efree(statement->cql);
-  }
 
   zend_object_std_dtor(&statement->zval TSRMLS_CC);
   efree(statement);
@@ -76,7 +75,7 @@ php_cassandra_simple_statement_new(zend_class_entry* class_type TSRMLS_DC)
   object_properties_init(&statement->zval, class_type);
 
   statement->type = CASSANDRA_SIMPLE_STATEMENT;
-  statement->cql = NULL;
+  statement->cql  = NULL;
 
   retval.handle   = zend_objects_store_put(statement,
                       (zend_objects_store_dtor_t) zend_objects_destroy_object,

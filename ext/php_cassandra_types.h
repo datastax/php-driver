@@ -95,7 +95,7 @@ typedef struct {
 
 typedef struct {
   STATEMENT_FIELDS
-  CassPrepared* prepared;
+  const CassPrepared* prepared;
 } cassandra_prepared_statement;
 
 typedef struct {
@@ -110,7 +110,7 @@ typedef struct {
   long        consistency;
   long        serial_consistency;
   long        page_size;
-  long        timeout;
+  zval*       timeout;
   zval*       arguments;
 } cassandra_execute_options;
 
@@ -133,16 +133,29 @@ typedef struct {
   unsigned int             connect_timeout;
   unsigned int             request_timeout;
   zval*                    ssl_options;
-  CassConsistency          default_consistency;
+  long                     default_consistency;
   int                      default_page_size;
   zval*                    default_timeout;
   cass_bool_t              persist;
 } cassandra_cluster_builder;
 
 typedef struct {
+  zend_object zval;
+  CassFuture* future;
+  zval*       prepared_statement;
+} cassandra_future_prepared_statement;
+
+typedef struct {
+  zend_object zval;
+  CassFuture* future;
+  zval*       rows;
+} cassandra_future_rows;
+
+typedef struct {
   zend_object       zval;
   CassFuture*       future;
   CassSession*      session;
+  zval*             default_session;
   cass_bool_t       persist;
   char*             hash_key;
   int               hash_key_len;
@@ -239,6 +252,8 @@ extern PHP_CASSANDRA_API zend_class_entry* cassandra_cluster_builder_ce;
 extern PHP_CASSANDRA_API zend_class_entry* cassandra_ssl_ce;
 extern PHP_CASSANDRA_API zend_class_entry* cassandra_ssl_builder_ce;
 extern PHP_CASSANDRA_API zend_class_entry* cassandra_future_ce;
+extern PHP_CASSANDRA_API zend_class_entry* cassandra_future_prepared_statement_ce;
+extern PHP_CASSANDRA_API zend_class_entry* cassandra_future_rows_ce;
 extern PHP_CASSANDRA_API zend_class_entry* cassandra_future_session_ce;
 extern PHP_CASSANDRA_API zend_class_entry* cassandra_session_ce;
 extern PHP_CASSANDRA_API zend_class_entry* cassandra_default_session_ce;
@@ -275,6 +290,8 @@ void cassandra_define_Cluster(TSRMLS_D);
 void cassandra_define_ClusterBuilder(TSRMLS_D);
 void cassandra_define_DefaultCluster(TSRMLS_D);
 void cassandra_define_Future(TSRMLS_D);
+void cassandra_define_FuturePreparedStatement(TSRMLS_D);
+void cassandra_define_FutureRows(TSRMLS_D);
 void cassandra_define_FutureSession(TSRMLS_D);
 void cassandra_define_Session(TSRMLS_D);
 void cassandra_define_DefaultSession(TSRMLS_D);

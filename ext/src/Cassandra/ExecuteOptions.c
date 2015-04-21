@@ -1,5 +1,7 @@
 #include "php_cassandra.h"
 
+#include "util/consistency.h"
+
 zend_class_entry *cassandra_execute_options_ce = NULL;
 
 ZEND_EXTERN_MODULE_GLOBALS(cassandra)
@@ -25,45 +27,41 @@ PHP_METHOD(ExecuteOptions, __construct)
 
   zval* consistency;
   if (zend_hash_find(Z_ARRVAL_P(options), "consistency", sizeof("consistency"), (void**)&consistency) != FAILURE) {
-    /* TODO: Check values */
-    if (Z_TYPE_P(consistency) != IS_LONG) {
-      INVALID_ARGUMENT(consistency, "a long");
+    if (php_cassandra_get_consistency(consistency, &self->consistency) == FAILURE) {
+      return;
     }
-    self->consistency = Z_LVAL_P(consistency);
   }
 
   zval* serial_consistency;
   if (zend_hash_find(Z_ARRVAL_P(options), "serial_consistency", sizeof("serial_consistency"), (void**)&serial_consistency) != FAILURE) {
-    /* TODO: Check values */
-    if (Z_TYPE_P(serial_consistency) != IS_LONG) {
-      INVALID_ARGUMENT(serial_consistency, "a long");
+    if (php_cassandra_get_serial_consistency(serial_consistency, &self->serial_consistency) == FAILURE) {
+      return;
     }
-    self->serial_consistency = Z_LVAL_P(serial_consistency);
   }
 
   zval* page_size;
   if (zend_hash_find(Z_ARRVAL_P(options), "page_size", sizeof("page_size"), (void**)&page_size) != FAILURE) {
     if (Z_TYPE_P(page_size) != IS_LONG) {
       INVALID_ARGUMENT(page_size, "a long");
+      return;
     }
     self->page_size = Z_LVAL_P(page_size);
   }
 
   zval* timeout;
   if (zend_hash_find(Z_ARRVAL_P(options), "timeout", sizeof("timeout"), (void**)&timeout) != FAILURE) {
-    if (Z_TYPE_P(timeout) != IS_LONG) {
-      INVALID_ARGUMENT(timeout, "a long");
-    }
-    self->timeout = Z_LVAL_P(timeout);
+    self->timeout = timeout;
+    Z_ADDREF_P(self->timeout);
   }
 
   zval* arguments;
   if (zend_hash_find(Z_ARRVAL_P(arguments), "arguments", sizeof("arguments"), (void**)&arguments) != FAILURE) {
     if (Z_TYPE_P(arguments) != IS_ARRAY) {
       INVALID_ARGUMENT(arguments, "an array");
+      return;
     }
-    Z_ADDREF_P(arguments);
     self->arguments = arguments;
+    Z_ADDREF_P(self->arguments);
   }
 }
 
@@ -101,9 +99,8 @@ php_cassandra_execute_options_free(void *object TSRMLS_DC)
 {
   cassandra_execute_options* options = (cassandra_execute_options*) object;
 
-  if (options->arguments) {
-    Z_DELREF_P(options->arguments);
-  }
+  if (options->arguments)
+    zval_ptr_dtor(&options->arguments);
 
   zend_object_std_dtor(&options->zval TSRMLS_CC);
   efree(options);
@@ -123,7 +120,7 @@ php_cassandra_execute_options_new(zend_class_entry* class_type TSRMLS_DC)
   options->consistency = -1;
   options->serial_consistency = -1;
   options->page_size = -1;
-  options->timeout = -1;
+  options->timeout = NULL;
   options->arguments = NULL;
 
   retval.handle   = zend_objects_store_put(options,

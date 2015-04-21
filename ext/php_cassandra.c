@@ -394,6 +394,8 @@ PHP_MINIT_FUNCTION(cassandra)
   cassandra_define_ClusterBuilder(TSRMLS_C);
   cassandra_define_DefaultCluster(TSRMLS_C);
   cassandra_define_Future(TSRMLS_C);
+  cassandra_define_FuturePreparedStatement(TSRMLS_C);
+  cassandra_define_FutureRows(TSRMLS_C);
   cassandra_define_FutureSession(TSRMLS_C);
   cassandra_define_Session(TSRMLS_C);
   cassandra_define_DefaultSession(TSRMLS_C);

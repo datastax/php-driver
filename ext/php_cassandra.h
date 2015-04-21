@@ -59,12 +59,27 @@ void throw_invalid_argument(zval* object,
   return; \
 }
 
+#define INVALID_ARGUMENT_VALUE(object, expected, failed_value) \
+{ \
+  throw_invalid_argument(object, #object, #expected TSRMLS_CC); \
+  return failed_value; \
+}
+
 #define ASSERT_SUCCESS(rc) \
 { \
   if (rc != CASS_OK) { \
     zend_throw_exception_ex(exception_class(rc), rc TSRMLS_CC, \
                             "%s", cass_error_desc(rc)); \
     return; \
+  } \
+}
+
+#define ASSERT_SUCCESS_VALUE(rc, failed_value) \
+{ \
+  if (rc != CASS_OK) { \
+    zend_throw_exception_ex(exception_class(rc), rc TSRMLS_CC, \
+                            "%s", cass_error_desc(rc)); \
+    return failed_value; \
   } \
 }
 

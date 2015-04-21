@@ -38,9 +38,8 @@ php_cassandra_prepared_statement_free(void *object TSRMLS_DC)
 {
   cassandra_prepared_statement* statement = (cassandra_prepared_statement*) object;
 
-  if (statement->prepared) {
+  if (statement->prepared)
     cass_prepared_free(statement->prepared);
-  }
 
   zend_object_std_dtor(&statement->zval TSRMLS_CC);
   efree(statement);

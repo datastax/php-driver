@@ -1,5 +1,6 @@
 #include "php_cassandra.h"
 #include "util/bytes.h"
+#include "util/future.h"
 #include "util/math.h"
 #include "util/collections.h"
 #include "types/collection.h"
@@ -19,7 +20,8 @@ zend_class_entry *cassandra_default_session_ce = NULL;
 }
 
 static int
-bind_argument_by_index(CassStatement* statement, zval* index, zval* value) {
+bind_argument_by_index(CassStatement* statement, zval* index, zval* value)
+{
   if (Z_TYPE_P(value) == IS_NULL)
     CHECK_RESULT(cass_statement_bind_null(statement, (cass_size_t) Z_LVAL_P(index)));
 
@@ -125,7 +127,8 @@ bind_argument_by_index(CassStatement* statement, zval* index, zval* value) {
 }
 
 static int
-bind_argument_by_name(CassStatement* statement, zval* name, zval* value) {
+bind_argument_by_name(CassStatement* statement, zval* name, zval* value)
+{
   if (Z_TYPE_P(value) == IS_NULL) {
     CHECK_RESULT(cass_statement_bind_null_by_name(statement, Z_STRVAL_P(name)));
   }
@@ -232,7 +235,8 @@ bind_argument_by_name(CassStatement* statement, zval* name, zval* value) {
 }
 
 static int
-bind_argument(CassStatement* statement, zval* key, zval* value) {
+bind_argument(CassStatement* statement, zval* key, zval* value)
+{
   if (Z_TYPE_P(key) == IS_LONG) {
     return bind_argument_by_index(statement, key, value);
   } else if (Z_TYPE_P(key) == IS_STRING) {
@@ -243,7 +247,8 @@ bind_argument(CassStatement* statement, zval* key, zval* value) {
 
 
 static int
-bind_arguments(CassStatement* statement, HashTable* arguments) {
+bind_arguments(CassStatement* statement, HashTable* arguments)
+{
   HashPosition pos;
   zval* key;
   zval* value;
@@ -259,33 +264,45 @@ bind_arguments(CassStatement* statement, HashTable* arguments) {
   return SUCCESS;
 }
 
+static int set_options(CassStatement* statement,
+                       cassandra_execute_options* options)
+{
+  if (options) {
+    if (options->arguments) {
+      if (bind_arguments(statement, Z_ARRVAL_P(options->arguments)) == FAILURE) {
+        cass_statement_free(statement);
+        return FAILURE;
+      }
+    }
+
+    if (options->consistency >= 0)
+      ASSERT_SUCCESS_VALUE(cass_statement_set_consistency(statement, (CassConsistency)options->consistency), FAILURE);
+
+    if (options->serial_consistency >= 0)
+      ASSERT_SUCCESS_VALUE(cass_statement_set_serial_consistency(statement, (CassConsistency)options->serial_consistency), FAILURE);
+
+    if (options->page_size >= 0)
+      ASSERT_SUCCESS_VALUE(cass_statement_set_paging_size(statement, options->page_size), FAILURE);
+  }
+
+  return SUCCESS;
+}
+
 static CassFuture*
 execute_simple(CassSession* session,
                cassandra_simple_statement* simple,
-               cassandra_execute_options* options) {
+               cassandra_execute_options* options)
+{
   zend_uint count = 0;
 
-  if (options->arguments) {
+  if (options && options->arguments) {
     count = Z_ARRVAL_P(options->arguments)->nNumOfElements;
   }
 
   CassStatement* statement = cass_statement_new(cass_string_init(simple->cql), count);
 
-  if (options->arguments) {
-    if (bind_arguments(statement, Z_ARRVAL_P(options->arguments)) == FAILURE) {
-      cass_statement_free(statement);
-      return NULL;
-    }
-  }
-
-  if (options->consistency >= 0)
-    cass_statement_set_consistency(statement, (CassConsistency)options->consistency);
-
-  if (options->serial_consistency >= 0)
-    cass_statement_set_serial_consistency(statement, (CassConsistency)options->serial_consistency);
-
-  if (options->page_size >= 0) {
-    cass_statement_set_paging_size(statement, options->page_size);
+  if (set_options(statement, options) == FAILURE) {
+    return NULL;
   }
 
   CassFuture* future = cass_session_execute(session, statement);
@@ -296,24 +313,12 @@ execute_simple(CassSession* session,
 static CassFuture*
 execute_prepared(CassSession* session,
                cassandra_prepared_statement* prepared,
-               cassandra_execute_options* options) {
+               cassandra_execute_options* options)
+{
   CassStatement* statement = cass_prepared_bind(prepared->prepared);
 
-  if (options->arguments) {
-    if (bind_arguments(statement, Z_ARRVAL_P(options->arguments)) == FAILURE) {
-      cass_statement_free(statement);
-      return NULL;
-    }
-  }
-
-  if (options->consistency >= 0)
-    cass_statement_set_consistency(statement, (CassConsistency)options->consistency);
-
-  if (options->serial_consistency >= 0)
-    cass_statement_set_serial_consistency(statement, (CassConsistency)options->serial_consistency);
-
-  if (options->page_size >= 0) {
-    cass_statement_set_paging_size(statement, options->page_size);
+  if (set_options(statement, options) == FAILURE) {
+    return NULL;
   }
 
   CassFuture* future = cass_session_execute(session, statement);
@@ -323,70 +328,193 @@ execute_prepared(CassSession* session,
 
 static CassFuture*
 execute_batch(CassSession* session,
-              cassandra_batch_statement* batch) {
+              cassandra_batch_statement* batch)
+{
+  return NULL;
+}
+
+static CassFuture* execute_async(CassSession* session,
+                                 cassandra_statement* statement,
+                                 cassandra_execute_options* options)
+{
+  CassFuture* future = NULL;
+  switch(statement->type) {
+  case CASSANDRA_SIMPLE_STATEMENT:
+    future = execute_simple(session, (cassandra_simple_statement*)statement, options);
+    break;
+  case CASSANDRA_PREPARED_STATEMENT:
+    future  = execute_prepared(session, (cassandra_prepared_statement*)statement, options);
+    break;
+  case CASSANDRA_BATCH_STATEMENT:
+    future  = execute_batch(session, (cassandra_batch_statement*)statement);
+    break;
+  default:
+    ZEND_ASSERT(0);
+  }
+  return future;
 }
 
 PHP_METHOD(DefaultSession, execute)
 {
-  zval *statement_arg;
-  zval *options_arg = NULL;
+  zval *statement = NULL;
+  zval *options = NULL;
 
-  if(zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z|z", &statement_arg, &options_arg) == FAILURE) {
+  if(zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z|z", &statement, &options) == FAILURE) {
+    return;
+  }
+
+  if (!instanceof_function(Z_OBJCE_P(statement), cassandra_statement_ce TSRMLS_CC)) {
+    INVALID_ARGUMENT(statement, "Cassandra\Statement");
+  }
+
+  cassandra_session* self =
+    (cassandra_session*)zend_object_store_get_object(getThis() TSRMLS_CC);
+
+  cassandra_statement* internal_statement
+    = (cassandra_statement*)zend_object_store_get_object(statement TSRMLS_CC);
+
+  cassandra_execute_options* internal_options = NULL;
+  if (options) {
+    if (Z_TYPE_P(options) != IS_ARRAY)  {
+      INVALID_ARGUMENT(options, "an array");
+    }
+    internal_options = (cassandra_execute_options*)zend_object_store_get_object(options TSRMLS_CC);
+  }
+
+  CassFuture* future = execute_async(self->session, internal_statement, internal_options);
+  if (!future) {
+    return;
+  }
+
+  zval* timeout = internal_options ? internal_options->timeout : NULL;
+  if (php_cassandra_future_wait_timed(future, timeout) == FAILURE) {
+    cass_future_free(future);
+    return;
+  }
+
+  if (php_cassandra_future_is_error(future) == FAILURE) {
+    cass_future_free(future);
+    return;
+  }
+
+  cass_future_free(future);
+
+  /* TODO: Handle rows */
+  RETURN_TRUE;
+}
+
+PHP_METHOD(DefaultSession, executeAsync)
+{
+  zval *statement = NULL;
+  zval *options = NULL;
+
+  if(zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z|z", &statement, &options) == FAILURE) {
+    return;
+  }
+
+  if (!instanceof_function(Z_OBJCE_P(statement), cassandra_statement_ce TSRMLS_CC)) {
+    INVALID_ARGUMENT(statement, "Cassandra\Statement");
+  }
+
+  cassandra_session* self =
+    (cassandra_session*)zend_object_store_get_object(getThis() TSRMLS_CC);
+
+  cassandra_statement* internal_statement
+    = (cassandra_statement*)zend_object_store_get_object(statement TSRMLS_CC);
+
+  cassandra_execute_options* internal_options = NULL;
+  if (options) {
+    if (Z_TYPE_P(options) != IS_ARRAY)  {
+      INVALID_ARGUMENT(options, "an array");
+    }
+    internal_options = (cassandra_execute_options*)zend_object_store_get_object(options TSRMLS_CC);
+  }
+
+  CassFuture* future = execute_async(self->session, internal_statement, internal_options);
+  if (!future) {
+    return;
+  }
+
+  object_init_ex(return_value, cassandra_future_rows_ce);
+  cassandra_future_rows* future_rows =
+   (cassandra_future_rows*)zend_object_store_get_object(return_value TSRMLS_CC);
+
+  future_rows->future = future;
+}
+
+PHP_METHOD(DefaultSession, prepare)
+{
+  zval *cql = NULL;
+  zval *options = NULL;
+
+  if(zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z|z", &cql, &options) == FAILURE) {
     return;
   }
 
   cassandra_session* self =
     (cassandra_session*)zend_object_store_get_object(getThis() TSRMLS_CC);
 
-  cassandra_statement* statement
-    = (cassandra_statement*)zend_object_store_get_object(statement_arg TSRMLS_CC);
-
-  cassandra_execute_options* options
-    = (cassandra_execute_options*)zend_object_store_get_object(options_arg TSRMLS_CC);
-
-  CassFuture* future;
-  switch(statement->type) {
-  case CASSANDRA_SIMPLE_STATEMENT:
-    future = execute_simple(self->session, (cassandra_simple_statement*)statement, options);
-    break;
-  case CASSANDRA_PREPARED_STATEMENT:
-    future  = execute_prepared(self->session, (cassandra_prepared_statement*)statement, options);
-    break;
-  case CASSANDRA_BATCH_STATEMENT:
-    future  = execute_batch(self->session, (cassandra_batch_statement*)statement);
-    break;
-  default:
-    ZEND_ASSERT(0);
+  cassandra_execute_options* internal_options = NULL;
+  if (options) {
+    if (Z_TYPE_P(options) != IS_ARRAY)  {
+      INVALID_ARGUMENT(options, "an array");
+    }
+    internal_options = (cassandra_execute_options*)zend_object_store_get_object(options TSRMLS_CC);
   }
 
-  if (options->timeout > 0 && !cass_future_wait_timed(future, options->timeout)) {
-    /* Timed out */
-    cass_future_free(future);
-    RETURN_FALSE;
-  }
+  CassFuture* future = cass_session_prepare(self->session,
+                                            cass_string_init2(Z_STRVAL_P(cql),
+                                                              Z_STRLEN_P(cql)));
 
-  int rc = cass_future_error_code(future);
-  if (rc != CASS_OK) {
-    CassString message = cass_future_error_message(future);
-    zend_throw_exception_ex(exception_class(rc), rc TSRMLS_CC,
-                            "%.*s", (int)message.length, message.data);
+  zval* timeout = internal_options ? internal_options->timeout : NULL;
+  if (php_cassandra_future_wait_timed(future, timeout) == FAILURE) {
     cass_future_free(future);
     return;
   }
 
-  RETURN_TRUE;
-}
+  if (php_cassandra_future_is_error(future) == FAILURE) {
+    cass_future_free(future);
+    return;
+  }
 
-PHP_METHOD(DefaultSession, executeAsync)
-{
-}
+  object_init_ex(return_value, cassandra_prepared_statement_ce);
+  cassandra_prepared_statement* prepared_statement =
+      (cassandra_prepared_statement*)zend_object_store_get_object(return_value TSRMLS_CC);
 
-PHP_METHOD(DefaultSession, prepare)
-{
+  prepared_statement->prepared = cass_future_get_prepared(future);
+
+  cass_future_free(future);
 }
 
 PHP_METHOD(DefaultSession, prepareAsync)
 {
+  zval *cql = NULL;
+  zval *options = NULL;
+
+  if(zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z|z", &cql, &options) == FAILURE) {
+    return;
+  }
+
+  cassandra_session* self =
+    (cassandra_session*)zend_object_store_get_object(getThis() TSRMLS_CC);
+
+  cassandra_execute_options* internal_options = NULL;
+  if (options) {
+    if (Z_TYPE_P(options) != IS_ARRAY)  {
+      INVALID_ARGUMENT(options, "an array");
+    }
+    internal_options = (cassandra_execute_options*)zend_object_store_get_object(options TSRMLS_CC);
+  }
+
+  CassFuture* future = cass_session_prepare(self->session,
+                                            cass_string_init2(Z_STRVAL_P(cql),
+                                                              Z_STRLEN_P(cql)));
+
+  object_init_ex(return_value, cassandra_future_prepared_statement_ce);
+  cassandra_future_prepared_statement* future_prepared =
+   (cassandra_future_prepared_statement*)zend_object_store_get_object(return_value TSRMLS_CC);
+
+  future_prepared->future = future;
 }
 
 PHP_METHOD(DefaultSession, close)

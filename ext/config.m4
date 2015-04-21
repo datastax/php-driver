@@ -36,6 +36,8 @@ if test "$PHP_CASSANDRA" != "no"; then
     src/Cassandra/Exception/IsBootstrappingException.c \
     src/Cassandra/Exception/OverloadedException.c \
     src/Cassandra/Future.c \
+    src/Cassandra/FuturePreparedStatement.c \
+    src/Cassandra/FutureRows.c \
     src/Cassandra/FutureSession.c \
     src/Cassandra/Session.c \
     src/Cassandra/DefaultSession.c \
@@ -51,6 +53,8 @@ if test "$PHP_CASSANDRA" != "no"; then
   CASSANDRA_TYPES="\
     util/bytes.c \
     util/collections.c \
+    util/consistency.c \
+    util/future.c \
     util/inet.c \
     util/math.c \
     util/uuid_gen.c \
