@@ -2,7 +2,6 @@
 #include <ext/spl/spl_exceptions.h>
 
 extern zend_class_entry* spl_ce_DomainException;
-extern zend_class_entry* cassandra_exception_ce;
 
 zend_class_entry *cassandra_domain_exception_ce = NULL;
 

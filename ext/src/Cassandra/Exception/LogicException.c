@@ -2,7 +2,6 @@
 #include <ext/spl/spl_exceptions.h>
 
 extern zend_class_entry* spl_ce_LogicException;
-extern zend_class_entry* cassandra_exception_ce;
 
 zend_class_entry *cassandra_logic_exception_ce = NULL;
 

@@ -261,6 +261,7 @@ extern PHP_CASSANDRA_API zend_class_entry* cassandra_exception_ce;
 extern PHP_CASSANDRA_API zend_class_entry* cassandra_runtime_exception_ce;
 extern PHP_CASSANDRA_API zend_class_entry* cassandra_timeout_exception_ce;
 extern PHP_CASSANDRA_API zend_class_entry* cassandra_logic_exception_ce;
+extern PHP_CASSANDRA_API zend_class_entry* cassandra_domain_exception_ce;
 extern PHP_CASSANDRA_API zend_class_entry* cassandra_invalid_argument_exception_ce;
 extern PHP_CASSANDRA_API zend_class_entry* cassandra_server_exception_ce;
 extern PHP_CASSANDRA_API zend_class_entry* cassandra_overloaded_exception_ce;
