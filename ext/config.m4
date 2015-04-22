@@ -44,7 +44,7 @@ if test "$PHP_CASSANDRA" != "no"; then
     src/Cassandra/SSLOptions.c \
     src/Cassandra/SSLOptions/Builder.c \
     src/Cassandra/Statement.c \
-    src/Cassandra/ExecuteOptions.c \
+    src/Cassandra/ExecutionOptions.c \
     src/Cassandra/SimpleStatement.c \
     src/Cassandra/PreparedStatement.c \
     src/Cassandra/BatchStatement.c \

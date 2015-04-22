@@ -112,7 +112,7 @@ typedef struct {
   long        page_size;
   zval*       timeout;
   zval*       arguments;
-} cassandra_execute_options;
+} cassandra_execution_options;
 
 typedef enum {
   LOAD_BALANCING_ROUND_ROBIN = 0,
@@ -146,9 +146,9 @@ typedef struct {
 } cassandra_future_prepared_statement;
 
 typedef struct {
-  zend_object zval;
-  CassFuture* future;
-  zval*       rows;
+  zend_object    zval;
+  CassFuture*    future;
+  zval*          rows;
 } cassandra_future_rows;
 
 typedef struct {
@@ -285,6 +285,7 @@ extern PHP_CASSANDRA_API zend_class_entry* cassandra_statement_ce;
 extern PHP_CASSANDRA_API zend_class_entry* cassandra_simple_statement_ce;
 extern PHP_CASSANDRA_API zend_class_entry* cassandra_prepared_statement_ce;
 extern PHP_CASSANDRA_API zend_class_entry* cassandra_batch_statement_ce;
+extern PHP_CASSANDRA_API zend_class_entry* cassandra_execution_options_ce;
 
 void cassandra_define_Cassandra(TSRMLS_D);
 void cassandra_define_Cluster(TSRMLS_D);
@@ -302,7 +303,7 @@ void cassandra_define_Statement(TSRMLS_D);
 void cassandra_define_SimpleStatement(TSRMLS_D);
 void cassandra_define_PreparedStatement(TSRMLS_D);
 void cassandra_define_BatchStatement(TSRMLS_D);
-void cassandra_define_ExecuteOptions(TSRMLS_D);
+void cassandra_define_ExecutionOptions(TSRMLS_D);
 
 extern int php_le_cassandra_cluster();
 extern int php_le_cassandra_session();

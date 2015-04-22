@@ -405,7 +405,7 @@ PHP_MINIT_FUNCTION(cassandra)
   cassandra_define_SimpleStatement(TSRMLS_C);
   cassandra_define_PreparedStatement(TSRMLS_C);
   cassandra_define_BatchStatement(TSRMLS_C);
-  cassandra_define_ExecuteOptions(TSRMLS_C);
+  cassandra_define_ExecutionOptions(TSRMLS_C);
 
   return SUCCESS;
 }
