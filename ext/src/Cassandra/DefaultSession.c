@@ -413,14 +413,14 @@ PHP_METHOD(DefaultSession, executeAsync)
   }
 
   if (!instanceof_function(Z_OBJCE_P(statement), cassandra_statement_ce TSRMLS_CC)) {
-    INVALID_ARGUMENT(statement, "Cassandra\Statement");
+    INVALID_ARGUMENT(statement, "an instance of Cassandra\\Statement");
   }
 
   cassandra_session* self =
-    (cassandra_session*)zend_object_store_get_object(getThis() TSRMLS_CC);
+    (cassandra_session*) zend_object_store_get_object(getThis() TSRMLS_CC);
 
   cassandra_statement* internal_statement
-    = (cassandra_statement*)zend_object_store_get_object(statement TSRMLS_CC);
+    = (cassandra_statement*) zend_object_store_get_object(statement TSRMLS_CC);
 
   cassandra_execute_options* internal_options = NULL;
   if (options) {
@@ -437,7 +437,7 @@ PHP_METHOD(DefaultSession, executeAsync)
 
   object_init_ex(return_value, cassandra_future_rows_ce);
   cassandra_future_rows* future_rows =
-   (cassandra_future_rows*)zend_object_store_get_object(return_value TSRMLS_CC);
+   (cassandra_future_rows*) zend_object_store_get_object(return_value TSRMLS_CC);
 
   future_rows->future = future;
 }

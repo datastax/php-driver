@@ -1,5 +1,4 @@
 #include "php_cassandra.h"
-
 #include "util/future.h"
 
 zend_class_entry *cassandra_future_rows_ce = NULL;
@@ -73,7 +72,8 @@ php_cassandra_future_rows_free(void *object TSRMLS_DC)
   if (future->rows)
     zval_ptr_dtor(&future->rows);
 
-  cass_future_free(future->future);
+  if (future->future)
+    cass_future_free(future->future);
 
   efree(future);
 }
