@@ -1,17 +1,21 @@
 #include "php_cassandra.h"
 
+#include "util/future.h"
+
 zend_class_entry *cassandra_default_cluster_ce = NULL;
 
 ZEND_EXTERN_MODULE_GLOBALS(cassandra)
 
 PHP_METHOD(DefaultCluster, connect)
 {
+  CassFuture* future;
   char* hash_key;
   int   hash_key_len;
   char* keyspace = NULL;
   int   keyspace_len;
+  zval* timeout = NULL;
 
-  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "|s", &keyspace, &keyspace_len) == FAILURE) {
+  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "|sz", &keyspace, &keyspace_len, &timeout) == FAILURE) {
     return;
   }
 
@@ -28,18 +32,19 @@ PHP_METHOD(DefaultCluster, connect)
     zend_rsrc_list_entry *le;
 
     hash_key_len = spprintf(&hash_key, 0,
-      "%s:session:%s", cluster->hash_key, SAFE_STR(keyspace));
+                            "%s:session:%s",
+                            cluster->hash_key, SAFE_STR(keyspace));
 
     if (zend_hash_find(&EG(persistent_list), hash_key, hash_key_len + 1, (void **)&le) == SUCCESS) {
       if (Z_TYPE_P(le) == php_le_cassandra_session()) {
         cassandra_psession* psession = (cassandra_psession*) le->ptr;
         session->session = psession->session;
+        efree(hash_key);
         return;
       }
     }
   }
 
-  CassFuture* future;
   session->session = cass_session_new();
 
   if (keyspace) {
@@ -48,20 +53,20 @@ PHP_METHOD(DefaultCluster, connect)
     future = cass_session_connect(session->session, cluster->cluster);
   }
 
+  if (php_cassandra_future_wait_timed(future, timeout) == FAILURE) {
+    cass_future_free(future);
+    if (cluster->persist) efree(hash_key);
+    return;
+  }
+
   CassError rc = cass_future_error_code(future);
 
   if (rc != CASS_OK) {
     CassString message = cass_future_error_message(future);
-
-    if (cluster->persist) {
-      efree(hash_key);
-      cass_session_free(session->session);
-      session->session = NULL;
-    }
     zend_throw_exception_ex(exception_class(rc), rc TSRMLS_CC,
       "%.*s", (int) message.length, message.data);
-
     cass_future_free(future);
+    if (cluster->persist) efree(hash_key);
     return;
   }
 
@@ -75,9 +80,12 @@ PHP_METHOD(DefaultCluster, connect)
     le.type = php_le_cassandra_session();
     le.ptr  = psession;
 
-    if (zend_hash_update(&EG(persistent_list), hash_key, hash_key_len + 1, &le, sizeof(zend_rsrc_list_entry), NULL) == SUCCESS) {
-      CASSANDRA_G(persistent_sessions)++;
-    }
+    zend_hash_update(&EG(persistent_list), hash_key, hash_key_len + 1, &le, sizeof(zend_rsrc_list_entry), NULL);
+    CASSANDRA_G(persistent_sessions)++;
+
+    efree(hash_key);
+  } else {
+    cass_future_free(future);
   }
 }
 
@@ -138,20 +146,23 @@ PHP_METHOD(DefaultCluster, connectAsync)
     le.type = php_le_cassandra_session();
     le.ptr  = psession;
 
-    if (zend_hash_update(&EG(persistent_list), hash_key, hash_key_len + 1, &le, sizeof(zend_rsrc_list_entry), NULL) == SUCCESS) {
-      CASSANDRA_G(persistent_sessions)++;
-    }
+    zend_hash_update(&EG(persistent_list), hash_key, hash_key_len + 1, &le, sizeof(zend_rsrc_list_entry), NULL);
+    CASSANDRA_G(persistent_sessions)++;
   }
 }
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_keyspace, 0, ZEND_RETURN_VALUE, 0)
+ZEND_BEGIN_ARG_INFO_EX(arginfo_connect, 0, ZEND_RETURN_VALUE, 0)
+  ZEND_ARG_INFO(0, keyspace)
+  ZEND_ARG_INFO(0, timeout)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_INFO_EX(arginfo_connectAsync, 0, ZEND_RETURN_VALUE, 0)
   ZEND_ARG_INFO(0, keyspace)
 ZEND_END_ARG_INFO()
 
 static zend_function_entry cassandra_default_cluster_methods[] = {
-  PHP_ME(DefaultCluster, connect, arginfo_keyspace, ZEND_ACC_PUBLIC)
-  PHP_ME(DefaultCluster, connectAsync, arginfo_keyspace,
-    ZEND_ACC_PUBLIC)
+  PHP_ME(DefaultCluster, connect, arginfo_connect, ZEND_ACC_PUBLIC)
+  PHP_ME(DefaultCluster, connectAsync, arginfo_connectAsync, ZEND_ACC_PUBLIC)
   PHP_FE_END
 };
 
