@@ -1,0 +1,81 @@
+// vim:ft=javascript
+
+ARG_ENABLE("cassandra", "Enable DataStax PHP Cassandra extension", "no");
+ARG_WITH("cassandra-cpp-driver", "Where to find DataStax C/C++ driver", "no");
+ARG_WITH("libuv-libs", "Where to find libuv libraries", "no");
+ARG_WITH("openssl-libs", "Where to find OpenSSL libraries", "no");
+ARG_WITH("mpir", "Where to find MPIR (GNU MP)", "no");
+
+if (PHP_CASSANDRA != "no" &&
+    PHP_CASSANDRA_CPP_DRIVER != "no" && PHP_LIBUV_LIBS != "no" && PHP_OPENSSL_LIBS != "no" &&
+    PHP_MPIR != "no") {
+  if (CHECK_LIB("cassandra_static.lib", "cassandra", PHP_CASSANDRA_CPP_DRIVER) &&
+      CHECK_LIB("libuv.lib", "cassandra", PHP_LIBUV_LIBS) &&
+      CHECK_LIB("psapi.lib", "cassandra") &&
+      CHECK_LIB("iphlpapi.lib", "cassandra") &&
+      CHECK_LIB("libeay32.lib", "cassandra", PHP_OPENSSL_LIBS) &&
+      CHECK_LIB("ssleay32.lib", "cassandra", PHP_OPENSSL_LIBS) &&
+      CHECK_LIB("gdi32.lib", "cassandra") &&
+      CHECK_HEADER_ADD_INCLUDE("cassandra.h", "CFLAGS_CASSANDRA_CPP_DRIVER", PHP_CASSANDRA_CPP_DRIVER + "/include")) {
+    
+    AC_DEFINE("HAVE_CASSANDRA_CPP_DRIVER", PHP_CASSANDRA_CPP_DRIVER ? 0 : 1, "Have DataStax C/C++ driver");
+    if (CHECK_LIB("mpir.lib", "cassandra", PHP_MPIR) &&
+        CHECK_HEADER_ADD_INCLUDE("mpir.h", "CFLAGS_MPIR", PHP_MPIR + "/include")) {
+      AC_DEFINE("HAVE_MPIR", PHP_MPIR ? 0 : 1, "Have MPIR");
+      if (ADD_EXTENSION_DEP("cassandra", "spl")) {
+        EXTENSION("cassandra", "php_cassandra.c");
+
+        ADD_SOURCES(configure_module_dirname + "/exceptions",
+            "domain.c " +
+            "exception.c " +
+            "invalid_argument.c " +
+            "logic.c " +
+            "runtime.c " +
+            "server.c " +
+            "timeout.c", "cassandra");
+        ADD_SOURCES(configure_module_dirname + "/types",
+            "bigint.c " +
+            "blob.c " +
+            "collection.c " +
+            "decimal.c " +
+            "float.c " +
+            "inet.c " +
+            "map.c " +
+            "set.c " +
+            "timestamp.c " +
+            "timeuuid.c " +
+            "uuid.c " +
+            "uuid_interface.c " +
+            "varint.c", "cassandra");
+        ADD_SOURCES(configure_module_dirname + "/util",
+            "bytes.c " +
+            "collections.c " +
+            "inet.c " +
+            "math.c " +
+            "uuid_gen.c", "cassandra");
+
+        ADD_FLAG("LDFLAGS_CASSANDRA",
+            "/INCREMENTAL:NO " +
+            "/LTCG " +
+            "/NODEFAULTLIB:LIBCMT.LIB " +
+            "/NODEFAULTLIB:LIBCMTD.LIB");
+        ADD_FLAG("CFLAGS_CASSANDRA",
+            "/I " + configure_module_dirname + " " +
+            "/I " + PHP_CASSANDRA_CPP_DRIVER + "/include " +
+            "/I " + PHP_MPIR + "/include " +
+            "/I " + configure_module_dirname + "/ext/exceptions " +
+            "/I " + configure_module_dirname + "/ext/types " +
+            "/I " + configure_module_dirname + "/ext/util" +
+            "/DCASS_STATIC " +
+            "/wd4267");
+      } else {
+        ERROR("Unable to add dependency spl");
+      }
+    } else {
+      ERROR("Unable to locate MPIR");
+    }
+  } else {
+    ERROR("Unable to locate DataStax C/C++ driver or its dependencies");
+  }
+}
+
