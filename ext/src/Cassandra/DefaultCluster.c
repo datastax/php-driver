@@ -1,5 +1,4 @@
 #include "php_cassandra.h"
-
 #include "util/future.h"
 
 zend_class_entry *cassandra_default_cluster_ce = NULL;
@@ -8,12 +7,13 @@ ZEND_EXTERN_MODULE_GLOBALS(cassandra)
 
 PHP_METHOD(DefaultCluster, connect)
 {
-  CassFuture* future;
+  CassFuture* future = NULL;
   char* hash_key;
   int   hash_key_len;
   char* keyspace = NULL;
   int   keyspace_len;
   zval* timeout = NULL;
+  cassandra_psession* psession;
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "|sz", &keyspace, &keyspace_len, &timeout) == FAILURE) {
     return;
@@ -28,34 +28,51 @@ PHP_METHOD(DefaultCluster, connect)
 
   session->persist = cluster->persist;
 
-  if (cluster->persist) {
+  if (session->persist) {
     zend_rsrc_list_entry *le;
 
-    hash_key_len = spprintf(&hash_key, 0,
-                            "%s:session:%s",
+    hash_key_len = spprintf(&hash_key, 0, "%s:session:%s",
                             cluster->hash_key, SAFE_STR(keyspace));
 
-    if (zend_hash_find(&EG(persistent_list), hash_key, hash_key_len + 1, (void **)&le) == SUCCESS) {
-      if (Z_TYPE_P(le) == php_le_cassandra_session()) {
-        cassandra_psession* psession = (cassandra_psession*) le->ptr;
-        session->session = psession->session;
-        efree(hash_key);
-        return;
-      }
+    if (zend_hash_find(&EG(persistent_list), hash_key, hash_key_len + 1, (void **)&le) == SUCCESS &&
+        Z_TYPE_P(le) == php_le_cassandra_session()) {
+      psession = (cassandra_psession*) le->ptr;
+      session->session = psession->session;
+      future = psession->future;
     }
   }
 
-  session->session = cass_session_new();
+  if (future == NULL) {
+    session->session = cass_session_new();
 
-  if (keyspace) {
-    future = cass_session_connect_keyspace(session->session, cluster->cluster, keyspace);
-  } else {
-    future = cass_session_connect(session->session, cluster->cluster);
+    if (keyspace)
+      future = cass_session_connect_keyspace(session->session, cluster->cluster, keyspace);
+    else
+      future = cass_session_connect(session->session, cluster->cluster);
+
+    if (session->persist) {
+      zend_rsrc_list_entry pe;
+      psession = (cassandra_psession*) pecalloc(1, sizeof(cassandra_psession), 1);
+      psession->session = session->session;
+      psession->future  = future;
+
+      pe.type = php_le_cassandra_session();
+      pe.ptr  = psession;
+
+      zend_hash_update(&EG(persistent_list), hash_key, hash_key_len + 1, &pe, sizeof(zend_rsrc_list_entry), NULL);
+      CASSANDRA_G(persistent_sessions)++;
+    }
   }
 
-  if (php_cassandra_future_wait_timed(future, timeout) == FAILURE) {
-    cass_future_free(future);
-    if (cluster->persist) efree(hash_key);
+  if (php_cassandra_future_wait_timed(future, timeout TSRMLS_CC) == FAILURE) {
+    zval_dtor(return_value);
+
+    if (session->persist) {
+      efree(hash_key);
+    } else {
+      cass_future_free(future);
+    }
+
     return;
   }
 
@@ -65,28 +82,23 @@ PHP_METHOD(DefaultCluster, connect)
     CassString message = cass_future_error_message(future);
     zend_throw_exception_ex(exception_class(rc), rc TSRMLS_CC,
       "%.*s", (int) message.length, message.data);
-    cass_future_free(future);
-    if (cluster->persist) efree(hash_key);
+    zval_dtor(return_value);
+
+    if (session->persist) {
+      if (zend_hash_del(&EG(persistent_list), hash_key, hash_key_len + 1) == SUCCESS) {
+        session->session = NULL;
+      }
+
+      efree(hash_key);
+    } else {
+      cass_future_free(future);
+    }
+
     return;
   }
 
-  if (cluster->persist) {
-    cassandra_psession* psession =
-      (cassandra_psession*) pecalloc(1, sizeof(cassandra_psession), 1);
-    psession->session = session->session;
-    psession->future  = future;
-
-    zend_rsrc_list_entry le;
-    le.type = php_le_cassandra_session();
-    le.ptr  = psession;
-
-    zend_hash_update(&EG(persistent_list), hash_key, hash_key_len + 1, &le, sizeof(zend_rsrc_list_entry), NULL);
-    CASSANDRA_G(persistent_sessions)++;
-
+  if (session->persist)
     efree(hash_key);
-  } else {
-    cass_future_free(future);
-  }
 }
 
 PHP_METHOD(DefaultCluster, connectAsync)
