@@ -121,6 +121,27 @@ typedef enum {
 } cassandra_load_balancing;
 
 typedef struct {
+  cass_size_t    count;
+  CassStatement* statement;
+} cassandra_statement_ref;
+
+typedef struct {
+  zend_object              zval;
+  cassandra_statement_ref* statement;
+  zval*                    session;
+  zval*                    rows;
+  const CassResult*        result;
+} cassandra_rows;
+
+typedef struct {
+  zend_object              zval;
+  cassandra_statement_ref* statement;
+  zval*                    session;
+  zval*                    rows;
+  CassFuture*              future;
+} cassandra_future_rows;
+
+typedef struct {
   zend_object              zval;
   char*                    contact_points;
   int                      port;
@@ -147,10 +168,9 @@ typedef struct {
 } cassandra_future_prepared_statement;
 
 typedef struct {
-  zend_object    zval;
-  CassFuture*    future;
-  zval*          rows;
-} cassandra_future_rows;
+  zend_object zval;
+  zval*       value;
+} cassandra_future_value;
 
 typedef struct {
   zend_object       zval;
@@ -256,6 +276,7 @@ extern PHP_CASSANDRA_API zend_class_entry* cassandra_future_ce;
 extern PHP_CASSANDRA_API zend_class_entry* cassandra_future_prepared_statement_ce;
 extern PHP_CASSANDRA_API zend_class_entry* cassandra_future_rows_ce;
 extern PHP_CASSANDRA_API zend_class_entry* cassandra_future_session_ce;
+extern PHP_CASSANDRA_API zend_class_entry* cassandra_future_value_ce;
 extern PHP_CASSANDRA_API zend_class_entry* cassandra_session_ce;
 extern PHP_CASSANDRA_API zend_class_entry* cassandra_default_session_ce;
 extern PHP_CASSANDRA_API zend_class_entry* cassandra_exception_ce;
@@ -287,6 +308,7 @@ extern PHP_CASSANDRA_API zend_class_entry* cassandra_simple_statement_ce;
 extern PHP_CASSANDRA_API zend_class_entry* cassandra_prepared_statement_ce;
 extern PHP_CASSANDRA_API zend_class_entry* cassandra_batch_statement_ce;
 extern PHP_CASSANDRA_API zend_class_entry* cassandra_execution_options_ce;
+extern PHP_CASSANDRA_API zend_class_entry* cassandra_rows_ce;
 
 void cassandra_define_Cassandra(TSRMLS_D);
 void cassandra_define_Cluster(TSRMLS_D);
@@ -296,6 +318,7 @@ void cassandra_define_Future(TSRMLS_D);
 void cassandra_define_FuturePreparedStatement(TSRMLS_D);
 void cassandra_define_FutureRows(TSRMLS_D);
 void cassandra_define_FutureSession(TSRMLS_D);
+void cassandra_define_FutureValue(TSRMLS_D);
 void cassandra_define_Session(TSRMLS_D);
 void cassandra_define_DefaultSession(TSRMLS_D);
 void cassandra_define_SSLOptions(TSRMLS_D);
@@ -305,6 +328,7 @@ void cassandra_define_SimpleStatement(TSRMLS_D);
 void cassandra_define_PreparedStatement(TSRMLS_D);
 void cassandra_define_BatchStatement(TSRMLS_D);
 void cassandra_define_ExecutionOptions(TSRMLS_D);
+void cassandra_define_Rows(TSRMLS_D);
 
 extern int php_le_cassandra_cluster();
 extern int php_le_cassandra_session();

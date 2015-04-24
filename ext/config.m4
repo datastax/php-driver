@@ -39,6 +39,7 @@ if test "$PHP_CASSANDRA" != "no"; then
     src/Cassandra/FuturePreparedStatement.c \
     src/Cassandra/FutureRows.c \
     src/Cassandra/FutureSession.c \
+    src/Cassandra/FutureValue.c \
     src/Cassandra/Session.c \
     src/Cassandra/DefaultSession.c \
     src/Cassandra/SSLOptions.c \
@@ -48,6 +49,7 @@ if test "$PHP_CASSANDRA" != "no"; then
     src/Cassandra/SimpleStatement.c \
     src/Cassandra/PreparedStatement.c \
     src/Cassandra/BatchStatement.c \
+    src/Cassandra/Rows.c \
   ";
 
   CASSANDRA_TYPES="\
@@ -57,6 +59,8 @@ if test "$PHP_CASSANDRA" != "no"; then
     util/future.c \
     util/inet.c \
     util/math.c \
+    util/ref.c \
+    util/result.c \
     util/uuid_gen.c \
     types/float.c \
     types/bigint.c \

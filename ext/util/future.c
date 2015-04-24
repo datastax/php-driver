@@ -1,9 +1,4 @@
 #include "php_cassandra.h"
-
-#include <cassandra.h>
-#include <php.h>
-#include <Zend/zend_exceptions.h>
-
 #include "future.h"
 
 int

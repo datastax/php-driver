@@ -1,5 +1,7 @@
 #include "php_cassandra.h"
 #include "util/future.h"
+#include "util/result.h"
+#include "util/ref.h"
 
 zend_class_entry *cassandra_future_rows_ce = NULL;
 
@@ -30,7 +32,35 @@ PHP_METHOD(FutureRows, get)
     return;
   }
 
-  /* Return object */
+  const CassResult* result = cass_future_get_result(self->future);
+
+  if (!result) {
+    zend_throw_exception_ex(cassandra_runtime_exception_ce, 0 TSRMLS_CC,
+                            "Future doesn't contain a result.");
+    return;
+  }
+
+  object_init_ex(self->rows, cassandra_rows_ce);
+  cassandra_rows* rows =
+    (cassandra_rows*) zend_object_store_get_object(self->rows TSRMLS_CC);
+
+  if (php_cassandra_get_result(result, &rows->rows TSRMLS_CC) == FAILURE) {
+    cass_result_free(result);
+    zval_ptr_dtor(&self->rows);
+    return;
+  }
+
+  if (self->statement) {
+    Z_ADDREF_P(self->session);
+    rows->statement = php_cassandra_add_ref(self->statement);
+    rows->session   = self->session;
+    rows->result    = result;
+  } else {
+    cass_result_free(result);
+  }
+
+  *return_value = *self->rows;
+  Z_ADDREF_P(return_value);
 }
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_timeout, 0, ZEND_RETURN_VALUE, 0)
@@ -72,6 +102,12 @@ php_cassandra_future_rows_free(void *object TSRMLS_DC)
   if (future->rows)
     zval_ptr_dtor(&future->rows);
 
+  if (future->statement)
+    php_cassandra_del_ref(&future->statement);
+
+  if (future->session)
+    zval_ptr_dtor(&future->session);
+
   if (future->future)
     cass_future_free(future->future);
 
@@ -89,8 +125,10 @@ php_cassandra_future_rows_new(zend_class_entry* class_type TSRMLS_DC)
   zend_object_std_init(&future->zval, class_type TSRMLS_CC);
   object_properties_init(&future->zval, class_type);
 
-  future->future = NULL;
-  future->rows   = NULL;
+  future->future    = NULL;
+  future->rows      = NULL;
+  future->statement = NULL;
+  future->session   = NULL;
 
   retval.handle   = zend_objects_store_put(future,
                       (zend_objects_store_dtor_t) zend_objects_destroy_object,
