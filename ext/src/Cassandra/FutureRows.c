@@ -40,6 +40,7 @@ PHP_METHOD(FutureRows, get)
     return;
   }
 
+  MAKE_STD_ZVAL(self->rows);
   object_init_ex(self->rows, cassandra_rows_ce);
   cassandra_rows* rows =
     (cassandra_rows*) zend_object_store_get_object(self->rows TSRMLS_CC);
