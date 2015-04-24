@@ -1,11 +1,10 @@
-#include "../php_cassandra.h"
+#include "php_cassandra.h"
 #include <stdlib.h>
 #include "util/collections.h"
 #include "util/bytes.h"
 #include "util/math.h"
 
 #define EXPECTING_VALUE(expected) \
-  ({ \
     if (Z_TYPE_P(object) == IS_OBJECT) { \
       Z_OBJ_HANDLER_P(object, get_class_name)(object, &class_name, &class_name_len, 0 TSRMLS_CC); \
       if (class_name) { \
@@ -20,20 +19,17 @@
       zend_throw_exception_ex(cassandra_ce_InvalidArgumentException, 0 TSRMLS_CC, \
         "Expected " expected ", %Z given", object); \
     } \
-    return 0; \
-  })
+    return 0;
 
 #define INSTANCE_OF(cls) \
   (Z_TYPE_P(object) == IS_OBJECT && instanceof_function(Z_OBJCE_P(object), cls TSRMLS_CC))
 
 #define CHECK_ERROR(rc) \
-  ({ \
     if (rc != CASS_OK) { \
       zend_throw_exception_ex(cassandra_ce_RuntimeException, 0 TSRMLS_CC, \
         "%s", cass_error_desc(rc)); \
       result = 0; \
-    } \
-  })
+    }
 
 extern zend_class_entry* cassandra_ce_RuntimeException;
 extern zend_class_entry* cassandra_ce_InvalidArgumentException;
@@ -400,14 +396,14 @@ php_cassandra_collection_append(CassCollection* collection, zval* value, CassVal
   cassandra_varint*     varint;
   cassandra_decimal*    decimal;
   cassandra_inet*       inet;
-  cass_size_t           size;
+  size_t                size;
   cass_byte_t*          data;
 
   switch (type) {
   case CASS_VALUE_TYPE_TEXT:
   case CASS_VALUE_TYPE_ASCII:
   case CASS_VALUE_TYPE_VARCHAR:
-    CHECK_ERROR(cass_collection_append_string(collection, cass_string_init2(Z_STRVAL_P(value), Z_STRLEN_P(value))));
+    CHECK_ERROR(cass_collection_append_string_n(collection, Z_STRVAL_P(value), Z_STRLEN_P(value)));
     break;
   case CASS_VALUE_TYPE_BIGINT:
   case CASS_VALUE_TYPE_COUNTER:
@@ -416,7 +412,7 @@ php_cassandra_collection_append(CassCollection* collection, zval* value, CassVal
     break;
   case CASS_VALUE_TYPE_BLOB:
     blob = (cassandra_blob*) zend_object_store_get_object(value TSRMLS_CC);
-    CHECK_ERROR(cass_collection_append_bytes(collection, cass_bytes_init(blob->data, blob->size)));
+    CHECK_ERROR(cass_collection_append_bytes(collection, blob->data, blob->size));
     break;
   case CASS_VALUE_TYPE_BOOLEAN:
     CHECK_ERROR(cass_collection_append_bool(collection, Z_BVAL_P(value)));
@@ -443,13 +439,13 @@ php_cassandra_collection_append(CassCollection* collection, zval* value, CassVal
   case CASS_VALUE_TYPE_VARINT:
     varint = (cassandra_varint*) zend_object_store_get_object(value TSRMLS_CC);
     data = (cass_byte_t*) export_twos_complement(varint->value, &size);
-    CHECK_ERROR(cass_collection_append_bytes(collection, cass_bytes_init(data, size)));
+    CHECK_ERROR(cass_collection_append_bytes(collection, data, size));
     free(data);
     break;
   case CASS_VALUE_TYPE_DECIMAL:
     decimal = (cassandra_decimal*) zend_object_store_get_object(value TSRMLS_CC);
     data = (cass_byte_t*) export_twos_complement(decimal->value, &size);
-    CHECK_ERROR(cass_collection_append_decimal(collection, cass_decimal_init(decimal->scale, cass_bytes_init(data, size))));
+    CHECK_ERROR(cass_collection_append_decimal(collection, data, size, decimal->scale));
     free(data);
     break;
   case CASS_VALUE_TYPE_INET:

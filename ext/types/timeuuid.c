@@ -1,4 +1,4 @@
-#include "../php_cassandra.h"
+#include "php_cassandra.h"
 #include "util/uuid_gen.h"
 #include "uuid_interface.h"
 #include "timeuuid.h"
@@ -149,11 +149,14 @@ php_cassandra_timeuuid_properties(zval *object TSRMLS_DC)
 static int
 php_cassandra_timeuuid_compare(zval *obj1, zval *obj2 TSRMLS_DC)
 {
+  cassandra_uuid* uuid1 = NULL;
+  cassandra_uuid* uuid2 = NULL;
+
   if (Z_OBJCE_P(obj1) != Z_OBJCE_P(obj2))
     return 1; /* different classes */
 
-  cassandra_uuid* uuid1 = (cassandra_uuid*) zend_object_store_get_object(obj1 TSRMLS_CC);
-  cassandra_uuid* uuid2 = (cassandra_uuid*) zend_object_store_get_object(obj2 TSRMLS_CC);
+  uuid1 = (cassandra_uuid*) zend_object_store_get_object(obj1 TSRMLS_CC);
+  uuid2 = (cassandra_uuid*) zend_object_store_get_object(obj2 TSRMLS_CC);
 
   if (uuid1->uuid.time_and_version == uuid2->uuid.time_and_version) {
     if (uuid1->uuid.clock_seq_and_node == uuid2->uuid.clock_seq_and_node)

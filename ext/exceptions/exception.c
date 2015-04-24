@@ -1,4 +1,4 @@
-#include "../php_cassandra.h"
+#include "php_cassandra.h"
 #include "exception.h"
 
 zend_class_entry *cassandra_ce_Exception = NULL;

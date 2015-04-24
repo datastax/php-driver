@@ -1,4 +1,4 @@
-#include "../php_cassandra.h"
+#include "php_cassandra.h"
 #include "exception.h"
 
 extern zend_class_entry* spl_ce_RuntimeException;

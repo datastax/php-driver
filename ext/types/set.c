@@ -1,4 +1,4 @@
-#include "../php_cassandra.h"
+#include "php_cassandra.h"
 #include "util/collections.h"
 #include "set.h"
 
@@ -120,11 +120,13 @@ PHP_METHOD(CassandraSet, values)
 /* {{{ Cassandra\Set::add(value) */
 PHP_METHOD(CassandraSet, add)
 {
+  cassandra_set* set = NULL;
+
   zval* object;
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z", &object) == FAILURE)
     return;
 
-  cassandra_set* set = (cassandra_set*) zend_object_store_get_object(getThis() TSRMLS_CC);
+  set = (cassandra_set*) zend_object_store_get_object(getThis() TSRMLS_CC);
 
   if (php_cassandra_set_add(set, object TSRMLS_CC))
     RETURN_TRUE;
@@ -136,11 +138,13 @@ PHP_METHOD(CassandraSet, add)
 /* {{{ Cassandra\Set::remove(value) */
 PHP_METHOD(CassandraSet, remove)
 {
+  cassandra_set* set = NULL;
+
   zval* object;
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z", &object) == FAILURE)
     return;
 
-  cassandra_set* set = (cassandra_set*) zend_object_store_get_object(getThis() TSRMLS_CC);
+  set = (cassandra_set*) zend_object_store_get_object(getThis() TSRMLS_CC);
 
   if (php_cassandra_set_del(set, object TSRMLS_CC))
     RETURN_TRUE;
@@ -152,11 +156,13 @@ PHP_METHOD(CassandraSet, remove)
 /* {{{ Cassandra\Set::has(value) */
 PHP_METHOD(CassandraSet, has)
 {
+  cassandra_set* set = NULL;
+
   zval* object;
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z", &object) == FAILURE)
     return;
 
-  cassandra_set* set = (cassandra_set*) zend_object_store_get_object(getThis() TSRMLS_CC);
+  set = (cassandra_set*) zend_object_store_get_object(getThis() TSRMLS_CC);
 
   if (php_cassandra_set_has(set, object TSRMLS_CC))
     RETURN_TRUE;
@@ -271,11 +277,14 @@ int zend_compare_symbol_tables_i(HashTable *ht1, HashTable *ht2 TSRMLS_DC);
 static int
 php_cassandra_set_compare(zval *obj1, zval *obj2 TSRMLS_DC)
 {
+  cassandra_set* set1 = NULL;
+  cassandra_set* set2 = NULL;
+
   if (Z_OBJCE_P(obj1) != Z_OBJCE_P(obj2))
     return 1; /* different classes */
 
-  cassandra_set* set1 = (cassandra_set*) zend_object_store_get_object(obj1 TSRMLS_CC);
-  cassandra_set* set2 = (cassandra_set*) zend_object_store_get_object(obj2 TSRMLS_CC);
+  set1 = (cassandra_set*) zend_object_store_get_object(obj1 TSRMLS_CC);
+  set2 = (cassandra_set*) zend_object_store_get_object(obj2 TSRMLS_CC);
 
   if (set1->type != set2->type)
     return 1;

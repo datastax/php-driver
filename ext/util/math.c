@@ -1,4 +1,4 @@
-#include "../php_cassandra.h"
+#include "php_cassandra.h"
 #include <errno.h>
 #include <stdlib.h>
 #include <gmp.h>
@@ -364,7 +364,7 @@ php_cassandra_format_decimal(mpz_t number, long scale, char** out, int* out_len)
 }
 
 void
-import_twos_complement(cass_byte_t* data, cass_size_t size, mpz_t* number)
+import_twos_complement(cass_byte_t* data, size_t size, mpz_t* number)
 {
   int i;
 
@@ -382,7 +382,7 @@ import_twos_complement(cass_byte_t* data, cass_size_t size, mpz_t* number)
 }
 
 cass_byte_t*
-export_twos_complement(mpz_t number, cass_size_t* size)
+export_twos_complement(mpz_t number, size_t* size)
 {
   // negative, do two's complement
   if (mpz_sgn(number) == -1) {

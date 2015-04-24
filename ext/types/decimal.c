@@ -1,4 +1,4 @@
-#include "../php_cassandra.h"
+#include "php_cassandra.h"
 #include "util/math.h"
 #include "decimal.h"
 
@@ -103,11 +103,14 @@ php_cassandra_decimal_properties(zval *object TSRMLS_DC)
 static int
 php_cassandra_decimal_compare(zval *obj1, zval *obj2 TSRMLS_DC)
 {
+  cassandra_decimal* decimal1 = NULL;
+  cassandra_decimal* decimal2 = NULL;
+
   if (Z_OBJCE_P(obj1) != Z_OBJCE_P(obj2))
     return 1; /* different classes */
 
-  cassandra_decimal* decimal1 = (cassandra_decimal*) zend_object_store_get_object(obj1 TSRMLS_CC);
-  cassandra_decimal* decimal2 = (cassandra_decimal*) zend_object_store_get_object(obj2 TSRMLS_CC);
+  decimal1 = (cassandra_decimal*) zend_object_store_get_object(obj1 TSRMLS_CC);
+  decimal2 = (cassandra_decimal*) zend_object_store_get_object(obj2 TSRMLS_CC);
 
   if (decimal1->scale == decimal2->scale) {
     return mpz_cmp(decimal1->value, decimal2->value);

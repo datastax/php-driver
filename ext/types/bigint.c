@@ -1,5 +1,5 @@
 #include <errno.h>
-#include "../php_cassandra.h"
+#include "php_cassandra.h"
 #include "bigint.h"
 
 extern zend_class_entry* cassandra_ce_InvalidArgumentException;
@@ -153,11 +153,14 @@ php_cassandra_bigint_properties(zval *object TSRMLS_DC)
 static int
 php_cassandra_bigint_compare(zval *obj1, zval *obj2 TSRMLS_DC)
 {
+  cassandra_bigint* bigint1 = NULL;
+  cassandra_bigint* bigint2 = NULL;
+
   if (Z_OBJCE_P(obj1) != Z_OBJCE_P(obj2))
     return 1; /* different classes */
 
-  cassandra_bigint* bigint1 = (cassandra_bigint*) zend_object_store_get_object(obj1 TSRMLS_CC);
-  cassandra_bigint* bigint2 = (cassandra_bigint*) zend_object_store_get_object(obj2 TSRMLS_CC);
+  bigint1 = (cassandra_bigint*) zend_object_store_get_object(obj1 TSRMLS_CC);
+  bigint2 = (cassandra_bigint*) zend_object_store_get_object(obj2 TSRMLS_CC);
 
   if (bigint1->value == bigint2->value)
     return 0;
