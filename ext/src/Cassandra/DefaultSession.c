@@ -625,12 +625,45 @@ PHP_METHOD(DefaultSession, prepareAsync)
 
 PHP_METHOD(DefaultSession, close)
 {
+  zval* timeout = NULL;
 
+  cassandra_session* self =
+    (cassandra_session*) zend_object_store_get_object(getThis() TSRMLS_CC);
+
+  if(zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "|z", &timeout) == FAILURE) {
+    return;
+  }
+
+  if (self->persist)
+    return;
+
+  CassFuture* future = cass_session_close(self->session);
+
+  if (php_cassandra_future_wait_timed(future, timeout TSRMLS_CC) == SUCCESS)
+    php_cassandra_future_is_error(future TSRMLS_CC);
+
+  cass_future_free(future);
 }
 
 PHP_METHOD(DefaultSession, closeAsync)
 {
+  cassandra_session* self =
+    (cassandra_session*) zend_object_store_get_object(getThis() TSRMLS_CC);
 
+  if (self->persist) {
+    object_init_ex(return_value, cassandra_future_value_ce);
+    return;
+  }
+
+  if(zend_parse_parameters_none() == FAILURE)
+    return;
+
+
+  object_init_ex(return_value, cassandra_future_close_ce);
+  cassandra_future_close* future =
+    (cassandra_future_close*) zend_object_store_get_object(return_value TSRMLS_CC);
+
+  future->future = cass_session_close(self->session);
 }
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_execute, 0, ZEND_RETURN_VALUE, 1)

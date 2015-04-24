@@ -40,6 +40,7 @@ if test "$PHP_CASSANDRA" != "no"; then
     src/Cassandra/FutureRows.c \
     src/Cassandra/FutureSession.c \
     src/Cassandra/FutureValue.c \
+    src/Cassandra/FutureClose.c \
     src/Cassandra/Session.c \
     src/Cassandra/DefaultSession.c \
     src/Cassandra/SSLOptions.c \

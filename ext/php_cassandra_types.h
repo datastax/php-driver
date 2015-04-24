@@ -178,6 +178,11 @@ typedef struct {
 } cassandra_future_value;
 
 typedef struct {
+  zend_object zval;
+  CassFuture* future;
+} cassandra_future_close;
+
+typedef struct {
   zend_object       zval;
   CassFuture*       future;
   CassSession*      session;
@@ -282,6 +287,7 @@ extern PHP_CASSANDRA_API zend_class_entry* cassandra_future_prepared_statement_c
 extern PHP_CASSANDRA_API zend_class_entry* cassandra_future_rows_ce;
 extern PHP_CASSANDRA_API zend_class_entry* cassandra_future_session_ce;
 extern PHP_CASSANDRA_API zend_class_entry* cassandra_future_value_ce;
+extern PHP_CASSANDRA_API zend_class_entry* cassandra_future_close_ce;
 extern PHP_CASSANDRA_API zend_class_entry* cassandra_session_ce;
 extern PHP_CASSANDRA_API zend_class_entry* cassandra_default_session_ce;
 extern PHP_CASSANDRA_API zend_class_entry* cassandra_exception_ce;
@@ -324,6 +330,7 @@ void cassandra_define_FuturePreparedStatement(TSRMLS_D);
 void cassandra_define_FutureRows(TSRMLS_D);
 void cassandra_define_FutureSession(TSRMLS_D);
 void cassandra_define_FutureValue(TSRMLS_D);
+void cassandra_define_FutureClose(TSRMLS_D);
 void cassandra_define_Session(TSRMLS_D);
 void cassandra_define_DefaultSession(TSRMLS_D);
 void cassandra_define_SSLOptions(TSRMLS_D);

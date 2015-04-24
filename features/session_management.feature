@@ -11,6 +11,7 @@ Feature: Session management
       <?php
       $cluster = Cassandra::cluster()
                      ->withContactPoints('127.0.0.1')
+                     ->withPersistentSessions(false)
                      ->build();
       $session = $cluster->connect();
       $session->close();
@@ -24,7 +25,7 @@ Feature: Session management
     When it is executed
     Then its output should contain:
       """
-      Cassandra\Exception\LogicException: Session is already closed
+      Cassandra\Exception\RuntimeException: Already closing or closed
       """
 
   Scenario: Session closes after outstanding requests are completed
