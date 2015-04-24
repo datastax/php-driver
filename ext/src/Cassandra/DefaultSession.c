@@ -470,9 +470,9 @@ PHP_METHOD(DefaultSession, execute)
       rows->result    = result;
       cass_future_free(future);
       return;
-    } else {
-      cass_result_free(result);
     }
+
+    cass_result_free(result);
   } while (0);
 
   if (batch)
