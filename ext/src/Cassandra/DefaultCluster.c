@@ -65,8 +65,6 @@ PHP_METHOD(DefaultCluster, connect)
   }
 
   if (php_cassandra_future_wait_timed(future, timeout TSRMLS_CC) == FAILURE) {
-    zval_dtor(return_value);
-
     if (session->persist) {
       efree(hash_key);
     } else {
@@ -82,7 +80,6 @@ PHP_METHOD(DefaultCluster, connect)
     CassString message = cass_future_error_message(future);
     zend_throw_exception_ex(exception_class(rc), rc TSRMLS_CC,
       "%.*s", (int) message.length, message.data);
-    zval_dtor(return_value);
 
     if (session->persist) {
       if (zend_hash_del(&EG(persistent_list), hash_key, hash_key_len + 1) == SUCCESS) {

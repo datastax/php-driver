@@ -2,14 +2,9 @@
 
 zend_class_entry *cassandra_batch_statement_ce = NULL;
 
-typedef struct {
-  zval* statement;
-  zval* arguments;
-} statement_entry;
-
-void statement_entry_dtor(void** dest)
+void cassandra_batch_statement_entry_dtor(void** dest)
 {
-  statement_entry* entry = *((statement_entry**)dest);
+  cassandra_batch_statement_entry* entry = *((cassandra_batch_statement_entry**)dest);
 
   zval_ptr_dtor(&entry->statement);
   if (entry->arguments) {
@@ -65,19 +60,19 @@ PHP_METHOD(BatchStatement, add)
     INVALID_ARGUMENT(statement, "a Cassandra\\SimpleStatement or Cassandra\\PreparedStatement");
   }
 
-  statement_entry* entry = (statement_entry*) ecalloc(1, sizeof(statement_entry));
+  cassandra_batch_statement_entry* entry = (cassandra_batch_statement_entry*) ecalloc(1, sizeof(cassandra_batch_statement_entry));
   entry->statement = statement;
   Z_ADDREF_P(entry->statement);
 
   if (arguments) {
     entry->arguments = arguments;
-    Z_ADDREF_P(entry->statement);
+    Z_ADDREF_P(entry->arguments);
   }
 
   cassandra_batch_statement* self =
       (cassandra_batch_statement*) zend_object_store_get_object(getThis() TSRMLS_CC);
 
-  zend_hash_next_index_insert(self->statements, &entry, sizeof(statement_entry*), NULL);
+  zend_hash_next_index_insert(self->statements, &entry, sizeof(cassandra_batch_statement_entry*), NULL);
 }
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo__construct, 0, ZEND_RETURN_VALUE, 0)
@@ -138,10 +133,11 @@ php_cassandra_batch_statement_new(zend_class_entry* class_type TSRMLS_DC)
   zend_object_std_init(&self->zval, class_type TSRMLS_CC);
   object_properties_init(&self->zval, class_type);
 
+  self->type = CASSANDRA_BATCH_STATEMENT;
   self->batch_type = CASS_BATCH_TYPE_LOGGED;
 
   ALLOC_HASHTABLE(self->statements);
-  zend_hash_init(self->statements, 0, NULL, (dtor_func_t) statement_entry_dtor, 0);
+  zend_hash_init(self->statements, 0, NULL, (dtor_func_t) cassandra_batch_statement_entry_dtor, 0);
 
   retval.handle   = zend_objects_store_put(self,
                       (zend_objects_store_dtor_t) zend_objects_destroy_object,

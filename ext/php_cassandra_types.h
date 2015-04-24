@@ -107,6 +107,11 @@ typedef struct {
 #undef STATEMENT_FIELDS
 
 typedef struct {
+  zval* statement;
+  zval* arguments;
+} cassandra_batch_statement_entry;
+
+typedef struct {
   zend_object zval;
   long        consistency;
   long        serial_consistency;

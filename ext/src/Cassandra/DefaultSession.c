@@ -77,7 +77,7 @@ bind_argument_by_index(CassStatement* statement, cass_size_t index, zval* value 
       CHECK_RESULT(rc);
     }
 
-    if (instanceof_function(Z_OBJCE_P(value), cassandra_ce_Uuid TSRMLS_CC)) {
+    if (instanceof_function(Z_OBJCE_P(value), cassandra_ce_UuidInterface TSRMLS_CC)) {
       cassandra_uuid* uuid = (cassandra_uuid*) zend_object_store_get_object(value TSRMLS_CC);
       CHECK_RESULT(cass_statement_bind_uuid(statement, index, uuid->uuid));
     }
@@ -185,7 +185,7 @@ bind_argument_by_name(CassStatement* statement, char* name, zval* value TSRMLS_D
       CHECK_RESULT(rc);
     }
 
-    if (instanceof_function(Z_OBJCE_P(value), cassandra_ce_Uuid TSRMLS_CC)) {
+    if (instanceof_function(Z_OBJCE_P(value), cassandra_ce_UuidInterface TSRMLS_CC)) {
       cassandra_uuid* uuid = (cassandra_uuid*) zend_object_store_get_object(value TSRMLS_CC);
       CHECK_RESULT(cass_statement_bind_uuid_by_name(statement, name, uuid->uuid));
     }
@@ -310,7 +310,42 @@ static CassBatch*
 create_batch(cassandra_batch_statement* batch,
              cassandra_execution_options* options TSRMLS_DC)
 {
-  return NULL;
+  HashPosition pos;
+  void** data;
+  HashTable* statements = batch->statements;
+  CassBatch* cass_batch = cass_batch_new(batch->batch_type);
+
+  zend_hash_internal_pointer_reset_ex(statements, &pos);
+  while (zend_hash_get_current_data_ex(statements, (void**)&data, &pos) == SUCCESS) {
+    cassandra_batch_statement_entry* entry = *((cassandra_batch_statement_entry**)data);
+    cassandra_statement* statement =
+        (cassandra_statement*) zend_object_store_get_object(entry->statement TSRMLS_CC);
+    HashTable* arguments
+        = entry->arguments ? Z_ARRVAL_P(entry->arguments) : NULL;
+    CassStatement* stmt = create_statement(statement, arguments);
+    if (!stmt) {
+      cass_batch_free(cass_batch);
+      return NULL;
+    }
+    cass_batch_add_statement(cass_batch, stmt);
+    zend_hash_move_forward_ex(statements, &pos);
+  }
+
+  if (options) {
+    CassError rc = CASS_OK;
+
+    if (options->consistency >= 0)
+      rc = cass_batch_set_consistency(cass_batch, (CassConsistency) options->consistency);
+
+    if (rc != CASS_OK) {
+      cass_batch_free(cass_batch);
+      zend_throw_exception_ex(exception_class(rc), rc TSRMLS_CC,
+                              "%s", cass_error_desc(rc));
+      return NULL;
+    }
+  }
+
+  return cass_batch;
 }
 
 static CassStatement*
@@ -338,7 +373,12 @@ create_single(cassandra_statement* statement,
     if (rc == CASS_OK && options->page_size >= 0)
       rc = cass_statement_set_paging_size(stmt, options->page_size);
 
-    ASSERT_SUCCESS_VALUE(rc, NULL);
+    if (rc != CASS_OK) {
+      cass_statement_free(stmt);
+      zend_throw_exception_ex(exception_class(rc), rc TSRMLS_CC,
+                              "%s", cass_error_desc(rc));
+      return NULL;
+    }
   }
 
   return stmt;
@@ -419,7 +459,6 @@ PHP_METHOD(DefaultSession, execute)
 
     if (php_cassandra_get_result(result, &rows->rows TSRMLS_CC) == FAILURE) {
       cass_result_free(result);
-      zval_dtor(return_value);
       break;
     }
 
@@ -501,7 +540,6 @@ PHP_METHOD(DefaultSession, executeAsync)
       future_rows->future = cass_session_execute_batch(self->session, batch);
       break;
     default:
-      zval_dtor(return_value);
       INVALID_ARGUMENT(statement,
         "an instance of one of Cassandra\\SimpleStatement, " \
         "Cassandra\\PreparedStatement or Cassandra\\BatchStatement"
