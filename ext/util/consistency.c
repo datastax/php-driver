@@ -1,6 +1,6 @@
 #include "php_cassandra.h"
 
-int php_cassandra_get_consistency(zval* consistency, long* result)
+int php_cassandra_get_consistency(zval* consistency, long* result TSRMLS_DC)
 {
   if (consistency && Z_TYPE_P(consistency) == IS_LONG) {
     switch (Z_LVAL_P(consistency)) {
@@ -26,7 +26,7 @@ int php_cassandra_get_consistency(zval* consistency, long* result)
   return SUCCESS;
 }
 
-int php_cassandra_get_serial_consistency(zval* serial_consistency, long* result)
+int php_cassandra_get_serial_consistency(zval* serial_consistency, long* result TSRMLS_DC)
 {
   if (serial_consistency && Z_TYPE_P(serial_consistency) == IS_LONG) {
     switch (Z_LVAL_P(serial_consistency)) {

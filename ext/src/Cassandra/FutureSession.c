@@ -29,7 +29,7 @@ PHP_METHOD(FutureSession, get)
     return;
   }
 
-  if (php_cassandra_future_wait_timed(future->future, timeout) == FAILURE) {
+  if (php_cassandra_future_wait_timed(future->future, timeout TSRMLS_CC) == FAILURE) {
     return;
   }
 

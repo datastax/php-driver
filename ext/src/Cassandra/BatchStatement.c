@@ -60,8 +60,8 @@ PHP_METHOD(BatchStatement, add)
     return;
   }
 
-  if (!instanceof_function(Z_OBJCE_P(statement), cassandra_simple_statement_ce) &&
-      !instanceof_function(Z_OBJCE_P(statement), cassandra_prepared_statement_ce)) {
+  if (!instanceof_function(Z_OBJCE_P(statement), cassandra_simple_statement_ce TSRMLS_CC) &&
+      !instanceof_function(Z_OBJCE_P(statement), cassandra_prepared_statement_ce TSRMLS_CC)) {
     INVALID_ARGUMENT(statement, "a Cassandra\\SimpleStatement or Cassandra\\PreparedStatement");
   }
 

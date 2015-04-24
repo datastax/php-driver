@@ -25,14 +25,14 @@ PHP_METHOD(ExecutionOptions, __construct)
 
   zval** consistency;
   if (zend_hash_find(Z_ARRVAL_P(options), "consistency", sizeof("consistency"), (void**)&consistency) == SUCCESS) {
-    if (php_cassandra_get_consistency(*consistency, &self->consistency) == FAILURE) {
+    if (php_cassandra_get_consistency(*consistency, &self->consistency TSRMLS_CC) == FAILURE) {
       return;
     }
   }
 
   zval** serial_consistency;
   if (zend_hash_find(Z_ARRVAL_P(options), "serial_consistency", sizeof("serial_consistency"), (void**)&serial_consistency) == SUCCESS) {
-    if (php_cassandra_get_serial_consistency(*serial_consistency, &self->serial_consistency) == FAILURE) {
+    if (php_cassandra_get_serial_consistency(*serial_consistency, &self->serial_consistency TSRMLS_CC) == FAILURE) {
       return;
     }
   }

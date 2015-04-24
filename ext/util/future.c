@@ -6,7 +6,8 @@
 
 #include "future.h"
 
-int php_cassandra_future_wait_timed(CassFuture* future, zval* timeout)
+int
+php_cassandra_future_wait_timed(CassFuture* future, zval* timeout TSRMLS_DC)
 {
   cass_duration_t timeout_us;
 
@@ -39,7 +40,8 @@ int php_cassandra_future_wait_timed(CassFuture* future, zval* timeout)
   return SUCCESS;
 }
 
-int php_cassandra_future_is_error(CassFuture* future)
+int
+php_cassandra_future_is_error(CassFuture* future TSRMLS_DC)
 {
   int rc = cass_future_error_code(future);
   if (rc != CASS_OK) {

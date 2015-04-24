@@ -448,12 +448,12 @@ PHP_METHOD(DefaultSession, prepare)
                                                               Z_STRLEN_P(cql)));
 
   zval* timeout = internal_options ? internal_options->timeout : NULL;
-  if (php_cassandra_future_wait_timed(future, timeout) == FAILURE) {
+  if (php_cassandra_future_wait_timed(future, timeout TSRMLS_CC) == FAILURE) {
     cass_future_free(future);
     return;
   }
 
-  if (php_cassandra_future_is_error(future) == FAILURE) {
+  if (php_cassandra_future_is_error(future TSRMLS_CC) == FAILURE) {
     cass_future_free(future);
     return;
   }

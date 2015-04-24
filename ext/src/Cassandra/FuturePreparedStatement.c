@@ -23,11 +23,11 @@ PHP_METHOD(FuturePreparedStatement, get)
     return;
   }
 
-  if (php_cassandra_future_wait_timed(self->future, timeout) == FAILURE) {
+  if (php_cassandra_future_wait_timed(self->future, timeout TSRMLS_CC) == FAILURE) {
     return;
   }
 
-  if (php_cassandra_future_is_error(self->future) == FAILURE) {
+  if (php_cassandra_future_is_error(self->future TSRMLS_CC) == FAILURE) {
     return;
   }
 

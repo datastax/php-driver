@@ -95,7 +95,7 @@ PHP_METHOD(ClusterBuilder, withDefaultConsistency)
   cassandra_cluster_builder* builder =
     (cassandra_cluster_builder*) zend_object_store_get_object(getThis() TSRMLS_CC);
 
-  if (php_cassandra_get_consistency(consistency, &builder->default_consistency) == FAILURE) {
+  if (php_cassandra_get_consistency(consistency, &builder->default_consistency TSRMLS_CC) == FAILURE) {
     return;
   }
 
