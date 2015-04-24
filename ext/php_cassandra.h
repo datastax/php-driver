@@ -65,23 +65,18 @@ void throw_invalid_argument(zval* object,
   return failed_value; \
 }
 
-#define ASSERT_SUCCESS(rc) \
+#define ASSERT_SUCCESS_BLOCK(rc, block) \
 { \
   if (rc != CASS_OK) { \
     zend_throw_exception_ex(exception_class(rc), rc TSRMLS_CC, \
                             "%s", cass_error_desc(rc)); \
-    return; \
+    block \
   } \
 }
 
-#define ASSERT_SUCCESS_VALUE(rc, failed_value) \
-{ \
-  if (rc != CASS_OK) { \
-    zend_throw_exception_ex(exception_class(rc), rc TSRMLS_CC, \
-                            "%s", cass_error_desc(rc)); \
-    return failed_value; \
-  } \
-}
+#define ASSERT_SUCCESS(rc) ASSERT_SUCCESS_BLOCK(rc, return;)
+
+#define ASSERT_SUCCESS_VALUE(rc, value) ASSERT_SUCCESS_BLOCK(rc, return value;)
 
 #include "php_cassandra_types.h"
 
