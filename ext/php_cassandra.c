@@ -89,6 +89,8 @@ exception_class(CassError rc)
   })
 
 ZEND_DECLARE_MODULE_GLOBALS(cassandra)
+static PHP_GINIT_FUNCTION(cassandra);
+static PHP_GSHUTDOWN_FUNCTION(cassandra);
 
 const zend_function_entry cassandra_functions[] = {
   /* Log */
@@ -161,7 +163,11 @@ zend_module_entry cassandra_module_entry = {
 #if ZEND_MODULE_API_NO >= 20010901
   PHP_CASSANDRA_EXTVER,
 #endif
-  STANDARD_MODULE_PROPERTIES
+  PHP_MODULE_GLOBALS(cassandra),
+  PHP_GINIT(cassandra),
+  PHP_GSHUTDOWN(cassandra),
+  NULL,
+  STANDARD_MODULE_PROPERTIES_EX
 };
 
 #ifdef COMPILE_DL_CASSANDRA
@@ -275,8 +281,7 @@ php_cassandra_batch_dtor(zend_rsrc_list_entry* rsrc TSRMLS_DC)
   }
 }
 
-static void
-php_cassandra_globals_ctor(zend_cassandra_globals* cassandra_globals TSRMLS_DC)
+static PHP_GINIT_FUNCTION(cassandra)
 {
   cassandra_globals->uuid_gen            = cass_uuid_gen_new();
   cassandra_globals->log_level           = CASS_LOG_ERROR;
@@ -285,28 +290,15 @@ php_cassandra_globals_ctor(zend_cassandra_globals* cassandra_globals TSRMLS_DC)
   cass_log_set_callback(php_cassandra_log, NULL);
 }
 
-static void
-php_cassandra_globals_dtor(zend_cassandra_globals* cassandra_globals TSRMLS_DC)
+static PHP_GSHUTDOWN_FUNCTION(cassandra)
 {
   cass_log_cleanup();
   cass_uuid_gen_free(cassandra_globals->uuid_gen);
-  cassandra_globals->uuid_gen = NULL;
 }
 
 PHP_MINIT_FUNCTION(cassandra)
 {
   // REGISTER_INI_ENTRIES();
-#ifdef ZTS
-  ts_allocate_id(
-    &cassandra_globals_id,
-    sizeof(zend_cassandra_globals),
-    (ts_allocate_ctor) php_cassandra_globals_ctor,
-    (ts_allocate_dtor) php_cassandra_globals_dtor
-  );
-#else
-  php_cassandra_globals_ctor(&cassandra_globals TSRMLS_CC);
-#endif
-
   le_cassandra_cluster_res = zend_register_list_destructors_ex(
     NULL,
     php_cassandra_cluster_dtor,
@@ -413,10 +405,6 @@ PHP_MINIT_FUNCTION(cassandra)
 PHP_MSHUTDOWN_FUNCTION(cassandra)
 {
   // UNREGISTER_INI_ENTRIES();
-#ifndef ZTS
-  php_cassandra_globals_dtor(&cassandra_globals TSRMLS_CC);
-#endif
-
   return SUCCESS;
 }
 
