@@ -322,7 +322,7 @@ create_batch(cassandra_batch_statement* batch,
         (cassandra_statement*) zend_object_store_get_object(entry->statement TSRMLS_CC);
     HashTable* arguments
         = entry->arguments ? Z_ARRVAL_P(entry->arguments) : NULL;
-    CassStatement* stmt = create_statement(statement, arguments);
+    CassStatement* stmt = create_statement(statement, arguments TSRMLS_CC);
     if (!stmt) {
       cass_batch_free(cass_batch);
       return NULL;
