@@ -96,9 +96,6 @@ PHP_MINFO_FUNCTION(cassandra);
 /* Log */
 PHP_FUNCTION(cassandra_set_log_level);
 
-/* Util */
-PHP_FUNCTION(cassandra_rows_from_result);
-
 /* CassSession */
 PHP_FUNCTION(cassandra_session_new);
 PHP_FUNCTION(cassandra_session_free);
