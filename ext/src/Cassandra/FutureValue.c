@@ -6,7 +6,9 @@ ZEND_EXTERN_MODULE_GLOBALS(cassandra)
 
 PHP_METHOD(FutureValue, get)
 {
-  if (zend_parse_parameters_none() == FAILURE)
+  zval* timeout = NULL;
+
+  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "|z", &timeout) == FAILURE)
     return;
 
   cassandra_future_value* self =
