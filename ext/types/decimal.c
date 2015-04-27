@@ -2,8 +2,6 @@
 #include "util/math.h"
 #include "decimal.h"
 
-extern zend_class_entry *cassandra_ce_InvalidArgumentException;
-
 zend_class_entry *cassandra_ce_Decimal = NULL;
 
 /* {{{ Cassandra\Decimal::__construct(string) */

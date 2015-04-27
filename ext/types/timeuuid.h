@@ -1,6 +1,9 @@
 #ifndef PHP_CASSANDRA_TIMEUUID_H
 #define PHP_CASSANDRA_TIMEUUID_H
 
+#include "exceptions\exception.h"
+#include "uuid_interface.h"
+
 PHP_METHOD(CassandraTimeuuid, __construct);
 PHP_METHOD(CassandraTimeuuid, __toString);
 PHP_METHOD(CassandraTimeuuid, uuid);

@@ -31,8 +31,6 @@
       result = 0; \
     }
 
-extern zend_class_entry* cassandra_ce_RuntimeException;
-extern zend_class_entry* cassandra_ce_InvalidArgumentException;
 extern zend_class_entry* cassandra_ce_Bigint;
 extern zend_class_entry* cassandra_ce_Blob;
 extern zend_class_entry* cassandra_ce_Decimal;

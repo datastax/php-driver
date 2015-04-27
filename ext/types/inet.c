@@ -2,8 +2,6 @@
 #include "util/inet.h"
 #include "inet.h"
 
-extern zend_class_entry *cassandra_ce_InvalidArgumentException;
-
 zend_class_entry *cassandra_ce_Inet = NULL;
 
 /* {{{ Cassandra\Inet::__construct(string) */

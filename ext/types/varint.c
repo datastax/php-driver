@@ -2,8 +2,6 @@
 #include "util/math.h"
 #include "varint.h"
 
-extern zend_class_entry *cassandra_ce_InvalidArgumentException;
-
 zend_class_entry *cassandra_ce_Varint = NULL;
 
 /* {{{ Cassandra\Varint::__construct(string) */

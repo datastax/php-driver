@@ -2,10 +2,14 @@
 #define PHP_CASSANDRA_H
 #include <gmp.h>
 #include <cassandra.h>
+#include "version.h"
 
 /* Define Extension Properties */
 #define PHP_CASSANDRA_EXTNAME   "cassandra"
 #define PHP_CASSANDRA_EXTVER    "0.1.0"
+#define PHP_CASSANDRA_MAJOR     0
+#define PHP_CASSANDRA_MINOR     1
+#define PHP_CASSANDRA_RELEASE   0
 
 /* Resources */
 #define PHP_CASSANDRA_CLUSTER_RES_NAME    "Cassandra Cluster"

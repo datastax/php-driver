@@ -65,7 +65,7 @@ if (PHP_CASSANDRA != "no" &&
             "/I " + PHP_MPIR + "/include " +
             "/I " + configure_module_dirname + "/ext/exceptions " +
             "/I " + configure_module_dirname + "/ext/types " +
-            "/I " + configure_module_dirname + "/ext/util" +
+            "/I " + configure_module_dirname + "/ext/util " +
             "/DCASS_STATIC " +
             "/wd4267");
       } else {

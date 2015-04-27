@@ -1,8 +1,6 @@
 #include "php_cassandra.h"
 #include "exception.h"
 
-extern zend_class_entry* cassandra_ce_RuntimeException;
-
 zend_class_entry *cassandra_ce_ServerException = NULL;
 zend_class_entry *cassandra_ce_OverloadedException = NULL;
 zend_class_entry *cassandra_ce_IsBootstrappingException = NULL;

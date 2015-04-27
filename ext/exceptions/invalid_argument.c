@@ -1,9 +1,6 @@
 #include "php_cassandra.h"
 #include "exception.h"
 
-extern zend_class_entry* spl_ce_InvalidArgumentException;
-extern zend_class_entry* cassandra_ce_Exception;
-
 zend_class_entry *cassandra_ce_InvalidArgumentException = NULL;
 
 static zend_function_entry CassandraInvalidArgumentException_methods[] = {

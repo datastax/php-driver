@@ -2,8 +2,6 @@
 #include "util/bytes.h"
 #include "blob.h"
 
-extern zend_class_entry *cassandra_ce_InvalidArgumentException;
-
 zend_class_entry *cassandra_ce_Blob = NULL;
 
 /* {{{ Cassandra\Blob::__construct(string) */

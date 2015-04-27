@@ -5,7 +5,6 @@
 #include "uuid_interface.h"
 #include "uuid.h"
 
-extern zend_class_entry* cassandra_ce_InvalidArgumentException;
 extern zend_class_entry* cassandra_ce_UuidInterface;
 
 zend_class_entry *cassandra_ce_Uuid = NULL;

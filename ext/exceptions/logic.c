@@ -1,9 +1,6 @@
 #include "php_cassandra.h"
 #include "exception.h"
 
-extern zend_class_entry* spl_ce_LogicException;
-extern zend_class_entry* cassandra_ce_Exception;
-
 zend_class_entry *cassandra_ce_LogicException = NULL;
 
 static zend_function_entry CassandraLogicException_methods[] = {

@@ -4,9 +4,6 @@
 #include "timeuuid.h"
 #include "ext/date/php_date.h"
 
-extern zend_class_entry* cassandra_ce_InvalidArgumentException;
-extern zend_class_entry* cassandra_ce_UuidInterface;
-
 zend_class_entry *cassandra_ce_Timeuuid = NULL;
 
 /* {{{ Cassandra\Timeuuid::__construct(string) */
