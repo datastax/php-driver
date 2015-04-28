@@ -9,7 +9,7 @@
 #else
 # error SPL must be enabled in order to build the driver
 #endif
-#include <Zend\zend_interfaces.h>
+#include <Zend/zend_interfaces.h>
 
 int php_cassandra_hash_object(zval* object, CassValueType type, char** key, int* len TSRMLS_DC);
 int php_cassandra_value_type(char* type, CassValueType* value_type TSRMLS_DC);
