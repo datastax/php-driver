@@ -26,9 +26,9 @@ SET EXIT_CODE_MISSING_VISUAL_STUDIO=2
 SET EXIT_CODE_MISSING_BUILD_DEPENDENCY=3
 SET EXIT_CODE_INVALID_BUILD_DEPENDENCY_VERSION=4
 SET EXIT_CODE_CLONE_FAILED=5
-SET EXIT_CODE_CHECKOUT_FAILED=6
-SET EXIT_CODE_BUILD_DEPENDENCY_FAILED=7
-SET EXIT_CODE_BUILD_DRIVER_FAILED=8
+SET EXIT_CODE_BUILD_DEPENDENCY_FAILED=6
+SET EXIT_CODE_BUILD_DRIVER_FAILED=7
+SET EXIT_CODE_CONFIGURATION_DRIVER_FAILED=8
 SET EXIT_CODE_INVALID_VERSION=9
 SET EXIT_CODE_PACKAGE_FAILED=10
 
@@ -36,6 +36,7 @@ REM Argument constants
 SET ARGUMENT_BUILD_TYPE_DEBUG=--DEBUG
 SET ARGUMENT_BUILD_TYPE_RELEASE=--RELEASE
 SET ARGUMENT_DISABLE_CLEAN_BUILD=--DISABLE-CLEAN
+SET ARGUMENT_DISABLE_THREAD_SAFETY=--DISABLE-THREAD-SAFETY
 SET ARGUMENT_ENABLE_BUILD_PACKAGES=--ENABLE-PACKAGES
 SET ARGUMENT_PHP_VERSION=--PHP-VERSION
 SET ARGUMENT_TARGET_ARCHITECTURE_32BIT=--X86
@@ -110,12 +111,23 @@ SET PHP_DIRECTORY=php
 SET PHP_5_4_BRANCH_TAG_VERSION=php-5.4.40
 SET PHP_5_5_BRANCH_TAG_VERSION=php-5.5.24
 SET PHP_5_6_BRANCH_TAG_VERSION=php-5.6.8
+SET LIBICONV_REPOSITORY_URL=https://github.com/winlibs/libiconv.git
+SET LIBICONV_DIRECTORY=libiconv
+SET LIBICONV_BRANCH_TAG_VERSION=libiconv-1.14
+SET LIBXML2_REPOSITORY_URL=https://github.com/winlibs/libxml2.git
+SET LIBXML2_DIRECTORY=libxml2
+SET LIBXML2_BRANCH_TAG_VERSION=libxml2-2.9.1
 SET "ABSOLUTE_DEPENDENCIES_CPP_DRIVER_SOURCE_DIRECTORY=%ABSOLUTE_BATCH_DIRECTORY%\..\%LIBRARY_BINARY_DIRECTORY%\%CPP_DRIVER_DIRECTORY%"
 SET "ABSOLUTE_DEPENDENCIES_CPP_DRIVER_LIBRARIES_DIRECTORY=%ABSOLUTE_BUILD_DIRECTORY%\%DEPENDENCIES_DIRECTORY%\%DEPENDENCIES_LIBRARIES_DIRECTORY%\%CPP_DRIVER_DIRECTORY%"
 SET "ABSOLUTE_DEPENDENCIES_LIBUV_LIBRARIES_DIRECTORY=%ABSOLUTE_BUILD_DIRECTORY%\%DEPENDENCIES_DIRECTORY%\%DEPENDENCIES_LIBRARIES_DIRECTORY%\libuv"
 SET "ABSOLUTE_DEPENDENCIES_OPENSSL_LIBRARIES_DIRECTORY=%ABSOLUTE_BUILD_DIRECTORY%\%DEPENDENCIES_DIRECTORY%\%DEPENDENCIES_LIBRARIES_DIRECTORY%\openssl"
+SET "ABSOLUTE_DEPENDENCIES_ZLIB_LIBRARIES_DIRECTORY=%ABSOLUTE_BUILD_DIRECTORY%\%DEPENDENCIES_DIRECTORY%\%DEPENDENCIES_LIBRARIES_DIRECTORY%\zlib"
 SET "ABSOLUTE_DEPENDENCIES_MPIR_SOURCE_DIRECTORY=%ABSOLUTE_BUILD_DIRECTORY%\%DEPENDENCIES_DIRECTORY%\%DEPENDENCIES_SOURCE_DIRECTORY%\%MPIR_DIRECTORY%"
 SET "ABSOLUTE_DEPENDENCIES_MPIR_LIBRARIES_DIRECTORY=%ABSOLUTE_BUILD_DIRECTORY%\%DEPENDENCIES_DIRECTORY%\%DEPENDENCIES_LIBRARIES_DIRECTORY%\%MPIR_DIRECTORY%"
+SET "ABSOLUTE_DEPENDENCIES_LIBICONV_SOURCE_DIRECTORY=%ABSOLUTE_BUILD_DIRECTORY%\%DEPENDENCIES_DIRECTORY%\%DEPENDENCIES_SOURCE_DIRECTORY%\%LIBICONV_DIRECTORY%"
+SET "ABSOLUTE_DEPENDENCIES_LIBICONV_LIBRARIES_DIRECTORY=%ABSOLUTE_BUILD_DIRECTORY%\%DEPENDENCIES_DIRECTORY%\%DEPENDENCIES_LIBRARIES_DIRECTORY%\%LIBICONV_DIRECTORY%"
+SET "ABSOLUTE_DEPENDENCIES_LIBXML2_SOURCE_DIRECTORY=%ABSOLUTE_BUILD_DIRECTORY%\%DEPENDENCIES_DIRECTORY%\%DEPENDENCIES_SOURCE_DIRECTORY%\%LIBXML2_DIRECTORY%"
+SET "ABSOLUTE_DEPENDENCIES_LIBXML2_LIBRARIES_DIRECTORY=%ABSOLUTE_BUILD_DIRECTORY%\%DEPENDENCIES_DIRECTORY%\%DEPENDENCIES_LIBRARIES_DIRECTORY%\%LIBXML2_DIRECTORY%"
 SET "ABSOLUTE_DEPENDENCIES_PHP_SOURCE_DIRECTORY=%ABSOLUTE_BUILD_DIRECTORY%\%DEPENDENCIES_DIRECTORY%\%DEPENDENCIES_SOURCE_DIRECTORY%\%PHP_DIRECTORY%"
 SET "ABSOLUTE_DEPENDENCIES_PHP_LIBRARIES_DIRECTORY=%ABSOLUTE_BUILD_DIRECTORY%\%DEPENDENCIES_DIRECTORY%\%DEPENDENCIES_LIBRARIES_DIRECTORY%\%PHP_DIRECTORY%"
 
@@ -124,13 +136,15 @@ SET LOG_DIRECTORY=log
 SET "ABSOLUTE_LOG_DIRECTORY=%ABSOLUTE_BUILD_DIRECTORY%\%LOG_DIRECTORY%"
 SET "LOG_CPP_DRIVER_BUILD=%ABSOLUTE_LOG_DIRECTORY%\cpp-driver.log"
 SET "LOG_MPIR_BUILD=%ABSOLUTE_LOG_DIRECTORY%\mpir.log"
-SET "LOG_PHP_BUILD=%ABSOLUTE_LOG_DIRECTORY%\php.log"
+SET "LOG_LIBICONV_BUILD=%ABSOLUTE_LOG_DIRECTORY%\libiconv.log"
+SET "LOG_LIBXML2_BUILD=%ABSOLUTE_LOG_DIRECTORY%\libxml2.log"
 SET "LOG_DRIVER_BUILD=%ABSOLUTE_LOG_DIRECTORY%\driver.log"
 
 REM Build defaults (can be updated via command line)
 SET BUILD_TYPE=%BUILD_TYPE_RELEASE%
 SET ENABLE_BUILD_PACKAGES=%FALSE%
 SET ENABLE_CLEAN_BUILD=%TRUE%
+SET ENABLE_THREAD_SAFETY=%TRUE%
 SET PHP_VERSION=5_6
 SET LIBRARY_TYPE=%LIBRARY_TYPE_SHARED%
 SET TARGET_ARCHITECTURE=%SYSTEM_ARCHITECTURE%
@@ -214,6 +228,11 @@ IF NOT [%1] == [] (
   REM Disable clean build
   IF "!ARGUMENT!" == "!ARGUMENT_DISABLE_CLEAN_BUILD!" (
     SET ENABLE_CLEAN_BUILD=!FALSE!
+  )
+
+  REM Disable thread safety
+  IF "!ARGUMENT!" == "!ARGUMENT_DISABLE_THREAD_SAFETY!" (
+    SET ENABLE_THREAD_SAFETY=!FALSE!
   )
 
   REM Enable the use of zlib library in the cpp-driver
@@ -440,6 +459,7 @@ IF "!ENABLE_BUILD_PACKAGES!" == "!FALSE!" (
   ECHO Clean Build:         !ENABLE_CLEAN_BUILD!
   ECHO PHP Version:         !PHP_BRANCH_TAG_VERSION!
   ECHO Target Architecture: !TARGET_ARCHITECTURE!
+  ECHO Thread Safety:       !ENABLE_THREAD_SAFETY!
   IF NOT DEFINED WINDOWS_SDK_SELECTED (
     ECHO Visual Studio:       !VISUAL_STUDIO_VERSION!
   ) ELSE (
@@ -482,19 +502,16 @@ IF NOT EXIST "!ABSOLUTE_BUILD_DIRECTORY!" MKDIR "!ABSOLUTE_BUILD_DIRECTORY!"
 IF NOT EXIST "!ABSOLUTE_DEPENDENCIES_DIRECTORY!" MKDIR "!ABSOLUTE_DEPENDENCIES_DIRECTORY!"
 IF NOT EXIST "!ABSOLUTE_LOG_DIRECTORY!" MKDIR "!ABSOLUTE_LOG_DIRECTORY!"
 
-REM Move to the dependencies directory
-PUSHD "!ABSOLUTE_DEPENDENCIES_DIRECTORY!" > NUL
-
 ECHO Cloning Library Dependencies
 
 REM Initialize and update the cpp-driver submodule
 IF NOT EXIST "!ABSOLUTE_DEPENDENCIES_CPP_DRIVER_SOURCE_DIRECTORY!\include\cassandra.h" (
   PUSHD "!ABSOLUTE_BATCH_DIRECTORY!\.." > NUL
+  ECHO Update cpp-driver submodule > "!LOG_CPP_DRIVER_BUILD!"
   ECHO | SET /P=Update cpp-driver submodule ... 
-  !GIT! submodule update --init --recursive > "!LOG_CPP_DRIVER_BUILD!" 2>&1
+  !GIT! submodule update --init --recursive >> "!LOG_CPP_DRIVER_BUILD!" 2>&1
   IF !ERRORLEVEL! EQU 0 (
     ECHO done.
-    POPD
     POPD
   ) ELSE (
     ECHO FAILED!
@@ -505,21 +522,11 @@ IF NOT EXIST "!ABSOLUTE_DEPENDENCIES_CPP_DRIVER_SOURCE_DIRECTORY!\include\cassan
 
 REM Clone MPIR and checkout the appropriate tag
 IF NOT EXIST "!ABSOLUTE_DEPENDENCIES_MPIR_SOURCE_DIRECTORY!" (
-  ECHO | SET /P=Cloning MPIR ... 
-  !GIT! clone !MPIR_REPOSITORY_URL! "!ABSOLUTE_DEPENDENCIES_MPIR_SOURCE_DIRECTORY!" > "!LOG_MPIR_BUILD!" 2>&1
+  ECHO Cloning MPIR !!MPIR_BRANCH_TAG_VERSION!! > "!LOG_MPIR_BUILD!"
+  ECHO | SET /P=Cloning MPIR !!MPIR_BRANCH_TAG_VERSION!! ... 
+  !GIT! clone --depth 1 --branch !MPIR_BRANCH_TAG_VERSION! --single-branch !MPIR_REPOSITORY_URL! "!ABSOLUTE_DEPENDENCIES_MPIR_SOURCE_DIRECTORY!" >> "!LOG_MPIR_BUILD!" 2>&1
   IF !ERRORLEVEL! EQU 0 (
     ECHO done.
-    PUSHD "!ABSOLUTE_DEPENDENCIES_MPIR_SOURCE_DIRECTORY!" > NUL
-    ECHO | SET /P=Checking out !MPIR_BRANCH_TAG_VERSION! ... 
-    ECHO. >> !LOG_MPIR_BUILD!
-    !GIT! checkout !MPIR_BRANCH_TAG_VERSION! >> "!LOG_MPIR_BUILD!" 2>&1
-    IF !ERRORLEVEL! EQU 0 (
-      ECHO done.
-    ) ELSE (
-      ECHO FAILED!
-      ECHO 	See !LOG_MPIR_BUILD! for more details
-      EXIT /B !EXIT_CODE_CHECKOUT_FAILED!
-    )
     POPD
   ) ELSE (
     ECHO FAILED!
@@ -528,33 +535,50 @@ IF NOT EXIST "!ABSOLUTE_DEPENDENCIES_MPIR_SOURCE_DIRECTORY!" (
   )
 )
 
-REM Clone PHP and checkout the appropriate tag
-IF NOT EXIST "!ABSOLUTE_DEPENDENCIES_PHP_SOURCE_DIRECTORY!" (
-  ECHO | SET /P=Cloning PHP ... 
-  !GIT! clone !PHP_REPOSITORY_URL! "!ABSOLUTE_DEPENDENCIES_PHP_SOURCE_DIRECTORY!" > "!LOG_PHP_BUILD!" 2>&1
+REM Clone libiconv and checkout the appropriate tag
+IF NOT EXIST "!ABSOLUTE_DEPENDENCIES_LIBICONV_SOURCE_DIRECTORY!" (
+  ECHO Cloning libiconv !LIBICONV_BRANCH_TAG_VERSION! > "!LOG_LIBICONV_BUILD!"
+  ECHO | SET /P=Cloning libiconv !LIBICONV_BRANCH_TAG_VERSION! ... 
+  !GIT! clone --depth 1 --branch !LIBICONV_BRANCH_TAG_VERSION! --single-branch !LIBICONV_REPOSITORY_URL! "!ABSOLUTE_DEPENDENCIES_LIBICONV_SOURCE_DIRECTORY!" >> "!LOG_LIBICONV_BUILD!" 2>&1
   IF !ERRORLEVEL! EQU 0 (
     ECHO done.
-    PUSHD "!ABSOLUTE_DEPENDENCIES_PHP_SOURCE_DIRECTORY!" > NUL
-    ECHO | SET /P=Checking out !PHP_BRANCH_TAG_VERSION! ... 
-    ECHO. >> !LOG_PHP_BUILD!
-    !GIT! checkout !PHP_BRANCH_TAG_VERSION! >> "!LOG_PHP_BUILD!" 2>&1
-    IF !ERRORLEVEL! EQU 0 (
-      ECHO done.
-    ) ELSE (
-      ECHO FAILED!
-      ECHO 	See !LOG_PHP_BUILD! for more details
-      EXIT /B !EXIT_CODE_CHECKOUT_FAILED!
-    )
     POPD
   ) ELSE (
     ECHO FAILED!
-    ECHO 	See !LOG_PHP_BUILD! for more details
+    ECHO 	See !LOG_LIBICONV_BUILD! for more details
     EXIT /B !EXIT_CODE_CLONE_FAILED!
   )
 )
 
-REM Move back to working directory
-POPD
+REM Clone libxml2 and checkout the appropriate tag
+IF NOT EXIST "!ABSOLUTE_DEPENDENCIES_LIBXML2_SOURCE_DIRECTORY!" (
+  ECHO Cloning libxml2 !LIBXML2_BRANCH_TAG_VERSION! > "!LOG_LIBXML2_BUILD!"
+  ECHO | SET /P=Cloning libxml2 !LIBXML2_BRANCH_TAG_VERSION! ... 
+  !GIT! clone --depth 1 --branch !LIBXML2_BRANCH_TAG_VERSION! --single-branch !LIBXML2_REPOSITORY_URL! "!ABSOLUTE_DEPENDENCIES_LIBXML2_SOURCE_DIRECTORY!" >> "!LOG_LIBXML2_BUILD!" 2>&1
+  IF !ERRORLEVEL! EQU 0 (
+    ECHO done.
+    POPD
+  ) ELSE (
+    ECHO FAILED!
+    ECHO 	See !LOG_LIBXML2_BUILD! for more details
+    EXIT /B !EXIT_CODE_CLONE_FAILED!
+  )
+)
+
+REM Clone PHP and checkout the appropriate tag
+IF NOT EXIST "!ABSOLUTE_DEPENDENCIES_PHP_SOURCE_DIRECTORY!" (
+  ECHO Cloning PHP !PHP_BRANCH_TAG_VERSION! > "!LOG_DRIVER_BUILD!"
+  ECHO | SET /P=Cloning PHP !PHP_BRANCH_TAG_VERSION! ... 
+  !GIT! clone --depth 1 --branch !PHP_BRANCH_TAG_VERSION! --single-branch !PHP_REPOSITORY_URL! "!ABSOLUTE_DEPENDENCIES_PHP_SOURCE_DIRECTORY!" >> "!LOG_DRIVER_BUILD!" 2>&1
+  IF !ERRORLEVEL! EQU 0 (
+    ECHO done.
+    POPD
+  ) ELSE (
+    ECHO FAILED!
+    ECHO 	See !LOG_DRIVER_BUILD! for more details
+    EXIT /B !EXIT_CODE_CLONE_FAILED!
+  )
+)
 
 REM Determine if the packages are being built
 ECHO.
@@ -565,27 +589,66 @@ IF "!ENABLE_BUILD_PACKAGES!" == "!FALSE!" (
   IF NOT EXIST "!ABSOLUTE_DEPENDENCIES_CPP_DRIVER_LIBRARIES_DIRECTORY!" (
     SET CPP_DRIVER_TARGET_COMPILER=!VISUAL_STUDIO_INTERNAL_VERSION!
     IF !WINDOWS_SDK_SELECTED! EQU !TRUE! SET CPP_DRIVER_TARGET_COMPILER=WINSDK
-    CALL :BUILDCPPDRIVER "!ABSOLUTE_DEPENDENCIES_CPP_DRIVER_SOURCE_DIRECTORY!" !CPP_DRIVER_TARGET_COMPILER! "!ABSOLUTE_DEPENDENCIES_CPP_DRIVER_LIBRARIES_DIRECTORY!" !TARGET_ARCHITECTURE! !ENABLE_ZLIB! !USE_BOOST_ATOMIC! "!LOG_CPP_DRIVER_BUILD!"
+    CALL :BUILDCPPDRIVER "!ABSOLUTE_DEPENDENCIES_CPP_DRIVER_SOURCE_DIRECTORY!" !CPP_DRIVER_TARGET_COMPILER! "!ABSOLUTE_DEPENDENCIES_CPP_DRIVER_LIBRARIES_DIRECTORY!" !BUILD_TYPE! !TARGET_ARCHITECTURE! !ENABLE_ZLIB! !USE_BOOST_ATOMIC! "!LOG_CPP_DRIVER_BUILD!"
     IF !ERRORLEVEL! NEQ 0 EXIT /B !ERRORLEVEL!
   )
 
   REM Determine if the MPIR library needs to be built
   IF NOT EXIST "!ABSOLUTE_DEPENDENCIES_MPIR_LIBRARIES_DIRECTORY!" (
-    CALL :BUILDMPIR "!ABSOLUTE_DEPENDENCIES_MPIR_SOURCE_DIRECTORY!" "!ABSOLUTE_DEPENDENCIES_MPIR_LIBRARIES_DIRECTORY!" "!TARGET_ARCHITECTURE!" "!LOG_MPIR_BUILD!"
+    CALL :BUILDMPIR "!ABSOLUTE_DEPENDENCIES_MPIR_SOURCE_DIRECTORY!" "!ABSOLUTE_DEPENDENCIES_MPIR_LIBRARIES_DIRECTORY!" !BUILD_TYPE! "!TARGET_ARCHITECTURE!" "!LOG_MPIR_BUILD!"
+    IF !ERRORLEVEL! NEQ 0 EXIT /B !ERRORLEVEL!
+  )
+
+  REM Determine if the libiconv library needs to be built
+  IF NOT EXIST "!ABSOLUTE_DEPENDENCIES_LIBICONV_LIBRARIES_DIRECTORY!" (
+    CALL :BUILDLIBICONV "!ABSOLUTE_DEPENDENCIES_LIBICONV_SOURCE_DIRECTORY!" "!ABSOLUTE_DEPENDENCIES_LIBICONV_LIBRARIES_DIRECTORY!" !TARGET_ARCHITECTURE! "!LOG_LIBICONV_BUILD!"
+    IF !ERRORLEVEL! NEQ 0 EXIT /B !ERRORLEVEL!
+  )
+
+  REM Determine if the libxml2 library needs to be built
+  IF NOT EXIST "!ABSOLUTE_DEPENDENCIES_LIBXML2_LIBRARIES_DIRECTORY!" (
+    CALL :BUILDLIBXML2 "!ABSOLUTE_DEPENDENCIES_LIBXML2_SOURCE_DIRECTORY!" "!ABSOLUTE_DEPENDENCIES_LIBXML2_LIBRARIES_DIRECTORY!" "!ABSOLUTE_DEPENDENCIES_LIBICONV_LIBRARIES_DIRECTORY!" "!LOG_LIBXML2_BUILD!"
     IF !ERRORLEVEL! NEQ 0 EXIT /B !ERRORLEVEL!
   )
 
   REM Determine if the driver needs to be built
   IF NOT EXIST "!ABSOLUTE_DRIVER_LIBRARY_DIRECTORY!" (
-    CALL :BUILDDRIVER "!ABSOLUTE_DEPENDENCIES_PHP_SOURCE_DIRECTORY!" "!ABSOLUTE_BATCH_DIRECTORY!" "!ABSOLUTE_DRIVER_LIBRARY_DIRECTORY!" "!ABSOLUTE_DEPENDENCIES_CPP_DRIVER_LIBRARIES_DIRECTORY!" "!ABSOLUTE_DEPENDENCIES_LIBUV_LIBRARIES_DIRECTORY!" "!ABSOLUTE_DEPENDENCIES_OPENSSL_LIBRARIES_DIRECTORY!" "!ABSOLUTE_DEPENDENCIES_MPIR_LIBRARIES_DIRECTORY!" "!LOG_DRIVER_BUILD!"
+    CALL :BUILDDRIVER "!ABSOLUTE_DEPENDENCIES_PHP_SOURCE_DIRECTORY!" "!ABSOLUTE_BATCH_DIRECTORY!" "!ABSOLUTE_DRIVER_LIBRARY_DIRECTORY!" !ENABLE_THREAD_SAFETY! !BUILD_TYPE! "!ABSOLUTE_DEPENDENCIES_LIBICONV_LIBRARIES_DIRECTORY!" "!ABSOLUTE_DEPENDENCIES_LIBXML2_LIBRARIES_DIRECTORY!" "!ABSOLUTE_DEPENDENCIES_CPP_DRIVER_LIBRARIES_DIRECTORY!" "!ABSOLUTE_DEPENDENCIES_LIBUV_LIBRARIES_DIRECTORY!" "!ABSOLUTE_DEPENDENCIES_OPENSSL_LIBRARIES_DIRECTORY!" "!ABSOLUTE_DEPENDENCIES_ZLIB_LIBRARIES_DIRECTORY!" "!ABSOLUTE_DEPENDENCIES_MPIR_LIBRARIES_DIRECTORY!" "!LOG_DRIVER_BUILD!"
     IF !ERRORLEVEL! NEQ 0 EXIT /B !ERRORLEVEL!
+
+    REM Configure minimalistic PHP instance for use with the driver
+    PUSHD "!ABSOLUTE_DRIVER_LIBRARY_DIRECTORY!" > NUL
+    ECHO | SET /P=Installing composer and driver dependencies ... 
+    ECHO extension=php_cassandra.dll >> "!ABSOLUTE_DRIVER_LIBRARY_DIRECTORY!\php.ini"
+    ECHO Installing composer >> "!LOG_DRIVER_BUILD!"
+    php -r "readfile('https://getcomposer.org/installer');" | php >> "!LOG_DRIVER_BUILD!" 2>&1
+    IF NOT !ERRORLEVEL! EQU 0 (
+      ECHO FAILED!
+      ECHO 	See !LOG_DRIVER_BUILD! for more details
+      EXIT /B !EXIT_CODE_CONFIGURATION_DRIVER_FAILED!
+    )
+    ECHO Copying composer dependencies script >> "!LOG_DRIVER_BUILD!"
+    COPY /Y "!ABSOLUTE_BATCH_DIRECTORY!\..\composer.json" "!ABSOLUTE_DRIVER_LIBRARY_DIRECTORY!" >> "!LOG_DRIVER_BUILD!" 2>&1
+    IF NOT !ERRORLEVEL! EQU 0 (
+      ECHO FAILED!
+      ECHO 	See !LOG_DRIVER_BUILD! for more details
+      EXIT /B !EXIT_CODE_CONFIGURATION_DRIVER_FAILED!
+    )
+    ECHO Installing driver dependencies >> "!LOG_DRIVER_BUILD!"
+    php composer.phar install >> "!LOG_DRIVER_BUILD!" 2>&1
+    IF NOT !ERRORLEVEL! EQU 0 (
+      ECHO FAILED!
+      ECHO 	See !LOG_DRIVER_BUILD! for more details
+      EXIT /B !EXIT_CODE_CONFIGURATION_DRIVER_FAILED!
+    )
+    ECHO done.
+    POPD
   )
 
   REM Display success message with location to built driver library
   ECHO.
   ECHO Driver has been successfully built [!TARGET_ARCHITECTURE!-bit !BUILD_TYPE!]
   ECHO 	!ABSOLUTE_DRIVER_LIBRARY_DIRECTORY!
-  GOTO :EOF
 ) ELSE (
   REM Ensure the Windows SDK version is undefined (unset)
   IF DEFINED WindowsSDKDir SET WindowsSDKDir=
@@ -664,8 +727,8 @@ IF "!ENABLE_BUILD_PACKAGES!" == "!FALSE!" (
 REM Disable delayed expansion
 ENDLOCAL
 
-REM Exit the batch operation (Ensures below functions are skipped)
-EXIT /B
+REM Exit the batch operation (Ensures below functions are skipped
+GOTO :EOF
 
 REM Convert a string to uppercase
 REM
@@ -697,6 +760,7 @@ REM Display the help message and exit with error code
   ECHO     !ARGUMENT_BUILD_TYPE_DEBUG!                           Enable debug build
   ECHO     !ARGUMENT_BUILD_TYPE_RELEASE!                         Enable release build ^(default^)
   ECHO     !ARGUMENT_DISABLE_CLEAN_BUILD!                   Disable clean build
+  ECHO     !ARGUMENT_DISABLE_THREAD_SAFETY!           Disable thread safety
 REM	ECHO     !ARGUMENT_ENABLE_BUILD_PACKAGES! [version]       Enable package generation
   ECHO     !ARGUMENT_PHP_VERSION! [version]           PHP version 5.4, 5.5, or 5.6
   IF !SYSTEM_ARCHITECTURE! EQU !ARCHITECTURE_32BIT! (
@@ -837,12 +901,13 @@ REM
 REM @param source-directory Location of driver source
 REM @param target-compiler Target compiler to use for compiling the cpp-driver
 REM @param install-directory Installation location of the cpp-driver
+REM @param build-type Debug or release
 REM @param target-architecture 32 or 64-bit
 REM @param enable-zlib True if zlib should be enabled; false otherwise
 REM @param use-boost-atomic True if Boost atomic library should be used; false
 REM                         otherwise
 REM @param log-filename Absolute path and filename for log output
-:BUILDCPPDRIVER [source-directory] [target-compiler] [install-directory] [target-architecture] [enable-zlib] [use-boost-atomic] [log-filename]
+:BUILDCPPDRIVER [source-directory] [target-compiler] [install-directory] [build-type] [target-architecture] [enable-zlib] [use-boost-atomic] [log-filename]
   REM Create cpp-driver variables from arguments
   SET "CPP_DRIVER_SOURCE_DIRECTORY=%~1"
   SHIFT
@@ -850,6 +915,8 @@ REM @param log-filename Absolute path and filename for log output
   SHIFT
   SET "CPP_DRIVER_INSTALLATION_DIRECTORY=%~1"
   SHIFT
+  SET "CPP_DRIVER_BUILD_TYPE=%~1"
+	SHIFT
   SET "CPP_DRIVER_TARGET_ARCHITECTURE=%~1"
   SHIFT
   SET "CPP_DRIVER_ENABLE_ZLIB=%~1"
@@ -862,6 +929,11 @@ REM @param log-filename Absolute path and filename for log output
   ECHO | SET /P=Building and installing cpp-driver ... 
   PUSHD "!CPP_DRIVER_SOURCE_DIRECTORY!" > NUL
   SET "CPP_DRIVER_BUILD_COMMAND_LINE=--TARGET-COMPILER !CPP_DRIVER_TARGET_COMPILER! --INSTALL-DIR !CPP_DRIVER_INSTALLATION_DIRECTORY! --STATIC"
+  IF !CPP_DRIVER_BUILD_TYPE! == "!BUILD_TYPE_DEBUG!" (
+    SET "CPP_DRIVER_BUILD_COMMAND_LINE=!CPP_DRIVER_BUILD_COMMAND_LINE! --DEBUG"
+  ) ELSE (
+    SET "CPP_DRIVER_BUILD_COMMAND_LINE=!CPP_DRIVER_BUILD_COMMAND_LINE! --RELEASE"
+  )
   IF !CPP_DRIVER_TARGET_ARCHITECTURE! EQU !ARCHITECTURE_64BIT! (
     SET "CPP_DRIVER_BUILD_COMMAND_LINE=!CPP_DRIVER_BUILD_COMMAND_LINE! --X64"
   ) ELSE (
@@ -888,14 +960,17 @@ REM Build the MPIR library
 REM
 REM @param source-directory Location of MPIR source
 REM @param install-directory Installation location of MPIR library
+REM @param build-type Debug or release
 REM @param target-architecture 32 or 64-bit
 REM @param log-filename Absolute path and filename for log output
-:BUILDMPIR [source-directory] [install-directory] [target-architecture] [log-filename]
+:BUILDMPIR [source-directory] [install-directory] [build-type] [target-architecture] [log-filename]
   REM Create MPIR variables from arguments
   SET "MPIR_SOURCE_DIRECTORY=%~1"
   SHIFT
   SET "MPIR_INSTALLATION_DIRECTORY=%~1"
   SHIFT
+  SET "MPIR_BUILD_TYPE=%~1"
+	SHIFT
   SET "MPIR_TARGET_ARCHITECTURE=%~1"
   SHIFT
   SET "MPIR_LOG_FILENAME=%~1"
@@ -904,7 +979,7 @@ REM @param log-filename Absolute path and filename for log output
   PUSHD "!MPIR_SOURCE_DIRECTORY!" > NUL
   IF DEFINED DEVENV_FOUND (
     ECHO | SET /P=Upgrading MPIR solution ... 
-    !DEVENV! !build.vc10\mpir.sln /upgrade >> "!MPIR_LOG_FILENAME!" 2>&1
+    !DEVENV! build.vc10\mpir.sln /upgrade >> "!MPIR_LOG_FILENAME!" 2>&1
     IF NOT !ERRORLEVEL! EQU 0 (
       ECHO FAILED!
       ECHO 	See !MPIR_LOG_FILENAME! for more details
@@ -916,8 +991,8 @@ REM @param log-filename Absolute path and filename for log output
   ECHO | SET /P=Building MPIR ... 
   SET MPIR_PLATFORM_ARCHITECTURE=Win32
   IF !MPIR_TARGET_ARCHITECTURE! EQU !ARCHITECTURE_64BIT! SET MPIR_PLATFORM_ARCHITECTURE=x64
-  ECHO !MSBUILD! build.vc10\mpir.sln /T:lib_mpir_gc /P:Configuration=!BUILD_TYPE! /P:Platform=!MPIR_PLATFORM_ARCHITECTURE! /CLP:NoSummary;NoItemAndPropertyList;Verbosity=minimal /NOLOGO >> "!MPIR_LOG_FILENAME!" 2>&1
-  !MSBUILD! build.vc10\mpir.sln /T:lib_mpir_gc /P:Configuration=!BUILD_TYPE! /P:Platform=!MPIR_PLATFORM_ARCHITECTURE! /CLP:NoSummary;NoItemAndPropertyList;Verbosity=minimal /NOLOGO >> "!MPIR_LOG_FILENAME!" 2>&1
+  ECHO !MSBUILD! build.vc10\mpir.sln /T:lib_mpir_gc /P:Configuration=!MPIR_BUILD_TYPE! /P:Platform=!MPIR_PLATFORM_ARCHITECTURE! /CLP:NoSummary;NoItemAndPropertyList;Verbosity=minimal /NOLOGO >> "!MPIR_LOG_FILENAME!" 2>&1
+  !MSBUILD! build.vc10\mpir.sln /T:lib_mpir_gc /P:Configuration=!MPIR_BUILD_TYPE! /P:Platform=!MPIR_PLATFORM_ARCHITECTURE! /CLP:NoSummary;NoItemAndPropertyList;Verbosity=minimal /NOLOGO >> "!MPIR_LOG_FILENAME!" 2>&1
   IF NOT !ERRORLEVEL! EQU 0 (
     ECHO FAILED!
     ECHO 	See !MPIR_LOG_FILENAME! for more details
@@ -942,11 +1017,130 @@ REM @param log-filename Absolute path and filename for log output
     EXIT /B !EXIT_CODE_BUILD_DEPENDENCY_FAILED!
   )
   IF NOT EXIST "!MPIR_INSTALLATION_DIRECTORY!\lib" MKDIR "!MPIR_INSTALLATION_DIRECTORY!\lib"
-  XCOPY /Y build.vc10\!MPIR_PLATFORM_ARCHITECTURE!\!BUILD_TYPE!\*.* "!MPIR_INSTALLATION_DIRECTORY!\lib" >> "!MPIR_LOG_FILENAME!" 2>&1
+  XCOPY /Y build.vc10\!MPIR_PLATFORM_ARCHITECTURE!\!MPIR_BUILD_TYPE!\*.* "!MPIR_INSTALLATION_DIRECTORY!\lib" >> "!MPIR_LOG_FILENAME!" 2>&1
   IF NOT !ERRORLEVEL! EQU 0 (
     ECHO FAILED!
     ECHO 	See !MPIR_LOG_FILENAME! for more details
     RMDIR /S /Q "!MPIR_INSTALLATION_DIRECTORY!"
+    EXIT /B !EXIT_CODE_BUILD_DEPENDENCY_FAILED!
+  )
+  POPD
+  ECHO done.
+  EXIT /B
+
+REM Build the libiconv library
+REM
+REM @param source-directory Location of libiconv source
+REM @param install-directory Installation location of libiconv library
+REM @param target-architecture 32 or 64-bit
+REM @param log-filename Absolute path and filename for log output
+:BUILDLIBICONV [source-directory] [install-directory] [target-architecture] [log-filename]
+  REM Create libiconv variables from arguments
+  SET "LIBICONV_SOURCE_DIRECTORY=%~1"
+  SHIFT
+  SET "LIBICONV_INSTALLATION_DIRECTORY=%~1"
+  SHIFT
+  SET "LIBICONV_TARGET_ARCHITECTURE=%~1"
+  SHIFT
+  SET "LIBICONV_LOG_FILENAME=%~1"
+
+  REM Attempt to upgrade the solution
+  PUSHD "!LIBICONV_SOURCE_DIRECTORY!" > NUL
+  IF DEFINED DEVENV_FOUND (
+    ECHO | SET /P=Upgrading libiconv solution ... 
+    !DEVENV! MSVC9\libiconv.sln /upgrade >> "!LIBICONV_LOG_FILENAME!" 2>&1
+    IF NOT !ERRORLEVEL! EQU 0 (
+      ECHO FAILED!
+      ECHO 	See !LIBICONV_LOG_FILENAME! for more details
+      EXIT /B !EXIT_CODE_BUILD_DEPENDENCY_FAILED!
+    )
+    ECHO done.
+  )
+  REM Build libiconv
+  ECHO | SET /P=Building libiconv ... 
+  SET LIBICONV_PLATFORM_ARCHITECTURE=Win32
+  IF !LIBICONV_TARGET_ARCHITECTURE! EQU !ARCHITECTURE_64BIT! SET LIBICONV_PLATFORM_ARCHITECTURE=x64
+  ECHO !MSBUILD! MSVC9\libiconv.sln /T:libiconv_static /P:Configuration=Release /P:Platform=!LIBICONV_PLATFORM_ARCHITECTURE! /CLP:NoSummary;NoItemAndPropertyList;Verbosity=minimal /NOLOGO >> "!LIBICONV_LOG_FILENAME!" 2>&1
+  !MSBUILD! MSVC9\libiconv.sln /T:libiconv_static /P:Configuration=Release /P:Platform=!LIBICONV_PLATFORM_ARCHITECTURE! /CLP:NoSummary;NoItemAndPropertyList;Verbosity=minimal /NOLOGO >> "!LIBICONV_LOG_FILENAME!" 2>&1
+  IF NOT !ERRORLEVEL! EQU 0 (
+    ECHO FAILED!
+    ECHO 	See !LIBICONV_LOG_FILENAME! for more details
+    EXIT /B !EXIT_CODE_BUILD_DEPENDENCY_FAILED!
+  )
+  ECHO done.
+  REM Install libiconv
+  ECHO | SET /P=Installing libiconv ... 
+  IF NOT EXIST "!LIBICONV_INSTALLATION_DIRECTORY!\include" MKDIR "!LIBICONV_INSTALLATION_DIRECTORY!\include"
+  XCOPY /Y source\include\iconv.h "!LIBICONV_INSTALLATION_DIRECTORY!\include" >> "!LIBICONV_LOG_FILENAME!" 2>&1
+  IF NOT !ERRORLEVEL! EQU 0 (
+    ECHO FAILED!
+    ECHO 	See !MPIR_LOG_FILENAME! for more details
+    RMDIR /S /Q "!LIBICONV_INSTALLATION_DIRECTORY!"
+    EXIT /B !EXIT_CODE_BUILD_DEPENDENCY_FAILED!
+  )
+  IF NOT EXIST "!LIBICONV_INSTALLATION_DIRECTORY!\lib" MKDIR "!LIBICONV_INSTALLATION_DIRECTORY!\lib"
+  IF !LIBICONV_TARGET_ARCHITECTURE! EQU !ARCHITECTURE_64BIT! (
+    XCOPY /Y MSVC9\libiconv_static\!LIBICONV_PLATFORM_ARCHITECTURE!\Release\*.lib "!LIBICONV_INSTALLATION_DIRECTORY!\lib" >> "!LIBICONV_LOG_FILENAME!" 2>&1
+  ) ELSE (
+    XCOPY /Y MSVC9\libiconv_static\Release\*.lib "!LIBICONV_INSTALLATION_DIRECTORY!\lib" >> "!LIBICONV_LOG_FILENAME!" 2>&1
+  )
+  IF NOT !ERRORLEVEL! EQU 0 (
+    ECHO FAILED!
+    ECHO 	See !LIBICONV_LOG_FILENAME! for more details
+    RMDIR /S /Q "!LIBICONV_INSTALLATION_DIRECTORY!"
+    EXIT /B !EXIT_CODE_BUILD_DEPENDENCY_FAILED!
+  )
+  POPD
+  ECHO done.
+  EXIT /B
+
+REM Build the libxml2 library
+REM
+REM @param source-directory Location of libxml2 source
+REM @param install-directory Installation location of libxml2 library
+REM @param libiconv-library-directory Library directory for cpp-driver
+REM @param log-filename Absolute path and filename for log output
+:BUILDLIBXML2 [source-directory] [install-directory] [libiconv-library-directory] [log-filename]
+  REM Create libxml2 variables from arguments
+  SET "LIBXML2_SOURCE_DIRECTORY=%~1"
+  SHIFT
+  SET "LIBXML2_INSTALLATION_DIRECTORY=%~1"
+  SHIFT
+  SET "LIBXML2_LIBICONV_LIBRARY_DIRECTORY=%~1"
+  SHIFT
+  SET "LIBXML2_LOG_FILENAME=%~1"
+
+  REM Build libxml2
+  PUSHD "!LIBXML2_SOURCE_DIRECTORY!\Win32" > NUL
+  ECHO | SET /P=Configuring libxml2 ... 
+  COPY /Y "!LIBXML2_LIBICONV_LIBRARY_DIRECTORY!\lib\libiconv_a.lib" "!LIBXML2_LIBICONV_LIBRARY_DIRECTORY!\lib\libiconv.lib" > "!LIBXML2_LOG_FILENAME!" 2>&1
+  IF NOT !ERRORLEVEL! EQU 0 (
+    ECHO FAILED!
+    ECHO 	See !LIBXML2_LOG_FILENAME! for more details
+    EXIT /B !EXIT_CODE_BUILD_DEPENDENCY_FAILED!
+  )
+  ECHO CSCRIPT configure.js lib="!LIBXML2_LIBICONV_LIBRARY_DIRECTORY!\lib" include="!LIBXML2_LIBICONV_LIBRARY_DIRECTORY!\include" vcmanifest=yes >> "!LIBXML2_LOG_FILENAME!" 2>&1
+  CSCRIPT configure.js prefix="!LIBXML2_INSTALLATION_DIRECTORY!" lib="!LIBXML2_LIBICONV_LIBRARY_DIRECTORY!\lib" include="!LIBXML2_LIBICONV_LIBRARY_DIRECTORY!\include" vcmanifest=yes >> "!LIBXML2_LOG_FILENAME!" 2>&1
+  IF NOT !ERRORLEVEL! EQU 0 (
+    ECHO FAILED!
+    ECHO 	See !LIBXML2_LOG_FILENAME! for more details
+    EXIT /B !EXIT_CODE_BUILD_DEPENDENCY_FAILED!
+  )
+  ECHO done.
+  ECHO | SET /P=Building libxml2 ... 
+  !NMAKE! all >> "!LIBXML2_LOG_FILENAME!" 2>&1
+  IF NOT !ERRORLEVEL! EQU 0 (
+    ECHO FAILED!
+    ECHO 	See !LIBXML2_LOG_FILENAME! for more details
+    EXIT /B !EXIT_CODE_BUILD_DEPENDENCY_FAILED!
+  )
+  ERASE "!LIBXML2_LIBICONV_LIBRARY_DIRECTORY!\lib\libiconv.lib"
+  ECHO done.
+  ECHO | SET /P=Installing libxml2 ... 
+  !NMAKE! install >> "!LIBXML2_LOG_FILENAME!" 2>&1
+  IF NOT !ERRORLEVEL! EQU 0 (
+    ECHO FAILED!
+    ECHO 	See !LIBXML2_LOG_FILENAME! for more details
     EXIT /B !EXIT_CODE_BUILD_DEPENDENCY_FAILED!
   )
   POPD
@@ -958,13 +1152,20 @@ REM
 REM @param php-source-directory Location of PHP source
 REM @param extension-source-directory Location of driver extension source
 REM @param install-directory Installation location of driver extension library
+REM @param enable-thread-safety True if thread safety is enabled; false
+REM                             otherwise
+REM @param build-type Debug or release
+REM @param libiconv-library-directory Library directory for libiconv
+REM @param libxml2-library-directory Library directory for libxml2
 REM @param cpp-driver-library-directory Library directory for cpp-driver
 REM @param libuv-library-directory Library directory for libuv
-REM @param openssl-library-directory Library directory for OpenSSL; empty
-REM                                  string indicates OpenSSL disabled
+REM @param openssl-library-directory Library directory for OpenSSL
+REM @param zlib-library-directory Library directory for zlib; if zlib library
+REM                               directory does not exist zlib will be
+REM                               disabled
 REM @param mpir-library-directory Library directory for MPIR
 REM @param log-filename Absolute path and filename for log output
-:BUILDDRIVER [php-source-directory] [extension-source-directory] [install-directory] [cpp-driver-library-directory] [libuv-library-directory] [openssl-library-directory] [mpir-library-directory] [log-filename]
+:BUILDDRIVER [php-source-directory] [extension-source-directory] [install-directory] [enable-thread-safety] [build-type] [libiconv-library-directory] [libxml2-library-directory] [cpp-driver-library-directory] [libuv-library-directory] [openssl-library-directory] [zlib-library-directory] [mpir-library-directory] [log-filename]
   REM Create php-driver variables from arguments
   SET "PHP_DRIVER_PHP_SOURCE_DIRECTORY=%~1"
   SHIFT
@@ -972,11 +1173,21 @@ REM @param log-filename Absolute path and filename for log output
   SHIFT
   SET "PHP_DRIVER_INSTALLATION_DIRECTORY=%~1"
   SHIFT
+  SET "PHP_DRIVER_BUILD_TYPE=%~1"
+  SHIFT
+  SET "PHP_DRIVER_ENABLE_THREAD_SAFETY=%~1"
+  SHIFT
+  SET "PHP_DRIVER_LIBICONV_LIBRARY_DIRECTORY=%~1"
+  SHIFT
+  SET "PHP_DRIVER_LIBXML2_LIBRARY_DIRECTORY=%~1"
+  SHIFT
   SET "PHP_DRIVER_CPP_DRIVER_LIBRARY_DIRECTORY=%~1"
   SHIFT
   SET "PHP_DRIVER_LIBUV_LIBRARY_DIRECTORY=%~1"
   SHIFT
-  SET "PHP_DRIVER_OPENSSLLIBRARY_DIRECTORY=%~1"
+  SET "PHP_DRIVER_OPENSSL_LIBRARY_DIRECTORY=%~1"
+  SHIFT
+  SET "PHP_DRIVER_ZLIB_LIBRARY_DIRECTORY=%~1"
   SHIFT
   SET "PHP_DRIVER_MPIR_LIBRARY_DIRECTORY=%~1"
   SHIFT
@@ -992,12 +1203,68 @@ REM @param log-filename Absolute path and filename for log output
     EXIT /B !EXIT_CODE_BUILD_DRIVER_FAILED!
   )
   ECHO done.
-  ECHO | SET /P=Configure build and enable driver extension ... 
-  ECHO configure.bat --with-prefix="!PHP_DRIVER_INSTALLATION_DIRECTORY!" --disable-all --enable-cli --enable-cassandra=shared --with-cassandra-cpp-driver="!PHP_DRIVER_CPP_DRIVER_LIBRARY_DIRECTORY!" --with-libuv-libs="!PHP_DRIVER_LIBUV_LIBRARY_DIRECTORY!" --with-openssl-libs="!PHP_DRIVER_OPENSSLLIBRARY_DIRECTORY!" --with-mpir="!PHP_DRIVER_MPIR_LIBRARY_DIRECTORY!" >> "!PHP_DRIVER_LOG_FILENAME!" 2>&1
-  CALL configure.bat --with-prefix="!PHP_DRIVER_INSTALLATION_DIRECTORY!" --disable-all --enable-cli --enable-cassandra=shared --with-cassandra-cpp-driver="!PHP_DRIVER_CPP_DRIVER_LIBRARY_DIRECTORY!" --with-libuv-libs="!PHP_DRIVER_LIBUV_LIBRARY_DIRECTORY!" --with-openssl-libs="!PHP_DRIVER_OPENSSLLIBRARY_DIRECTORY!" --with-mpir="!PHP_DRIVER_MPIR_LIBRARY_DIRECTORY!" >> "!PHP_DRIVER_LOG_FILENAME!" 2>&1
+  IF NOT EXIST "!PHP_DRIVER_PHP_SOURCE_DIRECTORY!\..\deps" (
+    ECHO | SET /P=Setting up PHP build environment ... 
+    MKDIR "!PHP_DRIVER_PHP_SOURCE_DIRECTORY!\..\deps"
+    XCOPY /Y /E "!PHP_DRIVER_OPENSSL_LIBRARY_DIRECTORY!\*.*" "!PHP_DRIVER_PHP_SOURCE_DIRECTORY!\..\deps" >> "!PHP_DRIVER_LOG_FILENAME!" 2>&1
+    IF NOT !ERRORLEVEL! EQU 0 (
+      ECHO FAILED!
+      ECHO 	See !PHP_DRIVER_LOG_FILENAME! for more details
+      RMDIR /S /Q "!PHP_DRIVER_PHP_SOURCE_DIRECTORY!\..\deps" > NUL
+      EXIT /B !EXIT_CODE_BUILD_DRIVER_FAILED!
+    )
+    XCOPY /Y /E "!PHP_DRIVER_LIBICONV_LIBRARY_DIRECTORY!\*.*" "!PHP_DRIVER_PHP_SOURCE_DIRECTORY!\..\deps" >> "!PHP_DRIVER_LOG_FILENAME!" 2>&1
+    IF NOT !ERRORLEVEL! EQU 0 (
+      ECHO FAILED!
+      ECHO 	See !PHP_DRIVER_LOG_FILENAME! for more details
+      RMDIR /S /Q "!PHP_DRIVER_PHP_SOURCE_DIRECTORY!\..\deps" > NUL
+      EXIT /B !EXIT_CODE_BUILD_DRIVER_FAILED!
+    )
+    XCOPY /Y /E "!PHP_DRIVER_LIBXML2_LIBRARY_DIRECTORY!\*.*" "!PHP_DRIVER_PHP_SOURCE_DIRECTORY!\..\deps" >> "!PHP_DRIVER_LOG_FILENAME!" 2>&1
+    IF NOT !ERRORLEVEL! EQU 0 (
+      ECHO FAILED!
+      ECHO 	See !PHP_DRIVER_LOG_FILENAME! for more details
+      RMDIR /S /Q "!PHP_DRIVER_PHP_SOURCE_DIRECTORY!\..\deps" > NUL
+      EXIT /B !EXIT_CODE_BUILD_DRIVER_FAILED!
+    )
+    MOVE "!PHP_DRIVER_PHP_SOURCE_DIRECTORY!\..\deps\include\libxml2\libxml" "!PHP_DRIVER_PHP_SOURCE_DIRECTORY!\..\deps\include\libxml" >> "!PHP_DRIVER_LOG_FILENAME!" 2>&1
+    IF NOT !ERRORLEVEL! EQU 0 (
+      ECHO FAILED!
+      ECHO 	See !PHP_DRIVER_LOG_FILENAME! for more details
+      RMDIR /S /Q "!PHP_DRIVER_PHP_SOURCE_DIRECTORY!\..\deps" > NUL
+      EXIT /B !EXIT_CODE_BUILD_DRIVER_FAILED!
+    )
+    RMDIR /S /Q "!PHP_DRIVER_PHP_SOURCE_DIRECTORY!\..\deps\include\libxml2" >> "!PHP_DRIVER_LOG_FILENAME!" 2>&1
+    IF EXIST "!PHP_DRIVER_ZLIB_LIBRARY_DIRECTORY!" (
+      XCOPY /Y /E "!PHP_DRIVER_ZLIB_LIBRARY_DIRECTORY!\*.*" "!PHP_DRIVER_PHP_SOURCE_DIRECTORY!\..\deps" >> "!PHP_DRIVER_LOG_FILENAME!" 2>&1
+      IF NOT !ERRORLEVEL! EQU 0 (
+        ECHO FAILED!
+        ECHO 	See !PHP_DRIVER_LOG_FILENAME! for more details
+        RMDIR /S /Q "!PHP_DRIVER_PHP_SOURCE_DIRECTORY!\..\deps" > NUL
+        EXIT /B !EXIT_CODE_BUILD_DRIVER_FAILED!
+      )
+    )
+    ECHO done.
+  )
+  ECHO | SET /P=Configuring PHP and enable driver extension ... 
+  SET "DRIVER_CONFIGURE_COMMAND_LINE=--with-prefix=^"!PHP_DRIVER_INSTALLATION_DIRECTORY!^" --disable-all --enable-cli --enable-phar --enable-json --enable-filter --enable-hash --enable-ctype --enable-mbstring --enable-mbregex --enable-mbregex-backtrack --enable-tokenizer --with-libxml --with-dom --with-iconv="!PHP_DRIVER_LIBICONV_LIBRARY_DIRECTORY!" --with-openssl="!PHP_DRIVER_OPENSSL_LIBRARY_DIRECTORY!" --enable-cassandra=shared --with-cassandra-cpp-driver=^"!PHP_DRIVER_CPP_DRIVER_LIBRARY_DIRECTORY!^" --with-libuv-libs=^"!PHP_DRIVER_LIBUV_LIBRARY_DIRECTORY!^" --with-mpir=^"!PHP_DRIVER_MPIR_LIBRARY_DIRECTORY!^""
+  IF EXIST "!PHP_DRIVER_ZLIB_LIBRARY_DIRECTORY!" (
+    SET "DRIVER_CONFIGURE_COMMAND_LINE=!DRIVER_CONFIGURE_COMMAND_LINE! --with-zlib-libs=^"!PHP_DRIVER_ZLIB_LIBRARY_DIRECTORY!^""
+  )
+  IF "!PHP_DRIVER_ENABLE_THREAD_SAFETY!" == "!TRUE!" (
+    SET "DRIVER_CONFIGURE_COMMAND_LINE=!DRIVER_CONFIGURE_COMMAND_LINE! --enable-zts"
+  ) ELSE (
+    SET "DRIVER_CONFIGURE_COMMAND_LINE=!DRIVER_CONFIGURE_COMMAND_LINE! --disable-zts"
+  )
+  IF "!PHP_DRIVER_BUILD_TYPE!" == "!BUILD_TYPE_DEBUG!" (
+    SET "DRIVER_CONFIGURE_COMMAND_LINE=!DRIVER_CONFIGURE_COMMAND_LINE! --enable-debug"
+  )
+  ECHO configure.bat !DRIVER_CONFIGURE_COMMAND_LINE! >> "!PHP_DRIVER_LOG_FILENAME!" 2>&1
+  CALL configure.bat !DRIVER_CONFIGURE_COMMAND_LINE! >> "!PHP_DRIVER_LOG_FILENAME!" 2>&1
   IF NOT !ERRORLEVEL! EQU 0 (
     ECHO FAILED!
     ECHO 	See !PHP_DRIVER_LOG_FILENAME! for more details
+    RMDIR /S /Q "!PHP_DRIVER_PHP_SOURCE_DIRECTORY!\..\deps" > NUL
     EXIT /B !EXIT_CODE_BUILD_DRIVER_FAILED!
   )
   ECHO done.
@@ -1006,6 +1273,7 @@ REM @param log-filename Absolute path and filename for log output
   IF NOT !ERRORLEVEL! EQU 0 (
     ECHO FAILED!
     ECHO 	See !PHP_DRIVER_LOG_FILENAME! for more details
+    RMDIR /S /Q "!PHP_DRIVER_PHP_SOURCE_DIRECTORY!\..\deps" > NUL
     EXIT /B !EXIT_CODE_BUILD_DRIVER_FAILED!
   )
   ECHO done.
@@ -1014,7 +1282,9 @@ REM @param log-filename Absolute path and filename for log output
   IF NOT !ERRORLEVEL! EQU 0 (
     ECHO FAILED!
     ECHO 	See !PHP_DRIVER_LOG_FILENAME! for more details
+    RMDIR /S /Q "!PHP_DRIVER_PHP_SOURCE_DIRECTORY!\..\deps" > NUL
     EXIT /B !EXIT_CODE_BUILD_DRIVER_FAILED!
   )
+REM   RMDIR /S /Q "!PHP_DRIVER_PHP_SOURCE_DIRECTORY!\..\deps" >> "!PHP_DRIVER_LOG_FILENAME!" 2>&1
   ECHO done.
   POPD

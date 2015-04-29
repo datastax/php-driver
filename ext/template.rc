@@ -25,16 +25,24 @@ BEGIN
     BEGIN
         BLOCK "040904b0"
         BEGIN
-            VALUE "Comments", "Copyright © 2015 DataStax, Inc. Licensed under the Apache License, Version 2.0 (the 'License'); you may not use this file except in compliance with the License"
+            VALUE "Comments", "Licensed under the Apache License, Version 2.0 (the 'License'); you may not use this file except in compliance with the License"
             VALUE "CompanyName", "DataStax, Inc."
-            VALUE "FileDescription", "DataStax driver for PHP for Cassandra (PHP Driver)"
+#ifdef ZTS
+            VALUE "FileDescription", "PHP extension for Cassandra without thread safety"
+#else
+            VALUE "FileDescription", "PHP extension for Cassandra with thread safety"
+#endif
             VALUE "FileVersion", PHP_CASSANDRA_MAJOR,PHP_CASSANDRA_MINOR,PHP_CASSANDRA_RELEASE,0
             VALUE "InternalName", FILE_NAME
             VALUE "LegalCopyright", "Copyright © 2015 DataStax, Inc."
             VALUE "OriginalFilename", FILE_NAME
-            VALUE "ProductName", "DataStax driver for PHP for Cassandra"
+#ifdef ZTS
+            VALUE "ProductName", "PHP driver for Cassandra (ZTS)"
+#else
+            VALUE "ProductName", "PHP driver for Cassandra"
+#endif
             VALUE "ProductVersion", PHP_CASSANDRA_EXTVER
-#ifdef _DEBUG
+#if def _DEBUG
             VALUE "SpecialBuild", "Debug build"
 #endif
             VALUE "URL", "http://www.datastax.com"

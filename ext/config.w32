@@ -3,21 +3,28 @@
 ARG_ENABLE("cassandra", "Enable DataStax PHP Cassandra extension", "no");
 ARG_WITH("cassandra-cpp-driver", "Where to find DataStax C/C++ driver", "no");
 ARG_WITH("libuv-libs", "Where to find libuv libraries", "no");
-ARG_WITH("openssl-libs", "Where to find OpenSSL libraries", "no");
 ARG_WITH("mpir", "Where to find MPIR (GNU MP)", "no");
+ARG_WITH("zlib-libs", "Where to find zlib libraries (optional)", "no");
 
 if (PHP_CASSANDRA != "no" &&
-    PHP_CASSANDRA_CPP_DRIVER != "no" && PHP_LIBUV_LIBS != "no" && PHP_OPENSSL_LIBS != "no" &&
+    PHP_CASSANDRA_CPP_DRIVER != "no" && PHP_LIBUV_LIBS != "no" && ADD_EXTENSION_DEP("cassandra", "openssl") &&
     PHP_MPIR != "no") {
   if (CHECK_LIB("cassandra_static.lib", "cassandra", PHP_CASSANDRA_CPP_DRIVER) &&
       CHECK_LIB("libuv.lib", "cassandra", PHP_LIBUV_LIBS) &&
       CHECK_LIB("psapi.lib", "cassandra") &&
       CHECK_LIB("iphlpapi.lib", "cassandra") &&
-      CHECK_LIB("libeay32.lib", "cassandra", PHP_OPENSSL_LIBS) &&
-      CHECK_LIB("ssleay32.lib", "cassandra", PHP_OPENSSL_LIBS) &&
-      CHECK_LIB("gdi32.lib", "cassandra") &&
+      CHECK_LIB("libeay32.lib", "cassandra") && CHECK_LIB("ssleay32.lib", "cassandra") &&
       CHECK_HEADER_ADD_INCLUDE("cassandra.h", "CFLAGS_CASSANDRA_CPP_DRIVER", PHP_CASSANDRA_CPP_DRIVER + "/include")) {
-    
+
+    if (PHP_ZLIB_LIBS != "no") {
+       if(CHECK_LIB("zlibstatic.lib", "cassandra", PHP_ZLIB_LIBS)) {
+         // Ensure zlibstatic.lib is linked for all dependency extensions
+         ADD_FLAG("LIBS", "zlibstatic.lib");
+       } else {
+         WARNING("Unable to locate zlib");
+       }
+    }
+
     AC_DEFINE("HAVE_CASSANDRA_CPP_DRIVER", PHP_CASSANDRA_CPP_DRIVER ? 0 : 1, "Have DataStax C/C++ driver");
     if (CHECK_LIB("mpir.lib", "cassandra", PHP_MPIR) &&
         CHECK_HEADER_ADD_INCLUDE("mpir.h", "CFLAGS_MPIR", PHP_MPIR + "/include")) {
@@ -68,6 +75,9 @@ if (PHP_CASSANDRA != "no" &&
             "/I " + configure_module_dirname + "/ext/util " +
             "/DCASS_STATIC " +
             "/wd4267");
+
+        // Ensure gdi32.lib is linked for all dependency extensions
+        ADD_FLAG("LIBS", "gdi32.lib");
       } else {
         ERROR("Unable to add dependency spl");
       }
