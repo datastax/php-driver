@@ -14,34 +14,6 @@ PHP_METHOD(Cassandra, ssl)
   object_init_ex(return_value, cassandra_ssl_builder_ce);
 }
 
-PHP_METHOD(Cassandra, setLogLevel)
-{
-  zval* level;
-
-  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z", &level) == FAILURE) {
-    return;
-  }
-
-  if (Z_TYPE_P(level) != IS_LONG) {
-    INVALID_ARGUMENT(level, "one of Cassandra::LOG_*");
-  }
-
-  switch (Z_LVAL_P(level)) {
-  case CASS_LOG_DISABLED:
-  case CASS_LOG_CRITICAL:
-  case CASS_LOG_ERROR:
-  case CASS_LOG_WARN:
-  case CASS_LOG_INFO:
-  case CASS_LOG_DEBUG:
-  case CASS_LOG_TRACE:
-    break;
-  default:
-    INVALID_ARGUMENT(level, "one of Cassandra::LOG_*");
-  }
-
-  CASSANDRA_G(log_level) = Z_LVAL_P(level);
-}
-
 ZEND_BEGIN_ARG_INFO_EX(arginfo_none, 0, ZEND_RETURN_VALUE, 0)
 ZEND_END_ARG_INFO()
 
@@ -52,7 +24,6 @@ ZEND_END_ARG_INFO()
 static zend_function_entry Cassandra_methods[] = {
   PHP_ME(Cassandra, cluster,     arginfo_none,  ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
   PHP_ME(Cassandra, ssl,         arginfo_none,  ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
-  PHP_ME(Cassandra, setLogLevel, arginfo_level, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
   PHP_FE_END
 };
 

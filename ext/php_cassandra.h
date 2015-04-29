@@ -7,6 +7,7 @@
 
 #include <gmp.h>
 #include <cassandra.h>
+#include <uv.h>
 #include <php.h>
 #include <Zend/zend_exceptions.h>
 
@@ -88,9 +89,6 @@ PHP_RINIT_FUNCTION(cassandra);
 PHP_RSHUTDOWN_FUNCTION(cassandra);
 PHP_MINFO_FUNCTION(cassandra);
 
-/* Log */
-PHP_FUNCTION(cassandra_set_log_level);
-
 /* CassSession */
 PHP_FUNCTION(cassandra_session_new);
 PHP_FUNCTION(cassandra_session_free);
@@ -134,7 +132,6 @@ PHP_FUNCTION(cassandra_batch_add_statement);
 
 ZEND_BEGIN_MODULE_GLOBALS(cassandra)
   CassUuidGen*          uuid_gen;
-  CassLogLevel          log_level;
   unsigned int          persistent_clusters;
   unsigned int          persistent_sessions;
 ZEND_END_MODULE_GLOBALS(cassandra)
