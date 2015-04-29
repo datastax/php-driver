@@ -1,4 +1,5 @@
 #include "php_cassandra.h"
+#include "util/future.h"
 
 zend_class_entry *cassandra_future_close_ce = NULL;
 

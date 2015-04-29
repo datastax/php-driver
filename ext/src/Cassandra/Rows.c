@@ -1,6 +1,7 @@
 #include "php_cassandra.h"
 #include "util/future.h"
 #include "util/ref.h"
+#include "util/result.h"
 
 zend_class_entry *cassandra_rows_ce = NULL;
 extern zend_class_entry *zend_ce_iterator;
