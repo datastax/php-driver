@@ -11,6 +11,10 @@
 
 #define PHP_CASSANDRA_DEFAULT_LOG "php-driver.log"
 
+static uv_once_t log_once = UV_ONCE_INIT;
+static char* log_location = NULL;
+static uv_rwlock_t log_lock;
+
 zend_class_entry*
 exception_class(CassError rc)
 {
@@ -174,19 +178,40 @@ ZEND_GET_MODULE(cassandra)
 #endif
 
 static void
+php_cassandra_log(const CassLogMessage* message, void* data);
+
+void
+php_cassandra_log_cleanup()
+{
+  cass_log_cleanup();
+  uv_rwlock_destroy(&log_lock);
+  if (log_location != NULL) {
+    free(log_location);
+  }
+}
+
+static void
+php_cassandra_log_initialize()
+{
+  uv_rwlock_init(&log_lock);
+  cass_log_set_level(CASS_LOG_ERROR);
+  cass_log_set_callback(php_cassandra_log, NULL);
+  atexit(php_cassandra_log_cleanup);
+}
+
+static void
 php_cassandra_log(const CassLogMessage* message, void* data)
 {
   char log[MAXPATHLEN + 1];
   uint log_length = 0;
 
-  (void)data;
-
-  uv_rwlock_rdlock(&CASSANDRA_G(log_lock));
-  if (CASSANDRA_G(log)) {
-    log_length = MIN(CASSANDRA_G(log_length), MAXPATHLEN);
-    memcpy(log, CASSANDRA_G(log), log_length);
+  /* Making a copy here because location could be updated by a PHP thread. */
+  uv_rwlock_rdlock(&log_lock);
+  if (log_location) {
+    log_length = MIN(strlen(log_location), MAXPATHLEN);
+    memcpy(log, log_location, log_length);
   }
-  uv_rwlock_rdunlock(&CASSANDRA_G(log_lock));
+  uv_rwlock_rdunlock(&log_lock);
 
   log[log_length] = '\0';
 
@@ -200,7 +225,7 @@ php_cassandra_log(const CassLogMessage* message, void* data)
       return;
     }
 
-    fd = VCWD_OPEN_MODE(log, O_CREAT | O_APPEND | O_WRONLY, 0644);
+    fd = open(log, O_CREAT | O_APPEND | O_WRONLY, 0644);
 
     if (fd != 1) {
       time_t log_time;
@@ -230,6 +255,11 @@ php_cassandra_log(const CassLogMessage* message, void* data)
       return;
     }
   }
+
+  /* This defaults to using "stderr" instead of "sapi_module.log_message"
+   * because there are no guarantees that all implementations of the SAPI
+   * logging function are thread-safe.
+   */
 
   fprintf(stderr, "php-driver | [%s] %s (%s:%d)%s",
           cass_log_level_string(message->severity), message->message,
@@ -337,20 +367,37 @@ php_cassandra_batch_dtor(zend_rsrc_list_entry* rsrc TSRMLS_DC)
 
 static PHP_INI_MH(OnUpdateLogLevel)
 {
+  /* If TSRM is enabled then the last thread to update this wins */
+
   if (new_value) {
     long log_level = zend_atol(new_value, new_value_length);
     if (log_level > CASS_LOG_DISABLED && log_level < CASS_LOG_LAST_ENTRY)
       cass_log_set_level((CassLogLevel) log_level);
   }
+
   return SUCCESS;
 }
 
 static PHP_INI_MH(OnUpdateLog)
 {
-  uv_rwlock_wrlock(&CASSANDRA_G(log_lock));
-  CASSANDRA_G(log) = new_value;
-  CASSANDRA_G(log_length) = new_value_length;
-  uv_rwlock_wrunlock(&CASSANDRA_G(log_lock));
+  /* If TSRM is enabled then the last thread to update this wins */
+
+  uv_rwlock_wrlock(&log_lock);
+  if (log_location) {
+    free(log_location);
+    log_location = NULL;
+  }
+  if (new_value) {
+    if(strcmp(new_value, "syslog") != 0) {
+      char realpath[MAXPATHLEN + 1];
+      if (VCWD_REALPATH(new_value, realpath))
+        log_location = strdup(realpath);
+    } else {
+      log_location = strdup(new_value);
+    }
+  }
+  uv_rwlock_wrunlock(&log_lock);
+
   return SUCCESS;
 }
 
@@ -362,23 +409,15 @@ PHP_INI_END()
 static PHP_GINIT_FUNCTION(cassandra)
 {
   cassandra_globals->uuid_gen            = cass_uuid_gen_new();
-  cassandra_globals->log                 = NULL;
-  cassandra_globals->log_length          = 0;
   cassandra_globals->persistent_clusters = 0;
   cassandra_globals->persistent_sessions = 0;
 
-  uv_rwlock_init(&(cassandra_globals->log_lock));
-
-  cass_log_set_level(CASS_LOG_ERROR);
-  cass_log_set_callback(php_cassandra_log, NULL);
+  uv_once(&log_once, php_cassandra_log_initialize);
 }
 
 static PHP_GSHUTDOWN_FUNCTION(cassandra)
 {
-  cass_log_cleanup();
   cass_uuid_gen_free(cassandra_globals->uuid_gen);
-
-  uv_rwlock_destroy(&(cassandra_globals->log_lock));
 }
 
 PHP_MINIT_FUNCTION(cassandra)

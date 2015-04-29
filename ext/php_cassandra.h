@@ -132,9 +132,6 @@ PHP_FUNCTION(cassandra_batch_add_statement);
 
 ZEND_BEGIN_MODULE_GLOBALS(cassandra)
   CassUuidGen*          uuid_gen;
-  char*                 log;
-  uint                  log_length;
-  uv_rwlock_t           log_lock;
   unsigned int          persistent_clusters;
   unsigned int          persistent_sessions;
 ZEND_END_MODULE_GLOBALS(cassandra)
