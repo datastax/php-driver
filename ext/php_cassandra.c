@@ -1,5 +1,6 @@
 #include "php_cassandra.h"
 #include <php_ini.h>
+#include <php_syslog.h>
 #include <ext/standard/info.h>
 #include "util/bytes.h"
 #include "util/math.h"
@@ -7,6 +8,8 @@
 #include "types/collection.h"
 #include "types/map.h"
 #include "types/set.h"
+
+#define PHP_CASSANDRA_DEFAULT_LOG "php-driver.log"
 
 zend_class_entry*
 exception_class(CassError rc)
@@ -93,8 +96,6 @@ static PHP_GINIT_FUNCTION(cassandra);
 static PHP_GSHUTDOWN_FUNCTION(cassandra);
 
 const zend_function_entry cassandra_functions[] = {
-  /* Log */
-  PHP_FE(cassandra_set_log_level, NULL)
   /* CassSession */
   PHP_FE(cassandra_session_new, NULL)
   PHP_FE(cassandra_session_free, NULL)
@@ -173,12 +174,67 @@ ZEND_GET_MODULE(cassandra)
 #endif
 
 static void
-php_cassandra_log(const CassLogMessage* message, void *data)
+php_cassandra_log(const CassLogMessage* message, void* data)
 {
-  fprintf(stderr, "php-driver | [%s] %s (%s:%d)\n",
-    cass_log_level_string(message->severity), message->message,
-    message->file, message->line
-  );
+  char log[MAXPATHLEN + 1];
+  uint log_length = 0;
+
+  (void)data;
+
+  uv_rwlock_rdlock(&CASSANDRA_G(log_lock));
+  if (CASSANDRA_G(log)) {
+    log_length = MIN(CASSANDRA_G(log_length), MAXPATHLEN);
+    memcpy(log, CASSANDRA_G(log), log_length);
+  }
+  uv_rwlock_rdunlock(&CASSANDRA_G(log_lock));
+
+  log[log_length] = '\0';
+
+  if (log_length > 0) {
+    int fd = -1;
+
+    if (!strcmp(log, "syslog")) {
+      php_syslog(LOG_NOTICE, "php-driver | [%s] %s (%s:%d)",
+                 cass_log_level_string(message->severity), message->message,
+                 message->file, message->line);
+      return;
+    }
+
+    fd = VCWD_OPEN_MODE(log, O_CREAT | O_APPEND | O_WRONLY, 0644);
+
+    if (fd != 1) {
+      time_t log_time;
+      struct tm log_tm;
+      char log_time_str[32];
+
+      time(&log_time);
+      php_localtime_r(&log_time, &log_tm);
+      strftime(log_time_str, sizeof(log_time_str), "%d-%m-%Y %H:%M:%S %Z", &log_tm);
+
+      size_t needed = snprintf(NULL, 0, "%s [%s] %s (%s:%d)%s",
+                               log_time_str,
+                               cass_log_level_string(message->severity), message->message,
+                               message->file, message->line,
+                               PHP_EOL);
+
+      char* tmp = malloc(needed + 1);
+      sprintf(tmp, "%s [%s] %s (%s:%d)%s",
+              log_time_str,
+              cass_log_level_string(message->severity), message->message,
+              message->file, message->line,
+              PHP_EOL);
+
+      write(fd, tmp, needed);
+      free(tmp);
+      close(fd);
+      return;
+    }
+  }
+
+  fprintf(stderr, "php-driver | [%s] %s (%s:%d)%s",
+          cass_log_level_string(message->severity), message->message,
+          message->file, message->line,
+          PHP_EOL);
 }
 
 static int le_cassandra_cluster_res;
@@ -279,12 +335,41 @@ php_cassandra_batch_dtor(zend_rsrc_list_entry* rsrc TSRMLS_DC)
   }
 }
 
+static PHP_INI_MH(OnUpdateLogLevel)
+{
+  if (new_value) {
+    long log_level = zend_atol(new_value, new_value_length);
+    if (log_level > CASS_LOG_DISABLED && log_level < CASS_LOG_LAST_ENTRY)
+      cass_log_set_level((CassLogLevel) log_level);
+  }
+  return SUCCESS;
+}
+
+static PHP_INI_MH(OnUpdateLog)
+{
+  uv_rwlock_wrlock(&CASSANDRA_G(log_lock));
+  CASSANDRA_G(log) = new_value;
+  CASSANDRA_G(log_length) = new_value_length;
+  uv_rwlock_wrunlock(&CASSANDRA_G(log_lock));
+  return SUCCESS;
+}
+
+PHP_INI_BEGIN()
+  PHP_INI_ENTRY("cassandra.log",       PHP_CASSANDRA_DEFAULT_LOG, PHP_INI_ALL, OnUpdateLog)
+  PHP_INI_ENTRY("cassandra.log_level", NULL,                      PHP_INI_ALL, OnUpdateLogLevel)
+PHP_INI_END()
+
 static PHP_GINIT_FUNCTION(cassandra)
 {
   cassandra_globals->uuid_gen            = cass_uuid_gen_new();
-  cassandra_globals->log_level           = CASS_LOG_ERROR;
+  cassandra_globals->log                 = NULL;
+  cassandra_globals->log_length          = 0;
   cassandra_globals->persistent_clusters = 0;
   cassandra_globals->persistent_sessions = 0;
+
+  uv_rwlock_init(&(cassandra_globals->log_lock));
+
+  cass_log_set_level(CASS_LOG_ERROR);
   cass_log_set_callback(php_cassandra_log, NULL);
 }
 
@@ -292,11 +377,14 @@ static PHP_GSHUTDOWN_FUNCTION(cassandra)
 {
   cass_log_cleanup();
   cass_uuid_gen_free(cassandra_globals->uuid_gen);
+
+  uv_rwlock_destroy(&(cassandra_globals->log_lock));
 }
 
 PHP_MINIT_FUNCTION(cassandra)
 {
-  // REGISTER_INI_ENTRIES();
+  REGISTER_INI_ENTRIES();
+
   le_cassandra_cluster_res = zend_register_list_destructors_ex(
     NULL,
     php_cassandra_cluster_dtor,
@@ -432,33 +520,6 @@ PHP_MINFO_FUNCTION(cassandra)
   php_info_print_table_row(2, "Persistent Sessions", buf);
 
   php_info_print_table_end();
-}
-
-PHP_FUNCTION(cassandra_set_log_level)
-{
-  long level;
-
-  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &level) == FAILURE) {
-    RETURN_FALSE;
-  }
-
-  switch (level) {
-  case CASS_LOG_DISABLED:
-  case CASS_LOG_CRITICAL:
-  case CASS_LOG_ERROR:
-  case CASS_LOG_WARN:
-  case CASS_LOG_INFO:
-  case CASS_LOG_DEBUG:
-  case CASS_LOG_TRACE:
-    cass_log_set_level(level);
-    break;
-  default:
-    RETURN_FALSE;
-  }
-
-  CASSANDRA_G(log_level) = level;
-
-  RETURN_TRUE;
 }
 
 PHP_FUNCTION(cassandra_session_new)
