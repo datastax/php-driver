@@ -54,6 +54,22 @@ if test "$PHP_CASSANDRA" != "no"; then
   ";
 
   CASSANDRA_TYPES="\
+    src/Cassandra/Types/Float.c \
+    src/Cassandra/Types/Bigint.c \
+    src/Cassandra/Types/Blob.c \
+    src/Cassandra/Types/Decimal.c \
+    src/Cassandra/Types/Inet.c \
+    src/Cassandra/Types/UuidInterface.c \
+    src/Cassandra/Types/Uuid.c \
+    src/Cassandra/Types/Timestamp.c \
+    src/Cassandra/Types/Timeuuid.c \
+    src/Cassandra/Types/Varint.c \
+    src/Cassandra/Types/Set.c \
+    src/Cassandra/Types/Map.c \
+    src/Cassandra/Types/Collection.c \
+  ";
+
+  CASSANDRA_UTIL="\
     util/bytes.c \
     util/collections.c \
     util/consistency.c \
@@ -63,24 +79,12 @@ if test "$PHP_CASSANDRA" != "no"; then
     util/ref.c \
     util/result.c \
     util/uuid_gen.c \
-    types/float.c \
-    types/bigint.c \
-    types/blob.c \
-    types/decimal.c \
-    types/inet.c \
-    types/uuid_interface.c \
-    types/uuid.c \
-    types/timestamp.c \
-    types/timeuuid.c \
-    types/varint.c \
-    types/set.c \
-    types/map.c \
-    types/collection.c \
   ";
+
 
   PHP_SUBST(CASSANDRA_SHARED_LIBADD)
   PHP_NEW_EXTENSION(cassandra, php_cassandra.c $CASSANDRA_CLASSES \
-    $CASSANDRA_TYPES, $ext_shared)
+    $CASSANDRA_TYPES $CASSANDRA_UTIL, $ext_shared)
 
   ifdef([PHP_ADD_EXTENSION_DEP],
   [

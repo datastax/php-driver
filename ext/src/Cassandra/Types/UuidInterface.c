@@ -1,6 +1,5 @@
 #include <php.h>
 #include "php_cassandra.h"
-#include "uuid_interface.h"
 
 zend_class_entry *cassandra_ce_UuidInterface = NULL;
 
@@ -18,7 +17,7 @@ cassandra_define_CassandraUuidInterface(TSRMLS_D)
 {
   zend_class_entry ce;
 
-  INIT_CLASS_ENTRY(ce, "Cassandra\\UuidInterface", CassandraUuidInterface_methods);
+  INIT_CLASS_ENTRY(ce, "Cassandra\\Types\\UuidInterface", CassandraUuidInterface_methods);
   cassandra_ce_UuidInterface = zend_register_internal_class(&ce TSRMLS_CC);
   cassandra_ce_UuidInterface->ce_flags |= ZEND_ACC_INTERFACE;
 }

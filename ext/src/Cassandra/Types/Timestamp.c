@@ -1,5 +1,6 @@
 #include "php_cassandra.h"
-#include "timestamp.h"
+#include <php.h>
+#include <zend_exceptions.h>
 #include <ext/date/php_date.h>
 
 zend_class_entry *cassandra_ce_Timestamp = NULL;

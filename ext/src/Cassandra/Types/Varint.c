@@ -1,10 +1,9 @@
 #include "php_cassandra.h"
 #include "util/math.h"
-#include "varint.h"
 
 zend_class_entry *cassandra_ce_Varint = NULL;
 
-/* {{{ Cassandra\Varint::__construct(string) */
+/* {{{ Cassandra\Types\Varint::__construct(string) */
 PHP_METHOD(CassandraVarint, __construct)
 {
   char *value;
@@ -22,7 +21,7 @@ PHP_METHOD(CassandraVarint, __construct)
 }
 /* }}} */
 
-/* {{{ Cassandra\Varint::__toString() */
+/* {{{ Cassandra\Types\Varint::__toString() */
 PHP_METHOD(CassandraVarint, __toString)
 {
   cassandra_varint* number = (cassandra_varint*) zend_object_store_get_object(getThis() TSRMLS_CC);
@@ -35,7 +34,7 @@ PHP_METHOD(CassandraVarint, __toString)
 }
 /* }}} */
 
-/* {{{ Cassandra\Varint::value() */
+/* {{{ Cassandra\Types\Varint::value() */
 PHP_METHOD(CassandraVarint, value)
 {
   cassandra_varint* number = (cassandra_varint*) zend_object_store_get_object(getThis() TSRMLS_CC);
@@ -133,7 +132,7 @@ void cassandra_define_CassandraVarint(TSRMLS_D)
 {
   zend_class_entry ce;
 
-  INIT_CLASS_ENTRY(ce, "Cassandra\\Varint", CassandraVarint_methods);
+  INIT_CLASS_ENTRY(ce, "Cassandra\\Types\\Varint", CassandraVarint_methods);
   cassandra_ce_Varint = zend_register_internal_class(&ce TSRMLS_CC);
   memcpy(&cassandra_varint_handlers, zend_get_std_object_handlers(), sizeof(zend_object_handlers));
   cassandra_varint_handlers.get_properties = php_cassandra_varint_properties;

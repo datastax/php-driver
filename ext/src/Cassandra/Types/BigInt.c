@@ -1,6 +1,5 @@
 #include "php_cassandra.h"
 #include "util/math.h"
-#include "bigint.h"
 
 zend_class_entry* cassandra_ce_Bigint = NULL;
 
@@ -16,7 +15,7 @@ ctype_digit(const char* s, int len)
   return 1;
 }
 
-/* {{{ Cassandra\Bigint::__construct(string) */
+/* {{{ Cassandra\Types\Bigint::__construct(string) */
 PHP_METHOD(CassandraBigint, __construct)
 {
   char* value;
@@ -33,7 +32,7 @@ PHP_METHOD(CassandraBigint, __construct)
 }
 /* }}} */
 
-/* {{{ Cassandra\Bigint::__toString() */
+/* {{{ Cassandra\Types\Bigint::__toString() */
 PHP_METHOD(CassandraBigint, __toString)
 {
   char* string;
@@ -47,7 +46,7 @@ PHP_METHOD(CassandraBigint, __toString)
 }
 /* }}} */
 
-/* {{{ Cassandra\Bigint::value() */
+/* {{{ Cassandra\Types\Bigint::value() */
 PHP_METHOD(CassandraBigint, value)
 {
   char* string;
@@ -157,7 +156,7 @@ void cassandra_define_CassandraBigint(TSRMLS_D)
 {
   zend_class_entry ce;
 
-  INIT_CLASS_ENTRY(ce, "Cassandra\\Bigint", CassandraBigint_methods);
+  INIT_CLASS_ENTRY(ce, "Cassandra\\Types\\Bigint", CassandraBigint_methods);
   cassandra_ce_Bigint = zend_register_internal_class(&ce TSRMLS_CC);
   memcpy(&cassandra_bigint_handlers, zend_get_std_object_handlers(), sizeof(zend_object_handlers));
   cassandra_bigint_handlers.get_properties = php_cassandra_bigint_properties;

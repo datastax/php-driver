@@ -1,10 +1,9 @@
 #include "php_cassandra.h"
 #include "util/bytes.h"
-#include "blob.h"
 
 zend_class_entry *cassandra_ce_Blob = NULL;
 
-/* {{{ Cassandra\Blob::__construct(string) */
+/* {{{ Cassandra\Types\Blob::__construct(string) */
 PHP_METHOD(CassandraBlob, __construct)
 {
   char *bytes;
@@ -21,7 +20,7 @@ PHP_METHOD(CassandraBlob, __construct)
 }
 /* }}} */
 
-/* {{{ Cassandra\Blob::__toString() */
+/* {{{ Cassandra\Types\Blob::__toString() */
 PHP_METHOD(CassandraBlob, __toString)
 {
   cassandra_blob* blob = (cassandra_blob*) zend_object_store_get_object(getThis() TSRMLS_CC);
@@ -33,7 +32,7 @@ PHP_METHOD(CassandraBlob, __toString)
 }
 /* }}} */
 
-/* {{{ Cassandra\Blob::bytes() */
+/* {{{ Cassandra\Types\Blob::bytes() */
 PHP_METHOD(CassandraBlob, bytes)
 {
   cassandra_blob* blob = (cassandra_blob*) zend_object_store_get_object(getThis() TSRMLS_CC);
@@ -138,7 +137,7 @@ void cassandra_define_CassandraBlob(TSRMLS_D)
 {
   zend_class_entry ce;
 
-  INIT_CLASS_ENTRY(ce, "Cassandra\\Blob", CassandraBlob_methods);
+  INIT_CLASS_ENTRY(ce, "Cassandra\\Types\\Blob", CassandraBlob_methods);
   cassandra_ce_Blob = zend_register_internal_class(&ce TSRMLS_CC);
   memcpy(&cassandra_blob_handlers, zend_get_std_object_handlers(), sizeof(zend_object_handlers));
   cassandra_blob_handlers.get_properties = php_cassandra_blob_properties;
