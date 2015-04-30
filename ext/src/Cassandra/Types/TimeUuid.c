@@ -1,7 +1,5 @@
-#include "../php_cassandra.h"
+#include "php_cassandra.h"
 #include "util/uuid_gen.h"
-#include "types/uuid_interface.h"
-#include "timeuuid.h"
 #include "ext/date/php_date.h"
 
 extern zend_class_entry* cassandra_invalid_argument_exception_ce;
@@ -9,7 +7,7 @@ extern zend_class_entry* cassandra_ce_UuidInterface;
 
 zend_class_entry *cassandra_ce_Timeuuid = NULL;
 
-/* {{{ Cassandra\Timeuuid::__construct(string) */
+/* {{{ Cassandra\Types\Timeuuid::__construct(string) */
 PHP_METHOD(CassandraTimeuuid, __construct)
 {
   long timestamp;
@@ -33,7 +31,7 @@ PHP_METHOD(CassandraTimeuuid, __construct)
 }
 /* }}} */
 
-/* {{{ Cassandra\Timeuuid::__toString() */
+/* {{{ Cassandra\Types\Timeuuid::__toString() */
 PHP_METHOD(CassandraTimeuuid, __toString)
 {
   cassandra_uuid* uuid   = (cassandra_uuid*) zend_object_store_get_object(getThis() TSRMLS_CC);
@@ -45,7 +43,7 @@ PHP_METHOD(CassandraTimeuuid, __toString)
 }
 /* }}} */
 
-/* {{{ Cassandra\Timeuuid::value() */
+/* {{{ Cassandra\Types\Timeuuid::value() */
 PHP_METHOD(CassandraTimeuuid, uuid)
 {
   cassandra_uuid* uuid   = (cassandra_uuid*) zend_object_store_get_object(getThis() TSRMLS_CC);
@@ -57,7 +55,7 @@ PHP_METHOD(CassandraTimeuuid, uuid)
 }
 /* }}} */
 
-/* {{{ Cassandra\Timeuuid::value() */
+/* {{{ Cassandra\Types\Timeuuid::value() */
 PHP_METHOD(CassandraTimeuuid, version)
 {
   cassandra_uuid* uuid = (cassandra_uuid*) zend_object_store_get_object(getThis() TSRMLS_CC);
@@ -66,7 +64,7 @@ PHP_METHOD(CassandraTimeuuid, version)
 }
 /* }}} */
 
-/* {{{ Cassandra\Timeuuid::value() */
+/* {{{ Cassandra\Types\Timeuuid::value() */
 PHP_METHOD(CassandraTimeuuid, time)
 {
   cassandra_uuid* uuid;
@@ -76,7 +74,7 @@ PHP_METHOD(CassandraTimeuuid, time)
 }
 /* }}} */
 
-/* {{{ Cassandra\Timeuuid::value() */
+/* {{{ Cassandra\Types\Timeuuid::value() */
 PHP_METHOD(CassandraTimeuuid, toDateTime)
 {
   cassandra_uuid* uuid;
@@ -206,7 +204,7 @@ cassandra_define_CassandraTimeuuid(TSRMLS_D)
 {
   zend_class_entry ce;
 
-  INIT_CLASS_ENTRY(ce, "Cassandra\\Timeuuid", CassandraTimeuuid_methods);
+  INIT_CLASS_ENTRY(ce, "Cassandra\\Types\\Timeuuid", CassandraTimeuuid_methods);
   cassandra_ce_Timeuuid = zend_register_internal_class(&ce TSRMLS_CC);
   zend_class_implements(cassandra_ce_Timeuuid TSRMLS_CC, 1, cassandra_ce_UuidInterface);
   memcpy(&cassandra_timeuuid_handlers, zend_get_std_object_handlers(), sizeof(zend_object_handlers));

@@ -4,9 +4,9 @@
 #include "util/bytes.h"
 #include "util/math.h"
 #include "util/collections.h"
-#include "types/collection.h"
-#include "types/map.h"
-#include "types/set.h"
+#include "src/Cassandra/Types/Collection.h"
+#include "src/Cassandra/Types/Map.h"
+#include "src/Cassandra/Types/Set.h"
 
 zend_class_entry*
 exception_class(CassError rc)

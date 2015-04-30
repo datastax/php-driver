@@ -1,5 +1,4 @@
-#include "../php_cassandra.h"
-#include "float.h"
+#include "php_cassandra.h"
 
 extern zend_class_entry* cassandra_invalid_argument_exception_ce;
 
@@ -21,7 +20,7 @@ ctype_float(const char* s, int len)
   return 1;
 }
 
-/* {{{ Cassandra\Float::__construct(string) */
+/* {{{ Cassandra\Types\Float::__construct(string) */
 PHP_METHOD(CassandraFloat, __construct)
 {
   char* value;
@@ -41,7 +40,7 @@ PHP_METHOD(CassandraFloat, __construct)
 }
 /* }}} */
 
-/* {{{ Cassandra\Float::__toString() */
+/* {{{ Cassandra\Types\Float::__toString() */
 PHP_METHOD(CassandraFloat, __toString)
 {
   char* string;
@@ -51,7 +50,7 @@ PHP_METHOD(CassandraFloat, __toString)
 }
 /* }}} */
 
-/* {{{ Cassandra\Float::value() */
+/* {{{ Cassandra\Types\Float::value() */
 PHP_METHOD(CassandraFloat, value)
 {
   cassandra_float* number = (cassandra_float*) zend_object_store_get_object(getThis() TSRMLS_CC);
@@ -148,7 +147,7 @@ void cassandra_define_CassandraFloat(TSRMLS_D)
 {
   zend_class_entry ce;
 
-  INIT_CLASS_ENTRY(ce, "Cassandra\\Float", CassandraFloat_methods);
+  INIT_CLASS_ENTRY(ce, "Cassandra\\Types\\Float", CassandraFloat_methods);
   cassandra_ce_Float = zend_register_internal_class(&ce TSRMLS_CC);
   memcpy(&cassandra_float_handlers, zend_get_std_object_handlers(), sizeof(zend_object_handlers));
   cassandra_float_handlers.get_properties = php_cassandra_float_properties;

@@ -1,6 +1,6 @@
-#include "../php_cassandra.h"
+#include "php_cassandra.h"
 #include "util/collections.h"
-#include "set.h"
+#include "Set.h"
 
 extern zend_class_entry* spl_ce_Countable;
 extern zend_class_entry* zend_ce_iterator;
@@ -82,7 +82,7 @@ php_cassandra_set_populate(cassandra_set* set, zval* array)
   zend_hash_set_pointer(&set->values, &ptr);
 }
 
-/* {{{ Cassandra\Set::__construct(string) */
+/* {{{ Cassandra\Types\Set::__construct(string) */
 PHP_METHOD(CassandraSet, __construct)
 {
   char *type;
@@ -99,7 +99,7 @@ PHP_METHOD(CassandraSet, __construct)
 }
 /* }}} */
 
-/* {{{ Cassandra\Set::type() */
+/* {{{ Cassandra\Types\Set::type() */
 PHP_METHOD(CassandraSet, type)
 {
   cassandra_set* set = (cassandra_set*) zend_object_store_get_object(getThis() TSRMLS_CC);
@@ -108,7 +108,7 @@ PHP_METHOD(CassandraSet, type)
 }
 /* }}} */
 
-/* {{{ Cassandra\Set::values() */
+/* {{{ Cassandra\Types\Set::values() */
 PHP_METHOD(CassandraSet, values)
 {
   array_init(return_value);
@@ -117,7 +117,7 @@ PHP_METHOD(CassandraSet, values)
 }
 /* }}} */
 
-/* {{{ Cassandra\Set::add(value) */
+/* {{{ Cassandra\Types\Set::add(value) */
 PHP_METHOD(CassandraSet, add)
 {
   zval* object;
@@ -133,7 +133,7 @@ PHP_METHOD(CassandraSet, add)
 }
 /* }}} */
 
-/* {{{ Cassandra\Set::remove(value) */
+/* {{{ Cassandra\Types\Set::remove(value) */
 PHP_METHOD(CassandraSet, remove)
 {
   zval* object;
@@ -149,7 +149,7 @@ PHP_METHOD(CassandraSet, remove)
 }
 /* }}} */
 
-/* {{{ Cassandra\Set::has(value) */
+/* {{{ Cassandra\Types\Set::has(value) */
 PHP_METHOD(CassandraSet, has)
 {
   zval* object;
@@ -165,7 +165,7 @@ PHP_METHOD(CassandraSet, has)
 }
 /* }}} */
 
-/* {{{ Cassandra\Set::count() */
+/* {{{ Cassandra\Types\Set::count() */
 PHP_METHOD(CassandraSet, count)
 {
   cassandra_set* set = (cassandra_set*) zend_object_store_get_object(getThis() TSRMLS_CC);
@@ -173,7 +173,7 @@ PHP_METHOD(CassandraSet, count)
 }
 /* }}} */
 
-/* {{{ Cassandra\Set::current() */
+/* {{{ Cassandra\Types\Set::current() */
 PHP_METHOD(CassandraSet, current)
 {
   zval** current;
@@ -184,7 +184,7 @@ PHP_METHOD(CassandraSet, current)
 }
 /* }}} */
 
-/* {{{ Cassandra\Set::key() */
+/* {{{ Cassandra\Types\Set::key() */
 PHP_METHOD(CassandraSet, key)
 {
   cassandra_set* set = (cassandra_set*) zend_object_store_get_object(getThis() TSRMLS_CC);
@@ -192,7 +192,7 @@ PHP_METHOD(CassandraSet, key)
 }
 /* }}} */
 
-/* {{{ Cassandra\Set::next() */
+/* {{{ Cassandra\Types\Set::next() */
 PHP_METHOD(CassandraSet, next)
 {
   cassandra_set* set = (cassandra_set*) zend_object_store_get_object(getThis() TSRMLS_CC);
@@ -201,7 +201,7 @@ PHP_METHOD(CassandraSet, next)
 }
 /* }}} */
 
-/* {{{ Cassandra\Set::valid() */
+/* {{{ Cassandra\Types\Set::valid() */
 PHP_METHOD(CassandraSet, valid)
 {
   cassandra_set* set = (cassandra_set*) zend_object_store_get_object(getThis() TSRMLS_CC);
@@ -209,7 +209,7 @@ PHP_METHOD(CassandraSet, valid)
 }
 /* }}} */
 
-/* {{{ Cassandra\Set::rewind() */
+/* {{{ Cassandra\Types\Set::rewind() */
 PHP_METHOD(CassandraSet, rewind)
 {
   cassandra_set* set = (cassandra_set*) zend_object_store_get_object(getThis() TSRMLS_CC);
@@ -323,7 +323,7 @@ void cassandra_define_CassandraSet(TSRMLS_D)
 {
   zend_class_entry ce;
 
-  INIT_CLASS_ENTRY(ce, "Cassandra\\Set", CassandraSet_methods);
+  INIT_CLASS_ENTRY(ce, "Cassandra\\Types\\Set", CassandraSet_methods);
   cassandra_ce_Set = zend_register_internal_class(&ce TSRMLS_CC);
   memcpy(&cassandra_set_handlers, zend_get_std_object_handlers(), sizeof(zend_object_handlers));
   cassandra_set_handlers.get_properties = php_cassandra_set_properties;

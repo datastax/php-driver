@@ -1,7 +1,6 @@
 #include <php.h>
 #include <zend_exceptions.h>
-#include "../php_cassandra.h"
-#include "timestamp.h"
+#include "php_cassandra.h"
 #include <ext/date/php_date.h>
 
 extern zend_class_entry *cassandra_invalid_argument_exception_ce;

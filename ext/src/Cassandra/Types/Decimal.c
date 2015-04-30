@@ -1,12 +1,11 @@
-#include "../php_cassandra.h"
+#include "php_cassandra.h"
 #include "util/math.h"
-#include "decimal.h"
 
 extern zend_class_entry *cassandra_invalid_argument_exception_ce;
 
 zend_class_entry *cassandra_ce_Decimal = NULL;
 
-/* {{{ Cassandra\Decimal::__construct(string) */
+/* {{{ Cassandra\Types\Decimal::__construct(string) */
 PHP_METHOD(CassandraDecimal, __construct)
 {
   char *value;
@@ -27,7 +26,7 @@ PHP_METHOD(CassandraDecimal, __construct)
 }
 /* }}} */
 
-/* {{{ Cassandra\Decimal::__toString() */
+/* {{{ Cassandra\Types\Decimal::__toString() */
 PHP_METHOD(CassandraDecimal, __toString)
 {
   cassandra_decimal* number = (cassandra_decimal*) zend_object_store_get_object(getThis() TSRMLS_CC);
@@ -40,7 +39,7 @@ PHP_METHOD(CassandraDecimal, __toString)
 }
 /* }}} */
 
-/* {{{ Cassandra\Decimal::value() */
+/* {{{ Cassandra\Types\Decimal::value() */
 PHP_METHOD(CassandraDecimal, value)
 {
   cassandra_decimal* number = (cassandra_decimal*) zend_object_store_get_object(getThis() TSRMLS_CC);
@@ -157,7 +156,7 @@ void cassandra_define_CassandraDecimal(TSRMLS_D)
 {
   zend_class_entry ce;
 
-  INIT_CLASS_ENTRY(ce, "Cassandra\\Decimal", CassandraDecimal_methods);
+  INIT_CLASS_ENTRY(ce, "Cassandra\\Types\\Decimal", CassandraDecimal_methods);
   cassandra_ce_Decimal = zend_register_internal_class(&ce TSRMLS_CC);
   memcpy(&cassandra_decimal_handlers, zend_get_std_object_handlers(), sizeof(zend_object_handlers));
   cassandra_decimal_handlers.get_properties = php_cassandra_decimal_properties;
