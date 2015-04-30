@@ -97,7 +97,7 @@ Feature: Datatypes
       Varint: Cassandra\Types\Varint::__set_state(array(
          'value' => '67890656781923123918798273492834712837198237',
       ))
-      Timestamp: Cassandra\Types\Timestamp::__set_state(array(
+      Timestamp: Cassandra\Timestamp::__set_state(array(
          'seconds' => 1425691864,
          'microseconds' => 1000,
       ))
@@ -161,12 +161,12 @@ Feature: Datatypes
          'values' =>
         array (
           0 =>
-          Cassandra\Types\Timestamp::__set_state(array(
+          Cassandra\Timestamp::__set_state(array(
              'seconds' => 1410430148,
              'microseconds' => 0,
           )),
           1 =>
-          Cassandra\Types\Timestamp::__set_state(array(
+          Cassandra\Timestamp::__set_state(array(
              'seconds' => 1410516540,
              'microseconds' => 0,
           )),
@@ -176,7 +176,7 @@ Feature: Datatypes
          'keys' =>
         array (
           0 =>
-          Cassandra\Types\Timestamp::__set_state(array(
+          Cassandra\Timestamp::__set_state(array(
              'seconds' => 1410430148,
              'microseconds' => 0,
           )),
