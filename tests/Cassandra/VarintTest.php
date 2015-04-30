@@ -1,6 +1,7 @@
 <?php
 
 namespace Cassandra;
+namespace Cassandra\Types;
 
 /**
  * @requires extension cassandra
