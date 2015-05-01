@@ -16,13 +16,13 @@ brew install libuv cmake gmp
 * apt-get
 
 ```bash
-sudo apt-get install g++ make cmake libuv-dev libssl-dev libgmp-dev php5 php5-dev openssl
+sudo apt-get install g++ make cmake libuv-dev libssl-dev libgmp-dev php5 php5-dev openssl libpcre3-dev
 ```
 
 * yum
 
 ```bash
-sudo yum install automake cmake gcc gcc-c++ git libtool openssl-devel wget gmp gmp-devel boost php-devel
+sudo yum install automake cmake gcc gcc-c++ git libtool openssl-devel wget gmp gmp-devel boost php-devel pcre-devel
 pushd /tmp
 wget http://libuv.org/dist/v1.4.0/libuv-v1.4.0.tar.gz
 tar xzf libuv-v1.4.0.tar.gz

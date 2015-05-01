@@ -29,7 +29,7 @@ Vagrant.configure("2") do |config|
   echo "Compiling cpp-driver..."
   mkdir cpp-driver
   pushd cpp-driver
-  cmake -DCMAKE_INSTALL_PREFIX:PATH=$builddir -DCASS_BUILD_STATIC=ON -DCASS_BUILD_SHARED=OFF -DCMAKE_BUILD_TYPE=RELEASE -DCMAKE_INSTALL_LIBDIR:PATH=lib -DCASS_USE_ZLIB=ON /usr/local/src/php-driver/lib/cpp-driver
+  cmake -DCMAKE_CXX_FLAGS="-fPIC" -DCMAKE_INSTALL_PREFIX:PATH=$builddir -DCASS_BUILD_STATIC=ON -DCASS_BUILD_SHARED=OFF -DCMAKE_BUILD_TYPE=RELEASE -DCMAKE_INSTALL_LIBDIR:PATH=lib -DCASS_USE_ZLIB=ON /usr/local/src/php-driver/lib/cpp-driver
   make
   make install
   popd
