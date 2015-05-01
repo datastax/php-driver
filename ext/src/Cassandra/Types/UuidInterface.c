@@ -1,23 +1,23 @@
 #include <php.h>
 #include "php_cassandra.h"
 
-zend_class_entry *cassandra_ce_UuidInterface = NULL;
+zend_class_entry *cassandra_uuid_interface_ce = NULL;
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_none, 0, ZEND_RETURN_VALUE, 0)
 ZEND_END_ARG_INFO()
 
-static zend_function_entry CassandraUuidInterface_methods[] = {
-  PHP_ABSTRACT_ME(CassandraUuidInterface, uuid, arginfo_none)
-  PHP_ABSTRACT_ME(CassandraUuidInterface, version, arginfo_none)
+static zend_function_entry cassandra_uuid_interface_methods[] = {
+  PHP_ABSTRACT_ME(UuidInterface, uuid, arginfo_none)
+  PHP_ABSTRACT_ME(UuidInterface, version, arginfo_none)
   PHP_FE_END
 };
 
 void
-cassandra_define_CassandraUuidInterface(TSRMLS_D)
+cassandra_define_UuidInterface(TSRMLS_D)
 {
   zend_class_entry ce;
 
-  INIT_CLASS_ENTRY(ce, "Cassandra\\Types\\UuidInterface", CassandraUuidInterface_methods);
-  cassandra_ce_UuidInterface = zend_register_internal_class(&ce TSRMLS_CC);
-  cassandra_ce_UuidInterface->ce_flags |= ZEND_ACC_INTERFACE;
+  INIT_CLASS_ENTRY(ce, "Cassandra\\Types\\UuidInterface", cassandra_uuid_interface_methods);
+  cassandra_uuid_interface_ce = zend_register_internal_class(&ce TSRMLS_CC);
+  cassandra_uuid_interface_ce->ce_flags |= ZEND_ACC_INTERFACE;
 }
