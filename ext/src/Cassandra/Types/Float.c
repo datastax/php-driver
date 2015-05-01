@@ -1,10 +1,9 @@
 #include "php_cassandra.h"
-<<<<<<< HEAD:ext/types/float.c
-#include "float.h"
-=======
->>>>>>> moved data types into src folder:ext/src/Cassandra/Types/Float.c
+#include <math.h>
 
-zend_class_entry* cassandra_ce_Float = NULL;
+extern zend_class_entry* cassandra_invalid_argument_exception_ce;
+
+zend_class_entry* cassandra_float_ce = NULL;
 
 static int
 ctype_float(const char* s, int len)
@@ -23,54 +22,306 @@ ctype_float(const char* s, int len)
 }
 
 /* {{{ Cassandra\Types\Float::__construct(string) */
-PHP_METHOD(CassandraFloat, __construct)
+PHP_METHOD(Float, __construct)
 {
-  char* value;
-  int value_len;
+  zval* num;
 
-  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &value, &value_len) == FAILURE) {
+  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z", &num) == FAILURE) {
     return;
   }
 
-  if (!ctype_float(value, value_len)) {
-    zend_throw_exception_ex(cassandra_invalid_argument_exception_ce, 0 TSRMLS_CC, "Invalid float value \"%s\"", value);
-    return;
-  }
+  cassandra_float* self =
+      (cassandra_float*) zend_object_store_get_object(getThis() TSRMLS_CC);
 
-  cassandra_float* number = (cassandra_float*) zend_object_store_get_object(getThis() TSRMLS_CC);
-  number->value = (cass_float_t) strtof(value, NULL);
+  if(Z_TYPE_P(num) == IS_LONG) {
+    self->value = (cass_float_t) Z_LVAL_P(num);
+  } else if(Z_TYPE_P(num) == IS_DOUBLE) {
+    self->value = (cass_float_t) Z_DVAL_P(num);
+  } else if(Z_TYPE_P(num) == IS_STRING) {
+    if (!ctype_float(Z_STRVAL_P(num), Z_STRLEN_P(num))) {
+      zend_throw_exception_ex(cassandra_invalid_argument_exception_ce, 0 TSRMLS_CC,
+                              "Invalid float value \"%s\"", Z_STRVAL_P(num));
+      return;
+    }
+    self->value = (cass_float_t) strtof(Z_STRVAL_P(num), NULL);
+  } else if (Z_TYPE_P(num) == IS_OBJECT &&
+             instanceof_function(Z_OBJCE_P(num), cassandra_float_ce)) {
+    cassandra_float* flt =
+        (cassandra_float*) zend_object_store_get_object(num TSRMLS_CC);
+    self->value = flt->value;
+  } else {
+    INVALID_ARGUMENT(num, "a long, a double, a numeric string or a Cassandra\\Float");
+  }
 }
 /* }}} */
 
 /* {{{ Cassandra\Types\Float::__toString() */
-PHP_METHOD(CassandraFloat, __toString)
+PHP_METHOD(Float, __toString)
 {
   char* string;
-  cassandra_float* number = (cassandra_float*) zend_object_store_get_object(getThis() TSRMLS_CC);
-  spprintf(&string, 0, "%.*F", (int) EG(precision), number->value);
+  cassandra_float* self = (cassandra_float*) zend_object_store_get_object(getThis() TSRMLS_CC);
+  spprintf(&string, 0, "%.*F", (int) EG(precision), self->value);
   RETURN_STRING(string, 0);
 }
 /* }}} */
 
 /* {{{ Cassandra\Types\Float::value() */
-PHP_METHOD(CassandraFloat, value)
+PHP_METHOD(Float, value)
 {
-  cassandra_float* number = (cassandra_float*) zend_object_store_get_object(getThis() TSRMLS_CC);
-  RETURN_LONG((long) number->value);
+  cassandra_float* self = (cassandra_float*) zend_object_store_get_object(getThis() TSRMLS_CC);
+  RETURN_DOUBLE((double) self->value);
 }
 /* }}} */
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo___construct, 0, ZEND_RETURN_VALUE, 1)
+/* {{{ Cassandra\Types\Float::isInfinite() */
+PHP_METHOD(Float, isInfinite)
+{
+  cassandra_float* self =
+      (cassandra_float*) zend_object_store_get_object(getThis() TSRMLS_CC);
+  RETURN_BOOL(zend_isinf(self->value));
+}
+/* }}} */
+
+/* {{{ Cassandra\Types\Float::isFinite() */
+PHP_METHOD(Float, isFinite)
+{
+  cassandra_float* self =
+      (cassandra_float*) zend_object_store_get_object(getThis() TSRMLS_CC);
+  RETURN_BOOL(zend_finite(self->value));
+}
+/* }}} */
+
+/* {{{ Cassandra\Types\Float::isNaN() */
+PHP_METHOD(Float, isNaN)
+{
+  cassandra_float* self =
+      (cassandra_float*) zend_object_store_get_object(getThis() TSRMLS_CC);
+  RETURN_BOOL(zend_isnan(self->value));
+}
+/* }}} */
+
+/* {{{ Cassandra\Types\Float::add() */
+PHP_METHOD(Float, add)
+{
+  zval* num;
+
+  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z", &num) == FAILURE) {
+    return;
+  }
+
+  if (Z_TYPE_P(num) == IS_OBJECT &&
+      instanceof_function(Z_OBJCE_P(num), cassandra_float_ce)) {
+    cassandra_float* self =
+        (cassandra_float*) zend_object_store_get_object(getThis() TSRMLS_CC);
+    cassandra_float* flt =
+        (cassandra_float*) zend_object_store_get_object(num TSRMLS_CC);
+
+    object_init_ex(return_value, cassandra_float_ce);
+    cassandra_float* result =
+        (cassandra_float*) zend_object_store_get_object(return_value TSRMLS_CC);
+
+    result->value = self->value + flt->value;
+  } else {
+    INVALID_ARGUMENT(num, "a Cassandra\\Types\\Float");
+  }
+}
+/* }}} */
+
+/* {{{ Cassandra\Types\Float::sub() */
+PHP_METHOD(Float, sub)
+{
+  zval* num;
+
+  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z", &num) == FAILURE) {
+    return;
+  }
+
+  if (Z_TYPE_P(num) == IS_OBJECT &&
+      instanceof_function(Z_OBJCE_P(num), cassandra_float_ce)) {
+    cassandra_float* self =
+        (cassandra_float*) zend_object_store_get_object(getThis() TSRMLS_CC);
+    cassandra_float* flt =
+        (cassandra_float*) zend_object_store_get_object(num TSRMLS_CC);
+
+    object_init_ex(return_value, cassandra_float_ce);
+    cassandra_float* result =
+        (cassandra_float*) zend_object_store_get_object(return_value TSRMLS_CC);
+
+    result->value = self->value - flt->value;
+  } else {
+    INVALID_ARGUMENT(num, "a Cassandra\\Types\\Float");
+  }
+}
+/* }}} */
+
+/* {{{ Cassandra\Types\Float::mul() */
+PHP_METHOD(Float, mul)
+{
+  zval* num;
+
+  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z", &num) == FAILURE) {
+    return;
+  }
+
+  if (Z_TYPE_P(num) == IS_OBJECT &&
+      instanceof_function(Z_OBJCE_P(num), cassandra_float_ce)) {
+    cassandra_float* self =
+        (cassandra_float*) zend_object_store_get_object(getThis() TSRMLS_CC);
+    cassandra_float* flt =
+        (cassandra_float*) zend_object_store_get_object(num TSRMLS_CC);
+
+    object_init_ex(return_value, cassandra_float_ce);
+    cassandra_float* result =
+        (cassandra_float*) zend_object_store_get_object(return_value TSRMLS_CC);
+
+    result->value = self->value * flt->value;
+  } else {
+    INVALID_ARGUMENT(num, "a Cassandra\\Types\\Float");
+  }
+}
+/* }}} */
+
+/* {{{ Cassandra\Types\Float::div() */
+PHP_METHOD(Float, div)
+{
+  zval* num;
+
+  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z", &num) == FAILURE) {
+    return;
+  }
+
+  if (Z_TYPE_P(num) == IS_OBJECT &&
+      instanceof_function(Z_OBJCE_P(num), cassandra_float_ce)) {
+    cassandra_float* self =
+        (cassandra_float*) zend_object_store_get_object(getThis() TSRMLS_CC);
+    cassandra_float* flt =
+        (cassandra_float*) zend_object_store_get_object(num TSRMLS_CC);
+
+    object_init_ex(return_value, cassandra_float_ce);
+    cassandra_float* result =
+        (cassandra_float*) zend_object_store_get_object(return_value TSRMLS_CC);
+
+    if (flt->value == 0) {
+      zend_throw_exception_ex(cassandra_divide_by_zero_exception_ce, 0 TSRMLS_CC, "Divide by zero");
+      return;
+    }
+
+    result->value = self->value / flt->value;
+  } else {
+    INVALID_ARGUMENT(num, "a Cassandra\\Types\\Float");
+  }
+}
+/* }}} */
+
+/* {{{ Cassandra\Types\Float::abs() */
+PHP_METHOD(Float, abs)
+{
+  cassandra_float* self =
+      (cassandra_float*) zend_object_store_get_object(getThis() TSRMLS_CC);
+  object_init_ex(return_value, cassandra_float_ce);
+  cassandra_float* result =
+      (cassandra_float*) zend_object_store_get_object(return_value TSRMLS_CC);
+  result->value = fabsf(self->value);
+}
+/* }}} */
+
+/* {{{ Cassandra\Types\Float::neg() */
+PHP_METHOD(Float, neg)
+{
+  cassandra_float* self =
+      (cassandra_float*) zend_object_store_get_object(getThis() TSRMLS_CC);
+  object_init_ex(return_value, cassandra_float_ce);
+  cassandra_float* result =
+      (cassandra_float*) zend_object_store_get_object(return_value TSRMLS_CC);
+  result->value = -self->value;
+}
+/* }}} */
+
+/* {{{ Cassandra\Types\Float::sqrt() */
+PHP_METHOD(Float, sqrt)
+{
+  cassandra_float* self =
+      (cassandra_float*) zend_object_store_get_object(getThis() TSRMLS_CC);
+
+  if (self->value < 0) {
+    zend_throw_exception_ex(cassandra_range_exception_ce, 0 TSRMLS_CC,
+                            "The operation would result in a complex number");
+  }
+
+  object_init_ex(return_value, cassandra_float_ce);
+  cassandra_float* result =
+      (cassandra_float*) zend_object_store_get_object(return_value TSRMLS_CC);
+  result->value = sqrtf(self->value);
+}
+/* }}} */
+
+/* {{{ Cassandra\Types\Float::toLong() */
+PHP_METHOD(Float, toLong)
+{
+  cassandra_float* self =
+      (cassandra_float*) zend_object_store_get_object(getThis() TSRMLS_CC);
+  RETURN_LONG((long) self->value);
+}
+/* }}} */
+
+/* {{{ Cassandra\Types\Float::toDouble() */
+PHP_METHOD(Float, toDouble)
+{
+  cassandra_float* self =
+      (cassandra_float*) zend_object_store_get_object(getThis() TSRMLS_CC);
+  RETURN_DOUBLE((double) self->value);
+}
+/* }}} */
+
+/* {{{ Cassandra\Types\Float::minValue() */
+PHP_METHOD(Float, minValue)
+{
+  object_init_ex(return_value, cassandra_float_ce);
+  cassandra_float* flt =
+          (cassandra_float*) zend_object_store_get_object(return_value TSRMLS_CC);
+  flt->value = LONG_LONG_MIN;
+}
+/* }}} */
+
+/* {{{ Cassandra\Types\Float::minValue() */
+PHP_METHOD(Float, maxValue)
+{
+  object_init_ex(return_value, cassandra_float_ce);
+  cassandra_float* flt =
+          (cassandra_float*) zend_object_store_get_object(return_value TSRMLS_CC);
+  flt->value = LONG_LONG_MAX;
+}
+/* }}} */
+
+ZEND_BEGIN_ARG_INFO_EX(arginfo__construct, 0, ZEND_RETURN_VALUE, 1)
   ZEND_ARG_INFO(0, value)
 ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_none, 0, ZEND_RETURN_VALUE, 0)
 ZEND_END_ARG_INFO()
 
-static zend_function_entry CassandraFloat_methods[] = {
-  PHP_ME(CassandraFloat, __construct, arginfo___construct, ZEND_ACC_CTOR|ZEND_ACC_PUBLIC)
-  PHP_ME(CassandraFloat, __toString, arginfo_none, ZEND_ACC_PUBLIC)
-  PHP_ME(CassandraFloat, value, arginfo_none, ZEND_ACC_PUBLIC)
+ZEND_BEGIN_ARG_INFO_EX(arginfo_num, 0, ZEND_RETURN_VALUE, 1)
+  ZEND_ARG_INFO(0, num)
+ZEND_END_ARG_INFO()
+
+static zend_function_entry cassandra_float_methods[] = {
+  PHP_ME(Float, __construct, arginfo__construct, ZEND_ACC_CTOR|ZEND_ACC_PUBLIC)
+  PHP_ME(Float, __toString, arginfo_none, ZEND_ACC_PUBLIC)
+  PHP_ME(Float, value, arginfo_none, ZEND_ACC_PUBLIC)
+  PHP_ME(Float, isInfinite, arginfo_none, ZEND_ACC_PUBLIC)
+  PHP_ME(Float, isFinite, arginfo_none, ZEND_ACC_PUBLIC)
+  PHP_ME(Float, isNaN, arginfo_none, ZEND_ACC_PUBLIC)
+  PHP_ME(Float, add, arginfo_num, ZEND_ACC_PUBLIC)
+  PHP_ME(Float, sub, arginfo_num, ZEND_ACC_PUBLIC)
+  PHP_ME(Float, mul, arginfo_num, ZEND_ACC_PUBLIC)
+  PHP_ME(Float, div, arginfo_num, ZEND_ACC_PUBLIC)
+  PHP_ME(Float, abs, arginfo_none, ZEND_ACC_PUBLIC)
+  PHP_ME(Float, neg, arginfo_none, ZEND_ACC_PUBLIC)
+  PHP_ME(Float, sqrt, arginfo_none, ZEND_ACC_PUBLIC)
+  PHP_ME(Float, toLong, arginfo_none, ZEND_ACC_PUBLIC)
+  PHP_ME(Float, toDouble, arginfo_none, ZEND_ACC_PUBLIC)
+  PHP_ME(Float, minValue, arginfo_none, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
+  PHP_ME(Float, maxValue, arginfo_none, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
   PHP_FE_END
 };
 
@@ -79,14 +330,14 @@ static zend_object_handlers cassandra_float_handlers;
 static HashTable*
 php_cassandra_float_properties(zval *object TSRMLS_DC)
 {
-  cassandra_float* number = (cassandra_float*) zend_object_store_get_object(object TSRMLS_CC);
+  cassandra_float* self = (cassandra_float*) zend_object_store_get_object(object TSRMLS_CC);
   HashTable*       props  = zend_std_get_properties(object TSRMLS_CC);
 
   zval* value;
   char* string;
   int string_len;
 
-  string_len = spprintf(&string, 0, "%.*F", (int) EG(precision), number->value);
+  string_len = spprintf(&string, 0, "%.*F", (int) EG(precision), self->value);
 
   MAKE_STD_ZVAL(value);
   ZVAL_STRINGL(value, string, string_len, 0);
@@ -116,14 +367,20 @@ php_cassandra_float_compare(zval *obj1, zval *obj2 TSRMLS_DC)
     return 1;
 }
 
+static int
+php_cassandra_float_cast(zval* obj, zval* retval, int type TSRMLS_DC)
+{
+  return FAILURE;
+}
+
 static void
 php_cassandra_float_free(void *object TSRMLS_DC)
 {
-  cassandra_float* number = (cassandra_float*) object;
+  cassandra_float* self = (cassandra_float*) object;
 
-  zend_object_std_dtor(&number->zval TSRMLS_CC);
+  zend_object_std_dtor(&self->zval TSRMLS_CC);
 
-  efree(number);
+  efree(self);
 }
 
 static zend_object_value
@@ -134,6 +391,8 @@ php_cassandra_float_new(zend_class_entry* class_type TSRMLS_DC)
 
   number = (cassandra_float*) emalloc(sizeof(cassandra_float));
   memset(number, 0, sizeof(cassandra_float));
+
+  number->type = CASSANDRA_FLOAT;
 
   zend_object_std_init(&number->zval, class_type TSRMLS_CC);
 #if ZEND_MODULE_API_NO >= 20100525
@@ -148,15 +407,18 @@ php_cassandra_float_new(zend_class_entry* class_type TSRMLS_DC)
   return retval;
 }
 
-void cassandra_define_CassandraFloat(TSRMLS_D)
+void cassandra_define_Float(TSRMLS_D)
 {
   zend_class_entry ce;
 
-  INIT_CLASS_ENTRY(ce, "Cassandra\\Types\\Float", CassandraFloat_methods);
-  cassandra_ce_Float = zend_register_internal_class(&ce TSRMLS_CC);
+  INIT_CLASS_ENTRY(ce, "Cassandra\\Types\\Float", cassandra_float_methods);
+  cassandra_float_ce = zend_register_internal_class(&ce TSRMLS_CC);
+  zend_class_implements(cassandra_float_ce TSRMLS_CC, 1, cassandra_numeric_ce);
+  cassandra_float_ce->ce_flags     |= ZEND_ACC_FINAL_CLASS;
+  cassandra_float_ce->create_object = php_cassandra_float_new;
+
   memcpy(&cassandra_float_handlers, zend_get_std_object_handlers(), sizeof(zend_object_handlers));
   cassandra_float_handlers.get_properties = php_cassandra_float_properties;
   cassandra_float_handlers.compare_objects = php_cassandra_float_compare;
-  cassandra_ce_Float->ce_flags |= ZEND_ACC_FINAL_CLASS;
-  cassandra_ce_Float->create_object = php_cassandra_float_new;
+  cassandra_float_handlers.cast_object = php_cassandra_float_cast;
 }

@@ -35,6 +35,8 @@ if test "$PHP_CASSANDRA" != "no"; then
     src/Cassandra/Exception/ServerException.c \
     src/Cassandra/Exception/IsBootstrappingException.c \
     src/Cassandra/Exception/OverloadedException.c \
+    src/Cassandra/Exception/DivideByZeroException.c \
+    src/Cassandra/Exception/RangeException.c \
     src/Cassandra/Future.c \
     src/Cassandra/FuturePreparedStatement.c \
     src/Cassandra/FutureRows.c \
@@ -59,6 +61,7 @@ if test "$PHP_CASSANDRA" != "no"; then
     src/Cassandra/Types/Blob.c \
     src/Cassandra/Types/Decimal.c \
     src/Cassandra/Types/Inet.c \
+    src/Cassandra/Types/Numeric.c \
     src/Cassandra/Types/UuidInterface.c \
     src/Cassandra/Types/Uuid.c \
     src/Cassandra/Types/Timestamp.c \

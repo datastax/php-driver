@@ -488,21 +488,24 @@ PHP_MINIT_FUNCTION(cassandra)
   cassandra_define_ServerException(TSRMLS_C);
   cassandra_define_IsBootstrappingException(TSRMLS_C);
   cassandra_define_OverloadedException(TSRMLS_C);
+  cassandra_define_DivideByZeroException(TSRMLS_C);
+  cassandra_define_RangeException(TSRMLS_C);
 
-  cassandra_define_CassandraBigint(TSRMLS_C);
-  cassandra_define_CassandraBlob(TSRMLS_C);
-  cassandra_define_CassandraDecimal(TSRMLS_C);
-  cassandra_define_CassandraFloat(TSRMLS_C);
-  cassandra_define_CassandraInet(TSRMLS_C);
-  cassandra_define_CassandraTimestamp(TSRMLS_C);
-  cassandra_define_CassandraUuidInterface(TSRMLS_C);
-  cassandra_define_CassandraTimeuuid(TSRMLS_C);
-  cassandra_define_CassandraUuid(TSRMLS_C);
-  cassandra_define_CassandraVarint(TSRMLS_C);
+  cassandra_define_Numeric(TSRMLS_C);
+  cassandra_define_Bigint(TSRMLS_C);
+  cassandra_define_Blob(TSRMLS_C);
+  cassandra_define_Decimal(TSRMLS_C);
+  cassandra_define_Float(TSRMLS_C);
+  cassandra_define_Inet(TSRMLS_C);
+  cassandra_define_Timestamp(TSRMLS_C);
+  cassandra_define_UuidInterface(TSRMLS_C);
+  cassandra_define_Timeuuid(TSRMLS_C);
+  cassandra_define_Uuid(TSRMLS_C);
+  cassandra_define_Varint(TSRMLS_C);
 
-  cassandra_define_CassandraSet(TSRMLS_C);
-  cassandra_define_CassandraMap(TSRMLS_C);
-  cassandra_define_CassandraCollection(TSRMLS_C);
+  cassandra_define_Set(TSRMLS_C);
+  cassandra_define_Map(TSRMLS_C);
+  cassandra_define_Collection(TSRMLS_C);
 
   cassandra_define_Cassandra(TSRMLS_C);
   cassandra_define_Cluster(TSRMLS_C);
@@ -1001,27 +1004,27 @@ PHP_FUNCTION(cassandra_statement_bind)
       CHECK_RESULT(cass_statement_bind_bool(statement, (size_t) Z_LVAL_P(index), Z_BVAL_P(value)));
 
     if (Z_TYPE_P(value) == IS_OBJECT) {
-      if (instanceof_function(Z_OBJCE_P(value), cassandra_ce_Float TSRMLS_CC)) {
+      if (instanceof_function(Z_OBJCE_P(value), cassandra_float_ce TSRMLS_CC)) {
         cassandra_float* float_number = (cassandra_float*) zend_object_store_get_object(value TSRMLS_CC);
         CHECK_RESULT(cass_statement_bind_float(statement, (size_t) Z_LVAL_P(index), float_number->value));
       }
 
-      if (instanceof_function(Z_OBJCE_P(value), cassandra_ce_Bigint TSRMLS_CC)) {
+      if (instanceof_function(Z_OBJCE_P(value), cassandra_bigint_ce TSRMLS_CC)) {
         cassandra_bigint* bigint = (cassandra_bigint*) zend_object_store_get_object(value TSRMLS_CC);
         CHECK_RESULT(cass_statement_bind_int64(statement, (size_t) Z_LVAL_P(index), bigint->value));
       }
 
-      if (instanceof_function(Z_OBJCE_P(value), cassandra_ce_Timestamp TSRMLS_CC)) {
+      if (instanceof_function(Z_OBJCE_P(value), cassandra_timestamp_ce TSRMLS_CC)) {
         cassandra_timestamp* timestamp = (cassandra_timestamp*) zend_object_store_get_object(value TSRMLS_CC);
         CHECK_RESULT(cass_statement_bind_int64(statement, (size_t) Z_LVAL_P(index), timestamp->timestamp));
       }
 
-      if (instanceof_function(Z_OBJCE_P(value), cassandra_ce_Blob TSRMLS_CC)) {
+      if (instanceof_function(Z_OBJCE_P(value), cassandra_blob_ce TSRMLS_CC)) {
         cassandra_blob* blob = (cassandra_blob*) zend_object_store_get_object(value TSRMLS_CC);
         CHECK_RESULT(cass_statement_bind_bytes(statement, (size_t) Z_LVAL_P(index), blob->data, blob->size));
       }
 
-      if (instanceof_function(Z_OBJCE_P(value), cassandra_ce_Varint TSRMLS_CC)) {
+      if (instanceof_function(Z_OBJCE_P(value), cassandra_varint_ce TSRMLS_CC)) {
         cassandra_varint* varint = (cassandra_varint*) zend_object_store_get_object(value TSRMLS_CC);
         size_t size;
         cass_byte_t* data;
@@ -1032,7 +1035,7 @@ PHP_FUNCTION(cassandra_statement_bind)
         return;
       }
 
-      if (instanceof_function(Z_OBJCE_P(value), cassandra_ce_Decimal TSRMLS_CC)) {
+      if (instanceof_function(Z_OBJCE_P(value), cassandra_decimal_ce TSRMLS_CC)) {
         cassandra_decimal* decimal = (cassandra_decimal*) zend_object_store_get_object(value TSRMLS_CC);
         size_t size;
         cass_byte_t* data;
@@ -1043,17 +1046,17 @@ PHP_FUNCTION(cassandra_statement_bind)
         return;
       }
 
-      if (instanceof_function(Z_OBJCE_P(value), cassandra_ce_Uuid TSRMLS_CC)) {
+      if (instanceof_function(Z_OBJCE_P(value), cassandra_uuid_ce TSRMLS_CC)) {
         cassandra_uuid* uuid = (cassandra_uuid*) zend_object_store_get_object(value TSRMLS_CC);
         CHECK_RESULT(cass_statement_bind_uuid(statement, (size_t) Z_LVAL_P(index), uuid->uuid));
       }
 
-      if (instanceof_function(Z_OBJCE_P(value), cassandra_ce_Inet TSRMLS_CC)) {
+      if (instanceof_function(Z_OBJCE_P(value), cassandra_inet_ce TSRMLS_CC)) {
         cassandra_inet* inet = (cassandra_inet*) zend_object_store_get_object(value TSRMLS_CC);
         CHECK_RESULT(cass_statement_bind_inet(statement, (size_t) Z_LVAL_P(index), inet->inet));
       }
 
-      if (instanceof_function(Z_OBJCE_P(value), cassandra_ce_Set TSRMLS_CC)) {
+      if (instanceof_function(Z_OBJCE_P(value), cassandra_set_ce TSRMLS_CC)) {
         CassCollection* collection;
         cassandra_set* set = (cassandra_set*) zend_object_store_get_object(value TSRMLS_CC);
         if (!php_cassandra_collection_from_set(set, &collection TSRMLS_CC))
@@ -1065,7 +1068,7 @@ PHP_FUNCTION(cassandra_statement_bind)
         return;
       }
 
-      if (instanceof_function(Z_OBJCE_P(value), cassandra_ce_Map TSRMLS_CC)) {
+      if (instanceof_function(Z_OBJCE_P(value), cassandra_map_ce TSRMLS_CC)) {
         CassCollection* collection;
         cassandra_map* map = (cassandra_map*) zend_object_store_get_object(value TSRMLS_CC);
         if (!php_cassandra_collection_from_map(map, &collection TSRMLS_CC))
@@ -1077,7 +1080,7 @@ PHP_FUNCTION(cassandra_statement_bind)
         return;
       }
 
-      if (instanceof_function(Z_OBJCE_P(value), cassandra_ce_Collection TSRMLS_CC)) {
+      if (instanceof_function(Z_OBJCE_P(value), cassandra_collection_ce TSRMLS_CC)) {
         CassCollection* collection;
         cassandra_collection* coll = (cassandra_collection*) zend_object_store_get_object(value TSRMLS_CC);
         if (!php_cassandra_collection_from_collection(coll, &collection TSRMLS_CC))
@@ -1107,27 +1110,27 @@ PHP_FUNCTION(cassandra_statement_bind)
       CHECK_RESULT(cass_statement_bind_bool_by_name_n(statement, Z_STRVAL_P(index), (size_t) Z_STRLEN_P(index), Z_BVAL_P(value)));
 
     if (Z_TYPE_P(value) == IS_OBJECT) {
-      if (instanceof_function(Z_OBJCE_P(value), cassandra_ce_Float TSRMLS_CC)) {
+      if (instanceof_function(Z_OBJCE_P(value), cassandra_float_ce TSRMLS_CC)) {
         cassandra_float* float_number = (cassandra_float*) zend_object_store_get_object(value TSRMLS_CC);
         CHECK_RESULT(cass_statement_bind_float_by_name_n(statement, Z_STRVAL_P(index), (size_t) Z_STRLEN_P(index), float_number->value));
       }
 
-      if (instanceof_function(Z_OBJCE_P(value), cassandra_ce_Bigint TSRMLS_CC)) {
+      if (instanceof_function(Z_OBJCE_P(value), cassandra_bigint_ce TSRMLS_CC)) {
         cassandra_bigint* bigint = (cassandra_bigint*) zend_object_store_get_object(value TSRMLS_CC);
         CHECK_RESULT(cass_statement_bind_int64_by_name_n(statement, Z_STRVAL_P(index), (size_t) Z_STRLEN_P(index), bigint->value));
       }
 
-      if (instanceof_function(Z_OBJCE_P(value), cassandra_ce_Timestamp TSRMLS_CC)) {
+      if (instanceof_function(Z_OBJCE_P(value), cassandra_timestamp_ce TSRMLS_CC)) {
         cassandra_timestamp* timestamp = (cassandra_timestamp*) zend_object_store_get_object(value TSRMLS_CC);
         CHECK_RESULT(cass_statement_bind_int64_by_name_n(statement, Z_STRVAL_P(index), (size_t) Z_STRLEN_P(index), timestamp->timestamp));
       }
 
-      if (instanceof_function(Z_OBJCE_P(value), cassandra_ce_Blob TSRMLS_CC)) {
+      if (instanceof_function(Z_OBJCE_P(value), cassandra_blob_ce TSRMLS_CC)) {
         cassandra_blob* blob = (cassandra_blob*) zend_object_store_get_object(value TSRMLS_CC);
         CHECK_RESULT(cass_statement_bind_bytes_by_name_n(statement, Z_STRVAL_P(index), (size_t) Z_STRLEN_P(index), blob->data, blob->size));
       }
 
-      if (instanceof_function(Z_OBJCE_P(value), cassandra_ce_Varint TSRMLS_CC)) {
+      if (instanceof_function(Z_OBJCE_P(value), cassandra_varint_ce TSRMLS_CC)) {
         cassandra_varint* varint = (cassandra_varint*) zend_object_store_get_object(value TSRMLS_CC);
         size_t size;
         cass_byte_t* data;
@@ -1138,7 +1141,7 @@ PHP_FUNCTION(cassandra_statement_bind)
         return;
       }
 
-      if (instanceof_function(Z_OBJCE_P(value), cassandra_ce_Decimal TSRMLS_CC)) {
+      if (instanceof_function(Z_OBJCE_P(value), cassandra_decimal_ce TSRMLS_CC)) {
         cassandra_decimal* decimal = (cassandra_decimal*) zend_object_store_get_object(value TSRMLS_CC);
         size_t size;
         cass_byte_t* data;
@@ -1149,17 +1152,17 @@ PHP_FUNCTION(cassandra_statement_bind)
         return;
       }
 
-      if (instanceof_function(Z_OBJCE_P(value), cassandra_ce_Uuid TSRMLS_CC)) {
+      if (instanceof_function(Z_OBJCE_P(value), cassandra_uuid_ce TSRMLS_CC)) {
         cassandra_uuid* uuid = (cassandra_uuid*) zend_object_store_get_object(value TSRMLS_CC);
         CHECK_RESULT(cass_statement_bind_uuid_by_name_n(statement, Z_STRVAL_P(index), (size_t) Z_STRLEN_P(index), uuid->uuid));
       }
 
-      if (instanceof_function(Z_OBJCE_P(value), cassandra_ce_Inet TSRMLS_CC)) {
+      if (instanceof_function(Z_OBJCE_P(value), cassandra_inet_ce TSRMLS_CC)) {
         cassandra_inet* inet = (cassandra_inet*) zend_object_store_get_object(value TSRMLS_CC);
         CHECK_RESULT(cass_statement_bind_inet_by_name_n(statement, Z_STRVAL_P(index), (size_t) Z_STRLEN_P(index), inet->inet));
       }
 
-      if (instanceof_function(Z_OBJCE_P(value), cassandra_ce_Set TSRMLS_CC)) {
+      if (instanceof_function(Z_OBJCE_P(value), cassandra_set_ce TSRMLS_CC)) {
         CassCollection* collection;
         cassandra_set* set = (cassandra_set*) zend_object_store_get_object(value TSRMLS_CC);
         if (!php_cassandra_collection_from_set(set, &collection TSRMLS_CC))
@@ -1171,7 +1174,7 @@ PHP_FUNCTION(cassandra_statement_bind)
         return;
       }
 
-      if (instanceof_function(Z_OBJCE_P(value), cassandra_ce_Map TSRMLS_CC)) {
+      if (instanceof_function(Z_OBJCE_P(value), cassandra_map_ce TSRMLS_CC)) {
         CassCollection* collection;
         cassandra_map* map = (cassandra_map*) zend_object_store_get_object(value TSRMLS_CC);
         if (!php_cassandra_collection_from_map(map, &collection TSRMLS_CC))
@@ -1183,7 +1186,7 @@ PHP_FUNCTION(cassandra_statement_bind)
         return;
       }
 
-      if (instanceof_function(Z_OBJCE_P(value), cassandra_ce_Collection TSRMLS_CC)) {
+      if (instanceof_function(Z_OBJCE_P(value), cassandra_collection_ce TSRMLS_CC)) {
         CassCollection* collection;
         cassandra_collection* coll = (cassandra_collection*) zend_object_store_get_object(value TSRMLS_CC);
         if (!php_cassandra_collection_from_collection(coll, &collection TSRMLS_CC))

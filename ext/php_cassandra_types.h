@@ -1,14 +1,43 @@
 #ifndef PHP_CASSANDRA_TYPES_H
 #define PHP_CASSANDRA_TYPES_H
+
+typedef enum {
+  CASSANDRA_BIGINT,
+  CASSANDRA_DECIMAL,
+  CASSANDRA_FLOAT,
+  CASSANDRA_VARINT,
+} cassandra_numeric_type;
+
+#define NUMERIC_FIELDS \
+  zend_object  zval; \
+  cassandra_numeric_type type;
+
 typedef struct {
-  zend_object  zval;
+  NUMERIC_FIELDS
+} cassandra_numeric;
+
+typedef struct {
+  NUMERIC_FIELDS
+  cass_int64_t value;
+} cassandra_bigint;
+
+typedef struct {
+  NUMERIC_FIELDS
+  mpz_t       value;
+  long        scale;
+} cassandra_decimal;
+
+typedef struct {
+  NUMERIC_FIELDS
   cass_float_t value;
 } cassandra_float;
 
 typedef struct {
-  zend_object  zval;
-  cass_int64_t value;
-} cassandra_bigint;
+  NUMERIC_FIELDS
+  mpz_t        value;
+} cassandra_varint;
+
+#undef NUMERIC_FIELDS
 
 typedef struct {
   zend_object  zval;
@@ -20,17 +49,6 @@ typedef struct {
   cass_byte_t* data;
   size_t       size;
 } cassandra_blob;
-
-typedef struct {
-  zend_object  zval;
-  mpz_t        value;
-} cassandra_varint;
-
-typedef struct {
-  zend_object zval;
-  mpz_t       value;
-  long        scale;
-} cassandra_decimal;
 
 typedef struct {
   zend_object zval;
@@ -220,20 +238,22 @@ typedef struct {
   char*       passphrase;
 } cassandra_ssl_builder;
 
-extern PHP_CASSANDRA_API zend_class_entry* cassandra_ce_Bigint;
-extern PHP_CASSANDRA_API zend_class_entry* cassandra_ce_Blob;
-extern PHP_CASSANDRA_API zend_class_entry* cassandra_ce_Decimal;
-extern PHP_CASSANDRA_API zend_class_entry* cassandra_ce_Float;
-extern PHP_CASSANDRA_API zend_class_entry* cassandra_ce_Inet;
-extern PHP_CASSANDRA_API zend_class_entry* cassandra_ce_Timestamp;
-extern PHP_CASSANDRA_API zend_class_entry* cassandra_ce_UuidInterface;
-extern PHP_CASSANDRA_API zend_class_entry* cassandra_ce_Uuid;
-extern PHP_CASSANDRA_API zend_class_entry* cassandra_ce_Timeuuid;
-extern PHP_CASSANDRA_API zend_class_entry* cassandra_ce_Varint;
 
-extern PHP_CASSANDRA_API zend_class_entry* cassandra_ce_Set;
-extern PHP_CASSANDRA_API zend_class_entry* cassandra_ce_Map;
-extern PHP_CASSANDRA_API zend_class_entry* cassandra_ce_Collection;
+extern PHP_CASSANDRA_API zend_class_entry* cassandra_numeric_ce;
+extern PHP_CASSANDRA_API zend_class_entry* cassandra_bigint_ce;
+extern PHP_CASSANDRA_API zend_class_entry* cassandra_blob_ce;
+extern PHP_CASSANDRA_API zend_class_entry* cassandra_decimal_ce;
+extern PHP_CASSANDRA_API zend_class_entry* cassandra_float_ce;
+extern PHP_CASSANDRA_API zend_class_entry* cassandra_inet_ce;
+extern PHP_CASSANDRA_API zend_class_entry* cassandra_timestamp_ce;
+extern PHP_CASSANDRA_API zend_class_entry* cassandra_uuid_interface_ce;
+extern PHP_CASSANDRA_API zend_class_entry* cassandra_uuid_ce;
+extern PHP_CASSANDRA_API zend_class_entry* cassandra_timeuuid_ce;
+extern PHP_CASSANDRA_API zend_class_entry* cassandra_varint_ce;
+
+extern PHP_CASSANDRA_API zend_class_entry* cassandra_set_ce;
+extern PHP_CASSANDRA_API zend_class_entry* cassandra_map_ce;
+extern PHP_CASSANDRA_API zend_class_entry* cassandra_collection_ce;
 
 /* Exceptions */
 void cassandra_define_Exception(TSRMLS_D);
@@ -259,21 +279,24 @@ void cassandra_define_ProtocolException(TSRMLS_D);
 void cassandra_define_ServerException(TSRMLS_D);
 void cassandra_define_IsBootstrappingException(TSRMLS_D);
 void cassandra_define_OverloadedException(TSRMLS_D);
+void cassandra_define_DivideByZeroException(TSRMLS_D);
+void cassandra_define_RangeException(TSRMLS_D);
 
 /* Types */
-void cassandra_define_CassandraBigint(TSRMLS_D);
-void cassandra_define_CassandraBlob(TSRMLS_D);
-void cassandra_define_CassandraCollection(TSRMLS_D);
-void cassandra_define_CassandraDecimal(TSRMLS_D);
-void cassandra_define_CassandraFloat(TSRMLS_D);
-void cassandra_define_CassandraInet(TSRMLS_D);
-void cassandra_define_CassandraMap(TSRMLS_D);
-void cassandra_define_CassandraSet(TSRMLS_D);
-void cassandra_define_CassandraTimestamp(TSRMLS_D);
-void cassandra_define_CassandraUuidInterface(TSRMLS_D);
-void cassandra_define_CassandraUuid(TSRMLS_D);
-void cassandra_define_CassandraTimeuuid(TSRMLS_D);
-void cassandra_define_CassandraVarint(TSRMLS_D);
+void cassandra_define_Numeric(TSRMLS_D);
+void cassandra_define_Bigint(TSRMLS_D);
+void cassandra_define_Blob(TSRMLS_D);
+void cassandra_define_Collection(TSRMLS_D);
+void cassandra_define_Decimal(TSRMLS_D);
+void cassandra_define_Float(TSRMLS_D);
+void cassandra_define_Inet(TSRMLS_D);
+void cassandra_define_Map(TSRMLS_D);
+void cassandra_define_Set(TSRMLS_D);
+void cassandra_define_Timestamp(TSRMLS_D);
+void cassandra_define_UuidInterface(TSRMLS_D);
+void cassandra_define_Uuid(TSRMLS_D);
+void cassandra_define_Timeuuid(TSRMLS_D);
+void cassandra_define_Varint(TSRMLS_D);
 
 /* Classes */
 extern PHP_CASSANDRA_API zend_class_entry* cassandra_ce;
@@ -314,6 +337,9 @@ extern PHP_CASSANDRA_API zend_class_entry* cassandra_already_exists_exception_ce
 extern PHP_CASSANDRA_API zend_class_entry* cassandra_unprepared_exception_ce;
 extern PHP_CASSANDRA_API zend_class_entry* cassandra_protocol_exception_ce;
 extern PHP_CASSANDRA_API zend_class_entry* cassandra_authentication_exception_ce;
+extern PHP_CASSANDRA_API zend_class_entry* cassandra_divide_by_zero_exception_ce;
+extern PHP_CASSANDRA_API zend_class_entry* cassandra_range_exception_ce;
+
 extern PHP_CASSANDRA_API zend_class_entry* cassandra_statement_ce;
 extern PHP_CASSANDRA_API zend_class_entry* cassandra_simple_statement_ce;
 extern PHP_CASSANDRA_API zend_class_entry* cassandra_prepared_statement_ce;
