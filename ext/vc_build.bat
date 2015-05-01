@@ -760,6 +760,7 @@ REM Display the help message and exit with error code
   ECHO     !ARGUMENT_DISABLE_CLEAN_BUILD!                   Disable clean build
   ECHO     !ARGUMENT_DISABLE_THREAD_SAFETY!           Disable thread safety
 REM	ECHO     !ARGUMENT_ENABLE_BUILD_PACKAGES! [version]       Enable package generation
+  ECHO     !ARGUMENT_ENABLE_TEST_CONFIGURATION!       Enable test configuration build
   ECHO     !ARGUMENT_PHP_VERSION! [version]           PHP version 5.3, 5.4, 5.5, or 5.6
   IF !SYSTEM_ARCHITECTURE! EQU !ARCHITECTURE_32BIT! (
     ECHO     !ARGUMENT_TARGET_ARCHITECTURE_32BIT!                             Target 32-bit build ^(default^)
