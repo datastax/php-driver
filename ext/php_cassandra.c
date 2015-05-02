@@ -1093,7 +1093,7 @@ PHP_FUNCTION(cassandra_future_wait)
   if (rc == CASS_OK)
     return;
 
-  char* message;
+  const char* message;
   size_t message_length;
   cass_future_error_message(future, &message, &message_length);
 
@@ -1128,7 +1128,7 @@ PHP_FUNCTION(cassandra_future_wait_timed)
   if (rc == CASS_OK)
     return;
 
-  char* message;
+  const char* message;
   size_t message_length;
   cass_future_error_message(future, &message, &message_length);
 
@@ -1704,11 +1704,11 @@ php_cassandra_value(const CassValue* value, CassValueType type TSRMLS_DC)
   CassError rc;
   const char* v_string;
   size_t v_string_length;
-  cass_byte_t* v_bytes;
+  const cass_byte_t* v_bytes;
   size_t v_bytes_length;
   CassUuid v_uuid;
   CassInet v_inet;
-  cass_byte_t* v_decimal;
+  const cass_byte_t* v_decimal;
   size_t v_decimal_length;
   cass_int32_t v_decimal_scale;
   cass_int64_t v_int_64;
