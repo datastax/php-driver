@@ -58,69 +58,82 @@ php_cassandra_validate_object(zval* object, CassValueType type TSRMLS_DC)
   case CASS_VALUE_TYPE_ASCII:
   case CASS_VALUE_TYPE_VARCHAR:
   case CASS_VALUE_TYPE_TEXT:
-    if (Z_TYPE_P(object) != IS_STRING)
+    if (Z_TYPE_P(object) != IS_STRING) {
       EXPECTING_VALUE("a string");
+    }
 
     return 1;
   case CASS_VALUE_TYPE_DOUBLE:
-    if (Z_TYPE_P(object) != IS_DOUBLE)
+    if (Z_TYPE_P(object) != IS_DOUBLE) {
       EXPECTING_VALUE("a float");
+    }
 
     return 1;
   case CASS_VALUE_TYPE_INT:
-    if (Z_TYPE_P(object) != IS_LONG)
+    if (Z_TYPE_P(object) != IS_LONG) {
       EXPECTING_VALUE("an int");
+    }
 
     return 1;
   case CASS_VALUE_TYPE_BOOLEAN:
-    if (Z_TYPE_P(object) != IS_BOOL)
+    if (Z_TYPE_P(object) != IS_BOOL) {
       EXPECTING_VALUE("a boolean");
+    }
 
     return 1;
   case CASS_VALUE_TYPE_FLOAT:
-    if (!INSTANCE_OF(cassandra_ce_Float))
+    if (!INSTANCE_OF(cassandra_ce_Float)) {
       EXPECTING_VALUE("an instance of Cassandra\\Float");
+    }
 
     return 1;
   case CASS_VALUE_TYPE_COUNTER:
   case CASS_VALUE_TYPE_BIGINT:
-    if (!INSTANCE_OF(cassandra_ce_Bigint))
+    if (!INSTANCE_OF(cassandra_ce_Bigint)) {
       EXPECTING_VALUE("an instance of Cassandra\\Bigint");
+    }
 
     return 1;
   case CASS_VALUE_TYPE_BLOB:
-    if (!INSTANCE_OF(cassandra_ce_Blob))
+    if (!INSTANCE_OF(cassandra_ce_Blob)) {
       EXPECTING_VALUE("an instance of Cassandra\\Blob");
+    }
 
     return 1;
   case CASS_VALUE_TYPE_DECIMAL:
-    if (!INSTANCE_OF(cassandra_ce_Decimal))
+    if (!INSTANCE_OF(cassandra_ce_Decimal)) {
       EXPECTING_VALUE("an instance of Cassandra\\Decimal");
+    }
 
     return 1;
   case CASS_VALUE_TYPE_TIMESTAMP:
-    if (!INSTANCE_OF(cassandra_ce_Timestamp))
+    if (!INSTANCE_OF(cassandra_ce_Timestamp)) {
       EXPECTING_VALUE("an instance of Cassandra\\Timestamp");
+    }
 
     return 1;
   case CASS_VALUE_TYPE_UUID:
-    if (!INSTANCE_OF(cassandra_ce_Uuid))
+    if (!INSTANCE_OF(cassandra_ce_Uuid)) {
       EXPECTING_VALUE("an instance of Cassandra\\Uuid");
+    }
 
     return 1;
   case CASS_VALUE_TYPE_VARINT:
-    if (!INSTANCE_OF(cassandra_ce_Varint))
+    if (!INSTANCE_OF(cassandra_ce_Varint)) {
       EXPECTING_VALUE("an instance of Cassandra\\Varint");
+    }
 
     return 1;
   case CASS_VALUE_TYPE_TIMEUUID:
-    if (!INSTANCE_OF(cassandra_ce_Timeuuid))
+    if (!INSTANCE_OF(cassandra_ce_Timeuuid)) {
       EXPECTING_VALUE("an instance of Cassandra\\Timeuuid");
+    }
 
     return 1;
   case CASS_VALUE_TYPE_INET:
-    if (!INSTANCE_OF(cassandra_ce_Inet))
+    if (!INSTANCE_OF(cassandra_ce_Inet)) {
       EXPECTING_VALUE("an instance of Cassandra\\Inet");
+    }
 
     return 1;
   default:
