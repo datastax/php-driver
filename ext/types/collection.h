@@ -1,7 +1,7 @@
 #ifndef PHP_CASSANDRA_COLLECTION_H
 #define PHP_CASSANDRA_COLLECTION_H
 
-#include "exceptions\exception.h"
+#include "exceptions/exception.h"
 
 int php_cassandra_collection_add(cassandra_collection* collection, zval* object TSRMLS_DC);
 

@@ -1,7 +1,7 @@
 #ifndef PHP_CASSANDRA_INET_H
 #define PHP_CASSANDRA_INET_H
 
-#include "exceptions\exception.h"
+#include "exceptions/exception.h"
 
 PHP_METHOD(CassandraInet, __construct);
 PHP_METHOD(CassandraInet, __toString);

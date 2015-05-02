@@ -1,7 +1,7 @@
 #ifndef PHP_CASSANDRA_FLOAT_H
 #define PHP_CASSANDRA_FLOAT_H
 
-#include "exceptions\exception.h"
+#include "exceptions/exception.h"
 
 PHP_METHOD(CassandraFloat, __construct);
 PHP_METHOD(CassandraFloat, __toString);

@@ -1,7 +1,7 @@
 #ifndef PHP_CASSANDRA_DECIMAL_H
 #define PHP_CASSANDRA_DECIMAL_H
 
-#include "exceptions\exception.h"
+#include "exceptions/exception.h"
 
 PHP_METHOD(CassandraDecimal, __construct);
 PHP_METHOD(CassandraDecimal, __toString);

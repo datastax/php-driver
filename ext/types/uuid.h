@@ -1,7 +1,7 @@
 #ifndef PHP_CASSANDRA_UUID_H
 #define PHP_CASSANDRA_UUID_H
 
-#include "exceptions\exception.h"
+#include "exceptions/exception.h"
 #include "uuid_interface.h"
 
 PHP_METHOD(CassandraUuid, __construct);
