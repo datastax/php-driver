@@ -1,8 +1,6 @@
 #ifndef PHP_CASSANDRA_TIMESTAMP_H
 #define PHP_CASSANDRA_TIMESTAMP_H
 
-#include "exceptions/exception.h"
-
 PHP_METHOD(CassandraTimestamp, __construct);
 PHP_METHOD(CassandraTimestamp, time);
 PHP_METHOD(CassandraTimestamp, microtime);

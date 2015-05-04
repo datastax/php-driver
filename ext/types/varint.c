@@ -17,7 +17,7 @@ PHP_METHOD(CassandraVarint, __construct)
 
   number = (cassandra_varint*) zend_object_store_get_object(getThis() TSRMLS_CC);
 
-  if (!php_cassandra_parse_integer(value, value_len, &number->value TSRMLS_CC))
+  if (!php_cassandra_parse_varint(value, value_len, &number->value TSRMLS_CC))
     return;
 }
 /* }}} */

@@ -2,7 +2,7 @@
 #include "util/uuid_gen.h"
 #include "uuid_interface.h"
 #include "timeuuid.h"
-#include "ext/date/php_date.h"
+#include <ext/date/php_date.h>
 
 zend_class_entry *cassandra_ce_Timeuuid = NULL;
 
@@ -22,7 +22,7 @@ PHP_METHOD(CassandraTimeuuid, __construct)
     php_cassandra_uuid_generate_time(&uuid->uuid TSRMLS_CC);
   } else {
     if (timestamp < 0) {
-      zend_throw_exception_ex(cassandra_ce_InvalidArgumentException, 0 TSRMLS_CC, "Timestamp must be a positive integer, \"%d\" given", timestamp);
+      zend_throw_exception_ex(cassandra_invalid_argument_exception_ce, 0 TSRMLS_CC, "Timestamp must be a positive integer, \"%d\" given", timestamp);
       return;
     }
     php_cassandra_uuid_generate_from_time(timestamp, &uuid->uuid TSRMLS_CC);
