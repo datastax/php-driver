@@ -1,5 +1,5 @@
 #include "php_cassandra.h"
-#include "bigint.h"
+#include "float.h"
 
 zend_class_entry* cassandra_ce_Float = NULL;
 
@@ -30,7 +30,7 @@ PHP_METHOD(CassandraFloat, __construct)
   }
 
   if (!ctype_float(value, value_len)) {
-    zend_throw_exception_ex(cassandra_ce_InvalidArgumentException, 0 TSRMLS_CC, "Invalid float value \"%s\"", value);
+    zend_throw_exception_ex(cassandra_invalid_argument_exception_ce, 0 TSRMLS_CC, "Invalid float value \"%s\"", value);
     return;
   }
 
