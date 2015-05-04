@@ -1,7 +1,4 @@
 #include "php_cassandra.h"
-#include <ext/spl/spl_exceptions.h>
-
-extern zend_class_entry* spl_ce_InvalidArgumentException;
 
 zend_class_entry *cassandra_invalid_argument_exception_ce = NULL;
 

@@ -1,4 +1,4 @@
-#include "../php_cassandra.h"
+#include "php_cassandra.h"
 #include "util/math.h"
 
 cassandra_statement_ref*
