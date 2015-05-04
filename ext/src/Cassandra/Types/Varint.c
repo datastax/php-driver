@@ -279,7 +279,7 @@ PHP_METHOD(Varint, toDouble)
   cassandra_varint* self =
       (cassandra_varint*) zend_object_store_get_object(getThis() TSRMLS_CC);
 
-  if (mpz_cmp_d(self->value, DBL_MIN) < 0) {
+  if (mpz_cmp_d(self->value, -DBL_MAX) < 0) {
     zend_throw_exception_ex(cassandra_range_exception_ce, 0 TSRMLS_CC, "Value is too small");
     return;
   }

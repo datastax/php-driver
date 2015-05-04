@@ -1,19 +1,22 @@
 #include "php_cassandra.h"
 #include "util/math.h"
+#include <gmp.h>
 #include <float.h>
 #include <math.h>
+#include <ext/spl/spl_exceptions.h>
 
 extern zend_class_entry *cassandra_invalid_argument_exception_ce;
 
 zend_class_entry *cassandra_decimal_ce = NULL;
 
 static void
-calculate_decimal(mpf_t result, mpz_t unscaled, long scale)
+to_mpf(mpf_t result, cassandra_decimal* value)
 {
   /* result = unscaled * pow(10, -scale) */
-  mpf_set_z(result, unscaled);
+  mpf_set_z(result, value->value);
 
   mpf_t scale_factor;
+  long scale = value->scale;
   mpf_init_set_si(scale_factor, 10);
   mpf_pow_ui(scale_factor, scale_factor, scale < 0 ? -scale : scale);
 
@@ -22,7 +25,115 @@ calculate_decimal(mpf_t result, mpz_t unscaled, long scale)
   }
 
   mpf_mul(result, result, scale_factor);
+
   mpf_clear(scale_factor);
+}
+
+/*
+ * IEEE 754 double precision floating point representation:
+ *
+ *  S   EEEEEEEEEEE  MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
+ * [63][  62 - 52  ][                    51 - 0                          ]
+ *
+ * S = sign bit
+ * E = exponent
+ * M = mantissa
+ */
+#define DOUBLE_MANTISSA_BITS 52
+#define DOUBLE_MANITSSA_MASK (int64_t) ((1LL << DOUBLE_MANTISSA_BITS) - 1)
+#define DOUBLE_EXPONENT_BITS 11
+#define DOUBLE_EXPONENT_MASK (int64_t) ((1LL << DOUBLE_EXPONENT_BITS) - 1)
+
+static void
+from_double(cassandra_decimal* result, double value)
+{
+  int64_t raw = *((int64_t*) &value);
+  int64_t mantissa = raw & DOUBLE_MANITSSA_MASK;
+  int64_t exponent = (raw >> DOUBLE_MANTISSA_BITS) & DOUBLE_EXPONENT_MASK;
+
+  /* This exponent is offset using 1023 unless it's a denormal value then its value
+   * is the minimum value -1022
+   */
+  int denormal;
+  if (exponent == 0) {
+    /* If the exponent is a zero then we have a denormal (subnormal) number. These are numbers
+     * that represent small values around 0.0. The mantissa has the form of 0.xxxxxxxx...
+     *
+     * http://en.wikipedia.org/wiki/Denormal_number
+     */
+    denormal = 1;
+    exponent = -1022;
+  } else {
+    /* Normal number The mantissa has the form of 1.xxxxxxx... */
+    denormal = 0;
+    exponent -= 1023;
+  }
+
+  /* Move the factional parts in the mantissa to the exponent. The significand
+   * represents fractional parts:
+   *
+   * S = 1 + B51 * 2^-51 + B50 * 2^-52 ... + B0
+   *
+   */
+  exponent -= DOUBLE_MANTISSA_BITS;
+
+  if (!denormal) {
+    /* Normal numbers have an implied one i.e. 1.xxxxxx... */
+    mantissa |= (1LL << DOUBLE_MANTISSA_BITS);
+  }
+
+  /* Remove trailing zeros and move them to the exponent */
+  while (exponent < 0 && (mantissa & 1) == 0) {
+    ++exponent;
+    mantissa >>= 1;
+  }
+
+  /* There isn't any "long long" setter method  */
+  char mantissa_str[32];
+#ifdef _WIN32
+  sprintf(mantissa_str, "%I64d", mantissa);
+#else
+  sprintf(mantissa_str, "%lld", mantissa);
+#else
+#endif
+  mpz_set_str(result->value, mantissa_str, 10);
+
+  /* Change the sign if negative */
+  if (raw < 0) {
+    mpz_neg(result->value, result->value);
+  }
+
+  if (exponent < 0) {
+    /* Convert from pow(2, exponent) to pow(10, exponent):
+     *
+     * mantissa * pow(2, exponent) equals
+     * mantissa * (pow(10, exponent) / pow(5, exponent))
+     */
+    mpz_t pow_5;
+    mpz_init(pow_5);
+    mpz_ui_pow_ui(pow_5, 5, -exponent);
+    mpz_mul(result->value, result->value, pow_5);
+    mpz_clear(pow_5);
+    result->scale = -exponent;
+  } else {
+    mpz_mul_2exp(result->value, result->value, exponent);
+    result->scale = 0;
+  }
+}
+
+static void
+align_decimals(cassandra_decimal* lhs, cassandra_decimal* rhs)
+{
+  mpz_t pow_10;
+  mpz_init(pow_10);
+  if (lhs->scale < rhs->scale) {
+    mpz_ui_pow_ui(pow_10, 10, rhs->scale - lhs->scale);
+    mpz_mul(lhs->value, lhs->value, pow_10);
+  } else if (lhs->scale > rhs->scale) {
+    mpz_ui_pow_ui(pow_10, 10, lhs->scale - rhs->scale);
+    mpz_mul(rhs->value, rhs->value, pow_10);
+  }
+  mpz_clear(pow_10);
 }
 
 /* {{{ Cassandra\Types\Decimal::__construct(string) */
@@ -46,7 +157,7 @@ PHP_METHOD(Decimal, __construct)
       zend_throw_exception_ex(cassandra_invalid_argument_exception_ce, 0 TSRMLS_CC,
                               "Value is NaN or +/- infinity");
     }
-    // TODO
+    from_double(self, value);
   } else if(Z_TYPE_P(num) == IS_STRING) {
     int scale;
     if (!php_cassandra_parse_decimal(Z_STRVAL_P(num), Z_STRLEN_P(num),
@@ -118,6 +229,7 @@ PHP_METHOD(Decimal, add)
     cassandra_decimal* result =
         (cassandra_decimal*) zend_object_store_get_object(return_value TSRMLS_CC);
 
+    align_decimals(self, decimal);
     mpz_add(result->value, self->value, decimal->value);
     result->scale = MAX(self->scale, decimal->scale);
   } else {
@@ -146,6 +258,7 @@ PHP_METHOD(Decimal, sub)
     cassandra_decimal* result =
         (cassandra_decimal*) zend_object_store_get_object(return_value TSRMLS_CC);
 
+    align_decimals(self, decimal);
     mpz_sub(result->value, self->value, decimal->value);
     result->scale = MAX(self->scale, decimal->scale);
   } else {
@@ -248,6 +361,32 @@ PHP_METHOD(Decimal, neg)
 /* {{{ Cassandra\Types\Decimal::sqrt() */
 PHP_METHOD(Decimal, sqrt)
 {
+  zend_throw_exception_ex(spl_ce_RuntimeException, 0 TSRMLS_CC, "Not implemented");
+#if 0
+  cassandra_decimal* self =
+      (cassandra_decimal*) zend_object_store_get_object(getThis() TSRMLS_CC);
+
+  mpf_t value;
+  mpf_init(value);
+  to_mpf(value, self);
+
+  mpf_sqrt(value, value);
+
+  mp_exp_t exponent;
+  char* mantissa = mpf_get_str(NULL, &exponent, 10, 0, value);
+
+  object_init_ex(return_value, cassandra_decimal_ce);
+  cassandra_decimal* result =
+      (cassandra_decimal*) zend_object_store_get_object(return_value TSRMLS_CC);
+
+  mpz_set_str(result->value, mantissa, 10);
+  mp_bitcnt_t prec = mpf_get_prec(value);
+  exponent -= prec;
+  result->scale = -exponent;
+
+  free(mantissa);
+  mpf_clear(value);
+#endif
 }
 /* }}} */
 
@@ -259,7 +398,7 @@ PHP_METHOD(Decimal, toLong)
 
   mpf_t value;
   mpf_init(value);
-  calculate_decimal(value, self->value, self->scale);
+  to_mpf(value, self);
 
   if (mpf_cmp_si(value, LONG_MIN) < 0) {
     zend_throw_exception_ex(cassandra_range_exception_ce, 0 TSRMLS_CC, "Value is too small");
@@ -286,14 +425,14 @@ PHP_METHOD(Decimal, toDouble)
 
   mpf_t value;
   mpf_init(value);
-  calculate_decimal(value, self->value, self->scale);
+  to_mpf(value, self);
 
-  if (mpf_cmp_d(value, DBL_MAX) < 0) {
+  if (mpf_cmp_d(value, -DBL_MAX) < 0) {
     zend_throw_exception_ex(cassandra_range_exception_ce, 0 TSRMLS_CC, "Value is too small");
     goto cleanup;
   }
 
-  if (mpf_cmp_d(value, DBL_MIN) > 0) {
+  if (mpf_cmp_d(value, DBL_MAX) > 0) {
     zend_throw_exception_ex(cassandra_range_exception_ce, 0 TSRMLS_CC, "Value is too big");
     goto cleanup;
   }
