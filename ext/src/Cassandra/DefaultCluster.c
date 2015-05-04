@@ -26,7 +26,10 @@ PHP_METHOD(DefaultCluster, connect)
   cassandra_session* session =
     (cassandra_session*) zend_object_store_get_object(return_value TSRMLS_CC);
 
-  session->persist = cluster->persist;
+  session->default_consistency = cluster->default_consistency;
+  session->default_page_size   = cluster->default_page_size;
+  session->default_timeout     = cluster->default_timeout;
+  session->persist             = cluster->persist;
 
   if (session->persist) {
     zend_rsrc_list_entry *le;
