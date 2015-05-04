@@ -182,7 +182,7 @@ php_cassandra_parse_decimal(char* in, int in_len, mpz_t* number, int* scale TSRM
     memcpy(&out[negative], &in[start], dot - start);
     memcpy(&out[negative + dot - start], &in[dot + 1], point - dot);
 
-    out_len = point - start + negative;
+    out_len = point - start + negative - 1;
     *scale = point - 1 - dot;
   } else {
     // If there was no decimal then the unscaled value is just the number
