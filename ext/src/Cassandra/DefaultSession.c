@@ -19,14 +19,13 @@ zend_class_entry *cassandra_default_session_ce = NULL;
 }
 
 static int
-bind_argument_by_index(CassStatement* statement, cass_size_t index, zval* value TSRMLS_DC)
+bind_argument_by_index(CassStatement* statement, size_t index, zval* value TSRMLS_DC)
 {
   if (Z_TYPE_P(value) == IS_NULL)
     CHECK_RESULT(cass_statement_bind_null(statement, index));
 
   if (Z_TYPE_P(value) == IS_STRING)
-    CHECK_RESULT(cass_statement_bind_string(statement, index,
-                                            cass_string_init2(Z_STRVAL_P(value), Z_STRLEN_P(value))));
+    CHECK_RESULT(cass_statement_bind_string(statement, index, Z_STRVAL_P(value)));
 
   if (Z_TYPE_P(value) == IS_DOUBLE)
     CHECK_RESULT(cass_statement_bind_double(statement, index, Z_DVAL_P(value)));
@@ -55,24 +54,24 @@ bind_argument_by_index(CassStatement* statement, cass_size_t index, zval* value 
 
     if (instanceof_function(Z_OBJCE_P(value), cassandra_ce_Blob TSRMLS_CC)) {
       cassandra_blob* blob = (cassandra_blob*) zend_object_store_get_object(value TSRMLS_CC);
-      CHECK_RESULT(cass_statement_bind_bytes(statement, index, cass_bytes_init(blob->data, blob->size)));
+      CHECK_RESULT(cass_statement_bind_bytes(statement, index, blob->data, blob->size));
     }
 
     if (instanceof_function(Z_OBJCE_P(value), cassandra_ce_Varint TSRMLS_CC)) {
       cassandra_varint* varint = (cassandra_varint*) zend_object_store_get_object(value TSRMLS_CC);
-      cass_size_t size;
+      size_t size;
       cass_byte_t* data = export_twos_complement(varint->value, &size);
-      CassError rc = cass_statement_bind_bytes(statement, index, cass_bytes_init(data, size));
+      CassError rc = cass_statement_bind_bytes(statement, index, data, size);
       free(data);
       CHECK_RESULT(rc);
     }
 
     if (instanceof_function(Z_OBJCE_P(value), cassandra_ce_Decimal TSRMLS_CC)) {
       cassandra_decimal* decimal = (cassandra_decimal*) zend_object_store_get_object(value TSRMLS_CC);
-      cass_size_t size;
+      size_t size;
       cass_byte_t* data;
       data = (cass_byte_t*) export_twos_complement(decimal->value, &size);
-      CassError rc = cass_statement_bind_decimal(statement, index, cass_decimal_init(decimal->scale, cass_bytes_init(data, size)));
+      CassError rc = cass_statement_bind_decimal(statement, index, data, size, decimal->scale);
       free(data);
       CHECK_RESULT(rc);
     }
@@ -125,15 +124,14 @@ bind_argument_by_index(CassStatement* statement, cass_size_t index, zval* value 
 }
 
 static int
-bind_argument_by_name(CassStatement* statement, char* name, zval* value TSRMLS_DC)
+bind_argument_by_name(CassStatement* statement, const char* name, zval* value TSRMLS_DC)
 {
   if (Z_TYPE_P(value) == IS_NULL) {
     CHECK_RESULT(cass_statement_bind_null_by_name(statement, name));
   }
 
   if (Z_TYPE_P(value) == IS_STRING)
-    CHECK_RESULT(cass_statement_bind_string_by_name(statement, name,
-                                                    cass_string_init2(Z_STRVAL_P(value), Z_STRLEN_P(value))));
+    CHECK_RESULT(cass_statement_bind_string_by_name(statement, name, Z_STRVAL_P(value)));
 
   if (Z_TYPE_P(value) == IS_DOUBLE)
     CHECK_RESULT(cass_statement_bind_double_by_name(statement, name, Z_DVAL_P(value)));
@@ -162,25 +160,25 @@ bind_argument_by_name(CassStatement* statement, char* name, zval* value TSRMLS_D
 
     if (instanceof_function(Z_OBJCE_P(value), cassandra_ce_Blob TSRMLS_CC)) {
       cassandra_blob* blob = (cassandra_blob*) zend_object_store_get_object(value TSRMLS_CC);
-      CHECK_RESULT(cass_statement_bind_bytes_by_name(statement, name, cass_bytes_init(blob->data, blob->size)));
+      CHECK_RESULT(cass_statement_bind_bytes_by_name(statement, name, blob->data, blob->size));
     }
 
     if (instanceof_function(Z_OBJCE_P(value), cassandra_ce_Varint TSRMLS_CC)) {
       cassandra_varint* varint = (cassandra_varint*) zend_object_store_get_object(value TSRMLS_CC);
-      cass_size_t size;
+      size_t size;
       cass_byte_t* data;
       data = (cass_byte_t*) export_twos_complement(varint->value, &size);
-      CassError rc = cass_statement_bind_bytes_by_name(statement, name, cass_bytes_init(data, size));
+      CassError rc = cass_statement_bind_bytes_by_name(statement, name, data, size);
       free(data);
       CHECK_RESULT(rc);
     }
 
     if (instanceof_function(Z_OBJCE_P(value), cassandra_ce_Decimal TSRMLS_CC)) {
       cassandra_decimal* decimal = (cassandra_decimal*) zend_object_store_get_object(value TSRMLS_CC);
-      cass_size_t size;
+      size_t size;
       cass_byte_t* data;
       data = (cass_byte_t*) export_twos_complement(decimal->value, &size);
-      CassError rc = cass_statement_bind_decimal_by_name(statement, name, cass_decimal_init(decimal->scale, cass_bytes_init(data, size)));
+      CassError rc = cass_statement_bind_decimal_by_name(statement, name, data, size, decimal->scale);
       free(data);
       CHECK_RESULT(rc);
     }
@@ -286,7 +284,7 @@ create_statement(cassandra_statement* statement, HashTable* arguments TSRMLS_DC)
     if (arguments)
       count = zend_hash_num_elements(arguments);
 
-    stmt = cass_statement_new(cass_string_init(simple->cql), count);
+    stmt = cass_statement_new(simple->cql, count);
     break;
   case CASSANDRA_PREPARED_STATEMENT:
     prepared = (cassandra_prepared_statement*) statement;
@@ -568,9 +566,7 @@ PHP_METHOD(DefaultSession, prepare)
     internal_options = (cassandra_execution_options*)zend_object_store_get_object(options TSRMLS_CC);
   }
 
-  CassFuture* future = cass_session_prepare(self->session,
-                                            cass_string_init2(Z_STRVAL_P(cql),
-                                                              Z_STRLEN_P(cql)));
+  CassFuture* future = cass_session_prepare_n(self->session, Z_STRVAL_P(cql), Z_STRLEN_P(cql));
 
   zval* timeout = internal_options ? internal_options->timeout : NULL;
   if (php_cassandra_future_wait_timed(future, timeout TSRMLS_CC) == FAILURE) {
@@ -612,9 +608,7 @@ PHP_METHOD(DefaultSession, prepareAsync)
     internal_options = (cassandra_execution_options*)zend_object_store_get_object(options TSRMLS_CC);
   }
 
-  CassFuture* future = cass_session_prepare(self->session,
-                                            cass_string_init2(Z_STRVAL_P(cql),
-                                                              Z_STRLEN_P(cql)));
+  CassFuture* future = cass_session_prepare_n(self->session, Z_STRVAL_P(cql), Z_STRLEN_P(cql));
 
   object_init_ex(return_value, cassandra_future_prepared_statement_ce);
   cassandra_future_prepared_statement* future_prepared =

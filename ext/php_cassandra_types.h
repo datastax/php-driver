@@ -18,7 +18,7 @@ typedef struct {
 typedef struct {
   zend_object  zval;
   cass_byte_t* data;
-  cass_size_t  size;
+  size_t       size;
 } cassandra_blob;
 
 typedef struct {
@@ -126,7 +126,7 @@ typedef enum {
 } cassandra_load_balancing;
 
 typedef struct {
-  cass_size_t    count;
+  size_t         count;
   CassStatement* statement;
 } cassandra_statement_ref;
 
