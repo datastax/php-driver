@@ -1,8 +1,6 @@
 #include "php_cassandra.h"
 #include <math.h>
 
-extern zend_class_entry* cassandra_invalid_argument_exception_ce;
-
 zend_class_entry* cassandra_float_ce = NULL;
 
 static int

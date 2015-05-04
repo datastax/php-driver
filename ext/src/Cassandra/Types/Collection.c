@@ -2,11 +2,6 @@
 #include "util/collections.h"
 #include "Collection.h"
 
-extern zend_class_entry* spl_ce_Countable;
-extern zend_class_entry* zend_ce_iterator;
-extern zend_class_entry* cassandra_runtime_exception_ce;
-extern zend_class_entry* cassandra_invalid_argument_exception_ce;
-
 zend_class_entry *cassandra_collection_ce = NULL;
 
 int

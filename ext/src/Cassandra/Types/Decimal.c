@@ -5,8 +5,6 @@
 #include <math.h>
 #include <ext/spl/spl_exceptions.h>
 
-extern zend_class_entry *cassandra_invalid_argument_exception_ce;
-
 zend_class_entry *cassandra_decimal_ce = NULL;
 
 static void
@@ -94,7 +92,6 @@ from_double(cassandra_decimal* result, double value)
   sprintf(mantissa_str, "%I64d", mantissa);
 #else
   sprintf(mantissa_str, "%lld", mantissa);
-#else
 #endif
   mpz_set_str(result->value, mantissa_str, 10);
 
