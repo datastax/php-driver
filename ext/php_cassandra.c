@@ -768,6 +768,8 @@ PHP_FUNCTION(cassandra_future_wait)
 {
   CassFuture* future;
   zval* future_resource;
+  const char* message;
+  size_t message_length;
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "r", &future_resource) == FAILURE) {
     RETURN_FALSE;
@@ -783,8 +785,6 @@ PHP_FUNCTION(cassandra_future_wait)
   if (rc == CASS_OK)
     return;
 
-  const char* message;
-  size_t message_length;
   cass_future_error_message(future, &message, &message_length);
 
   zend_throw_exception_ex(exception_class(rc), rc TSRMLS_CC,
@@ -797,6 +797,8 @@ PHP_FUNCTION(cassandra_future_wait_timed)
   zval* future_resource;
   double timeout;
   int t;
+  const char* message;
+  size_t message_length;
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "rd", &future_resource, &timeout) == FAILURE) {
     RETURN_FALSE;
@@ -818,8 +820,6 @@ PHP_FUNCTION(cassandra_future_wait_timed)
   if (rc == CASS_OK)
     return;
 
-  const char* message;
-  size_t message_length;
   cass_future_error_message(future, &message, &message_length);
 
   zend_throw_exception_ex(exception_class(rc), rc TSRMLS_CC,

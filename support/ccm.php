@@ -209,6 +209,9 @@ class CCM
         }
 
         $command = sprintf('ccm %s', implode(' ', $args));
+        if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN' || strtoupper(substr(PHP_OS, 0, 6)) === 'CYGWIN') {
+          $command = 'START "PHP Integration Tests" /MIN /WAIT ' . $command;
+        }
         $this->process->setCommandLine($command);
 
         echo 'ccm > ' . $command . "\n";

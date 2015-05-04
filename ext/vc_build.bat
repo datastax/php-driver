@@ -614,36 +614,33 @@ IF "!ENABLE_BUILD_PACKAGES!" == "!FALSE!" (
   IF NOT EXIST "!ABSOLUTE_DRIVER_LIBRARY_DIRECTORY!" (
     CALL :BUILDDRIVER "!ABSOLUTE_DEPENDENCIES_PHP_SOURCE_DIRECTORY!" "!ABSOLUTE_BATCH_DIRECTORY!" "!ABSOLUTE_DRIVER_LIBRARY_DIRECTORY!" !ENABLE_TEST_CONFIGURATION! !ENABLE_THREAD_SAFETY! !BUILD_TYPE! "!ABSOLUTE_DEPENDENCIES_LIBICONV_LIBRARIES_DIRECTORY!" "!ABSOLUTE_DEPENDENCIES_LIBXML2_LIBRARIES_DIRECTORY!" "!ABSOLUTE_DEPENDENCIES_CPP_DRIVER_LIBRARIES_DIRECTORY!" "!ABSOLUTE_DEPENDENCIES_LIBUV_LIBRARIES_DIRECTORY!" "!ABSOLUTE_DEPENDENCIES_OPENSSL_LIBRARIES_DIRECTORY!" "!ABSOLUTE_DEPENDENCIES_ZLIB_LIBRARIES_DIRECTORY!" "!ABSOLUTE_DEPENDENCIES_MPIR_LIBRARIES_DIRECTORY!" "!LOG_DRIVER_BUILD!"
     IF !ERRORLEVEL! NEQ 0 EXIT /B !ERRORLEVEL!
+    ECHO extension=php_cassandra.dll >> "!ABSOLUTE_DRIVER_LIBRARY_DIRECTORY!\php.ini"
+  )
 
-    REM Configure PHP instance for use with the driver (or keep just driver)
-    IF !ENABLE_TEST_CONFIGURATION! EQU !TRUE! (
-      PUSHD "!ABSOLUTE_DRIVER_LIBRARY_DIRECTORY!" > NUL
-      ECHO | SET /P=Installing composer and driver dependencies ... 
-      ECHO extension=php_cassandra.dll >> "!ABSOLUTE_DRIVER_LIBRARY_DIRECTORY!\php.ini"
-      ECHO Installing composer >> "!LOG_DRIVER_BUILD!"
-      php -r "readfile('https://getcomposer.org/installer');" | php >> "!LOG_DRIVER_BUILD!" 2>&1
-      IF NOT !ERRORLEVEL! EQU 0 (
-        ECHO FAILED!
-        ECHO 	See !LOG_DRIVER_BUILD! for more details
-        EXIT /B !EXIT_CODE_CONFIGURATION_DRIVER_FAILED!
-      )
-      ECHO Copying composer dependencies script >> "!LOG_DRIVER_BUILD!"
-      COPY /Y "!ABSOLUTE_BATCH_DIRECTORY!\..\composer.json" "!ABSOLUTE_DRIVER_LIBRARY_DIRECTORY!" >> "!LOG_DRIVER_BUILD!" 2>&1
-      IF NOT !ERRORLEVEL! EQU 0 (
-        ECHO FAILED!
-        ECHO 	See !LOG_DRIVER_BUILD! for more details
-        EXIT /B !EXIT_CODE_CONFIGURATION_DRIVER_FAILED!
-      )
-      ECHO Installing driver dependencies >> "!LOG_DRIVER_BUILD!"
-      php composer.phar install >> "!LOG_DRIVER_BUILD!" 2>&1
-      IF NOT !ERRORLEVEL! EQU 0 (
-        ECHO FAILED!
-        ECHO 	See !LOG_DRIVER_BUILD! for more details
-        EXIT /B !EXIT_CODE_CONFIGURATION_DRIVER_FAILED!
-      )
-      ECHO done.
-      POPD
+  REM Configure PHP instance for use with the driver (or keep just driver)
+  IF !ENABLE_TEST_CONFIGURATION! EQU !TRUE! (
+    SET "PATH=!ABSOLUTE_DRIVER_LIBRARY_DIRECTORY!;!PATH!"
+    PUSHD "!ABSOLUTE_BATCH_DIRECTORY!\.." > NUL
+    IF EXIST bin RMDIR /S /Q bin
+    IF EXIST vendor RMDIR /S /Q vendor
+    IF EXIST composer.phar ERASE composer.phar
+    ECHO | SET /P=Installing composer and driver dependencies ... 
+    ECHO Installing composer >> "!LOG_DRIVER_BUILD!"
+    php -r "readfile('https://getcomposer.org/installer');" | php >> "!LOG_DRIVER_BUILD!" 2>&1
+    IF NOT !ERRORLEVEL! EQU 0 (
+      ECHO FAILED!
+      ECHO 	See !LOG_DRIVER_BUILD! for more details
+      EXIT /B !EXIT_CODE_CONFIGURATION_DRIVER_FAILED!
     )
+    ECHO Installing driver dependencies >> "!LOG_DRIVER_BUILD!"
+    php composer.phar install >> "!LOG_DRIVER_BUILD!" 2>&1
+    IF NOT !ERRORLEVEL! EQU 0 (
+      ECHO FAILED!
+      ECHO 	See !LOG_DRIVER_BUILD! for more details
+      EXIT /B !EXIT_CODE_CONFIGURATION_DRIVER_FAILED!
+    )
+    ECHO done.
+    POPD
   )
 
   REM Display success message with location to built driver library
@@ -1216,7 +1213,7 @@ REM @param log-filename Absolute path and filename for log output
     )
 
     REM Handle the additional test configuration dependencies
-    IF "!PHP_DRIVER_ENABLE_TEST_CONFIGURATION!" EQU !TRUE! (
+    IF "!PHP_DRIVER_ENABLE_TEST_CONFIGURATION!" == "!TRUE!" (
       XCOPY /Y /E "!PHP_DRIVER_LIBICONV_LIBRARY_DIRECTORY!\*.*" "!PHP_DRIVER_PHP_SOURCE_DIRECTORY!\..\deps" >> "!PHP_DRIVER_LOG_FILENAME!" 2>&1
       IF NOT !ERRORLEVEL! EQU 0 (
         ECHO FAILED!
@@ -1281,6 +1278,6 @@ REM @param log-filename Absolute path and filename for log output
     RMDIR /S /Q "!PHP_DRIVER_PHP_SOURCE_DIRECTORY!\..\deps" > NUL
     EXIT /B !EXIT_CODE_BUILD_DRIVER_FAILED!
   )
-  RMDIR /S /Q "!PHP_DRIVER_PHP_SOURCE_DIRECTORY!\..\deps" >> "!PHP_DRIVER_LOG_FILENAME!" 2>&1
+REM  RMDIR /S /Q "!PHP_DRIVER_PHP_SOURCE_DIRECTORY!\..\deps" >> "!PHP_DRIVER_LOG_FILENAME!" 2>&1
   ECHO done.
   POPD
