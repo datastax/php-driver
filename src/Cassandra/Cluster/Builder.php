@@ -203,7 +203,7 @@ final class Builder
             cassandra_cluster_set_port($cluster, $this->port);
         }
 
-        return new DefaultCluster($cluster, $options, $ssl);
+        return new DefaultCluster($cluster, $options, $this->contactPoints, $this->port, $ssl);
     }
 
     /**

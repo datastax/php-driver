@@ -155,6 +155,7 @@ const zend_function_entry cassandra_functions[] = {
   PHP_FE(cassandra_ssl_set_verify_flags, NULL)
   /* CassSession */
   PHP_FE(cassandra_session_new, NULL)
+  PHP_FE(cassandra_session_pnew, NULL)
   PHP_FE(cassandra_session_free, NULL)
   PHP_FE(cassandra_session_connect, NULL)
   PHP_FE(cassandra_session_connect_keyspace, NULL)
@@ -262,6 +263,18 @@ php_cassandra_ssl_dtor(zend_rsrc_list_entry* rsrc TSRMLS_DC)
 static int le_cassandra_session_res;
 static void
 php_cassandra_session_dtor(zend_rsrc_list_entry* rsrc TSRMLS_DC)
+{
+  CassSession* session = (CassSession*) rsrc->ptr;
+
+  if (session) {
+    cass_session_free(session);
+    rsrc->ptr = NULL;
+  }
+}
+
+static int le_cassandra_psession_res;
+static void
+php_cassandra_psession_dtor(zend_rsrc_list_entry* rsrc TSRMLS_DC)
 {
   CassSession* session = (CassSession*) rsrc->ptr;
 
@@ -379,6 +392,12 @@ PHP_MINIT_FUNCTION(cassandra)
     PHP_CASSANDRA_SESSION_RES_NAME,
     module_number
   );
+  le_cassandra_psession_res = zend_register_list_destructors_ex(
+      NULL,
+      php_cassandra_psession_dtor,
+      PHP_CASSANDRA_SESSION_RES_NAME,
+      module_number
+    );
   le_cassandra_future_res = zend_register_list_destructors_ex(
     php_cassandra_future_dtor,
     NULL,
@@ -869,6 +888,63 @@ PHP_FUNCTION(cassandra_session_new)
   );
 }
 
+PHP_FUNCTION(cassandra_session_pnew)
+{
+  CassSession* session;
+  char* key;
+  int key_len;
+  zend_rsrc_list_entry* le;
+  zend_rsrc_list_entry new_le;
+  zval* return_session;
+  int return_found = 0;
+
+  array_init(return_value);
+  ALLOC_INIT_ZVAL(return_session);
+
+  if(zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &key, &key_len) == FAILURE) {
+    RETURN_FALSE;
+  }
+
+  // Check to see if this session already exists.
+  if (zend_hash_find(&EG(persistent_list), key, key_len + 1, (void**)&le) == SUCCESS) {
+    ZEND_REGISTER_RESOURCE(
+        return_session,
+        le->ptr,
+        le_cassandra_psession_res
+    );
+
+    add_assoc_bool(return_value, "found", 1);
+    add_assoc_zval(return_value, "session", return_session);
+    return;
+  }
+
+  // Ok it doesn't exist yet... lets make a new session.
+  session = cass_session_new();
+
+  ZEND_REGISTER_RESOURCE(
+    return_session,
+    session,
+    le_cassandra_psession_res
+  );
+
+  // Now make sure to persist the new resource.
+  new_le.ptr = session;
+  new_le.type = le_cassandra_psession_res;
+  zend_hash_add(
+    &EG(persistent_list),
+    key,
+    key_len + 1,
+    &new_le,
+    sizeof(zend_rsrc_list_entry),
+    NULL
+  );
+
+  // Return the new session as not found.
+  add_assoc_bool(return_value, "found", 0);
+  add_assoc_zval(return_value, "session", return_session);
+  return;
+}
+
 PHP_FUNCTION(cassandra_session_free)
 {
   CassSession* session;
@@ -878,6 +954,7 @@ PHP_FUNCTION(cassandra_session_free)
     RETURN_FALSE;
   }
 
+  // Intentionally ignoring persistent session resources.
   ZEND_FETCH_RESOURCE(session, CassSession*, &session_resource, -1,
     PHP_CASSANDRA_SESSION_RES_NAME, le_cassandra_session_res);
 
@@ -898,8 +975,8 @@ PHP_FUNCTION(cassandra_session_connect)
     RETURN_FALSE;
   }
 
-  ZEND_FETCH_RESOURCE(session, CassSession*, &session_resource, -1,
-    PHP_CASSANDRA_SESSION_RES_NAME, le_cassandra_session_res);
+  ZEND_FETCH_RESOURCE2(session, CassSession*, &session_resource, -1,
+    PHP_CASSANDRA_SESSION_RES_NAME, le_cassandra_session_res, le_cassandra_psession_res);
 
   ZEND_FETCH_RESOURCE(cluster, CassCluster*, &cluster_resource, -1,
     PHP_CASSANDRA_CLUSTER_RES_NAME, le_cassandra_cluster_res);
@@ -928,8 +1005,8 @@ PHP_FUNCTION(cassandra_session_connect_keyspace)
     RETURN_FALSE;
   }
 
-  ZEND_FETCH_RESOURCE(session, CassSession*, &session_resource, -1,
-    PHP_CASSANDRA_SESSION_RES_NAME, le_cassandra_session_res);
+  ZEND_FETCH_RESOURCE2(session, CassSession*, &session_resource, -1,
+    PHP_CASSANDRA_SESSION_RES_NAME, le_cassandra_session_res, le_cassandra_psession_res);
 
   ZEND_FETCH_RESOURCE(cluster, CassCluster*, &cluster_resource, -1,
     PHP_CASSANDRA_CLUSTER_RES_NAME, le_cassandra_cluster_res);
@@ -957,8 +1034,8 @@ PHP_FUNCTION(cassandra_session_execute)
     RETURN_FALSE;
   }
 
-  ZEND_FETCH_RESOURCE(session, CassSession*, &session_resource, -1,
-    PHP_CASSANDRA_SESSION_RES_NAME, le_cassandra_session_res);
+  ZEND_FETCH_RESOURCE2(session, CassSession*, &session_resource, -1,
+    PHP_CASSANDRA_SESSION_RES_NAME, le_cassandra_session_res, le_cassandra_psession_res);
 
   ZEND_FETCH_RESOURCE(statement, CassStatement*, &statement_resource, -1,
     PHP_CASSANDRA_STATEMENT_RES_NAME, le_cassandra_statement_res);
@@ -985,8 +1062,8 @@ PHP_FUNCTION(cassandra_session_prepare)
     RETURN_FALSE;
   }
 
-  ZEND_FETCH_RESOURCE(session, CassSession*, &session_resource, -1,
-    PHP_CASSANDRA_SESSION_RES_NAME, le_cassandra_session_res);
+  ZEND_FETCH_RESOURCE2(session, CassSession*, &session_resource, -1,
+    PHP_CASSANDRA_SESSION_RES_NAME, le_cassandra_session_res, le_cassandra_psession_res);
 
   future = cass_session_prepare(session, cass_string_init2(cql, cql_len));
 
@@ -1009,8 +1086,8 @@ PHP_FUNCTION(cassandra_session_execute_batch)
     RETURN_FALSE;
   }
 
-  ZEND_FETCH_RESOURCE(session, CassSession*, &session_resource, -1,
-    PHP_CASSANDRA_SESSION_RES_NAME, le_cassandra_session_res);
+  ZEND_FETCH_RESOURCE2(session, CassSession*, &session_resource, -1,
+    PHP_CASSANDRA_SESSION_RES_NAME, le_cassandra_session_res, le_cassandra_psession_res);
 
   ZEND_FETCH_RESOURCE(batch, CassBatch*, &batch_resource, -1,
     PHP_CASSANDRA_BATCH_RES_NAME, le_cassandra_batch_res);
@@ -1034,6 +1111,7 @@ PHP_FUNCTION(cassandra_session_close)
     RETURN_FALSE;
   }
 
+  // Intentionally ignoring persistent session resources.
   ZEND_FETCH_RESOURCE(session, CassSession*, &session_resource, -1,
     PHP_CASSANDRA_SESSION_RES_NAME, le_cassandra_session_res);
 

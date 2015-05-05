@@ -141,6 +141,7 @@ PHP_FUNCTION(cassandra_ssl_set_verify_flags);
 
 /* CassSession */
 PHP_FUNCTION(cassandra_session_new);
+PHP_FUNCTION(cassandra_session_pnew);
 PHP_FUNCTION(cassandra_session_free);
 PHP_FUNCTION(cassandra_session_connect);
 PHP_FUNCTION(cassandra_session_connect_keyspace);
