@@ -22,7 +22,7 @@ PHP_METHOD(Uuid, __construct)
     php_cassandra_uuid_generate_random(&uuid->uuid TSRMLS_CC);
   else {
     if (cass_uuid_from_string(value, &uuid->uuid) != CASS_OK) {
-      zend_throw_exception_ex(cassandra_invalid_argument_exception_ce, 0 TSRMLS_CC, "Invalid uuid value: \"%s\"", value);
+      zend_throw_exception_ex(cassandra_invalid_argument_exception_ce, 0 TSRMLS_CC, "Invalid uuid value: '%s'", value);
       return;
     }
   }

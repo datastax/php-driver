@@ -438,7 +438,7 @@ php_cassandra_collection_append(CassCollection* collection, zval* value, CassVal
     CHECK_ERROR(cass_collection_append_inet(collection, inet->inet));
     break;
   default:
-    zend_throw_exception_ex(cassandra_invalid_argument_exception_ce, 0 TSRMLS_CC, "Unsupported set type");
+    zend_throw_exception_ex(cassandra_runtime_exception_ce, 0 TSRMLS_CC, "Unsupported collection type");
     return 0;
   }
 

@@ -210,7 +210,7 @@ PHP_METHOD(Float, div)
         (cassandra_float*) zend_object_store_get_object(return_value TSRMLS_CC);
 
     if (flt->value == 0) {
-      zend_throw_exception_ex(cassandra_divide_by_zero_exception_ce, 0 TSRMLS_CC, "Divide by zero");
+      zend_throw_exception_ex(cassandra_divide_by_zero_exception_ce, 0 TSRMLS_CC, "Cannot divide by zero");
       return;
     }
 
@@ -227,8 +227,7 @@ PHP_METHOD(Float, mod)
   /* TODO: We could use fmod() here, but maybe we should add a remainder function
    * for floating point types.
    */
-  zend_throw_exception_ex(cassandra_logic_exception_ce, 0 TSRMLS_CC,
-                          "Modulo not implemented for floating point types");
+  zend_throw_exception_ex(cassandra_runtime_exception_ce, 0 TSRMLS_CC, "Not implemented");
 }
 
 /* {{{ Cassandra\Float::abs() */
@@ -263,7 +262,7 @@ PHP_METHOD(Float, sqrt)
 
   if (self->value < 0) {
     zend_throw_exception_ex(cassandra_range_exception_ce, 0 TSRMLS_CC,
-                            "The operation would result in a complex number");
+                            "Cannot take a square root of a negative number");
   }
 
   object_init_ex(return_value, cassandra_float_ce);

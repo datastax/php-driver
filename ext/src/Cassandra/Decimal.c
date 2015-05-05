@@ -371,7 +371,7 @@ PHP_METHOD(Decimal, div)
         (cassandra_decimal*) zend_object_store_get_object(return_value TSRMLS_CC);
 
     if (mpz_sgn(self->value) == 0) {
-      zend_throw_exception_ex(cassandra_divide_by_zero_exception_ce, 0 TSRMLS_CC, "Divide by zero");
+      zend_throw_exception_ex(cassandra_divide_by_zero_exception_ce, 0 TSRMLS_CC, "Cannot divide by zero");
       return;
     }
 
@@ -387,8 +387,7 @@ PHP_METHOD(Decimal, div)
 PHP_METHOD(Decimal, mod)
 {
   /* TODO: We could implement a remainder method */
-  zend_throw_exception_ex(cassandra_logic_exception_ce, 0 TSRMLS_CC,
-                          "Modulo not implemented for floating point types");
+  zend_throw_exception_ex(cassandra_runtime_exception_ce, 0 TSRMLS_CC, "Not implemented");
 }
 
 /* {{{ Cassandra\Decimal::abs() */
@@ -424,7 +423,7 @@ PHP_METHOD(Decimal, neg)
 /* {{{ Cassandra\Decimal::sqrt() */
 PHP_METHOD(Decimal, sqrt)
 {
-  zend_throw_exception_ex(spl_ce_RuntimeException, 0 TSRMLS_CC, "Not implemented");
+  zend_throw_exception_ex(cassandra_runtime_exception_ce, 0 TSRMLS_CC, "Not implemented");
 #if 0
   cassandra_decimal* self =
       (cassandra_decimal*) zend_object_store_get_object(getThis() TSRMLS_CC);

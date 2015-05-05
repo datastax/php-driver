@@ -210,7 +210,7 @@ PHP_METHOD(Bigint, div)
         (cassandra_bigint*) zend_object_store_get_object(return_value TSRMLS_CC);
 
     if (bigint->value == 0) {
-      zend_throw_exception_ex(cassandra_divide_by_zero_exception_ce, 0 TSRMLS_CC, "Divide by zero");
+      zend_throw_exception_ex(cassandra_divide_by_zero_exception_ce, 0 TSRMLS_CC, "Cannot divide by zero");
       return;
     }
 
@@ -242,7 +242,7 @@ PHP_METHOD(Bigint, mod)
         (cassandra_bigint*) zend_object_store_get_object(return_value TSRMLS_CC);
 
     if (bigint->value == 0) {
-      zend_throw_exception_ex(cassandra_divide_by_zero_exception_ce, 0 TSRMLS_CC, "Modulo by zero");
+      zend_throw_exception_ex(cassandra_divide_by_zero_exception_ce, 0 TSRMLS_CC, "Cannot modulo by zero");
       return;
     }
 
@@ -260,7 +260,7 @@ PHP_METHOD(Bigint, abs)
       (cassandra_bigint*) zend_object_store_get_object(getThis() TSRMLS_CC);
 
   if (self->value == LONG_LONG_MIN) {
-    zend_throw_exception_ex(cassandra_range_exception_ce, 0 TSRMLS_CC, "No such value");
+    zend_throw_exception_ex(cassandra_range_exception_ce, 0 TSRMLS_CC, "Value doesn't exist");
     return;
   }
 
@@ -292,7 +292,7 @@ PHP_METHOD(Bigint, sqrt)
 
   if (self->value < 0) {
     zend_throw_exception_ex(cassandra_range_exception_ce, 0 TSRMLS_CC,
-                            "The operation would result in a complex number");
+                            "Cannot take a square root of a negative number");
   }
 
   object_init_ex(return_value, cassandra_bigint_ce);

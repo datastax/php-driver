@@ -108,7 +108,7 @@ php_cassandra_parse_varint(char* in, int in_len, mpz_t* number TSRMLS_DC)
       n = n * -1;
 
     if (errno) {
-      zend_throw_exception_ex(cassandra_invalid_argument_exception_ce, 0 TSRMLS_CC, "Invalid integer value: %s", in);
+      zend_throw_exception_ex(cassandra_invalid_argument_exception_ce, 0 TSRMLS_CC, "Invalid integer value: '%s'", in);
       return 0;
     }
 
@@ -118,7 +118,7 @@ php_cassandra_parse_varint(char* in, int in_len, mpz_t* number TSRMLS_DC)
     }
 
     if (end == &in[point]) {
-      zend_throw_exception_ex(cassandra_invalid_argument_exception_ce, 0 TSRMLS_CC, "No digits were found in value: \"%s\"", in);
+      zend_throw_exception_ex(cassandra_invalid_argument_exception_ce, 0 TSRMLS_CC, "No digits were found in value: '%s'", in);
       return 0;
     }
 
@@ -132,7 +132,7 @@ php_cassandra_parse_varint(char* in, int in_len, mpz_t* number TSRMLS_DC)
   }
 
   if (mpz_set_str(*number, &in[point], base) == -1) {
-    zend_throw_exception_ex(cassandra_invalid_argument_exception_ce, 0 TSRMLS_CC, "Invalid integer value: \"%s\", base: %d", in, base);
+    zend_throw_exception_ex(cassandra_invalid_argument_exception_ce, 0 TSRMLS_CC, "Invalid integer value: '%s', base: %d", in, base);
     return 0;
   }
 
@@ -210,7 +210,7 @@ php_cassandra_parse_decimal(char* in, int in_len, mpz_t* number, int* scale TSRM
     if (c == '.') {
       // If dot != -1 then we've seen more than one decimal point.
       if (dot != -1) {
-        zend_throw_exception_ex(cassandra_invalid_argument_exception_ce, 0 TSRMLS_CC, "Multiple '.' (dots) in the number \"%s\"", in);
+        zend_throw_exception_ex(cassandra_invalid_argument_exception_ce, 0 TSRMLS_CC, "Multiple '.' (dots) in the number '%s'", in);
         return 0;
       }
 
@@ -222,7 +222,7 @@ php_cassandra_parse_decimal(char* in, int in_len, mpz_t* number, int* scale TSRM
     // Throw an exception if the character was not a decimal or an
     // exponent and is not a hexadecimal digit.
     else if (!isxdigit(c)) {
-      zend_throw_exception_ex(cassandra_invalid_argument_exception_ce, 0 TSRMLS_CC, "Unrecognized character '%c' at %d", c, point);
+      zend_throw_exception_ex(cassandra_invalid_argument_exception_ce, 0 TSRMLS_CC, "Unrecognized character '%c' at position %d", c, point);
       return 0;
     }
 
@@ -250,14 +250,14 @@ php_cassandra_parse_decimal(char* in, int in_len, mpz_t* number, int* scale TSRM
   }
 
   if (out_len == 0) {
-    zend_throw_exception_ex(cassandra_invalid_argument_exception_ce, 0 TSRMLS_CC, "No digits seen in value: \"%s\"", in);
+    zend_throw_exception_ex(cassandra_invalid_argument_exception_ce, 0 TSRMLS_CC, "No digits seen in value: '%s'", in);
     return 0;
   }
 
   int ok = php_cassandra_parse_varint(out, out_len, number TSRMLS_CC);
 
   if (!ok) {
-    zend_throw_exception_ex(cassandra_invalid_argument_exception_ce, 0 TSRMLS_CC, "Unable to extract integer part of decimal value: \"%s\", %s", in, out);
+    zend_throw_exception_ex(cassandra_invalid_argument_exception_ce, 0 TSRMLS_CC, "Unable to extract integer part of decimal value: '%s', %s", in, out);
     efree(out);
     return 0;
   }
@@ -275,14 +275,14 @@ php_cassandra_parse_decimal(char* in, int in_len, mpz_t* number, int* scale TSRM
     // Throw an exception if there were no digits found after the 'e'
     // or 'E'.
     if (point >= in_len) {
-      zend_throw_exception_ex(cassandra_invalid_argument_exception_ce, 0 TSRMLS_CC, "No exponent following e or E in value: \"%s\"", in);
+      zend_throw_exception_ex(cassandra_invalid_argument_exception_ce, 0 TSRMLS_CC, "No exponent following e or E in value: '%s'", in);
       return 0;
     }
 
     int diff;
 
     if (!sscanf(&in[point], "%d", &diff)) {
-      zend_throw_exception_ex(cassandra_invalid_argument_exception_ce, 0 TSRMLS_CC, "Malformed exponent in value: \"%s\"", in);
+      zend_throw_exception_ex(cassandra_invalid_argument_exception_ce, 0 TSRMLS_CC, "Malformed exponent in value: '%s'", in);
       return 0;
     }
 

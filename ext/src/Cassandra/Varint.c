@@ -205,7 +205,7 @@ PHP_METHOD(Varint, div)
         (cassandra_varint*) zend_object_store_get_object(return_value TSRMLS_CC);
 
     if (mpz_sgn(varint->value) == 0) {
-      zend_throw_exception_ex(cassandra_divide_by_zero_exception_ce, 0 TSRMLS_CC, "Divide by zero");
+      zend_throw_exception_ex(cassandra_divide_by_zero_exception_ce, 0 TSRMLS_CC, "Cannot divide by zero");
       return;
     }
 
@@ -237,7 +237,7 @@ PHP_METHOD(Varint, mod)
         (cassandra_varint*) zend_object_store_get_object(return_value TSRMLS_CC);
 
     if (mpz_sgn(varint->value) == 0) {
-      zend_throw_exception_ex(cassandra_divide_by_zero_exception_ce, 0 TSRMLS_CC, "Modulo by zero");
+      zend_throw_exception_ex(cassandra_divide_by_zero_exception_ce, 0 TSRMLS_CC, "Cannot modulo by zero");
       return;
     }
 
@@ -284,7 +284,7 @@ PHP_METHOD(Varint, sqrt)
 
   if (mpz_sgn(self->value) < 0) {
     zend_throw_exception_ex(cassandra_range_exception_ce, 0 TSRMLS_CC,
-                            "The operation would result in a complex number");
+                            "Cannot take a square root of a negative number");
     return;
   }
 
