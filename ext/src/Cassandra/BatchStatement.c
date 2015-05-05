@@ -130,7 +130,7 @@ php_cassandra_batch_statement_new(zend_class_entry* class_type TSRMLS_DC)
   zend_object_std_init(&self->zval, class_type TSRMLS_CC);
   object_properties_init(&self->zval, class_type);
 
-  self->type = CASSANDRA_BATCH_STATEMENT;
+  self->type       = CASSANDRA_BATCH_STATEMENT;
   self->batch_type = CASS_BATCH_TYPE_LOGGED;
 
   zend_hash_init(&self->statements, 0, NULL, (dtor_func_t) cassandra_batch_statement_entry_dtor, 0);
