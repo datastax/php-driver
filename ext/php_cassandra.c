@@ -488,8 +488,8 @@ PHP_MINIT_FUNCTION(cassandra)
   cassandra_define_ServerException(TSRMLS_C);
   cassandra_define_IsBootstrappingException(TSRMLS_C);
   cassandra_define_OverloadedException(TSRMLS_C);
-  cassandra_define_DivideByZeroException(TSRMLS_C);
   cassandra_define_RangeException(TSRMLS_C);
+  cassandra_define_DivideByZeroException(TSRMLS_C);
 
   cassandra_define_Numeric(TSRMLS_C);
   cassandra_define_Bigint(TSRMLS_C);
