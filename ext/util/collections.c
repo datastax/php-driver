@@ -5,31 +5,15 @@
 #include "util/math.h"
 
 #define EXPECTING_VALUE(expected) \
-  if (Z_TYPE_P(object) == IS_OBJECT) { \
-    Z_OBJ_HANDLER_P(object, get_class_name)(object, &class_name, &class_name_len, 0 TSRMLS_CC); \
-    if (class_name) { \
-      zend_throw_exception_ex(cassandra_invalid_argument_exception_ce, 0 TSRMLS_CC, \
-        "Expected " expected ", an instance of %s given", class_name); \
-      efree((void *) class_name); \
-    } else { \
-      zend_throw_exception_ex(cassandra_invalid_argument_exception_ce, 0 TSRMLS_CC, \
-        "Expected " expected ", an instance of Unknown Class given"); \
-    } \
-  } else { \
-    zend_throw_exception_ex(cassandra_invalid_argument_exception_ce, 0 TSRMLS_CC, \
-      "Expected " expected ", %Z given", object); \
-  } \
-  return 0;
+{ \
+  throw_invalid_argument(object, "argument", expected TSRMLS_CC); \
+  return 0; \
+}
 
 #define INSTANCE_OF(cls) \
   (Z_TYPE_P(object) == IS_OBJECT && instanceof_function(Z_OBJCE_P(object), cls TSRMLS_CC))
 
-#define CHECK_ERROR(rc) \
-  if (rc != CASS_OK) { \
-    zend_throw_exception_ex(cassandra_runtime_exception_ce, 0 TSRMLS_CC, \
-      "%s", cass_error_desc(rc)); \
-    result = 0; \
-  }
+#define CHECK_ERROR(rc) ASSERT_SUCCESS_BLOCK(rc, result = 0;)
 
 int
 php_cassandra_validate_object(zval* object, CassValueType type TSRMLS_DC)
