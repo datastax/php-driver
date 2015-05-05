@@ -322,8 +322,8 @@ PHP_METHOD(Bigint, toDouble)
 }
 /* }}} */
 
-/* {{{ Cassandra\Types\Bigint::minValue() */
-PHP_METHOD(Bigint, minValue)
+/* {{{ Cassandra\Types\Bigint::min() */
+PHP_METHOD(Bigint, min)
 {
   object_init_ex(return_value, cassandra_bigint_ce);
   cassandra_bigint* bigint =
@@ -332,8 +332,8 @@ PHP_METHOD(Bigint, minValue)
 }
 /* }}} */
 
-/* {{{ Cassandra\Types\Bigint::minValue() */
-PHP_METHOD(Bigint, maxValue)
+/* {{{ Cassandra\Types\Bigint::max() */
+PHP_METHOD(Bigint, max)
 {
   object_init_ex(return_value, cassandra_bigint_ce);
   cassandra_bigint* bigint =
@@ -367,8 +367,8 @@ static zend_function_entry cassandra_bigint_methods[] = {
   PHP_ME(Bigint, sqrt, arginfo_none, ZEND_ACC_PUBLIC)
   PHP_ME(Bigint, toInt, arginfo_none, ZEND_ACC_PUBLIC)
   PHP_ME(Bigint, toDouble, arginfo_none, ZEND_ACC_PUBLIC)
-  PHP_ME(Bigint, minValue, arginfo_none, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
-  PHP_ME(Bigint, maxValue, arginfo_none, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
+  PHP_ME(Bigint, min, arginfo_none, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
+  PHP_ME(Bigint, max, arginfo_none, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
   PHP_FE_END
 };
 

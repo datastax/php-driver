@@ -1,5 +1,6 @@
 #include "php_cassandra.h"
 #include <math.h>
+#include <float.h>
 
 zend_class_entry* cassandra_float_ce = NULL;
 
@@ -292,23 +293,23 @@ PHP_METHOD(Float, toDouble)
 }
 /* }}} */
 
-/* {{{ Cassandra\Types\Float::minValue() */
-PHP_METHOD(Float, minValue)
+/* {{{ Cassandra\Types\Float::min() */
+PHP_METHOD(Float, min)
 {
   object_init_ex(return_value, cassandra_float_ce);
   cassandra_float* flt =
           (cassandra_float*) zend_object_store_get_object(return_value TSRMLS_CC);
-  flt->value = LONG_LONG_MIN;
+  flt->value = FLT_MIN;
 }
 /* }}} */
 
-/* {{{ Cassandra\Types\Float::minValue() */
-PHP_METHOD(Float, maxValue)
+/* {{{ Cassandra\Types\Float::max() */
+PHP_METHOD(Float, max)
 {
   object_init_ex(return_value, cassandra_float_ce);
   cassandra_float* flt =
           (cassandra_float*) zend_object_store_get_object(return_value TSRMLS_CC);
-  flt->value = LONG_LONG_MAX;
+  flt->value = FLT_MAX;
 }
 /* }}} */
 
@@ -340,8 +341,8 @@ static zend_function_entry cassandra_float_methods[] = {
   PHP_ME(Float, sqrt, arginfo_none, ZEND_ACC_PUBLIC)
   PHP_ME(Float, toInt, arginfo_none, ZEND_ACC_PUBLIC)
   PHP_ME(Float, toDouble, arginfo_none, ZEND_ACC_PUBLIC)
-  PHP_ME(Float, minValue, arginfo_none, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
-  PHP_ME(Float, maxValue, arginfo_none, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
+  PHP_ME(Float, min, arginfo_none, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
+  PHP_ME(Float, max, arginfo_none, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
   PHP_FE_END
 };
 
