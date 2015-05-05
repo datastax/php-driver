@@ -10,11 +10,7 @@ zend_class_entry *cassandra_default_session_ce = NULL;
 
 #define CHECK_RESULT(rc) \
 { \
-  if (rc != CASS_OK) { \
-    zend_throw_exception_ex(exception_class(rc), rc TSRMLS_CC, \
-                            "%s", cass_error_desc(rc)); \
-    return FAILURE; \
-  } \
+  ASSERT_SUCCESS_VALUE(rc, FAILURE) \
   return SUCCESS; \
 }
 
@@ -330,12 +326,10 @@ create_batch(cassandra_batch_statement* batch, CassConsistency consistency TSRML
 
   CassError rc = cass_batch_set_consistency(cass_batch, consistency);
 
-  if (rc != CASS_OK) {
+  ASSERT_SUCCESS_BLOCK(rc,
     cass_batch_free(cass_batch);
-    zend_throw_exception_ex(exception_class(rc), rc TSRMLS_CC,
-                            "%s", cass_error_desc(rc));
     return NULL;
-  }
+  )
 
   return cass_batch;
 }

@@ -32,33 +32,31 @@ to_string(zval* result, cassandra_float* flt TSRMLS_DC)
 /* {{{ Cassandra\Float::__construct(string) */
 PHP_METHOD(Float, __construct)
 {
-  zval* num;
+  zval* value;
 
-  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z", &num) == FAILURE) {
+  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z", &value) == FAILURE) {
     return;
   }
 
   cassandra_float* self =
       (cassandra_float*) zend_object_store_get_object(getThis() TSRMLS_CC);
 
-  if(Z_TYPE_P(num) == IS_LONG) {
-    self->value = (cass_float_t) Z_LVAL_P(num);
-  } else if(Z_TYPE_P(num) == IS_DOUBLE) {
-    self->value = (cass_float_t) Z_DVAL_P(num);
-  } else if(Z_TYPE_P(num) == IS_STRING) {
-    if (!ctype_float(Z_STRVAL_P(num), Z_STRLEN_P(num))) {
-      zend_throw_exception_ex(cassandra_invalid_argument_exception_ce, 0 TSRMLS_CC,
-                              "Invalid float value \"%s\"", Z_STRVAL_P(num));
-      return;
+  if(Z_TYPE_P(value) == IS_LONG) {
+    self->value = (cass_float_t) Z_LVAL_P(value);
+  } else if(Z_TYPE_P(value) == IS_DOUBLE) {
+    self->value = (cass_float_t) Z_DVAL_P(value);
+  } else if(Z_TYPE_P(value) == IS_STRING) {
+    if (!ctype_float(Z_STRVAL_P(value), Z_STRLEN_P(value))) {
+      INVALID_ARGUMENT(value, "a long, double, numeric string or a Cassandra\\Float instance");
     }
-    self->value = (cass_float_t) strtof(Z_STRVAL_P(num), NULL);
-  } else if (Z_TYPE_P(num) == IS_OBJECT &&
-             instanceof_function(Z_OBJCE_P(num), cassandra_float_ce TSRMLS_CC)) {
+    self->value = (cass_float_t) strtof(Z_STRVAL_P(value), NULL);
+  } else if (Z_TYPE_P(value) == IS_OBJECT &&
+             instanceof_function(Z_OBJCE_P(value), cassandra_float_ce TSRMLS_CC)) {
     cassandra_float* flt =
-        (cassandra_float*) zend_object_store_get_object(num TSRMLS_CC);
+        (cassandra_float*) zend_object_store_get_object(value TSRMLS_CC);
     self->value = flt->value;
   } else {
-    INVALID_ARGUMENT(num, "a long, double, numeric string or a Cassandra\\Float instance");
+    INVALID_ARGUMENT(value, "a long, double, numeric string or a Cassandra\\Float instance");
   }
 }
 /* }}} */
