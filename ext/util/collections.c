@@ -93,10 +93,11 @@ php_cassandra_validate_object(zval* object, CassValueType type TSRMLS_DC)
   case CASS_VALUE_TYPE_DECIMAL:
     if (!INSTANCE_OF(cassandra_decimal_ce)) {
       EXPECTING_VALUE("an instance of Cassandra\\Types\\Decimal");
+    }
 
     return 1;
   case CASS_VALUE_TYPE_TIMESTAMP:
-    if (!INSTANCE_OF(cassandra_timestamp_ce))
+    if (!INSTANCE_OF(cassandra_timestamp_ce)) {
       EXPECTING_VALUE("an instance of Cassandra\\Types\\Timestamp");
     }
 

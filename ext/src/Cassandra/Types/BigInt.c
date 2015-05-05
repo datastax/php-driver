@@ -1,8 +1,6 @@
 #include "php_cassandra.h"
 #include "util/math.h"
 
-extern zend_class_entry* cassandra_invalid_argument_exception_ce;
-
 zend_class_entry* cassandra_bigint_ce = NULL;
 
 static int
@@ -37,7 +35,7 @@ PHP_METHOD(Bigint, __construct)
     if (!php_cassandra_parse_bigint(Z_STRVAL_P(num), Z_STRLEN_P(num), &self->value TSRMLS_CC))
       return;
   } else if (Z_TYPE_P(num) == IS_OBJECT &&
-             instanceof_function(Z_OBJCE_P(num), cassandra_bigint_ce)) {
+             instanceof_function(Z_OBJCE_P(num), cassandra_bigint_ce TSRMLS_CC)) {
     cassandra_bigint* bigint =
         (cassandra_bigint*) zend_object_store_get_object(num TSRMLS_CC);
     self->value = bigint->value;
@@ -85,7 +83,7 @@ PHP_METHOD(Bigint, add)
   }
 
   if (Z_TYPE_P(num) == IS_OBJECT &&
-      instanceof_function(Z_OBJCE_P(num), cassandra_bigint_ce)) {
+      instanceof_function(Z_OBJCE_P(num), cassandra_bigint_ce TSRMLS_CC)) {
     cassandra_bigint* self =
         (cassandra_bigint*) zend_object_store_get_object(getThis() TSRMLS_CC);
     cassandra_bigint* bigint =
@@ -112,7 +110,7 @@ PHP_METHOD(Bigint, sub)
   }
 
   if (Z_TYPE_P(num) == IS_OBJECT &&
-      instanceof_function(Z_OBJCE_P(num), cassandra_bigint_ce)) {
+      instanceof_function(Z_OBJCE_P(num), cassandra_bigint_ce TSRMLS_CC)) {
     cassandra_bigint* self =
         (cassandra_bigint*) zend_object_store_get_object(getThis() TSRMLS_CC);
     cassandra_bigint* bigint =
@@ -139,7 +137,7 @@ PHP_METHOD(Bigint, mul)
   }
 
   if (Z_TYPE_P(num) == IS_OBJECT &&
-      instanceof_function(Z_OBJCE_P(num), cassandra_bigint_ce)) {
+      instanceof_function(Z_OBJCE_P(num), cassandra_bigint_ce TSRMLS_CC)) {
     cassandra_bigint* self =
         (cassandra_bigint*) zend_object_store_get_object(getThis() TSRMLS_CC);
     cassandra_bigint* bigint =
@@ -166,7 +164,7 @@ PHP_METHOD(Bigint, div)
   }
 
   if (Z_TYPE_P(num) == IS_OBJECT &&
-      instanceof_function(Z_OBJCE_P(num), cassandra_bigint_ce)) {
+      instanceof_function(Z_OBJCE_P(num), cassandra_bigint_ce TSRMLS_CC)) {
     cassandra_bigint* self =
         (cassandra_bigint*) zend_object_store_get_object(getThis() TSRMLS_CC);
     cassandra_bigint* bigint =
@@ -198,7 +196,7 @@ PHP_METHOD(Bigint, mod)
   }
 
   if (Z_TYPE_P(num) == IS_OBJECT &&
-      instanceof_function(Z_OBJCE_P(num), cassandra_bigint_ce)) {
+      instanceof_function(Z_OBJCE_P(num), cassandra_bigint_ce TSRMLS_CC)) {
     cassandra_bigint* self =
         (cassandra_bigint*) zend_object_store_get_object(getThis() TSRMLS_CC);
     cassandra_bigint* bigint =

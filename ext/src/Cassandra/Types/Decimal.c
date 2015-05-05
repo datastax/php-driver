@@ -5,8 +5,6 @@
 #include <math.h>
 #include <ext/spl/spl_exceptions.h>
 
-extern zend_class_entry *cassandra_invalid_argument_exception_ce;
-
 zend_class_entry *cassandra_decimal_ce = NULL;
 
 static void
@@ -94,7 +92,6 @@ from_double(cassandra_decimal* result, double value)
   sprintf(mantissa_str, "%I64d", mantissa);
 #else
   sprintf(mantissa_str, "%lld", mantissa);
-#else
 #endif
   mpz_set_str(result->value, mantissa_str, 10);
 
@@ -165,7 +162,7 @@ PHP_METHOD(Decimal, __construct)
       return;
     self->scale = scale;
   } else if (Z_TYPE_P(num) == IS_OBJECT &&
-             instanceof_function(Z_OBJCE_P(num), cassandra_decimal_ce)) {
+             instanceof_function(Z_OBJCE_P(num), cassandra_decimal_ce TSRMLS_CC)) {
     cassandra_decimal* decimal =
         (cassandra_decimal*) zend_object_store_get_object(num TSRMLS_CC);
     mpz_set(self->value, decimal->value);
@@ -219,7 +216,7 @@ PHP_METHOD(Decimal, add)
   }
 
   if (Z_TYPE_P(num) == IS_OBJECT &&
-      instanceof_function(Z_OBJCE_P(num), cassandra_decimal_ce)) {
+      instanceof_function(Z_OBJCE_P(num), cassandra_decimal_ce TSRMLS_CC)) {
     cassandra_decimal* self =
         (cassandra_decimal*) zend_object_store_get_object(getThis() TSRMLS_CC);
     cassandra_decimal* decimal =
@@ -248,7 +245,7 @@ PHP_METHOD(Decimal, sub)
   }
 
   if (Z_TYPE_P(num) == IS_OBJECT &&
-      instanceof_function(Z_OBJCE_P(num), cassandra_decimal_ce)) {
+      instanceof_function(Z_OBJCE_P(num), cassandra_decimal_ce TSRMLS_CC)) {
     cassandra_decimal* self =
         (cassandra_decimal*) zend_object_store_get_object(getThis() TSRMLS_CC);
     cassandra_decimal* decimal =
@@ -277,7 +274,7 @@ PHP_METHOD(Decimal, mul)
   }
 
   if (Z_TYPE_P(num) == IS_OBJECT &&
-      instanceof_function(Z_OBJCE_P(num), cassandra_decimal_ce)) {
+      instanceof_function(Z_OBJCE_P(num), cassandra_decimal_ce TSRMLS_CC)) {
     cassandra_decimal* self =
         (cassandra_decimal*) zend_object_store_get_object(getThis() TSRMLS_CC);
     cassandra_decimal* decimal =
@@ -305,7 +302,7 @@ PHP_METHOD(Decimal, div)
   }
 
   if (Z_TYPE_P(num) == IS_OBJECT &&
-      instanceof_function(Z_OBJCE_P(num), cassandra_decimal_ce)) {
+      instanceof_function(Z_OBJCE_P(num), cassandra_decimal_ce TSRMLS_CC)) {
     cassandra_decimal* self =
         (cassandra_decimal*) zend_object_store_get_object(getThis() TSRMLS_CC);
     cassandra_decimal* decimal =

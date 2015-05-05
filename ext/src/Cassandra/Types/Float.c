@@ -1,8 +1,6 @@
 #include "php_cassandra.h"
 #include <math.h>
 
-extern zend_class_entry* cassandra_invalid_argument_exception_ce;
-
 zend_class_entry* cassandra_float_ce = NULL;
 
 static int
@@ -45,7 +43,7 @@ PHP_METHOD(Float, __construct)
     }
     self->value = (cass_float_t) strtof(Z_STRVAL_P(num), NULL);
   } else if (Z_TYPE_P(num) == IS_OBJECT &&
-             instanceof_function(Z_OBJCE_P(num), cassandra_float_ce)) {
+             instanceof_function(Z_OBJCE_P(num), cassandra_float_ce TSRMLS_CC)) {
     cassandra_float* flt =
         (cassandra_float*) zend_object_store_get_object(num TSRMLS_CC);
     self->value = flt->value;
@@ -110,7 +108,7 @@ PHP_METHOD(Float, add)
   }
 
   if (Z_TYPE_P(num) == IS_OBJECT &&
-      instanceof_function(Z_OBJCE_P(num), cassandra_float_ce)) {
+      instanceof_function(Z_OBJCE_P(num), cassandra_float_ce TSRMLS_CC)) {
     cassandra_float* self =
         (cassandra_float*) zend_object_store_get_object(getThis() TSRMLS_CC);
     cassandra_float* flt =
@@ -137,7 +135,7 @@ PHP_METHOD(Float, sub)
   }
 
   if (Z_TYPE_P(num) == IS_OBJECT &&
-      instanceof_function(Z_OBJCE_P(num), cassandra_float_ce)) {
+      instanceof_function(Z_OBJCE_P(num), cassandra_float_ce TSRMLS_CC)) {
     cassandra_float* self =
         (cassandra_float*) zend_object_store_get_object(getThis() TSRMLS_CC);
     cassandra_float* flt =
@@ -164,7 +162,7 @@ PHP_METHOD(Float, mul)
   }
 
   if (Z_TYPE_P(num) == IS_OBJECT &&
-      instanceof_function(Z_OBJCE_P(num), cassandra_float_ce)) {
+      instanceof_function(Z_OBJCE_P(num), cassandra_float_ce TSRMLS_CC)) {
     cassandra_float* self =
         (cassandra_float*) zend_object_store_get_object(getThis() TSRMLS_CC);
     cassandra_float* flt =
@@ -191,7 +189,7 @@ PHP_METHOD(Float, div)
   }
 
   if (Z_TYPE_P(num) == IS_OBJECT &&
-      instanceof_function(Z_OBJCE_P(num), cassandra_float_ce)) {
+      instanceof_function(Z_OBJCE_P(num), cassandra_float_ce TSRMLS_CC)) {
     cassandra_float* self =
         (cassandra_float*) zend_object_store_get_object(getThis() TSRMLS_CC);
     cassandra_float* flt =

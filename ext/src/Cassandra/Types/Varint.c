@@ -2,8 +2,6 @@
 #include "util/math.h"
 #include <float.h>
 
-extern zend_class_entry *cassandra_invalid_argument_exception_ce;
-
 zend_class_entry *cassandra_varint_ce = NULL;
 
 /* {{{ Cassandra\Types\Varint::__construct(string) */
@@ -26,7 +24,7 @@ PHP_METHOD(Varint, __construct)
     if (!php_cassandra_parse_varint(Z_STRVAL_P(num), Z_STRLEN_P(num), &self->value TSRMLS_CC))
       return;
   } else if (Z_TYPE_P(num) == IS_OBJECT &&
-             instanceof_function(Z_OBJCE_P(num), cassandra_varint_ce)) {
+             instanceof_function(Z_OBJCE_P(num), cassandra_varint_ce TSRMLS_CC)) {
     cassandra_varint* varint =
         (cassandra_varint*) zend_object_store_get_object(num TSRMLS_CC);
     mpz_set(self->value, varint->value);
@@ -72,7 +70,7 @@ PHP_METHOD(Varint, add)
   }
 
   if (Z_TYPE_P(num) == IS_OBJECT &&
-      instanceof_function(Z_OBJCE_P(num), cassandra_varint_ce)) {
+      instanceof_function(Z_OBJCE_P(num), cassandra_varint_ce TSRMLS_CC)) {
     cassandra_varint* self =
         (cassandra_varint*) zend_object_store_get_object(getThis() TSRMLS_CC);
     cassandra_varint* varint =
@@ -99,7 +97,7 @@ PHP_METHOD(Varint, sub)
   }
 
   if (Z_TYPE_P(num) == IS_OBJECT &&
-      instanceof_function(Z_OBJCE_P(num), cassandra_varint_ce)) {
+      instanceof_function(Z_OBJCE_P(num), cassandra_varint_ce TSRMLS_CC)) {
     cassandra_varint* self =
         (cassandra_varint*) zend_object_store_get_object(getThis() TSRMLS_CC);
     cassandra_varint* varint =
@@ -126,7 +124,7 @@ PHP_METHOD(Varint, mul)
   }
 
   if (Z_TYPE_P(num) == IS_OBJECT &&
-      instanceof_function(Z_OBJCE_P(num), cassandra_varint_ce)) {
+      instanceof_function(Z_OBJCE_P(num), cassandra_varint_ce TSRMLS_CC)) {
     cassandra_varint* self =
         (cassandra_varint*) zend_object_store_get_object(getThis() TSRMLS_CC);
     cassandra_varint* varint =
@@ -153,7 +151,7 @@ PHP_METHOD(Varint, div)
   }
 
   if (Z_TYPE_P(num) == IS_OBJECT &&
-      instanceof_function(Z_OBJCE_P(num), cassandra_varint_ce)) {
+      instanceof_function(Z_OBJCE_P(num), cassandra_varint_ce TSRMLS_CC)) {
     cassandra_varint* self =
         (cassandra_varint*) zend_object_store_get_object(getThis() TSRMLS_CC);
     cassandra_varint* varint =
@@ -185,7 +183,7 @@ PHP_METHOD(Varint, mod)
   }
 
   if (Z_TYPE_P(num) == IS_OBJECT &&
-      instanceof_function(Z_OBJCE_P(num), cassandra_varint_ce)) {
+      instanceof_function(Z_OBJCE_P(num), cassandra_varint_ce TSRMLS_CC)) {
     cassandra_varint* self =
         (cassandra_varint*) zend_object_store_get_object(getThis() TSRMLS_CC);
     cassandra_varint* varint =
