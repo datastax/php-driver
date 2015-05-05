@@ -1,7 +1,4 @@
-#include "../php_cassandra.h"
-#include <ext/spl/spl_exceptions.h>
-
-extern zend_class_entry* spl_ce_DomainException;
+#include "php_cassandra.h"
 
 zend_class_entry *cassandra_domain_exception_ce = NULL;
 

@@ -7,12 +7,19 @@
 
 #include <gmp.h>
 #include <cassandra.h>
+#include <uv.h>
 #include <php.h>
 #include <Zend/zend_exceptions.h>
+#include <Zend/zend_interfaces.h>
 
-/* Define Extension Properties */
-#define PHP_CASSANDRA_EXTNAME   "cassandra"
-#define PHP_CASSANDRA_EXTVER    "0.1.0"
+#if HAVE_SPL
+#    include <ext/spl/spl_iterators.h>
+#    include <ext/spl/spl_exceptions.h>
+#else
+#    error SPL must be enabled in order to build the driver
+#endif
+
+#include "version.h"
 
 /* Resources */
 #define PHP_CASSANDRA_CLUSTER_RES_NAME    "Cassandra Cluster"
@@ -88,9 +95,6 @@ PHP_RINIT_FUNCTION(cassandra);
 PHP_RSHUTDOWN_FUNCTION(cassandra);
 PHP_MINFO_FUNCTION(cassandra);
 
-/* Log */
-PHP_FUNCTION(cassandra_set_log_level);
-
 /* CassSession */
 PHP_FUNCTION(cassandra_session_new);
 PHP_FUNCTION(cassandra_session_free);
@@ -134,7 +138,6 @@ PHP_FUNCTION(cassandra_batch_add_statement);
 
 ZEND_BEGIN_MODULE_GLOBALS(cassandra)
   CassUuidGen*          uuid_gen;
-  CassLogLevel          log_level;
   unsigned int          persistent_clusters;
   unsigned int          persistent_sessions;
 ZEND_END_MODULE_GLOBALS(cassandra)

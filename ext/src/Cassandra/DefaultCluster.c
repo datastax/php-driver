@@ -26,7 +26,10 @@ PHP_METHOD(DefaultCluster, connect)
   cassandra_session* session =
     (cassandra_session*) zend_object_store_get_object(return_value TSRMLS_CC);
 
-  session->persist = cluster->persist;
+  session->default_consistency = cluster->default_consistency;
+  session->default_page_size   = cluster->default_page_size;
+  session->default_timeout     = cluster->default_timeout;
+  session->persist             = cluster->persist;
 
   if (session->persist) {
     zend_rsrc_list_entry *le;
@@ -77,9 +80,11 @@ PHP_METHOD(DefaultCluster, connect)
   CassError rc = cass_future_error_code(future);
 
   if (rc != CASS_OK) {
-    CassString message = cass_future_error_message(future);
+    const char* message;
+    size_t message_len;
+    cass_future_error_message(future, &message, &message_len);
     zend_throw_exception_ex(exception_class(rc), rc TSRMLS_CC,
-      "%.*s", (int) message.length, message.data);
+      "%.*s", (int) message_len, message);
 
     if (session->persist) {
       if (zend_hash_del(&EG(persistent_list), hash_key, hash_key_len + 1) == SUCCESS) {

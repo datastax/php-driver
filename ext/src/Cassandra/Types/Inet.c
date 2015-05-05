@@ -1,8 +1,6 @@
 #include "php_cassandra.h"
 #include "util/inet.h"
 
-extern zend_class_entry *cassandra_invalid_argument_exception_ce;
-
 zend_class_entry *cassandra_inet_ce = NULL;
 
 /* {{{ Cassandra\Types\Inet::__construct(string) */
@@ -82,11 +80,14 @@ php_cassandra_inet_properties(zval *object TSRMLS_DC)
 static int
 php_cassandra_inet_compare(zval *obj1, zval *obj2 TSRMLS_DC)
 {
+  cassandra_inet* inet1 = NULL;
+  cassandra_inet* inet2 = NULL;
+
   if (Z_OBJCE_P(obj1) != Z_OBJCE_P(obj2))
     return 1; /* different classes */
 
-  cassandra_inet* inet1 = (cassandra_inet*) zend_object_store_get_object(obj1 TSRMLS_CC);
-  cassandra_inet* inet2 = (cassandra_inet*) zend_object_store_get_object(obj2 TSRMLS_CC);
+  inet1 = (cassandra_inet*) zend_object_store_get_object(obj1 TSRMLS_CC);
+  inet2 = (cassandra_inet*) zend_object_store_get_object(obj2 TSRMLS_CC);
 
   if (inet1->inet.address == inet2->inet.address)
     return 0;

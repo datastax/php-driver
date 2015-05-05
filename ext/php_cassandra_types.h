@@ -47,7 +47,7 @@ typedef struct {
 typedef struct {
   zend_object  zval;
   cass_byte_t* data;
-  cass_size_t  size;
+  size_t       size;
 } cassandra_blob;
 
 typedef struct {
@@ -82,14 +82,14 @@ typedef struct {
 } cassandra_collection;
 
 typedef struct {
-  zend_object     zval;
-  CassCluster*    cluster;
-  CassConsistency default_consistency;
-  int             default_page_size;
-  zval*           default_timeout;
-  cass_bool_t     persist;
-  char*           hash_key;
-  int             hash_key_len;
+  zend_object  zval;
+  CassCluster* cluster;
+  long         default_consistency;
+  int          default_page_size;
+  zval*        default_timeout;
+  cass_bool_t  persist;
+  char*        hash_key;
+  int          hash_key_len;
 } cassandra_cluster;
 
 typedef enum {
@@ -119,7 +119,7 @@ typedef struct {
 typedef struct {
   STATEMENT_FIELDS
   CassBatchType batch_type;
-  HashTable* statements;
+  HashTable*    statements;
 } cassandra_batch_statement;
 
 #undef STATEMENT_FIELDS
@@ -133,7 +133,7 @@ typedef struct {
   zend_object zval;
   long        consistency;
   long        serial_consistency;
-  long        page_size;
+  int         page_size;
   zval*       timeout;
   zval*       arguments;
 } cassandra_execution_options;
@@ -144,7 +144,7 @@ typedef enum {
 } cassandra_load_balancing;
 
 typedef struct {
-  cass_size_t    count;
+  size_t         count;
   CassStatement* statement;
 } cassandra_statement_ref;
 
@@ -201,15 +201,15 @@ typedef struct {
 } cassandra_future_close;
 
 typedef struct {
-  zend_object       zval;
-  CassFuture*       future;
-  CassSession*      session;
-  zval*             default_session;
-  cass_bool_t       persist;
-  char*             hash_key;
-  int               hash_key_len;
-  char*             exception_message;
-  CassError         exception_code;
+  zend_object  zval;
+  CassFuture*  future;
+  CassSession* session;
+  zval*        default_session;
+  cass_bool_t  persist;
+  char*        hash_key;
+  int          hash_key_len;
+  char*        exception_message;
+  CassError    exception_code;
 } cassandra_future_session;
 
 typedef struct {
@@ -220,6 +220,9 @@ typedef struct {
 typedef struct {
   zend_object  zval;
   CassSession* session;
+  long         default_consistency;
+  int          default_page_size;
+  zval*        default_timeout;
   cass_bool_t  persist;
 } cassandra_session;
 

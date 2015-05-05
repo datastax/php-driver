@@ -1,7 +1,4 @@
-#include "../php_cassandra.h"
-#include <ext/spl/spl_exceptions.h>
-
-extern zend_class_entry* spl_ce_LogicException;
+#include "php_cassandra.h"
 
 zend_class_entry *cassandra_logic_exception_ce = NULL;
 

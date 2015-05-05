@@ -1,21 +1,17 @@
-#include "../php_cassandra.h"
+#include "php_cassandra.h"
 #include <stdlib.h>
 #include "util/inet.h"
-
-extern zend_class_entry* cassandra_invalid_argument_exception_ce;
 
 #define IPV4             1
 #define IPV6             2
 #define TOKEN_MAX_LEN    4
 #define IP_MAX_ADDRLEN   50
 #define EXPECTING_TOKEN(expected) \
-  ({ \
-    zend_throw_exception_ex(cassandra_invalid_argument_exception_ce, 0 TSRMLS_CC, \
-      "Unexpected %s at position %d in address \"%s\", expected " expected, \
-      ip_address_describe_token(type), ((int) (in_ptr - in) - 1), in \
-    ); \
-    return 0; \
-  })
+  zend_throw_exception_ex(cassandra_invalid_argument_exception_ce, 0 TSRMLS_CC, \
+    "Unexpected %s at position %d in address \"%s\", expected " expected, \
+    ip_address_describe_token(type), ((int) (in_ptr - in) - 1), in \
+  ); \
+  return 0;
 
 enum token_type {
   TOKEN_END = 0,

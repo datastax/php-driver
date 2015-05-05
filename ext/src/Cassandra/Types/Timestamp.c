@@ -3,7 +3,6 @@
 #include "php_cassandra.h"
 #include <ext/date/php_date.h>
 
-extern zend_class_entry *cassandra_invalid_argument_exception_ce;
 zend_class_entry *cassandra_timestamp_ce = NULL;
 
 /* {{{ Cassandra\Timestamp::__construct(string) */
@@ -163,11 +162,13 @@ php_cassandra_timestamp_properties(zval *object TSRMLS_DC)
 static int
 php_cassandra_timestamp_compare(zval *obj1, zval *obj2 TSRMLS_DC)
 {
+  cassandra_timestamp* timestamp1 = NULL;
+  cassandra_timestamp* timestamp2 = NULL;
   if (Z_OBJCE_P(obj1) != Z_OBJCE_P(obj2))
     return 1; /* different classes */
 
-  cassandra_timestamp* timestamp1 = (cassandra_timestamp*) zend_object_store_get_object(obj1 TSRMLS_CC);
-  cassandra_timestamp* timestamp2 = (cassandra_timestamp*) zend_object_store_get_object(obj2 TSRMLS_CC);
+  timestamp1 = (cassandra_timestamp*) zend_object_store_get_object(obj1 TSRMLS_CC);
+  timestamp2 = (cassandra_timestamp*) zend_object_store_get_object(obj2 TSRMLS_CC);
 
   if (timestamp1->timestamp == timestamp2->timestamp)
     return 0;

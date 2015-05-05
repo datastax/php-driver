@@ -46,7 +46,7 @@ PHP_METHOD(SSLOptionsBuilder, build)
       if (!file_get_contents(path, &contents, &len TSRMLS_CC))
         return;
 
-      rc = cass_ssl_add_trusted_cert(ssl->ssl, cass_string_init2(contents, len));
+      rc = cass_ssl_add_trusted_cert_n(ssl->ssl, contents, len);
       efree(contents);
       ASSERT_SUCCESS(rc);
     }
@@ -56,7 +56,7 @@ PHP_METHOD(SSLOptionsBuilder, build)
     if (!file_get_contents(builder->client_cert, &contents, &len TSRMLS_CC))
       return;
 
-    rc = cass_ssl_set_cert(ssl->ssl, cass_string_init2(contents, len));
+    rc = cass_ssl_set_cert_n(ssl->ssl, contents, len);
     efree(contents);
     ASSERT_SUCCESS(rc);
   }
@@ -65,7 +65,7 @@ PHP_METHOD(SSLOptionsBuilder, build)
     if (!file_get_contents(builder->private_key, &contents, &len TSRMLS_CC))
       return;
 
-    rc = cass_ssl_set_private_key(ssl->ssl, cass_string_init2(contents, len), builder->passphrase);
+    rc = cass_ssl_set_private_key(ssl->ssl, contents, builder->passphrase);
     efree(contents);
     ASSERT_SUCCESS(rc);
   }

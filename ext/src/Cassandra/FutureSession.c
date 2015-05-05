@@ -36,10 +36,12 @@ PHP_METHOD(FutureSession, get)
   CassError rc = cass_future_error_code(future->future);
 
   if (rc != CASS_OK) {
-    CassString message = cass_future_error_message(future->future);
+    const char* message;
+    size_t message_len;
+    cass_future_error_message(future->future, &message, &message_len);
 
     if (future->persist) {
-      future->exception_message = estrndup(message.data, message.length);
+      future->exception_message = estrndup(message, message_len);
       future->exception_code    = rc;
 
       if (zend_hash_del(&EG(persistent_list), future->hash_key, future->hash_key_len + 1) == SUCCESS) {
@@ -53,7 +55,7 @@ PHP_METHOD(FutureSession, get)
     }
 
     zend_throw_exception_ex(exception_class(rc), rc TSRMLS_CC,
-      "%.*s", (int) message.length, message.data);
+      "%.*s", (int) message_len, message);
     return;
   }
 

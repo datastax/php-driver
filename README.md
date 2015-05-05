@@ -41,7 +41,7 @@ as well as what's planned for the upcoming releases.
 $cluster   = Cassandra::cluster()                 // connects to localhost by default
                  ->build();
 $keyspace  = 'system';
-$session   = $cluster->connect($system);          // create session, optionally scoped to a keyspace
+$session   = $cluster->connect($keyspace);        // create session, optionally scoped to a keyspace
 $statement = new Cassandra\SimpleStatement(       // also supports prepared and batch statements
     'SELECT keyspace_name, columnfamily_name FROM schema_columnfamilies'
 );
