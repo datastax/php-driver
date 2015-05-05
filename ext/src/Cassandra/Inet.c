@@ -3,7 +3,7 @@
 
 zend_class_entry *cassandra_inet_ce = NULL;
 
-/* {{{ Cassandra\Types\Inet::__construct(string) */
+/* {{{ Cassandra\Inet::__construct(string) */
 PHP_METHOD(Inet, __construct)
 {
   char *address;
@@ -21,7 +21,7 @@ PHP_METHOD(Inet, __construct)
 }
 /* }}} */
 
-/* {{{ Cassandra\Types\Inet::__toString() */
+/* {{{ Cassandra\Inet::__toString() */
 PHP_METHOD(Inet, __toString)
 {
   cassandra_inet* inet = (cassandra_inet*) zend_object_store_get_object(getThis() TSRMLS_CC);
@@ -32,7 +32,7 @@ PHP_METHOD(Inet, __toString)
 }
 /* }}} */
 
-/* {{{ Cassandra\Types\Inet::address() */
+/* {{{ Cassandra\Inet::address() */
 PHP_METHOD(Inet, address)
 {
   cassandra_inet* inet = (cassandra_inet*) zend_object_store_get_object(getThis() TSRMLS_CC);
@@ -133,7 +133,7 @@ void cassandra_define_Inet(TSRMLS_D)
 {
   zend_class_entry ce;
 
-  INIT_CLASS_ENTRY(ce, "Cassandra\\Types\\Inet", cassandra_inet_methods);
+  INIT_CLASS_ENTRY(ce, "Cassandra\\Inet", cassandra_inet_methods);
   cassandra_inet_ce = zend_register_internal_class(&ce TSRMLS_CC);
   memcpy(&cassandra_inet_handlers, zend_get_std_object_handlers(), sizeof(zend_object_handlers));
   cassandra_inet_handlers.get_properties = php_cassandra_inet_properties;

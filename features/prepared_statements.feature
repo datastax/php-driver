@@ -37,19 +37,19 @@ Feature: Prepared Statements
 
       $songs = array(
           array(
-              'song_id' => new Cassandra\Types\Uuid('756716f7-2e54-4715-9f00-91dcbea6cf50'),
+              'song_id' => new Cassandra\Uuid('756716f7-2e54-4715-9f00-91dcbea6cf50'),
               'title'   => 'La Petite Tonkinoise',
               'album'   => 'Bye Bye Blackbird',
               'artist'  => 'Joséphine Baker'
           ),
           array(
-              'song_id' => new Cassandra\Types\Uuid('f6071e72-48ec-4fcb-bf3e-379c8a696488'),
+              'song_id' => new Cassandra\Uuid('f6071e72-48ec-4fcb-bf3e-379c8a696488'),
               'title'   => 'Die Mösch',
               'album'   => 'In Gold',
               'artist'  => 'Willi Ostermann'
           ),
           array(
-              'song_id' => new Cassandra\Types\Uuid('fbdf82ed-0063-4796-9c7c-a3d4f47b4b25'),
+              'song_id' => new Cassandra\Uuid('fbdf82ed-0063-4796-9c7c-a3d4f47b4b25'),
               'title'   => 'Memo From Turner',
               'album'   => 'Performance',
               'artist'  => 'Mick Jager'

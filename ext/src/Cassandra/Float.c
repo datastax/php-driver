@@ -29,7 +29,7 @@ to_string(zval* result, cassandra_float* flt TSRMLS_DC)
   return SUCCESS;
 }
 
-/* {{{ Cassandra\Types\Float::__construct(string) */
+/* {{{ Cassandra\Float::__construct(string) */
 PHP_METHOD(Float, __construct)
 {
   zval* num;
@@ -63,7 +63,7 @@ PHP_METHOD(Float, __construct)
 }
 /* }}} */
 
-/* {{{ Cassandra\Types\Float::__toString() */
+/* {{{ Cassandra\Float::__toString() */
 PHP_METHOD(Float, __toString)
 {
   cassandra_float* self =
@@ -73,7 +73,7 @@ PHP_METHOD(Float, __toString)
 }
 /* }}} */
 
-/* {{{ Cassandra\Types\Float::value() */
+/* {{{ Cassandra\Float::value() */
 PHP_METHOD(Float, value)
 {
   cassandra_float* self = (cassandra_float*) zend_object_store_get_object(getThis() TSRMLS_CC);
@@ -81,7 +81,7 @@ PHP_METHOD(Float, value)
 }
 /* }}} */
 
-/* {{{ Cassandra\Types\Float::isInfinite() */
+/* {{{ Cassandra\Float::isInfinite() */
 PHP_METHOD(Float, isInfinite)
 {
   cassandra_float* self =
@@ -90,7 +90,7 @@ PHP_METHOD(Float, isInfinite)
 }
 /* }}} */
 
-/* {{{ Cassandra\Types\Float::isFinite() */
+/* {{{ Cassandra\Float::isFinite() */
 PHP_METHOD(Float, isFinite)
 {
   cassandra_float* self =
@@ -99,7 +99,7 @@ PHP_METHOD(Float, isFinite)
 }
 /* }}} */
 
-/* {{{ Cassandra\Types\Float::isNaN() */
+/* {{{ Cassandra\Float::isNaN() */
 PHP_METHOD(Float, isNaN)
 {
   cassandra_float* self =
@@ -108,7 +108,7 @@ PHP_METHOD(Float, isNaN)
 }
 /* }}} */
 
-/* {{{ Cassandra\Types\Float::add() */
+/* {{{ Cassandra\Float::add() */
 PHP_METHOD(Float, add)
 {
   zval* num;
@@ -130,12 +130,12 @@ PHP_METHOD(Float, add)
 
     result->value = self->value + flt->value;
   } else {
-    INVALID_ARGUMENT(num, "a Cassandra\\Types\\Float");
+    INVALID_ARGUMENT(num, "a Cassandra\\Float");
   }
 }
 /* }}} */
 
-/* {{{ Cassandra\Types\Float::sub() */
+/* {{{ Cassandra\Float::sub() */
 PHP_METHOD(Float, sub)
 {
   zval* num;
@@ -157,12 +157,12 @@ PHP_METHOD(Float, sub)
 
     result->value = self->value - flt->value;
   } else {
-    INVALID_ARGUMENT(num, "a Cassandra\\Types\\Float");
+    INVALID_ARGUMENT(num, "a Cassandra\\Float");
   }
 }
 /* }}} */
 
-/* {{{ Cassandra\Types\Float::mul() */
+/* {{{ Cassandra\Float::mul() */
 PHP_METHOD(Float, mul)
 {
   zval* num;
@@ -184,12 +184,12 @@ PHP_METHOD(Float, mul)
 
     result->value = self->value * flt->value;
   } else {
-    INVALID_ARGUMENT(num, "a Cassandra\\Types\\Float");
+    INVALID_ARGUMENT(num, "a Cassandra\\Float");
   }
 }
 /* }}} */
 
-/* {{{ Cassandra\Types\Float::div() */
+/* {{{ Cassandra\Float::div() */
 PHP_METHOD(Float, div)
 {
   zval* num;
@@ -216,12 +216,12 @@ PHP_METHOD(Float, div)
 
     result->value = self->value / flt->value;
   } else {
-    INVALID_ARGUMENT(num, "a Cassandra\\Types\\Float");
+    INVALID_ARGUMENT(num, "a Cassandra\\Float");
   }
 }
 /* }}} */
 
-/* {{{ Cassandra\Types\Float::mod() */
+/* {{{ Cassandra\Float::mod() */
 PHP_METHOD(Float, mod)
 {
   /* TODO: We could use fmod() here, but maybe we should add a remainder function
@@ -231,7 +231,7 @@ PHP_METHOD(Float, mod)
                           "Modulo not implemented for floating point types");
 }
 
-/* {{{ Cassandra\Types\Float::abs() */
+/* {{{ Cassandra\Float::abs() */
 PHP_METHOD(Float, abs)
 {
   cassandra_float* self =
@@ -243,7 +243,7 @@ PHP_METHOD(Float, abs)
 }
 /* }}} */
 
-/* {{{ Cassandra\Types\Float::neg() */
+/* {{{ Cassandra\Float::neg() */
 PHP_METHOD(Float, neg)
 {
   cassandra_float* self =
@@ -255,7 +255,7 @@ PHP_METHOD(Float, neg)
 }
 /* }}} */
 
-/* {{{ Cassandra\Types\Float::sqrt() */
+/* {{{ Cassandra\Float::sqrt() */
 PHP_METHOD(Float, sqrt)
 {
   cassandra_float* self =
@@ -273,7 +273,7 @@ PHP_METHOD(Float, sqrt)
 }
 /* }}} */
 
-/* {{{ Cassandra\Types\Float::toInt() */
+/* {{{ Cassandra\Float::toInt() */
 PHP_METHOD(Float, toInt)
 {
   cassandra_float* self =
@@ -283,7 +283,7 @@ PHP_METHOD(Float, toInt)
 }
 /* }}} */
 
-/* {{{ Cassandra\Types\Float::toDouble() */
+/* {{{ Cassandra\Float::toDouble() */
 PHP_METHOD(Float, toDouble)
 {
   cassandra_float* self =
@@ -293,7 +293,7 @@ PHP_METHOD(Float, toDouble)
 }
 /* }}} */
 
-/* {{{ Cassandra\Types\Float::min() */
+/* {{{ Cassandra\Float::min() */
 PHP_METHOD(Float, min)
 {
   object_init_ex(return_value, cassandra_float_ce);
@@ -303,7 +303,7 @@ PHP_METHOD(Float, min)
 }
 /* }}} */
 
-/* {{{ Cassandra\Types\Float::max() */
+/* {{{ Cassandra\Float::max() */
 PHP_METHOD(Float, max)
 {
   object_init_ex(return_value, cassandra_float_ce);
@@ -445,7 +445,7 @@ void cassandra_define_Float(TSRMLS_D)
 {
   zend_class_entry ce;
 
-  INIT_CLASS_ENTRY(ce, "Cassandra\\Types\\Float", cassandra_float_methods);
+  INIT_CLASS_ENTRY(ce, "Cassandra\\Float", cassandra_float_methods);
   cassandra_float_ce = zend_register_internal_class(&ce TSRMLS_CC);
   zend_class_implements(cassandra_float_ce TSRMLS_CC, 1, cassandra_numeric_ce);
   cassandra_float_ce->ce_flags     |= ZEND_ACC_FINAL_CLASS;

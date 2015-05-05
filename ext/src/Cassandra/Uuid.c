@@ -5,7 +5,7 @@
 
 zend_class_entry *cassandra_uuid_ce = NULL;
 
-/* {{{ Cassandra\Types\Uuid::__construct(string) */
+/* {{{ Cassandra\Uuid::__construct(string) */
 PHP_METHOD(Uuid, __construct)
 {
   char *value;
@@ -29,7 +29,7 @@ PHP_METHOD(Uuid, __construct)
 }
 /* }}} */
 
-/* {{{ Cassandra\Types\Uuid::__toString() */
+/* {{{ Cassandra\Uuid::__toString() */
 PHP_METHOD(Uuid, __toString)
 {
   cassandra_uuid* uuid   = (cassandra_uuid*) zend_object_store_get_object(getThis() TSRMLS_CC);
@@ -41,7 +41,7 @@ PHP_METHOD(Uuid, __toString)
 }
 /* }}} */
 
-/* {{{ Cassandra\Types\Uuid::value() */
+/* {{{ Cassandra\Uuid::value() */
 PHP_METHOD(Uuid, uuid)
 {
   cassandra_uuid* uuid   = (cassandra_uuid*) zend_object_store_get_object(getThis() TSRMLS_CC);
@@ -53,7 +53,7 @@ PHP_METHOD(Uuid, uuid)
 }
 /* }}} */
 
-/* {{{ Cassandra\Types\Uuid::value() */
+/* {{{ Cassandra\Uuid::value() */
 PHP_METHOD(Uuid, version)
 {
   cassandra_uuid* uuid = (cassandra_uuid*) zend_object_store_get_object(getThis() TSRMLS_CC);
@@ -166,7 +166,7 @@ cassandra_define_Uuid(TSRMLS_D)
 {
   zend_class_entry ce;
 
-  INIT_CLASS_ENTRY(ce, "Cassandra\\Types\\Uuid", cassandra_uuid_methods);
+  INIT_CLASS_ENTRY(ce, "Cassandra\\Uuid", cassandra_uuid_methods);
   cassandra_uuid_ce = zend_register_internal_class(&ce TSRMLS_CC);
   zend_class_implements(cassandra_uuid_ce TSRMLS_CC, 1, cassandra_uuid_interface_ce);
   memcpy(&cassandra_uuid_handlers, zend_get_std_object_handlers(), sizeof(zend_object_handlers));

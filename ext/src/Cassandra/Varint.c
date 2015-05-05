@@ -49,7 +49,7 @@ to_string(zval* result, cassandra_varint* varint TSRMLS_DC)
   return SUCCESS;
 }
 
-/* {{{ Cassandra\Types\Varint::__construct(string) */
+/* {{{ Cassandra\Varint::__construct(string) */
 PHP_METHOD(Varint, __construct)
 {
   zval* num;
@@ -79,7 +79,7 @@ PHP_METHOD(Varint, __construct)
 }
 /* }}} */
 
-/* {{{ Cassandra\Types\Varint::__toString() */
+/* {{{ Cassandra\Varint::__toString() */
 PHP_METHOD(Varint, __toString)
 {
   cassandra_varint* self =
@@ -89,7 +89,7 @@ PHP_METHOD(Varint, __toString)
 }
 /* }}} */
 
-/* {{{ Cassandra\Types\Varint::value() */
+/* {{{ Cassandra\Varint::value() */
 PHP_METHOD(Varint, value)
 {
   cassandra_varint* self =
@@ -103,7 +103,7 @@ PHP_METHOD(Varint, value)
 }
 /* }}} */
 
-/* {{{ Cassandra\Types\Varint::add() */
+/* {{{ Cassandra\Varint::add() */
 PHP_METHOD(Varint, add)
 {
   zval* num;
@@ -125,12 +125,12 @@ PHP_METHOD(Varint, add)
 
     mpz_add(result->value, self->value, varint->value);
   } else {
-    INVALID_ARGUMENT(num, "a Cassandra\\Types\\Varint");
+    INVALID_ARGUMENT(num, "a Cassandra\\Varint");
   }
 }
 /* }}} */
 
-/* {{{ Cassandra\Types\Varint::sub() */
+/* {{{ Cassandra\Varint::sub() */
 PHP_METHOD(Varint, sub)
 {
   zval* num;
@@ -152,12 +152,12 @@ PHP_METHOD(Varint, sub)
 
     mpz_sub(result->value, self->value, varint->value);
   } else {
-    INVALID_ARGUMENT(num, "a Cassandra\\Types\\Varint");
+    INVALID_ARGUMENT(num, "a Cassandra\\Varint");
   }
 }
 /* }}} */
 
-/* {{{ Cassandra\Types\Varint::mul() */
+/* {{{ Cassandra\Varint::mul() */
 PHP_METHOD(Varint, mul)
 {
   zval* num;
@@ -179,12 +179,12 @@ PHP_METHOD(Varint, mul)
 
     mpz_mul(result->value, self->value, varint->value);
   } else {
-    INVALID_ARGUMENT(num, "a Cassandra\\Types\\Varint");
+    INVALID_ARGUMENT(num, "a Cassandra\\Varint");
   }
 }
 /* }}} */
 
-/* {{{ Cassandra\Types\Varint::div() */
+/* {{{ Cassandra\Varint::div() */
 PHP_METHOD(Varint, div)
 {
   zval* num;
@@ -211,12 +211,12 @@ PHP_METHOD(Varint, div)
 
     mpz_div(result->value, self->value, varint->value);
   } else {
-    INVALID_ARGUMENT(num, "a Cassandra\\Types\\Varint");
+    INVALID_ARGUMENT(num, "a Cassandra\\Varint");
   }
 }
 /* }}} */
 
-/* {{{ Cassandra\Types\Varint::mod() */
+/* {{{ Cassandra\Varint::mod() */
 PHP_METHOD(Varint, mod)
 {
   zval* num;
@@ -243,12 +243,12 @@ PHP_METHOD(Varint, mod)
 
     mpz_mod(result->value, self->value, varint->value);
   } else {
-    INVALID_ARGUMENT(num, "a Cassandra\\Types\\Varint");
+    INVALID_ARGUMENT(num, "a Cassandra\\Varint");
   }
 }
 /* }}} */
 
-/* {{{ Cassandra\Types\Varint::abs() */
+/* {{{ Cassandra\Varint::abs() */
 PHP_METHOD(Varint, abs)
 {
   cassandra_varint* self =
@@ -262,7 +262,7 @@ PHP_METHOD(Varint, abs)
 }
 /* }}} */
 
-/* {{{ Cassandra\Types\Varint::neg() */
+/* {{{ Cassandra\Varint::neg() */
 PHP_METHOD(Varint, neg)
 {
   cassandra_varint* self =
@@ -276,7 +276,7 @@ PHP_METHOD(Varint, neg)
 }
 /* }}} */
 
-/* {{{ Cassandra\Types\Varint::sqrt() */
+/* {{{ Cassandra\Varint::sqrt() */
 PHP_METHOD(Varint, sqrt)
 {
   cassandra_varint* self =
@@ -296,7 +296,7 @@ PHP_METHOD(Varint, sqrt)
 }
 /* }}} */
 
-/* {{{ Cassandra\Types\Varint::toInt() */
+/* {{{ Cassandra\Varint::toInt() */
 PHP_METHOD(Varint, toInt)
 {
   cassandra_varint* self =
@@ -306,7 +306,7 @@ PHP_METHOD(Varint, toInt)
 }
 /* }}} */
 
-/* {{{ Cassandra\Types\Varint::toDouble() */
+/* {{{ Cassandra\Varint::toDouble() */
 PHP_METHOD(Varint, toDouble)
 {
   cassandra_varint* self =
@@ -438,7 +438,7 @@ void cassandra_define_Varint(TSRMLS_D)
 {
   zend_class_entry ce;
 
-  INIT_CLASS_ENTRY(ce, "Cassandra\\Types\\Varint", cassandra_varint_methods);
+  INIT_CLASS_ENTRY(ce, "Cassandra\\Varint", cassandra_varint_methods);
   cassandra_varint_ce = zend_register_internal_class(&ce TSRMLS_CC);
   zend_class_implements(cassandra_varint_ce TSRMLS_CC, 1, cassandra_numeric_ce);
   cassandra_varint_ce->ce_flags     |= ZEND_ACC_FINAL_CLASS;

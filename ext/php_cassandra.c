@@ -5,9 +5,9 @@
 #include "util/bytes.h"
 #include "util/math.h"
 #include "util/collections.h"
-#include "src/Cassandra/Types/Collection.h"
-#include "src/Cassandra/Types/Map.h"
-#include "src/Cassandra/Types/Set.h"
+#include "src/Cassandra/Collection.h"
+#include "src/Cassandra/Map.h"
+#include "src/Cassandra/Set.h"
 
 #define PHP_CASSANDRA_DEFAULT_LOG "php-driver.log"
 

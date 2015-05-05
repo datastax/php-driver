@@ -54,19 +54,19 @@ Feature: Simple Statements
 
       $songs = array(
           array(
-              new Cassandra\Types\Uuid('756716f7-2e54-4715-9f00-91dcbea6cf50'),
+              new Cassandra\Uuid('756716f7-2e54-4715-9f00-91dcbea6cf50'),
               'Joséphine Baker',
               'La Petite Tonkinoise',
               'Bye Bye Blackbird'
           ),
           array(
-              new Cassandra\Types\Uuid('f6071e72-48ec-4fcb-bf3e-379c8a696488'),
+              new Cassandra\Uuid('f6071e72-48ec-4fcb-bf3e-379c8a696488'),
               'Willi Ostermann',
               'Die Mösch',
               'In Gold'
           ),
           array(
-              new Cassandra\Types\Uuid('fbdf82ed-0063-4796-9c7c-a3d4f47b4b25'),
+              new Cassandra\Uuid('fbdf82ed-0063-4796-9c7c-a3d4f47b4b25'),
               'Mick Jager',
               'Memo From Turner',
               'Performance'

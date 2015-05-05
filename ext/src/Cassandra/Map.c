@@ -151,7 +151,7 @@ php_cassandra_map_populate(cassandra_map* map, zval* keys_array, zval* values_ar
   }
 }
 
-/* {{{ Cassandra\Types\Map::__construct(string) */
+/* {{{ Cassandra\Map::__construct(string) */
 PHP_METHOD(Map, __construct)
 {
   char* key_type;
@@ -171,7 +171,7 @@ PHP_METHOD(Map, __construct)
 }
 /* }}} */
 
-/* {{{ Cassandra\Types\Map::keyType() */
+/* {{{ Cassandra\Map::keyType() */
 PHP_METHOD(Map, keyType)
 {
   cassandra_map* map = (cassandra_map*) zend_object_store_get_object(getThis() TSRMLS_CC);
@@ -180,7 +180,7 @@ PHP_METHOD(Map, keyType)
 }
 /* }}} */
 
-/* {{{ Cassandra\Types\Map::valueType() */
+/* {{{ Cassandra\Map::valueType() */
 PHP_METHOD(Map, valueType)
 {
   cassandra_map* map = (cassandra_map*) zend_object_store_get_object(getThis() TSRMLS_CC);
@@ -501,7 +501,7 @@ void cassandra_define_Map(TSRMLS_D)
 {
   zend_class_entry ce;
 
-  INIT_CLASS_ENTRY(ce, "Cassandra\\Types\\Map", cassandra_map_methods);
+  INIT_CLASS_ENTRY(ce, "Cassandra\\Map", cassandra_map_methods);
   cassandra_map_ce = zend_register_internal_class(&ce TSRMLS_CC);
   memcpy(&cassandra_map_handlers, zend_get_std_object_handlers(), sizeof(zend_object_handlers));
   cassandra_map_handlers.get_properties = php_cassandra_map_properties;

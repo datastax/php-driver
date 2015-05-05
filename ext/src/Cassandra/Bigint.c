@@ -53,7 +53,7 @@ to_string(zval* result, cassandra_bigint* bigint TSRMLS_DC)
   return SUCCESS;
 }
 
-/* {{{ Cassandra\Types\Bigint::__construct(string) */
+/* {{{ Cassandra\Bigint::__construct(string) */
 PHP_METHOD(Bigint, __construct)
 {
   zval* num;
@@ -83,7 +83,7 @@ PHP_METHOD(Bigint, __construct)
 }
 /* }}} */
 
-/* {{{ Cassandra\Types\Bigint::__toString() */
+/* {{{ Cassandra\Bigint::__toString() */
 PHP_METHOD(Bigint, __toString)
 {
   cassandra_bigint* self =
@@ -93,7 +93,7 @@ PHP_METHOD(Bigint, __toString)
 }
 /* }}} */
 
-/* {{{ Cassandra\Types\Bigint::value() */
+/* {{{ Cassandra\Bigint::value() */
 PHP_METHOD(Bigint, value)
 {
   char* string;
@@ -108,7 +108,7 @@ PHP_METHOD(Bigint, value)
 }
 /* }}} */
 
-/* {{{ Cassandra\Types\Bigint::add() */
+/* {{{ Cassandra\Bigint::add() */
 PHP_METHOD(Bigint, add)
 {
   zval* num;
@@ -130,12 +130,12 @@ PHP_METHOD(Bigint, add)
 
     result->value = self->value + bigint->value;
   } else {
-    INVALID_ARGUMENT(num, "a Cassandra\\Types\\Bigint");
+    INVALID_ARGUMENT(num, "a Cassandra\\Bigint");
   }
 }
 /* }}} */
 
-/* {{{ Cassandra\Types\Bigint::sub() */
+/* {{{ Cassandra\Bigint::sub() */
 PHP_METHOD(Bigint, sub)
 {
   zval* num;
@@ -157,12 +157,12 @@ PHP_METHOD(Bigint, sub)
 
     result->value = self->value - bigint->value;
   } else {
-    INVALID_ARGUMENT(num, "a Cassandra\\Types\\Bigint");
+    INVALID_ARGUMENT(num, "a Cassandra\\Bigint");
   }
 }
 /* }}} */
 
-/* {{{ Cassandra\Types\Bigint::mul() */
+/* {{{ Cassandra\Bigint::mul() */
 PHP_METHOD(Bigint, mul)
 {
   zval* num;
@@ -184,12 +184,12 @@ PHP_METHOD(Bigint, mul)
 
     result->value = self->value * bigint->value;
   } else {
-    INVALID_ARGUMENT(num, "a Cassandra\\Types\\Bigint");
+    INVALID_ARGUMENT(num, "a Cassandra\\Bigint");
   }
 }
 /* }}} */
 
-/* {{{ Cassandra\Types\Bigint::div() */
+/* {{{ Cassandra\Bigint::div() */
 PHP_METHOD(Bigint, div)
 {
   zval* num;
@@ -216,12 +216,12 @@ PHP_METHOD(Bigint, div)
 
     result->value = self->value / bigint->value;
   } else {
-    INVALID_ARGUMENT(num, "a Cassandra\\Types\\Bigint");
+    INVALID_ARGUMENT(num, "a Cassandra\\Bigint");
   }
 }
 /* }}} */
 
-/* {{{ Cassandra\Types\Bigint::mod() */
+/* {{{ Cassandra\Bigint::mod() */
 PHP_METHOD(Bigint, mod)
 {
   zval* num;
@@ -248,12 +248,12 @@ PHP_METHOD(Bigint, mod)
 
     result->value = self->value % bigint->value;
   } else {
-    INVALID_ARGUMENT(num, "a Cassandra\\Types\\Bigint");
+    INVALID_ARGUMENT(num, "a Cassandra\\Bigint");
   }
 }
 /* }}} */
 
-/* {{{ Cassandra\Types\Bigint::abs() */
+/* {{{ Cassandra\Bigint::abs() */
 PHP_METHOD(Bigint, abs)
 {
   cassandra_bigint* self =
@@ -271,7 +271,7 @@ PHP_METHOD(Bigint, abs)
 }
 /* }}} */
 
-/* {{{ Cassandra\Types\Bigint::neg() */
+/* {{{ Cassandra\Bigint::neg() */
 PHP_METHOD(Bigint, neg)
 {
   cassandra_bigint* self =
@@ -284,7 +284,7 @@ PHP_METHOD(Bigint, neg)
 }
 /* }}} */
 
-/* {{{ Cassandra\Types\Bigint::sqrt() */
+/* {{{ Cassandra\Bigint::sqrt() */
 PHP_METHOD(Bigint, sqrt)
 {
   cassandra_bigint* self =
@@ -302,7 +302,7 @@ PHP_METHOD(Bigint, sqrt)
 }
 /* }}} */
 
-/* {{{ Cassandra\Types\Bigint::toInt() */
+/* {{{ Cassandra\Bigint::toInt() */
 PHP_METHOD(Bigint, toInt)
 {
   cassandra_bigint* self =
@@ -312,7 +312,7 @@ PHP_METHOD(Bigint, toInt)
 }
 /* }}} */
 
-/* {{{ Cassandra\Types\Bigint::toDouble() */
+/* {{{ Cassandra\Bigint::toDouble() */
 PHP_METHOD(Bigint, toDouble)
 {
   cassandra_bigint* self =
@@ -322,7 +322,7 @@ PHP_METHOD(Bigint, toDouble)
 }
 /* }}} */
 
-/* {{{ Cassandra\Types\Bigint::min() */
+/* {{{ Cassandra\Bigint::min() */
 PHP_METHOD(Bigint, min)
 {
   object_init_ex(return_value, cassandra_bigint_ce);
@@ -332,7 +332,7 @@ PHP_METHOD(Bigint, min)
 }
 /* }}} */
 
-/* {{{ Cassandra\Types\Bigint::max() */
+/* {{{ Cassandra\Bigint::max() */
 PHP_METHOD(Bigint, max)
 {
   object_init_ex(return_value, cassandra_bigint_ce);
@@ -474,7 +474,7 @@ void cassandra_define_Bigint(TSRMLS_D)
 {
   zend_class_entry ce;
 
-  INIT_CLASS_ENTRY(ce, "Cassandra\\Types\\Bigint", cassandra_bigint_methods);
+  INIT_CLASS_ENTRY(ce, "Cassandra\\Bigint", cassandra_bigint_methods);
   cassandra_bigint_ce = zend_register_internal_class(&ce TSRMLS_CC);
   zend_class_implements(cassandra_bigint_ce TSRMLS_CC, 1, cassandra_numeric_ce);
   cassandra_bigint_ce->ce_flags     |= ZEND_ACC_FINAL_CLASS;

@@ -4,7 +4,7 @@
 
 zend_class_entry *cassandra_timeuuid_ce = NULL;
 
-/* {{{ Cassandra\Types\Timeuuid::__construct(string) */
+/* {{{ Cassandra\Timeuuid::__construct(string) */
 PHP_METHOD(Timeuuid, __construct)
 {
   long timestamp;
@@ -28,7 +28,7 @@ PHP_METHOD(Timeuuid, __construct)
 }
 /* }}} */
 
-/* {{{ Cassandra\Types\Timeuuid::__toString() */
+/* {{{ Cassandra\Timeuuid::__toString() */
 PHP_METHOD(Timeuuid, __toString)
 {
   cassandra_uuid* uuid   = (cassandra_uuid*) zend_object_store_get_object(getThis() TSRMLS_CC);
@@ -40,7 +40,7 @@ PHP_METHOD(Timeuuid, __toString)
 }
 /* }}} */
 
-/* {{{ Cassandra\Types\Timeuuid::value() */
+/* {{{ Cassandra\Timeuuid::value() */
 PHP_METHOD(Timeuuid, uuid)
 {
   cassandra_uuid* uuid   = (cassandra_uuid*) zend_object_store_get_object(getThis() TSRMLS_CC);
@@ -52,7 +52,7 @@ PHP_METHOD(Timeuuid, uuid)
 }
 /* }}} */
 
-/* {{{ Cassandra\Types\Timeuuid::value() */
+/* {{{ Cassandra\Timeuuid::value() */
 PHP_METHOD(Timeuuid, version)
 {
   cassandra_uuid* uuid = (cassandra_uuid*) zend_object_store_get_object(getThis() TSRMLS_CC);
@@ -61,7 +61,7 @@ PHP_METHOD(Timeuuid, version)
 }
 /* }}} */
 
-/* {{{ Cassandra\Types\Timeuuid::value() */
+/* {{{ Cassandra\Timeuuid::value() */
 PHP_METHOD(Timeuuid, time)
 {
   cassandra_uuid* uuid;
@@ -71,7 +71,7 @@ PHP_METHOD(Timeuuid, time)
 }
 /* }}} */
 
-/* {{{ Cassandra\Types\Timeuuid::value() */
+/* {{{ Cassandra\Timeuuid::value() */
 PHP_METHOD(Timeuuid, toDateTime)
 {
   cassandra_uuid* uuid;
@@ -204,7 +204,7 @@ cassandra_define_Timeuuid(TSRMLS_D)
 {
   zend_class_entry ce;
 
-  INIT_CLASS_ENTRY(ce, "Cassandra\\Types\\Timeuuid", cassandra_timeuuid_methods);
+  INIT_CLASS_ENTRY(ce, "Cassandra\\Timeuuid", cassandra_timeuuid_methods);
   cassandra_timeuuid_ce = zend_register_internal_class(&ce TSRMLS_CC);
   zend_class_implements(cassandra_timeuuid_ce TSRMLS_CC, 1, cassandra_uuid_interface_ce);
   memcpy(&cassandra_timeuuid_handlers, zend_get_std_object_handlers(), sizeof(zend_object_handlers));

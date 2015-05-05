@@ -192,7 +192,7 @@ align_decimals(cassandra_decimal* lhs, cassandra_decimal* rhs)
   mpz_clear(pow_10);
 }
 
-/* {{{ Cassandra\Types\Decimal::__construct(string) */
+/* {{{ Cassandra\Decimal::__construct(string) */
 PHP_METHOD(Decimal, __construct)
 {
   zval* num;
@@ -232,7 +232,7 @@ PHP_METHOD(Decimal, __construct)
 }
 /* }}} */
 
-/* {{{ Cassandra\Types\Decimal::__toString() */
+/* {{{ Cassandra\Decimal::__toString() */
 PHP_METHOD(Decimal, __toString)
 {
   cassandra_decimal* self =
@@ -242,7 +242,7 @@ PHP_METHOD(Decimal, __toString)
 }
 /* }}} */
 
-/* {{{ Cassandra\Types\Decimal::value() */
+/* {{{ Cassandra\Decimal::value() */
 PHP_METHOD(Decimal, value)
 {
   cassandra_decimal* self =
@@ -264,7 +264,7 @@ PHP_METHOD(Decimal, scale)
   RETURN_LONG(self->scale);
 }
 
-/* {{{ Cassandra\Types\Decimal::add() */
+/* {{{ Cassandra\Decimal::add() */
 PHP_METHOD(Decimal, add)
 {
   zval* num;
@@ -288,12 +288,12 @@ PHP_METHOD(Decimal, add)
     mpz_add(result->value, self->value, decimal->value);
     result->scale = MAX(self->scale, decimal->scale);
   } else {
-    INVALID_ARGUMENT(num, "a Cassandra\\Types\\Decimal");
+    INVALID_ARGUMENT(num, "a Cassandra\\Decimal");
   }
 }
 /* }}} */
 
-/* {{{ Cassandra\Types\Decimal::sub() */
+/* {{{ Cassandra\Decimal::sub() */
 PHP_METHOD(Decimal, sub)
 {
   zval* num;
@@ -317,12 +317,12 @@ PHP_METHOD(Decimal, sub)
     mpz_sub(result->value, self->value, decimal->value);
     result->scale = MAX(self->scale, decimal->scale);
   } else {
-    INVALID_ARGUMENT(num, "a Cassandra\\Types\\Decimal");
+    INVALID_ARGUMENT(num, "a Cassandra\\Decimal");
   }
 }
 /* }}} */
 
-/* {{{ Cassandra\Types\Decimal::mul() */
+/* {{{ Cassandra\Decimal::mul() */
 PHP_METHOD(Decimal, mul)
 {
   zval* num;
@@ -345,12 +345,12 @@ PHP_METHOD(Decimal, mul)
     mpz_mul(result->value, self->value, decimal->value);
     result->scale = self->scale + decimal->scale;
   } else {
-    INVALID_ARGUMENT(num, "a Cassandra\\Types\\Decimal");
+    INVALID_ARGUMENT(num, "a Cassandra\\Decimal");
   }
 }
 /* }}} */
 
-/* {{{ Cassandra\Types\Decimal::div() */
+/* {{{ Cassandra\Decimal::div() */
 PHP_METHOD(Decimal, div)
 {
   zval* num;
@@ -378,12 +378,12 @@ PHP_METHOD(Decimal, div)
     mpz_div(result->value, self->value, decimal->value);
     result->scale = self->scale - decimal->scale;
   } else {
-    INVALID_ARGUMENT(num, "a Cassandra\\Types\\Decimal");
+    INVALID_ARGUMENT(num, "a Cassandra\\Decimal");
   }
 }
 /* }}} */
 
-/* {{{ Cassandra\Types\Decimal::mod() */
+/* {{{ Cassandra\Decimal::mod() */
 PHP_METHOD(Decimal, mod)
 {
   /* TODO: We could implement a remainder method */
@@ -391,7 +391,7 @@ PHP_METHOD(Decimal, mod)
                           "Modulo not implemented for floating point types");
 }
 
-/* {{{ Cassandra\Types\Decimal::abs() */
+/* {{{ Cassandra\Decimal::abs() */
 PHP_METHOD(Decimal, abs)
 {
   cassandra_decimal* self =
@@ -406,7 +406,7 @@ PHP_METHOD(Decimal, abs)
 }
 /* }}} */
 
-/* {{{ Cassandra\Types\Decimal::neg() */
+/* {{{ Cassandra\Decimal::neg() */
 PHP_METHOD(Decimal, neg)
 {
   cassandra_decimal* self =
@@ -421,7 +421,7 @@ PHP_METHOD(Decimal, neg)
 }
 /* }}} */
 
-/* {{{ Cassandra\Types\Decimal::sqrt() */
+/* {{{ Cassandra\Decimal::sqrt() */
 PHP_METHOD(Decimal, sqrt)
 {
   zend_throw_exception_ex(spl_ce_RuntimeException, 0 TSRMLS_CC, "Not implemented");
@@ -453,7 +453,7 @@ PHP_METHOD(Decimal, sqrt)
 }
 /* }}} */
 
-/* {{{ Cassandra\Types\Decimal::toInt() */
+/* {{{ Cassandra\Decimal::toInt() */
 PHP_METHOD(Decimal, toInt)
 {
   cassandra_decimal* self =
@@ -463,7 +463,7 @@ PHP_METHOD(Decimal, toInt)
 }
 /* }}} */
 
-/* {{{ Cassandra\Types\Decimal::toDouble() */
+/* {{{ Cassandra\Decimal::toDouble() */
 PHP_METHOD(Decimal, toDouble)
 {
   cassandra_decimal* self =
@@ -607,7 +607,7 @@ void cassandra_define_Decimal(TSRMLS_D)
 {
   zend_class_entry ce;
 
-  INIT_CLASS_ENTRY(ce, "Cassandra\\Types\\Decimal", cassandra_decimal_methods);
+  INIT_CLASS_ENTRY(ce, "Cassandra\\Decimal", cassandra_decimal_methods);
   cassandra_decimal_ce = zend_register_internal_class(&ce TSRMLS_CC);
   zend_class_implements(cassandra_decimal_ce TSRMLS_CC, 1, cassandra_numeric_ce);
   cassandra_decimal_ce->ce_flags     |= ZEND_ACC_FINAL_CLASS;

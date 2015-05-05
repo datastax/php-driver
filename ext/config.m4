@@ -56,20 +56,20 @@ if test "$PHP_CASSANDRA" != "no"; then
   ";
 
   CASSANDRA_TYPES="\
-    src/Cassandra/Types/Float.c \
-    src/Cassandra/Types/Bigint.c \
-    src/Cassandra/Types/Blob.c \
-    src/Cassandra/Types/Decimal.c \
-    src/Cassandra/Types/Inet.c \
-    src/Cassandra/Types/Numeric.c \
-    src/Cassandra/Types/UuidInterface.c \
-    src/Cassandra/Types/Uuid.c \
-    src/Cassandra/Types/Timestamp.c \
-    src/Cassandra/Types/Timeuuid.c \
-    src/Cassandra/Types/Varint.c \
-    src/Cassandra/Types/Set.c \
-    src/Cassandra/Types/Map.c \
-    src/Cassandra/Types/Collection.c \
+    src/Cassandra/Float.c \
+    src/Cassandra/Bigint.c \
+    src/Cassandra/Blob.c \
+    src/Cassandra/Decimal.c \
+    src/Cassandra/Inet.c \
+    src/Cassandra/Numeric.c \
+    src/Cassandra/UuidInterface.c \
+    src/Cassandra/Uuid.c \
+    src/Cassandra/Timestamp.c \
+    src/Cassandra/Timeuuid.c \
+    src/Cassandra/Varint.c \
+    src/Cassandra/Set.c \
+    src/Cassandra/Map.c \
+    src/Cassandra/Collection.c \
   ";
 
   CASSANDRA_UTIL="\
