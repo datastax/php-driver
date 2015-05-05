@@ -309,7 +309,7 @@ create_batch(cassandra_batch_statement* batch, CassConsistency consistency TSRML
 {
   HashPosition pos;
   void** data;
-  HashTable* statements = batch->statements;
+  HashTable* statements = &batch->statements;
   CassBatch* cass_batch = cass_batch_new(batch->batch_type);
 
   zend_hash_internal_pointer_reset_ex(statements, &pos);

@@ -119,7 +119,7 @@ typedef struct {
 typedef struct {
   STATEMENT_FIELDS
   CassBatchType batch_type;
-  HashTable*    statements;
+  HashTable     statements;
 } cassandra_batch_statement;
 
 #undef STATEMENT_FIELDS
