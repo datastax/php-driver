@@ -1,6 +1,10 @@
-
 #include "php_cassandra.h"
 #include "util/math.h"
+
+#if !defined(HAVE_STDINT_H)
+#define INT64_MAX 9223372036854775807LL
+#define INT64_MIN (-INT_MAX-1)
+#endif
 
 zend_class_entry* cassandra_bigint_ce = NULL;
 
@@ -259,7 +263,7 @@ PHP_METHOD(Bigint, abs)
   cassandra_bigint* self =
       (cassandra_bigint*) zend_object_store_get_object(getThis() TSRMLS_CC);
 
-  if (self->value == LONG_LONG_MIN) {
+  if (self->value == INT64_MIN) {
     zend_throw_exception_ex(cassandra_range_exception_ce, 0 TSRMLS_CC, "Value doesn't exist");
     return;
   }
@@ -328,7 +332,7 @@ PHP_METHOD(Bigint, min)
   object_init_ex(return_value, cassandra_bigint_ce);
   cassandra_bigint* bigint =
           (cassandra_bigint*) zend_object_store_get_object(return_value TSRMLS_CC);
-  bigint->value = LONG_LONG_MIN;
+  bigint->value = INT64_MIN;
 }
 /* }}} */
 
@@ -338,7 +342,7 @@ PHP_METHOD(Bigint, max)
   object_init_ex(return_value, cassandra_bigint_ce);
   cassandra_bigint* bigint =
           (cassandra_bigint*) zend_object_store_get_object(return_value TSRMLS_CC);
-  bigint->value = LONG_LONG_MAX;
+  bigint->value = INT64_MAX;
 }
 /* }}} */
 

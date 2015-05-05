@@ -38,16 +38,16 @@ to_mpf(mpf_t result, cassandra_decimal* decimal)
  * M = mantissa
  */
 #define DOUBLE_MANTISSA_BITS 52
-#define DOUBLE_MANITSSA_MASK (int64_t) ((1LL << DOUBLE_MANTISSA_BITS) - 1)
+#define DOUBLE_MANITSSA_MASK (cass_int64_t) ((1LL << DOUBLE_MANTISSA_BITS) - 1)
 #define DOUBLE_EXPONENT_BITS 11
-#define DOUBLE_EXPONENT_MASK (int64_t) ((1LL << DOUBLE_EXPONENT_BITS) - 1)
+#define DOUBLE_EXPONENT_MASK (cass_int64_t) ((1LL << DOUBLE_EXPONENT_BITS) - 1)
 
 static void
 from_double(cassandra_decimal* result, double value)
 {
-  int64_t raw = *((int64_t*) &value);
-  int64_t mantissa = raw & DOUBLE_MANITSSA_MASK;
-  int64_t exponent = (raw >> DOUBLE_MANTISSA_BITS) & DOUBLE_EXPONENT_MASK;
+  cass_int64_t raw = *((cass_int64_t*) &value);
+  cass_int64_t mantissa = raw & DOUBLE_MANITSSA_MASK;
+  cass_int64_t exponent = (raw >> DOUBLE_MANTISSA_BITS) & DOUBLE_EXPONENT_MASK;
 
   /* This exponent is offset using 1023 unless it's a denormal value then its value
    * is the minimum value -1022
