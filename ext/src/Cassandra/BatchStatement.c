@@ -30,7 +30,6 @@ PHP_METHOD(BatchStatement, __construct)
   if (type) {
     if (Z_TYPE_P(type) != IS_LONG) {
       INVALID_ARGUMENT(type, "one of Cassandra::BATCH_TYPE_*");
-      return;
     }
 
     switch (Z_LVAL_P(type)) {
@@ -41,7 +40,6 @@ PHP_METHOD(BatchStatement, __construct)
       break;
     default:
       INVALID_ARGUMENT(type, "one of Cassandra::BATCH_TYPE_*");
-      return;
     }
   }
 }
