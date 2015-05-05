@@ -383,6 +383,14 @@ PHP_METHOD(Decimal, div)
 }
 /* }}} */
 
+/* {{{ Cassandra\Types\Decimal::mod() */
+PHP_METHOD(Decimal, mod)
+{
+  /* TODO: We could implement a remainder method */
+  zend_throw_exception_ex(cassandra_logic_exception_ce, 0 TSRMLS_CC,
+                          "Modulo not implemented for floating point types");
+}
+
 /* {{{ Cassandra\Types\Decimal::abs() */
 PHP_METHOD(Decimal, abs)
 {
@@ -485,6 +493,7 @@ static zend_function_entry cassandra_decimal_methods[] = {
   PHP_ME(Decimal, sub, arginfo_num, ZEND_ACC_PUBLIC)
   PHP_ME(Decimal, mul, arginfo_num, ZEND_ACC_PUBLIC)
   PHP_ME(Decimal, div, arginfo_num, ZEND_ACC_PUBLIC)
+  PHP_ME(Decimal, mod, arginfo_num, ZEND_ACC_PUBLIC)
   PHP_ME(Decimal, abs, arginfo_none, ZEND_ACC_PUBLIC)
   PHP_ME(Decimal, neg, arginfo_none, ZEND_ACC_PUBLIC)
   PHP_ME(Decimal, sqrt, arginfo_none, ZEND_ACC_PUBLIC)

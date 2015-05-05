@@ -15,6 +15,7 @@ static zend_function_entry cassandra_numeric_methods[] = {
   PHP_ABSTRACT_ME(Numeric, sub, arginfo_num)
   PHP_ABSTRACT_ME(Numeric, mul, arginfo_num)
   PHP_ABSTRACT_ME(Numeric, div, arginfo_num)
+  PHP_ABSTRACT_ME(Numeric, mod, arginfo_num)
   PHP_ABSTRACT_ME(Numeric, abs, arginfo_none)
   PHP_ABSTRACT_ME(Numeric, neg, arginfo_none)
   PHP_ABSTRACT_ME(Numeric, sqrt, arginfo_none)

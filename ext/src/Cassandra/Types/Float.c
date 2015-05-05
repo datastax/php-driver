@@ -220,6 +220,16 @@ PHP_METHOD(Float, div)
 }
 /* }}} */
 
+/* {{{ Cassandra\Types\Float::mod() */
+PHP_METHOD(Float, mod)
+{
+  /* TODO: We could use fmod() here, but maybe we should add a remainder function
+   * for floating point types.
+   */
+  zend_throw_exception_ex(cassandra_logic_exception_ce, 0 TSRMLS_CC,
+                          "Modulo not implemented for floating point types");
+}
+
 /* {{{ Cassandra\Types\Float::abs() */
 PHP_METHOD(Float, abs)
 {
@@ -324,6 +334,7 @@ static zend_function_entry cassandra_float_methods[] = {
   PHP_ME(Float, sub, arginfo_num, ZEND_ACC_PUBLIC)
   PHP_ME(Float, mul, arginfo_num, ZEND_ACC_PUBLIC)
   PHP_ME(Float, div, arginfo_num, ZEND_ACC_PUBLIC)
+  PHP_ME(Float, mod, arginfo_num, ZEND_ACC_PUBLIC)
   PHP_ME(Float, abs, arginfo_none, ZEND_ACC_PUBLIC)
   PHP_ME(Float, neg, arginfo_none, ZEND_ACC_PUBLIC)
   PHP_ME(Float, sqrt, arginfo_none, ZEND_ACC_PUBLIC)
