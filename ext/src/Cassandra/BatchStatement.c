@@ -57,7 +57,7 @@ PHP_METHOD(BatchStatement, add)
 
   if (!instanceof_function(Z_OBJCE_P(statement), cassandra_simple_statement_ce TSRMLS_CC) &&
       !instanceof_function(Z_OBJCE_P(statement), cassandra_prepared_statement_ce TSRMLS_CC)) {
-    INVALID_ARGUMENT(statement, "a Cassandra\\SimpleStatement or Cassandra\\PreparedStatement");
+    INVALID_ARGUMENT(statement, "an instance of Cassandra\\SimpleStatement or Cassandra\\PreparedStatement");
   }
 
   cassandra_batch_statement_entry* entry = (cassandra_batch_statement_entry*) ecalloc(1, sizeof(cassandra_batch_statement_entry));

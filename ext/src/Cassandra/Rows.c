@@ -94,7 +94,7 @@ PHP_METHOD(Rows, offsetExists)
     return;
 
   if (Z_TYPE_P(offset) != IS_LONG || Z_LVAL_P(offset) < 0) {
-    INVALID_ARGUMENT(offset, "an positive integer");
+    INVALID_ARGUMENT(offset, "a positive integer");
   }
 
   cassandra_rows* self = (cassandra_rows*) zend_object_store_get_object(getThis() TSRMLS_CC);
@@ -111,7 +111,7 @@ PHP_METHOD(Rows, offsetGet)
     return;
 
   if (Z_TYPE_P(offset) != IS_LONG || Z_LVAL_P(offset) < 0) {
-    INVALID_ARGUMENT(offset, "an positive integer");
+    INVALID_ARGUMENT(offset, "a positive integer");
   }
 
   cassandra_rows* self = (cassandra_rows*) zend_object_store_get_object(getThis() TSRMLS_CC);

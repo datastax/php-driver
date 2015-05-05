@@ -39,15 +39,20 @@ PHP_METHOD(ExecutionOptions, __construct)
 
   zval** page_size;
   if (zend_hash_find(Z_ARRVAL_P(options), "page_size", sizeof("page_size"), (void**)&page_size) == SUCCESS) {
-    if (Z_TYPE_P(*page_size) != IS_LONG) {
-      INVALID_ARGUMENT(*page_size, "a long");
-      return;
+    if (Z_TYPE_P(*page_size) != IS_LONG || Z_LVAL_P(*page_size) <= 0) {
+      INVALID_ARGUMENT(*page_size, "greater than zero");
     }
     self->page_size = Z_LVAL_P(*page_size);
   }
 
   zval** timeout;
   if (zend_hash_find(Z_ARRVAL_P(options), "timeout", sizeof("timeout"), (void**)&timeout) == SUCCESS) {
+    if (!(Z_TYPE_P(*timeout) == IS_LONG   && Z_LVAL_P(*timeout) > 0) ||
+        !(Z_TYPE_P(*timeout) == IS_DOUBLE && Z_DVAL_P(*timeout) > 0) ||
+        !(Z_TYPE_P(*timeout) == IS_NULL)) {
+      INVALID_ARGUMENT(*timeout, "a number of seconds greater than zero or null");
+    }
+
     self->timeout = *timeout;
     Z_ADDREF_P(self->timeout);
   }

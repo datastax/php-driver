@@ -561,7 +561,7 @@ PHP_METHOD(DefaultSession, executeAsync)
       break;
     default:
       INVALID_ARGUMENT(statement,
-        "an instance of one of Cassandra\\SimpleStatement, " \
+        "an instance of Cassandra\\SimpleStatement, " \
         "Cassandra\\PreparedStatement or Cassandra\\BatchStatement"
       );
       return;

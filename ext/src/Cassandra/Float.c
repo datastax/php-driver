@@ -58,7 +58,7 @@ PHP_METHOD(Float, __construct)
         (cassandra_float*) zend_object_store_get_object(num TSRMLS_CC);
     self->value = flt->value;
   } else {
-    INVALID_ARGUMENT(num, "a long, a double, a numeric string or a Cassandra\\Float");
+    INVALID_ARGUMENT(num, "a long, double, numeric string or a Cassandra\\Float instance");
   }
 }
 /* }}} */
@@ -130,7 +130,7 @@ PHP_METHOD(Float, add)
 
     result->value = self->value + flt->value;
   } else {
-    INVALID_ARGUMENT(num, "a Cassandra\\Float");
+    INVALID_ARGUMENT(num, "an instance of Cassandra\\Float");
   }
 }
 /* }}} */
@@ -157,7 +157,7 @@ PHP_METHOD(Float, sub)
 
     result->value = self->value - flt->value;
   } else {
-    INVALID_ARGUMENT(num, "a Cassandra\\Float");
+    INVALID_ARGUMENT(num, "an instance of Cassandra\\Float");
   }
 }
 /* }}} */
@@ -184,7 +184,7 @@ PHP_METHOD(Float, mul)
 
     result->value = self->value * flt->value;
   } else {
-    INVALID_ARGUMENT(num, "a Cassandra\\Float");
+    INVALID_ARGUMENT(num, "an instance of Cassandra\\Float");
   }
 }
 /* }}} */
@@ -216,7 +216,7 @@ PHP_METHOD(Float, div)
 
     result->value = self->value / flt->value;
   } else {
-    INVALID_ARGUMENT(num, "a Cassandra\\Float");
+    INVALID_ARGUMENT(num, "an instance of Cassandra\\Float");
   }
 }
 /* }}} */

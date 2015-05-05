@@ -74,7 +74,7 @@ PHP_METHOD(Varint, __construct)
         (cassandra_varint*) zend_object_store_get_object(num TSRMLS_CC);
     mpz_set(self->value, varint->value);
   } else {
-    INVALID_ARGUMENT(num, "a long, a double, a numeric string or a Cassandra\\Varint");
+    INVALID_ARGUMENT(num, "a long, double, numeric string or a Cassandra\\Varint instance");
   }
 }
 /* }}} */
@@ -125,7 +125,7 @@ PHP_METHOD(Varint, add)
 
     mpz_add(result->value, self->value, varint->value);
   } else {
-    INVALID_ARGUMENT(num, "a Cassandra\\Varint");
+    INVALID_ARGUMENT(num, "an instance of Cassandra\\Varint");
   }
 }
 /* }}} */
@@ -152,7 +152,7 @@ PHP_METHOD(Varint, sub)
 
     mpz_sub(result->value, self->value, varint->value);
   } else {
-    INVALID_ARGUMENT(num, "a Cassandra\\Varint");
+    INVALID_ARGUMENT(num, "an instance of Cassandra\\Varint");
   }
 }
 /* }}} */
@@ -179,7 +179,7 @@ PHP_METHOD(Varint, mul)
 
     mpz_mul(result->value, self->value, varint->value);
   } else {
-    INVALID_ARGUMENT(num, "a Cassandra\\Varint");
+    INVALID_ARGUMENT(num, "an instance of Cassandra\\Varint");
   }
 }
 /* }}} */
@@ -211,7 +211,7 @@ PHP_METHOD(Varint, div)
 
     mpz_div(result->value, self->value, varint->value);
   } else {
-    INVALID_ARGUMENT(num, "a Cassandra\\Varint");
+    INVALID_ARGUMENT(num, "an instance of Cassandra\\Varint");
   }
 }
 /* }}} */
@@ -243,7 +243,7 @@ PHP_METHOD(Varint, mod)
 
     mpz_mod(result->value, self->value, varint->value);
   } else {
-    INVALID_ARGUMENT(num, "a Cassandra\\Varint");
+    INVALID_ARGUMENT(num, "an instance of Cassandra\\Varint");
   }
 }
 /* }}} */
