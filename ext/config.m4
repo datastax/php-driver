@@ -86,7 +86,11 @@ if test "$PHP_CASSANDRA" != "no"; then
       CASSANDRA_CFLAGS="-Wall -pedantic -Wextra -Wno-long-long -Wno-deprecated-declarations -Wno-unused-parameter -Wno-variadic-macros"
       ;;
   esac
-  CASSANDRA_LIBS="-lssl -lz -luv -lstdc++"
+
+  PHP_NEW_EXTENSION(cassandra, php_cassandra.c $CASSANDRA_CLASSES \
+    $CASSANDRA_TYPES, $ext_shared, , $CASSANDRA_CFLAGS)
+  PHP_SUBST(CASSANDRA_SHARED_LIBADD)
+  PHP_SUBST(CASSANDRA_CFLAGS)
 
   ifdef([PHP_ADD_EXTENSION_DEP],
   [
@@ -167,10 +171,5 @@ if test "$PHP_CASSANDRA" != "no"; then
 
   PHP_ADD_LIBRARY(cassandra,, CASSANDRA_SHARED_LIBADD)
 
-  CASSANDRA_SHARED_LIBADD="$CASSANDRA_SHARED_LIBADD $CASSANDRA_LIBS"
-  PHP_NEW_EXTENSION(cassandra, php_cassandra.c $CASSANDRA_CLASSES \
-    $CASSANDRA_TYPES, $ext_shared, , $CASSANDRA_CFLAGS)
-  PHP_SUBST(CASSANDRA_SHARED_LIBADD)
-  PHP_SUBST(CASSANDRA_CFLAGS)
-
+  CASSANDRA_SHARED_LIBADD="$CASSANDRA_SHARED_LIBADD $LIBS"
 fi
