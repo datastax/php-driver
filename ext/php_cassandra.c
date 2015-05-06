@@ -1,6 +1,10 @@
 #include "php_cassandra.h"
 #include <php_ini.h>
+#ifndef _WIN32
 #include <php_syslog.h>
+#else
+#  pragma message("syslog will be disabled on Windows")
+#endif
 #include <ext/standard/info.h>
 #include <fcntl.h>
 #include "util/bytes.h"
@@ -9,20 +13,6 @@
 #include "types/collection.h"
 #include "types/map.h"
 #include "types/set.h"
-
-#ifdef _WIN32
-  char *strndup(const char *str, size_t len) {
-    if (str) {
-        char *new_str = malloc(len + 1);
-        if (new_str) {
-            new_str[len] = 0;
-            return strncpy(new_str, str, len);
-        }
-    }
-
-    return NULL;
-  }
-#endif
 
 #define PHP_CASSANDRA_DEFAULT_LOG "php-driver.log"
 
@@ -230,13 +220,14 @@ php_cassandra_log(const CassLogMessage* message, void* data)
 
   if (log_length > 0) {
     int fd = -1;
-
+#ifndef _WIN32
     if (!strcmp(log, "syslog")) {
       php_syslog(LOG_NOTICE, "php-driver | [%s] %s (%s:%d)",
                  cass_log_level_string(message->severity), message->message,
                  message->file, message->line);
       return;
     }
+#endif
 
     fd = open(log, O_CREAT | O_APPEND | O_WRONLY, 0644);
 
@@ -653,7 +644,7 @@ PHP_FUNCTION(cassandra_session_connect_keyspace)
   ZEND_FETCH_RESOURCE(cluster, CassCluster*, &cluster_resource, -1,
     PHP_CASSANDRA_CLUSTER_RES_NAME, le_cassandra_cluster_res);
 
-  ks     = strndup(keyspace, keyspace_len);
+  ks     = estrndup(keyspace, keyspace_len);
   future = cass_session_connect_keyspace(session, cluster, ks);
 
   ZEND_REGISTER_RESOURCE(
