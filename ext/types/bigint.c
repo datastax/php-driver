@@ -21,12 +21,13 @@ PHP_METHOD(CassandraBigint, __construct)
 {
   char* value;
   int value_len;
+  cassandra_bigint* number = NULL;
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &value, &value_len) == FAILURE) {
     return;
   }
 
-  cassandra_bigint* number = (cassandra_bigint*) zend_object_store_get_object(getThis() TSRMLS_CC);
+  number = (cassandra_bigint*) zend_object_store_get_object(getThis() TSRMLS_CC);
 
   if (!php_cassandra_parse_bigint(value, value_len, &number->value TSRMLS_CC))
     return;

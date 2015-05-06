@@ -9,48 +9,48 @@ fi
 if test "$PHP_CASSANDRA" != "no"; then
   CASSANDRA_CLASSES="\
     src/Cassandra.c \
+    src/Cassandra/BatchStatement.c \
     src/Cassandra/Cluster.c \
-    src/Cassandra/Cluster/Builder.c \
     src/Cassandra/DefaultCluster.c \
+    src/Cassandra/DefaultSession.c \
     src/Cassandra/Exception.c \
-    src/Cassandra/Exception/DomainException.c \
-    src/Cassandra/Exception/InvalidArgumentException.c \
-    src/Cassandra/Exception/LogicException.c \
-    src/Cassandra/Exception/RuntimeException.c \
-    src/Cassandra/Exception/TimeoutException.c \
-    src/Cassandra/Exception/ExecutionException.c \
-    src/Cassandra/Exception/ReadTimeout.c \
-    src/Cassandra/Exception/WriteTimeoutException.c \
-    src/Cassandra/Exception/UnavailableException.c \
-    src/Cassandra/Exception/TruncateException.c \
-    src/Cassandra/Exception/ValidationException.c \
-    src/Cassandra/Exception/InvalidQueryException.c \
-    src/Cassandra/Exception/InvalidSyntaxException.c \
-    src/Cassandra/Exception/UnauthorizedException.c \
-    src/Cassandra/Exception/UnpreparedException.c \
-    src/Cassandra/Exception/ConfigurationException.c \
-    src/Cassandra/Exception/AlreadyExistsException.c \
-    src/Cassandra/Exception/AuthenticationException.c \
-    src/Cassandra/Exception/ProtocolException.c \
-    src/Cassandra/Exception/ServerException.c \
-    src/Cassandra/Exception/IsBootstrappingException.c \
-    src/Cassandra/Exception/OverloadedException.c \
+    src/Cassandra/ExecutionOptions.c \
     src/Cassandra/Future.c \
+    src/Cassandra/FutureClose.c \
     src/Cassandra/FuturePreparedStatement.c \
     src/Cassandra/FutureRows.c \
     src/Cassandra/FutureSession.c \
     src/Cassandra/FutureValue.c \
-    src/Cassandra/FutureClose.c \
-    src/Cassandra/Session.c \
-    src/Cassandra/DefaultSession.c \
-    src/Cassandra/SSLOptions.c \
-    src/Cassandra/SSLOptions/Builder.c \
-    src/Cassandra/Statement.c \
-    src/Cassandra/ExecutionOptions.c \
-    src/Cassandra/SimpleStatement.c \
     src/Cassandra/PreparedStatement.c \
-    src/Cassandra/BatchStatement.c \
     src/Cassandra/Rows.c \
+    src/Cassandra/Session.c \
+    src/Cassandra/SimpleStatement.c \
+    src/Cassandra/SSLOptions.c \
+    src/Cassandra/Statement.c \
+    src/Cassandra/Cluster/Builder.c \
+    src/Cassandra/Exception/AlreadyExistsException.c \
+    src/Cassandra/Exception/AuthenticationException.c \
+    src/Cassandra/Exception/ConfigurationException.c \
+    src/Cassandra/Exception/DomainException.c \
+    src/Cassandra/Exception/ExecutionException.c \
+    src/Cassandra/Exception/InvalidArgumentException.c \
+    src/Cassandra/Exception/InvalidQueryException.c \
+    src/Cassandra/Exception/InvalidSyntaxException.c \
+    src/Cassandra/Exception/IsBootstrappingException.c \
+    src/Cassandra/Exception/LogicException.c \
+    src/Cassandra/Exception/OverloadedException.c \
+    src/Cassandra/Exception/ProtocolException.c \
+    src/Cassandra/Exception/ReadTimeout.c \
+    src/Cassandra/Exception/RuntimeException.c \
+    src/Cassandra/Exception/ServerException.c \
+    src/Cassandra/Exception/TimeoutException.c \
+    src/Cassandra/Exception/TruncateException.c \
+    src/Cassandra/Exception/UnauthorizedException.c \
+    src/Cassandra/Exception/UnavailableException.c \
+    src/Cassandra/Exception/UnpreparedException.c \
+    src/Cassandra/Exception/ValidationException.c \
+    src/Cassandra/Exception/WriteTimeoutException.c \
+    src/Cassandra/SSLOptions/Builder.c \
   ";
 
   CASSANDRA_TYPES="\
@@ -78,9 +78,15 @@ if test "$PHP_CASSANDRA" != "no"; then
     types/collection.c \
   ";
 
-  PHP_SUBST(CASSANDRA_SHARED_LIBADD)
-  PHP_NEW_EXTENSION(cassandra, php_cassandra.c $CASSANDRA_CLASSES \
-    $CASSANDRA_TYPES, $ext_shared)
+  case $(uname -s) in
+    Linux)
+      CASSANDRA_CFLAGS="-Wall -pedantic-errors -Wextra -Wno-long-long -Wno-deprecated-declarations -Wno-unused-parameter -Wno-variadic-macros -pthread"
+      ;;
+    Darwin)
+      CASSANDRA_CFLAGS="-Wall -pedantic -Wextra -Wno-long-long -Wno-deprecated-declarations -Wno-unused-parameter -Wno-variadic-macros"
+      ;;
+  esac
+  CASSANDRA_LIBS="-lssl -lz -luv -lstdc++"
 
   ifdef([PHP_ADD_EXTENSION_DEP],
   [
@@ -161,5 +167,10 @@ if test "$PHP_CASSANDRA" != "no"; then
 
   PHP_ADD_LIBRARY(cassandra,, CASSANDRA_SHARED_LIBADD)
 
-  CASSANDRA_SHARED_LIBADD="$CASSANDRA_SHARED_LIBADD $LIBS"
+  CASSANDRA_SHARED_LIBADD="$CASSANDRA_SHARED_LIBADD $CASSANDRA_LIBS"
+  PHP_NEW_EXTENSION(cassandra, php_cassandra.c $CASSANDRA_CLASSES \
+    $CASSANDRA_TYPES, $ext_shared, , $CASSANDRA_CFLAGS)
+  PHP_SUBST(CASSANDRA_SHARED_LIBADD)
+  PHP_SUBST(CASSANDRA_CFLAGS)
+
 fi

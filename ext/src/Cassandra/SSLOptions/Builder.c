@@ -23,16 +23,16 @@ file_get_contents(char* path, char** output, int* len TSRMLS_DC)
 
 PHP_METHOD(SSLOptionsBuilder, build)
 {
+  cassandra_ssl* ssl = NULL;
+  int   len;
+  char* contents;
+  CassError rc;
+
   cassandra_ssl_builder* builder =
     (cassandra_ssl_builder*) zend_object_store_get_object(getThis() TSRMLS_CC);
 
   object_init_ex(return_value, cassandra_ssl_ce);
-  cassandra_ssl* ssl = (cassandra_ssl*)
-    zend_object_store_get_object(return_value TSRMLS_CC);
-
-  int   len;
-  char* contents;
-  CassError rc;
+  ssl = (cassandra_ssl*) zend_object_store_get_object(return_value TSRMLS_CC);
 
   cass_ssl_set_verify_flags(ssl->ssl, builder->flags);
 
@@ -77,6 +77,7 @@ PHP_METHOD(SSLOptionsBuilder, withTrustedCerts)
   zval*   path;
   zval    readable;
   int     argc, i;
+  cassandra_ssl_builder* builder = NULL;
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "+", &args, &argc) == FAILURE) {
     return;
@@ -98,8 +99,7 @@ PHP_METHOD(SSLOptionsBuilder, withTrustedCerts)
     }
   }
 
-  cassandra_ssl_builder* builder =
-    (cassandra_ssl_builder*) zend_object_store_get_object(getThis() TSRMLS_CC);
+  builder = (cassandra_ssl_builder*) zend_object_store_get_object(getThis() TSRMLS_CC);
 
   if (builder->trusted_certs) {
     for (i = 0; i < builder->trusted_certs_cnt; i++)
@@ -123,13 +123,13 @@ PHP_METHOD(SSLOptionsBuilder, withTrustedCerts)
 PHP_METHOD(SSLOptionsBuilder, withVerifyFlags)
 {
   long flags;
+  cassandra_ssl_builder* builder = NULL;
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &flags) == FAILURE) {
     return;
   }
 
-  cassandra_ssl_builder* builder =
-    (cassandra_ssl_builder*) zend_object_store_get_object(getThis() TSRMLS_CC);
+  builder = (cassandra_ssl_builder*) zend_object_store_get_object(getThis() TSRMLS_CC);
 
   builder->flags = (int) flags;
 
@@ -141,6 +141,7 @@ PHP_METHOD(SSLOptionsBuilder, withClientCert)
   char* client_cert;
   int   client_cert_len;
   zval  readable;
+  cassandra_ssl_builder* builder = NULL;
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &client_cert, &client_cert_len) == FAILURE) {
     return;
@@ -154,8 +155,7 @@ PHP_METHOD(SSLOptionsBuilder, withClientCert)
     return;
   }
 
-  cassandra_ssl_builder* builder =
-    (cassandra_ssl_builder*) zend_object_store_get_object(getThis() TSRMLS_CC);
+  builder = (cassandra_ssl_builder*) zend_object_store_get_object(getThis() TSRMLS_CC);
 
   if (builder->client_cert)
     efree(builder->client_cert);
@@ -171,6 +171,7 @@ PHP_METHOD(SSLOptionsBuilder, withPrivateKey)
   char* passphrase = NULL;
   int   private_key_len, passphrase_len;
   zval  readable;
+  cassandra_ssl_builder* builder = NULL;
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s|s", &private_key, &private_key_len, &passphrase, &passphrase_len) == FAILURE) {
     return;
@@ -184,8 +185,7 @@ PHP_METHOD(SSLOptionsBuilder, withPrivateKey)
     return;
   }
 
-  cassandra_ssl_builder* builder =
-    (cassandra_ssl_builder*) zend_object_store_get_object(getThis() TSRMLS_CC);
+  builder = (cassandra_ssl_builder*) zend_object_store_get_object(getThis() TSRMLS_CC);
 
   if (builder->private_key)
     efree(builder->private_key);

@@ -9,6 +9,12 @@ ZEND_EXTERN_MODULE_GLOBALS(cassandra)
 PHP_METHOD(ExecutionOptions, __construct)
 {
   zval* options = NULL;
+  cassandra_execution_options* self = NULL;
+  zval** consistency = NULL;
+  zval** serial_consistency = NULL;
+  zval** page_size = NULL;
+  zval** timeout = NULL;
+  zval** arguments = NULL;
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z", &options) == FAILURE) {
     return;
@@ -20,24 +26,20 @@ PHP_METHOD(ExecutionOptions, __construct)
     INVALID_ARGUMENT(options, "an array");
   }
 
-  cassandra_execution_options* self =
-    (cassandra_execution_options*) zend_object_store_get_object(getThis() TSRMLS_CC);
+  self = (cassandra_execution_options*) zend_object_store_get_object(getThis() TSRMLS_CC);
 
-  zval** consistency;
   if (zend_hash_find(Z_ARRVAL_P(options), "consistency", sizeof("consistency"), (void**)&consistency) == SUCCESS) {
     if (php_cassandra_get_consistency(*consistency, &self->consistency TSRMLS_CC) == FAILURE) {
       return;
     }
   }
 
-  zval** serial_consistency;
   if (zend_hash_find(Z_ARRVAL_P(options), "serial_consistency", sizeof("serial_consistency"), (void**)&serial_consistency) == SUCCESS) {
     if (php_cassandra_get_serial_consistency(*serial_consistency, &self->serial_consistency TSRMLS_CC) == FAILURE) {
       return;
     }
   }
 
-  zval** page_size;
   if (zend_hash_find(Z_ARRVAL_P(options), "page_size", sizeof("page_size"), (void**)&page_size) == SUCCESS) {
     if (Z_TYPE_P(*page_size) != IS_LONG) {
       INVALID_ARGUMENT(*page_size, "a long");
@@ -46,13 +48,11 @@ PHP_METHOD(ExecutionOptions, __construct)
     self->page_size = Z_LVAL_P(*page_size);
   }
 
-  zval** timeout;
   if (zend_hash_find(Z_ARRVAL_P(options), "timeout", sizeof("timeout"), (void**)&timeout) == SUCCESS) {
     self->timeout = *timeout;
     Z_ADDREF_P(self->timeout);
   }
 
-  zval** arguments;
   if (zend_hash_find(Z_ARRVAL_P(options), "arguments", sizeof("arguments"), (void**)&arguments) == SUCCESS) {
     if (Z_TYPE_P(*arguments) != IS_ARRAY) {
       INVALID_ARGUMENT(*arguments, "an array");

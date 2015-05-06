@@ -146,6 +146,14 @@ php_cassandra_hash_object(zval* object, CassValueType type, char** key, int* len
   zend_uint class_name_len;
   char* string;
   int string_len;
+  cassandra_float* float_number = NULL;
+  cassandra_bigint* bigint = NULL;
+  cassandra_blob* blob = NULL;
+  cassandra_decimal* decimal = NULL;
+  cassandra_timestamp* timestamp = NULL;
+  cassandra_uuid* uuid = NULL;
+  cassandra_varint* varint = NULL;
+  cassandra_inet* inet = NULL;
 
   if (Z_TYPE_P(object) == IS_NULL) {
     *key = strdup("C:NULL");
@@ -189,7 +197,7 @@ php_cassandra_hash_object(zval* object, CassValueType type, char** key, int* len
       EXPECTING_VALUE("an instance of Cassandra\\Float");
     }
 
-    cassandra_float* float_number = (cassandra_float*) zend_object_store_get_object(object TSRMLS_CC);
+    float_number = (cassandra_float*) zend_object_store_get_object(object TSRMLS_CC);
     *len = spprintf(key, 0, "C:FLOAT:%.*F", (int) EG(precision), float_number->value);
 
     return 1;
@@ -199,7 +207,7 @@ php_cassandra_hash_object(zval* object, CassValueType type, char** key, int* len
       EXPECTING_VALUE("an instance of Cassandra\\Bigint");
     }
 
-    cassandra_bigint* bigint = (cassandra_bigint*) zend_object_store_get_object(object TSRMLS_CC);
+    bigint = (cassandra_bigint*) zend_object_store_get_object(object TSRMLS_CC);
 #ifdef WIN32
     *len = spprintf(key, 0, "C:BIGINT:%I64d", (long long int) bigint->value);
 #else
@@ -211,7 +219,7 @@ php_cassandra_hash_object(zval* object, CassValueType type, char** key, int* len
       EXPECTING_VALUE("an instance of Cassandra\\Blob");
     }
 
-    cassandra_blob* blob = (cassandra_blob*) zend_object_store_get_object(object TSRMLS_CC);
+    blob = (cassandra_blob*) zend_object_store_get_object(object TSRMLS_CC);
     php_cassandra_bytes_to_hex((const char*) blob->data, blob->size, &string, &string_len);
 
     *len = spprintf(key, 0, "C:BLOB:%s", string);
@@ -222,7 +230,7 @@ php_cassandra_hash_object(zval* object, CassValueType type, char** key, int* len
       EXPECTING_VALUE("an instance of Cassandra\\Decimal");
     }
 
-    cassandra_decimal* decimal = (cassandra_decimal*) zend_object_store_get_object(object TSRMLS_CC);
+    decimal = (cassandra_decimal*) zend_object_store_get_object(object TSRMLS_CC);
     php_cassandra_format_integer(decimal->value, &string, &string_len);
 
     *len = spprintf(key, 0, "C:DECIMAL:%s:%ld", string, decimal->scale);
@@ -233,7 +241,7 @@ php_cassandra_hash_object(zval* object, CassValueType type, char** key, int* len
       EXPECTING_VALUE("an instance of Cassandra\\Timestamp");
     }
 
-    cassandra_timestamp* timestamp = (cassandra_timestamp*) zend_object_store_get_object(object TSRMLS_CC);
+    timestamp = (cassandra_timestamp*) zend_object_store_get_object(object TSRMLS_CC);
 
 #ifdef WIN32
     *len = spprintf(key, 0, "C:TIMESTAMP:%I64d", (long long int) timestamp->timestamp);
@@ -247,7 +255,7 @@ php_cassandra_hash_object(zval* object, CassValueType type, char** key, int* len
       EXPECTING_VALUE("an instance of Cassandra\\Uuid");
     }
 
-    cassandra_uuid* uuid = (cassandra_uuid*) zend_object_store_get_object(object TSRMLS_CC);
+    uuid = (cassandra_uuid*) zend_object_store_get_object(object TSRMLS_CC);
 #ifdef WIN32
     *len = spprintf(key, 0, "C:UUID:%I64d:%I64d", (long long int) uuid->uuid.time_and_version, (long long int) uuid->uuid.clock_seq_and_node);
 #else
@@ -259,7 +267,7 @@ php_cassandra_hash_object(zval* object, CassValueType type, char** key, int* len
       EXPECTING_VALUE("an instance of Cassandra\\Varint");
     }
 
-    cassandra_varint* varint = (cassandra_varint*) zend_object_store_get_object(object TSRMLS_CC);
+    varint = (cassandra_varint*) zend_object_store_get_object(object TSRMLS_CC);
     php_cassandra_format_integer(varint->value, &string, &string_len);
 
     *len = spprintf(key, 0, "C:VARINT:%s", string);
@@ -270,7 +278,7 @@ php_cassandra_hash_object(zval* object, CassValueType type, char** key, int* len
       EXPECTING_VALUE("an instance of Cassandra\\Inet");
     }
 
-    cassandra_inet* inet = (cassandra_inet*) zend_object_store_get_object(object TSRMLS_CC);
+    inet = (cassandra_inet*) zend_object_store_get_object(object TSRMLS_CC);
     if (inet->inet.address_length > 4)
       *len = spprintf(key, 0, "C:INET:%x:%x:%x:%x:%x:%x:%x:%x",
         (inet->inet.address[0]  * 256 + inet->inet.address[1]),
@@ -467,11 +475,12 @@ php_cassandra_collection_from_set(cassandra_set* set, CassCollection** collectio
   int result = 1;
   HashPointer ptr;
   zval** current;
+  CassCollection* collection = NULL;
 
   zend_hash_get_pointer(&set->values, &ptr);
   zend_hash_internal_pointer_reset(&set->values);
 
-  CassCollection* collection = cass_collection_new(CASS_COLLECTION_TYPE_SET, zend_hash_num_elements(&set->values));
+  collection = cass_collection_new(CASS_COLLECTION_TYPE_SET, zend_hash_num_elements(&set->values));
 
   while (zend_hash_get_current_data(&set->values, (void**) &current) == SUCCESS) {
     if (!php_cassandra_collection_append(collection, *current, set->type TSRMLS_CC)) {
@@ -497,11 +506,12 @@ php_cassandra_collection_from_collection(cassandra_collection* coll, CassCollect
   int result = 1;
   HashPointer ptr;
   zval** current;
+  CassCollection* collection = NULL;
 
   zend_hash_get_pointer(&coll->values, &ptr);
   zend_hash_internal_pointer_reset(&coll->values);
 
-  CassCollection* collection = cass_collection_new(CASS_COLLECTION_TYPE_LIST, zend_hash_num_elements(&coll->values));
+  collection = cass_collection_new(CASS_COLLECTION_TYPE_LIST, zend_hash_num_elements(&coll->values));
 
   while (zend_hash_get_current_data(&coll->values, (void**) &current) == SUCCESS) {
     if (!php_cassandra_collection_append(collection, *current, coll->type TSRMLS_CC)) {
@@ -527,6 +537,7 @@ php_cassandra_collection_from_map(cassandra_map* map, CassCollection** collectio
   int result = 1;
   HashPointer keys_ptr, values_ptr;
   zval** current;
+  CassCollection* collection = NULL;
 
   zend_hash_get_pointer(&map->keys, &keys_ptr);
   zend_hash_internal_pointer_reset(&map->keys);
@@ -534,7 +545,7 @@ php_cassandra_collection_from_map(cassandra_map* map, CassCollection** collectio
   zend_hash_get_pointer(&map->values, &values_ptr);
   zend_hash_internal_pointer_reset(&map->values);
 
-  CassCollection* collection = cass_collection_new(CASS_COLLECTION_TYPE_MAP, zend_hash_num_elements(&map->keys));
+  collection = cass_collection_new(CASS_COLLECTION_TYPE_MAP, zend_hash_num_elements(&map->keys));
 
   while (zend_hash_get_current_data(&map->keys, (void**) &current) == SUCCESS) {
     if (php_cassandra_collection_append(collection, *current, map->key_type TSRMLS_CC)) {

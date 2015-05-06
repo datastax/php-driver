@@ -1,4 +1,3 @@
-#include <php.h>
 #include "php_cassandra.h"
 #include <stdlib.h>
 #include "util/bytes.h"

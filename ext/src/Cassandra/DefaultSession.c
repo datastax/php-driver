@@ -69,8 +69,7 @@ bind_argument_by_index(CassStatement* statement, size_t index, zval* value TSRML
     if (instanceof_function(Z_OBJCE_P(value), cassandra_ce_Decimal TSRMLS_CC)) {
       cassandra_decimal* decimal = (cassandra_decimal*) zend_object_store_get_object(value TSRMLS_CC);
       size_t size;
-      cass_byte_t* data;
-      data = (cass_byte_t*) export_twos_complement(decimal->value, &size);
+      cass_byte_t* data = (cass_byte_t*) export_twos_complement(decimal->value, &size);
       CassError rc = cass_statement_bind_decimal(statement, index, data, size, decimal->scale);
       free(data);
       CHECK_RESULT(rc);
@@ -87,34 +86,37 @@ bind_argument_by_index(CassStatement* statement, size_t index, zval* value TSRML
     }
 
     if (instanceof_function(Z_OBJCE_P(value), cassandra_ce_Set TSRMLS_CC)) {
+      CassError rc = CASS_OK;
       CassCollection* collection;
       cassandra_set* set = (cassandra_set*) zend_object_store_get_object(value TSRMLS_CC);
       if (!php_cassandra_collection_from_set(set, &collection TSRMLS_CC))
         return FAILURE;
 
-      CassError rc = cass_statement_bind_collection(statement, index, collection);
+      rc = cass_statement_bind_collection(statement, index, collection);
       cass_collection_free(collection);
       CHECK_RESULT(rc);
     }
 
     if (instanceof_function(Z_OBJCE_P(value), cassandra_ce_Map TSRMLS_CC)) {
+      CassError rc = CASS_OK;
       CassCollection* collection;
       cassandra_map* map = (cassandra_map*) zend_object_store_get_object(value TSRMLS_CC);
       if (!php_cassandra_collection_from_map(map, &collection TSRMLS_CC))
         return FAILURE;
 
-      CassError rc = cass_statement_bind_collection(statement, index, collection);
+      rc = cass_statement_bind_collection(statement, index, collection);
       cass_collection_free(collection);
       CHECK_RESULT(rc);
     }
 
     if (instanceof_function(Z_OBJCE_P(value), cassandra_ce_Collection TSRMLS_CC)) {
+      CassError rc = CASS_OK;
       CassCollection* collection;
       cassandra_collection* coll = (cassandra_collection*) zend_object_store_get_object(value TSRMLS_CC);
       if (!php_cassandra_collection_from_collection(coll, &collection TSRMLS_CC))
         return FAILURE;
 
-      CassError rc = cass_statement_bind_collection(statement, index, collection);
+      rc = cass_statement_bind_collection(statement, index, collection);
       cass_collection_free(collection);
       CHECK_RESULT(rc);
     }
@@ -166,8 +168,7 @@ bind_argument_by_name(CassStatement* statement, const char* name, zval* value TS
     if (instanceof_function(Z_OBJCE_P(value), cassandra_ce_Varint TSRMLS_CC)) {
       cassandra_varint* varint = (cassandra_varint*) zend_object_store_get_object(value TSRMLS_CC);
       size_t size;
-      cass_byte_t* data;
-      data = (cass_byte_t*) export_twos_complement(varint->value, &size);
+      cass_byte_t* data = (cass_byte_t*) export_twos_complement(varint->value, &size);
       CassError rc = cass_statement_bind_bytes_by_name(statement, name, data, size);
       free(data);
       CHECK_RESULT(rc);
@@ -176,8 +177,7 @@ bind_argument_by_name(CassStatement* statement, const char* name, zval* value TS
     if (instanceof_function(Z_OBJCE_P(value), cassandra_ce_Decimal TSRMLS_CC)) {
       cassandra_decimal* decimal = (cassandra_decimal*) zend_object_store_get_object(value TSRMLS_CC);
       size_t size;
-      cass_byte_t* data;
-      data = (cass_byte_t*) export_twos_complement(decimal->value, &size);
+      cass_byte_t* data = (cass_byte_t*) export_twos_complement(decimal->value, &size);
       CassError rc = cass_statement_bind_decimal_by_name(statement, name, data, size, decimal->scale);
       free(data);
       CHECK_RESULT(rc);
@@ -194,34 +194,37 @@ bind_argument_by_name(CassStatement* statement, const char* name, zval* value TS
     }
 
     if (instanceof_function(Z_OBJCE_P(value), cassandra_ce_Set TSRMLS_CC)) {
+      CassError rc = CASS_OK;
       CassCollection* collection;
       cassandra_set* set = (cassandra_set*) zend_object_store_get_object(value TSRMLS_CC);
       if (!php_cassandra_collection_from_set(set, &collection TSRMLS_CC))
         return FAILURE;
 
-      CassError rc = cass_statement_bind_collection_by_name(statement, name, collection);
+      rc = cass_statement_bind_collection_by_name(statement, name, collection);
       cass_collection_free(collection);
       CHECK_RESULT(rc);
     }
 
     if (instanceof_function(Z_OBJCE_P(value), cassandra_ce_Map TSRMLS_CC)) {
+      CassError rc = CASS_OK;
       CassCollection* collection;
       cassandra_map* map = (cassandra_map*) zend_object_store_get_object(value TSRMLS_CC);
       if (!php_cassandra_collection_from_map(map, &collection TSRMLS_CC))
         return FAILURE;
 
-      CassError rc = cass_statement_bind_collection_by_name(statement, name, collection);
+      rc = cass_statement_bind_collection_by_name(statement, name, collection);
       cass_collection_free(collection);
       CHECK_RESULT(rc);
     }
 
     if (instanceof_function(Z_OBJCE_P(value), cassandra_ce_Collection TSRMLS_CC)) {
+      CassError rc = CASS_OK;
       CassCollection* collection;
       cassandra_collection* coll = (cassandra_collection*) zend_object_store_get_object(value TSRMLS_CC);
       if (!php_cassandra_collection_from_collection(coll, &collection TSRMLS_CC))
         return FAILURE;
 
-      CassError rc = cass_statement_bind_collection_by_name(statement, name, collection);
+      rc = cass_statement_bind_collection_by_name(statement, name, collection);
       cass_collection_free(collection);
       CHECK_RESULT(rc);
     }
@@ -311,6 +314,7 @@ create_batch(cassandra_batch_statement* batch, CassConsistency consistency TSRML
   void** data;
   HashTable* statements = batch->statements;
   CassBatch* cass_batch = cass_batch_new(batch->batch_type);
+  CassError rc = CASS_OK;
 
   zend_hash_internal_pointer_reset_ex(statements, &pos);
   while (zend_hash_get_current_data_ex(statements, (void**)&data, &pos) == SUCCESS) {
@@ -328,7 +332,7 @@ create_batch(cassandra_batch_statement* batch, CassConsistency consistency TSRML
     zend_hash_move_forward_ex(statements, &pos);
   }
 
-  CassError rc = cass_batch_set_consistency(cass_batch, consistency);
+  rc = cass_batch_set_consistency(cass_batch, consistency);
 
   if (rc != CASS_OK) {
     cass_batch_free(cass_batch);
@@ -345,11 +349,12 @@ create_single(cassandra_statement* statement, HashTable* arguments,
               CassConsistency consistency, long serial_consistency,
               int page_size TSRMLS_DC)
 {
+  CassError rc = CASS_OK;
   CassStatement* stmt = create_statement(statement, arguments TSRMLS_CC);
   if (!stmt)
     return NULL;
 
-  CassError rc = cass_statement_set_consistency(stmt, consistency);
+  rc = cass_statement_set_consistency(stmt, consistency);
 
   if (rc == CASS_OK && serial_consistency >= 0)
     rc = cass_statement_set_serial_consistency(stmt, serial_consistency);
@@ -371,30 +376,36 @@ PHP_METHOD(DefaultSession, execute)
 {
   zval *statement = NULL;
   zval *options = NULL;
+  cassandra_session* self = NULL;
+  cassandra_statement* stmt = NULL;
+  HashTable* arguments = NULL;
+  CassConsistency consistency = CASS_CONSISTENCY_ONE;
+  int page_size = -1;
+  zval* timeout = NULL;
+  long serial_consistency = -1;
+  cassandra_execution_options* opts = NULL;
+  CassFuture* future = NULL;
+  CassStatement* single = NULL;
+  CassBatch* batch  = NULL;
 
   if(zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z|z", &statement, &options) == FAILURE) {
     return;
   }
 
-  cassandra_session* self =
-    (cassandra_session*) zend_object_store_get_object(getThis() TSRMLS_CC);
+  self = (cassandra_session*) zend_object_store_get_object(getThis() TSRMLS_CC);
 
-  cassandra_statement* stmt =
-    (cassandra_statement*) zend_object_store_get_object(statement TSRMLS_CC);
+  stmt = (cassandra_statement*) zend_object_store_get_object(statement TSRMLS_CC);
 
-  HashTable*      arguments          = NULL;
-  CassConsistency consistency        = self->default_consistency;
-  int             page_size          = self->default_page_size;
-  zval*           timeout            = self->default_timeout;
-  long            serial_consistency = -1;
+  consistency = self->default_consistency;
+  page_size = self->default_page_size;
+  timeout = self->default_timeout;
 
   if (options) {
     if (!instanceof_function(Z_OBJCE_P(options), cassandra_execution_options_ce TSRMLS_CC)) {
       INVALID_ARGUMENT(options, "an instance of Cassandra\\ExecutionOptions or null");
     }
 
-    cassandra_execution_options* opts =
-      (cassandra_execution_options*) zend_object_store_get_object(options TSRMLS_CC);
+    opts = (cassandra_execution_options*) zend_object_store_get_object(options TSRMLS_CC);
 
     if (opts->arguments)
       arguments = Z_ARRVAL_P(opts->arguments);
@@ -411,10 +422,6 @@ PHP_METHOD(DefaultSession, execute)
     if (opts->serial_consistency >= 0)
       serial_consistency = opts->serial_consistency;
   }
-
-  CassFuture*    future;
-  CassStatement* single = NULL;
-  CassBatch*     batch  = NULL;
 
   switch (stmt->type) {
     case CASSANDRA_SIMPLE_STATEMENT:
@@ -444,11 +451,14 @@ PHP_METHOD(DefaultSession, execute)
   }
 
   do {
+    const CassResult* result = NULL;
+    cassandra_rows* rows = NULL;
+
     if (php_cassandra_future_wait_timed(future, timeout TSRMLS_CC) == FAILURE ||
         php_cassandra_future_is_error(future TSRMLS_CC) == FAILURE)
       break;
 
-    const CassResult* result = cass_future_get_result(future);
+    result = cass_future_get_result(future);
 
     if (!result) {
       zend_throw_exception_ex(cassandra_runtime_exception_ce, 0 TSRMLS_CC,
@@ -457,8 +467,7 @@ PHP_METHOD(DefaultSession, execute)
     }
 
     object_init_ex(return_value, cassandra_rows_ce);
-    cassandra_rows* rows =
-      (cassandra_rows*) zend_object_store_get_object(return_value TSRMLS_CC);
+    rows = (cassandra_rows*) zend_object_store_get_object(return_value TSRMLS_CC);
 
     if (php_cassandra_get_result(result, &rows->rows TSRMLS_CC) == FAILURE) {
       cass_result_free(result);
@@ -491,30 +500,35 @@ PHP_METHOD(DefaultSession, executeAsync)
 {
   zval *statement = NULL;
   zval *options = NULL;
+  cassandra_session* self = NULL;
+  cassandra_statement* stmt = NULL;
+  HashTable* arguments = NULL;
+  CassConsistency consistency = CASS_CONSISTENCY_ONE;
+  int page_size = -1;
+  long serial_consistency = -1;
+  cassandra_execution_options* opts = NULL;
+  cassandra_future_rows* future_rows = NULL;
+  CassStatement* single = NULL;
+  CassBatch* batch  = NULL;
 
   if(zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "O|z", &statement,
                            cassandra_statement_ce, &options) == FAILURE) {
     return;
   }
 
-  cassandra_session* self =
-    (cassandra_session*) zend_object_store_get_object(getThis() TSRMLS_CC);
+  self = (cassandra_session*) zend_object_store_get_object(getThis() TSRMLS_CC);
 
-  cassandra_statement* stmt =
-    (cassandra_statement*) zend_object_store_get_object(statement TSRMLS_CC);
+  stmt = (cassandra_statement*) zend_object_store_get_object(statement TSRMLS_CC);
 
-  HashTable*      arguments          = NULL;
-  CassConsistency consistency        = self->default_consistency;
-  int             page_size          = self->default_page_size;
-  long            serial_consistency = -1;
+  consistency = self->default_consistency;
+  page_size = self->default_page_size;
 
   if (options) {
     if (!instanceof_function(Z_OBJCE_P(options), cassandra_execution_options_ce TSRMLS_CC)) {
       INVALID_ARGUMENT(options, "an instance of Cassandra\\ExecutionOptions or null");
     }
 
-    cassandra_execution_options* opts =
-      (cassandra_execution_options*) zend_object_store_get_object(options TSRMLS_CC);
+    opts = (cassandra_execution_options*) zend_object_store_get_object(options TSRMLS_CC);
 
     if (opts->arguments)
       arguments = Z_ARRVAL_P(opts->arguments);
@@ -530,11 +544,7 @@ PHP_METHOD(DefaultSession, executeAsync)
   }
 
   object_init_ex(return_value, cassandra_future_rows_ce);
-  cassandra_future_rows* future_rows =
-    (cassandra_future_rows*) zend_object_store_get_object(return_value TSRMLS_CC);
-
-  CassStatement* single = NULL;
-  CassBatch*     batch  = NULL;
+  future_rows = (cassandra_future_rows*) zend_object_store_get_object(return_value TSRMLS_CC);
 
   switch (stmt->type) {
     case CASSANDRA_SIMPLE_STATEMENT:
@@ -572,15 +582,18 @@ PHP_METHOD(DefaultSession, prepare)
 {
   zval *cql = NULL;
   zval *options = NULL;
+  cassandra_session* self = NULL;
+  cassandra_execution_options* internal_options = NULL;
+  CassFuture* future = NULL;
+  zval* timeout = NULL;
+  cassandra_prepared_statement* prepared_statement = NULL;
 
   if(zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z|z", &cql, &options) == FAILURE) {
     return;
   }
 
-  cassandra_session* self =
-    (cassandra_session*)zend_object_store_get_object(getThis() TSRMLS_CC);
+  self = (cassandra_session*)zend_object_store_get_object(getThis() TSRMLS_CC);
 
-  cassandra_execution_options* internal_options = NULL;
   if (options) {
     if (Z_TYPE_P(options) != IS_ARRAY)  {
       INVALID_ARGUMENT(options, "an array");
@@ -588,9 +601,9 @@ PHP_METHOD(DefaultSession, prepare)
     internal_options = (cassandra_execution_options*)zend_object_store_get_object(options TSRMLS_CC);
   }
 
-  CassFuture* future = cass_session_prepare_n(self->session, Z_STRVAL_P(cql), Z_STRLEN_P(cql));
+  future = cass_session_prepare_n(self->session, Z_STRVAL_P(cql), Z_STRLEN_P(cql));
 
-  zval* timeout = internal_options ? internal_options->timeout : NULL;
+  timeout = internal_options ? internal_options->timeout : NULL;
   if (php_cassandra_future_wait_timed(future, timeout TSRMLS_CC) == FAILURE) {
     cass_future_free(future);
     return;
@@ -602,8 +615,7 @@ PHP_METHOD(DefaultSession, prepare)
   }
 
   object_init_ex(return_value, cassandra_prepared_statement_ce);
-  cassandra_prepared_statement* prepared_statement =
-      (cassandra_prepared_statement*)zend_object_store_get_object(return_value TSRMLS_CC);
+  prepared_statement = (cassandra_prepared_statement*)zend_object_store_get_object(return_value TSRMLS_CC);
 
   prepared_statement->prepared = cass_future_get_prepared(future);
 
@@ -614,15 +626,17 @@ PHP_METHOD(DefaultSession, prepareAsync)
 {
   zval *cql = NULL;
   zval *options = NULL;
+  cassandra_session* self = NULL;
+  cassandra_execution_options* internal_options = NULL;
+  CassFuture* future = NULL;
+  cassandra_future_prepared_statement* future_prepared = NULL;
 
   if(zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z|z", &cql, &options) == FAILURE) {
     return;
   }
 
-  cassandra_session* self =
-    (cassandra_session*)zend_object_store_get_object(getThis() TSRMLS_CC);
+  self = (cassandra_session*)zend_object_store_get_object(getThis() TSRMLS_CC);
 
-  cassandra_execution_options* internal_options = NULL;
   if (options) {
     if (Z_TYPE_P(options) != IS_ARRAY)  {
       INVALID_ARGUMENT(options, "an array");
@@ -630,11 +644,10 @@ PHP_METHOD(DefaultSession, prepareAsync)
     internal_options = (cassandra_execution_options*)zend_object_store_get_object(options TSRMLS_CC);
   }
 
-  CassFuture* future = cass_session_prepare_n(self->session, Z_STRVAL_P(cql), Z_STRLEN_P(cql));
+  future = cass_session_prepare_n(self->session, Z_STRVAL_P(cql), Z_STRLEN_P(cql));
 
   object_init_ex(return_value, cassandra_future_prepared_statement_ce);
-  cassandra_future_prepared_statement* future_prepared =
-   (cassandra_future_prepared_statement*)zend_object_store_get_object(return_value TSRMLS_CC);
+  future_prepared = (cassandra_future_prepared_statement*)zend_object_store_get_object(return_value TSRMLS_CC);
 
   future_prepared->future = future;
 }
@@ -642,6 +655,7 @@ PHP_METHOD(DefaultSession, prepareAsync)
 PHP_METHOD(DefaultSession, close)
 {
   zval* timeout = NULL;
+  CassFuture* future = NULL;
 
   cassandra_session* self =
     (cassandra_session*) zend_object_store_get_object(getThis() TSRMLS_CC);
@@ -653,7 +667,7 @@ PHP_METHOD(DefaultSession, close)
   if (self->persist)
     return;
 
-  CassFuture* future = cass_session_close(self->session);
+  future = cass_session_close(self->session);
 
   if (php_cassandra_future_wait_timed(future, timeout TSRMLS_CC) == SUCCESS)
     php_cassandra_future_is_error(future TSRMLS_CC);
@@ -663,6 +677,8 @@ PHP_METHOD(DefaultSession, close)
 
 PHP_METHOD(DefaultSession, closeAsync)
 {
+  cassandra_future_close* future = NULL;
+
   cassandra_session* self =
     (cassandra_session*) zend_object_store_get_object(getThis() TSRMLS_CC);
 
@@ -676,8 +692,7 @@ PHP_METHOD(DefaultSession, closeAsync)
 
 
   object_init_ex(return_value, cassandra_future_close_ce);
-  cassandra_future_close* future =
-    (cassandra_future_close*) zend_object_store_get_object(return_value TSRMLS_CC);
+  future = (cassandra_future_close*) zend_object_store_get_object(return_value TSRMLS_CC);
 
   future->future = cass_session_close(self->session);
 }

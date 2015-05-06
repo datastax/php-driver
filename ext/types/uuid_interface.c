@@ -1,4 +1,3 @@
-#include <php.h>
 #include "php_cassandra.h"
 #include "uuid_interface.h"
 

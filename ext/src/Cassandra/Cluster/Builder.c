@@ -10,13 +10,13 @@ PHP_METHOD(ClusterBuilder, build)
 {
   char* hash_key;
   int   hash_key_len;
+  cassandra_cluster* cluster = NULL;
 
   cassandra_cluster_builder* builder =
     (cassandra_cluster_builder*) zend_object_store_get_object(getThis() TSRMLS_CC);
 
   object_init_ex(return_value, cassandra_default_cluster_ce);
-  cassandra_cluster* cluster =
-    (cassandra_cluster*) zend_object_store_get_object(return_value TSRMLS_CC);
+  cluster = (cassandra_cluster*) zend_object_store_get_object(return_value TSRMLS_CC);
 
   cluster->persist                 = builder->persist;
   cluster->default_consistency     = builder->default_consistency;
@@ -87,13 +87,13 @@ PHP_METHOD(ClusterBuilder, build)
 PHP_METHOD(ClusterBuilder, withDefaultConsistency)
 {
   zval* consistency;
+  cassandra_cluster_builder* builder = NULL;
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z", &consistency) == FAILURE) {
     return;
   }
 
-  cassandra_cluster_builder* builder =
-    (cassandra_cluster_builder*) zend_object_store_get_object(getThis() TSRMLS_CC);
+  builder = (cassandra_cluster_builder*) zend_object_store_get_object(getThis() TSRMLS_CC);
 
   if (php_cassandra_get_consistency(consistency, &builder->default_consistency TSRMLS_CC) == FAILURE) {
     return;
@@ -105,13 +105,13 @@ PHP_METHOD(ClusterBuilder, withDefaultConsistency)
 PHP_METHOD(ClusterBuilder, withDefaultPageSize)
 {
   zval* pageSize;
+  cassandra_cluster_builder* builder = NULL;
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z", &pageSize) == FAILURE) {
     return;
   }
 
-  cassandra_cluster_builder* builder =
-    (cassandra_cluster_builder*) zend_object_store_get_object(getThis() TSRMLS_CC);
+  builder = (cassandra_cluster_builder*) zend_object_store_get_object(getThis() TSRMLS_CC);
 
   if (Z_TYPE_P(pageSize) == IS_NULL) {
     builder->default_page_size = -1;
@@ -127,13 +127,13 @@ PHP_METHOD(ClusterBuilder, withDefaultPageSize)
 PHP_METHOD(ClusterBuilder, withDefaultTimeout)
 {
   zval* timeout;
+  cassandra_cluster_builder* builder = NULL;
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z", &timeout) == FAILURE) {
     return;
   }
 
-  cassandra_cluster_builder* builder =
-    (cassandra_cluster_builder*) zend_object_store_get_object(getThis() TSRMLS_CC);
+  builder = (cassandra_cluster_builder*) zend_object_store_get_object(getThis() TSRMLS_CC);
 
   if (Z_TYPE_P(timeout) == IS_NULL) {
     if (builder->default_timeout)
@@ -158,6 +158,7 @@ PHP_METHOD(ClusterBuilder, withContactPoints)
   zval*     host;
   int       argc, i;
   smart_str contactPoints = {0};
+  cassandra_cluster_builder* builder = NULL;
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "+", &args, &argc) == FAILURE) {
     return;
@@ -180,8 +181,7 @@ PHP_METHOD(ClusterBuilder, withContactPoints)
 
   smart_str_0(&contactPoints);
 
-  cassandra_cluster_builder* builder =
-    (cassandra_cluster_builder*) zend_object_store_get_object(getThis() TSRMLS_CC);
+  builder = (cassandra_cluster_builder*) zend_object_store_get_object(getThis() TSRMLS_CC);
 
   efree(builder->contact_points);
   builder->contact_points = contactPoints.c;
@@ -192,13 +192,13 @@ PHP_METHOD(ClusterBuilder, withContactPoints)
 PHP_METHOD(ClusterBuilder, withPort)
 {
   zval* port;
+  cassandra_cluster_builder* builder = NULL;
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z", &port) == FAILURE) {
     return;
   }
 
-  cassandra_cluster_builder* builder =
-    (cassandra_cluster_builder*) zend_object_store_get_object(getThis() TSRMLS_CC);
+  builder = (cassandra_cluster_builder*) zend_object_store_get_object(getThis() TSRMLS_CC);
 
   if (Z_TYPE_P(port) == IS_LONG && Z_LVAL_P(port) > 0 && Z_LVAL_P(port) < 65536) {
     builder->port = Z_LVAL_P(port);
@@ -211,12 +211,13 @@ PHP_METHOD(ClusterBuilder, withPort)
 
 PHP_METHOD(ClusterBuilder, withRoundRobinLoadBalancingPolicy)
 {
+  cassandra_cluster_builder* builder = NULL;
+
   if (zend_parse_parameters_none() == FAILURE) {
     return;
   }
 
-  cassandra_cluster_builder* builder =
-    (cassandra_cluster_builder*) zend_object_store_get_object(getThis() TSRMLS_CC);
+  builder = (cassandra_cluster_builder*) zend_object_store_get_object(getThis() TSRMLS_CC);
 
   if (builder->local_dc) {
     efree(builder->local_dc);
@@ -234,6 +235,7 @@ PHP_METHOD(ClusterBuilder, withDatacenterAwareRoundRobinLoadBalancingPolicy)
   int          local_dc_len;
   zval*        hostPerRemoteDatacenter;
   zend_bool    allow_remote_dcs_for_local_cl;
+  cassandra_cluster_builder* builder = NULL;
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "szb", &local_dc, &local_dc_len, &hostPerRemoteDatacenter, &allow_remote_dcs_for_local_cl) == FAILURE) {
     return;
@@ -243,8 +245,7 @@ PHP_METHOD(ClusterBuilder, withDatacenterAwareRoundRobinLoadBalancingPolicy)
     INVALID_ARGUMENT(hostPerRemoteDatacenter, "a positive integer");
   }
 
-  cassandra_cluster_builder* builder =
-    (cassandra_cluster_builder*) zend_object_store_get_object(getThis() TSRMLS_CC);
+  builder = (cassandra_cluster_builder*) zend_object_store_get_object(getThis() TSRMLS_CC);
 
   if (builder->local_dc) {
     efree(builder->local_dc);
@@ -262,13 +263,13 @@ PHP_METHOD(ClusterBuilder, withDatacenterAwareRoundRobinLoadBalancingPolicy)
 PHP_METHOD(ClusterBuilder, withTokenAwareRouting)
 {
   zend_bool enabled = 1;
+  cassandra_cluster_builder* builder = NULL;
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "|b", &enabled) == FAILURE) {
     return;
   }
 
-  cassandra_cluster_builder* builder =
-    (cassandra_cluster_builder*) zend_object_store_get_object(getThis() TSRMLS_CC);
+  builder = (cassandra_cluster_builder*) zend_object_store_get_object(getThis() TSRMLS_CC);
 
   builder->use_token_aware_routing = enabled;
 
@@ -279,6 +280,7 @@ PHP_METHOD(ClusterBuilder, withCredentials)
 {
   zval* username;
   zval* password;
+  cassandra_cluster_builder* builder = NULL;
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "zz", &username, &password) == FAILURE) {
     return;
@@ -292,8 +294,7 @@ PHP_METHOD(ClusterBuilder, withCredentials)
     INVALID_ARGUMENT(password, "a string");
   }
 
-  cassandra_cluster_builder* builder =
-    (cassandra_cluster_builder*) zend_object_store_get_object(getThis() TSRMLS_CC);
+  builder = (cassandra_cluster_builder*) zend_object_store_get_object(getThis() TSRMLS_CC);
 
   if (builder->username) {
     efree(builder->username);
@@ -309,13 +310,13 @@ PHP_METHOD(ClusterBuilder, withCredentials)
 PHP_METHOD(ClusterBuilder, withConnectTimeout)
 {
   double timeout;
+  cassandra_cluster_builder* builder = NULL;
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "d", &timeout) == FAILURE) {
     return;
   }
 
-  cassandra_cluster_builder* builder =
-    (cassandra_cluster_builder*) zend_object_store_get_object(getThis() TSRMLS_CC);
+  builder = (cassandra_cluster_builder*) zend_object_store_get_object(getThis() TSRMLS_CC);
 
   builder->connect_timeout = ceil(timeout * 1000);
 
@@ -325,13 +326,13 @@ PHP_METHOD(ClusterBuilder, withConnectTimeout)
 PHP_METHOD(ClusterBuilder, withRequestTimeout)
 {
   double timeout;
+  cassandra_cluster_builder* builder = NULL;
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "d", &timeout) == FAILURE) {
     return;
   }
 
-  cassandra_cluster_builder* builder =
-    (cassandra_cluster_builder*) zend_object_store_get_object(getThis() TSRMLS_CC);
+  builder = (cassandra_cluster_builder*) zend_object_store_get_object(getThis() TSRMLS_CC);
 
   builder->request_timeout = ceil(timeout * 1000);
 
@@ -341,13 +342,13 @@ PHP_METHOD(ClusterBuilder, withRequestTimeout)
 PHP_METHOD(ClusterBuilder, withSSL)
 {
   zval *ssl_options;
+  cassandra_cluster_builder* builder = NULL;
 
   if(zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "O", &ssl_options, cassandra_ssl_ce) == FAILURE) {
     return;
   }
 
-  cassandra_cluster_builder* builder =
-    (cassandra_cluster_builder*) zend_object_store_get_object(getThis() TSRMLS_CC);
+  builder = (cassandra_cluster_builder*) zend_object_store_get_object(getThis() TSRMLS_CC);
 
   if (builder->ssl_options)
     zval_ptr_dtor(&builder->ssl_options);
@@ -361,13 +362,13 @@ PHP_METHOD(ClusterBuilder, withSSL)
 PHP_METHOD(ClusterBuilder, withPersistentSessions)
 {
   zend_bool enabled = 1;
+  cassandra_cluster_builder* builder = NULL;
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "|b", &enabled) == FAILURE) {
     return;
   }
 
-  cassandra_cluster_builder* builder =
-    (cassandra_cluster_builder*) zend_object_store_get_object(getThis() TSRMLS_CC);
+  builder = (cassandra_cluster_builder*) zend_object_store_get_object(getThis() TSRMLS_CC);
 
   builder->persist = enabled;
 

@@ -19,13 +19,13 @@ ZEND_EXTERN_MODULE_GLOBALS(cassandra)
 PHP_METHOD(BatchStatement, __construct)
 {
   zval* type = NULL;
+  cassandra_batch_statement* self = NULL;
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "|z", &type) == FAILURE) {
     return;
   }
 
-  cassandra_batch_statement* self =
-      (cassandra_batch_statement*) zend_object_store_get_object(getThis() TSRMLS_CC);
+  self = (cassandra_batch_statement*) zend_object_store_get_object(getThis() TSRMLS_CC);
 
   if (type) {
     if (Z_TYPE_P(type) != IS_LONG) {
@@ -50,6 +50,8 @@ PHP_METHOD(BatchStatement, add)
 {
   zval* statement = NULL;
   zval* arguments = NULL;
+  cassandra_batch_statement_entry* entry = NULL;
+  cassandra_batch_statement* self = NULL;
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z|z", &statement, &arguments) == FAILURE) {
     return;
@@ -60,7 +62,7 @@ PHP_METHOD(BatchStatement, add)
     INVALID_ARGUMENT(statement, "a Cassandra\\SimpleStatement or Cassandra\\PreparedStatement");
   }
 
-  cassandra_batch_statement_entry* entry = (cassandra_batch_statement_entry*) ecalloc(1, sizeof(cassandra_batch_statement_entry));
+  entry = (cassandra_batch_statement_entry*) ecalloc(1, sizeof(cassandra_batch_statement_entry));
   entry->statement = statement;
   Z_ADDREF_P(entry->statement);
 
@@ -69,8 +71,7 @@ PHP_METHOD(BatchStatement, add)
     Z_ADDREF_P(entry->arguments);
   }
 
-  cassandra_batch_statement* self =
-      (cassandra_batch_statement*) zend_object_store_get_object(getThis() TSRMLS_CC);
+  self = (cassandra_batch_statement*) zend_object_store_get_object(getThis() TSRMLS_CC);
 
   zend_hash_next_index_insert(self->statements, &entry, sizeof(cassandra_batch_statement_entry*), NULL);
 }

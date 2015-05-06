@@ -7,12 +7,12 @@ ZEND_EXTERN_MODULE_GLOBALS(cassandra)
 PHP_METHOD(FutureValue, get)
 {
   zval* timeout = NULL;
+  cassandra_future_value* self = NULL;
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "|z", &timeout) == FAILURE)
     return;
 
-  cassandra_future_value* self =
-    (cassandra_future_value*) zend_object_store_get_object(getThis() TSRMLS_CC);
+  self = (cassandra_future_value*) zend_object_store_get_object(getThis() TSRMLS_CC);
 
   if (self->value) {
     *return_value = *self->value;

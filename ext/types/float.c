@@ -24,6 +24,7 @@ PHP_METHOD(CassandraFloat, __construct)
 {
   char* value;
   int value_len;
+  cassandra_float* number = NULL;
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &value, &value_len) == FAILURE) {
     return;
@@ -34,7 +35,7 @@ PHP_METHOD(CassandraFloat, __construct)
     return;
   }
 
-  cassandra_float* number = (cassandra_float*) zend_object_store_get_object(getThis() TSRMLS_CC);
+  number = (cassandra_float*) zend_object_store_get_object(getThis() TSRMLS_CC);
   number->value = (cass_float_t) strtof(value, NULL);
 }
 /* }}} */

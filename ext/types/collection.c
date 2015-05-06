@@ -108,8 +108,9 @@ PHP_METHOD(CassandraCollection, type)
 /* {{{ Cassandra\Collection::values() */
 PHP_METHOD(CassandraCollection, values)
 {
+  cassandra_collection* collection = NULL;
   array_init(return_value);
-  cassandra_collection* collection = (cassandra_collection*) zend_object_store_get_object(getThis() TSRMLS_CC);
+  collection = (cassandra_collection*) zend_object_store_get_object(getThis() TSRMLS_CC);
   php_cassandra_collection_populate(collection, return_value);
 }
 /* }}} */

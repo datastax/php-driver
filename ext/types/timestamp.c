@@ -9,6 +9,8 @@ PHP_METHOD(CassandraTimestamp, __construct)
 {
   long seconds = 0;
   long microseconds = 0;
+  cassandra_timestamp* timestamp = NULL;
+  cass_int64_t value = 0;
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "|ll", &seconds, &microseconds) == FAILURE) {
     return;
@@ -25,9 +27,6 @@ PHP_METHOD(CassandraTimestamp, __construct)
     microseconds = (time.tv_usec / 1000) * 1000;
 #endif
   }
-
-  cassandra_timestamp* timestamp;
-  cass_int64_t value = 0;
 
   value += microseconds / 1000;
   value += (seconds * 1000);
@@ -52,6 +51,9 @@ PHP_METHOD(CassandraTimestamp, microtime)
 {
   zend_bool get_as_float = 0;
   cassandra_timestamp* timestamp;
+  char *ret = NULL;
+  long sec = -1;
+  double usec = 0.0f;
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "|b", &get_as_float) == FAILURE) {
     return;
@@ -63,9 +65,8 @@ PHP_METHOD(CassandraTimestamp, microtime)
     RETURN_DOUBLE((double) timestamp->timestamp / 1000.00);
   }
 
-  char *ret;
-  long sec    = (long) (timestamp->timestamp / 1000);
-  double usec = (double) ((timestamp->timestamp - (sec * 1000)) / 1000.00);
+  sec    = (long) (timestamp->timestamp / 1000);
+  usec   = (double) ((timestamp->timestamp - (sec * 1000)) / 1000.00);
   spprintf(&ret, 0, "%.8F %ld", usec, sec);
   RETURN_STRING(ret, 0);
 }
@@ -102,6 +103,7 @@ PHP_METHOD(CassandraTimestamp, toDateTime)
 PHP_METHOD(CassandraTimestamp, __toString)
 {
   cassandra_timestamp* timestamp;
+  char *ret = NULL;
 
   if (zend_parse_parameters_none() == FAILURE) {
     return;
@@ -109,7 +111,6 @@ PHP_METHOD(CassandraTimestamp, __toString)
 
   timestamp = (cassandra_timestamp*) zend_object_store_get_object(getThis() TSRMLS_CC);
 
-  char *ret;
   spprintf(&ret, 0, "%lld", (long long int) timestamp->timestamp);
   RETURN_STRING(ret, 0);
 }

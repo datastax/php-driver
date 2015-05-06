@@ -14,17 +14,18 @@ PHP_METHOD(DefaultCluster, connect)
   int   keyspace_len;
   zval* timeout = NULL;
   cassandra_psession* psession;
+  cassandra_cluster* cluster = NULL;
+  cassandra_session* session = NULL;
+  CassError rc = CASS_OK;
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "|sz", &keyspace, &keyspace_len, &timeout) == FAILURE) {
     return;
   }
 
-  cassandra_cluster* cluster =
-    (cassandra_cluster*) zend_object_store_get_object(getThis() TSRMLS_CC);
+  cluster = (cassandra_cluster*) zend_object_store_get_object(getThis() TSRMLS_CC);
 
   object_init_ex(return_value, cassandra_default_session_ce);
-  cassandra_session* session =
-    (cassandra_session*) zend_object_store_get_object(return_value TSRMLS_CC);
+  session = (cassandra_session*) zend_object_store_get_object(return_value TSRMLS_CC);
 
   session->default_consistency = cluster->default_consistency;
   session->default_page_size   = cluster->default_page_size;
@@ -77,7 +78,7 @@ PHP_METHOD(DefaultCluster, connect)
     return;
   }
 
-  CassError rc = cass_future_error_code(future);
+  rc = cass_future_error_code(future);
 
   if (rc != CASS_OK) {
     const char* message;
@@ -109,17 +110,17 @@ PHP_METHOD(DefaultCluster, connectAsync)
   int   hash_key_len;
   char* keyspace = NULL;
   int   keyspace_len;
+  cassandra_cluster* cluster = NULL;
+  cassandra_future_session* future = NULL;
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "|s", &keyspace, &keyspace_len) == FAILURE) {
     return;
   }
 
-  cassandra_cluster* cluster =
-    (cassandra_cluster*) zend_object_store_get_object(getThis() TSRMLS_CC);
+  cluster = (cassandra_cluster*) zend_object_store_get_object(getThis() TSRMLS_CC);
 
   object_init_ex(return_value, cassandra_future_session_ce);
-  cassandra_future_session* future =
-    (cassandra_future_session*) zend_object_store_get_object(return_value TSRMLS_CC);
+  future = (cassandra_future_session*) zend_object_store_get_object(return_value TSRMLS_CC);
 
   future->persist = cluster->persist;
 
@@ -151,12 +152,12 @@ PHP_METHOD(DefaultCluster, connectAsync)
   }
 
   if (cluster->persist) {
+    zend_rsrc_list_entry le;
     cassandra_psession* psession =
       (cassandra_psession*) pecalloc(1, sizeof(cassandra_psession), 1);
     psession->session = future->session;
     psession->future  = future->future;
 
-    zend_rsrc_list_entry le;
     le.type = php_le_cassandra_session();
     le.ptr  = psession;
 

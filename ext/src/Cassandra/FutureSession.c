@@ -9,6 +9,8 @@ ZEND_EXTERN_MODULE_GLOBALS(cassandra)
 PHP_METHOD(FutureSession, get)
 {
   zval* timeout = NULL;
+  cassandra_session* session = NULL;
+  CassError rc = CASS_OK;
 
   cassandra_future_session* future =
     (cassandra_future_session*) zend_object_store_get_object(getThis() TSRMLS_CC);
@@ -33,7 +35,7 @@ PHP_METHOD(FutureSession, get)
     return;
   }
 
-  CassError rc = cass_future_error_code(future->future);
+  rc = cass_future_error_code(future->future);
 
   if (rc != CASS_OK) {
     const char* message;
@@ -62,8 +64,7 @@ PHP_METHOD(FutureSession, get)
   object_init_ex(return_value, cassandra_default_session_ce);
   future->default_session = return_value;
   Z_ADDREF_P(future->default_session);
-  cassandra_session* session =
-    (cassandra_session*) zend_object_store_get_object(return_value TSRMLS_CC);
+  session = (cassandra_session*) zend_object_store_get_object(return_value TSRMLS_CC);
   session->session = future->session;
   session->persist = future->persist;
 }
