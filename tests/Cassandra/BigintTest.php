@@ -87,4 +87,85 @@ class BigintTest extends \PHPUnit_Framework_TestCase
         $bigint = new Bigint("-9223372036854775808");
         $i = $bigint->toInt();
     }
+
+    public function testAdd()
+    {
+        $bigint1 = new Bigint("1");
+        $bigint2 = new Bigint("2");
+        $this->assertEquals(3, (int)$bigint1->add($bigint2));
+    }
+
+    public function testSub()
+    {
+        $bigint1 = new Bigint("1");
+        $bigint2 = new Bigint("2");
+        $this->assertEquals(-1, (int)$bigint1->sub($bigint2));
+    }
+
+    public function testMul()
+    {
+        $bigint1 = new Bigint("1");
+        $bigint2 = new Bigint("2");
+        $this->assertEquals(2, (int)$bigint1->mul($bigint2));
+    }
+
+    public function testDiv()
+    {
+        $bigint1 = new Bigint("1");
+        $bigint2 = new Bigint("2");
+        $this->assertEquals(0, (int)$bigint1->div($bigint2));
+    }
+
+    /**
+     * @expectedException Cassandra\Exception\DivideByZeroException
+     */
+    public function testDivByZero()
+    {
+        $bigint1 = new Bigint("1");
+        $bigint2 = new Bigint("0");
+        $bigint1->div($bigint2);
+    }
+
+    public function testMod()
+    {
+        $bigint1 = new Bigint("1");
+        $bigint2 = new Bigint("2");
+        $this->assertEquals(1, (int)$bigint1->mod($bigint2));
+    }
+
+    /**
+     * @expectedException Cassandra\Exception\DivideByZeroException
+     */
+    public function testModByZero()
+    {
+        $bigint1 = new Bigint("1");
+        $bigint2 = new Bigint("0");
+        $bigint1->mod($bigint2);
+    }
+
+    public function testAbs()
+    {
+        $bigint1 = new Bigint("-1");
+        $this->assertEquals(1, (int)$bigint1->abs());
+    }
+
+    /**
+     * @expectedException RangeException
+     */
+    public function testAbsMinimum()
+    {
+        Bigint::min()->abs();
+    }
+
+    public function testNeg()
+    {
+        $bigint1 = new Bigint("1");
+        $this->assertEquals(-1, (int)$bigint1->neg());
+    }
+
+    public function testSqrt()
+    {
+        $bigint1 = new Bigint("4");
+        $this->assertEquals(2, (int)$bigint1->sqrt());
+    }
 }

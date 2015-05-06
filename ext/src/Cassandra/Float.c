@@ -1,24 +1,8 @@
 #include "php_cassandra.h"
-#include <math.h>
+#include "util/math.h"
 #include <float.h>
 
 zend_class_entry* cassandra_float_ce = NULL;
-
-static int
-ctype_float(const char* s, int len)
-{
-  int i;
-  int dot = -1;
-  for (i = 0; i < len; i++) {
-    if (s[i] == '.' && dot == -1)
-      dot = i;
-
-    if (!(isdigit(s[i]) || dot == i))
-      return 0;
-  }
-
-  return 1;
-}
 
 static int
 to_string(zval* result, cassandra_float* flt TSRMLS_DC)
@@ -46,10 +30,7 @@ PHP_METHOD(Float, __construct)
   } else if(Z_TYPE_P(value) == IS_DOUBLE) {
     self->value = (cass_float_t) Z_DVAL_P(value);
   } else if(Z_TYPE_P(value) == IS_STRING) {
-    if (!ctype_float(Z_STRVAL_P(value), Z_STRLEN_P(value))) {
-      INVALID_ARGUMENT(value, "a long, double, numeric string or a Cassandra\\Float instance");
-    }
-    self->value = (cass_float_t) strtof(Z_STRVAL_P(value), NULL);
+    php_cassandra_parse_float(Z_STRVAL_P(value), Z_STRLEN_P(value), &self->value TSRMLS_CC);
   } else if (Z_TYPE_P(value) == IS_OBJECT &&
              instanceof_function(Z_OBJCE_P(value), cassandra_float_ce TSRMLS_CC)) {
     cassandra_float* flt =

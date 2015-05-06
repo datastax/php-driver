@@ -66,8 +66,7 @@ PHP_METHOD(Varint, __construct)
   } else if(Z_TYPE_P(num) == IS_DOUBLE) {
     mpz_set_d(self->value, Z_DVAL_P(num));
   } else if(Z_TYPE_P(num) == IS_STRING) {
-    if (!php_cassandra_parse_varint(Z_STRVAL_P(num), Z_STRLEN_P(num), &self->value TSRMLS_CC))
-      return;
+    php_cassandra_parse_varint(Z_STRVAL_P(num), Z_STRLEN_P(num), &self->value TSRMLS_CC);
   } else if (Z_TYPE_P(num) == IS_OBJECT &&
              instanceof_function(Z_OBJCE_P(num), cassandra_varint_ce TSRMLS_CC)) {
     cassandra_varint* varint =

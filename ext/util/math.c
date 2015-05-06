@@ -8,6 +8,37 @@
 extern zend_class_entry *cassandra_invalid_argument_exception_ce;
 
 int
+php_cassandra_parse_float(char* in, int in_len, cass_float_t* number TSRMLS_DC)
+{
+  char* end;
+  errno = 0;
+
+  *number = (cass_float_t) strtof(in, &end);
+
+  if (*number == HUGE_VALF || *number == -HUGE_VALF) {
+    zend_throw_exception_ex(cassandra_range_exception_ce, 0 TSRMLS_CC, "Value is too small or too big for float: '%s'", in);
+    return 0;
+  }
+
+  if (errno) {
+    zend_throw_exception_ex(cassandra_invalid_argument_exception_ce, 0 TSRMLS_CC, "Invalid float value: '%s'", in);
+    return 0;
+  }
+
+  if (end != &in[in_len]) {
+    zend_throw_exception_ex(cassandra_invalid_argument_exception_ce, 0 TSRMLS_CC, "Invalid characters were found in value: '%s'", in);
+    return 0;
+  }
+
+  if (end == in) {
+    zend_throw_exception_ex(cassandra_invalid_argument_exception_ce, 0 TSRMLS_CC, "No float value found in string: '%s'", in);
+    return 0;
+  }
+
+  return 1;
+}
+
+int
 php_cassandra_parse_bigint(char* in, int in_len, cass_int64_t* number TSRMLS_DC)
 {
   int point = 0;
