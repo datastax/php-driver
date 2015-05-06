@@ -8,28 +8,37 @@ namespace Cassandra;
 class FloatTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @dataProvider      invalidStrings
      * @expectedException InvalidArgumentException
+     * @expectedExceptionMessage No float value found in string: ''
      */
-    public function testThrowsWhenCreatingNotAFloat($string)
+    public function testThrowsWhenCreatingFromEmpty()
     {
-        new Float($string);
+        new Float("");
     }
 
-    public function invalidStrings()
+    /**
+     * @expectedException InvalidArgumentException
+     * @expectedExceptionMessage Invalid characters were found in value: 'invalid'
+     */
+    public function testThrowsWhenCreatingFromInvalid()
     {
-        return array(
-            array(""),
-            array("invalid"),
-            array("123.123       "),
-        );
+        new Float("invalid");
+    }
+
+    /**
+     * @expectedException InvalidArgumentException
+     * @expectedExceptionMessage Invalid characters were found in value: '123.123    '
+     */
+    public function testThrowsWhenCreatingFromInvalidTrailingChars()
+    {
+        new Float("123.123    ");
     }
 
     /**
      * @dataProvider      outOfRangeStrings
      * @expectedException RangeException
      */
-    public function testThrowsWhenCreatingOutOfRangeFloat($string)
+    public function testThrowsWhenCreatingOutOfRange($string)
     {
         new Float($string);
     }

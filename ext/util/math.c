@@ -15,7 +15,7 @@ php_cassandra_parse_float(char* in, int in_len, cass_float_t* number TSRMLS_DC)
 
   *number = (cass_float_t) strtof(in, &end);
 
-  if (*number == HUGE_VALF || *number == -HUGE_VALF) {
+  if (errno == ERANGE) {
     zend_throw_exception_ex(cassandra_range_exception_ce, 0 TSRMLS_CC, "Value is too small or too big for float: '%s'", in);
     return 0;
   }
@@ -76,6 +76,11 @@ php_cassandra_parse_bigint(char* in, int in_len, cass_int64_t* number TSRMLS_DC)
 
   if (negative)
     *number = *number * -1;
+
+  if (errno == ERANGE) {
+    zend_throw_exception_ex(cassandra_range_exception_ce, 0 TSRMLS_CC, "Value is too small or too big for bigint: '%s'", in);
+    return 0;
+  }
 
   if (errno) {
     zend_throw_exception_ex(cassandra_invalid_argument_exception_ce, 0 TSRMLS_CC, "Invalid integer value: '%s'", in);

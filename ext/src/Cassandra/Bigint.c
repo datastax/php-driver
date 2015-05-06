@@ -9,18 +9,6 @@
 zend_class_entry* cassandra_bigint_ce = NULL;
 
 static int
-ctype_digit(const char* s, int len)
-{
-  int i;
-  for (i = 0; i < len; i++) {
-    if (!isdigit(s[i]))
-      return 0;
-  }
-
-  return 1;
-}
-
-static int
 to_double(zval* result, cassandra_bigint* bigint TSRMLS_DC)
 {
   ZVAL_DOUBLE(result, (double) bigint->value);

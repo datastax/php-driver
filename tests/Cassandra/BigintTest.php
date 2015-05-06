@@ -8,12 +8,47 @@ namespace Cassandra;
 class BigintTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @expectedException         InvalidArgumentException
-     * @expectedExceptionMessage  Non digit characters were found in value: '123.123'
+     * @expectedException InvalidArgumentException
+     * @expectedExceptionMessage Invalid integer value: ''
      */
-    public function testThrowsWhenCreatingNotAnInteger()
+    public function testThrowsWhenCreatingFromEmpty()
+    {
+        new Bigint("");
+    }
+
+    /**
+     * @expectedException InvalidArgumentException
+     * @expectedExceptionMessage Invalid integer value: 'invalid'
+     */
+    public function testThrowsWhenCreatingFromInvalid()
+    {
+        new Bigint("invalid");
+    }
+
+    /**
+     * @expectedException InvalidArgumentException
+     * @expectedExceptionMessage Non digit characters were found in value: '123.123'
+     */
+    public function testThrowsWhenCreatingFromInvalidTrailingChars()
     {
         new Bigint("123.123");
+    }
+
+    /**
+     * @dataProvider      outOfRangeStrings
+     * @expectedException RangeException
+     */
+    public function testThrowsWhenCreatingOutOfRange($string)
+    {
+        new Bigint($string);
+    }
+
+    public function outOfRangeStrings()
+    {
+        return array(
+            array("9223372036854775808"),
+            array("-9223372036854775809"),
+        );
     }
 
     /**
