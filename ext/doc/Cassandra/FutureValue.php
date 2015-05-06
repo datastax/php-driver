@@ -19,23 +19,12 @@
 namespace Cassandra;
 
 /**
- * All statements implement this common interface.
- *
- * @see Cassandra\SimpleStatement
- * @see Cassandra\PreparedStatement
- * @see Cassandra\BatchStatement
+ * A future that always resolves in a value.
  */
-interface Statement
+final class FutureValue implements Future
 {
     /**
-     * @access private
-     *
-     * @param array|null $arguments
-     * @param int|null   $consistency       One of the \Cassandra::CONSISTENCY_* constants
-     * @param int|null   $serialConsistency One of the \Cassandra::CONSISTENCY_* constants
-     * @param int|null   $pageSize
-     *
-     * @return resource Actual statement resource
+     * {@inheritDoc}
      */
-    public function resource(array $arguments = null, $consistency = null, $serialConsistency = null, $pageSize = null);
+    public function get($timeout = null) {}
 }

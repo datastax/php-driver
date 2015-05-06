@@ -18,33 +18,17 @@
 
 namespace Cassandra;
 
+use Cassandra\Exception\InvalidArgumentException;
+
 /**
- * A future that always resolves in a value.
+ * A future returned from `Cassandra\Session::closeAsync()`.
+ *
+ * @see Cassandra\Session::closeAsync()
  */
-final class FutureValue implements Future
+final class FutureClose implements Future
 {
-    /**
-     * Actual value to resolve this future with.
-     *
-     * @var mixed
-     */
-    private $value;
-
-    /**
-     * Creates a future value.
-     *
-     * @param mixed $value a value to resolve this future with.
-     */
-    public function __construct($value)
-    {
-        $this->value = $value;
-    }
-
     /**
      * {@inheritDoc}
      */
-    public function get($timeout = null)
-    {
-        return $this->value;
-    }
+    public function get($timeout = null) {}
 }

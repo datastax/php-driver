@@ -19,32 +19,12 @@
 namespace Cassandra;
 
 /**
- * A future that always resolves in an exception.
+ * All statements implement this common interface.
+ *
+ * @see Cassandra\SimpleStatement
+ * @see Cassandra\PreparedStatement
+ * @see Cassandra\BatchStatement
  */
-final class FutureException implements Future
+interface Statement
 {
-    /**
-     * Actual exception to resolve this future with.
-     *
-     * @var Exception
-     */
-    private $exception;
-
-    /**
-     * Creates a future exception.
-     *
-     * @param \Exception $exception an exception to resolve this future with.
-     */
-    public function __construct(\Exception $exception)
-    {
-        $this->exception = $exception;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function get($timeout = null)
-    {
-        throw $this->exception;
-    }
 }

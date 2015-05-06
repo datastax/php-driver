@@ -26,77 +26,48 @@ use Cassandra\Exception\DomainException;
 final class Row implements \Iterator, \Countable, \ArrayAccess
 {
     /**
-     * Actual data.
-     *
-     * @var array
-     */
-    private $data;
-
-    /**
-     * Creates a new row.
-     *
-     * @access private
-     *
-     * @param array $data data for the row
-     */
-    public function __construct(array $data)
-    {
-        $this->data = $data;
-    }
-
-    /**
      * Number of columns in this row.
      *
      * @return int number of columns
+     * @see Countable::count()
      */
-    public function count()
-    {
-        return count($this->data);
-    }
+    public function count() {}
 
     /**
      * Resets the values iterator.
+     * @return void
+     * @see Iterator::rewind()
      */
-    public function rewind()
-    {
-        reset($this->data);
-    }
+    public function rewind() {}
 
     /**
      * Returns current column's value.
      *
      * @return mixed value
+     * @see Iterator::current()
      */
-    public function current()
-    {
-        return current($this->data);
-    }
+    public function current() {}
 
     /**
      * Returns current column's name.
      *
      * @return string name
+     * @see Iterator::key()
      */
-    public function key()
-    {
-        return key($this->data);
-    }
+    public function key() {}
 
     /**
      * Advances the values iterator by one.
+     * @return void
+     * @see Iterator::next()
      */
-    public function next()
-    {
-        next($this->data);
-    }
+    public function next() {}
 
     /**
      * @return bool whether there are more values available for iteration
+     * @see Iterator::valid()
      */
-    public function valid()
-    {
-        return key($this->data) !== null;
-    }
+    public function valid() {}
 
     /**
      * Rows are read-only so this method throws an exception and doesn't do anything.
@@ -105,14 +76,10 @@ final class Row implements \Iterator, \Countable, \ArrayAccess
      *
      * @param string $offset
      * @param mixed  $value
+     * @return void
+     * @see ArrayAccess::offsetSet()
      */
-    public function offsetSet($offset, $value)
-    {
-        throw new DomainException(sprintf(
-            'Cannot overwrite value at offset: %s with value: %s, rows are immutable',
-            var_export($offset, true), var_export($value, true)
-        ));
-    }
+    public function offsetSet($offset, $value) {}
 
     /**
      * Rows are read-only so this method throws an exception and doesn't do anything.
@@ -120,14 +87,10 @@ final class Row implements \Iterator, \Countable, \ArrayAccess
      * @throws DomainException
      *
      * @param string $offset
+     * @return void
+     * @see ArrayAccess::offsetUnset()
      */
-    public function offsetUnset($offset)
-    {
-        throw new DomainException(sprintf(
-            'Cannot delete value at offset: %s, rows are immutable',
-            var_export($offset, true)
-        ));
-    }
+    public function offsetUnset($offset) {}
 
     /**
      * Checks if a column is present in this row.
@@ -135,11 +98,9 @@ final class Row implements \Iterator, \Countable, \ArrayAccess
      * @param string $offset column name
      *
      * @return bool
+     * @see ArrayAccess::offsetExists()
      */
-    public function offsetExists($offset)
-    {
-        return isset($this->data[$offset]);
-    }
+    public function offsetExists($offset) {}
 
     /**
      * Gets the value of a given column.
@@ -147,9 +108,7 @@ final class Row implements \Iterator, \Countable, \ArrayAccess
      * @param string $offset column name
      *
      * @return mixed|null value
+     * @see ArrayAccess::offsetGet()
      */
-    public function offsetGet($offset)
-    {
-        return isset($this->data[$offset]) ? $this->data[$offset] : null;
-    }
+    public function offsetGet($offset) {}
 }

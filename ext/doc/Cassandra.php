@@ -87,11 +87,4 @@ final class Cassandra
      * @return \Cassandra\SSLOptions\Builder a SSLOptions Builder instance
      */
     public static function ssl() {}
-
-    /**
-     * Sets log severity.
-     *
-     * @param int $level log severity, must be one of Cassandra::LOG_* constants.
-     */
-    public static function setLogLevel($level) {}
 }
