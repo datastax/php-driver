@@ -215,11 +215,8 @@ PHP_METHOD(Decimal, __construct)
     }
     from_double(self, value);
   } else if(Z_TYPE_P(num) == IS_STRING) {
-    int scale;
-    if (!php_cassandra_parse_decimal(Z_STRVAL_P(num), Z_STRLEN_P(num),
-                                     &self->value, &scale TSRMLS_CC))
-      return;
-    self->scale = scale;
+    php_cassandra_parse_decimal(Z_STRVAL_P(num), Z_STRLEN_P(num),
+                                &self->value, &self->scale TSRMLS_CC);
   } else if (Z_TYPE_P(num) == IS_OBJECT &&
              instanceof_function(Z_OBJCE_P(num), cassandra_decimal_ce TSRMLS_CC)) {
     cassandra_decimal* decimal =
@@ -353,33 +350,8 @@ PHP_METHOD(Decimal, mul)
 /* {{{ Cassandra\Decimal::div() */
 PHP_METHOD(Decimal, div)
 {
-  zval* num;
-
-  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z", &num) == FAILURE) {
-    return;
-  }
-
-  if (Z_TYPE_P(num) == IS_OBJECT &&
-      instanceof_function(Z_OBJCE_P(num), cassandra_decimal_ce TSRMLS_CC)) {
-    cassandra_decimal* self =
-        (cassandra_decimal*) zend_object_store_get_object(getThis() TSRMLS_CC);
-    cassandra_decimal* decimal =
-        (cassandra_decimal*) zend_object_store_get_object(num TSRMLS_CC);
-
-    object_init_ex(return_value, cassandra_decimal_ce);
-    cassandra_decimal* result =
-        (cassandra_decimal*) zend_object_store_get_object(return_value TSRMLS_CC);
-
-    if (mpz_sgn(self->value) == 0) {
-      zend_throw_exception_ex(cassandra_divide_by_zero_exception_ce, 0 TSRMLS_CC, "Cannot divide by zero");
-      return;
-    }
-
-    mpz_div(result->value, self->value, decimal->value);
-    result->scale = self->scale - decimal->scale;
-  } else {
-    INVALID_ARGUMENT(num, "a Cassandra\\Decimal");
-  }
+  /* TODO: Implementation of this a bit more difficult than anticipated. */
+  zend_throw_exception_ex(cassandra_runtime_exception_ce, 0 TSRMLS_CC, "Not implemented");
 }
 /* }}} */
 

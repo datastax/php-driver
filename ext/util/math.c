@@ -106,8 +106,6 @@ php_cassandra_parse_varint(char* in, int in_len, mpz_t* number TSRMLS_DC)
   int point = 0;
   int base = 10;
 
-  int i, digit;
-
   //  Determine the sign of the number.
   int negative = 0;
   if (in[point] == '+') {
@@ -133,40 +131,6 @@ php_cassandra_parse_varint(char* in, int in_len, mpz_t* number TSRMLS_DC)
     }
   }
 
-  if (in_len <= 15) {
-    long n;
-    char* end;
-    errno = 0;
-
-    n = strtol(&in[point], &end, base);
-
-    if (negative)
-      n = n * -1;
-
-    if (errno) {
-      zend_throw_exception_ex(cassandra_invalid_argument_exception_ce, 0 TSRMLS_CC, "Invalid integer value: '%s'", in);
-      return 0;
-    }
-
-    if (end != &in[in_len]) {
-      zend_throw_exception_ex(cassandra_invalid_argument_exception_ce, 0 TSRMLS_CC, "Non digit characters were found in value: '%s'", in);
-      return 0;
-    }
-
-    if (end == &in[point]) {
-      zend_throw_exception_ex(cassandra_invalid_argument_exception_ce, 0 TSRMLS_CC, "No digits were found in value: '%s'", in);
-      return 0;
-    }
-
-    mpz_set_si(*number, n);
-
-    return 1;
-  }
-
-  if (base != 10) {
-    point += 2;
-  }
-
   if (mpz_set_str(*number, &in[point], base) == -1) {
     zend_throw_exception_ex(cassandra_invalid_argument_exception_ce, 0 TSRMLS_CC, "Invalid integer value: '%s', base: %d", in, base);
     return 0;
@@ -179,7 +143,7 @@ php_cassandra_parse_varint(char* in, int in_len, mpz_t* number TSRMLS_DC)
 }
 
 int
-php_cassandra_parse_decimal(char* in, int in_len, mpz_t* number, int* scale TSRMLS_DC)
+php_cassandra_parse_decimal(char* in, int in_len, mpz_t* number, long* scale TSRMLS_DC)
 {
   //  start is the index into the char array where the significand starts
   int start = 0;
@@ -194,6 +158,8 @@ php_cassandra_parse_decimal(char* in, int in_len, mpz_t* number, int* scale TSRM
   char* out = (char*) ecalloc((in_len + 1), sizeof(char));
   //  holds length of the formatted integer number
   int out_len = 0;
+
+  int maybe_octal = 0;
 
   //  The following examples show what these variables mean.  Note that
   //  point and dot don't yet have the correct values, they will be
@@ -231,11 +197,12 @@ php_cassandra_parse_decimal(char* in, int in_len, mpz_t* number, int* scale TSRM
     negative = 1;
   }
 
-  if (in[point] == '0') {
-    if (in[point + 1] == 'b')
-      point += 2;
-    else if (in[point + 1] == 'x')
-      point += 2;
+  maybe_octal = (in[point] == '0');
+
+  // Hex or binary
+  if (maybe_octal && (in[point + 1] == 'b' || in[point + 1] == 'x')) {
+    *scale = 0;
+    return php_cassandra_parse_varint(in, in_len, number TSRMLS_CC);
   }
 
   //  Check each character looking for the decimal point and the
@@ -265,6 +232,12 @@ php_cassandra_parse_decimal(char* in, int in_len, mpz_t* number, int* scale TSRM
     point++;
   }
 
+  // Octal number
+  if (maybe_octal && dot == -1) {
+    *scale = 0;
+    return php_cassandra_parse_varint(in, in_len, number TSRMLS_CC);
+  }
+
   // Prepend a negative sign if necessary.
   if (negative)
     out[0] = '-';
@@ -290,13 +263,12 @@ php_cassandra_parse_decimal(char* in, int in_len, mpz_t* number, int* scale TSRM
     return 0;
   }
 
-  int ok = php_cassandra_parse_varint(out, out_len, number TSRMLS_CC);
-
-  if (!ok) {
+  if (mpz_set_str(*number, out, 10) == -1) {
     zend_throw_exception_ex(cassandra_invalid_argument_exception_ce, 0 TSRMLS_CC, "Unable to extract integer part of decimal value: '%s', %s", in, out);
     efree(out);
     return 0;
   }
+
   efree(out);
 
   // Now parse exponent.
@@ -413,7 +385,7 @@ php_cassandra_format_decimal(mpz_t number, long scale, char** out, int* out_len)
         total--;
       }
 
-      memmove(&(tmp[point + 1]), &(tmp[point]), len - point);
+      memmove(&(tmp[point + 1]), &(tmp[point]), total - point);
 
       tmp[point] = '.';
       tmp[total] = '\0';

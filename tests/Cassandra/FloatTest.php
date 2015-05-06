@@ -7,6 +7,8 @@ namespace Cassandra;
  */
 class FloatTest extends \PHPUnit_Framework_TestCase
 {
+    const EPSILON = 0.00001;
+
     /**
      * @expectedException InvalidArgumentException
      * @expectedExceptionMessage No float value found in string: ''
@@ -57,7 +59,7 @@ class FloatTest extends \PHPUnit_Framework_TestCase
     public function testCorrectlyParsesStrings($number, $expected)
     {
         $number = new Float($number);
-        $this->assertEquals((float)$number, (float)$expected, "", 0.00001);
+        $this->assertEquals((float)$number, (float)$expected, "", self::EPSILON);
     }
 
     public function validStrings()
@@ -77,7 +79,9 @@ class FloatTest extends \PHPUnit_Framework_TestCase
     public function testFromNumbers($number)
     {
         $float = new Float($number);
-        $this->assertEquals((float)$float, (float)$number, "", 0.00001);
+        $this->assertEquals((float)$number, (float)$float, "", self::EPSILON);
+        $this->assertEquals((int)$number, $float->toInt());
+        $this->assertEquals((float)$number, (float)(string)$float, "", self::EPSILON);
     }
 
     public function validNumbers()
@@ -92,28 +96,28 @@ class FloatTest extends \PHPUnit_Framework_TestCase
     {
         $float1 = new Float("1");
         $float2 = new Float("0.5");
-        $this->assertEquals(1.5, (float)$float1->add($float2), "", 0.00001);
+        $this->assertEquals(1.5, (float)$float1->add($float2), "", self::EPSILON);
     }
 
     public function testSub()
     {
         $float1 = new Float("1");
         $float2 = new Float("0.5");
-        $this->assertEquals(0.5, (float)$float1->sub($float2), "", 0.00001);
+        $this->assertEquals(0.5, (float)$float1->sub($float2), "", self::EPSILON);
     }
 
     public function testMul()
     {
         $float1 = new Float("2");
         $float2 = new Float("0.5");
-        $this->assertEquals(1.0, (float)$float1->mul($float2), "", 0.00001);
+        $this->assertEquals(1.0, (float)$float1->mul($float2), "", self::EPSILON);
     }
 
     public function testDiv()
     {
         $float1 = new Float("1");
         $float2 = new Float("0.5");
-        $this->assertEquals(2, (float)$float1->div($float2), "", 0.00001);
+        $this->assertEquals(2, (float)$float1->div($float2), "", self::EPSILON);
     }
 
     /**
@@ -140,18 +144,18 @@ class FloatTest extends \PHPUnit_Framework_TestCase
     public function testAbs()
     {
         $float1 = new Float("-123.123");
-        $this->assertEquals(123.123, (float)$float1->abs(), "", 0.00001);
+        $this->assertEquals(123.123, (float)$float1->abs(), "", self::EPSILON);
     }
 
     public function testNeg()
     {
         $float1 = new Float("123.123");
-        $this->assertEquals(-123.123, (float)$float1->neg(), "", 0.00001);
+        $this->assertEquals(-123.123, (float)$float1->neg(), "", self::EPSILON);
     }
 
     public function testSqrt()
     {
         $float1 = new Float("4.0");
-        $this->assertEquals(2.0, (float)$float1->sqrt(), "", 0.00001);
+        $this->assertEquals(2.0, (float)$float1->sqrt(), "", self::EPSILON);
     }
 }
