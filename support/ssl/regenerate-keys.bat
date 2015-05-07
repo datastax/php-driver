@@ -79,18 +79,23 @@ IF NOT DEFINED OPENSSL_FOUND_IN_PATH (
   )
 )
 
+ECHO | SET /P=Cleaning older SSL certificates ... 
 ERASE /Q "!SERVER_CERTIFICATE_PEM!" ^
+  "!CLIENT_CERTIFICATE!" ^
   "!CLIENT_CERTIFICATE_PEM!" ^
   "!PRIVATE_KEY!" ^
   "!SERVER_KEYSTORE!" ^
   "!SERVER_TRUSTSTORE!" ^
   "!CLIENT_KEYSTORE!" ^
-  "!CLIENT_KEYSTORE_OPENSSL_P12!"> NUL
+  "!CLIENT_KEYSTORE_OPENSSL_P12!"> NUL 2>&1
 IF NOT !ERRORLEVEL! EQU 0 (
+  ECHO FAILED!
   ECHO Unable to Erase SSL Certificates: !ERRORLEVEL!
   EXIT /B !EXIT_CODE_ERASE_FAILURE!
 )
+ECHO done.
 
+ECHO | SET /P=Generating server keystore ... 
 !KEYTOOL! -genkeypair -noprompt ^
   -keyalg RSA ^
   -validity 36500 ^
@@ -99,23 +104,29 @@ IF NOT !ERRORLEVEL! EQU 0 (
   -storepass "!SERVER_KEYSTORE_PASSPHRASE!" ^
   -keypass !PASSPHRASE! ^
   -ext SAN="IP:!SERVER_IP_ADDRESS!" ^
-  -dname "CN=Cassandra Server, OU=PHP Driver Tests, O=DataStax Inc., L=Santa Clara, ST=California, C=US"
+  -dname "CN=Cassandra Server, OU=PHP Driver Tests, O=DataStax Inc., L=Santa Clara, ST=California, C=US"> NUL 2>&1
 IF NOT !ERRORLEVEL! EQU 0 (
+  ECHO FAILED!
   ECHO Unable to Generate Server Keystore: !ERRORLEVEL!
   EXIT /B !EXIT_CODE_KEYTOOL_COMMAND_FAILURE!
 )
+ECHO done.
 
+ECHO | SET /P=Generating server certificate ... 
 !KEYTOOL! -exportcert -noprompt ^
   -rfc ^
   -alias cassandra ^
   -keystore "!SERVER_KEYSTORE!" ^
   -storepass "!SERVER_KEYSTORE_PASSPHRASE!" ^
-  -file "!SERVER_CERTIFICATE_PEM!"
+  -file "!SERVER_CERTIFICATE_PEM!"> NUL 2>&1
 IF NOT !ERRORLEVEL! EQU 0 (
+  ECHO FAILED!
   ECHO Unable to Generate Server Certificate: !ERRORLEVEL!
   EXIT /B !EXIT_CODE_KEYTOOL_COMMAND_FAILURE!
 )
+ECHO done.
 
+ECHO | SET /P=Generating client keystore ... 
 !KEYTOOL! -genkeypair -noprompt ^
   -keyalg RSA ^
   -validity 36500 ^
@@ -124,31 +135,55 @@ IF NOT !ERRORLEVEL! EQU 0 (
   -storepass "!CLIENT_KEYSTORE_PASSPHRASE!" ^
   -keypass !PASSPHRASE! ^
   -ext SAN="IP:!CLIENT_IP_ADDRESS!" ^
-  -dname "CN=PHP Driver, OU=PHP Driver Tests, O=DataStax Inc., L=Santa Clara, ST=California, C=US"
+  -dname "CN=PHP Driver, OU=PHP Driver Tests, O=DataStax Inc., L=Santa Clara, ST=California, C=US"> NUL 2>&1
 IF NOT !ERRORLEVEL! EQU 0 (
+  ECHO FAILED!
   ECHO Unable to Generate Client Keystore: !ERRORLEVEL!
   EXIT /B !EXIT_CODE_KEYTOOL_COMMAND_FAILURE!
 )
+ECHO done.
 
+ECHO | SET /P=Generating client certificate ... 
 !KEYTOOL! -exportcert -noprompt ^
   -alias driver ^
   -keystore "!CLIENT_KEYSTORE!" ^
   -storepass "!CLIENT_KEYSTORE_PASSPHRASE!" ^
-  -file "!CLIENT_CERTIFICATE!"
+  -file "!CLIENT_CERTIFICATE!"> NUL 2>&1
+IF NOT !ERRORLEVEL! EQU 0 (
+  ECHO FAILED!
+  ECHO Unable to Client Certificate: !ERRORLEVEL!
+  EXIT /B !EXIT_CODE_KEYTOOL_COMMAND_FAILURE!
+)
+ECHO done.
 
+ECHO | SET /P=Importing client certificate into server truststore ... 
 !KEYTOOL! -import -noprompt ^
   -alias cassandra ^
   -keystore "!SERVER_TRUSTSTORE!" ^
   -storepass "!SERVER_TRUSTSTORE_PASSPHRASE!" ^
-  -file "!CLIENT_CERTIFICATE!"
+  -file "!CLIENT_CERTIFICATE!"> NUL 2>&1
+IF NOT !ERRORLEVEL! EQU 0 (
+  ECHO FAILED!
+  ECHO Unable to Import Client Certificate: !ERRORLEVEL!
+  EXIT /B !EXIT_CODE_KEYTOOL_COMMAND_FAILURE!
+)
+ECHO done.
 
+ECHO | SET /P=Generating client PEM certificate ... 
 !KEYTOOL! -exportcert -noprompt ^
   -rfc ^
   -alias driver ^
   -keystore "!CLIENT_KEYSTORE!" ^
   -storepass "!CLIENT_KEYSTORE_PASSPHRASE!" ^
-  -file "!CLIENT_CERTIFICATE_PEM!"
+  -file "!CLIENT_CERTIFICATE_PEM!"> NUL 2>&1
+IF NOT !ERRORLEVEL! EQU 0 (
+  ECHO FAILED!
+  ECHO Unable to Generate Client PEM Certificate: !ERRORLEVEL!
+  EXIT /B !EXIT_CODE_KEYTOOL_COMMAND_FAILURE!
+)
+ECHO done.
 
+ECHO | SET /P=Generating client private PEM key ... 
 !KEYTOOL! -importkeystore -noprompt ^
   -srcalias certificatekey ^
   -deststoretype PKCS12 ^
@@ -156,13 +191,24 @@ IF NOT !ERRORLEVEL! EQU 0 (
   -srckeystore "!CLIENT_KEYSTORE!" ^
   -srcstorepass "!CLIENT_KEYSTORE_PASSPHRASE!" ^
   -storepass "!CLIENT_KEYSTORE_PASSPHRASE!" ^
-  -destkeystore "!CLIENT_KEYSTORE_OPENSSL_P12!"
+  -destkeystore "!CLIENT_KEYSTORE_OPENSSL_P12!"> NUL 2>&1
+IF NOT !ERRORLEVEL! EQU 0 (
+  ECHO FAILED!
+  ECHO Unable to Generate Client Private P12 Key: !ERRORLEVEL!
+  EXIT /B !EXIT_CODE_KEYTOOL_COMMAND_FAILURE!
+)
 
 !OPENSSL! pkcs12 -nomacver -nocerts ^
   -in "!CLIENT_KEYSTORE_OPENSSL_P12!" ^
   -password pass:"!CLIENT_KEYSTORE_PASSPHRASE!" ^
   -passout pass:"!PASSPHRASE!" ^
-  -out "!PRIVATE_KEY!"
+  -out "!PRIVATE_KEY!"> NUL 2>&1
+IF NOT !ERRORLEVEL! EQU 0 (
+  ECHO FAILED!
+  ECHO Unable to Generate Client Private PEM Key: !ERRORLEVEL!
+  EXIT /B !EXIT_CODE_KEYTOOL_COMMAND_FAILURE!
+)
+ECHO done.
 
 REM Disable delayed expansion and local variables
 ENDLOCAL
