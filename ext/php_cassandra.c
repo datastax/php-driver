@@ -199,7 +199,6 @@ php_cassandra_log_initialize()
   uv_rwlock_init(&log_lock);
   cass_log_set_level(CASS_LOG_ERROR);
   cass_log_set_callback(php_cassandra_log, NULL);
-  atexit(php_cassandra_log_cleanup);
 }
 
 static void
@@ -414,11 +413,11 @@ PHP_INI_END()
 
 static PHP_GINIT_FUNCTION(cassandra)
 {
+  uv_once(&log_once, php_cassandra_log_initialize);
+
   cassandra_globals->uuid_gen            = cass_uuid_gen_new();
   cassandra_globals->persistent_clusters = 0;
   cassandra_globals->persistent_sessions = 0;
-
-  uv_once(&log_once, php_cassandra_log_initialize);
 }
 
 static PHP_GSHUTDOWN_FUNCTION(cassandra)
@@ -539,6 +538,9 @@ PHP_MINIT_FUNCTION(cassandra)
 PHP_MSHUTDOWN_FUNCTION(cassandra)
 {
   /* UNREGISTER_INI_ENTRIES(); */
+
+  php_cassandra_log_cleanup();
+
   return SUCCESS;
 }
 
