@@ -20,18 +20,13 @@ php_cassandra_parse_float(char* in, int in_len, cass_float_t* number TSRMLS_DC)
     return 0;
   }
 
-  if (errno) {
+  if (errno || end == in) {
     zend_throw_exception_ex(cassandra_invalid_argument_exception_ce, 0 TSRMLS_CC, "Invalid float value: '%s'", in);
     return 0;
   }
 
   if (end != &in[in_len]) {
     zend_throw_exception_ex(cassandra_invalid_argument_exception_ce, 0 TSRMLS_CC, "Invalid characters were found in value: '%s'", in);
-    return 0;
-  }
-
-  if (end == in) {
-    zend_throw_exception_ex(cassandra_invalid_argument_exception_ce, 0 TSRMLS_CC, "No float value found in string: '%s'", in);
     return 0;
   }
 
@@ -82,18 +77,13 @@ php_cassandra_parse_bigint(char* in, int in_len, cass_int64_t* number TSRMLS_DC)
     return 0;
   }
 
-  if (errno) {
+  if (errno || end == &in[point]) {
     zend_throw_exception_ex(cassandra_invalid_argument_exception_ce, 0 TSRMLS_CC, "Invalid integer value: '%s'", in);
     return 0;
   }
 
   if (end != &in[in_len]) {
-    zend_throw_exception_ex(cassandra_invalid_argument_exception_ce, 0 TSRMLS_CC, "Non digit characters were found in value: '%s'", in);
-    return 0;
-  }
-
-  if (end == &in[point]) {
-    zend_throw_exception_ex(cassandra_invalid_argument_exception_ce, 0 TSRMLS_CC, "No digits were found in value: '%s'", in);
+    zend_throw_exception_ex(cassandra_invalid_argument_exception_ce, 0 TSRMLS_CC, "Invalid characters were found in value: '%s'", in);
     return 0;
   }
 

@@ -11,7 +11,7 @@ class FloatTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @expectedException InvalidArgumentException
-     * @expectedExceptionMessage No float value found in string: ''
+     * @expectedExceptionMessage Invalid float value: ''
      */
     public function testThrowsWhenCreatingFromEmpty()
     {
@@ -20,7 +20,7 @@ class FloatTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @expectedException InvalidArgumentException
-     * @expectedExceptionMessage Invalid characters were found in value: 'invalid'
+     * @expectedExceptionMessage Invalid float value: 'invalid'
      */
     public function testThrowsWhenCreatingFromInvalid()
     {

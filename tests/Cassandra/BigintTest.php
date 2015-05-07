@@ -27,7 +27,7 @@ class BigintTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @expectedException InvalidArgumentException
-     * @expectedExceptionMessage Non digit characters were found in value: '123.123'
+     * @expectedExceptionMessage Invalid characters were found in value: '123.123'
      */
     public function testThrowsWhenCreatingFromInvalidTrailingChars()
     {
