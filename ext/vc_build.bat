@@ -695,7 +695,7 @@ IF "!ENABLE_BUILD_PACKAGES!" == "!FALSE!" (
       REM Build the cpp-driver
       IF !VISUAL_STUDIO_VERSION! EQU 2010 SET USE_BOOST_ATOMIC=!TRUE!
       SET CPP_DRIVER_TARGET_COMPILER=!VISUAL_STUDIO_INTERNAL_VERSION!
-      CALL :BUILDCPPDRIVER "!ABSOLUTE_DEPENDENCIES_CPP_DRIVER_SOURCE_DIRECTORY!" !CPP_DRIVER_TARGET_COMPILER! "!ABSOLUTE_CPP_DRIVER_PACKAGE_INSTALLATION_DIRECTORY!" !TARGET_ARCHITECTURE! !FALSE! !USE_BOOST_ATOMIC! "!LOG_CPP_DRIVER_BUILD!"
+      CALL :BUILDCPPDRIVER "!ABSOLUTE_DEPENDENCIES_CPP_DRIVER_SOURCE_DIRECTORY!" !CPP_DRIVER_TARGET_COMPILER! "!ABSOLUTE_CPP_DRIVER_PACKAGE_INSTALLATION_DIRECTORY!" !BUILD_TYPE_RELEASE! !TARGET_ARCHITECTURE! !USE_BOOST_ATOMIC! "!LOG_CPP_DRIVER_BUILD!"
       IF !ERRORLEVEL! NEQ 0 EXIT /B !ERRORLEVEL!
 
       REM Skip a line on the display
@@ -886,11 +886,10 @@ REM @param target-compiler Target compiler to use for compiling the cpp-driver
 REM @param install-directory Installation location of the cpp-driver
 REM @param build-type Debug or release
 REM @param target-architecture 32 or 64-bit
-REM @param enable-zlib True if zlib should be enabled; false otherwise
 REM @param use-boost-atomic True if Boost atomic library should be used; false
 REM                         otherwise
 REM @param log-filename Absolute path and filename for log output
-:BUILDCPPDRIVER [source-directory] [target-compiler] [install-directory] [build-type] [target-architecture] [enable-zlib] [use-boost-atomic] [log-filename]
+:BUILDCPPDRIVER [source-directory] [target-compiler] [install-directory] [build-type] [target-architecture] [use-boost-atomic] [log-filename]
   REM Create cpp-driver variables from arguments
   SET "CPP_DRIVER_SOURCE_DIRECTORY=%~1"
   SHIFT
@@ -910,7 +909,7 @@ REM @param log-filename Absolute path and filename for log output
   ECHO | SET /P=Building and installing cpp-driver ... 
   PUSHD "!CPP_DRIVER_SOURCE_DIRECTORY!" > NUL
   SET "CPP_DRIVER_BUILD_COMMAND_LINE=--TARGET-COMPILER !CPP_DRIVER_TARGET_COMPILER! --INSTALL-DIR !CPP_DRIVER_INSTALLATION_DIRECTORY! --STATIC --ENABLE-ZLIB"
-  IF !CPP_DRIVER_BUILD_TYPE! == "!BUILD_TYPE_DEBUG!" (
+  IF "!CPP_DRIVER_BUILD_TYPE!" == "!BUILD_TYPE_DEBUG!" (
     SET "CPP_DRIVER_BUILD_COMMAND_LINE=!CPP_DRIVER_BUILD_COMMAND_LINE! --DEBUG"
   ) ELSE (
     SET "CPP_DRIVER_BUILD_COMMAND_LINE=!CPP_DRIVER_BUILD_COMMAND_LINE! --RELEASE"
