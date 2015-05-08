@@ -1,4 +1,3 @@
-#include <php.h>
 #include "php_cassandra.h"
 
 zend_class_entry *cassandra_uuid_interface_ce = NULL;
