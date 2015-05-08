@@ -5,6 +5,12 @@
 #include <math.h>
 #include "util/math.h"
 
+#ifdef _WIN32
+#  ifdef DISABLE_MSVC_STDINT
+#    define strtoll _strtoi64
+#  endif
+#endif
+
 extern zend_class_entry *cassandra_invalid_argument_exception_ce;
 
 int

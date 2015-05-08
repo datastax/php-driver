@@ -8,15 +8,17 @@
 #include <gmp.h>
 #include <cassandra.h>
 
-#ifndef PHP_WIN32
-#  pragma GCC diagnostic push
-#  pragma GCC diagnostic ignored "-Wpedantic"
+// Ensure Visual Studio 2010 does not load MSVC++ stdint definitions
+#ifdef _WIN32
+#  ifdef DISABLE_MSVC_STDINT
+#    pragma once
+#    ifndef _STDINT
+#      define _STDINT
+#    endif
+#  endif
 #endif
+
 #include <php.h>
-#ifndef PHP_WIN32
-#  pragma GCC diagnostic pop
-#endif
-#include <uv.h>
 #include <Zend/zend_exceptions.h>
 #include <Zend/zend_interfaces.h>
 

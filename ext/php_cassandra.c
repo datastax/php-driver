@@ -14,6 +14,8 @@
 #include "types/map.h"
 #include "types/set.h"
 
+#include <uv.h>
+
 #define PHP_CASSANDRA_DEFAULT_LOG "php-driver.log"
 
 static uv_once_t log_once = UV_ONCE_INIT;

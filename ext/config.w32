@@ -123,6 +123,12 @@ if (PHP_CASSANDRA != "no" &&
             "/DCASS_STATIC " +
             "/wd4267");
 
+        // Determine if MSVC++ stdint definitions should be disabled
+        if(PHP_VERSION == "5" && PHP_MINOR_VERSION <= 4) {
+          ADD_FLAG("CFLAGS_CASSANDRA",
+              "/DDISABLE_MSVC_STDINT");
+        }
+
         // Ensure gdi32.lib is linked for all dependency extensions
         ADD_FLAG("LIBS", "gdi32.lib");
       } else {

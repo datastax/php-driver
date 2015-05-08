@@ -435,6 +435,9 @@ IF "!ENABLE_BUILD_PACKAGES!" == "!FALSE!" (
     CALL :GETARRAYELEMENT VISUAL_STUDIO_VERSIONS !AVAILABLE_VISUAL_STUDIO_VERSIONS! VISUAL_STUDIO_VERSION
   )
 
+  REM Determine if Boost atomic should be enabled
+  IF !VISUAL_STUDIO_VERSION! EQU 2010 SET USE_BOOST_ATOMIC=!TRUE!
+
   REM Setup the Visual Studio environment for compiling
   CALL :CONFIGUREVISUALSTUDIOENVIRONMENT !VISUAL_STUDIO_INTERNAL_VERSION! !TARGET_ARCHITECTURE!
   CALL :GETFULLPATH "!DEVENV!" DEVENV_FOUND
@@ -559,7 +562,7 @@ IF NOT EXIST "!ABSOLUTE_DEPENDENCIES_PHP_SOURCE_DIRECTORY!" (
       ECHO done.
       ECHO | SET /P=Patching PHP !PHP_BRANCH_TAG_VERSION! for proper build ... 
       PUSHD "!ABSOLUTE_DEPENDENCIES_PHP_SOURCE_DIRECTORY!"
-      !GIT! apply "!ABSOLUTE_BATCH_DIRECTORY!\win32\php-5.4.patch"
+      !GIT! apply --ignore-space-change --ignore-whitespace "!ABSOLUTE_BATCH_DIRECTORY!\win32\php-5.4.patch"
       IF NOT !ERRORLEVEL! EQU 0 (
         ECHO FAILED!
         ECHO 	See !LOG_DRIVER_BUILD! for more details
@@ -567,8 +570,9 @@ IF NOT EXIST "!ABSOLUTE_DEPENDENCIES_PHP_SOURCE_DIRECTORY!" (
       )
       POPD
       ECHO done.
+    ) ELSE (
+      ECHO done.
     )
-    ECHO done.
   ) ELSE (
     ECHO FAILED!
     ECHO 	See !LOG_DRIVER_BUILD! for more details
@@ -590,7 +594,7 @@ IF "!ENABLE_BUILD_PACKAGES!" == "!FALSE!" (
 
   REM Determine if the MPIR library needs to be built
   IF NOT EXIST "!ABSOLUTE_DEPENDENCIES_MPIR_LIBRARIES_DIRECTORY!" (
-    CALL :BUILDMPIR "!ABSOLUTE_DEPENDENCIES_MPIR_SOURCE_DIRECTORY!" "!ABSOLUTE_DEPENDENCIES_MPIR_LIBRARIES_DIRECTORY!" !BUILD_TYPE! "!TARGET_ARCHITECTURE!" "!LOG_MPIR_BUILD!"
+    CALL :BUILDMPIR "!ABSOLUTE_DEPENDENCIES_MPIR_SOURCE_DIRECTORY!" "!ABSOLUTE_DEPENDENCIES_MPIR_LIBRARIES_DIRECTORY!" !BUILD_TYPE! "!TARGET_ARCHITECTURE!" !VISUAL_STUDIO_VERSION! "!LOG_MPIR_BUILD!"
     IF !ERRORLEVEL! NEQ 0 EXIT /B !ERRORLEVEL!
   )
 
@@ -905,6 +909,10 @@ REM @param log-filename Absolute path and filename for log output
   SHIFT
   SET "CPP_DRIVER_LOG_FILENAME=%~1"
 
+  REM Store the available Visual Studio versions and undefine environment
+  SET "STORE_AVAILABLE_VISUAL_STUDIO_VERSIONS=!AVAILABLE_VISUAL_STUDIO_VERSIONS!"
+  SET AVAILABLE_VISUAL_STUDIO_VERSIONS=
+
   REM Build the cpp-driver
   ECHO | SET /P=Building and installing cpp-driver ... 
   PUSHD "!CPP_DRIVER_SOURCE_DIRECTORY!" > NUL
@@ -931,6 +939,9 @@ REM @param log-filename Absolute path and filename for log output
   )
   POPD
   ECHO done.
+
+  REM Restore available Visual Studio version and exit function
+  SET "AVAILABLE_VISUAL_STUDIO_VERSIONS=!STORE_AVAILABLE_VISUAL_STUDIO_VERSIONS!"
   EXIT /B
 
 REM Build the MPIR library
@@ -939,8 +950,9 @@ REM @param source-directory Location of MPIR source
 REM @param install-directory Installation location of MPIR library
 REM @param build-type Debug or release
 REM @param target-architecture 32 or 64-bit
+REM @param visual-studio-version Visual Studio version being used to compile
 REM @param log-filename Absolute path and filename for log output
-:BUILDMPIR [source-directory] [install-directory] [build-type] [target-architecture] [log-filename]
+:BUILDMPIR [source-directory] [install-directory] [build-type] [target-architecture] [visual-studio-version] [log-filename]
   REM Create MPIR variables from arguments
   SET "MPIR_SOURCE_DIRECTORY=%~1"
   SHIFT
@@ -950,26 +962,35 @@ REM @param log-filename Absolute path and filename for log output
 	SHIFT
   SET "MPIR_TARGET_ARCHITECTURE=%~1"
   SHIFT
+  SET "MPIR_VISUAL_STUDIO_VERSION=%~1"
+  SHIFT
   SET "MPIR_LOG_FILENAME=%~1"
 
   REM Attempt to upgrade the solution
   PUSHD "!MPIR_SOURCE_DIRECTORY!" > NUL
   IF DEFINED DEVENV_FOUND (
-    ECHO | SET /P=Upgrading MPIR solution ... 
-    !DEVENV! build.vc10\mpir.sln /upgrade >> "!MPIR_LOG_FILENAME!" 2>&1
-    IF NOT !ERRORLEVEL! EQU 0 (
-      ECHO FAILED!
-      ECHO 	See !MPIR_LOG_FILENAME! for more details
-      EXIT /B !EXIT_CODE_BUILD_DEPENDENCY_FAILED!
+    IF NOT !MPIR_VISUAL_STUDIO_VERSION! EQU 2010 (
+      ECHO | SET /P=Upgrading MPIR solution ... 
+      !DEVENV! build.vc10\mpir.sln /upgrade >> "!MPIR_LOG_FILENAME!" 2>&1
+      IF NOT !ERRORLEVEL! EQU 0 (
+        ECHO FAILED!
+        ECHO 	See !MPIR_LOG_FILENAME! for more details
+        EXIT /B !EXIT_CODE_BUILD_DEPENDENCY_FAILED!
+      )
+      ECHO done.
     )
-    ECHO done.
   )
   REM Build MPIR
   ECHO | SET /P=Building MPIR ... 
   SET MPIR_PLATFORM_ARCHITECTURE=Win32
   IF !MPIR_TARGET_ARCHITECTURE! EQU !ARCHITECTURE_64BIT! SET MPIR_PLATFORM_ARCHITECTURE=x64
-  ECHO !MSBUILD! build.vc10\mpir.sln /T:lib_mpir_gc /P:Configuration=!MPIR_BUILD_TYPE! /P:Platform=!MPIR_PLATFORM_ARCHITECTURE! /CLP:NoSummary;NoItemAndPropertyList;Verbosity=minimal /NOLOGO >> "!MPIR_LOG_FILENAME!" 2>&1
-  !MSBUILD! build.vc10\mpir.sln /T:lib_mpir_gc /P:Configuration=!MPIR_BUILD_TYPE! /P:Platform=!MPIR_PLATFORM_ARCHITECTURE! /CLP:NoSummary;NoItemAndPropertyList;Verbosity=minimal /NOLOGO >> "!MPIR_LOG_FILENAME!" 2>&1
+  IF !MPIR_VISUAL_STUDIO_VERSION! EQU 2010 (
+    ECHO !MSBUILD! build.vc10\lib_mpir_gc\lib_mpir_gc.vcxproj /P:Configuration=!MPIR_BUILD_TYPE! /P:Platform=!MPIR_PLATFORM_ARCHITECTURE! /CLP:NoSummary;NoItemAndPropertyList;Verbosity=minimal /NOLOGO >> "!MPIR_LOG_FILENAME!" 2>&1
+    !MSBUILD! build.vc10\lib_mpir_gc\lib_mpir_gc.vcxproj /P:Configuration=!MPIR_BUILD_TYPE! /P:Platform=!MPIR_PLATFORM_ARCHITECTURE! /CLP:NoSummary;NoItemAndPropertyList;Verbosity=minimal /NOLOGO >> "!MPIR_LOG_FILENAME!" 2>&1
+  ) ELSE (
+    ECHO !MSBUILD! build.vc10\mpir.sln /T:lib_mpir_gc /P:Configuration=!MPIR_BUILD_TYPE! /P:Platform=!MPIR_PLATFORM_ARCHITECTURE! /CLP:NoSummary;NoItemAndPropertyList;Verbosity=minimal /NOLOGO >> "!MPIR_LOG_FILENAME!" 2>&1
+    !MSBUILD! build.vc10\mpir.sln /T:lib_mpir_gc /P:Configuration=!MPIR_BUILD_TYPE! /P:Platform=!MPIR_PLATFORM_ARCHITECTURE! /CLP:NoSummary;NoItemAndPropertyList;Verbosity=minimal /NOLOGO >> "!MPIR_LOG_FILENAME!" 2>&1
+  )
   IF NOT !ERRORLEVEL! EQU 0 (
     ECHO FAILED!
     ECHO 	See !MPIR_LOG_FILENAME! for more details
@@ -994,12 +1015,22 @@ REM @param log-filename Absolute path and filename for log output
     EXIT /B !EXIT_CODE_BUILD_DEPENDENCY_FAILED!
   )
   IF NOT EXIST "!MPIR_INSTALLATION_DIRECTORY!\lib" MKDIR "!MPIR_INSTALLATION_DIRECTORY!\lib"
-  XCOPY /Y build.vc10\!MPIR_PLATFORM_ARCHITECTURE!\!MPIR_BUILD_TYPE!\*.* "!MPIR_INSTALLATION_DIRECTORY!\lib" >> "!MPIR_LOG_FILENAME!" 2>&1
-  IF NOT !ERRORLEVEL! EQU 0 (
-    ECHO FAILED!
-    ECHO 	See !MPIR_LOG_FILENAME! for more details
-    RMDIR /S /Q "!MPIR_INSTALLATION_DIRECTORY!"
-    EXIT /B !EXIT_CODE_BUILD_DEPENDENCY_FAILED!
+  IF !MPIR_VISUAL_STUDIO_VERSION! EQU 2010 (
+    XCOPY /Y build.vc10\lib_mpir_gc\!MPIR_PLATFORM_ARCHITECTURE!\!MPIR_BUILD_TYPE!\*.* "!MPIR_INSTALLATION_DIRECTORY!\lib" >> "!MPIR_LOG_FILENAME!" 2>&1
+    IF NOT !ERRORLEVEL! EQU 0 (
+      ECHO FAILED!
+      ECHO 	See !MPIR_LOG_FILENAME! for more details
+      RMDIR /S /Q "!MPIR_INSTALLATION_DIRECTORY!"
+      EXIT /B !EXIT_CODE_BUILD_DEPENDENCY_FAILED!
+    )
+  ) ELSE (
+    XCOPY /Y build.vc10\!MPIR_PLATFORM_ARCHITECTURE!\!MPIR_BUILD_TYPE!\*.* "!MPIR_INSTALLATION_DIRECTORY!\lib" >> "!MPIR_LOG_FILENAME!" 2>&1
+    IF NOT !ERRORLEVEL! EQU 0 (
+      ECHO FAILED!
+      ECHO 	See !MPIR_LOG_FILENAME! for more details
+      RMDIR /S /Q "!MPIR_INSTALLATION_DIRECTORY!"
+      EXIT /B !EXIT_CODE_BUILD_DEPENDENCY_FAILED!
+    )
   )
   POPD
   ECHO done.
@@ -1239,7 +1270,7 @@ REM @param log-filename Absolute path and filename for log output
     ECHO done.
   )
   ECHO | SET /P=Configuring PHP and enable driver extension ... 
-  SET "DRIVER_CONFIGURE_COMMAND_LINE=--with-prefix=^"!PHP_DRIVER_INSTALLATION_DIRECTORY!^" --disable-all --enable-cli --with-openssl=^"!PHP_DRIVER_OPENSSL_LIBRARY_DIRECTORY!^" --enable-cassandra=shared --with-cassandra-cpp-driver=^"!PHP_DRIVER_CPP_DRIVER_LIBRARY_DIRECTORY!^" --with-libuv-libs=^"!PHP_DRIVER_LIBUV_LIBRARY_DIRECTORY!^" --with-mpir=^"!PHP_DRIVER_MPIR_LIBRARY_DIRECTORY!^" --with-zlib-libs=^"!PHP_DRIVER_ZLIB_LIBRARY_DIRECTORY!^""
+  SET "DRIVER_CONFIGURE_COMMAND_LINE=--with-prefix=^"!PHP_DRIVER_INSTALLATION_DIRECTORY!^" --with-extra-includes=^"!PHP_DRIVER_PHP_SOURCE_DIRECTORY!\..\deps\include^" --disable-all --enable-cli --with-openssl=^"!PHP_DRIVER_OPENSSL_LIBRARY_DIRECTORY!^" --enable-cassandra=shared --with-cassandra-cpp-driver=^"!PHP_DRIVER_CPP_DRIVER_LIBRARY_DIRECTORY!^" --with-libuv-libs=^"!PHP_DRIVER_LIBUV_LIBRARY_DIRECTORY!^" --with-mpir=^"!PHP_DRIVER_MPIR_LIBRARY_DIRECTORY!^" --with-zlib-libs=^"!PHP_DRIVER_ZLIB_LIBRARY_DIRECTORY!^""
   IF "!PHP_DRIVER_ENABLE_THREAD_SAFETY!" == "!TRUE!" (
     SET "DRIVER_CONFIGURE_COMMAND_LINE=!DRIVER_CONFIGURE_COMMAND_LINE! --enable-zts"
   ) ELSE (

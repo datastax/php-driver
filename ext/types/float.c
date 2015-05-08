@@ -1,6 +1,14 @@
 #include "php_cassandra.h"
 #include "float.h"
 
+#ifdef _WIN32
+#  ifdef DISABLE_MSVC_STDINT
+    float strtof(const char *str, char **endptr) {
+      return (float) strtod(str, endptr);
+    }
+#  endif
+#endif
+
 zend_class_entry* cassandra_ce_Float = NULL;
 
 static int
