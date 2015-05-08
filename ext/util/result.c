@@ -245,7 +245,7 @@ php_cassandra_get_result(const CassResult* result, zval** out TSRMLS_DC)
   columns  = cass_result_column_count(result);
 
   while (cass_iterator_next(iterator)) {
-    int i;
+    unsigned i;
     MAKE_STD_ZVAL(row);
     array_init(row);
     cass_row = cass_iterator_get_row(iterator);

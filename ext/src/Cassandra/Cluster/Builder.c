@@ -157,7 +157,7 @@ PHP_METHOD(ClusterBuilder, withContactPoints)
   zval***   args;
   zval*     host;
   int       argc, i;
-  smart_str contactPoints = {0};
+  smart_str contactPoints = {NULL, 0, 0};
   cassandra_cluster_builder* builder = NULL;
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "+", &args, &argc) == FAILURE) {
