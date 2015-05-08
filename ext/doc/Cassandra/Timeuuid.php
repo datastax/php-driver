@@ -18,6 +18,8 @@
 
 namespace Cassandra;
 
+use DateTime;
+
 /**
  * A PHP representation of the CQL `timeuuid` datatype
  */
@@ -27,36 +29,36 @@ final class Timeuuid
      * Creates a timeuuid from a given timestamp or current time.
      * @param int $timestamp Unix timestamp
      */
-    public function __construct($timestamp = null) {}
+    public function __construct(int $timestamp = null) {}
 
     /**
      * Returns this timeuuid as string
      * @return string timeuuid
      */
-    public function __toString() {}
+    public function string __toString() {}
 
     /**
      * Returns this timeuuid as string
      * @return string timeuuid
      */
-    public function uuid() {}
+    public function string uuid() {}
 
     /**
      * Returns the version of this timeuuid
-     * @return integer version of this timeuuid
+     * @return int version of this timeuuid
      */
-    public function version() {}
+    public function int version() {}
 
     /**
      * Unix timestamp
-     * @see time
+     * @see time()
      * @return int seconds
      */
-    public function time() {}
+    public function int time() {}
 
     /**
      * Converts current timeuuid to PHP DateTime
-     * @return \DateTime
+     * @return DateTime
      */
-    public function toDateTime() {}
+    public function DateTime toDateTime() {}
 }

@@ -18,60 +18,64 @@
 
 namespace Cassandra;
 
+/**
+ * Common interface implemented by all numeric types, providing basic
+ * arithmetic functions.
+ */
 interface Numeric
 {
     /**
      * @param  Numeric $addend a number to add to this one
      * @return Numeric sum
      */
-    function add(Numeric $addend);
+    function Numeric add(Numeric $addend);
 
     /**
      * @param  Numeric $subtrahend a number to subtract from this one
      * @return Numeric             difference
      */
-    function sub(Numeric $subtrahend);
+    function Numeric sub(Numeric $subtrahend);
 
     /**
      * @param  Numeric $multiplier a number to multiply this one by
      * @return Numeric             product
      */
-    function mul(Numeric $multiplier);
+    function Numeric mul(Numeric $multiplier);
 
     /**
      * @param  Numeric $divisor a number to divide this one by
      * @return Numeric          quotient
      */
-    function div(Numeric $divisor);
+    function Numeric div(Numeric $divisor);
 
     /**
      * @param  Numeric $divisor a number to divide this one by
      * @return Numeric          remainder
      */
-    function mod(Numeric $divisor);
+    function Numeric mod(Numeric $divisor);
 
     /**
      * @return Numeric absolute value
      */
-    function abs();
+    function Numeric abs();
 
     /**
      * @return Numeric negative value
      */
-    function neg();
+    function Numeric neg();
 
     /**
      * @return Numeric square root
      */
-    function sqrt();
+    function Numeric sqrt();
 
     /**
      * @return int this number as int
      */
-    function toInt();
+    function int toInt();
 
     /**
      * @return float this number as float
      */
-    function toFloat();
+    function float toDouble();
 }

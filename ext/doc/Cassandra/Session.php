@@ -21,7 +21,7 @@ namespace Cassandra;
 /**
  * A session is used to prepare and execute statements.
  *
- * @see Cassandra\Cluster::connect()
+ * @see Cassandra::Cluster::connect()
  */
 interface Session
 {
@@ -35,20 +35,20 @@ interface Session
      *
      * @return Rows execution result
      */
-    public function execute(Statement $statement, ExecutionOptions $options = null);
+    public function Rows execute(Statement $statement, ExecutionOptions $options = null);
 
     /**
      * Executes a given statement and returns a future result.
      *
-     * Note that this method ignores ExecutionOptions::$timeout option, you can
-     * provide one to Future::get() instead.
+     * Note that this method ignores timeout specified in the ExecutionOptions,
+     * you can provide one to Future::get() instead.
      *
      * @param Statement             $statement statement to be executed
      * @param ExecutionOptions|null $options   execution options
      *
      * @return Future future result
      */
-    public function executeAsync(Statement $statement, ExecutionOptions $options = null);
+    public function Future executeAsync(Statement $statement, ExecutionOptions $options = null);
 
     /**
      * Creates a prepared statement from a given CQL string.
@@ -63,7 +63,7 @@ interface Session
      *
      * @return PreparedStatement prepared statement
      */
-    public function prepare($cql, ExecutionOptions $options = null);
+    public function PreparedStatement prepare(string $cql, ExecutionOptions $options = null);
 
     /**
      * Asynchronously prepares a statement and returns a future prepared statement.
@@ -75,19 +75,19 @@ interface Session
      *
      * @return Future statement
      */
-    public function prepareAsync($cql, ExecutionOptions $options = null);
+    public function Future prepareAsync(string $cql, ExecutionOptions $options = null);
 
     /**
      * Closes current session and all of its connections.
      *
      * @param float|null $timeout Timeout to wait for closure in seconds
      */
-    public function close($timeout = null);
+    public function void close(float $timeout = null);
 
     /**
      * Asynchronously closes current session once all pending requests have finished.
      *
      * @return Future future
      */
-    public function closeAsync();
+    public function Future closeAsync();
 }

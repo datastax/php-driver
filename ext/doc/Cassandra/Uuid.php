@@ -27,23 +27,23 @@ final class Uuid
      * Creates a uuid from a given uuid string or a random one.
      * @param string $uuid A uuid string
      */
-    public function __construct($uuid = null) {}
+    public function __construct(string $uuid = null) {}
 
     /**
      * Returns this uuid as string
      * @return string uuid
      */
-    public function __toString() {}
+    public function string __toString() {}
 
     /**
      * Returns this uuid as string
      * @return string uuid
      */
-    public function uuid() {}
+    public function string uuid() {}
 
     /**
      * Returns the version of this uuid
-     * @return integer version of this uuid
+     * @return int version of this uuid
      */
-    public function version() {}
+    public function int version() {}
 }

@@ -22,17 +22,17 @@ namespace Cassandra;
 /**
  * Default cluster implementation.
  *
- * @see Cassandra\Cluster
+ * @see Cassandra::Cluster
  */
 final class DefaultCluster implements Cluster
 {
     /**
      * {@inheritDoc}
      */
-    public function connect($keyspace = null) {}
+    public function Session connect(string $keyspace = null) {}
 
     /**
      * {@inheritDoc}
      */
-    public function connectAsync($keyspace = null) {}
+    public function Future connectAsync(string $keyspace = null) {}
 }

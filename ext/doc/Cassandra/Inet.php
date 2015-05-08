@@ -27,17 +27,17 @@ final class Inet
      * Creates a new IPv4 or IPv6 inet address
      * @param string $address any IPv4 or IPv6 address
      */
-    public function __construct($address) {}
+    public function __construct(string $address) {}
 
     /**
      * Returns the normalized string representation of the address
      * @return string address
      */
-    public function value() {}
+    public function string value() {}
 
     /**
      * Returns the normalized string representation of the address
      * @return string address
      */
-    public function __toString() {}
+    public function string __toString() {}
 }

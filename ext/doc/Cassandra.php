@@ -69,22 +69,19 @@ final class Cassandra
     const TYPE_TIMEUUID  = 'timeuuid';
     const TYPE_INET      = 'inet';
 
-    const LOAD_BALANCING_ROUND_ROBIN          = 0;
-    const LOAD_BALANCING_DC_AWARE_ROUND_ROBIN = 1;
-
     const VERSION = '1.0.0-alpha';
 
     /**
      * Returns a Cluster Builder.
      *
-     * @return \Cassandra\Cluster\Builder a Cluster Builder instance
+     * @return Cluster::Builder a Cluster Builder instance
      */
-    public static function cluster() {}
+    public static Cassandra::Cluster::Builder function cluster() {}
 
     /**
      * Returns SSL Options Builder.
      *
-     * @return \Cassandra\SSLOptions\Builder a SSLOptions Builder instance
+     * @return SSLOptions::Builder an SSLOptions Builder instance
      */
-    public static function ssl() {}
+    public static Cassandra::SSLOptions::Builder function ssl() {}
 }

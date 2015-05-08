@@ -12,8 +12,7 @@ sections:
   - title:     API docs
     prefix:    /api
     type:      doxygen
-    directory: ['src', 'ext/stubs']
+    directory: ['ext/doc']
     config: |
       RECURSIVE     = YES
       FILE_PATTERNS = *.php
-      INPUT_FILTER  = "/usr/bin/php doxygen-filter.php"

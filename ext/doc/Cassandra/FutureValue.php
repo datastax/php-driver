@@ -26,5 +26,5 @@ final class FutureValue implements Future
     /**
      * {@inheritDoc}
      */
-    public function get($timeout = null) {}
+    public function mixed get(float $timeout = null) {}
 }

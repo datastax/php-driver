@@ -18,18 +18,16 @@
 
 namespace Cassandra;
 
-use Cassandra\Exception\InvalidArgumentException;
-
 /**
  * A future returned from `Cassandra\Session::prepareAsync()`
  * This future will resolve with a `Cassandra\PreparedStatement` or an exception.
  *
- * @see Cassandra\Session::prepareAsync()
+ * @see Cassandra::Session::prepareAsync()
  */
 final class FuturePreparedStatement implements Future
 {
     /**
      * {@inheritDoc}
      */
-    public function get($timeout = null) {}
+    public function mixed get(float $timeout = null) {}
 }

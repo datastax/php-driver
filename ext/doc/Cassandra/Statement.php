@@ -21,9 +21,9 @@ namespace Cassandra;
 /**
  * All statements implement this common interface.
  *
- * @see Cassandra\SimpleStatement
- * @see Cassandra\PreparedStatement
- * @see Cassandra\BatchStatement
+ * @see Cassandra::SimpleStatement
+ * @see Cassandra::PreparedStatement
+ * @see Cassandra::BatchStatement
  */
 interface Statement
 {

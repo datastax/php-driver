@@ -19,94 +19,68 @@
 namespace Cassandra\SSLOptions;
 
 use Cassandra\SSLOptions;
-use Cassandra\Exception\InvalidArgumentException;
 
 /**
  * SSLOptions builder allows fluent configuration of ssl options.
  *
  * @see Cassandra::ssl()
- * @see Cassandra\Cluster\Builder::withSSL()
+ * @see Cassandra::Cluster::Builder::withSSL()
  */
 final class Builder
 {
     /**
-     * A list of paths to trusted certificates (server certs).
-     *
-     * @var array|null
-     */
-    private $trustedCerts;
-
-    /**
-     * Verification flags, a bitwise combination of one or more values of `Cassandra::VERIFY_*`.
-     *
-     * @var int|null
-     */
-    private $verifyFlags;
-
-    /**
-     * Path to client cert for client ssl authentication.
-     *
-     * @var string|null
-     */
-    private $clientCert;
-
-    /**
-     * Path to private key for client ssl authentication.
-     *
-     * @var string|null
-     */
-    private $privateKey;
-
-    /**
-     * Private key passphrase if any.
-     *
-     * @var string|null
-     */
-    private $passphrase;
-
-    /**
      * Adds a trusted certificate. This is used to verify node's identity.
      *
-     * @param string $path path to a file containing a PEM formatted certificate.
-     * @param string ...   additional paths
+     * @throws Cassandra::Exception::InvalidArgumentException
+     *
+     * @param string $path,... one or more paths to files containing a PEM formatted certificate.
      *
      * @return Builder self
      */
-    public function withTrustedCerts($path) {}
+    public function Builder withTrustedCerts(string $path) {}
 
     /**
      * Disable certificate verification.
+     *
+     * @throws Cassandra::Exception::InvalidArgumentException
      *
      * @param int $flags
      *
      * @return self
      */
-    public function withVerifyFlags($flags) {}
+    public function Builder withVerifyFlags(int $flags) {}
+
     /**
      * Set client-side certificate chain.
      *
      * This is used to authenticate the client on the server-side. This should contain the entire Certificate
      * chain starting with the certificate itself.
      *
+     * @throws Cassandra::Exception::InvalidArgumentException
+     *
      * @param string $path path to a file containing a PEM formatted certificate.
      *
      * @return self
      */
-    public function withClientCert($path) {}
+    public function Builder withClientCert(string $path) {}
+
     /**
      * Set client-side private key. This is used to authenticate the client on
      * the server-side.
      *
+     * @throws Cassandra::Exception::InvalidArgumentException
+     *
      * @param string      $path       Path to the private key file
-     * @param string|null $passphrase Passphrase for the private key, if any (default: `null`)
+     * @param string|null $passphrase Passphrase for the private key, if any
      *
      * @return self
      */
-    public function withPrivateKey($path, $passphrase = null) {}
+    public function Builder withPrivateKey(string $path, string $passphrase = null) {}
+
     /**
      * Builds SSL options.
      *
      * @return SSLOptions ssl options configured accordingly.
      */
-    public function build() {}
+    public function SSLOptions build() {}
 }

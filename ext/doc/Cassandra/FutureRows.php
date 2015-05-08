@@ -18,17 +18,15 @@
 
 namespace Cassandra;
 
-use Cassandra\Exception\InvalidArgumentException;
-
 /**
- * This future results is resolved with `Cassandra\Rows`.
+ * This future results is resolved with `Cassandra::Rows`.
  *
- * @see Cassandra\Session::executeAsync()
+ * @see Cassandra::Session::executeAsync()
  */
 final class FutureRows implements Future
 {
     /**
      * {@inheritDoc}
      */
-    public function get($timeout = null) {}
+    public function mixed get(float $timeout = null) {}
 }

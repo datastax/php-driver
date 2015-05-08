@@ -25,19 +25,20 @@ final class Varint
 {
     /**
      * Creates a new variable length integer
+     *
      * @param string $value integer value as a string
      */
-    public function __construct($value) {}
+    public function __construct(string $value) {}
 
     /**
      * Returns the integer value
      * @return string integer value
      */
-    public function __toString() {}
+    public function string __toString() {}
 
     /**
      * Returns the integer value
      * @return string integer value
      */
-    public function value() {}
+    public function string value() {}
 }

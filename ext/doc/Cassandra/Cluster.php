@@ -30,7 +30,7 @@ interface Cluster
      *
      * @return Session Session instance
      */
-    public function connect($keyspace = null);
+    public function Session connect(string $keyspace = null);
 
     /**
      * Creates a new Session instance.
@@ -39,5 +39,5 @@ interface Cluster
      *
      * @return Future A Future Session instance
      */
-    public function connectAsync($keyspace = null);
+    public function Future connectAsync(string $keyspace = null);
 }

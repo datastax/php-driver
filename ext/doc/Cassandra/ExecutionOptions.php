@@ -18,19 +18,19 @@
 
 namespace Cassandra;
 
-use Cassandra\Exception\InvalidArgumentException;
-
 /**
  * Request execution options.
  *
- * @see Cassandra\Session::execute()
- * @see Cassandra\Session::executeAsync()
- * @see Cassandra\Session::prepare()
- * @see Cassandra\Session::prepareAsync()
+ * @see Cassandra::Session::execute()
+ * @see Cassandra::Session::executeAsync()
+ * @see Cassandra::Session::prepare()
+ * @see Cassandra::Session::prepareAsync()
  */
 final class ExecutionOptions
 {
     /**
+     * @throws Cassandra::Exception::InvalidArgumentException
+     *
      * array['arguments']          array    An array or positional or named arguments
      * array['consistency']        int      One of Cassandra::CONSISTENCY_*
      * array['timeout']            int|null A number of seconds or null
