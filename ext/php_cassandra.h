@@ -2,7 +2,7 @@
 #define PHP_CASSANDRA_H
 
 #ifdef HAVE_CONFIG_H
-#    include "config.h"
+#  include "config.h"
 #endif
 
 #include <gmp.h>
@@ -23,10 +23,10 @@
 #include <Zend/zend_interfaces.h>
 
 #if HAVE_SPL
-#    include <ext/spl/spl_iterators.h>
-#    include <ext/spl/spl_exceptions.h>
+#  include <ext/spl/spl_iterators.h>
+#  include <ext/spl/spl_exceptions.h>
 #else
-#    error SPL must be enabled in order to build the driver
+#  error SPL must be enabled in order to build the driver
 #endif
 
 #include "version.h"
@@ -39,26 +39,26 @@ extern zend_module_entry cassandra_module_entry;
 #define phpext_cassandra_ptr &cassandra_module_entry
 
 #ifdef PHP_WIN32
-#    define PHP_CASSANDRA_API __declspec(dllexport)
+#  define PHP_CASSANDRA_API __declspec(dllexport)
 #elif defined(__GNUC__) && __GNUC__ >= 4
-#    define PHP_CASSANDRA_API __attribute__ ((visibility("default")))
+#  define PHP_CASSANDRA_API __attribute__ ((visibility("default")))
 #else
-#    define PHP_CASSANDRA_API
+#  define PHP_CASSANDRA_API
 #endif
 
 #ifndef PHP_FE_END
-#    define PHP_FE_END { NULL, NULL, NULL, 0, 0 }
+#  define PHP_FE_END { NULL, NULL, NULL, 0, 0 }
 #endif
 
 #if ZEND_MODULE_API_NO < 20100525
-#    define object_properties_init(value, class_entry) \
+#  define object_properties_init(value, class_entry) \
               zend_hash_copy(*value.properties, &class_entry->default_properties, (copy_ctor_func_t) zval_add_ref, NULL, sizeof(zval *));
 #endif
 
 #define SAFE_STR(a) ((a)?a:"")
 
 #ifdef ZTS
-#    include "TSRM.h"
+#  include "TSRM.h"
 #endif
 
 zend_class_entry* exception_class(CassError rc);
@@ -107,9 +107,9 @@ ZEND_BEGIN_MODULE_GLOBALS(cassandra)
 ZEND_END_MODULE_GLOBALS(cassandra)
 
 #ifdef ZTS
-#    define CASSANDRA_G(v) TSRMG(cassandra_globals_id, zend_cassandra_globals *, v)
+#  define CASSANDRA_G(v) TSRMG(cassandra_globals_id, zend_cassandra_globals *, v)
 #else
-#    define CASSANDRA_G(v) (cassandra_globals.v)
+#  define CASSANDRA_G(v) (cassandra_globals.v)
 #endif
 
 #endif /* PHP_CASSANDRA_H */
