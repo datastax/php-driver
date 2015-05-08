@@ -5,42 +5,19 @@
 #include "util/math.h"
 
 #define EXPECTING_VALUE(expected) \
-  if (Z_TYPE_P(object) == IS_OBJECT) { \
-    Z_OBJ_HANDLER_P(object, get_class_name)(object, &class_name, &class_name_len, 0 TSRMLS_CC); \
-    if (class_name) { \
-      zend_throw_exception_ex(cassandra_invalid_argument_exception_ce, 0 TSRMLS_CC, \
-        "Expected " expected ", an instance of %s given", class_name); \
-      efree((void *) class_name); \
-    } else { \
-      zend_throw_exception_ex(cassandra_invalid_argument_exception_ce, 0 TSRMLS_CC, \
-        "Expected " expected ", an instance of Unknown Class given"); \
-    } \
-  } else { \
-    zend_throw_exception_ex(cassandra_invalid_argument_exception_ce, 0 TSRMLS_CC, \
-      "Expected " expected ", %Z given", object); \
-  } \
-  return 0;
+{ \
+  throw_invalid_argument(object, "argument", expected TSRMLS_CC); \
+  return 0; \
+}
 
 #define INSTANCE_OF(cls) \
   (Z_TYPE_P(object) == IS_OBJECT && instanceof_function(Z_OBJCE_P(object), cls TSRMLS_CC))
 
-#define CHECK_ERROR(rc) \
-  if (rc != CASS_OK) { \
-    zend_throw_exception_ex(cassandra_runtime_exception_ce, 0 TSRMLS_CC, \
-      "%s", cass_error_desc(rc)); \
-    result = 0; \
-  }
+#define CHECK_ERROR(rc) ASSERT_SUCCESS_BLOCK(rc, result = 0;)
 
 int
 php_cassandra_validate_object(zval* object, CassValueType type TSRMLS_DC)
 {
-#if ZEND_MODULE_API_NO >= 20100525
-  const char* class_name = NULL;
-#else
-  char* class_name = NULL;
-#endif
-  zend_uint class_name_len;
-
   if (Z_TYPE_P(object) == IS_NULL)
     return 1;
 
@@ -72,56 +49,56 @@ php_cassandra_validate_object(zval* object, CassValueType type TSRMLS_DC)
 
     return 1;
   case CASS_VALUE_TYPE_FLOAT:
-    if (!INSTANCE_OF(cassandra_ce_Float)) {
+    if (!INSTANCE_OF(cassandra_float_ce)) {
       EXPECTING_VALUE("an instance of Cassandra\\Float");
     }
 
     return 1;
   case CASS_VALUE_TYPE_COUNTER:
   case CASS_VALUE_TYPE_BIGINT:
-    if (!INSTANCE_OF(cassandra_ce_Bigint)) {
+    if (!INSTANCE_OF(cassandra_bigint_ce)) {
       EXPECTING_VALUE("an instance of Cassandra\\Bigint");
     }
 
     return 1;
   case CASS_VALUE_TYPE_BLOB:
-    if (!INSTANCE_OF(cassandra_ce_Blob)) {
+    if (!INSTANCE_OF(cassandra_blob_ce)) {
       EXPECTING_VALUE("an instance of Cassandra\\Blob");
     }
 
     return 1;
   case CASS_VALUE_TYPE_DECIMAL:
-    if (!INSTANCE_OF(cassandra_ce_Decimal)) {
+    if (!INSTANCE_OF(cassandra_decimal_ce)) {
       EXPECTING_VALUE("an instance of Cassandra\\Decimal");
     }
 
     return 1;
   case CASS_VALUE_TYPE_TIMESTAMP:
-    if (!INSTANCE_OF(cassandra_ce_Timestamp)) {
+    if (!INSTANCE_OF(cassandra_timestamp_ce)) {
       EXPECTING_VALUE("an instance of Cassandra\\Timestamp");
     }
 
     return 1;
   case CASS_VALUE_TYPE_UUID:
-    if (!INSTANCE_OF(cassandra_ce_Uuid)) {
+    if (!INSTANCE_OF(cassandra_uuid_ce)) {
       EXPECTING_VALUE("an instance of Cassandra\\Uuid");
     }
 
     return 1;
   case CASS_VALUE_TYPE_VARINT:
-    if (!INSTANCE_OF(cassandra_ce_Varint)) {
+    if (!INSTANCE_OF(cassandra_varint_ce)) {
       EXPECTING_VALUE("an instance of Cassandra\\Varint");
     }
 
     return 1;
   case CASS_VALUE_TYPE_TIMEUUID:
-    if (!INSTANCE_OF(cassandra_ce_Timeuuid)) {
+    if (!INSTANCE_OF(cassandra_timeuuid_ce)) {
       EXPECTING_VALUE("an instance of Cassandra\\Timeuuid");
     }
 
     return 1;
   case CASS_VALUE_TYPE_INET:
-    if (!INSTANCE_OF(cassandra_ce_Inet)) {
+    if (!INSTANCE_OF(cassandra_inet_ce)) {
       EXPECTING_VALUE("an instance of Cassandra\\Inet");
     }
 
@@ -136,14 +113,6 @@ php_cassandra_validate_object(zval* object, CassValueType type TSRMLS_DC)
 int
 php_cassandra_hash_object(zval* object, CassValueType type, char** key, int* len TSRMLS_DC)
 {
-  zval* value;
-  zval* scale;
-#if ZEND_MODULE_API_NO >= 20100525
-  const char* class_name = NULL;
-#else
-  char* class_name = NULL;
-#endif
-  zend_uint class_name_len;
   char* string;
   int string_len;
   cassandra_float* float_number = NULL;
@@ -193,7 +162,7 @@ php_cassandra_hash_object(zval* object, CassValueType type, char** key, int* len
     *len = spprintf(key, 0, "C:BOOLEAN:%d", Z_BVAL_P(object));
     return 1;
   case CASS_VALUE_TYPE_FLOAT:
-    if (!INSTANCE_OF(cassandra_ce_Float)) {
+    if (!INSTANCE_OF(cassandra_float_ce)) {
       EXPECTING_VALUE("an instance of Cassandra\\Float");
     }
 
@@ -203,7 +172,7 @@ php_cassandra_hash_object(zval* object, CassValueType type, char** key, int* len
     return 1;
   case CASS_VALUE_TYPE_COUNTER:
   case CASS_VALUE_TYPE_BIGINT:
-    if (!INSTANCE_OF(cassandra_ce_Bigint)) {
+    if (!INSTANCE_OF(cassandra_bigint_ce)) {
       EXPECTING_VALUE("an instance of Cassandra\\Bigint");
     }
 
@@ -215,7 +184,7 @@ php_cassandra_hash_object(zval* object, CassValueType type, char** key, int* len
 #endif
     return 1;
   case CASS_VALUE_TYPE_BLOB:
-    if (!INSTANCE_OF(cassandra_ce_Blob)) {
+    if (!INSTANCE_OF(cassandra_blob_ce)) {
       EXPECTING_VALUE("an instance of Cassandra\\Blob");
     }
 
@@ -226,7 +195,7 @@ php_cassandra_hash_object(zval* object, CassValueType type, char** key, int* len
     efree(string);
     return 1;
   case CASS_VALUE_TYPE_DECIMAL:
-    if (!INSTANCE_OF(cassandra_ce_Decimal)) {
+    if (!INSTANCE_OF(cassandra_decimal_ce)) {
       EXPECTING_VALUE("an instance of Cassandra\\Decimal");
     }
 
@@ -237,7 +206,7 @@ php_cassandra_hash_object(zval* object, CassValueType type, char** key, int* len
     efree(string);
     return 1;
   case CASS_VALUE_TYPE_TIMESTAMP:
-    if (!INSTANCE_OF(cassandra_ce_Timestamp)) {
+    if (!INSTANCE_OF(cassandra_timestamp_ce)) {
       EXPECTING_VALUE("an instance of Cassandra\\Timestamp");
     }
 
@@ -251,7 +220,7 @@ php_cassandra_hash_object(zval* object, CassValueType type, char** key, int* len
     return 1;
   case CASS_VALUE_TYPE_UUID:
   case CASS_VALUE_TYPE_TIMEUUID:
-    if (!INSTANCE_OF(cassandra_ce_Uuid)) {
+    if (!INSTANCE_OF(cassandra_uuid_ce)) {
       EXPECTING_VALUE("an instance of Cassandra\\Uuid");
     }
 
@@ -263,7 +232,7 @@ php_cassandra_hash_object(zval* object, CassValueType type, char** key, int* len
 #endif
     return 1;
   case CASS_VALUE_TYPE_VARINT:
-    if (!INSTANCE_OF(cassandra_ce_Varint)) {
+    if (!INSTANCE_OF(cassandra_varint_ce)) {
       EXPECTING_VALUE("an instance of Cassandra\\Varint");
     }
 
@@ -274,7 +243,7 @@ php_cassandra_hash_object(zval* object, CassValueType type, char** key, int* len
     efree(string);
     return 1;
   case CASS_VALUE_TYPE_INET:
-    if (!INSTANCE_OF(cassandra_ce_Inet)) {
+    if (!INSTANCE_OF(cassandra_inet_ce)) {
       EXPECTING_VALUE("an instance of Cassandra\\Inet");
     }
 
@@ -462,7 +431,7 @@ php_cassandra_collection_append(CassCollection* collection, zval* value, CassVal
     CHECK_ERROR(cass_collection_append_inet(collection, inet->inet));
     break;
   default:
-    zend_throw_exception_ex(cassandra_invalid_argument_exception_ce, 0 TSRMLS_CC, "Unsupported set type");
+    zend_throw_exception_ex(cassandra_runtime_exception_ce, 0 TSRMLS_CC, "Unsupported collection type");
     return 0;
   }
 

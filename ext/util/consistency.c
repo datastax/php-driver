@@ -35,10 +35,10 @@ int php_cassandra_get_serial_consistency(zval* serial_consistency, long* result 
       *result = Z_LVAL_P(serial_consistency);
       break;
     default:
-      INVALID_ARGUMENT_VALUE(serial_consistency, "one of Cassandra::CONSISTENCY_SERIAL OR Cassanra::CASS_CONSISTENCY_LOCAL_SERIAL", FAILURE);
+      INVALID_ARGUMENT_VALUE(serial_consistency, "either Cassandra::CONSISTENCY_SERIAL or Cassanra::CASS_CONSISTENCY_LOCAL_SERIAL", FAILURE);
     }
   } else {
-    INVALID_ARGUMENT_VALUE(serial_consistency, "one of Cassandra::CONSISTENCY_SERIAL OR Cassanra::CASS_CONSISTENCY_LOCAL_SERIAL", FAILURE);
+    INVALID_ARGUMENT_VALUE(serial_consistency, "either Cassandra::CONSISTENCY_SERIAL or Cassanra::CASS_CONSISTENCY_LOCAL_SERIAL", FAILURE);
   }
   return SUCCESS;
 }

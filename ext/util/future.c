@@ -20,14 +20,8 @@ php_cassandra_future_wait_timed(CassFuture* future, zval* timeout TSRMLS_DC)
     }
 
     if (!cass_future_wait_timed(future, timeout_us)) {
-      if (Z_TYPE_P(timeout) == IS_LONG) {
-        zend_throw_exception_ex(cassandra_timeout_exception_ce, 0 TSRMLS_CC,
-                                "Unable to resolve future within %d seconds", Z_LVAL_P(timeout));
-        return FAILURE;
-      } else {
-        zend_throw_exception_ex(cassandra_timeout_exception_ce, 0 TSRMLS_CC,
-                                "Unable to resolve future within %f seconds", Z_DVAL_P(timeout));
-      }
+      zend_throw_exception_ex(cassandra_timeout_exception_ce, 0 TSRMLS_CC,
+                              "Future hasn't resolved within %f seconds", timeout_us / 1000000.0);
       return FAILURE;
     }
   }

@@ -16,7 +16,6 @@ PHP_METHOD(DefaultCluster, connect)
   cassandra_psession* psession;
   cassandra_cluster* cluster = NULL;
   cassandra_session* session = NULL;
-  CassError rc = CASS_OK;
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "|sz", &keyspace, &keyspace_len, &timeout) == FAILURE) {
     return;
@@ -78,15 +77,7 @@ PHP_METHOD(DefaultCluster, connect)
     return;
   }
 
-  rc = cass_future_error_code(future);
-
-  if (rc != CASS_OK) {
-    const char* message;
-    size_t message_len;
-    cass_future_error_message(future, &message, &message_len);
-    zend_throw_exception_ex(exception_class(rc), rc TSRMLS_CC,
-      "%.*s", (int) message_len, message);
-
+  if (php_cassandra_future_is_error(future TSRMLS_CC) == FAILURE) {
     if (session->persist) {
       if (zend_hash_del(&EG(persistent_list), hash_key, hash_key_len + 1) == SUCCESS) {
         session->session = NULL;
@@ -186,8 +177,8 @@ static zend_object_handlers cassandra_default_cluster_handlers;
 static HashTable*
 php_cassandra_default_cluster_properties(zval *object TSRMLS_DC)
 {
-  cassandra_cluster* cluster = (cassandra_cluster*) zend_object_store_get_object(object TSRMLS_CC);
-  HashTable*         props   = zend_std_get_properties(object TSRMLS_CC);
+  /* cassandra_cluster* self = (cassandra_cluster*) zend_object_store_get_object(object TSRMLS_CC); */
+  HashTable* props = zend_std_get_properties(object TSRMLS_CC);
 
   return props;
 }

@@ -107,14 +107,11 @@ php_cassandra_parse_ip_address(char* in, CassInet* inet TSRMLS_DC)
   int               prev_token_len               = 0;
   char*             in_ptr                       = in;
   enum token_type   type;
-  int               token_pos                    = 0;
   enum parser_state state                        = STATE_START;
   int               pos                          = -1;
   int               compress_pos                 = -1;
   int               ipv4_pos;
   int               ipv4_byte;
-  int               prefix_len;
-  int               i;
   cass_uint8_t      address[CASS_INET_V6_LENGTH] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
   int               domain                       = 0;
 
@@ -188,7 +185,6 @@ php_cassandra_parse_ip_address(char* in, CassInet* inet TSRMLS_DC)
     /* FIELD: expect an IP address field. */
     if (state == STATE_FIELD) {
       unsigned int field;
-      int byte;
 
       /* End of string is only valid after a zero compression
        * block "::".
@@ -353,7 +349,6 @@ php_cassandra_parse_ip_address(char* in, CassInet* inet TSRMLS_DC)
     pos++;
     if (pos != compress_pos) {
       int i;
-      int compress_len = CASS_INET_V6_LENGTH - pos;
       int move_len     = pos - compress_pos;
 
       /* Move bytes after the compression position to the end and

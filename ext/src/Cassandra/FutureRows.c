@@ -79,8 +79,8 @@ static zend_object_handlers cassandra_future_rows_handlers;
 static HashTable*
 php_cassandra_future_rows_properties(zval *object TSRMLS_DC)
 {
-  cassandra_future_rows* future = (cassandra_future_rows*) zend_object_store_get_object(object TSRMLS_CC);
-  HashTable*             props  = zend_std_get_properties(object TSRMLS_CC);
+  /* cassandra_future_rows* self = (cassandra_future_rows*) zend_object_store_get_object(object TSRMLS_CC); */
+  HashTable* props = zend_std_get_properties(object TSRMLS_CC);
 
   return props;
 }

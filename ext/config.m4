@@ -9,51 +9,70 @@ fi
 if test "$PHP_CASSANDRA" != "no"; then
   CASSANDRA_CLASSES="\
     src/Cassandra.c \
-    src/Cassandra/BatchStatement.c \
     src/Cassandra/Cluster.c \
+    src/Cassandra/Cluster/Builder.c \
     src/Cassandra/DefaultCluster.c \
-    src/Cassandra/DefaultSession.c \
     src/Cassandra/Exception.c \
-    src/Cassandra/ExecutionOptions.c \
+    src/Cassandra/Exception/DomainException.c \
+    src/Cassandra/Exception/InvalidArgumentException.c \
+    src/Cassandra/Exception/LogicException.c \
+    src/Cassandra/Exception/RuntimeException.c \
+    src/Cassandra/Exception/TimeoutException.c \
+    src/Cassandra/Exception/ExecutionException.c \
+    src/Cassandra/Exception/ReadTimeout.c \
+    src/Cassandra/Exception/WriteTimeoutException.c \
+    src/Cassandra/Exception/UnavailableException.c \
+    src/Cassandra/Exception/TruncateException.c \
+    src/Cassandra/Exception/ValidationException.c \
+    src/Cassandra/Exception/InvalidQueryException.c \
+    src/Cassandra/Exception/InvalidSyntaxException.c \
+    src/Cassandra/Exception/UnauthorizedException.c \
+    src/Cassandra/Exception/UnpreparedException.c \
+    src/Cassandra/Exception/ConfigurationException.c \
+    src/Cassandra/Exception/AlreadyExistsException.c \
+    src/Cassandra/Exception/AuthenticationException.c \
+    src/Cassandra/Exception/ProtocolException.c \
+    src/Cassandra/Exception/ServerException.c \
+    src/Cassandra/Exception/IsBootstrappingException.c \
+    src/Cassandra/Exception/OverloadedException.c \
+    src/Cassandra/Exception/DivideByZeroException.c \
+    src/Cassandra/Exception/RangeException.c \
     src/Cassandra/Future.c \
-    src/Cassandra/FutureClose.c \
     src/Cassandra/FuturePreparedStatement.c \
     src/Cassandra/FutureRows.c \
     src/Cassandra/FutureSession.c \
     src/Cassandra/FutureValue.c \
-    src/Cassandra/PreparedStatement.c \
-    src/Cassandra/Rows.c \
+    src/Cassandra/FutureClose.c \
     src/Cassandra/Session.c \
-    src/Cassandra/SimpleStatement.c \
+    src/Cassandra/DefaultSession.c \
     src/Cassandra/SSLOptions.c \
-    src/Cassandra/Statement.c \
-    src/Cassandra/Cluster/Builder.c \
-    src/Cassandra/Exception/AlreadyExistsException.c \
-    src/Cassandra/Exception/AuthenticationException.c \
-    src/Cassandra/Exception/ConfigurationException.c \
-    src/Cassandra/Exception/DomainException.c \
-    src/Cassandra/Exception/ExecutionException.c \
-    src/Cassandra/Exception/InvalidArgumentException.c \
-    src/Cassandra/Exception/InvalidQueryException.c \
-    src/Cassandra/Exception/InvalidSyntaxException.c \
-    src/Cassandra/Exception/IsBootstrappingException.c \
-    src/Cassandra/Exception/LogicException.c \
-    src/Cassandra/Exception/OverloadedException.c \
-    src/Cassandra/Exception/ProtocolException.c \
-    src/Cassandra/Exception/ReadTimeout.c \
-    src/Cassandra/Exception/RuntimeException.c \
-    src/Cassandra/Exception/ServerException.c \
-    src/Cassandra/Exception/TimeoutException.c \
-    src/Cassandra/Exception/TruncateException.c \
-    src/Cassandra/Exception/UnauthorizedException.c \
-    src/Cassandra/Exception/UnavailableException.c \
-    src/Cassandra/Exception/UnpreparedException.c \
-    src/Cassandra/Exception/ValidationException.c \
-    src/Cassandra/Exception/WriteTimeoutException.c \
     src/Cassandra/SSLOptions/Builder.c \
+    src/Cassandra/Statement.c \
+    src/Cassandra/ExecutionOptions.c \
+    src/Cassandra/SimpleStatement.c \
+    src/Cassandra/PreparedStatement.c \
+    src/Cassandra/BatchStatement.c \
+    src/Cassandra/Rows.c \
   ";
 
   CASSANDRA_TYPES="\
+    src/Cassandra/Float.c \
+    src/Cassandra/Bigint.c \
+    src/Cassandra/Blob.c \
+    src/Cassandra/Decimal.c \
+    src/Cassandra/Inet.c \
+    src/Cassandra/Numeric.c \
+    src/Cassandra/UuidInterface.c \
+    src/Cassandra/Uuid.c \
+    src/Cassandra/Timestamp.c \
+    src/Cassandra/Timeuuid.c \
+    src/Cassandra/Varint.c \
+    src/Cassandra/Set.c \
+    src/Cassandra/Map.c \
+    src/Cassandra/Collection.c \
+  ";
+
+  CASSANDRA_UTIL="\
     util/bytes.c \
     util/collections.c \
     util/consistency.c \
@@ -63,19 +82,6 @@ if test "$PHP_CASSANDRA" != "no"; then
     util/ref.c \
     util/result.c \
     util/uuid_gen.c \
-    types/float.c \
-    types/bigint.c \
-    types/blob.c \
-    types/decimal.c \
-    types/inet.c \
-    types/uuid_interface.c \
-    types/uuid.c \
-    types/timestamp.c \
-    types/timeuuid.c \
-    types/varint.c \
-    types/set.c \
-    types/map.c \
-    types/collection.c \
   ";
 
   case $(uname -s) in
@@ -88,7 +94,7 @@ if test "$PHP_CASSANDRA" != "no"; then
   esac
 
   PHP_NEW_EXTENSION(cassandra, php_cassandra.c $CASSANDRA_CLASSES \
-    $CASSANDRA_TYPES, $ext_shared, , $CASSANDRA_CFLAGS)
+    $CASSANDRA_TYPES $CASSANDRA_UTIL, $ext_shared, , $CASSANDRA_CFLAGS)
   PHP_SUBST(CASSANDRA_SHARED_LIBADD)
   PHP_SUBST(CASSANDRA_CFLAGS)
 

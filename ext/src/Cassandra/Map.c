@@ -1,8 +1,8 @@
 #include "php_cassandra.h"
 #include "util/collections.h"
-#include "map.h"
+#include "Map.h"
 
-zend_class_entry *cassandra_ce_Map = NULL;
+zend_class_entry *cassandra_map_ce = NULL;
 
 typedef struct {
   zval* key;
@@ -152,7 +152,7 @@ php_cassandra_map_populate(cassandra_map* map, zval* keys_array, zval* values_ar
 }
 
 /* {{{ Cassandra\Map::__construct(string) */
-PHP_METHOD(CassandraMap, __construct)
+PHP_METHOD(Map, __construct)
 {
   char* key_type;
   char* value_type;
@@ -172,7 +172,7 @@ PHP_METHOD(CassandraMap, __construct)
 /* }}} */
 
 /* {{{ Cassandra\Map::keyType() */
-PHP_METHOD(CassandraMap, keyType)
+PHP_METHOD(Map, keyType)
 {
   cassandra_map* map = (cassandra_map*) zend_object_store_get_object(getThis() TSRMLS_CC);
 
@@ -181,7 +181,7 @@ PHP_METHOD(CassandraMap, keyType)
 /* }}} */
 
 /* {{{ Cassandra\Map::valueType() */
-PHP_METHOD(CassandraMap, valueType)
+PHP_METHOD(Map, valueType)
 {
   cassandra_map* map = (cassandra_map*) zend_object_store_get_object(getThis() TSRMLS_CC);
 
@@ -189,7 +189,7 @@ PHP_METHOD(CassandraMap, valueType)
 }
 /* }}} */
 
-PHP_METHOD(CassandraMap, keys)
+PHP_METHOD(Map, keys)
 {
   cassandra_map* map = NULL;
   array_init(return_value);
@@ -197,7 +197,7 @@ PHP_METHOD(CassandraMap, keys)
   php_cassandra_map_populate(map, return_value, NULL);
 }
 
-PHP_METHOD(CassandraMap, values)
+PHP_METHOD(Map, values)
 {
   cassandra_map* map = NULL;
   array_init(return_value);
@@ -205,7 +205,7 @@ PHP_METHOD(CassandraMap, values)
   php_cassandra_map_populate(map, NULL, return_value);
 }
 
-PHP_METHOD(CassandraMap, set)
+PHP_METHOD(Map, set)
 {
   zval* key;
   cassandra_map* map = NULL;
@@ -222,7 +222,7 @@ PHP_METHOD(CassandraMap, set)
   RETURN_FALSE;
 }
 
-PHP_METHOD(CassandraMap, get)
+PHP_METHOD(Map, get)
 {
   zval* key;
   cassandra_map* map = NULL;
@@ -237,7 +237,7 @@ PHP_METHOD(CassandraMap, get)
     RETURN_ZVAL(value, 1, 0);
 }
 
-PHP_METHOD(CassandraMap, remove)
+PHP_METHOD(Map, remove)
 {
   zval* key;
   cassandra_map* map = NULL;
@@ -253,7 +253,7 @@ PHP_METHOD(CassandraMap, remove)
   RETURN_FALSE;
 }
 
-PHP_METHOD(CassandraMap, has)
+PHP_METHOD(Map, has)
 {
   zval* key;
   cassandra_map* map = NULL;
@@ -269,13 +269,13 @@ PHP_METHOD(CassandraMap, has)
   RETURN_FALSE;
 }
 
-PHP_METHOD(CassandraMap, count)
+PHP_METHOD(Map, count)
 {
   cassandra_map* map = (cassandra_map*) zend_object_store_get_object(getThis() TSRMLS_CC);
   RETURN_LONG(zend_hash_num_elements(&map->values));
 }
 
-PHP_METHOD(CassandraMap, current)
+PHP_METHOD(Map, current)
 {
   zval** current;
   cassandra_map* map = (cassandra_map*) zend_object_store_get_object(getThis() TSRMLS_CC);
@@ -284,7 +284,7 @@ PHP_METHOD(CassandraMap, current)
     RETURN_ZVAL(*current, 1, 0);
 }
 
-PHP_METHOD(CassandraMap, key)
+PHP_METHOD(Map, key)
 {
   zval** current;
   cassandra_map* map = (cassandra_map*) zend_object_store_get_object(getThis() TSRMLS_CC);
@@ -293,27 +293,27 @@ PHP_METHOD(CassandraMap, key)
     RETURN_ZVAL(*current, 1, 0);
 }
 
-PHP_METHOD(CassandraMap, next)
+PHP_METHOD(Map, next)
 {
   cassandra_map* map = (cassandra_map*) zend_object_store_get_object(getThis() TSRMLS_CC);
   if (zend_hash_move_forward(&map->keys) == SUCCESS)
     zend_hash_move_forward(&map->values);
 }
 
-PHP_METHOD(CassandraMap, valid)
+PHP_METHOD(Map, valid)
 {
   cassandra_map* map = (cassandra_map*) zend_object_store_get_object(getThis() TSRMLS_CC);
   RETURN_BOOL(zend_hash_has_more_elements(&map->values) == SUCCESS);
 }
 
-PHP_METHOD(CassandraMap, rewind)
+PHP_METHOD(Map, rewind)
 {
   cassandra_map* map = (cassandra_map*) zend_object_store_get_object(getThis() TSRMLS_CC);
   zend_hash_internal_pointer_reset(&map->values);
   zend_hash_internal_pointer_reset(&map->keys);
 }
 
-PHP_METHOD(CassandraMap, offsetSet)
+PHP_METHOD(Map, offsetSet)
 {
   zval* key;
   cassandra_map* map = NULL;
@@ -327,7 +327,7 @@ PHP_METHOD(CassandraMap, offsetSet)
   php_cassandra_map_set(map, key, value TSRMLS_CC);
 }
 
-PHP_METHOD(CassandraMap, offsetGet)
+PHP_METHOD(Map, offsetGet)
 {
   zval* key;
   cassandra_map* map = NULL;
@@ -342,7 +342,7 @@ PHP_METHOD(CassandraMap, offsetGet)
     RETURN_ZVAL(value, 1, 0);
 }
 
-PHP_METHOD(CassandraMap, offsetUnset)
+PHP_METHOD(Map, offsetUnset)
 {
   zval* key;
   cassandra_map* map = NULL;
@@ -355,7 +355,7 @@ PHP_METHOD(CassandraMap, offsetUnset)
   php_cassandra_map_del(map, key TSRMLS_CC);
 }
 
-PHP_METHOD(CassandraMap, offsetExists)
+PHP_METHOD(Map, offsetExists)
 {
   zval* key;
   cassandra_map* map = NULL;
@@ -371,7 +371,7 @@ PHP_METHOD(CassandraMap, offsetExists)
   RETURN_FALSE;
 }
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo___construct, 0, ZEND_RETURN_VALUE, 1)
+ZEND_BEGIN_ARG_INFO_EX(arginfo__construct, 0, ZEND_RETURN_VALUE, 1)
   ZEND_ARG_INFO(0, type)
 ZEND_END_ARG_INFO()
 
@@ -387,29 +387,29 @@ ZEND_END_ARG_INFO()
 ZEND_BEGIN_ARG_INFO_EX(arginfo_none, 0, ZEND_RETURN_VALUE, 0)
 ZEND_END_ARG_INFO()
 
-static zend_function_entry CassandraMap_methods[] = {
-  PHP_ME(CassandraMap, __construct, arginfo___construct, ZEND_ACC_CTOR|ZEND_ACC_PUBLIC)
-  PHP_ME(CassandraMap, keyType, arginfo_none, ZEND_ACC_PUBLIC)
-  PHP_ME(CassandraMap, keys, arginfo_none, ZEND_ACC_PUBLIC)
-  PHP_ME(CassandraMap, valueType, arginfo_none, ZEND_ACC_PUBLIC)
-  PHP_ME(CassandraMap, values, arginfo_none, ZEND_ACC_PUBLIC)
-  PHP_ME(CassandraMap, set, arginfo_two, ZEND_ACC_PUBLIC)
-  PHP_ME(CassandraMap, get, arginfo_one, ZEND_ACC_PUBLIC)
-  PHP_ME(CassandraMap, remove, arginfo_one, ZEND_ACC_PUBLIC)
-  PHP_ME(CassandraMap, has, arginfo_one, ZEND_ACC_PUBLIC)
+static zend_function_entry cassandra_map_methods[] = {
+  PHP_ME(Map, __construct, arginfo__construct, ZEND_ACC_CTOR|ZEND_ACC_PUBLIC)
+  PHP_ME(Map, keyType, arginfo_none, ZEND_ACC_PUBLIC)
+  PHP_ME(Map, keys, arginfo_none, ZEND_ACC_PUBLIC)
+  PHP_ME(Map, valueType, arginfo_none, ZEND_ACC_PUBLIC)
+  PHP_ME(Map, values, arginfo_none, ZEND_ACC_PUBLIC)
+  PHP_ME(Map, set, arginfo_two, ZEND_ACC_PUBLIC)
+  PHP_ME(Map, get, arginfo_one, ZEND_ACC_PUBLIC)
+  PHP_ME(Map, remove, arginfo_one, ZEND_ACC_PUBLIC)
+  PHP_ME(Map, has, arginfo_one, ZEND_ACC_PUBLIC)
   /* Countable */
-  PHP_ME(CassandraMap, count, arginfo_none, ZEND_ACC_PUBLIC)
+  PHP_ME(Map, count, arginfo_none, ZEND_ACC_PUBLIC)
   /* Iterator */
-  PHP_ME(CassandraMap, current, arginfo_none, ZEND_ACC_PUBLIC)
-  PHP_ME(CassandraMap, key, arginfo_none, ZEND_ACC_PUBLIC)
-  PHP_ME(CassandraMap, next, arginfo_none, ZEND_ACC_PUBLIC)
-  PHP_ME(CassandraMap, valid, arginfo_none, ZEND_ACC_PUBLIC)
-  PHP_ME(CassandraMap, rewind, arginfo_none, ZEND_ACC_PUBLIC)
+  PHP_ME(Map, current, arginfo_none, ZEND_ACC_PUBLIC)
+  PHP_ME(Map, key, arginfo_none, ZEND_ACC_PUBLIC)
+  PHP_ME(Map, next, arginfo_none, ZEND_ACC_PUBLIC)
+  PHP_ME(Map, valid, arginfo_none, ZEND_ACC_PUBLIC)
+  PHP_ME(Map, rewind, arginfo_none, ZEND_ACC_PUBLIC)
   /* ArrayAccess */
-  PHP_ME(CassandraMap, offsetSet, arginfo_two, ZEND_ACC_PUBLIC)
-  PHP_ME(CassandraMap, offsetGet, arginfo_one, ZEND_ACC_PUBLIC)
-  PHP_ME(CassandraMap, offsetUnset, arginfo_one, ZEND_ACC_PUBLIC)
-  PHP_ME(CassandraMap, offsetExists, arginfo_one, ZEND_ACC_PUBLIC)
+  PHP_ME(Map, offsetSet, arginfo_two, ZEND_ACC_PUBLIC)
+  PHP_ME(Map, offsetGet, arginfo_one, ZEND_ACC_PUBLIC)
+  PHP_ME(Map, offsetUnset, arginfo_one, ZEND_ACC_PUBLIC)
+  PHP_ME(Map, offsetExists, arginfo_one, ZEND_ACC_PUBLIC)
   PHP_FE_END
 };
 
@@ -499,16 +499,16 @@ php_cassandra_map_new(zend_class_entry* class_type TSRMLS_DC)
   return retval;
 }
 
-void cassandra_define_CassandraMap(TSRMLS_D)
+void cassandra_define_Map(TSRMLS_D)
 {
   zend_class_entry ce;
 
-  INIT_CLASS_ENTRY(ce, "Cassandra\\Map", CassandraMap_methods);
-  cassandra_ce_Map = zend_register_internal_class(&ce TSRMLS_CC);
+  INIT_CLASS_ENTRY(ce, "Cassandra\\Map", cassandra_map_methods);
+  cassandra_map_ce = zend_register_internal_class(&ce TSRMLS_CC);
   memcpy(&cassandra_map_handlers, zend_get_std_object_handlers(), sizeof(zend_object_handlers));
   cassandra_map_handlers.get_properties = php_cassandra_map_properties;
   cassandra_map_handlers.compare_objects = php_cassandra_map_compare;
-  cassandra_ce_Map->ce_flags |= ZEND_ACC_FINAL_CLASS;
-  cassandra_ce_Map->create_object = php_cassandra_map_new;
-  zend_class_implements(cassandra_ce_Map TSRMLS_CC, 3, spl_ce_Countable, zend_ce_iterator, zend_ce_arrayaccess);
+  cassandra_map_ce->ce_flags |= ZEND_ACC_FINAL_CLASS;
+  cassandra_map_ce->create_object = php_cassandra_map_new;
+  zend_class_implements(cassandra_map_ce TSRMLS_CC, 3, spl_ce_Countable, zend_ce_iterator, zend_ce_arrayaccess);
 }

@@ -57,7 +57,7 @@ class CollectionTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @expectedException         InvalidArgumentException
-     * @expectedExceptionMessage  Expected an instance of Cassandra\Varint, an instance of Cassandra\Decimal given
+     * @expectedExceptionMessage  argument must be an instance of Cassandra\Varint, an instance of Cassandra\Decimal given
      */
     public function testValidatesTypesOfElements()
     {

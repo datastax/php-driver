@@ -17,10 +17,6 @@ PHP_METHOD(Cassandra, ssl)
 ZEND_BEGIN_ARG_INFO_EX(arginfo_none, 0, ZEND_RETURN_VALUE, 0)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_level, 0, ZEND_RETURN_VALUE, 0)
-  ZEND_ARG_INFO(0, level)
-ZEND_END_ARG_INFO()
-
 static zend_function_entry Cassandra_methods[] = {
   PHP_ME(Cassandra, cluster,     arginfo_none,  ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
   PHP_ME(Cassandra, ssl,         arginfo_none,  ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)

@@ -8,16 +8,51 @@ namespace Cassandra;
 class BigintTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @expectedException         InvalidArgumentException
-     * @expectedExceptionMessage  Non digit characters were found in value: '123.123'
+     * @expectedException InvalidArgumentException
+     * @expectedExceptionMessage Invalid integer value: ''
      */
-    public function testThrowsWhenCreatingNotAnInteger()
+    public function testThrowsWhenCreatingFromEmpty()
+    {
+        new Bigint("");
+    }
+
+    /**
+     * @expectedException InvalidArgumentException
+     * @expectedExceptionMessage Invalid integer value: 'invalid'
+     */
+    public function testThrowsWhenCreatingFromInvalid()
+    {
+        new Bigint("invalid");
+    }
+
+    /**
+     * @expectedException InvalidArgumentException
+     * @expectedExceptionMessage Invalid characters were found in value: '123.123'
+     */
+    public function testThrowsWhenCreatingFromInvalidTrailingChars()
     {
         new Bigint("123.123");
     }
 
     /**
-     * @dataProvider validNumbers
+     * @dataProvider      outOfRangeStrings
+     * @expectedException RangeException
+     */
+    public function testThrowsWhenCreatingOutOfRange($string)
+    {
+        new Bigint($string);
+    }
+
+    public function outOfRangeStrings()
+    {
+        return array(
+            array("9223372036854775808"),
+            array("-9223372036854775809"),
+        );
+    }
+
+    /**
+     * @dataProvider validStrings
      */
     public function testCorrectlyParsesStrings($number, $expected)
     {
@@ -26,7 +61,7 @@ class BigintTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($expected, (string) $number);
     }
 
-    public function validNumbers()
+    public function validStrings()
     {
         return array(
             array("123", "123"),
@@ -38,5 +73,134 @@ class BigintTest extends \PHPUnit_Framework_TestCase
             array("-0x123", "-291") ,
             array("-0b1010101", "-85")
         );
+    }
+
+    /**
+     * @dataProvider validNumbers
+     */
+    public function testFromNumbers($number)
+    {
+        $bigint = new Bigint($number);
+        $this->assertEquals((int)$number, $bigint->toInt());
+        $this->assertEquals((float)(int)$number, $bigint->toDouble());
+        $this->assertEquals((string)(int)$number, (string)$bigint);
+    }
+
+    public function validNumbers()
+    {
+        return array(
+            array(0.123),
+            array(123),
+        );
+    }
+
+    public function testIs32Bit()
+    {
+        if (PHP_INT_MAX == 9223372036854775807) {
+            $this->markTestSkipped("Not a valid test on 64-bit machinces");
+        }
+    }
+
+    /**
+     * @depends testIs32Bit
+     * @expectedException         RangeException
+     * @expectedExceptionMessage  Value is too big
+     */
+    public function testOverflowTooBig()
+    {
+        $bigint = new Bigint("9223372036854775807");
+        $i = $bigint->toInt();
+    }
+
+    /**
+     * @depends testIs32Bit
+     * @expectedException         RangeException
+     * @expectedExceptionMessage  Value is too small
+     */
+    public function testOverflowTooSmall()
+    {
+        $bigint = new Bigint("-9223372036854775808");
+        $i = $bigint->toInt();
+    }
+
+    public function testAdd()
+    {
+        $bigint1 = new Bigint("1");
+        $bigint2 = new Bigint("2");
+        $this->assertEquals(3, (int)$bigint1->add($bigint2));
+    }
+
+    public function testSub()
+    {
+        $bigint1 = new Bigint("1");
+        $bigint2 = new Bigint("2");
+        $this->assertEquals(-1, (int)$bigint1->sub($bigint2));
+    }
+
+    public function testMul()
+    {
+        $bigint1 = new Bigint("1");
+        $bigint2 = new Bigint("2");
+        $this->assertEquals(2, (int)$bigint1->mul($bigint2));
+    }
+
+    public function testDiv()
+    {
+        $bigint1 = new Bigint("1");
+        $bigint2 = new Bigint("2");
+        $this->assertEquals(0, (int)$bigint1->div($bigint2));
+    }
+
+    /**
+     * @expectedException Cassandra\Exception\DivideByZeroException
+     */
+    public function testDivByZero()
+    {
+        $bigint1 = new Bigint("1");
+        $bigint2 = new Bigint("0");
+        $bigint1->div($bigint2);
+    }
+
+    public function testMod()
+    {
+        $bigint1 = new Bigint("1");
+        $bigint2 = new Bigint("2");
+        $this->assertEquals(1, (int)$bigint1->mod($bigint2));
+    }
+
+    /**
+     * @expectedException Cassandra\Exception\DivideByZeroException
+     */
+    public function testModByZero()
+    {
+        $bigint1 = new Bigint("1");
+        $bigint2 = new Bigint("0");
+        $bigint1->mod($bigint2);
+    }
+
+    public function testAbs()
+    {
+        $bigint1 = new Bigint("-1");
+        $this->assertEquals(1, (int)$bigint1->abs());
+    }
+
+    /**
+     * @expectedException RangeException
+     */
+    public function testAbsMinimum()
+    {
+        Bigint::min()->abs();
+    }
+
+    public function testNeg()
+    {
+        $bigint1 = new Bigint("1");
+        $this->assertEquals(-1, (int)$bigint1->neg());
+    }
+
+    public function testSqrt()
+    {
+        $bigint1 = new Bigint("4");
+        $this->assertEquals(2, (int)$bigint1->sqrt());
     }
 }
