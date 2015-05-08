@@ -145,7 +145,6 @@ php_cassandra_parse_varint(char* in, int in_len, mpz_t* number TSRMLS_DC)
 int
 php_cassandra_parse_decimal(char* in, int in_len, mpz_t* number, long* scale TSRMLS_DC)
 {
-  int ok = -1;
   /*  start is the index into the char array where the significand starts */
   int start = 0;
   /*
@@ -456,8 +455,6 @@ php_cassandra_format_decimal(mpz_t number, long scale, char** out, int* out_len)
 void
 import_twos_complement(cass_byte_t* data, size_t size, mpz_t* number)
 {
-  int i;
-
   mpz_import(*number, size, 1, sizeof(cass_byte_t), 1, 0, data);
 
   /* negative value */

@@ -18,13 +18,6 @@
 int
 php_cassandra_validate_object(zval* object, CassValueType type TSRMLS_DC)
 {
-#if ZEND_MODULE_API_NO >= 20100525
-  const char* class_name = NULL;
-#else
-  char* class_name = NULL;
-#endif
-  zend_uint class_name_len;
-
   if (Z_TYPE_P(object) == IS_NULL)
     return 1;
 
@@ -120,14 +113,6 @@ php_cassandra_validate_object(zval* object, CassValueType type TSRMLS_DC)
 int
 php_cassandra_hash_object(zval* object, CassValueType type, char** key, int* len TSRMLS_DC)
 {
-  zval* value;
-  zval* scale;
-#if ZEND_MODULE_API_NO >= 20100525
-  const char* class_name = NULL;
-#else
-  char* class_name = NULL;
-#endif
-  zend_uint class_name_len;
   char* string;
   int string_len;
   cassandra_float* float_number = NULL;

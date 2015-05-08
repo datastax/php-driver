@@ -237,8 +237,8 @@ static zend_object_handlers cassandra_ssl_builder_handlers;
 static HashTable*
 php_cassandra_ssl_builder_properties(zval *object TSRMLS_DC)
 {
-  cassandra_ssl_builder* builder = (cassandra_ssl_builder*) zend_object_store_get_object(object TSRMLS_CC);
-  HashTable*             props   = zend_std_get_properties(object TSRMLS_CC);
+  /* cassandra_ssl_builder* self = (cassandra_ssl_builder*) zend_object_store_get_object(object TSRMLS_CC); */
+  HashTable* props = zend_std_get_properties(object TSRMLS_CC);
 
   return props;
 }

@@ -10,25 +10,18 @@ static int
 php_cassandra_value(const CassValue* value, CassValueType type, zval** out TSRMLS_DC)
 {
   zval* return_value;
-  CassError rc;
   const char* v_string;
   size_t v_string_len;
   const cass_byte_t* v_bytes;
   size_t v_bytes_len;
-  CassUuid v_uuid;
-  CassInet v_inet;
   const cass_byte_t* v_decimal;
   size_t v_decimal_len;
   cass_int32_t v_decimal_scale;
-  cass_int64_t v_int_64;
   cass_int32_t v_int_32;
   cass_bool_t v_boolean;
   cass_double_t v_double;
-  cass_float_t v_float;
   cassandra_uuid* uuid;
   CassIterator* iterator;
-  char* string;
-  int string_len;
   cassandra_bigint* bigint_number = NULL;
   cassandra_timestamp* timestamp = NULL;
   cassandra_blob* blob = NULL;

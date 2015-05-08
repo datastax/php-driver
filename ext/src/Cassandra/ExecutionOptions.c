@@ -82,8 +82,8 @@ static zend_object_handlers cassandra_execution_options_handlers;
 static HashTable*
 php_cassandra_execution_options_properties(zval *object TSRMLS_DC)
 {
-  cassandra_execution_options*  options = (cassandra_execution_options*) zend_object_store_get_object(object TSRMLS_CC);
-  HashTable*                  props     = zend_std_get_properties(object TSRMLS_CC);
+  /* cassandra_execution_options* self = (cassandra_execution_options*) zend_object_store_get_object(object TSRMLS_CC); */
+  HashTable* props = zend_std_get_properties(object TSRMLS_CC);
 
   return props;
 }

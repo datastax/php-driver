@@ -57,7 +57,6 @@ PHP_METHOD(Rows, key)
 {
   ulong key;
   char* string;
-  int length;
   cassandra_rows* self = NULL;
 
   if (zend_parse_parameters_none() == FAILURE)
@@ -312,7 +311,7 @@ static zend_object_handlers cassandra_rows_handlers;
 static HashTable*
 php_cassandra_rows_properties(zval *object TSRMLS_DC)
 {
-  cassandra_rows* self  = (cassandra_rows*) zend_object_store_get_object(object TSRMLS_CC);
+  /* cassandra_rows* self = (cassandra_rows*) zend_object_store_get_object(object TSRMLS_CC); */
   HashTable*      props = zend_std_get_properties(object TSRMLS_CC);
 
   return props;

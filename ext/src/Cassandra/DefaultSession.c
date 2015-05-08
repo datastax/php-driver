@@ -233,11 +233,10 @@ static int
 bind_arguments(CassStatement* statement, HashTable* arguments TSRMLS_DC)
 {
   HashPointer ptr;
-  ulong       hashIndex   = 0;
-  char*       hashKey     = NULL;
-  int         hashKeyType = 0;
+  ulong       hashIndex = 0;
+  char*       hashKey   = NULL;
   zval**      value;
-  int         rc          = SUCCESS;
+  int         rc        = SUCCESS;
 
   zend_hash_get_pointer(arguments, &ptr);
   zend_hash_internal_pointer_reset(arguments);
@@ -723,8 +722,8 @@ static zend_object_handlers cassandra_default_session_handlers;
 static HashTable*
 php_cassandra_default_session_properties(zval *object TSRMLS_DC)
 {
-  cassandra_session* session = (cassandra_session*) zend_object_store_get_object(object TSRMLS_CC);
-  HashTable*         props   = zend_std_get_properties(object TSRMLS_CC);
+  /* cassandra_session* self = (cassandra_session*) zend_object_store_get_object(object TSRMLS_CC); */
+  HashTable* props = zend_std_get_properties(object TSRMLS_CC);
 
   return props;
 }
