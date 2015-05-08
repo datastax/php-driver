@@ -1,51 +1,35 @@
-#include "../php_cassandra.h"
+#include "php_cassandra.h"
 #include <stdlib.h>
 #include "util/collections.h"
 #include "util/bytes.h"
 #include "util/math.h"
 
 #define EXPECTING_VALUE(expected) \
-  ({ \
-    if (Z_TYPE_P(object) == IS_OBJECT) { \
-      Z_OBJ_HANDLER_P(object, get_class_name)(object, &class_name, &class_name_len, 0 TSRMLS_CC); \
-      if (class_name) { \
-        zend_throw_exception_ex(cassandra_ce_InvalidArgumentException, 0 TSRMLS_CC, \
-          "Expected " expected ", an instance of %s given", class_name); \
-        efree((void *) class_name); \
-      } else { \
-        zend_throw_exception_ex(cassandra_ce_InvalidArgumentException, 0 TSRMLS_CC, \
-          "Expected " expected ", an instance of Unknown Class given"); \
-      } \
+  if (Z_TYPE_P(object) == IS_OBJECT) { \
+    Z_OBJ_HANDLER_P(object, get_class_name)(object, &class_name, &class_name_len, 0 TSRMLS_CC); \
+    if (class_name) { \
+      zend_throw_exception_ex(cassandra_invalid_argument_exception_ce, 0 TSRMLS_CC, \
+        "Expected " expected ", an instance of %s given", class_name); \
+      efree((void *) class_name); \
     } else { \
-      zend_throw_exception_ex(cassandra_ce_InvalidArgumentException, 0 TSRMLS_CC, \
-        "Expected " expected ", %Z given", object); \
+      zend_throw_exception_ex(cassandra_invalid_argument_exception_ce, 0 TSRMLS_CC, \
+        "Expected " expected ", an instance of Unknown Class given"); \
     } \
-    return 0; \
-  })
+  } else { \
+    zend_throw_exception_ex(cassandra_invalid_argument_exception_ce, 0 TSRMLS_CC, \
+      "Expected " expected ", %Z given", object); \
+  } \
+  return 0;
 
 #define INSTANCE_OF(cls) \
   (Z_TYPE_P(object) == IS_OBJECT && instanceof_function(Z_OBJCE_P(object), cls TSRMLS_CC))
 
 #define CHECK_ERROR(rc) \
-  ({ \
-    if (rc != CASS_OK) { \
-      zend_throw_exception_ex(cassandra_ce_RuntimeException, 0 TSRMLS_CC, \
-        "%s", cass_error_desc(rc)); \
-      result = 0; \
-    } \
-  })
-
-extern zend_class_entry* cassandra_ce_RuntimeException;
-extern zend_class_entry* cassandra_ce_InvalidArgumentException;
-extern zend_class_entry* cassandra_ce_Bigint;
-extern zend_class_entry* cassandra_ce_Blob;
-extern zend_class_entry* cassandra_ce_Decimal;
-extern zend_class_entry* cassandra_ce_Float;
-extern zend_class_entry* cassandra_ce_Inet;
-extern zend_class_entry* cassandra_ce_Timestamp;
-extern zend_class_entry* cassandra_ce_Timeuuid;
-extern zend_class_entry* cassandra_ce_Uuid;
-extern zend_class_entry* cassandra_ce_Varint;
+  if (rc != CASS_OK) { \
+    zend_throw_exception_ex(cassandra_runtime_exception_ce, 0 TSRMLS_CC, \
+      "%s", cass_error_desc(rc)); \
+    result = 0; \
+  }
 
 int
 php_cassandra_validate_object(zval* object, CassValueType type TSRMLS_DC)
@@ -64,69 +48,82 @@ php_cassandra_validate_object(zval* object, CassValueType type TSRMLS_DC)
   case CASS_VALUE_TYPE_ASCII:
   case CASS_VALUE_TYPE_VARCHAR:
   case CASS_VALUE_TYPE_TEXT:
-    if (Z_TYPE_P(object) != IS_STRING)
+    if (Z_TYPE_P(object) != IS_STRING) {
       EXPECTING_VALUE("a string");
+    }
 
     return 1;
   case CASS_VALUE_TYPE_DOUBLE:
-    if (Z_TYPE_P(object) != IS_DOUBLE)
+    if (Z_TYPE_P(object) != IS_DOUBLE) {
       EXPECTING_VALUE("a float");
+    }
 
     return 1;
   case CASS_VALUE_TYPE_INT:
-    if (Z_TYPE_P(object) != IS_LONG)
+    if (Z_TYPE_P(object) != IS_LONG) {
       EXPECTING_VALUE("an int");
+    }
 
     return 1;
   case CASS_VALUE_TYPE_BOOLEAN:
-    if (Z_TYPE_P(object) != IS_BOOL)
+    if (Z_TYPE_P(object) != IS_BOOL) {
       EXPECTING_VALUE("a boolean");
+    }
 
     return 1;
   case CASS_VALUE_TYPE_FLOAT:
-    if (!INSTANCE_OF(cassandra_ce_Float))
+    if (!INSTANCE_OF(cassandra_ce_Float)) {
       EXPECTING_VALUE("an instance of Cassandra\\Float");
+    }
 
     return 1;
   case CASS_VALUE_TYPE_COUNTER:
   case CASS_VALUE_TYPE_BIGINT:
-    if (!INSTANCE_OF(cassandra_ce_Bigint))
+    if (!INSTANCE_OF(cassandra_ce_Bigint)) {
       EXPECTING_VALUE("an instance of Cassandra\\Bigint");
+    }
 
     return 1;
   case CASS_VALUE_TYPE_BLOB:
-    if (!INSTANCE_OF(cassandra_ce_Blob))
+    if (!INSTANCE_OF(cassandra_ce_Blob)) {
       EXPECTING_VALUE("an instance of Cassandra\\Blob");
+    }
 
     return 1;
   case CASS_VALUE_TYPE_DECIMAL:
-    if (!INSTANCE_OF(cassandra_ce_Decimal))
+    if (!INSTANCE_OF(cassandra_ce_Decimal)) {
       EXPECTING_VALUE("an instance of Cassandra\\Decimal");
+    }
 
     return 1;
   case CASS_VALUE_TYPE_TIMESTAMP:
-    if (!INSTANCE_OF(cassandra_ce_Timestamp))
+    if (!INSTANCE_OF(cassandra_ce_Timestamp)) {
       EXPECTING_VALUE("an instance of Cassandra\\Timestamp");
+    }
 
     return 1;
   case CASS_VALUE_TYPE_UUID:
-    if (!INSTANCE_OF(cassandra_ce_Uuid))
+    if (!INSTANCE_OF(cassandra_ce_Uuid)) {
       EXPECTING_VALUE("an instance of Cassandra\\Uuid");
+    }
 
     return 1;
   case CASS_VALUE_TYPE_VARINT:
-    if (!INSTANCE_OF(cassandra_ce_Varint))
+    if (!INSTANCE_OF(cassandra_ce_Varint)) {
       EXPECTING_VALUE("an instance of Cassandra\\Varint");
+    }
 
     return 1;
   case CASS_VALUE_TYPE_TIMEUUID:
-    if (!INSTANCE_OF(cassandra_ce_Timeuuid))
+    if (!INSTANCE_OF(cassandra_ce_Timeuuid)) {
       EXPECTING_VALUE("an instance of Cassandra\\Timeuuid");
+    }
 
     return 1;
   case CASS_VALUE_TYPE_INET:
-    if (!INSTANCE_OF(cassandra_ce_Inet))
+    if (!INSTANCE_OF(cassandra_ce_Inet)) {
       EXPECTING_VALUE("an instance of Cassandra\\Inet");
+    }
 
     return 1;
   default:
@@ -149,6 +146,14 @@ php_cassandra_hash_object(zval* object, CassValueType type, char** key, int* len
   zend_uint class_name_len;
   char* string;
   int string_len;
+  cassandra_float* float_number = NULL;
+  cassandra_bigint* bigint = NULL;
+  cassandra_blob* blob = NULL;
+  cassandra_decimal* decimal = NULL;
+  cassandra_timestamp* timestamp = NULL;
+  cassandra_uuid* uuid = NULL;
+  cassandra_varint* varint = NULL;
+  cassandra_inet* inet = NULL;
 
   if (Z_TYPE_P(object) == IS_NULL) {
     *key = strdup("C:NULL");
@@ -192,7 +197,7 @@ php_cassandra_hash_object(zval* object, CassValueType type, char** key, int* len
       EXPECTING_VALUE("an instance of Cassandra\\Float");
     }
 
-    cassandra_float* float_number = (cassandra_float*) zend_object_store_get_object(object TSRMLS_CC);
+    float_number = (cassandra_float*) zend_object_store_get_object(object TSRMLS_CC);
     *len = spprintf(key, 0, "C:FLOAT:%.*F", (int) EG(precision), float_number->value);
 
     return 1;
@@ -202,7 +207,7 @@ php_cassandra_hash_object(zval* object, CassValueType type, char** key, int* len
       EXPECTING_VALUE("an instance of Cassandra\\Bigint");
     }
 
-    cassandra_bigint* bigint = (cassandra_bigint*) zend_object_store_get_object(object TSRMLS_CC);
+    bigint = (cassandra_bigint*) zend_object_store_get_object(object TSRMLS_CC);
 #ifdef WIN32
     *len = spprintf(key, 0, "C:BIGINT:%I64d", (long long int) bigint->value);
 #else
@@ -214,7 +219,7 @@ php_cassandra_hash_object(zval* object, CassValueType type, char** key, int* len
       EXPECTING_VALUE("an instance of Cassandra\\Blob");
     }
 
-    cassandra_blob* blob = (cassandra_blob*) zend_object_store_get_object(object TSRMLS_CC);
+    blob = (cassandra_blob*) zend_object_store_get_object(object TSRMLS_CC);
     php_cassandra_bytes_to_hex((const char*) blob->data, blob->size, &string, &string_len);
 
     *len = spprintf(key, 0, "C:BLOB:%s", string);
@@ -225,7 +230,7 @@ php_cassandra_hash_object(zval* object, CassValueType type, char** key, int* len
       EXPECTING_VALUE("an instance of Cassandra\\Decimal");
     }
 
-    cassandra_decimal* decimal = (cassandra_decimal*) zend_object_store_get_object(object TSRMLS_CC);
+    decimal = (cassandra_decimal*) zend_object_store_get_object(object TSRMLS_CC);
     php_cassandra_format_integer(decimal->value, &string, &string_len);
 
     *len = spprintf(key, 0, "C:DECIMAL:%s:%ld", string, decimal->scale);
@@ -236,7 +241,7 @@ php_cassandra_hash_object(zval* object, CassValueType type, char** key, int* len
       EXPECTING_VALUE("an instance of Cassandra\\Timestamp");
     }
 
-    cassandra_timestamp* timestamp = (cassandra_timestamp*) zend_object_store_get_object(object TSRMLS_CC);
+    timestamp = (cassandra_timestamp*) zend_object_store_get_object(object TSRMLS_CC);
 
 #ifdef WIN32
     *len = spprintf(key, 0, "C:TIMESTAMP:%I64d", (long long int) timestamp->timestamp);
@@ -250,7 +255,7 @@ php_cassandra_hash_object(zval* object, CassValueType type, char** key, int* len
       EXPECTING_VALUE("an instance of Cassandra\\Uuid");
     }
 
-    cassandra_uuid* uuid = (cassandra_uuid*) zend_object_store_get_object(object TSRMLS_CC);
+    uuid = (cassandra_uuid*) zend_object_store_get_object(object TSRMLS_CC);
 #ifdef WIN32
     *len = spprintf(key, 0, "C:UUID:%I64d:%I64d", (long long int) uuid->uuid.time_and_version, (long long int) uuid->uuid.clock_seq_and_node);
 #else
@@ -262,7 +267,7 @@ php_cassandra_hash_object(zval* object, CassValueType type, char** key, int* len
       EXPECTING_VALUE("an instance of Cassandra\\Varint");
     }
 
-    cassandra_varint* varint = (cassandra_varint*) zend_object_store_get_object(object TSRMLS_CC);
+    varint = (cassandra_varint*) zend_object_store_get_object(object TSRMLS_CC);
     php_cassandra_format_integer(varint->value, &string, &string_len);
 
     *len = spprintf(key, 0, "C:VARINT:%s", string);
@@ -273,7 +278,7 @@ php_cassandra_hash_object(zval* object, CassValueType type, char** key, int* len
       EXPECTING_VALUE("an instance of Cassandra\\Inet");
     }
 
-    cassandra_inet* inet = (cassandra_inet*) zend_object_store_get_object(object TSRMLS_CC);
+    inet = (cassandra_inet*) zend_object_store_get_object(object TSRMLS_CC);
     if (inet->inet.address_length > 4)
       *len = spprintf(key, 0, "C:INET:%x:%x:%x:%x:%x:%x:%x:%x",
         (inet->inet.address[0]  * 256 + inet->inet.address[1]),
@@ -339,7 +344,7 @@ php_cassandra_value_type(char* type, CassValueType* value_type TSRMLS_DC)
   } else if (strcmp("inet", type) == 0) {
     *value_type = CASS_VALUE_TYPE_INET;
   } else {
-    zend_throw_exception_ex(cassandra_ce_InvalidArgumentException, 0 TSRMLS_CC,
+    zend_throw_exception_ex(cassandra_invalid_argument_exception_ce, 0 TSRMLS_CC,
       "Unsupported type '%s'", type);
     return 0;
   }
@@ -400,14 +405,14 @@ php_cassandra_collection_append(CassCollection* collection, zval* value, CassVal
   cassandra_varint*     varint;
   cassandra_decimal*    decimal;
   cassandra_inet*       inet;
-  cass_size_t           size;
+  size_t                size;
   cass_byte_t*          data;
 
   switch (type) {
   case CASS_VALUE_TYPE_TEXT:
   case CASS_VALUE_TYPE_ASCII:
   case CASS_VALUE_TYPE_VARCHAR:
-    CHECK_ERROR(cass_collection_append_string(collection, cass_string_init2(Z_STRVAL_P(value), Z_STRLEN_P(value))));
+    CHECK_ERROR(cass_collection_append_string_n(collection, Z_STRVAL_P(value), Z_STRLEN_P(value)));
     break;
   case CASS_VALUE_TYPE_BIGINT:
   case CASS_VALUE_TYPE_COUNTER:
@@ -416,7 +421,7 @@ php_cassandra_collection_append(CassCollection* collection, zval* value, CassVal
     break;
   case CASS_VALUE_TYPE_BLOB:
     blob = (cassandra_blob*) zend_object_store_get_object(value TSRMLS_CC);
-    CHECK_ERROR(cass_collection_append_bytes(collection, cass_bytes_init(blob->data, blob->size)));
+    CHECK_ERROR(cass_collection_append_bytes(collection, blob->data, blob->size));
     break;
   case CASS_VALUE_TYPE_BOOLEAN:
     CHECK_ERROR(cass_collection_append_bool(collection, Z_BVAL_P(value)));
@@ -443,13 +448,13 @@ php_cassandra_collection_append(CassCollection* collection, zval* value, CassVal
   case CASS_VALUE_TYPE_VARINT:
     varint = (cassandra_varint*) zend_object_store_get_object(value TSRMLS_CC);
     data = (cass_byte_t*) export_twos_complement(varint->value, &size);
-    CHECK_ERROR(cass_collection_append_bytes(collection, cass_bytes_init(data, size)));
+    CHECK_ERROR(cass_collection_append_bytes(collection, data, size));
     free(data);
     break;
   case CASS_VALUE_TYPE_DECIMAL:
     decimal = (cassandra_decimal*) zend_object_store_get_object(value TSRMLS_CC);
     data = (cass_byte_t*) export_twos_complement(decimal->value, &size);
-    CHECK_ERROR(cass_collection_append_decimal(collection, cass_decimal_init(decimal->scale, cass_bytes_init(data, size))));
+    CHECK_ERROR(cass_collection_append_decimal(collection, data, size, decimal->scale));
     free(data);
     break;
   case CASS_VALUE_TYPE_INET:
@@ -457,7 +462,7 @@ php_cassandra_collection_append(CassCollection* collection, zval* value, CassVal
     CHECK_ERROR(cass_collection_append_inet(collection, inet->inet));
     break;
   default:
-    zend_throw_exception_ex(cassandra_ce_InvalidArgumentException, 0 TSRMLS_CC, "Unsupported set type");
+    zend_throw_exception_ex(cassandra_invalid_argument_exception_ce, 0 TSRMLS_CC, "Unsupported set type");
     return 0;
   }
 
@@ -470,11 +475,12 @@ php_cassandra_collection_from_set(cassandra_set* set, CassCollection** collectio
   int result = 1;
   HashPointer ptr;
   zval** current;
+  CassCollection* collection = NULL;
 
   zend_hash_get_pointer(&set->values, &ptr);
   zend_hash_internal_pointer_reset(&set->values);
 
-  CassCollection* collection = cass_collection_new(CASS_COLLECTION_TYPE_SET, zend_hash_num_elements(&set->values));
+  collection = cass_collection_new(CASS_COLLECTION_TYPE_SET, zend_hash_num_elements(&set->values));
 
   while (zend_hash_get_current_data(&set->values, (void**) &current) == SUCCESS) {
     if (!php_cassandra_collection_append(collection, *current, set->type TSRMLS_CC)) {
@@ -500,11 +506,12 @@ php_cassandra_collection_from_collection(cassandra_collection* coll, CassCollect
   int result = 1;
   HashPointer ptr;
   zval** current;
+  CassCollection* collection = NULL;
 
   zend_hash_get_pointer(&coll->values, &ptr);
   zend_hash_internal_pointer_reset(&coll->values);
 
-  CassCollection* collection = cass_collection_new(CASS_COLLECTION_TYPE_LIST, zend_hash_num_elements(&coll->values));
+  collection = cass_collection_new(CASS_COLLECTION_TYPE_LIST, zend_hash_num_elements(&coll->values));
 
   while (zend_hash_get_current_data(&coll->values, (void**) &current) == SUCCESS) {
     if (!php_cassandra_collection_append(collection, *current, coll->type TSRMLS_CC)) {
@@ -530,6 +537,7 @@ php_cassandra_collection_from_map(cassandra_map* map, CassCollection** collectio
   int result = 1;
   HashPointer keys_ptr, values_ptr;
   zval** current;
+  CassCollection* collection = NULL;
 
   zend_hash_get_pointer(&map->keys, &keys_ptr);
   zend_hash_internal_pointer_reset(&map->keys);
@@ -537,7 +545,7 @@ php_cassandra_collection_from_map(cassandra_map* map, CassCollection** collectio
   zend_hash_get_pointer(&map->values, &values_ptr);
   zend_hash_internal_pointer_reset(&map->values);
 
-  CassCollection* collection = cass_collection_new(CASS_COLLECTION_TYPE_MAP, zend_hash_num_elements(&map->keys));
+  collection = cass_collection_new(CASS_COLLECTION_TYPE_MAP, zend_hash_num_elements(&map->keys));
 
   while (zend_hash_get_current_data(&map->keys, (void**) &current) == SUCCESS) {
     if (php_cassandra_collection_append(collection, *current, map->key_type TSRMLS_CC)) {

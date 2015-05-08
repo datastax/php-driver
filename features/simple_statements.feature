@@ -74,8 +74,7 @@ Feature: Simple Statements
       );
 
       foreach ($songs as $song) {
-          $options = new Cassandra\ExecutionOptions();
-          $options->arguments = $song;
+          $options = new Cassandra\ExecutionOptions(array('arguments' => $song));
           $session->execute($statement, $options);
       }
 

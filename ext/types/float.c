@@ -1,7 +1,13 @@
-#include "../php_cassandra.h"
-#include "bigint.h"
+#include "php_cassandra.h"
+#include "float.h"
 
-extern zend_class_entry* cassandra_ce_InvalidArgumentException;
+#ifdef _WIN32
+#  ifdef DISABLE_MSVC_STDINT
+    float strtof(const char *str, char **endptr) {
+      return (float) strtod(str, endptr);
+    }
+#  endif
+#endif
 
 zend_class_entry* cassandra_ce_Float = NULL;
 
@@ -26,17 +32,18 @@ PHP_METHOD(CassandraFloat, __construct)
 {
   char* value;
   int value_len;
+  cassandra_float* number = NULL;
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &value, &value_len) == FAILURE) {
     return;
   }
 
   if (!ctype_float(value, value_len)) {
-    zend_throw_exception_ex(cassandra_ce_InvalidArgumentException, 0 TSRMLS_CC, "Invalid float value \"%s\"", value);
+    zend_throw_exception_ex(cassandra_invalid_argument_exception_ce, 0 TSRMLS_CC, "Invalid float value \"%s\"", value);
     return;
   }
 
-  cassandra_float* number = (cassandra_float*) zend_object_store_get_object(getThis() TSRMLS_CC);
+  number = (cassandra_float*) zend_object_store_get_object(getThis() TSRMLS_CC);
   number->value = (cass_float_t) strtof(value, NULL);
 }
 /* }}} */
@@ -98,11 +105,14 @@ php_cassandra_float_properties(zval *object TSRMLS_DC)
 static int
 php_cassandra_float_compare(zval *obj1, zval *obj2 TSRMLS_DC)
 {
+  cassandra_float* number1 = NULL;
+  cassandra_float* number2 =  NULL;
+
   if (Z_OBJCE_P(obj1) != Z_OBJCE_P(obj2))
     return 1; /* different classes */
 
-  cassandra_float* number1 = (cassandra_float*) zend_object_store_get_object(obj1 TSRMLS_CC);
-  cassandra_float* number2 = (cassandra_float*) zend_object_store_get_object(obj2 TSRMLS_CC);
+  number1 = (cassandra_float*) zend_object_store_get_object(obj1 TSRMLS_CC);
+  number2 = (cassandra_float*) zend_object_store_get_object(obj2 TSRMLS_CC);
 
   if (number1->value == number2->value)
     return 0;

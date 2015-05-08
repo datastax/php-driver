@@ -1,8 +1,6 @@
-#include <errno.h>
-#include "../php_cassandra.h"
+#include "php_cassandra.h"
+#include "util/math.h"
 #include "bigint.h"
-
-extern zend_class_entry* cassandra_ce_InvalidArgumentException;
 
 zend_class_entry* cassandra_ce_Bigint = NULL;
 
@@ -23,62 +21,16 @@ PHP_METHOD(CassandraBigint, __construct)
 {
   char* value;
   int value_len;
+  cassandra_bigint* number = NULL;
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &value, &value_len) == FAILURE) {
     return;
   }
 
-  cassandra_bigint* number = (cassandra_bigint*) zend_object_store_get_object(getThis() TSRMLS_CC);
-  int point = 0;
-  int base = 10;
+  number = (cassandra_bigint*) zend_object_store_get_object(getThis() TSRMLS_CC);
 
-  //  Determine the sign of the number.
-  int negative = 0;
-  if (value[point] == '+') {
-    point++;
-  } else if (value[point] == '-') {
-    point++;
-    negative = 1;
-  }
-
-  if (value[point] == '0') {
-    switch(value[point + 1]) {
-    case 'b':
-      point += 2;
-      base = 2;
-      break;
-    case 'x':
-      point += 2;
-      base = 16;
-      break;
-    default:
-      base = 8;
-      break;
-    }
-  }
-
-  char* end;
-  errno = 0;
-
-  number->value = strtoll(&(value[point]), &end, base);
-
-  if (negative)
-    number->value = number->value * -1;
-
-  if (errno) {
-    zend_throw_exception_ex(cassandra_ce_InvalidArgumentException, 0 TSRMLS_CC, "Invalid integer value: '%s'", value);
+  if (!php_cassandra_parse_bigint(value, value_len, &number->value TSRMLS_CC))
     return;
-  }
-
-  if (end != &value[value_len]) {
-    zend_throw_exception_ex(cassandra_ce_InvalidArgumentException, 0 TSRMLS_CC, "Non digit characters were found in value: '%s'", value);
-    return;
-  }
-
-  if (end == &value[point]) {
-    zend_throw_exception_ex(cassandra_ce_InvalidArgumentException, 0 TSRMLS_CC, "No digits were found in value: '%s'", value);
-    return;
-  }
 }
 /* }}} */
 
@@ -153,11 +105,14 @@ php_cassandra_bigint_properties(zval *object TSRMLS_DC)
 static int
 php_cassandra_bigint_compare(zval *obj1, zval *obj2 TSRMLS_DC)
 {
+  cassandra_bigint* bigint1 = NULL;
+  cassandra_bigint* bigint2 = NULL;
+
   if (Z_OBJCE_P(obj1) != Z_OBJCE_P(obj2))
     return 1; /* different classes */
 
-  cassandra_bigint* bigint1 = (cassandra_bigint*) zend_object_store_get_object(obj1 TSRMLS_CC);
-  cassandra_bigint* bigint2 = (cassandra_bigint*) zend_object_store_get_object(obj2 TSRMLS_CC);
+  bigint1 = (cassandra_bigint*) zend_object_store_get_object(obj1 TSRMLS_CC);
+  bigint2 = (cassandra_bigint*) zend_object_store_get_object(obj2 TSRMLS_CC);
 
   if (bigint1->value == bigint2->value)
     return 0;

@@ -1,5 +1,4 @@
-#include <php.h>
-#include "../php_cassandra.h"
+#include "php_cassandra.h"
 #include <stdlib.h>
 #include "util/uuid_gen.h"
 

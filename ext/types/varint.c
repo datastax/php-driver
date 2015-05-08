@@ -1,8 +1,6 @@
-#include "../php_cassandra.h"
+#include "php_cassandra.h"
 #include "util/math.h"
 #include "varint.h"
-
-extern zend_class_entry *cassandra_ce_InvalidArgumentException;
 
 zend_class_entry *cassandra_ce_Varint = NULL;
 
@@ -19,7 +17,7 @@ PHP_METHOD(CassandraVarint, __construct)
 
   number = (cassandra_varint*) zend_object_store_get_object(getThis() TSRMLS_CC);
 
-  if (!php_cassandra_parse_integer(value, value_len, &number->value TSRMLS_CC))
+  if (!php_cassandra_parse_varint(value, value_len, &number->value TSRMLS_CC))
     return;
 }
 /* }}} */
@@ -85,11 +83,14 @@ php_cassandra_varint_properties(zval *object TSRMLS_DC)
 static int
 php_cassandra_varint_compare(zval *obj1, zval *obj2 TSRMLS_DC)
 {
+  cassandra_varint* varint1 = NULL;
+  cassandra_varint* varint2 = NULL;
+
   if (Z_OBJCE_P(obj1) != Z_OBJCE_P(obj2))
     return 1; /* different classes */
 
-  cassandra_varint* varint1 = (cassandra_varint*) zend_object_store_get_object(obj1 TSRMLS_CC);
-  cassandra_varint* varint2 = (cassandra_varint*) zend_object_store_get_object(obj2 TSRMLS_CC);
+  varint1 = (cassandra_varint*) zend_object_store_get_object(obj1 TSRMLS_CC);
+  varint2 = (cassandra_varint*) zend_object_store_get_object(obj2 TSRMLS_CC);
 
   return mpz_cmp(varint1->value, varint2->value);
 }

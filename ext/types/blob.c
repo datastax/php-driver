@@ -1,8 +1,6 @@
-#include "../php_cassandra.h"
+#include "php_cassandra.h"
 #include "util/bytes.h"
 #include "blob.h"
-
-extern zend_class_entry *cassandra_ce_InvalidArgumentException;
 
 zend_class_entry *cassandra_ce_Blob = NULL;
 
@@ -11,12 +9,13 @@ PHP_METHOD(CassandraBlob, __construct)
 {
   char *bytes;
   int bytes_len;
+  cassandra_blob* blob = NULL;
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &bytes, &bytes_len) == FAILURE) {
     return;
   }
 
-  cassandra_blob* blob = (cassandra_blob*) zend_object_store_get_object(getThis() TSRMLS_CC);
+  blob = (cassandra_blob*) zend_object_store_get_object(getThis() TSRMLS_CC);
   blob->data = emalloc(bytes_len + 1 * sizeof(cass_byte_t));
   blob->size = bytes_len + 1;
   memcpy(blob->data, bytes, bytes_len + 1);
@@ -85,11 +84,14 @@ php_cassandra_blob_properties(zval *object TSRMLS_DC)
 static int
 php_cassandra_blob_compare(zval *obj1, zval *obj2 TSRMLS_DC)
 {
+  cassandra_blob* blob1 = NULL;
+  cassandra_blob* blob2 = NULL;
+
   if (Z_OBJCE_P(obj1) != Z_OBJCE_P(obj2))
     return 1; /* different classes */
 
-  cassandra_blob* blob1 = (cassandra_blob*) zend_object_store_get_object(obj1 TSRMLS_CC);
-  cassandra_blob* blob2 = (cassandra_blob*) zend_object_store_get_object(obj2 TSRMLS_CC);
+  blob1 = (cassandra_blob*) zend_object_store_get_object(obj1 TSRMLS_CC);
+  blob2 = (cassandra_blob*) zend_object_store_get_object(obj2 TSRMLS_CC);
 
   if (blob1->size == blob2->size) {
     return memcmp((const char*) blob1->data, (const char*) blob2->data, blob1->size);

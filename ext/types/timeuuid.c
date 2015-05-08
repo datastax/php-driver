@@ -1,11 +1,8 @@
-#include "../php_cassandra.h"
+#include "php_cassandra.h"
 #include "util/uuid_gen.h"
 #include "uuid_interface.h"
 #include "timeuuid.h"
-#include "ext/date/php_date.h"
-
-extern zend_class_entry* cassandra_ce_InvalidArgumentException;
-extern zend_class_entry* cassandra_ce_UuidInterface;
+#include <ext/date/php_date.h>
 
 zend_class_entry *cassandra_ce_Timeuuid = NULL;
 
@@ -25,7 +22,7 @@ PHP_METHOD(CassandraTimeuuid, __construct)
     php_cassandra_uuid_generate_time(&uuid->uuid TSRMLS_CC);
   } else {
     if (timestamp < 0) {
-      zend_throw_exception_ex(cassandra_ce_InvalidArgumentException, 0 TSRMLS_CC, "Timestamp must be a positive integer, \"%d\" given", timestamp);
+      zend_throw_exception_ex(cassandra_invalid_argument_exception_ce, 0 TSRMLS_CC, "Timestamp must be a positive integer, \"%d\" given", timestamp);
       return;
     }
     php_cassandra_uuid_generate_from_time(timestamp, &uuid->uuid TSRMLS_CC);
@@ -149,11 +146,14 @@ php_cassandra_timeuuid_properties(zval *object TSRMLS_DC)
 static int
 php_cassandra_timeuuid_compare(zval *obj1, zval *obj2 TSRMLS_DC)
 {
+  cassandra_uuid* uuid1 = NULL;
+  cassandra_uuid* uuid2 = NULL;
+
   if (Z_OBJCE_P(obj1) != Z_OBJCE_P(obj2))
     return 1; /* different classes */
 
-  cassandra_uuid* uuid1 = (cassandra_uuid*) zend_object_store_get_object(obj1 TSRMLS_CC);
-  cassandra_uuid* uuid2 = (cassandra_uuid*) zend_object_store_get_object(obj2 TSRMLS_CC);
+  uuid1 = (cassandra_uuid*) zend_object_store_get_object(obj1 TSRMLS_CC);
+  uuid2 = (cassandra_uuid*) zend_object_store_get_object(obj2 TSRMLS_CC);
 
   if (uuid1->uuid.time_and_version == uuid2->uuid.time_and_version) {
     if (uuid1->uuid.clock_seq_and_node == uuid2->uuid.clock_seq_and_node)
