@@ -40,21 +40,8 @@ popd
 echo "Compiling and installing the extension..."
 phpize
 
-case $(uname -s) in
-  Linux)
-    CFLAGS="-pthread"
-    LDFLAGS="-L$builddir/lib"
-    LIBS="-lssl -lz -luv -lgmp -lstdc++"
-    ;;
-  Darwin)
-    CFLAGS=
-    LDFLAGS="-L$builddir/lib"
-    LIBS="-lssl -lz -luv -lgmp -lstdc++"
-    ;;
-esac
-
-CFLAGS=$CFLAGS LDFLAGS=$LDFLAGS LIBS=$LIBS ./configure \
-  --with-cassandra=$builddir --with-libdir=lib
+echo ./configure --with-cassandra=$builddir --with-libdir=lib
+LIBS="-lssl -lz -luv -lstdc++" LDFLAGS="-L$builddir/lib" ./configure --with-cassandra=$builddir --with-libdir=lib
 make
 make install
 

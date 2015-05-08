@@ -9,6 +9,7 @@ ZEND_EXTERN_MODULE_GLOBALS(cassandra)
 PHP_METHOD(FuturePreparedStatement, get)
 {
   zval* timeout = NULL;
+  cassandra_prepared_statement* prepared_statement = NULL;
 
   cassandra_future_prepared_statement* self =
     (cassandra_future_prepared_statement*) zend_object_store_get_object(getThis() TSRMLS_CC);
@@ -35,8 +36,7 @@ PHP_METHOD(FuturePreparedStatement, get)
   self->prepared_statement = return_value;
   Z_ADDREF_P(self->prepared_statement);
 
-  cassandra_prepared_statement* prepared_statement =
-      (cassandra_prepared_statement*)zend_object_store_get_object(return_value TSRMLS_CC);
+  prepared_statement = (cassandra_prepared_statement*)zend_object_store_get_object(return_value TSRMLS_CC);
 
   prepared_statement->prepared = cass_future_get_prepared(self->future);
 }

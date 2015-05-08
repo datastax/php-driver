@@ -4,8 +4,6 @@
 #include "util/result.h"
 
 zend_class_entry *cassandra_rows_ce = NULL;
-extern zend_class_entry *zend_ce_iterator;
-extern zend_class_entry *zend_ce_arrayaccess;
 
 PHP_METHOD(Rows, __construct)
 {
@@ -18,20 +16,24 @@ PHP_METHOD(Rows, __construct)
 
 PHP_METHOD(Rows, count)
 {
+  cassandra_rows* self = NULL;
+
   if (zend_parse_parameters_none() == FAILURE)
     return;
 
-  cassandra_rows* self = (cassandra_rows*) zend_object_store_get_object(getThis() TSRMLS_CC);
+  self = (cassandra_rows*) zend_object_store_get_object(getThis() TSRMLS_CC);
 
   RETURN_LONG(zend_hash_num_elements(Z_ARRVAL_P(self->rows)));
 }
 
 PHP_METHOD(Rows, rewind)
 {
+  cassandra_rows* self = NULL;
+
   if (zend_parse_parameters_none() == FAILURE)
     return;
 
-  cassandra_rows* self = (cassandra_rows*) zend_object_store_get_object(getThis() TSRMLS_CC);
+  self = (cassandra_rows*) zend_object_store_get_object(getThis() TSRMLS_CC);
 
   zend_hash_internal_pointer_reset(Z_ARRVAL_P(self->rows));
 }
@@ -39,12 +41,13 @@ PHP_METHOD(Rows, rewind)
 PHP_METHOD(Rows, current)
 {
   zval **entry;
+  cassandra_rows* self = NULL;
 
   if (zend_parse_parameters_none() == FAILURE) {
     return;
   }
 
-  cassandra_rows* self = (cassandra_rows*) zend_object_store_get_object(getThis() TSRMLS_CC);
+  self = (cassandra_rows*) zend_object_store_get_object(getThis() TSRMLS_CC);
 
   if (zend_hash_get_current_data(Z_ARRVAL_P(self->rows), (void **) &entry) == SUCCESS)
     RETURN_ZVAL(*entry, 1, 0);
@@ -55,11 +58,12 @@ PHP_METHOD(Rows, key)
   ulong key;
   char* string;
   int length;
+  cassandra_rows* self = NULL;
 
   if (zend_parse_parameters_none() == FAILURE)
     return;
 
-  cassandra_rows* self = (cassandra_rows*) zend_object_store_get_object(getThis() TSRMLS_CC);
+  self = (cassandra_rows*) zend_object_store_get_object(getThis() TSRMLS_CC);
 
   if (zend_hash_get_current_key(Z_ARRVAL_P(self->rows), &string, &key, 0) == HASH_KEY_IS_LONG)
     RETURN_LONG(key);
@@ -67,21 +71,25 @@ PHP_METHOD(Rows, key)
 
 PHP_METHOD(Rows, next)
 {
+  cassandra_rows* self = NULL;
+
   if (zend_parse_parameters_none() == FAILURE) {
     return;
   }
 
-  cassandra_rows* self = (cassandra_rows*) zend_object_store_get_object(getThis() TSRMLS_CC);
+  self = (cassandra_rows*) zend_object_store_get_object(getThis() TSRMLS_CC);
 
   zend_hash_move_forward(Z_ARRVAL_P(self->rows));
 }
 
 PHP_METHOD(Rows, valid)
 {
+  cassandra_rows* self = NULL;
+
   if (zend_parse_parameters_none() == FAILURE)
     return;
 
-  cassandra_rows* self = (cassandra_rows*) zend_object_store_get_object(getThis() TSRMLS_CC);
+  self = (cassandra_rows*) zend_object_store_get_object(getThis() TSRMLS_CC);
 
   RETURN_BOOL(zend_hash_has_more_elements(Z_ARRVAL_P(self->rows)) == SUCCESS);
 }
@@ -89,6 +97,7 @@ PHP_METHOD(Rows, valid)
 PHP_METHOD(Rows, offsetExists)
 {
   zval* offset;
+  cassandra_rows* self = NULL;
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z", &offset) == FAILURE)
     return;
@@ -97,7 +106,7 @@ PHP_METHOD(Rows, offsetExists)
     INVALID_ARGUMENT(offset, "a positive integer");
   }
 
-  cassandra_rows* self = (cassandra_rows*) zend_object_store_get_object(getThis() TSRMLS_CC);
+  self = (cassandra_rows*) zend_object_store_get_object(getThis() TSRMLS_CC);
 
   RETURN_BOOL(zend_hash_index_exists(Z_ARRVAL_P(self->rows), (ulong) Z_LVAL_P(offset)));
 }
@@ -106,6 +115,7 @@ PHP_METHOD(Rows, offsetGet)
 {
   zval*  offset;
   zval** value;
+  cassandra_rows* self = NULL;
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z", &offset) == FAILURE)
     return;
@@ -114,7 +124,7 @@ PHP_METHOD(Rows, offsetGet)
     INVALID_ARGUMENT(offset, "a positive integer");
   }
 
-  cassandra_rows* self = (cassandra_rows*) zend_object_store_get_object(getThis() TSRMLS_CC);
+  self = (cassandra_rows*) zend_object_store_get_object(getThis() TSRMLS_CC);
 
   if (zend_hash_index_find(Z_ARRVAL_P(self->rows), (ulong) Z_LVAL_P(offset), (void**) &value) == SUCCESS)
     RETURN_ZVAL(*value, 1, 0);
@@ -144,10 +154,12 @@ PHP_METHOD(Rows, offsetUnset)
 
 PHP_METHOD(Rows, isLastPage)
 {
+  cassandra_rows* self = NULL;
+
   if (zend_parse_parameters_none() == FAILURE)
     return;
 
-  cassandra_rows* self = (cassandra_rows*) zend_object_store_get_object(getThis() TSRMLS_CC);
+  self = (cassandra_rows*) zend_object_store_get_object(getThis() TSRMLS_CC);
 
   if (!(self->result && cass_result_has_more_pages(self->result)))
     RETURN_TRUE;
@@ -158,6 +170,10 @@ PHP_METHOD(Rows, isLastPage)
 PHP_METHOD(Rows, nextPage)
 {
   zval* timeout = NULL;
+  cassandra_session* session = NULL;
+  CassFuture* future = NULL;
+  const CassResult* result = NULL;
+  cassandra_rows* rows = NULL;
 
   cassandra_rows* self = (cassandra_rows*) zend_object_store_get_object(getThis() TSRMLS_CC);
 
@@ -170,9 +186,8 @@ PHP_METHOD(Rows, nextPage)
 
   ASSERT_SUCCESS(cass_statement_set_paging_state(self->statement->statement, self->result));
 
-  cassandra_session* session =
-    (cassandra_session*) zend_object_store_get_object(self->session TSRMLS_CC);
-  CassFuture* future = cass_session_execute(session->session, self->statement->statement);
+  session = (cassandra_session*) zend_object_store_get_object(self->session TSRMLS_CC);
+  future = cass_session_execute(session->session, self->statement->statement);
 
   if (php_cassandra_future_wait_timed(future, timeout TSRMLS_CC) == FAILURE) {
     return;
@@ -182,7 +197,7 @@ PHP_METHOD(Rows, nextPage)
     return;
   }
 
-  const CassResult* result = cass_future_get_result(future);
+  result = cass_future_get_result(future);
 
   if (!result) {
     zend_throw_exception_ex(cassandra_runtime_exception_ce, 0 TSRMLS_CC,
@@ -191,8 +206,7 @@ PHP_METHOD(Rows, nextPage)
   }
 
   object_init_ex(return_value, cassandra_rows_ce);
-  cassandra_rows* rows =
-    (cassandra_rows*) zend_object_store_get_object(return_value TSRMLS_CC);
+  rows = (cassandra_rows*) zend_object_store_get_object(return_value TSRMLS_CC);
 
   if (php_cassandra_get_result(result, &rows->rows TSRMLS_CC) == FAILURE) {
     cass_result_free(result);
@@ -208,10 +222,15 @@ PHP_METHOD(Rows, nextPage)
 
 PHP_METHOD(Rows, nextPageAsync)
 {
+  cassandra_rows* self = NULL;
+  cassandra_session* session = NULL;
+  CassFuture* future = NULL;
+  cassandra_future_rows* future_rows = NULL;
+
   if (zend_parse_parameters_none() == FAILURE)
     return;
 
-  cassandra_rows* self = (cassandra_rows*) zend_object_store_get_object(getThis() TSRMLS_CC);
+  self = (cassandra_rows*) zend_object_store_get_object(getThis() TSRMLS_CC);
 
   if (!(self->result && cass_result_has_more_pages(self->result))) {
     object_init_ex(return_value, cassandra_future_value_ce);
@@ -220,13 +239,11 @@ PHP_METHOD(Rows, nextPageAsync)
 
   ASSERT_SUCCESS(cass_statement_set_paging_state(self->statement->statement, self->result));
 
-  cassandra_session* session =
-    (cassandra_session*) zend_object_store_get_object(self->session TSRMLS_CC);
-  CassFuture* future = cass_session_execute(session->session, self->statement->statement);
+  session = (cassandra_session*) zend_object_store_get_object(self->session TSRMLS_CC);
+  future = cass_session_execute(session->session, self->statement->statement);
 
   object_init_ex(return_value, cassandra_future_rows_ce);
-  cassandra_future_rows* future_rows =
-    (cassandra_future_rows*) zend_object_store_get_object(return_value TSRMLS_CC);
+  future_rows = (cassandra_future_rows*) zend_object_store_get_object(return_value TSRMLS_CC);
 
   Z_ADDREF_P(self->session);
   future_rows->session   = self->session;
@@ -238,12 +255,13 @@ PHP_METHOD(Rows, first)
 {
   HashPointer ptr;
   zval **entry;
+  cassandra_rows* self = NULL;
 
   if (zend_parse_parameters_none() == FAILURE) {
     return;
   }
 
-  cassandra_rows* self = (cassandra_rows*) zend_object_store_get_object(getThis() TSRMLS_CC);
+  self = (cassandra_rows*) zend_object_store_get_object(getThis() TSRMLS_CC);
 
   zend_hash_get_pointer(Z_ARRVAL_P(self->rows), &ptr);
   zend_hash_internal_pointer_reset(Z_ARRVAL_P(self->rows));

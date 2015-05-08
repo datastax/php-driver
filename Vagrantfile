@@ -36,12 +36,13 @@ Vagrant.configure("2") do |config|
   rm -Rf cpp-driver
 
   mv build/lib/libcassandra_static.a build/lib/libcassandra.a
+  rm build/lib/libcassandra.so*
   popd
 
   echo "Compiling and installing the extension..."
   pushd /usr/local/src/php-driver/ext
   phpize
-  CFLAGS="-pthread" LDFLAGS="-L$builddir/lib" LIBS="-lssl -lz -luv -lgmp -lstdc++" ./configure --with-cassandra=/tmp/php-driver-installation/build --with-gmp=/tmp/php-driver-installation/build --with-libdir=lib
+  LDFLAGS="-L$builddir/lib" LIBS="-lssl -lz -luv -lgmp -lstdc++" ./configure --with-cassandra=/tmp/php-driver-installation/build --with-gmp=/tmp/php-driver-installation/build --with-libdir=lib
   make
   sudo make install
   sudo sh -c 'echo "extension=cassandra.so" > /etc/php5/cli/conf.d/100-cassandra.ini'

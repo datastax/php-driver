@@ -6,12 +6,12 @@ zend_class_entry *cassandra_future_close_ce = NULL;
 PHP_METHOD(FutureClose, get)
 {
   zval* timeout = NULL;
+  cassandra_future_close* self = NULL;
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "|z", &timeout) == FAILURE)
     return;
 
-  cassandra_future_close* self =
-    (cassandra_future_close*) zend_object_store_get_object(getThis() TSRMLS_CC);
+  self = (cassandra_future_close*) zend_object_store_get_object(getThis() TSRMLS_CC);
 
   if (php_cassandra_future_wait_timed(self->future, timeout TSRMLS_CC) == FAILURE)
     return;

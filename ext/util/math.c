@@ -5,6 +5,15 @@
 #include <math.h>
 #include "util/math.h"
 
+#ifdef _WIN32
+#  ifdef DISABLE_MSVC_STDINT
+#    define strtoll _strtoi64
+float strtof(const char *str, char **endptr) {
+  return (float) strtod(str, endptr);
+}
+#  endif
+#endif
+
 extern zend_class_entry *cassandra_invalid_argument_exception_ce;
 
 int
@@ -36,10 +45,12 @@ php_cassandra_parse_float(char* in, int in_len, cass_float_t* number TSRMLS_DC)
 int
 php_cassandra_parse_bigint(char* in, int in_len, cass_int64_t* number TSRMLS_DC)
 {
+  char* end = NULL;
+
   int point = 0;
   int base = 10;
 
-  //  Determine the sign of the number.
+  /*  Determine the sign of the number. */
   int negative = 0;
   if (in[point] == '+') {
     point++;
@@ -64,7 +75,6 @@ php_cassandra_parse_bigint(char* in, int in_len, cass_int64_t* number TSRMLS_DC)
     }
   }
 
-  char* end;
   errno = 0;
 
   *number = (cass_int64_t) strtoll(&(in[point]), &end, base);
@@ -96,7 +106,7 @@ php_cassandra_parse_varint(char* in, int in_len, mpz_t* number TSRMLS_DC)
   int point = 0;
   int base = 10;
 
-  //  Determine the sign of the number.
+  /*  Determine the sign of the number. */
   int negative = 0;
   if (in[point] == '+') {
     point++;
@@ -135,48 +145,57 @@ php_cassandra_parse_varint(char* in, int in_len, mpz_t* number TSRMLS_DC)
 int
 php_cassandra_parse_decimal(char* in, int in_len, mpz_t* number, long* scale TSRMLS_DC)
 {
-  //  start is the index into the char array where the significand starts
+  int ok = -1;
+  /*  start is the index into the char array where the significand starts */
   int start = 0;
-  //  point is the index into the char array where the exponent starts
-  //  (or, if there is no exponent, this is equal to end)
+  /*
+   *  point is the index into the char array where the exponent starts
+   *  (or, if there is no exponent, this is equal to end)
+   */
   int point = 0;
-  //  dot is the index into the char array where the decimal point is
-  //  found, or -1 if there is no decimal point
+  /*
+   * dot is the index into the char array where the decimal point is
+   * found, or -1 if there is no decimal point
+   */
   int dot = -1;
-  //  out will be storing the string representation of the integer part
-  //  of the decimal value
+  /*
+   * out will be storing the string representation of the integer part
+   * of the decimal value
+   */
   char* out = (char*) ecalloc((in_len + 1), sizeof(char));
-  //  holds length of the formatted integer number
+  /*  holds length of the formatted integer number */
   int out_len = 0;
 
   int maybe_octal = 0;
 
-  //  The following examples show what these variables mean.  Note that
-  //  point and dot don't yet have the correct values, they will be
-  //  properly assigned in a loop later on in this method.
-  //
-  //  Example 1
-  //
-  //         +  1  0  2  .  4  6  9
-  //  __ __ __ __ __ __ __ __ __ __ __ __ __ __ __ __
-  //
-  //  offset = 2, in_len = 8, start = 3, dot = 6, point = end = 10
-  //
-  //  Example 2
-  //
-  //         +  2  3  4  .  6  1  3  E  -  1
-  //  __ __ __ __ __ __ __ __ __ __ __ __ __ __ __ __
-  //
-  //  offset = 2, in_len = 11, start = 3, dot = 6, point = 10, end = 13
-  //
-  //  Example 3
-  //
-  //         -  1  2  3  4  5  e  7
-  //  __ __ __ __ __ __ __ __ __ __ __ __ __ __ __ __
-  //
-  //  offset = 2, in_len = 8, start = 3, dot = -1, point = 8, end = 10
+  /*
+   * The following examples show what these variables mean.  Note that
+   * point and dot don't yet have the correct values, they will be
+   * properly assigned in a loop later on in this method.
+   *
+   * Example 1
+   *
+   *        +  1  0  2  .  4  6  9
+   * __ __ __ __ __ __ __ __ __ __ __ __ __ __ __ __
+   *
+   * offset = 2, in_len = 8, start = 3, dot = 6, point = end = 10
+   *
+   * Example 2
+   *
+   *        +  2  3  4  .  6  1  3  E  -  1
+   * __ __ __ __ __ __ __ __ __ __ __ __ __ __ __ __
+   *
+   * offset = 2, in_len = 11, start = 3, dot = 6, point = 10, end = 13
+   *
+   * Example 3
+   *
+   *        -  1  2  3  4  5  e  7
+   * __ __ __ __ __ __ __ __ __ __ __ __ __ __ __ __
+   *
+   * offset = 2, in_len = 8, start = 3, dot = -1, point = 8, end = 10
+   */
 
-  //  Determine the sign of the number.
+  /* Determine the sign of the number. */
   int negative = 0;
   if (in[start] == '+') {
     start++;
@@ -195,13 +214,15 @@ php_cassandra_parse_decimal(char* in, int in_len, mpz_t* number, long* scale TSR
     return php_cassandra_parse_varint(in, in_len, number TSRMLS_CC);
   }
 
-  //  Check each character looking for the decimal point and the
-  //  start of the exponent.
+  /*
+   * Check each character looking for the decimal point and the
+   * start of the exponent.
+   */
   while (point < in_len) {
     char c = in[point];
 
     if (c == '.') {
-      // If dot != -1 then we've seen more than one decimal point.
+      /* If dot != -1 then we've seen more than one decimal point. */
       if (dot != -1) {
         zend_throw_exception_ex(cassandra_invalid_argument_exception_ce, 0 TSRMLS_CC, "Multiple '.' (dots) in the number '%s'", in);
         return 0;
@@ -209,11 +230,13 @@ php_cassandra_parse_decimal(char* in, int in_len, mpz_t* number, long* scale TSR
 
       dot = point;
     }
-    // Break when we reach the start of the exponent.
+    /* Break when we reach the start of the exponent. */
     else if (c == 'e' || c == 'E')
       break;
-    // Throw an exception if the character was not a decimal or an
-    // exponent and is not a hexadecimal digit.
+    /*
+     * Throw an exception if the character was not a decimal or an
+     * exponent and is not a hexadecimal digit.
+     */
     else if (!isxdigit(c)) {
       zend_throw_exception_ex(cassandra_invalid_argument_exception_ce, 0 TSRMLS_CC, "Unrecognized character '%c' at position %d", c, point);
       return 0;
@@ -222,27 +245,31 @@ php_cassandra_parse_decimal(char* in, int in_len, mpz_t* number, long* scale TSR
     point++;
   }
 
-  // Octal number
+  /* Octal number */
   if (maybe_octal && dot == -1) {
     *scale = 0;
     return php_cassandra_parse_varint(in, in_len, number TSRMLS_CC);
   }
 
-  // Prepend a negative sign if necessary.
+  /* Prepend a negative sign if necessary. */
   if (negative)
     out[0] = '-';
 
   if (dot != -1) {
-    // If there was a decimal we must combine the two parts that
-    // contain only digits and we must set the scale properly.
+    /*
+     * If there was a decimal we must combine the two parts that
+     * contain only digits and we must set the scale properly.
+     */
     memcpy(&out[negative], &in[start], dot - start);
     memcpy(&out[negative + dot - start], &in[dot + 1], point - dot);
 
     out_len = point - start + negative - 1;
     *scale = point - 1 - dot;
   } else {
-    // If there was no decimal then the unscaled value is just the number
-    // formed from all the digits and the scale is zero.
+    /*
+     * If there was no decimal then the unscaled value is just the number
+     * formed from all the digits and the scale is zero.
+     */
     memcpy(&out[negative], &in[start], point - start);
     out_len = point - start + negative;
     *scale = 0;
@@ -261,23 +288,27 @@ php_cassandra_parse_decimal(char* in, int in_len, mpz_t* number, long* scale TSR
 
   efree(out);
 
-  // Now parse exponent.
-  // If point < end that means we broke out of the previous loop when we
-  // saw an 'e' or an 'E'.
+  /*
+   * Now parse exponent.
+   * If point < end that means we broke out of the previous loop when we
+   * saw an 'e' or an 'E'.
+   */
   if (point < in_len) {
+    int diff;
+
     point++;
-    // Ignore a '+' sign.
+    /* Ignore a '+' sign. */
     if (in[point] == '+')
       point++;
 
-    // Throw an exception if there were no digits found after the 'e'
-    // or 'E'.
+    /*
+     * Throw an exception if there were no digits found after the 'e'
+     * or 'E'.
+     */
     if (point >= in_len) {
       zend_throw_exception_ex(cassandra_invalid_argument_exception_ce, 0 TSRMLS_CC, "No exponent following e or E in value: '%s'", in);
       return 0;
     }
-
-    int diff;
 
     if (!sscanf(&in[point], "%d", &diff)) {
       zend_throw_exception_ex(cassandra_invalid_argument_exception_ce, 0 TSRMLS_CC, "Malformed exponent in value: '%s'", in);
@@ -317,26 +348,27 @@ php_cassandra_format_integer(mpz_t number, char** out, int* out_len)
 void
 php_cassandra_format_decimal(mpz_t number, long scale, char** out, int* out_len)
 {
+  char* tmp = NULL;
+  size_t total = 0;
+  size_t len   = mpz_sizeinbase(number, 10);
+  int negative = 0;
+  int point = -1;
+
   if (scale == 0) {
     php_cassandra_format_integer(number, out, out_len);
     return;
   }
 
-  char* tmp;
-  size_t total = 0;
-  size_t len   = mpz_sizeinbase(number, 10);
-  int negative = 0;
-
   if (mpz_sgn(number) < 0)
     negative = 1;
 
-  int point = len - scale;
+  point = len - scale;
 
   if (scale >= 0 && (point - 1) >= -6) {
     if (point <= 0) {
-      // current position
+      /* current position */
       int i = 0;
-      // absolute length + negative sign + point sign + leading zeroes
+      /* absolute length + negative sign + point sign + leading zeroes */
       total = len + negative + 2 + (point * -1);
       tmp   = (char*) emalloc((total + 1) * sizeof(char));
 
@@ -363,7 +395,7 @@ php_cassandra_format_decimal(mpz_t number, long scale, char** out, int* out_len)
 
       tmp[total] = '\0';
     } else {
-      // absolute length + negative sign + point sign
+      /* absolute length + negative sign + point sign */
       total = len + negative + 1;
       point = point + negative;
       tmp   = (char*) emalloc((total + 1) * sizeof(char));
@@ -381,15 +413,19 @@ php_cassandra_format_decimal(mpz_t number, long scale, char** out, int* out_len)
       tmp[total] = '\0';
     }
   } else {
-    // absolute length + negative sign + exponent modifier and sign
+    int exponent = -1;
+    int exponent_size = -1;
+    int i = 1;
+
+    /* absolute length + negative sign + exponent modifier and sign */
     total = len + negative + 2;
-    // (optional) point sign
+    /* (optional) point sign */
     if (len > 1)
       total++;
 
-    // exponent value
-    int exponent      = point - 1;
-    int exponent_size = (int) ceil(log10(abs(exponent) + 2)) + 1;
+    /* exponent value */
+    exponent      = point - 1;
+    exponent_size = (int) ceil(log10(abs(exponent) + 2)) + 1;
 
     total = total + exponent_size;
     tmp   = (char*) emalloc((total + 1) * sizeof(char));
@@ -401,7 +437,6 @@ php_cassandra_format_decimal(mpz_t number, long scale, char** out, int* out_len)
       total--;
     }
 
-    int i = 1;
     if (negative)
       i++;
 
@@ -425,13 +460,13 @@ import_twos_complement(cass_byte_t* data, size_t size, mpz_t* number)
 
   mpz_import(*number, size, 1, sizeof(cass_byte_t), 1, 0, data);
 
-  // negative value
+  /* negative value */
   if ((data[0] & 0x80) == 0x80) {
-    // invert bits
+    /* invert bits */
     mpz_com(*number, *number);
-    // add one
+    /* add one */
     mpz_add_ui(*number, *number, 1);
-    // negate the value
+    /* negate the value */
     mpz_neg(*number, *number);
   }
 }
@@ -439,11 +474,11 @@ import_twos_complement(cass_byte_t* data, size_t size, mpz_t* number)
 cass_byte_t*
 export_twos_complement(mpz_t number, size_t* size)
 {
-  // negative, do two's complement
+  /* negative, do two's complement */
   if (mpz_sgn(number) == -1) {
-    // invert bits
+    /* invert bits */
     mpz_com(number, number);
-    // add one
+    /* add one */
     mpz_add_ui(number, number, 1);
   }
 

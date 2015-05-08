@@ -1,7 +1,13 @@
 #include "php_cassandra.h"
 #include <php_ini.h>
+#ifndef _WIN32
 #include <php_syslog.h>
+#else
+#  pragma message("syslog will be disabled on Windows")
+#endif
 #include <ext/standard/info.h>
+#include <fcntl.h>
+#include <uv.h>
 
 #define PHP_CASSANDRA_DEFAULT_LOG "php-driver.log"
 
@@ -75,7 +81,6 @@ php_cassandra_log_initialize()
   uv_rwlock_init(&log_lock);
   cass_log_set_level(CASS_LOG_ERROR);
   cass_log_set_callback(php_cassandra_log, NULL);
-  atexit(php_cassandra_log_cleanup);
 }
 
 static void
@@ -96,13 +101,14 @@ php_cassandra_log(const CassLogMessage* message, void* data)
 
   if (log_length > 0) {
     int fd = -1;
-
+#ifndef _WIN32
     if (!strcmp(log, "syslog")) {
       php_syslog(LOG_NOTICE, "php-driver | [%s] %s (%s:%d)",
                  cass_log_level_string(message->severity), message->message,
                  message->file, message->line);
       return;
     }
+#endif
 
     fd = open(log, O_CREAT | O_APPEND | O_WRONLY, 0644);
 
@@ -110,18 +116,20 @@ php_cassandra_log(const CassLogMessage* message, void* data)
       time_t log_time;
       struct tm log_tm;
       char log_time_str[32];
+      size_t needed = 0;
+      char* tmp = NULL;
 
       time(&log_time);
       php_localtime_r(&log_time, &log_tm);
       strftime(log_time_str, sizeof(log_time_str), "%d-%m-%Y %H:%M:%S %Z", &log_tm);
 
-      size_t needed = snprintf(NULL, 0, "%s [%s] %s (%s:%d)%s",
+      needed = snprintf(NULL, 0, "%s [%s] %s (%s:%d)%s",
                                log_time_str,
                                cass_log_level_string(message->severity), message->message,
                                message->file, message->line,
                                PHP_EOL);
 
-      char* tmp = malloc(needed + 1);
+      tmp = malloc(needed + 1);
       sprintf(tmp, "%s [%s] %s (%s:%d)%s",
               log_time_str,
               cass_log_level_string(message->severity), message->message,
@@ -227,16 +235,18 @@ PHP_INI_END()
 
 static PHP_GINIT_FUNCTION(cassandra)
 {
+  uv_once(&log_once, php_cassandra_log_initialize);
+
   cassandra_globals->uuid_gen            = cass_uuid_gen_new();
   cassandra_globals->persistent_clusters = 0;
   cassandra_globals->persistent_sessions = 0;
-
-  uv_once(&log_once, php_cassandra_log_initialize);
 }
 
 static PHP_GSHUTDOWN_FUNCTION(cassandra)
 {
   cass_uuid_gen_free(cassandra_globals->uuid_gen);
+
+  php_cassandra_log_cleanup();
 }
 
 PHP_MINIT_FUNCTION(cassandra)
@@ -324,7 +334,8 @@ PHP_MINIT_FUNCTION(cassandra)
 
 PHP_MSHUTDOWN_FUNCTION(cassandra)
 {
-  // UNREGISTER_INI_ENTRIES();
+  /* UNREGISTER_INI_ENTRIES(); */
+
   return SUCCESS;
 }
 

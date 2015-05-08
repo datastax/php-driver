@@ -191,15 +191,17 @@ PHP_METHOD(Map, valueType)
 
 PHP_METHOD(Map, keys)
 {
+  cassandra_map* map = NULL;
   array_init(return_value);
-  cassandra_map* map = (cassandra_map*) zend_object_store_get_object(getThis() TSRMLS_CC);
+  map = (cassandra_map*) zend_object_store_get_object(getThis() TSRMLS_CC);
   php_cassandra_map_populate(map, return_value, NULL);
 }
 
 PHP_METHOD(Map, values)
 {
+  cassandra_map* map = NULL;
   array_init(return_value);
-  cassandra_map* map = (cassandra_map*) zend_object_store_get_object(getThis() TSRMLS_CC);
+  map = (cassandra_map*) zend_object_store_get_object(getThis() TSRMLS_CC);
   php_cassandra_map_populate(map, NULL, return_value);
 }
 

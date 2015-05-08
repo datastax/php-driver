@@ -7,6 +7,7 @@ ZEND_EXTERN_MODULE_GLOBALS(cassandra)
 PHP_METHOD(SimpleStatement, __construct)
 {
   zval* cql = NULL;
+  cassandra_simple_statement* self = NULL;
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z", &cql) == FAILURE) {
     return;
@@ -16,8 +17,7 @@ PHP_METHOD(SimpleStatement, __construct)
     INVALID_ARGUMENT(cql, "a string");
   }
 
-  cassandra_simple_statement* self =
-    (cassandra_simple_statement*) zend_object_store_get_object(getThis() TSRMLS_CC);
+  self = (cassandra_simple_statement*) zend_object_store_get_object(getThis() TSRMLS_CC);
 
   self->cql = estrndup(Z_STRVAL_P(cql), Z_STRLEN_P(cql));
 }

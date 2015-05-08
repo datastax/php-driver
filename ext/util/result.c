@@ -27,9 +27,20 @@ php_cassandra_value(const CassValue* value, CassValueType type, zval** out TSRML
   cass_float_t v_float;
   cassandra_uuid* uuid;
   CassIterator* iterator;
-  MAKE_STD_ZVAL(return_value);
   char* string;
   int string_len;
+  cassandra_bigint* bigint_number = NULL;
+  cassandra_timestamp* timestamp = NULL;
+  cassandra_blob* blob = NULL;
+  cassandra_varint* varint_number = NULL;
+  cassandra_inet* inet = NULL;
+  cassandra_decimal* decimal_number = NULL;
+  cassandra_float* float_number = NULL;
+  cassandra_collection* collection = NULL;
+  cassandra_map* map = NULL;
+  cassandra_set* set = NULL;
+
+  MAKE_STD_ZVAL(return_value);
 
   if (cass_value_is_null(value)) {
     *out = return_value;
@@ -56,7 +67,7 @@ php_cassandra_value(const CassValue* value, CassValueType type, zval** out TSRML
   case CASS_VALUE_TYPE_COUNTER:
   case CASS_VALUE_TYPE_BIGINT:
     object_init_ex(return_value, cassandra_bigint_ce);
-    cassandra_bigint* bigint_number = (cassandra_bigint*) zend_object_store_get_object(return_value TSRMLS_CC);
+    bigint_number = (cassandra_bigint*) zend_object_store_get_object(return_value TSRMLS_CC);
     ASSERT_SUCCESS_BLOCK(cass_value_get_int64(value, &bigint_number->value),
       zval_ptr_dtor(&return_value);
       return FAILURE;
@@ -64,7 +75,7 @@ php_cassandra_value(const CassValue* value, CassValueType type, zval** out TSRML
     break;
   case CASS_VALUE_TYPE_TIMESTAMP:
     object_init_ex(return_value, cassandra_timestamp_ce);
-    cassandra_timestamp* timestamp = (cassandra_timestamp*) zend_object_store_get_object(return_value TSRMLS_CC);
+    timestamp = (cassandra_timestamp*) zend_object_store_get_object(return_value TSRMLS_CC);
     ASSERT_SUCCESS_BLOCK(cass_value_get_int64(value, &timestamp->timestamp),
       zval_ptr_dtor(&return_value);
       return FAILURE;
@@ -72,7 +83,7 @@ php_cassandra_value(const CassValue* value, CassValueType type, zval** out TSRML
     break;
   case CASS_VALUE_TYPE_BLOB:
     object_init_ex(return_value, cassandra_blob_ce);
-    cassandra_blob* blob = (cassandra_blob*) zend_object_store_get_object(return_value TSRMLS_CC);
+    blob = (cassandra_blob*) zend_object_store_get_object(return_value TSRMLS_CC);
     ASSERT_SUCCESS_BLOCK(cass_value_get_bytes(value, &v_bytes, &v_bytes_len),
       zval_ptr_dtor(&return_value);
       return FAILURE;
@@ -87,7 +98,7 @@ php_cassandra_value(const CassValue* value, CassValueType type, zval** out TSRML
       return FAILURE;
     );
     object_init_ex(return_value, cassandra_varint_ce);
-    cassandra_varint* varint_number = (cassandra_varint*) zend_object_store_get_object(return_value TSRMLS_CC);
+    varint_number = (cassandra_varint*) zend_object_store_get_object(return_value TSRMLS_CC);
     import_twos_complement((cass_byte_t*) v_bytes, v_bytes_len, &varint_number->value);
     break;
   case CASS_VALUE_TYPE_UUID:
@@ -119,7 +130,7 @@ php_cassandra_value(const CassValue* value, CassValueType type, zval** out TSRML
     break;
   case CASS_VALUE_TYPE_INET:
     object_init_ex(return_value, cassandra_inet_ce);
-    cassandra_inet* inet = (cassandra_inet*) zend_object_store_get_object(return_value TSRMLS_CC);
+    inet = (cassandra_inet*) zend_object_store_get_object(return_value TSRMLS_CC);
     ASSERT_SUCCESS_BLOCK(cass_value_get_inet(value, &inet->inet),
       zval_ptr_dtor(&return_value);
       return FAILURE;
@@ -131,7 +142,7 @@ php_cassandra_value(const CassValue* value, CassValueType type, zval** out TSRML
       return FAILURE;
     );
     object_init_ex(return_value, cassandra_decimal_ce);
-    cassandra_decimal* decimal_number = (cassandra_decimal*) zend_object_store_get_object(return_value TSRMLS_CC);
+    decimal_number = (cassandra_decimal*) zend_object_store_get_object(return_value TSRMLS_CC);
     import_twos_complement((cass_byte_t*) v_decimal, v_decimal_len, &decimal_number->value);
     decimal_number->scale = v_decimal_scale;
     break;
@@ -144,7 +155,7 @@ php_cassandra_value(const CassValue* value, CassValueType type, zval** out TSRML
     break;
   case CASS_VALUE_TYPE_FLOAT:
     object_init_ex(return_value, cassandra_float_ce);
-    cassandra_float* float_number = (cassandra_float*) zend_object_store_get_object(return_value TSRMLS_CC);
+    float_number = (cassandra_float*) zend_object_store_get_object(return_value TSRMLS_CC);
     ASSERT_SUCCESS_BLOCK(cass_value_get_float(value, &float_number->value),
       zval_ptr_dtor(&return_value);
       return FAILURE;
@@ -152,7 +163,7 @@ php_cassandra_value(const CassValue* value, CassValueType type, zval** out TSRML
     break;
   case CASS_VALUE_TYPE_LIST:
     object_init_ex(return_value, cassandra_collection_ce);
-    cassandra_collection* collection = (cassandra_collection*) zend_object_store_get_object(return_value TSRMLS_CC);
+    collection = (cassandra_collection*) zend_object_store_get_object(return_value TSRMLS_CC);
     collection->type = cass_value_primary_sub_type(value);
 
     iterator = cass_iterator_from_collection(value);
@@ -172,7 +183,7 @@ php_cassandra_value(const CassValue* value, CassValueType type, zval** out TSRML
     break;
   case CASS_VALUE_TYPE_MAP:
     object_init_ex(return_value, cassandra_map_ce);
-    cassandra_map* map = (cassandra_map*) zend_object_store_get_object(return_value TSRMLS_CC);
+    map = (cassandra_map*) zend_object_store_get_object(return_value TSRMLS_CC);
     map->key_type = cass_value_primary_sub_type(value);
     map->value_type = cass_value_secondary_sub_type(value);
 
@@ -195,7 +206,7 @@ php_cassandra_value(const CassValue* value, CassValueType type, zval** out TSRML
     break;
   case CASS_VALUE_TYPE_SET:
     object_init_ex(return_value, cassandra_set_ce);
-    cassandra_set* set = (cassandra_set*) zend_object_store_get_object(return_value TSRMLS_CC);
+    set = (cassandra_set*) zend_object_store_get_object(return_value TSRMLS_CC);
     set->type = cass_value_primary_sub_type(value);
 
     iterator = cass_iterator_from_collection(value);
@@ -231,19 +242,20 @@ php_cassandra_get_result(const CassResult* result, zval** out TSRMLS_DC)
   size_t           column_name_len;
   CassValueType    column_type;
   const CassValue* column_value;
+  CassIterator*    iterator = NULL;
+  size_t           columns = -1;
 
   MAKE_STD_ZVAL(rows);
   array_init(rows);
 
-  CassIterator* iterator = cass_iterator_from_result(result);
-  size_t        columns  = cass_result_column_count(result);
+  iterator = cass_iterator_from_result(result);
+  columns  = cass_result_column_count(result);
 
   while (cass_iterator_next(iterator)) {
+    int i;
     MAKE_STD_ZVAL(row);
     array_init(row);
     cass_row = cass_iterator_get_row(iterator);
-
-    int i;
 
     for (i = 0; i < columns; i++) {
       zval* php_value;

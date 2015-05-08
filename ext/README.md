@@ -7,6 +7,8 @@ Multiple Precision Arithmetic Library](https://gmplib.org/).
 
 ## Install dependencies
 
+### Linux/OS X
+
 * homebrew
 
 ```bash
@@ -60,3 +62,91 @@ have on your system, run `phpize`, `./configure` and `make install`.
 ```bash
 echo "# DataStax PHP Driver\nextension=cassandra.so" >> `php --ini | grep "Loaded Configuration" | sed -e "s|.*:\s*||"`
 ```
+
+### Windows
+
+The library dependencies will automatically download and build; however the
+following build dependencies will need to be installed.
+
+#### Obtaining Build Dependencies
+
+- Download and install [Bison](http://gnuwin32.sourceforge.net/downlinks/bison.php).
+ - Make sure Bison is in your system PATH and not installed in a directory with
+   spaces (e.g. %SYSTEMDRIVE%\GnuWin32)
+- Download and install [CMake](http://www.cmake.org/download).
+ - Make sure to select the option "Add CMake to the system PATH for all users"
+   or "Add CMake to the system PATH for current user".
+- Download and install [Git](http://git-scm.com/download/win)
+ - Make sure to select the option "Use Git from Windows Command Prompt" or
+   manually add the git executable to the system PATH.
+- Download and install [ActiveState Perl](https://www.perl.org/get.html#win32)
+ - Make sure to select the option "Add Perl to PATH environment variable".
+- Download and install [Python v2.7.x](https://www.python.org/downloads)
+ - Make sure to select/install the feature "Add python.exe to Path"
+
+#### Building the Driver
+
+A batch script has been created to detect installed versions of Visual Studio
+to simplify the build process on Windows. If you have more than one version of
+Visual Studio installed you will be prompted to which version to use when
+compiling the driver.
+
+First you will need to open a "Command Prompt" to execute the batch script.
+
+```dos
+Usage: VC_BUILD.BAT [OPTION...]
+
+    --DEBUG                           Enable debug build
+    --RELEASE                         Enable release build (default)
+    --DISABLE-CLEAN                   Disable clean build
+    --DISABLE-THREAD-SAFETY           Disable thread safety
+    --ENABLE-TEST-CONFIGURATION       Enable test configuration build
+    --PHP-VERSION [version]           PHP version 5.3, 5.4, 5.5, or 5.6 (*)
+    --X86                             Target 32-bit build (**)
+    --X64                             Target 64-bit build (**)
+
+    C/C++ Driver Options
+      --USE-BOOST-ATOMIC              Use Boost atomic
+
+    --HELP                            Display this message
+
+*  Defaults to PHP v5.6 if --PHP-VERSION is not used
+** Default target architecture is determined based on system architecture
+```
+
+To build 32-bit extension library with Zend thread safety:
+
+```dos
+VC_BUILD.BAT --X86
+```
+
+To build 32-bit extension library with thread safety disabled:
+
+```dos
+VC_BUILD.BAT --X86 --DISABLE-THREAD-SAFETY
+```
+
+To build 64-bit shared library with Zend thread safety:
+
+```dos
+VC_BUILD.BAT --X64
+```
+
+To build the default system architecture using PHP v5.5:
+
+```dos
+VC_BUILD.BAT --PHP-VERSION 5.5
+```
+
+To build the default system architecture using Boost atomic implementation:
+
+```dos
+VC_BUILD.BAT --USE-BOOST-ATOMIC
+```
+
+#### Testing
+
+Ensure the driver is built with --ENABLE-TEST-CONFIGURATION in order to execute
+the [Behat](http://www.behat.org) test suite and PHPUnit unit tests. You will
+also need to install CCM; detailed instructions can be found in this blog
+[post](http://www.datastax.com/dev/blog/ccm-2-0-and-windows).

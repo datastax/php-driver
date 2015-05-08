@@ -10,6 +10,8 @@ ZEND_EXTERN_MODULE_GLOBALS(cassandra)
 PHP_METHOD(FutureRows, get)
 {
   zval* timeout = NULL;
+  cassandra_rows* rows = NULL;
+  const CassResult* result = NULL;
 
   cassandra_future_rows* self =
     (cassandra_future_rows*) zend_object_store_get_object(getThis() TSRMLS_CC);
@@ -32,7 +34,7 @@ PHP_METHOD(FutureRows, get)
     return;
   }
 
-  const CassResult* result = cass_future_get_result(self->future);
+  result = cass_future_get_result(self->future);
 
   if (!result) {
     zend_throw_exception_ex(cassandra_runtime_exception_ce, 0 TSRMLS_CC,
@@ -42,8 +44,7 @@ PHP_METHOD(FutureRows, get)
 
   MAKE_STD_ZVAL(self->rows);
   object_init_ex(self->rows, cassandra_rows_ce);
-  cassandra_rows* rows =
-    (cassandra_rows*) zend_object_store_get_object(self->rows TSRMLS_CC);
+  rows = (cassandra_rows*) zend_object_store_get_object(self->rows TSRMLS_CC);
 
   if (php_cassandra_get_result(result, &rows->rows TSRMLS_CC) == FAILURE) {
     cass_result_free(result);

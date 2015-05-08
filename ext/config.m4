@@ -84,10 +84,19 @@ if test "$PHP_CASSANDRA" != "no"; then
     util/uuid_gen.c \
   ";
 
+  case $(uname -s) in
+    Linux)
+      CASSANDRA_CFLAGS="-Wall -pedantic -Wextra -Wno-long-long -Wno-deprecated-declarations -Wno-unused-parameter -Wno-variadic-macros -pthread"
+      ;;
+    Darwin)
+      CASSANDRA_CFLAGS="-Wall -pedantic -Wextra -Wno-long-long -Wno-deprecated-declarations -Wno-unused-parameter -Wno-variadic-macros"
+      ;;
+  esac
 
-  PHP_SUBST(CASSANDRA_SHARED_LIBADD)
   PHP_NEW_EXTENSION(cassandra, php_cassandra.c $CASSANDRA_CLASSES \
-    $CASSANDRA_TYPES $CASSANDRA_UTIL, $ext_shared)
+    $CASSANDRA_TYPES $CASSANDRA_UTIL, $ext_shared, , $CASSANDRA_CFLAGS)
+  PHP_SUBST(CASSANDRA_SHARED_LIBADD)
+  PHP_SUBST(CASSANDRA_CFLAGS)
 
   ifdef([PHP_ADD_EXTENSION_DEP],
   [

@@ -8,12 +8,13 @@ PHP_METHOD(Blob, __construct)
 {
   char *bytes;
   int bytes_len;
+  cassandra_blob* blob = NULL;
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &bytes, &bytes_len) == FAILURE) {
     return;
   }
 
-  cassandra_blob* blob = (cassandra_blob*) zend_object_store_get_object(getThis() TSRMLS_CC);
+  blob = (cassandra_blob*) zend_object_store_get_object(getThis() TSRMLS_CC);
   blob->data = emalloc(bytes_len + 1 * sizeof(cass_byte_t));
   blob->size = bytes_len + 1;
   memcpy(blob->data, bytes, bytes_len + 1);

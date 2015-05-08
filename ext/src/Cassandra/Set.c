@@ -106,8 +106,9 @@ PHP_METHOD(Set, type)
 /* {{{ Cassandra\Set::values() */
 PHP_METHOD(Set, values)
 {
+  cassandra_set* set = NULL;
   array_init(return_value);
-  cassandra_set* set = (cassandra_set*) zend_object_store_get_object(getThis() TSRMLS_CC);
+  set = (cassandra_set*) zend_object_store_get_object(getThis() TSRMLS_CC);
   php_cassandra_set_populate(set, return_value);
 }
 /* }}} */
