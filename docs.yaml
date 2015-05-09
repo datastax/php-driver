@@ -1,0 +1,18 @@
+title:   DataStax PHP Driver
+summary: DataStax PHP Driver for Apache Cassandra
+sections:
+  - title:     Features
+    prefix:    /features
+    sources:
+      - type:  markdown
+        files: 'features/**/*.md'
+      - type:  gherkin
+        files: 'features/**/*.feature'
+
+  - title:     API docs
+    prefix:    /api
+    type:      doxygen
+    directory: ['ext/doc']
+    config: |
+      RECURSIVE     = YES
+      FILE_PATTERNS = *.php

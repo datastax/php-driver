@@ -18,8 +18,8 @@
 
 namespace Cassandra\Cluster;
 
+use Cassandra\Cluster;
 use Cassandra\SSLOptions;
-use Cassandra\DefaultCluster;
 use Cassandra\ExecutionOptions;
 use Cassandra\Exception\InvalidArgumentException;
 
@@ -31,113 +31,11 @@ use Cassandra\Exception\InvalidArgumentException;
 final class Builder
 {
     /**
-     * Contact points, defaults to "127.0.0.1".
-     *
-     * @var string
-     */
-    private $contactPoints;
-
-    /**
-     * Either Cassandra::LOAD_BALANCING_ROUND_ROBIN or Cassandra::LOAD_BALANCING_DC_AWARE_ROUND_ROBIN.
-     *
-     * @var int
-     */
-    private $loadBalancingPolicy;
-
-    /**
-     * Name of the local datacenter.
-     *
-     * @var string
-     */
-    private $localDatacenter;
-
-    /**
-     * Maximum number of hosts to try in remote datacenters.
-     *
-     * @var int
-     */
-    private $hostPerRemoteDatacenter;
-
-    /**
-     * Allow using hosts from remote datacenters to execute statements with local consistencies.
-     *
-     * @var bool
-     */
-    private $useRemoteDatacenterForLocalConsistencies;
-
-    /**
-     * Enable Token-aware routing.
-     *
-     * @var bool
-     */
-    private $useTokenAwareRouting;
-
-    /**
-     * Username for authentication.
-     *
-     * @var string
-     */
-    private $username;
-
-    /**
-     * Password for authentication.
-     *
-     * @var string
-     */
-    private $password;
-
-    /**
-     * Connection timeout.
-     *
-     * @var float
-     */
-    private $connectTimeout;
-
-    /**
-     * Request timeout.
-     *
-     * @var float
-     */
-    private $requestTimeout;
-
-    /**
-     * sslOptions.
-     *
-     * @var SSLOptions
-     */
-    private $sslOptions;
-
-    /**
-     * Default consistency for requests
-     * One of Cassandra::CONSISTENCY_*
-     * Default: Cassandra::CONSISTENCY_ONE.
-     *
-     * @var int
-     */
-    private $defaultConsistency;
-
-    /**
-     * Default results page size
-     * Default: 10000.
-     *
-     * @var int
-     */
-    private $defaultPageSize;
-
-    /**
-     * Default timeout for future resolution in blocking operations
-     * Default: null.
-     *
-     * @var float
-     */
-    private $defaultTimeout;
-
-    /**
      * Returns a Cluster Instance.
      *
-     * @return \Cassandra\Cluster Cluster instance
+     * @return Cluster Cluster instance
      */
-    public function build() {}
+    public function Cluster build() {}
 
     /**
      * Configures default consistency for all requests.
@@ -146,7 +44,7 @@ final class Builder
      *
      * @return self
      */
-    public function withDefaultConsistency($consistency) {}
+    public function Builder withDefaultConsistency(int $consistency) {}
 
     /**
      * Configures default page size for all results.
@@ -156,35 +54,34 @@ final class Builder
      *
      * @return self
      */
-    public function withDefaultPageSize($pageSize) {}
+    public function Builder withDefaultPageSize(int|null $pageSize) {}
 
     /**
      * Configures default timeout for future resolution in blocking operations
      * Set to null to disable (default).
      *
-     * @param int|null $timeout timeout value
+     * @param float|null $timeout timeout value
      *
      * @return self
      */
-    public function withDefaultTimeout($timeout) {}
+    public function Builder withDefaultTimeout(float|null $timeout) {}
 
     /**
      * Configures the initial endpoints. Note that the driver will
      * automatically discover and connect to the rest of the cluster.
      *
-     * @param string $host an ip address string
-     * @param string ...   additional addresses
+     * @param string $host,... one or more ip addresses or hostnames
      *
      * @return self
      */
-    public function withContactPoints($host) {}
+    public function Builder withContactPoints(string $host) {}
 
     /**
      * Configures this cluster to use a round robin load balancing policy.
      *
      * @return self
      */
-    public function withRoundRobinLoadBalancingPolicy() {}
+    public function Builder withRoundRobinLoadBalancingPolicy() {}
 
     /**
      * Configures this cluster to use a datacenter aware round robin load balancing policy.
@@ -195,16 +92,16 @@ final class Builder
      *
      * @return self
      */
-    public function withDatacenterAwareRoundRobinLoadBalancingPolicy($localDatacenter, $hostPerRemoteDatacenter, $useRemoteDatacenterForLocalConsistencies) {}
+    public function Builder withDatacenterAwareRoundRobinLoadBalancingPolicy(string $localDatacenter, int $hostPerRemoteDatacenter, bool $useRemoteDatacenterForLocalConsistencies) {}
 
     /**
      * Enable token aware routing.
      *
-     * @param bool $enabled Whether to enable token aware routing (default: `true`)
+     * @param bool $enabled Whether to enable token aware routing
      *
      * @return self
      */
-    public function withTokenAwareRouting($enabled = true) {}
+    public function Builder withTokenAwareRouting(bool $enabled = true) {}
 
     /**
      * Configures cassandra authentication.
@@ -214,7 +111,7 @@ final class Builder
      *
      * @return self
      */
-    public function withCredentials($username, $password) {}
+    public function Builder withCredentials(string $username, string $password) {}
 
     /**
      * Timeout used for establishing TCP connections.
@@ -223,7 +120,7 @@ final class Builder
      *
      * @return self
      */
-    public function withConnectTimeout($timeout) {}
+    public function Builder withConnectTimeout(float $timeout) {}
     /**
      * Timeout used for waiting for a response from a node.
      *
@@ -231,7 +128,7 @@ final class Builder
      *
      * @return self
      */
-    public function withRequestTimeout($timeout) {}
+    public function Builder withRequestTimeout(float $timeout) {}
 
     /**
      * Set up ssl context.
@@ -240,7 +137,7 @@ final class Builder
      *
      * @return self
      */
-    public function withSSL(SSLOptions $options) {}
+    public function Builder withSSL(SSLOptions $options) {}
 
     /**
      * Enable persistent sessions and clusters
@@ -249,5 +146,5 @@ final class Builder
      *
      * @return self
      */
-    public function withPersistentSessions($enabled = true) {}
+    public function Builder withPersistentSessions(bool $enabled = true) {}
 }

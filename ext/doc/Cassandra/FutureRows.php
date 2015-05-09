@@ -19,26 +19,14 @@
 namespace Cassandra;
 
 /**
- * A PHP representation of the CQL `varint` datatype
+ * This future results is resolved with `Cassandra::Rows`.
+ *
+ * @see Cassandra::Session::executeAsync()
  */
-final class Varint
+final class FutureRows implements Future
 {
     /**
-     * Creates a new variable length integer
-     *
-     * @param string $value integer value as a string
+     * {@inheritDoc}
      */
-    public function __construct(string $value) {}
-
-    /**
-     * Returns the integer value
-     * @return string integer value
-     */
-    public function string __toString() {}
-
-    /**
-     * Returns the integer value
-     * @return string integer value
-     */
-    public function string value() {}
+    public function mixed get(float $timeout = null) {}
 }

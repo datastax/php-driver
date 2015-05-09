@@ -19,32 +19,12 @@
 namespace Cassandra;
 
 /**
- * A future that always resolves in a value.
+ * All statements implement this common interface.
+ *
+ * @see Cassandra::SimpleStatement
+ * @see Cassandra::PreparedStatement
+ * @see Cassandra::BatchStatement
  */
-final class FutureValue implements Future
+interface Statement
 {
-    /**
-     * Actual value to resolve this future with.
-     *
-     * @var mixed
-     */
-    private $value;
-
-    /**
-     * Creates a future value.
-     *
-     * @param mixed $value a value to resolve this future with.
-     */
-    public function __construct($value)
-    {
-        $this->value = $value;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function get($timeout = null)
-    {
-        return $this->value;
-    }
 }

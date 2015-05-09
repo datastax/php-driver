@@ -18,47 +18,50 @@
 
 namespace Cassandra;
 
+use Countable;
+use IteratorAggregate;
+
 /**
  * A PHP representation of the CQL `set` datatype
  */
-final class Set implements \Countable, \IteratorAggregate
+final class Set implements Countable, IteratorAggregate
 {
     /**
      * Creates a new collection of a given type
      * @param string $type one of `Cassandra::TYPE_*`
      */
-    public function __construct($type) {}
+    public function __construct(string $type) {}
 
     /**
      * The type of this set
      * @return string one of `Cassandra::TYPE_*`
      */
-    public function type() {}
+    public function string type() {}
 
     /**
      * Array of values in this set
      * @return array values
      */
-    public function values() {}
+    public function array values() {}
 
     /**
      * Adds a value to this set
      * @param  mixed   $value Value
-     * @return boolean whether the value has been added
+     * @return bool whether the value has been added
      */
-    public function add($value) {}
+    public function bool add(mixed $value) {}
 
     /**
      * Removes a value to this set
      * @param  mixed   $value Value
-     * @return boolean whether the value has been removed
+     * @return bool whether the value has been removed
      */
-    public function remove($value) {}
+    public function bool remove(mixed $value) {}
 
     /**
      * Returns whether a value is in this set
      * @param  mixed   $value Value
-     * @return boolean whether the value is in the set
+     * @return bool whether the value is in the set
      */
-    public function has($value) {}
+    public function bool has(mixed $value) {}
 }

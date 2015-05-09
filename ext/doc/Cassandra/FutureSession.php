@@ -18,17 +18,15 @@
 
 namespace Cassandra;
 
-use Cassandra\Exception\InvalidArgumentException;
-
 /**
- * A future that resolves with `Cassandra\Session`.
+ * A future that resolves with `Cassandra::Session`.
  *
- * @see Cassandra\Cluster::connectAsync()
+ * @see Cassandra::Cluster::connectAsync()
  */
 final class FutureSession implements Future
 {
     /**
      * {@inheritDoc}
      */
-    public function get($timeout = null) {}
+    public function mixed get(float $timeout = null) {}
 }

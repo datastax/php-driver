@@ -18,48 +18,50 @@
 
 namespace Cassandra;
 
+use Countable;
+use IteratorAggregate;
+
 /**
  * A PHP representation of the CQL `list` datatype
  */
-final class Collection implements \Countable, \IteratorAggregate
+final class Collection implements Countable, IteratorAggregate
 {
     /**
      * Creates a new collection of a given type
      * @param string $type one of `Cassandra::TYPE_*`
      */
-    public function __construct($type) {}
+    public function __construct(string $type) {}
 
     /**
      * The type of this collection
      * @return string one of `Cassandra::TYPE_*`
      */
-    public function type() {}
+    public function string type() {}
 
     /**
      * Array of values in this collection
      * @return array values
      */
-    public function values() {}
+    public function array values() {}
 
     /**
      * Adds one or more values to this collection
-     * @param mixed $value Value to add
-     * @param mixed ...    More values to add
+     * @param mixed $value,... one or more values to add
      * @return int total number of values in this collection
      */
-    public function add($value) {}
+    public function int add(mixed $value) {}
 
     /**
      * Retrieves the value at a given index
      * @param   int         $index  Index
      * @return  mixed|null          Value
      */
-    public function get($index) {}
+    public function mixed|null get(int $index) {}
 
     /**
      * Finds index of a value in this collection
      * @param   mixed     $value Value
      * @return  int|null         Index
      */
-    public function find($value) {}
+    public function int|null find(mixed $value) {}
 }

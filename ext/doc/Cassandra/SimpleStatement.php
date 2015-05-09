@@ -19,32 +19,18 @@
 namespace Cassandra;
 
 /**
- * A future that always resolves in an exception.
+ * Simple statements can be executed using a Session instance.
+ * They are constructed with a CQL string that can contain positional
+ * argument markers `?`.
+ *
+ * @see Cassandra::Session::execute()
  */
-final class FutureException implements Future
+final class SimpleStatement implements Statement
 {
     /**
-     * Actual exception to resolve this future with.
+     * Creates a new simple statement with the provided CQL.
      *
-     * @var Exception
+     * @param string $cql CQL string for this simple statement
      */
-    private $exception;
-
-    /**
-     * Creates a future exception.
-     *
-     * @param \Exception $exception an exception to resolve this future with.
-     */
-    public function __construct(\Exception $exception)
-    {
-        $this->exception = $exception;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function get($timeout = null)
-    {
-        throw $this->exception;
-    }
+    public function __construct(string $cql) {}
 }

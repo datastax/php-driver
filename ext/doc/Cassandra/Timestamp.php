@@ -18,6 +18,8 @@
 
 namespace Cassandra;
 
+use DateTime;
+
 /**
  * A PHP representation of the CQL `timestamp` datatype
  */
@@ -29,28 +31,28 @@ final class Timestamp
      * @param int $time Unix timestamp
      * @param int $usec Microseconds
      */
-    public function __construct($time = null, $usec = null) {}
+    public function __construct(int $time = null, int $usec = null) {}
 
     /**
      * Unix timestamp
      * @see time
      * @return int seconds
      */
-    public function time() {}
+    public function int time() {}
 
     /**
      * Microtime from this timestamp
      * @see microtime
-     * @param  boolean      $get_as_float Whther to get this value as float
+     * @param  bool      $get_as_float Whther to get this value as float
      * @return float|string               Float or string representation
      */
-    public function microtime($get_as_float = false) {}
+    public function float|string microtime(bool $get_as_float = false) {}
 
     /**
      * Converts current timestamp to PHP DateTime
-     * @return \DateTime
+     * @return DateTime
      */
-    public function toDateTime() {}
+    public function DateTime toDateTime() {}
 
     /**
      * Returns a string representation of this timestamp

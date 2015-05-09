@@ -19,24 +19,25 @@
 namespace Cassandra;
 
 /**
- * Futures are returns from asynchronous methods.
+ * Request execution options.
  *
- * @see Cassandra::Cluster::connectAsync()
+ * @see Cassandra::Session::execute()
  * @see Cassandra::Session::executeAsync()
+ * @see Cassandra::Session::prepare()
  * @see Cassandra::Session::prepareAsync()
- * @see Cassandra::Session::closeAsync()
  */
-interface Future
+final class ExecutionOptions
 {
     /**
-     * Waits for a given future resource to resolve and throws errors if any.
-     *
      * @throws Cassandra::Exception::InvalidArgumentException
-     * @throws Cassandra::Exception::TimeoutException
      *
-     * @param float|null $timeout
+     * array['arguments']          array    An array or positional or named arguments
+     * array['consistency']        int      One of Cassandra::CONSISTENCY_*
+     * array['timeout']            int|null A number of seconds or null
+     * array['page_size']          int      A number of rows to include in result for paging
+     * array['serial_consistency'] int      Either Cassandra::CONSISTENCY_SERIAL or Cassandra::CONSISTENCY_LOCAL_SERIAL
      *
-     * @return mixed a value that the future has been resolved with
+     * @param array $options various execution options
      */
-    public function mixed get(float $timeout = null);
+    public function __construct(array $options = null) {}
 }

@@ -19,26 +19,15 @@
 namespace Cassandra;
 
 /**
- * A PHP representation of the CQL `varint` datatype
+ * Prepared statements are faster to execute because the server doesn't need
+ * to process statement's CQL during the execution.
+ *
+ * With token-awareness enabled in the driver, prepared statements are even
+ * faster, because they are sent directly to replica nodes and avoid the extra
+ * network hop.
+ *
+ * @see Cassandra::Session::prepare()
  */
-final class Varint
+final class PreparedStatement implements Statement
 {
-    /**
-     * Creates a new variable length integer
-     *
-     * @param string $value integer value as a string
-     */
-    public function __construct(string $value) {}
-
-    /**
-     * Returns the integer value
-     * @return string integer value
-     */
-    public function string __toString() {}
-
-    /**
-     * Returns the integer value
-     * @return string integer value
-     */
-    public function string value() {}
 }
