@@ -37,29 +37,44 @@ if (PHP_CASSANDRA != "no" &&
             "Cassandra.c", "cassandra");
         ADD_SOURCES(configure_module_dirname + "/src/Cassandra",
             "BatchStatement.c " +
+            "Bigint.c " +
+            "Blob.c " +
             "Cluster.c " +
+            "Collection.c " +
+            "Decimal.c " +
             "DefaultCluster.c " +
             "DefaultSession.c " +
             "Exception.c " +
             "ExecutionOptions.c " +
+            "Float.c " +
             "Future.c " +
             "FutureClose.c " +
             "FuturePreparedStatement.c " +
             "FutureRows.c " +
             "FutureSession.c " +
             "FutureValue.c " +
+            "Inet.c " +
+            "Map.c " +
+            "Numeric.c " +
             "PreparedStatement.c " +
             "Rows.c " +
             "Session.c " +
+            "Set.c " +
             "SimpleStatement.c " +
             "SSLOptions.c " +
-            "Statement.c", "cassandra");
+            "Statement.c " +
+            "Timestamp.c " +
+            "Timeuuid.c " +
+            "Uuid.c " +
+            "UuidInterface.c " +
+            "Varint.c", "cassandra");
         ADD_SOURCES(configure_module_dirname + "/src/Cassandra/Cluster",
             "Builder.c", "cassandra");
         ADD_SOURCES(configure_module_dirname + "/src/Cassandra/Exception",
             "AlreadyExistsException.c " +
             "AuthenticationException.c " +
             "ConfigurationException.c " +
+            "DivideByZeroException.c " +
             "DomainException.c " +
             "ExecutionException.c " +
             "InvalidArgumentException.c " +
@@ -69,6 +84,7 @@ if (PHP_CASSANDRA != "no" &&
             "LogicException.c " +
             "OverloadedException.c " +
             "ProtocolException.c " +
+            "RangeException.c " +
             "ReadTimeout.c " +
             "RuntimeException.c " +
             "ServerException.c " +
@@ -81,21 +97,6 @@ if (PHP_CASSANDRA != "no" &&
             "WriteTimeoutException.c", "cassandra");
         ADD_SOURCES(configure_module_dirname + "/src/Cassandra/SSLOptions",
             "Builder.c", "cassandra");
-
-        ADD_SOURCES(configure_module_dirname + "/types",
-            "bigint.c " +
-            "blob.c " +
-            "collection.c " +
-            "decimal.c " +
-            "float.c " +
-            "inet.c " +
-            "map.c " +
-            "set.c " +
-            "timestamp.c " +
-            "timeuuid.c " +
-            "uuid.c " +
-            "uuid_interface.c " +
-            "varint.c", "cassandra");
 
         ADD_SOURCES(configure_module_dirname + "/util",
             "bytes.c " +
@@ -118,7 +119,7 @@ if (PHP_CASSANDRA != "no" &&
             "/I " + PHP_CASSANDRA_CPP_DRIVER + "/include " +
             "/I " + PHP_LIBUV_LIBS + "/include " +
             "/I " + PHP_MPIR + "/include " +
-            "/I " + configure_module_dirname + "/types " +
+            "/I " + configure_module_dirname + "/src/Cassandra " +
             "/I " + configure_module_dirname + "/util " +
             "/DCASS_STATIC " +
             "/wd4267");

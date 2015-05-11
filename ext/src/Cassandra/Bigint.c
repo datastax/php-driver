@@ -1,9 +1,9 @@
 #include "php_cassandra.h"
 #include "util/math.h"
 
-#if !defined(HAVE_STDINT_H)
-#define INT64_MAX 9223372036854775807LL
-#define INT64_MIN (-INT_MAX-1)
+#if !defined(HAVE_STDINT_H) && !defined(_MSC_STDINT_H_)
+#  define INT64_MAX 9223372036854775807LL
+#  define INT64_MIN (-INT_MAX-1)
 #endif
 
 zend_class_entry* cassandra_bigint_ce = NULL;
@@ -37,7 +37,7 @@ to_string(zval* result, cassandra_bigint* bigint TSRMLS_DC)
 {
   char* string;
 #ifdef WIN32
-  spprintf(&string, 0, "%I64d", (long long int) value->value);
+  spprintf(&string, 0, "%I64d", (long long int) bigint->value);
 #else
   spprintf(&string, 0, "%lld", (long long int) bigint->value);
 #endif
@@ -393,11 +393,14 @@ php_cassandra_bigint_properties(zval *object TSRMLS_DC)
 static int
 php_cassandra_bigint_compare(zval *obj1, zval *obj2 TSRMLS_DC)
 {
+  cassandra_bigint* bigint1 = NULL;
+  cassandra_bigint* bigint2 = NULL;
+
   if (Z_OBJCE_P(obj1) != Z_OBJCE_P(obj2))
     return 1; /* different classes */
 
-  cassandra_bigint* bigint1 = (cassandra_bigint*) zend_object_store_get_object(obj1 TSRMLS_CC);
-  cassandra_bigint* bigint2 = (cassandra_bigint*) zend_object_store_get_object(obj2 TSRMLS_CC);
+  bigint1 = (cassandra_bigint*) zend_object_store_get_object(obj1 TSRMLS_CC);
+  bigint2 = (cassandra_bigint*) zend_object_store_get_object(obj2 TSRMLS_CC);
 
   if (bigint1->value == bigint2->value)
     return 0;

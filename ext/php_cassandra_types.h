@@ -5,7 +5,7 @@ typedef enum {
   CASSANDRA_BIGINT,
   CASSANDRA_DECIMAL,
   CASSANDRA_FLOAT,
-  CASSANDRA_VARINT,
+  CASSANDRA_VARINT
 } cassandra_numeric_type;
 
 #define NUMERIC_FIELDS \

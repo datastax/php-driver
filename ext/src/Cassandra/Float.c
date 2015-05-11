@@ -2,6 +2,12 @@
 #include "util/math.h"
 #include <float.h>
 
+#ifdef _WIN32
+  float fabsf(float value) {
+    return (float) fabs((float) value);
+  }
+#endif
+
 zend_class_entry* cassandra_float_ce = NULL;
 
 static int
@@ -349,11 +355,14 @@ php_cassandra_float_properties(zval *object TSRMLS_DC)
 static int
 php_cassandra_float_compare(zval *obj1, zval *obj2 TSRMLS_DC)
 {
+  cassandra_float* flt1 = NULL;
+  cassandra_float* flt2 = NULL;
+
   if (Z_OBJCE_P(obj1) != Z_OBJCE_P(obj2))
     return 1; /* different classes */
 
-  cassandra_float* flt1 = (cassandra_float*) zend_object_store_get_object(obj1 TSRMLS_CC);
-  cassandra_float* flt2 = (cassandra_float*) zend_object_store_get_object(obj2 TSRMLS_CC);
+  flt1 = (cassandra_float*) zend_object_store_get_object(obj1 TSRMLS_CC);
+  flt2 = (cassandra_float*) zend_object_store_get_object(obj2 TSRMLS_CC);
 
   if (flt1->value == flt2->value)
     return 0;
