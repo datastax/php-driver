@@ -562,7 +562,7 @@ IF NOT EXIST "!ABSOLUTE_DEPENDENCIES_PHP_SOURCE_DIRECTORY!" (
       ECHO done.
       ECHO | SET /P=Patching PHP !PHP_BRANCH_TAG_VERSION! for proper build ... 
       PUSHD "!ABSOLUTE_DEPENDENCIES_PHP_SOURCE_DIRECTORY!"
-      !GIT! apply --ignore-space-change --ignore-whitespace "!ABSOLUTE_BATCH_DIRECTORY!\win32\php-5.4.patch"
+      !GIT! apply --ignore-space-change --ignore-whitespace "!ABSOLUTE_BATCH_DIRECTORY!\win32\php-5.4.patch" >> "!LOG_DRIVER_BUILD!" 2>&1
       IF NOT !ERRORLEVEL! EQU 0 (
         ECHO FAILED!
         ECHO 	See !LOG_DRIVER_BUILD! for more details

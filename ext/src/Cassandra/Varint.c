@@ -53,13 +53,13 @@ to_string(zval* result, cassandra_varint* varint TSRMLS_DC)
 PHP_METHOD(Varint, __construct)
 {
   zval* num;
+  cassandra_varint* self = NULL;
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z", &num) == FAILURE) {
     return;
   }
 
-  cassandra_varint* self =
-      (cassandra_varint*) zend_object_store_get_object(getThis() TSRMLS_CC);
+  self = (cassandra_varint*) zend_object_store_get_object(getThis() TSRMLS_CC);
 
   if(Z_TYPE_P(num) == IS_LONG) {
     mpz_set_si(self->value, Z_LVAL_P(num));
@@ -106,6 +106,7 @@ PHP_METHOD(Varint, value)
 PHP_METHOD(Varint, add)
 {
   zval* num;
+  cassandra_varint* result = NULL;
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z", &num) == FAILURE) {
     return;
@@ -119,8 +120,7 @@ PHP_METHOD(Varint, add)
         (cassandra_varint*) zend_object_store_get_object(num TSRMLS_CC);
 
     object_init_ex(return_value, cassandra_varint_ce);
-    cassandra_varint* result =
-        (cassandra_varint*) zend_object_store_get_object(return_value TSRMLS_CC);
+    result = (cassandra_varint*) zend_object_store_get_object(return_value TSRMLS_CC);
 
     mpz_add(result->value, self->value, varint->value);
   } else {
@@ -133,6 +133,7 @@ PHP_METHOD(Varint, add)
 PHP_METHOD(Varint, sub)
 {
   zval* num;
+  cassandra_varint* result = NULL;
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z", &num) == FAILURE) {
     return;
@@ -146,8 +147,7 @@ PHP_METHOD(Varint, sub)
         (cassandra_varint*) zend_object_store_get_object(num TSRMLS_CC);
 
     object_init_ex(return_value, cassandra_varint_ce);
-    cassandra_varint* result =
-        (cassandra_varint*) zend_object_store_get_object(return_value TSRMLS_CC);
+    result = (cassandra_varint*) zend_object_store_get_object(return_value TSRMLS_CC);
 
     mpz_sub(result->value, self->value, varint->value);
   } else {
@@ -160,6 +160,7 @@ PHP_METHOD(Varint, sub)
 PHP_METHOD(Varint, mul)
 {
   zval* num;
+  cassandra_varint* result = NULL;
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z", &num) == FAILURE) {
     return;
@@ -173,8 +174,7 @@ PHP_METHOD(Varint, mul)
         (cassandra_varint*) zend_object_store_get_object(num TSRMLS_CC);
 
     object_init_ex(return_value, cassandra_varint_ce);
-    cassandra_varint* result =
-        (cassandra_varint*) zend_object_store_get_object(return_value TSRMLS_CC);
+    result = (cassandra_varint*) zend_object_store_get_object(return_value TSRMLS_CC);
 
     mpz_mul(result->value, self->value, varint->value);
   } else {
@@ -187,6 +187,7 @@ PHP_METHOD(Varint, mul)
 PHP_METHOD(Varint, div)
 {
   zval* num;
+  cassandra_varint* result = NULL;
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z", &num) == FAILURE) {
     return;
@@ -200,8 +201,7 @@ PHP_METHOD(Varint, div)
         (cassandra_varint*) zend_object_store_get_object(num TSRMLS_CC);
 
     object_init_ex(return_value, cassandra_varint_ce);
-    cassandra_varint* result =
-        (cassandra_varint*) zend_object_store_get_object(return_value TSRMLS_CC);
+    result = (cassandra_varint*) zend_object_store_get_object(return_value TSRMLS_CC);
 
     if (mpz_sgn(varint->value) == 0) {
       zend_throw_exception_ex(cassandra_divide_by_zero_exception_ce, 0 TSRMLS_CC, "Cannot divide by zero");
@@ -219,6 +219,7 @@ PHP_METHOD(Varint, div)
 PHP_METHOD(Varint, mod)
 {
   zval* num;
+  cassandra_varint* result = NULL;
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z", &num) == FAILURE) {
     return;
@@ -232,8 +233,7 @@ PHP_METHOD(Varint, mod)
         (cassandra_varint*) zend_object_store_get_object(num TSRMLS_CC);
 
     object_init_ex(return_value, cassandra_varint_ce);
-    cassandra_varint* result =
-        (cassandra_varint*) zend_object_store_get_object(return_value TSRMLS_CC);
+    result = (cassandra_varint*) zend_object_store_get_object(return_value TSRMLS_CC);
 
     if (mpz_sgn(varint->value) == 0) {
       zend_throw_exception_ex(cassandra_divide_by_zero_exception_ce, 0 TSRMLS_CC, "Cannot modulo by zero");
@@ -250,12 +250,13 @@ PHP_METHOD(Varint, mod)
 /* {{{ Cassandra\Varint::abs() */
 PHP_METHOD(Varint, abs)
 {
+  cassandra_varint* result = NULL;
+
   cassandra_varint* self =
       (cassandra_varint*) zend_object_store_get_object(getThis() TSRMLS_CC);
 
   object_init_ex(return_value, cassandra_varint_ce);
-  cassandra_varint* result =
-      (cassandra_varint*) zend_object_store_get_object(return_value TSRMLS_CC);
+  result = (cassandra_varint*) zend_object_store_get_object(return_value TSRMLS_CC);
 
   mpz_abs(result->value, self->value);
 }
@@ -264,12 +265,13 @@ PHP_METHOD(Varint, abs)
 /* {{{ Cassandra\Varint::neg() */
 PHP_METHOD(Varint, neg)
 {
+  cassandra_varint* result = NULL;
+
   cassandra_varint* self =
       (cassandra_varint*) zend_object_store_get_object(getThis() TSRMLS_CC);
 
   object_init_ex(return_value, cassandra_varint_ce);
-  cassandra_varint* result =
-      (cassandra_varint*) zend_object_store_get_object(return_value TSRMLS_CC);
+  result = (cassandra_varint*) zend_object_store_get_object(return_value TSRMLS_CC);
 
   mpz_neg(result->value, self->value);
 }
@@ -278,6 +280,8 @@ PHP_METHOD(Varint, neg)
 /* {{{ Cassandra\Varint::sqrt() */
 PHP_METHOD(Varint, sqrt)
 {
+  cassandra_varint* result = NULL;
+
   cassandra_varint* self =
       (cassandra_varint*) zend_object_store_get_object(getThis() TSRMLS_CC);
 
@@ -288,8 +292,7 @@ PHP_METHOD(Varint, sqrt)
   }
 
   object_init_ex(return_value, cassandra_varint_ce);
-  cassandra_varint* result =
-      (cassandra_varint*) zend_object_store_get_object(return_value TSRMLS_CC);
+  result = (cassandra_varint*) zend_object_store_get_object(return_value TSRMLS_CC);
 
   mpz_sqrt(result->value, self->value);
 }

@@ -10,11 +10,12 @@ zend_class_entry *cassandra_decimal_ce = NULL;
 static void
 to_mpf(mpf_t result, cassandra_decimal* decimal)
 {
+  mpf_t scale_factor;
+  long scale;
   /* result = unscaled * pow(10, -scale) */
   mpf_set_z(result, decimal->value);
 
-  mpf_t scale_factor;
-  long scale = decimal->scale;
+  scale = decimal->scale;
   mpf_init_set_si(scale_factor, 10);
   mpf_pow_ui(scale_factor, scale_factor, scale < 0 ? -scale : scale);
 
@@ -48,6 +49,7 @@ from_double(cassandra_decimal* result, double value)
   cass_int64_t raw = *((cass_int64_t*) &value);
   cass_int64_t mantissa = raw & DOUBLE_MANITSSA_MASK;
   cass_int64_t exponent = (raw >> DOUBLE_MANTISSA_BITS) & DOUBLE_EXPONENT_MASK;
+  char mantissa_str[32];
 
   /* This exponent is offset using 1023 unless it's a denormal value then its value
    * is the minimum value -1022
@@ -87,7 +89,6 @@ from_double(cassandra_decimal* result, double value)
   }
 
   /* There isn't any "long long" setter method  */
-  char mantissa_str[32];
 #ifdef _WIN32
   sprintf(mantissa_str, "%I64d", mantissa);
 #else
@@ -196,13 +197,14 @@ align_decimals(cassandra_decimal* lhs, cassandra_decimal* rhs)
 PHP_METHOD(Decimal, __construct)
 {
   zval* num;
+  cassandra_decimal* self = NULL;
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z", &num) == FAILURE) {
     return;
   }
 
-  cassandra_decimal* self =
-      (cassandra_decimal*) zend_object_store_get_object(getThis() TSRMLS_CC);
+  
+  self = (cassandra_decimal*) zend_object_store_get_object(getThis() TSRMLS_CC);
 
   if(Z_TYPE_P(num) == IS_LONG) {
     mpz_set_si(self->value, Z_LVAL_P(num));
@@ -265,6 +267,7 @@ PHP_METHOD(Decimal, scale)
 PHP_METHOD(Decimal, add)
 {
   zval* num;
+  cassandra_decimal* result = NULL;
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z", &num) == FAILURE) {
     return;
@@ -278,8 +281,7 @@ PHP_METHOD(Decimal, add)
         (cassandra_decimal*) zend_object_store_get_object(num TSRMLS_CC);
 
     object_init_ex(return_value, cassandra_decimal_ce);
-    cassandra_decimal* result =
-        (cassandra_decimal*) zend_object_store_get_object(return_value TSRMLS_CC);
+    result = (cassandra_decimal*) zend_object_store_get_object(return_value TSRMLS_CC);
 
     align_decimals(self, decimal);
     mpz_add(result->value, self->value, decimal->value);
@@ -294,6 +296,7 @@ PHP_METHOD(Decimal, add)
 PHP_METHOD(Decimal, sub)
 {
   zval* num;
+  cassandra_decimal* result = NULL;
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z", &num) == FAILURE) {
     return;
@@ -307,8 +310,7 @@ PHP_METHOD(Decimal, sub)
         (cassandra_decimal*) zend_object_store_get_object(num TSRMLS_CC);
 
     object_init_ex(return_value, cassandra_decimal_ce);
-    cassandra_decimal* result =
-        (cassandra_decimal*) zend_object_store_get_object(return_value TSRMLS_CC);
+    result = (cassandra_decimal*) zend_object_store_get_object(return_value TSRMLS_CC);
 
     align_decimals(self, decimal);
     mpz_sub(result->value, self->value, decimal->value);
@@ -323,6 +325,7 @@ PHP_METHOD(Decimal, sub)
 PHP_METHOD(Decimal, mul)
 {
   zval* num;
+  cassandra_decimal* result = NULL;
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z", &num) == FAILURE) {
     return;
@@ -336,8 +339,7 @@ PHP_METHOD(Decimal, mul)
         (cassandra_decimal*) zend_object_store_get_object(num TSRMLS_CC);
 
     object_init_ex(return_value, cassandra_decimal_ce);
-    cassandra_decimal* result =
-        (cassandra_decimal*) zend_object_store_get_object(return_value TSRMLS_CC);
+    result = (cassandra_decimal*) zend_object_store_get_object(return_value TSRMLS_CC);
 
     mpz_mul(result->value, self->value, decimal->value);
     result->scale = self->scale + decimal->scale;
@@ -365,12 +367,13 @@ PHP_METHOD(Decimal, mod)
 /* {{{ Cassandra\Decimal::abs() */
 PHP_METHOD(Decimal, abs)
 {
+  cassandra_decimal* result = NULL;
+
   cassandra_decimal* self =
       (cassandra_decimal*) zend_object_store_get_object(getThis() TSRMLS_CC);
 
   object_init_ex(return_value, cassandra_decimal_ce);
-  cassandra_decimal* result =
-      (cassandra_decimal*) zend_object_store_get_object(return_value TSRMLS_CC);
+  result = (cassandra_decimal*) zend_object_store_get_object(return_value TSRMLS_CC);
 
   mpz_abs(result->value, self->value);
   result->scale = self->scale;
@@ -380,12 +383,13 @@ PHP_METHOD(Decimal, abs)
 /* {{{ Cassandra\Decimal::neg() */
 PHP_METHOD(Decimal, neg)
 {
+  cassandra_decimal* result = NULL;
+
   cassandra_decimal* self =
       (cassandra_decimal*) zend_object_store_get_object(getThis() TSRMLS_CC);
 
   object_init_ex(return_value, cassandra_decimal_ce);
-  cassandra_decimal* result =
-      (cassandra_decimal*) zend_object_store_get_object(return_value TSRMLS_CC);
+  result = (cassandra_decimal*) zend_object_store_get_object(return_value TSRMLS_CC);
 
   mpz_neg(result->value, self->value);
   result->scale = self->scale;
