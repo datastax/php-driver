@@ -32,7 +32,7 @@ make
 make install
 popd
 rm -Rf cpp-driver
-rm -f build/lib/libcassandra.dylib
+rm -f build/lib/libcassandra.{dylib,so}
 mv build/lib/libcassandra_static.a build/lib/libcassandra.a
 
 popd
