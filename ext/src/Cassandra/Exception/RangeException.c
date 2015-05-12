@@ -1,8 +1,6 @@
 #include "php_cassandra.h"
 #include <ext/spl/spl_exceptions.h>
 
-extern zend_class_entry* spl_ce_RangeException;
-
 zend_class_entry *cassandra_range_exception_ce = NULL;
 
 static zend_function_entry RangeException_methods[] = {

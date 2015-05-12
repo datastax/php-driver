@@ -1,5 +1,3 @@
-#include <php.h>
-#include <zend_exceptions.h>
 #include "php_cassandra.h"
 #include <ext/date/php_date.h>
 

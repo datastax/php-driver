@@ -6,11 +6,11 @@
 #include "util/math.h"
 
 #ifdef _WIN32
-#  ifdef DISABLE_MSVC_STDINT
+#  if defined(DISABLE_MSVC_STDINT) || _MSC_VER <= 1700
 #    define strtoll _strtoi64
-float strtof(const char *str, char **endptr) {
-  return (float) strtod(str, endptr);
-}
+       float strtof(const char *str, char **endptr) {
+         return (float) strtod(str, endptr);
+       }
 #  endif
 #endif
 
