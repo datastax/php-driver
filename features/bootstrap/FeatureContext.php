@@ -25,9 +25,9 @@ class FeatureContext implements Context, SnippetAcceptingContext
      * You can also pass arbitrary arguments to the
      * context constructor through behat.yml.
      */
-    public function __construct()
+    public function __construct($cluster_name, $cassandra_version)
     {
-        $this->ccm = new \CCM('php-driver-test-cluster', '2.1.3');
+        $this->ccm = new \CCM($cluster_name, $cassandra_version);
     }
 
     /**
@@ -41,6 +41,8 @@ class FeatureContext implements Context, SnippetAcceptingContext
         if (is_dir($dir = sys_get_temp_dir().DIRECTORY_SEPARATOR.'php-driver')) {
             self::clearDirectory($dir);
         }
+        $ccm = new \CCM('', '');
+        $ccm->removeAllClusters();
     }
 
     /**

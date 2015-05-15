@@ -94,16 +94,22 @@ class CCM
         $this->run('stop');
     }
 
-    public function setup()
+    private function getClusters()
     {
         $clusters = array();
-        foreach (explode("\n", $this->run('list')) as $cluster) {
-            if ($this->isActive($cluster)) {
-                $active = count($clusters);
+        foreach (explode("\r\n", $this->run('list')) as $cluster) {
+            $cluster = trim(substr($cluster, 2, strlen($cluster) - 2));
+            if (!empty($cluster)) {
+                $clusters[] = $cluster;
             }
-            $clusters[] = substr($cluster, 2, strlen($cluster) - 2);
         }
 
+        return $clusters;
+    }
+
+    public function setup()
+    {
+        $clusters = $this->getClusters();
         if (!(isset($active) && $clusters[$active] == $this->name)) {
             if (in_array($this->name, $clusters)) {
                 $this->run('switch', $this->name);
@@ -210,7 +216,11 @@ class CCM
 
         $command = sprintf('ccm %s', implode(' ', $args));
         if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN' || strtoupper(substr(PHP_OS, 0, 6)) === 'CYGWIN') {
-          $command = 'START "PHP Integration Tests" /MIN /WAIT ' . $command;
+            $keepWindowsContext = '';
+            if ($args[0] != "\"start\"") {
+                $keepWindowsContext = '/B ';
+            }
+            $command = 'START "PHP Integration Tests" ' . $keepWindowsContext . '/MIN /WAIT ' . $command;
         }
         $this->process->setCommandLine($command);
 
@@ -220,5 +230,18 @@ class CCM
         });
 
         return $this->process->getOutput();
+    }
+
+    public function removeCluster($cluster)
+    {
+      return $this->run('remove', $cluster);
+    }
+
+    public function removeAllClusters()
+    {
+        $clusters = $this->getClusters();
+        foreach ($clusters as $cluster) {
+            $this->removeCluster($cluster);
+        }
     }
 }
