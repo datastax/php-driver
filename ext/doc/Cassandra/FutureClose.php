@@ -19,9 +19,9 @@
 namespace Cassandra;
 
 /**
- * A future returned from Cassandra::Session::closeAsync().
+ * A future returned from Cassandra\Session::closeAsync().
  *
- * @see Cassandra::Session::closeAsync()
+ * @see Cassandra\Session::closeAsync()
  */
 final class FutureClose implements Future
 {

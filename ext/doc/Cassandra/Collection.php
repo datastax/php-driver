@@ -31,34 +31,34 @@ final class Collection implements \Countable, \IteratorAggregate
 
     /**
      * The type of this collection
-     * @retval string one of `Cassandra::TYPE_*`
+     * @return string one of `Cassandra::TYPE_*`
      */
     public function type() {}
 
     /**
      * Array of values in this collection
-     * @retval array values
+     * @return array values
      */
     public function values() {}
 
     /**
      * Adds one or more values to this collection
      * @param mixed $value,... one or more values to add
-     * @retval int total number of values in this collection
+     * @return int total number of values in this collection
      */
     public function add($value) {}
 
     /**
      * Retrieves the value at a given index
      * @param   int         $index  Index
-     * @retval  mixed|null          Value
+     * @return  mixed|null          Value
      */
     public function get($index) {}
 
     /**
      * Finds index of a value in this collection
      * @param   mixed     $value Value
-     * @retval  int|null         Index
+     * @return  int|null         Index
      */
     public function find($value) {}
 }

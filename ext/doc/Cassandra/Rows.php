@@ -20,20 +20,18 @@ namespace Cassandra;
 
 /**
  * Rows represent a result of statement execution.
- * @author Bulat Shakirzyanov
- * @author Bob McCarthy
  */
 final class Rows implements \Iterator, \Countable, \ArrayAccess
 {
     /**
-     * @retval int number of rows
+     * @return int number of rows
      * @see Countable::count()
      */
     public function count() {}
 
     /**
      * Resets the rows iterator.
-     * @retval void
+     * @return void
      * @see Iterator::rewind()
      */
     public function rewind() {}
@@ -41,7 +39,7 @@ final class Rows implements \Iterator, \Countable, \ArrayAccess
     /**
      * Returns current row.
      *
-     * @retval array current row
+     * @return array current row
      * @see Iterator::current()
      */
     public function current() {}
@@ -49,74 +47,74 @@ final class Rows implements \Iterator, \Countable, \ArrayAccess
     /**
      * Returns current index.
      *
-     * @retval int index
+     * @return int index
      * @see Iterator::key()
      */
     public function key() {}
 
     /**
      * Advances the rows iterator by one.
-     * @retval void
+     * @return void
      * @see Iterator::next()
      */
     public function next() {}
 
     /**
-     * @retval bool whether there are more rows available for iteration
+     * @return bool whether there are more rows available for iteration
      * @see Iterator::valid()
      */
     public function valid() {}
 
     /**
      * @param int $offset
-     * @retval bool whether a row at a given index exists
+     * @return bool whether a row at a given index exists
      * @see ArrayAccess::offsetExists()
      */
-    public function offsetExists(int $offset) {}
+    public function offsetExists($offset) {}
 
     /**
      * @param int $offset
-     * @retval array|null row at a given index
+     * @return array|null row at a given index
      * @see ArrayAccess::offsetGet()
      */
-    public function offsetGet(int $offset) {}
+    public function offsetGet($offset) {}
 
     /**
      * @param int   $offset
      * @param array $value
-     * @retval void
-     * @throws Cassandra::Exception::DomainException
+     * @return void
+     * @throws Cassandra\Exception\DomainException
      * @see ArrayAccess::offsetSet()
      */
-    public function offsetSet(int $offset, array $value) {}
+    public function offsetSet($offset, array $value) {}
 
     /**
      * @param int $offset
-     * @retval void
-     * @throws Cassandra::Exception::DomainException
+     * @return void
+     * @throws Cassandra\Exception\DomainException
      * @see ArrayAccess::offsetUnset()
      */
-    public function offsetUnset(int $offset) {}
+    public function offsetUnset($offset) {}
 
     /**
-     * @retval bool whether this is the last page or not
+     * @return bool whether this is the last page or not
      */
     public function isLastPage() {}
 
     /**
      * @param float|null $timeout
      *
-     * @retval Rows|null loads and returns next result page
+     * @return Rows|null loads and returns next result page
      */
-    public function nextPage(float $timeout = null) {}
+    public function nextPage($timeout = null) {}
 
     /**
-     * @retval Future returns future of the next result page
+     * @return Future returns future of the next result page
      */
     public function nextPageAsync() {}
 
     /**
-     * @retval array|null returns first row if any
+     * @return array|null returns first row if any
      */
     public function first() {}
 }

@@ -28,7 +28,7 @@ interface Cluster
      *
      * @param string $keyspace Optional keyspace name
      *
-     * @retval Session Session instance
+     * @return Session Session instance
      */
     public function connect($keyspace = null);
 
@@ -37,7 +37,7 @@ interface Cluster
      *
      * @param string $keyspace Optional keyspace name
      *
-     * @retval Future A Future Session instance
+     * @return Future A Future Session instance
      */
     public function connectAsync($keyspace = null);
 }

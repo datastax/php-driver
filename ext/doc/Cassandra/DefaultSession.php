@@ -21,7 +21,7 @@ namespace Cassandra;
 /**
  * Actual session implementation.
  *
- * @see Cassandra::Session
+ * @see Cassandra\Session
  */
 final class DefaultSession implements Session
 {

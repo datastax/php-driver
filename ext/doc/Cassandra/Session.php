@@ -21,7 +21,7 @@ namespace Cassandra;
 /**
  * A session is used to prepare and execute statements.
  *
- * @see Cassandra::Cluster::connect()
+ * @see Cassandra\Cluster::connect()
  */
 interface Session
 {
@@ -33,7 +33,7 @@ interface Session
      *
      * @throws Exception
      *
-     * @retval Rows execution result
+     * @return Rows execution result
      */
     public function Rows execute(Statement $statement, ExecutionOptions $options = null);
 
@@ -46,7 +46,7 @@ interface Session
      * @param Statement             $statement statement to be executed
      * @param ExecutionOptions|null $options   execution options
      *
-     * @retval Future future result
+     * @return Future future result
      */
     public function Future executeAsync(Statement $statement, ExecutionOptions $options = null);
 
@@ -61,9 +61,9 @@ interface Session
      *
      * @throws Exception
      *
-     * @retval PreparedStatement prepared statement
+     * @return PreparedStatement prepared statement
      */
-    public function PreparedStatement prepare(string $cql, ExecutionOptions $options = null);
+    public function PreparedStatement prepare($cql, ExecutionOptions $options = null);
 
     /**
      * Asynchronously prepares a statement and returns a future prepared statement.
@@ -73,21 +73,21 @@ interface Session
      * @param string                $cql     CQL string to be prepared
      * @param ExecutionOptions|null $options preparation options
      *
-     * @retval Future statement
+     * @return Future statement
      */
-    public function Future prepareAsync(string $cql, ExecutionOptions $options = null);
+    public function Future prepareAsync($cql, ExecutionOptions $options = null);
 
     /**
      * Closes current session and all of its connections.
      *
      * @param float|null $timeout Timeout to wait for closure in seconds
      */
-    public function void close(float $timeout = null);
+    public function void close($timeout = null);
 
     /**
      * Asynchronously closes current session once all pending requests have finished.
      *
-     * @retval Future future
+     * @return Future future
      */
     public function Future closeAsync();
 }

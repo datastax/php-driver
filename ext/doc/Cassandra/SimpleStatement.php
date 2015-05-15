@@ -23,7 +23,7 @@ namespace Cassandra;
  * They are constructed with a CQL string that can contain positional
  * argument markers `?`.
  *
- * @see Cassandra::Session::execute()
+ * @see Cassandra\Session::execute()
  */
 final class SimpleStatement implements Statement
 {
@@ -32,5 +32,5 @@ final class SimpleStatement implements Statement
      *
      * @param string $cql CQL string for this simple statement
      */
-    public function __construct(string $cql) {}
+    public function __construct($cql) {}
 }

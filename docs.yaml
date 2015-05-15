@@ -16,6 +16,7 @@ sections:
     config: |
       RECURSIVE     = YES
       FILE_PATTERNS = *.php
+      INPUT_FILTER  = ./doxygen.rb
 links:
   - title: Code
     href:  https://github.com/datastax/php-driver/

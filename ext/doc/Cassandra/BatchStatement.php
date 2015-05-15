@@ -54,7 +54,7 @@ final class BatchStatement implements Statement
      *
      * @throws Cassandra\Exception\InvalidArgumentException
      *
-     * @retval BatchStatement self
+     * @return BatchStatement self
      */
     public function add(Statement $statement, array $arguments = null) {}
 }

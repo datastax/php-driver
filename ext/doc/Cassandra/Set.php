@@ -27,38 +27,38 @@ final class Set implements \Countable, \IteratorAggregate
      * Creates a new collection of a given type
      * @param string $type one of `Cassandra::TYPE_*`
      */
-    public function __construct(string $type) {}
+    public function __construct($type) {}
 
     /**
      * The type of this set
-     * @retval string one of `Cassandra::TYPE_*`
+     * @return string one of `Cassandra::TYPE_*`
      */
-    public function string type() {}
+    public function type() {}
 
     /**
      * Array of values in this set
-     * @retval array values
+     * @return array values
      */
-    public function array values() {}
+    public function values() {}
 
     /**
      * Adds a value to this set
      * @param  mixed   $value Value
-     * @retval bool whether the value has been added
+     * @return bool whether the value has been added
      */
-    public function bool add(mixed $value) {}
+    public function add(mixed $value) {}
 
     /**
      * Removes a value to this set
      * @param  mixed   $value Value
-     * @retval bool whether the value has been removed
+     * @return bool whether the value has been removed
      */
-    public function bool remove(mixed $value) {}
+    public function remove(mixed $value) {}
 
     /**
      * Returns whether a value is in this set
      * @param  mixed   $value Value
-     * @retval bool whether the value is in the set
+     * @return bool whether the value is in the set
      */
-    public function bool has(mixed $value) {}
+    public function has(mixed $value) {}
 }

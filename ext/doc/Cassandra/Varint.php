@@ -32,13 +32,13 @@ final class Varint
 
     /**
      * Returns the integer value
-     * @retval string integer value
+     * @return string integer value
      */
     public function __toString() {}
 
     /**
      * Returns the integer value
-     * @retval string integer value
+     * @return string integer value
      */
     public function value() {}
 }

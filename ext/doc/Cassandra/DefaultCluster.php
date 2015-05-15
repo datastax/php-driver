@@ -22,7 +22,7 @@ namespace Cassandra;
 /**
  * Default cluster implementation.
  *
- * @see Cassandra::Cluster
+ * @see Cassandra\Cluster
  */
 final class DefaultCluster implements Cluster
 {

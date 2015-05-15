@@ -20,9 +20,9 @@ namespace Cassandra\Exception;
 
 /**
  * ExecutionException is raised when something went wrong during request execution.
- * @see Cassandra::Exception::TruncateException
- * @see Cassandra::Exception::UnavailableException
- * @see Cassandra::Exception::ReadTimeoutException
- * @see Cassandra::Exception::WriteTimeoutException
+ * @see Cassandra\Exception\TruncateException
+ * @see Cassandra\Exception\UnavailableException
+ * @see Cassandra\Exception\ReadTimeoutException
+ * @see Cassandra\Exception\WriteTimeoutException
  */
 class ExecutionException extends ServerException {}

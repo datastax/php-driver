@@ -104,7 +104,7 @@ final class Cassandra
     /**
      * This is a serial consistency level, it is used in conditional updates,
      * e.g. (`CREATE|INSERT ... IF NOT EXISTS`), and should be specified as the
-     * `serial_consistency` option of the Cassandra::ExecutionOptions instance.
+     * `serial_consistency` option of the Cassandra\ExecutionOptions instance.
      *
      * Consistency level SERIAL, when set, ensures that a Paxos commit fails if
      * any of the replicas is down.
@@ -124,14 +124,14 @@ final class Cassandra
     /**
      * Perform no verification of Cassandra nodes when using SSL encryption.
      *
-     * @see SSLOptions::Builder::withVerifyFlags()
+     * @see SSLOptions\Builder::withVerifyFlags()
      */
     const VERIFY_NONE          = 0;
 
     /**
      * Verify presence and validity of SSL certificates of Cassandra.
      *
-     * @see SSLOptions::Builder::withVerifyFlags()
+     * @see SSLOptions\Builder::withVerifyFlags()
      */
     const VERIFY_PEER_CERT     = 1;
 
@@ -140,7 +140,7 @@ final class Cassandra
      * one of its subject alternative names. This implies the certificate is
      * also present.
      *
-     * @see SSLOptions::Builder::withVerifyFlags()
+     * @see SSLOptions\Builder::withVerifyFlags()
      */
     const VERIFY_PEER_IDENTITY = 2;
 
@@ -327,14 +327,14 @@ final class Cassandra
     /**
      * Returns a Cluster Builder.
      *
-     * @retval Cluster::Builder a Cluster Builder instance
+     * @return Cassandra\Cluster\Builder a Cluster Builder instance
      */
     public static function cluster() {}
 
     /**
      * Returns SSL Options Builder.
      *
-     * @retval SSLOptions::Builder an SSLOptions Builder instance
+     * @return Cassandra\SSLOptions\Builder an SSLOptions Builder instance
      */
     public static function ssl() {}
 }

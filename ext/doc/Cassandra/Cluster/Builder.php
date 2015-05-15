@@ -28,7 +28,7 @@ final class Builder
     /**
      * Returns a Cluster Instance.
      *
-     * @retval Cluster Cluster instance
+     * @return Cluster Cluster instance
      */
     public function build() {}
 
@@ -37,7 +37,7 @@ final class Builder
      *
      * @param int $consistency A consistency level, must be one of Cassandra::CONSISTENCY_* values
      *
-     * @retval self
+     * @return Builder self
      */
     public function withDefaultConsistency($consistency) {}
 
@@ -47,7 +47,7 @@ final class Builder
      *
      * @param int|null $pageSize default page size
      *
-     * @retval self
+     * @return Builder self
      */
     public function withDefaultPageSize($pageSize) {}
 
@@ -57,7 +57,7 @@ final class Builder
      *
      * @param float|null $timeout timeout value
      *
-     * @retval self
+     * @return Builder self
      */
     public function withDefaultTimeout($timeout) {}
 
@@ -67,14 +67,14 @@ final class Builder
      *
      * @param string $host,... one or more ip addresses or hostnames
      *
-     * @retval self
+     * @return Builder self
      */
     public function withContactPoints($host) {}
 
     /**
      * Configures this cluster to use a round robin load balancing policy.
      *
-     * @retval self
+     * @return Builder self
      */
     public function withRoundRobinLoadBalancingPolicy() {}
 
@@ -85,7 +85,7 @@ final class Builder
      * @param int    $hostPerRemoteDatacenter                  Maximum number of hosts to try in remote datacenters
      * @param bool   $useRemoteDatacenterForLocalConsistencies Allow using hosts from remote datacenters to execute statements with local consistencies
      *
-     * @retval self
+     * @return Builder self
      */
     public function withDatacenterAwareRoundRobinLoadBalancingPolicy($localDatacenter, $hostPerRemoteDatacenter, $useRemoteDatacenterForLocalConsistencies) {}
 
@@ -94,7 +94,7 @@ final class Builder
      *
      * @param bool $enabled Whether to enable token aware routing
      *
-     * @retval self
+     * @return Builder self
      */
     public function withTokenAwareRouting($enabled = true) {}
 
@@ -104,7 +104,7 @@ final class Builder
      * @param string $username Username
      * @param string $password Password
      *
-     * @retval self
+     * @return Builder self
      */
     public function withCredentials($username, $password) {}
 
@@ -113,7 +113,7 @@ final class Builder
      *
      * @param float $timeout Timeout value in seconds, can be fractional
      *
-     * @retval self
+     * @return Builder self
      */
     public function withConnectTimeout($timeout) {}
     /**
@@ -121,7 +121,7 @@ final class Builder
      *
      * @param float $timeout Timeout value in seconds, can be fractional
      *
-     * @retval self
+     * @return Builder self
      */
     public function withRequestTimeout($timeout) {}
 
@@ -130,7 +130,7 @@ final class Builder
      *
      * @param SSLOptions $options a preconfigured ssl context
      *
-     * @retval self
+     * @return Builder self
      */
     public function withSSL(SSLOptions $options) {}
 
@@ -139,7 +139,7 @@ final class Builder
      *
      * @param bool $enabled whether to enable persistent sessions and clusters.
      *
-     * @retval self
+     * @return Builder self
      */
     public function withPersistentSessions($enabled = true) {}
 }

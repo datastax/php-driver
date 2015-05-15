@@ -31,13 +31,13 @@ final class Float
 
     /**
      * Returns the float value
-     * @retval string float value
+     * @return string float value
      */
     public function value() {}
 
     /**
      * Returns string representation of the float value
-     * @retval string float value
+     * @return string float value
      */
     public function __toString() {}
 }

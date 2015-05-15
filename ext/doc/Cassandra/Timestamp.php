@@ -29,32 +29,32 @@ final class Timestamp
      * @param int $time Unix timestamp
      * @param int $usec Microseconds
      */
-    public function __construct(int $time = null, int $usec = null) {}
+    public function __construct($time = null, $usec = null) {}
 
     /**
      * Unix timestamp
      * @see time
-     * @retval int seconds
+     * @return int seconds
      */
-    public function int time() {}
+    public function time() {}
 
     /**
      * Microtime from this timestamp
      * @see microtime
      * @param  bool      $get_as_float Whther to get this value as float
-     * @retval float|string               Float or string representation
+     * @return float|string               Float or string representation
      */
-    public function float|string microtime(bool $get_as_float = false) {}
+    public function microtime($get_as_float = false) {}
 
     /**
      * Converts current timestamp to PHP DateTime
-     * @retval DateTime
+     * @return DateTime
      */
-    public function \DateTime toDateTime() {}
+    public function toDateTime() {}
 
     /**
      * Returns a string representation of this timestamp
-     * @retval string timestamp
+     * @return string timestamp
      */
     public function __toString() {}
 }

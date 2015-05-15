@@ -26,56 +26,56 @@ interface Numeric
 {
     /**
      * @param  Numeric $addend a number to add to this one
-     * @retval Numeric sum
+     * @return Numeric sum
      */
     function add(Numeric $addend);
 
     /**
      * @param  Numeric $subtrahend a number to subtract from this one
-     * @retval Numeric             difference
+     * @return Numeric             difference
      */
     function sub(Numeric $subtrahend);
 
     /**
      * @param  Numeric $multiplier a number to multiply this one by
-     * @retval Numeric             product
+     * @return Numeric             product
      */
     function mul(Numeric $multiplier);
 
     /**
      * @param  Numeric $divisor a number to divide this one by
-     * @retval Numeric          quotient
+     * @return Numeric          quotient
      */
     function div(Numeric $divisor);
 
     /**
      * @param  Numeric $divisor a number to divide this one by
-     * @retval Numeric          remainder
+     * @return Numeric          remainder
      */
     function mod(Numeric $divisor);
 
     /**
-     * @retval Numeric absolute value
+     * @return Numeric absolute value
      */
     function abs();
 
     /**
-     * @retval Numeric negative value
+     * @return Numeric negative value
      */
     function neg();
 
     /**
-     * @retval Numeric square root
+     * @return Numeric square root
      */
     function sqrt();
 
     /**
-     * @retval int this number as int
+     * @return int this number as int
      */
     function toInt();
 
     /**
-     * @retval float this number as float
+     * @return float this number as float
      */
     function toDouble();
 }

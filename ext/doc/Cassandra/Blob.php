@@ -31,13 +31,13 @@ final class Blob
 
     /**
      * Returns bytes as a hex string
-     * @retval string bytes as hexadecimal string
+     * @return string bytes as hexadecimal string
      */
     public function bytes() {}
 
     /**
      * Returns bytes as a hex string
-     * @retval string bytes as hexadecimal string
+     * @return string bytes as hexadecimal string
      */
     public function __toString() {}
 }

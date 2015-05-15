@@ -32,25 +32,25 @@ final class Map implements \Countable, \IteratorAggregate, \ArrayAccess
 
     /**
      * Returns key type of this map
-     * @retval string key type, one of `Cassandra::TYPE_*`
+     * @return string key type, one of `Cassandra::TYPE_*`
      */
     public function keyType() {}
 
     /**
      * Returns all keys in the map as an array
-     * @retval array keys
+     * @return array keys
      */
     public function keys() {}
 
     /**
      * Returns value type of this map
-     * @retval string value type, one of `Cassandra::TYPE_*`
+     * @return string value type, one of `Cassandra::TYPE_*`
      */
     public function valueType() {}
 
     /**
      * Returns all values in the map as an array
-     * @retval array values
+     * @return array values
      */
     public function values() {}
 
@@ -64,21 +64,21 @@ final class Map implements \Countable, \IteratorAggregate, \ArrayAccess
     /**
      * Gets the value of the key in the map
      * @param  mixed $key Key
-     * @retval mixed      Value or null
+     * @return mixed      Value or null
      */
     public function get($key) {}
 
     /**
      * Removes the key from the map
      * @param  mixed   $key Key
-     * @retval bool      Whether the key was removed or not, e.g. didn't exist
+     * @return bool      Whether the key was removed or not, e.g. didn't exist
      */
     public function remove($key) {}
 
     /**
      * Returns whether the key is in the map
      * @param  mixed   $key Key
-     * @retval bool      Whether the key is in the map or not
+     * @return bool      Whether the key is in the map or not
      */
     public function has($key) {}
 }
