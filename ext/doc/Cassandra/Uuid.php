@@ -31,19 +31,19 @@ final class Uuid
 
     /**
      * Returns this uuid as string
-     * @return string uuid
+     * @retval string uuid
      */
     public function string __toString() {}
 
     /**
      * Returns this uuid as string
-     * @return string uuid
+     * @retval string uuid
      */
     public function string uuid() {}
 
     /**
      * Returns the version of this uuid
-     * @return int version of this uuid
+     * @retval int version of this uuid
      */
     public function int version() {}
 }

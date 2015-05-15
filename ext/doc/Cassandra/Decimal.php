@@ -35,23 +35,23 @@ final class Decimal
      * </code>
      * @param  string  $value  Any decimal string
      */
-    public function __construct(string $value) {}
+    public function __construct($value) {}
 
     /**
      * String representation of this decimal
-     * @return string Decimal value
+     * @retval string Decimal value
      */
-    public function string __toString() {}
+    public function __toString() {}
 
     /**
      * Numeric value of this decimal as string
-     * @return string Numeric value
+     * @retval string Numeric value
      */
-    public function string value() {}
+    public function value() {}
 
     /**
      * Scale of this decimal as int
-     * @return int Scale
+     * @retval int Scale
      */
-    public function int scale() {}
+    public function scale() {}
 }

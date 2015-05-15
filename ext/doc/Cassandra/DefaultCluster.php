@@ -29,10 +29,10 @@ final class DefaultCluster implements Cluster
     /**
      * {@inheritDoc}
      */
-    public function Session connect(string $keyspace = null) {}
+    public function connect($keyspace = null) {}
 
     /**
      * {@inheritDoc}
      */
-    public function Future connectAsync(string $keyspace = null) {}
+    public function connectAsync($keyspace = null) {}
 }

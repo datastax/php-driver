@@ -18,8 +18,6 @@
 
 namespace Cassandra\SSLOptions;
 
-use Cassandra\SSLOptions;
-
 /**
  * SSLOptions builder allows fluent configuration of ssl options.
  *
@@ -35,9 +33,9 @@ final class Builder
      *
      * @param string $path,... one or more paths to files containing a PEM formatted certificate.
      *
-     * @return Builder self
+     * @retval Builder self
      */
-    public function Builder withTrustedCerts(string $path) {}
+    public function withTrustedCerts($path) {}
 
     /**
      * Disable certificate verification.
@@ -46,9 +44,9 @@ final class Builder
      *
      * @param int $flags
      *
-     * @return self
+     * @retval self
      */
-    public function Builder withVerifyFlags(int $flags) {}
+    public function withVerifyFlags($flags) {}
 
     /**
      * Set client-side certificate chain.
@@ -60,9 +58,9 @@ final class Builder
      *
      * @param string $path path to a file containing a PEM formatted certificate.
      *
-     * @return self
+     * @retval self
      */
-    public function Builder withClientCert(string $path) {}
+    public function withClientCert($path) {}
 
     /**
      * Set client-side private key. This is used to authenticate the client on
@@ -73,14 +71,14 @@ final class Builder
      * @param string      $path       Path to the private key file
      * @param string|null $passphrase Passphrase for the private key, if any
      *
-     * @return self
+     * @retval self
      */
-    public function Builder withPrivateKey(string $path, string $passphrase = null) {}
+    public function withPrivateKey($path, $passphrase = null) {}
 
     /**
      * Builds SSL options.
      *
-     * @return SSLOptions ssl options configured accordingly.
+     * @retval SSLOptions ssl options configured accordingly.
      */
-    public function SSLOptions build() {}
+    public function build() {}
 }

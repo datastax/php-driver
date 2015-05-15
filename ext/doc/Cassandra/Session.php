@@ -33,7 +33,7 @@ interface Session
      *
      * @throws Exception
      *
-     * @return Rows execution result
+     * @retval Rows execution result
      */
     public function Rows execute(Statement $statement, ExecutionOptions $options = null);
 
@@ -46,7 +46,7 @@ interface Session
      * @param Statement             $statement statement to be executed
      * @param ExecutionOptions|null $options   execution options
      *
-     * @return Future future result
+     * @retval Future future result
      */
     public function Future executeAsync(Statement $statement, ExecutionOptions $options = null);
 
@@ -61,7 +61,7 @@ interface Session
      *
      * @throws Exception
      *
-     * @return PreparedStatement prepared statement
+     * @retval PreparedStatement prepared statement
      */
     public function PreparedStatement prepare(string $cql, ExecutionOptions $options = null);
 
@@ -73,7 +73,7 @@ interface Session
      * @param string                $cql     CQL string to be prepared
      * @param ExecutionOptions|null $options preparation options
      *
-     * @return Future statement
+     * @retval Future statement
      */
     public function Future prepareAsync(string $cql, ExecutionOptions $options = null);
 
@@ -87,7 +87,7 @@ interface Session
     /**
      * Asynchronously closes current session once all pending requests have finished.
      *
-     * @return Future future
+     * @retval Future future
      */
     public function Future closeAsync();
 }

@@ -18,8 +18,6 @@
 
 namespace Cassandra;
 
-use DateTime;
-
 /**
  * A PHP representation of the CQL `timeuuid` datatype
  */
@@ -33,32 +31,32 @@ final class Timeuuid
 
     /**
      * Returns this timeuuid as string
-     * @return string timeuuid
+     * @retval string timeuuid
      */
     public function string __toString() {}
 
     /**
      * Returns this timeuuid as string
-     * @return string timeuuid
+     * @retval string timeuuid
      */
     public function string uuid() {}
 
     /**
      * Returns the version of this timeuuid
-     * @return int version of this timeuuid
+     * @retval int version of this timeuuid
      */
     public function int version() {}
 
     /**
      * Unix timestamp
      * @see time()
-     * @return int seconds
+     * @retval int seconds
      */
     public function int time() {}
 
     /**
      * Converts current timeuuid to PHP DateTime
-     * @return DateTime
+     * @retval DateTime
      */
-    public function DateTime toDateTime() {}
+    public function \DateTime toDateTime() {}
 }

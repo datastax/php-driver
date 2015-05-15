@@ -31,13 +31,13 @@ final class Inet
 
     /**
      * Returns the normalized string representation of the address
-     * @return string address
+     * @retval string address
      */
     public function string value() {}
 
     /**
      * Returns the normalized string representation of the address
-     * @return string address
+     * @retval string address
      */
     public function string __toString() {}
 }

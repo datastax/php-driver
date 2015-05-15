@@ -28,5 +28,5 @@ final class FutureRows implements Future
     /**
      * {@inheritDoc}
      */
-    public function mixed get(float $timeout = null) {}
+    public function get($timeout = null) {}
 }

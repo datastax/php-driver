@@ -18,9 +18,6 @@
 
 namespace Cassandra;
 
-use Cassandra\Exception\InvalidArgumentException;
-use Cassandra\Exception\LogicException;
-
 /**
  * Actual session implementation.
  *
@@ -31,30 +28,30 @@ final class DefaultSession implements Session
     /**
      * {@inheritDoc}
      */
-    public function Rows execute(Statement $statement, ExecutionOptions $options = null) {}
+    public function execute(Statement $statement, ExecutionOptions $options = null) {}
 
     /**
      * {@inheritDoc}
      */
-    public function Future executeAsync(Statement $statement, ExecutionOptions $options = null) {}
+    public function executeAsync(Statement $statement, ExecutionOptions $options = null) {}
 
     /**
      * {@inheritDoc}
      */
-    public function PreparedStatement prepare(string $cql, ExecutionOptions $options = null) {}
+    public function prepare($cql, ExecutionOptions $options = null) {}
 
     /**
      * {@inheritDoc}
      */
-    public function Future prepareAsync(string $cql, ExecutionOptions $options = null) {}
+    public function prepareAsync($cql, ExecutionOptions $options = null) {}
 
     /**
      * {@inheritDoc}
      */
-    public function void close(float $timeout = null) {}
+    public function close($timeout = null) {}
 
     /**
      * {@inheritDoc}
      */
-    public function Future closeAsync() {}
+    public function closeAsync() {}
 }

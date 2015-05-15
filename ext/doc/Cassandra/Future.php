@@ -36,7 +36,7 @@ interface Future
      *
      * @param float|null $timeout
      *
-     * @return mixed a value that the future has been resolved with
+     * @retval mixed a value that the future has been resolved with
      */
-    public function mixed get(float $timeout = null);
+    public function get($timeout = null);
 }

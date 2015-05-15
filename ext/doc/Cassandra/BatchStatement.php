@@ -18,9 +18,6 @@
 
 namespace Cassandra;
 
-use Cassandra;
-use Cassandra\Exception\InvalidArgumentException;
-
 /**
  * Batch statements are used to execute a series of simple or prepared
  * statements.
@@ -47,7 +44,7 @@ final class BatchStatement implements Statement
      *
      * @param int $type must be one of Cassandra::BATCH_*
      */
-    public function __construct(int $type = Cassandra::BATCH_LOGGED) {}
+    public function __construct($type = \Cassandra::BATCH_LOGGED) {}
 
     /**
      * Adds a statement to this batch.
@@ -55,7 +52,9 @@ final class BatchStatement implements Statement
      * @param Statement  $statement the statement to add
      * @param array|null $arguments positional or named arguments
      *
-     * @return self
+     * @throws Cassandra\Exception\InvalidArgumentException
+     *
+     * @retval BatchStatement self
      */
-    public function BatchStatement add(Statement $statement, array $arguments = null) {}
+    public function add(Statement $statement, array $arguments = null) {}
 }

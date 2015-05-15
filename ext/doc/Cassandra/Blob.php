@@ -27,17 +27,17 @@ final class Blob
      * Creates a new bytes array
      * @param string $bytes any bytes
      */
-    public function __construct(string $bytes) {}
+    public function __construct($bytes) {}
 
     /**
      * Returns bytes as a hex string
-     * @return string bytes as hexadecimal string
+     * @retval string bytes as hexadecimal string
      */
-    public function string bytes() {}
+    public function bytes() {}
 
     /**
      * Returns bytes as a hex string
-     * @return string bytes as hexadecimal string
+     * @retval string bytes as hexadecimal string
      */
-    public function string __toString() {}
+    public function __toString() {}
 }

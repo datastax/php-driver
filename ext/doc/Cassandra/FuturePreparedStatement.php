@@ -29,5 +29,5 @@ final class FuturePreparedStatement implements Future
     /**
      * {@inheritDoc}
      */
-    public function mixed get(float $timeout = null) {}
+    public function get($timeout = null) {}
 }

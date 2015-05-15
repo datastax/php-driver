@@ -18,13 +18,10 @@
 
 namespace Cassandra;
 
-use Countable;
-use IteratorAggregate;
-
 /**
  * A PHP representation of the CQL `set` datatype
  */
-final class Set implements Countable, IteratorAggregate
+final class Set implements \Countable, \IteratorAggregate
 {
     /**
      * Creates a new collection of a given type
@@ -34,34 +31,34 @@ final class Set implements Countable, IteratorAggregate
 
     /**
      * The type of this set
-     * @return string one of `Cassandra::TYPE_*`
+     * @retval string one of `Cassandra::TYPE_*`
      */
     public function string type() {}
 
     /**
      * Array of values in this set
-     * @return array values
+     * @retval array values
      */
     public function array values() {}
 
     /**
      * Adds a value to this set
      * @param  mixed   $value Value
-     * @return bool whether the value has been added
+     * @retval bool whether the value has been added
      */
     public function bool add(mixed $value) {}
 
     /**
      * Removes a value to this set
      * @param  mixed   $value Value
-     * @return bool whether the value has been removed
+     * @retval bool whether the value has been removed
      */
     public function bool remove(mixed $value) {}
 
     /**
      * Returns whether a value is in this set
      * @param  mixed   $value Value
-     * @return bool whether the value is in the set
+     * @retval bool whether the value is in the set
      */
     public function bool has(mixed $value) {}
 }

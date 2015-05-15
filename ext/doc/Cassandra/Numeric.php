@@ -26,56 +26,56 @@ interface Numeric
 {
     /**
      * @param  Numeric $addend a number to add to this one
-     * @return Numeric sum
+     * @retval Numeric sum
      */
-    function Numeric add(Numeric $addend);
+    function add(Numeric $addend);
 
     /**
      * @param  Numeric $subtrahend a number to subtract from this one
-     * @return Numeric             difference
+     * @retval Numeric             difference
      */
-    function Numeric sub(Numeric $subtrahend);
+    function sub(Numeric $subtrahend);
 
     /**
      * @param  Numeric $multiplier a number to multiply this one by
-     * @return Numeric             product
+     * @retval Numeric             product
      */
-    function Numeric mul(Numeric $multiplier);
+    function mul(Numeric $multiplier);
 
     /**
      * @param  Numeric $divisor a number to divide this one by
-     * @return Numeric          quotient
+     * @retval Numeric          quotient
      */
-    function Numeric div(Numeric $divisor);
+    function div(Numeric $divisor);
 
     /**
      * @param  Numeric $divisor a number to divide this one by
-     * @return Numeric          remainder
+     * @retval Numeric          remainder
      */
-    function Numeric mod(Numeric $divisor);
+    function mod(Numeric $divisor);
 
     /**
-     * @return Numeric absolute value
+     * @retval Numeric absolute value
      */
-    function Numeric abs();
+    function abs();
 
     /**
-     * @return Numeric negative value
+     * @retval Numeric negative value
      */
-    function Numeric neg();
+    function neg();
 
     /**
-     * @return Numeric square root
+     * @retval Numeric square root
      */
-    function Numeric sqrt();
+    function sqrt();
 
     /**
-     * @return int this number as int
+     * @retval int this number as int
      */
-    function int toInt();
+    function toInt();
 
     /**
-     * @return float this number as float
+     * @retval float this number as float
      */
-    function float toDouble();
+    function toDouble();
 }
