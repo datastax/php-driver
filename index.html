@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <meta name="description" content="DataStax PHP Driver for Apache Cassandra">
+    <meta name="author" content="DataStax">
+
+    <title>DataStax PHP Driver - Home</title>
+
+    <link rel="icon" href="favicon.ico">
+    <link rel="apple-touch-icon" href="favicon.png">
+    <link href="css/style.css" rel="stylesheet">
+    <link href="css/pygments.css" rel="stylesheet">
+    <link href="css/hotkeys.css" rel="stylesheet">
+
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  </head>
+  <body ng-app="docs" data-spy="scroll" data-target=".side-nav">
+    <header class="navbar navbar-default navbar-static-top" role="navigation">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="./">DataStax PHP Driver</a>
+        </div>
+        <div class="collapse navbar-collapse" ng-controller="search">
+          <ul class="nav navbar-nav">
+            
+            
+            
+            <li>
+              <a href="features/">Features</a>
+            </li>
+            
+            
+            <li>
+              <a href="api/">API docs</a>
+            </li>
+            
+          </ul>
+          <form class="navbar-form form-search navbar-right dropdown visible-lg-block" ng-class="{open: hasResults}" role="search" ng-submit="submit()">
+            <div class="form-group has-feedback">
+              <input type="search" class="form-control input-sm mousetrap" placeholder="Search..." ng-model="q" ng-change="search('current')" ng-disabled="!searchReady" disabled data-hotkey="{down: moveDown, up: moveUp, esc: reset}" data-search>
+            </div>
+            <ul class="dropdown-menu" role="menu">
+              <li ng-repeat="result in results" ng-class="{'bg-warning': $index == current}"><a ng-href="{{basePath}}{{result.path}}"><span ng-bind-html="summary(result)"></span></a></li>
+            </ul>
+          </form>
+        </div>
+      </div>
+    </header>
+
+    <div class="container" id="content">
+      <div class="row">
+        <div class="col-md-9 content">
+          <nav class="crumbs">
+            <ol class="breadcrumb">
+              
+              
+              
+              
+              <li class="active">Home</li>
+              
+              
+              
+            </ol>
+          </nav>
+          
+
+<h1 id="data-stax-php-driver-for-apache-cassandra">DataStax PHP Driver for Apache Cassandra<a class="anchor" href="#data-stax-php-driver-for-apache-cassandra" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+</h1>
+
+<p><a href="https://travis-ci.org/datastax/php-driver"><img src="https://travis-ci.org/datastax/php-driver.svg" alt="Build Status"></a></p>
+
+<p>This is a wrapper around the DataStax C/C++ driver for Apache Cassandra. This
+driver works exclusively with the Cassandra Query Language version 3 (CQL3) and
+Cassandra’s native protocol.</p>
+
+<ul>
+<li>Code: <a href="https://github.com/datastax/php-driver">https://github.com/datastax/php-driver</a>
+</li>
+<li>Jira: <a href="https://datastax-oss.atlassian.net/browse/PHP">https://datastax-oss.atlassian.net/browse/PHP</a>
+</li>
+<li>Mailing List: <a href="https://groups.google.com/a/lists.datastax.com/forum/#!forum/php-driver-user">https://groups.google.com/a/lists.datastax.com/forum/#!forum/php-driver-user</a>
+</li>
+<li>IRC: #datastax-drivers on <a href="http://freenode.net">irc.freenode.net</a>
+</li>
+<li>Twitter: Follow the latest news about DataStax Drivers - <a href="http://twitter.com/avalanche123">@avalanche123</a>, <a href="http://twitter.com/mfiguiere">@mfiguiere</a>, <a href="https://twitter.com/al3xandru">@al3xandru</a>
+</li>
+</ul>
+
+<h2 id="status-of-v1-0-0-alpha">Status of v1.0.0.alpha<a class="anchor" href="#status-of-v1-0-0-alpha" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+</h2>
+
+<p>The current release is an early alpha. This means that it lacks some features
+and stability, but should be enough to start testing and working with Apache
+Cassandra. Below, you’ll find a list of functionality that is already supported
+as well as what’s planned for the upcoming releases.</p>
+
+<h2 id="features">Features<a class="anchor" href="#features" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+</h2>
+
+<ul>
+<li>
+<a href="features/datatypes.feature">All pre 2.1 Cassandra datatypes, including sets, lists and maps</a>.</li>
+<li>
+<a href="features/simple_statements.feature">Simple</a>, <a href="features/prepared_statements.feature">prepared</a> and <a href="features/batch_statements.feature">batch statements</a>.</li>
+<li>
+<a href="features/result_paging.feature">Results paging</a>.</li>
+<li>
+<a href="src/Cassandra/Session.php#L24-L35">Asynchronous IO</a>.</li>
+<li>
+<a href="features/ssl_encryption.feature">SSL encryption</a>.</li>
+<li>
+<a href="src/Cassandra/Cluster/Builder.php#L312-L320">Credentials authentication</a>.</li>
+</ul>
+
+<h2 id="planned">Planned<a class="anchor" href="#planned" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+</h2>
+
+<ul>
+<li>Windows support.</li>
+<li>Expose <a href="http://datastax.github.io/cpp-driver/api/struct_cass_session/#1afc51badec695483e4cde43ae0fc1e876">Schema Metadata</a>.</li>
+<li>Add arithmetic functions to numeric types.</li>
+</ul>
+
+<h2 id="quick-start">Quick Start<a class="anchor" href="#quick-start" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+</h2>
+<pre class="highlight"><code><span class="cp">&lt;?php</span>
+<span class="nv">$cluster</span>   <span class="o">=</span> <span class="nx">Cassandra</span><span class="o">::</span><span class="na">cluster</span><span class="p">()</span>                 <span class="c1">// connects to localhost by default
+</span>                 <span class="o">-&gt;</span><span class="na">build</span><span class="p">();</span>
+<span class="nv">$keyspace</span>  <span class="o">=</span> <span class="s1">'system'</span><span class="p">;</span>
+<span class="nv">$session</span>   <span class="o">=</span> <span class="nv">$cluster</span><span class="o">-&gt;</span><span class="na">connect</span><span class="p">(</span><span class="nv">$keyspace</span><span class="p">);</span>        <span class="c1">// create session, optionally scoped to a keyspace
+</span><span class="nv">$statement</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Cassandra\SimpleStatement</span><span class="p">(</span>       <span class="c1">// also supports prepared and batch statements
+</span>    <span class="s1">'SELECT keyspace_name, columnfamily_name FROM schema_columnfamilies'</span>
+<span class="p">);</span>
+<span class="nv">$future</span>    <span class="o">=</span> <span class="nv">$session</span><span class="o">-&gt;</span><span class="na">executeAsync</span><span class="p">(</span><span class="nv">$statement</span><span class="p">);</span>  <span class="c1">// fully asynchronous and easy parallel execution
+</span><span class="nv">$result</span>    <span class="o">=</span> <span class="nv">$future</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">();</span>                      <span class="c1">// wait for result to become available, optionally set a timeout
+</span>
+<span class="k">foreach</span> <span class="p">(</span><span class="nv">$result</span> <span class="k">as</span> <span class="nv">$row</span><span class="p">)</span> <span class="p">{</span>                       <span class="c1">// results and rows implement Iterator, Countable and ArrayAccess
+</span>    <span class="nb">printf</span><span class="p">(</span><span class="s2">"The keyspace %s has a table called %s</span><span class="se">\n</span><span class="s2">"</span><span class="p">,</span> <span class="nv">$row</span><span class="p">[</span><span class="s1">'keyspace_name'</span><span class="p">],</span> <span class="nv">$row</span><span class="p">[</span><span class="s1">'columnfamily_name'</span><span class="p">]);</span>
+<span class="p">}</span>
+</code></pre>
+<h2 id="installation">Installation<a class="anchor" href="#installation" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+</h2>
+
+<p><strong>NOTE</strong>: You must first <a href="ext/README.md">install and enable the <code>cassandra.so</code> PHP extension</a>.</p>
+
+<ul>
+<li>First, <a href="https://getcomposer.org/">get composer</a>.</li>
+<li>Then, install the DataStax PHP Driver for Apache Cassandra:</li>
+</ul>
+<pre class="highlight"><code>composer require datastax/php-driver 1.0.0-alpha
+</code></pre>
+<h2 id="compatibility">Compatibility<a class="anchor" href="#compatibility" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+</h2>
+
+<p>This driver works exclusively with the Cassandra Query Language v3 (CQL3) and
+Cassandra’s native protocol. The current version works with:</p>
+
+<ul>
+<li>Apache Cassandra versions 1.2, 2.0 and partially 2.1</li>
+<li>DataStax Enterprise 3.1, 3.2, 4.0 and 4.5</li>
+<li>PHP 5.3+</li>
+</ul>
+
+<p><strong>NOTE</strong>: Apache Cassandra 2.1 support is limited to the Cassandra 2.0 API, e.g. no user-defined types.</p>
+
+<p><strong>NOTE</strong>: Windows support is planned for a later, more stable release.</p>
+
+<h2 id="contributing">Contributing<a class="anchor" href="#contributing" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+</h2>
+
+<p><a href="CONTRIBUTING.md">Read our contribution policy</a> for a detailed description of the process.</p>
+
+<h2 id="code-examples">Code examples<a class="anchor" href="#code-examples" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+</h2>
+
+<p>The DataStax PHP Driver uses the amazing <a href="http://docs.behat.org/">Behat Framework</a>
+for both end-to-end, or acceptance, testing and documentation. All of the features
+supported by the driver have appropriate acceptance tests with easy-to-copy code
+examples in the <code>features/</code> directory.</p>
+
+<h2 id="running-tests">Running tests<a class="anchor" href="#running-tests" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+</h2>
+
+<p>For your convenience a <code>Vagrantfile</code> with configuration ready for testing is
+available. To execute tests, run the following:</p>
+<pre class="highlight"><code>git clone https://github.com/datastax/php-driver.git
+<span class="nb">cd </span>php-driver
+git submodule update --init
+vagrant up
+vagrant ssh
+</code></pre>
+<p>Once you’ve logged in to the vagrant vm, run:</p>
+<pre class="highlight"><code><span class="nb">cd</span> /usr/local/src/php-driver
+./bin/behat
+./bin/phpunit
+</code></pre>
+<h2 id="copyright">Copyright<a class="anchor" href="#copyright" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+</h2>
+
+<p>Copyright 2015 DataStax, Inc.</p>
+
+<p>Licensed under the Apache License, Version 2.0 (the “License”); you may not use this file except in compliance with the License. You may obtain a copy of the License at</p>
+
+<p><a href="http://www.apache.org/licenses/LICENSE-2.0">http://www.apache.org/licenses/LICENSE-2.0</a></p>
+
+<p>Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an “AS IS” BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.</p>
+
+
+        </div>
+        <div class="col-md-3">
+          <div id="navigation" class="panel-group side-nav" data-spy="affix" data-offset-top="60" data-offset-bottom="54" role="tablist" aria-multiselectable="true">
+            <div id="table-of-contents-panel" class="panel panel-default">
+              <div id="table-of-contents-heading" class="panel-heading" role="tab">
+                <h4 class="panel-title">
+                  <a data-toggle="collapse" href="#table-of-contents" aria-expanded="true" aria-controls="table-of-contents">
+                    Contents<i class="pull-right glyphicon glyphicon-chevron-up"></i>
+                  </a>
+                </h4>
+              </div>
+              <div id="table-of-contents" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="table-of-contents-heading">
+                <div class="panel-body">
+                  <ol class="nav nav-pills nav-stacked toc">
+<li><a href="#status-of-v1-0-0-alpha">Status of v1.0.0.alpha
+</a></li>
+<li><a href="#features">Features
+</a></li>
+<li><a href="#planned">Planned
+</a></li>
+<li><a href="#quick-start">Quick Start
+</a></li>
+<li><a href="#installation">Installation
+</a></li>
+<li><a href="#compatibility">Compatibility
+</a></li>
+<li><a href="#contributing">Contributing
+</a></li>
+<li><a href="#code-examples">Code examples
+</a></li>
+<li><a href="#running-tests">Running tests
+</a></li>
+<li><a href="#copyright">Copyright
+</a></li>
+</ol>
+                </div>
+              </div>
+            </div>
+
+            
+            <div id="read-more-panel" class="panel panel-default">
+              <div id="read-more-heading" class="panel-heading" role="tab">
+                <h4 class="panel-title">
+                  <a data-toggle="collapse" href="#read-more" aria-expanded="true" aria-controls="read-more">
+                    Read More<i class="pull-right glyphicon glyphicon-chevron-up"></i>
+                  </a>
+                </h4>
+              </div>
+              <div id="read-more" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="read-more-heading">
+                <div class="panel-body">
+                  <ol class="nav nav-pills nav-stacked">
+                  
+                    <li>
+                      <a href="api/">API docs</a>
+                    </li>
+                  
+                    <li>
+                      <a href="features/">Features</a>
+                    </li>
+                  
+                  </ol>
+                </div>
+              </div>
+            </div>
+            
+          </div>
+        </div>
+      </div>
+    </div>
+
+    
+    <footer class="container text-muted">
+      <ul class="list-inline">
+      
+        
+        <li>
+          <a href="https://github.com/datastax/php-driver/">Code</a>
+        </li>
+      
+        <li>·</li>
+        <li>
+          <a href="http://datastax.github.io/php-driver/">Docs</a>
+        </li>
+      
+        <li>·</li>
+        <li>
+          <a href="https://datastax-oss.atlassian.net/browse/PHP/">Issues</a>
+        </li>
+      
+        <li>·</li>
+        <li>
+          <a href="https://groups.google.com/a/lists.datastax.com/forum/#!forum/php-driver-user">Mailing List</a>
+        </li>
+      
+        <li>·</li>
+        <li>
+          <a href="irc://irc.freenode.net/datastax-drivers">IRC Channel</a>
+        </li>
+      
+        <li>·</li>
+        <li>
+          <a href="https://github.com/datastax/php-driver/releases">Releases</a>
+        </li>
+      
+      </ul>
+    </footer>
+    
+
+    <script src="js/jquery.js"></script>
+    <script src="js/bootstrap.js"></script>
+    <script src="js/angular.js"></script>
+    <script src="js/mousetrap.js"></script>
+    <script src="js/hotkeys.js"></script>
+    <script src="js/ZeroClipboard.js"></script>
+    <script src="js/lunr.js"></script>
+    <script src="js/app.js"></script>
+  </body>
+</html>
