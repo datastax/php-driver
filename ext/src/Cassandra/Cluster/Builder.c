@@ -344,7 +344,7 @@ PHP_METHOD(ClusterBuilder, withSSL)
   zval *ssl_options;
   cassandra_cluster_builder* builder = NULL;
 
-  if(zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "O", &ssl_options, cassandra_ssl_ce) == FAILURE) {
+  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "O", &ssl_options, cassandra_ssl_ce) == FAILURE) {
     return;
   }
 

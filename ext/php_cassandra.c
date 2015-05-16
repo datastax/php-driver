@@ -215,7 +215,7 @@ static PHP_INI_MH(OnUpdateLog)
     log_location = NULL;
   }
   if (new_value) {
-    if(strcmp(new_value, "syslog") != 0) {
+    if (strcmp(new_value, "syslog") != 0) {
       char realpath[MAXPATHLEN + 1];
       if (VCWD_REALPATH(new_value, realpath))
         log_location = strdup(realpath);

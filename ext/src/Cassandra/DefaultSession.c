@@ -381,7 +381,7 @@ PHP_METHOD(DefaultSession, execute)
   CassStatement* single = NULL;
   CassBatch* batch  = NULL;
 
-  if(zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z|z", &statement, &options) == FAILURE) {
+  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z|z", &statement, &options) == FAILURE) {
     return;
   }
 
@@ -504,7 +504,7 @@ PHP_METHOD(DefaultSession, executeAsync)
   CassStatement* single = NULL;
   CassBatch* batch  = NULL;
 
-  if(zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "O|z", &statement,
+  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "O|z", &statement,
                            cassandra_statement_ce, &options) == FAILURE) {
     return;
   }
@@ -653,7 +653,7 @@ PHP_METHOD(DefaultSession, close)
   cassandra_session* self =
     (cassandra_session*) zend_object_store_get_object(getThis() TSRMLS_CC);
 
-  if(zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "|z", &timeout) == FAILURE) {
+  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "|z", &timeout) == FAILURE) {
     return;
   }
 
@@ -680,7 +680,7 @@ PHP_METHOD(DefaultSession, closeAsync)
     return;
   }
 
-  if(zend_parse_parameters_none() == FAILURE)
+  if (zend_parse_parameters_none() == FAILURE)
     return;
 
 

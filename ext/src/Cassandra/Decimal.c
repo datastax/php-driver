@@ -206,17 +206,17 @@ PHP_METHOD(Decimal, __construct)
   
   self = (cassandra_decimal*) zend_object_store_get_object(getThis() TSRMLS_CC);
 
-  if(Z_TYPE_P(num) == IS_LONG) {
+  if (Z_TYPE_P(num) == IS_LONG) {
     mpz_set_si(self->value, Z_LVAL_P(num));
     self->scale = 0;
-  } else if(Z_TYPE_P(num) == IS_DOUBLE) {
+  } else if (Z_TYPE_P(num) == IS_DOUBLE) {
     double value = Z_DVAL_P(num);
     if (zend_isnan(value) || zend_isinf(value)) {
       zend_throw_exception_ex(cassandra_invalid_argument_exception_ce, 0 TSRMLS_CC,
                               "Value is NaN or +/- infinity");
     }
     from_double(self, value);
-  } else if(Z_TYPE_P(num) == IS_STRING) {
+  } else if (Z_TYPE_P(num) == IS_STRING) {
     php_cassandra_parse_decimal(Z_STRVAL_P(num), Z_STRLEN_P(num),
                                 &self->value, &self->scale TSRMLS_CC);
   } else if (Z_TYPE_P(num) == IS_OBJECT &&
