@@ -3,7 +3,7 @@
 #ifndef _WIN32
 #include <php_syslog.h>
 #else
-#  pragma message("syslog will be disabled on Windows")
+#pragma message("syslog will be disabled on Windows")
 #endif
 #include <ext/standard/info.h>
 #include <fcntl.h>
@@ -26,22 +26,17 @@ const zend_function_entry cassandra_functions[] = {
 #if ZEND_MODULE_API_NO >= 20050617
 static zend_module_dep php_cassandra_deps[] = {
   ZEND_MOD_REQUIRED("spl")
-#ifdef ZEND_MOD_END
   ZEND_MOD_END
-#else
-  {NULL,NULL,NULL}
-#endif
 };
 #endif
 
 zend_module_entry cassandra_module_entry = {
 #if ZEND_MODULE_API_NO >= 20050617
-  STANDARD_MODULE_HEADER_EX, NULL,
-  php_cassandra_deps,
+  STANDARD_MODULE_HEADER_EX, NULL, php_cassandra_deps,
 #elif ZEND_MODULE_API_NO >= 20010901
   STANDARD_MODULE_HEADER,
 #endif
-  PHP_CASSANDRA_EXTNAME,
+  PHP_CASSANDRA_NAME,
   cassandra_functions,      /* Functions */
   PHP_MINIT(cassandra),     /* MINIT */
   PHP_MSHUTDOWN(cassandra), /* MSHUTDOWN */
@@ -49,7 +44,7 @@ zend_module_entry cassandra_module_entry = {
   PHP_RSHUTDOWN(cassandra), /* RSHUTDOWN */
   PHP_MINFO(cassandra),     /* MINFO */
 #if ZEND_MODULE_API_NO >= 20010901
-  PHP_CASSANDRA_EXTVER,
+  PHP_CASSANDRA_VERSION,
 #endif
   PHP_MODULE_GLOBALS(cassandra),
   PHP_GINIT(cassandra),
@@ -117,17 +112,17 @@ php_cassandra_log(const CassLogMessage* message, void* data)
       struct tm log_tm;
       char log_time_str[32];
       size_t needed = 0;
-      char* tmp = NULL;
+      char* tmp     = NULL;
 
       time(&log_time);
       php_localtime_r(&log_time, &log_tm);
       strftime(log_time_str, sizeof(log_time_str), "%d-%m-%Y %H:%M:%S %Z", &log_tm);
 
       needed = snprintf(NULL, 0, "%s [%s] %s (%s:%d)%s",
-                               log_time_str,
-                               cass_log_level_string(message->severity), message->message,
-                               message->file, message->line,
-                               PHP_EOL);
+                        log_time_str,
+                        cass_log_level_string(message->severity), message->message,
+                        message->file, message->line,
+                        PHP_EOL);
 
       tmp = malloc(needed + 1);
       sprintf(tmp, "%s [%s] %s (%s:%d)%s",
@@ -229,8 +224,8 @@ static PHP_INI_MH(OnUpdateLog)
 }
 
 PHP_INI_BEGIN()
-  PHP_INI_ENTRY("cassandra.log",       PHP_CASSANDRA_DEFAULT_LOG, PHP_INI_ALL, OnUpdateLog)
-  PHP_INI_ENTRY("cassandra.log_level", NULL,                      PHP_INI_ALL, OnUpdateLogLevel)
+PHP_INI_ENTRY("cassandra.log", PHP_CASSANDRA_DEFAULT_LOG, PHP_INI_ALL, OnUpdateLog)
+PHP_INI_ENTRY("cassandra.log_level", NULL, PHP_INI_ALL, OnUpdateLogLevel)
 PHP_INI_END()
 
 static PHP_GINIT_FUNCTION(cassandra)
@@ -253,18 +248,14 @@ PHP_MINIT_FUNCTION(cassandra)
 {
   REGISTER_INI_ENTRIES();
 
-  le_cassandra_cluster_res = zend_register_list_destructors_ex(
-    NULL,
-    php_cassandra_cluster_dtor,
-    PHP_CASSANDRA_CLUSTER_RES_NAME,
-    module_number
-  );
-  le_cassandra_session_res = zend_register_list_destructors_ex(
-    NULL,
-    php_cassandra_session_dtor,
-    PHP_CASSANDRA_SESSION_RES_NAME,
-    module_number
-  );
+  le_cassandra_cluster_res =
+  zend_register_list_destructors_ex(NULL, php_cassandra_cluster_dtor,
+                                    PHP_CASSANDRA_CLUSTER_RES_NAME,
+                                    module_number);
+  le_cassandra_session_res =
+  zend_register_list_destructors_ex(NULL, php_cassandra_session_dtor,
+                                    PHP_CASSANDRA_SESSION_RES_NAME,
+                                    module_number);
 
   cassandra_define_Exception(TSRMLS_C);
   cassandra_define_InvalidArgumentException(TSRMLS_C);
@@ -435,9 +426,10 @@ exception_class(CassError rc)
   }
 }
 
-void throw_invalid_argument(zval* object,
-                            const char* object_name,
-                            const char* expected_type TSRMLS_DC)
+void
+throw_invalid_argument(zval* object,
+                       const char* object_name,
+                       const char* expected_type TSRMLS_DC)
 {
   if (Z_TYPE_P(object) == IS_OBJECT) {
 #if ZEND_MODULE_API_NO >= 20100525
@@ -452,7 +444,7 @@ void throw_invalid_argument(zval* object,
       zend_throw_exception_ex(cassandra_invalid_argument_exception_ce, 0 TSRMLS_CC,
                               "%s must be %s, an instance of %.*s given",
                               object_name, expected_type, cls_len, cls_name);
-      efree((void *)cls_name);
+      efree((void*) cls_name);
     } else {
       zend_throw_exception_ex(cassandra_invalid_argument_exception_ce, 0 TSRMLS_CC,
                               "%s must be %s, an instance of Unknown Class given",

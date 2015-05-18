@@ -9,7 +9,7 @@ typedef enum {
 } cassandra_numeric_type;
 
 #define NUMERIC_FIELDS \
-  zend_object  zval; \
+  zend_object zval;    \
   cassandra_numeric_type type;
 
 typedef struct {
@@ -23,8 +23,8 @@ typedef struct {
 
 typedef struct {
   NUMERIC_FIELDS
-  mpz_t       value;
-  long        scale;
+  mpz_t value;
+  long scale;
 } cassandra_decimal;
 
 typedef struct {
@@ -34,62 +34,62 @@ typedef struct {
 
 typedef struct {
   NUMERIC_FIELDS
-  mpz_t        value;
+  mpz_t value;
 } cassandra_varint;
 
 #undef NUMERIC_FIELDS
 
 typedef struct {
-  zend_object  zval;
+  zend_object zval;
   cass_int64_t timestamp;
 } cassandra_timestamp;
 
 typedef struct {
-  zend_object  zval;
+  zend_object zval;
   cass_byte_t* data;
-  size_t       size;
+  size_t size;
 } cassandra_blob;
 
 typedef struct {
   zend_object zval;
-  CassUuid    uuid;
+  CassUuid uuid;
 } cassandra_uuid;
 
 typedef struct {
   zend_object zval;
-  CassInet    inet;
+  CassInet inet;
 } cassandra_inet;
 
 typedef struct {
-  zend_object   zval;
+  zend_object zval;
   CassValueType type;
-  HashTable     values;
-  int           pos;
+  HashTable values;
+  int pos;
 } cassandra_set;
 
 typedef struct {
-  zend_object   zval;
+  zend_object zval;
   CassValueType key_type;
-  HashTable     keys;
+  HashTable keys;
   CassValueType value_type;
-  HashTable     values;
+  HashTable values;
 } cassandra_map;
 
 typedef struct {
-  zend_object   zval;
+  zend_object zval;
   CassValueType type;
-  HashTable     values;
+  HashTable values;
 } cassandra_collection;
 
 typedef struct {
-  zend_object  zval;
+  zend_object zval;
   CassCluster* cluster;
-  long         default_consistency;
-  int          default_page_size;
-  zval*        default_timeout;
-  cass_bool_t  persist;
-  char*        hash_key;
-  int          hash_key_len;
+  long default_consistency;
+  int default_page_size;
+  zval* default_timeout;
+  cass_bool_t persist;
+  char* hash_key;
+  int hash_key_len;
 } cassandra_cluster;
 
 typedef enum {
@@ -99,7 +99,7 @@ typedef enum {
 } cassandra_statement_type;
 
 #define STATEMENT_FIELDS \
-  zend_object  zval; \
+  zend_object zval;      \
   cassandra_statement_type type;
 
 typedef struct {
@@ -119,7 +119,7 @@ typedef struct {
 typedef struct {
   STATEMENT_FIELDS
   CassBatchType batch_type;
-  HashTable     statements;
+  HashTable statements;
 } cassandra_batch_statement;
 
 #undef STATEMENT_FIELDS
@@ -131,11 +131,11 @@ typedef struct {
 
 typedef struct {
   zend_object zval;
-  long        consistency;
-  long        serial_consistency;
-  int         page_size;
-  zval*       timeout;
-  zval*       arguments;
+  long consistency;
+  long serial_consistency;
+  int page_size;
+  zval* timeout;
+  zval* arguments;
 } cassandra_execution_options;
 
 typedef enum {
@@ -144,55 +144,55 @@ typedef enum {
 } cassandra_load_balancing;
 
 typedef struct {
-  size_t         count;
+  size_t count;
   CassStatement* statement;
 } cassandra_statement_ref;
 
 typedef struct {
-  zend_object              zval;
+  zend_object zval;
   cassandra_statement_ref* statement;
-  zval*                    session;
-  zval*                    rows;
-  const CassResult*        result;
+  zval* session;
+  zval* rows;
+  const CassResult* result;
 } cassandra_rows;
 
 typedef struct {
-  zend_object              zval;
+  zend_object zval;
   cassandra_statement_ref* statement;
-  zval*                    session;
-  zval*                    rows;
-  CassFuture*              future;
+  zval* session;
+  zval* rows;
+  CassFuture* future;
 } cassandra_future_rows;
 
 typedef struct {
-  zend_object              zval;
-  char*                    contact_points;
-  int                      port;
+  zend_object zval;
+  char* contact_points;
+  int port;
   cassandra_load_balancing load_balancing_policy;
-  char*                    local_dc;
-  unsigned int             used_hosts_per_remote_dc;
-  cass_bool_t              allow_remote_dcs_for_local_cl;
-  cass_bool_t              use_token_aware_routing;
-  char*                    username;
-  char*                    password;
-  unsigned int             connect_timeout;
-  unsigned int             request_timeout;
-  zval*                    ssl_options;
-  long                     default_consistency;
-  int                      default_page_size;
-  zval*                    default_timeout;
-  cass_bool_t              persist;
+  char* local_dc;
+  unsigned int used_hosts_per_remote_dc;
+  cass_bool_t allow_remote_dcs_for_local_cl;
+  cass_bool_t use_token_aware_routing;
+  char* username;
+  char* password;
+  unsigned int connect_timeout;
+  unsigned int request_timeout;
+  zval* ssl_options;
+  long default_consistency;
+  int default_page_size;
+  zval* default_timeout;
+  cass_bool_t persist;
 } cassandra_cluster_builder;
 
 typedef struct {
   zend_object zval;
   CassFuture* future;
-  zval*       prepared_statement;
+  zval* prepared_statement;
 } cassandra_future_prepared_statement;
 
 typedef struct {
   zend_object zval;
-  zval*       value;
+  zval* value;
 } cassandra_future_value;
 
 typedef struct {
@@ -201,46 +201,45 @@ typedef struct {
 } cassandra_future_close;
 
 typedef struct {
-  zend_object  zval;
-  CassFuture*  future;
+  zend_object zval;
+  CassFuture* future;
   CassSession* session;
-  zval*        default_session;
-  cass_bool_t  persist;
-  char*        hash_key;
-  int          hash_key_len;
-  char*        exception_message;
-  CassError    exception_code;
+  zval* default_session;
+  cass_bool_t persist;
+  char* hash_key;
+  int hash_key_len;
+  char* exception_message;
+  CassError exception_code;
 } cassandra_future_session;
 
 typedef struct {
-  CassFuture*  future;
+  CassFuture* future;
   CassSession* session;
 } cassandra_psession;
 
 typedef struct {
-  zend_object  zval;
+  zend_object zval;
   CassSession* session;
-  long         default_consistency;
-  int          default_page_size;
-  zval*        default_timeout;
-  cass_bool_t  persist;
+  long default_consistency;
+  int default_page_size;
+  zval* default_timeout;
+  cass_bool_t persist;
 } cassandra_session;
 
 typedef struct {
-  zend_object     zval;
-  CassSsl*        ssl;
+  zend_object zval;
+  CassSsl* ssl;
 } cassandra_ssl;
 
 typedef struct {
   zend_object zval;
-  int         flags;
-  char**      trusted_certs;
-  int         trusted_certs_cnt;
-  char*       client_cert;
-  char*       private_key;
-  char*       passphrase;
+  int flags;
+  char** trusted_certs;
+  int trusted_certs_cnt;
+  char* client_cert;
+  char* private_key;
+  char* passphrase;
 } cassandra_ssl_builder;
-
 
 extern PHP_CASSANDRA_API zend_class_entry* cassandra_numeric_ce;
 extern PHP_CASSANDRA_API zend_class_entry* cassandra_bigint_ce;
