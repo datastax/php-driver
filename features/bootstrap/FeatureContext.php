@@ -157,6 +157,41 @@ class FeatureContext implements Context, SnippetAcceptingContext
         PHPUnit_Framework_Assert::assertContains((string) $string, $this->getOutput());
     }
 
+    /**
+     * @Given the following logger settings:
+     */
+    public function theFollowingLoggerSettings(PyStringNode $string)
+    {
+        $lines = preg_split("/\\r\\n|\\r|\\n/", $string->getRaw());
+        foreach($lines as $key=>$line) {
+          $settings = explode('=', $line);
+            // Make sure the working directory for the log file is used
+            if ($settings[0] === 'cassandra.log') {
+              $settings[1] = $this->workingDir.DIRECTORY_SEPARATOR.$settings[1];
+            }
+            ini_set($settings[0], $settings[1]);
+        }
+    }
+
+    /**
+     * @Then a log file :filename should exist
+     */
+    public function aLogFileShouldExist($filename)
+    {
+        $absoluteFilename = $this->workingDir.DIRECTORY_SEPARATOR.((string) $filename);
+        PHPUnit_Framework_Assert::assertFileExists($absoluteFilename);
+    }
+
+    /**
+     * @Then the log file :filename should contain :contents
+     */
+    public function theLogFileShouldContain($filename, $contents)
+    {
+      $absoluteFilename = $this->workingDir.DIRECTORY_SEPARATOR.((string) $filename);
+      PHPUnit_Framework_Assert::assertFileExists($absoluteFilename);
+      PHPUnit_Framework_Assert::assertContains($contents, file_get_contents($absoluteFilename));
+    }
+
     private function getOutput()
     {
         $output = $this->process->getErrorOutput().$this->process->getOutput();
