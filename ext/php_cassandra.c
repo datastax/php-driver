@@ -362,6 +362,8 @@ PHP_MINFO_FUNCTION(cassandra)
   php_info_print_table_row(2, "Persistent Sessions", buf);
 
   php_info_print_table_end();
+
+  DISPLAY_INI_ENTRIES();
 }
 
 zend_class_entry*
