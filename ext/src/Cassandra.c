@@ -1,6 +1,6 @@
 #include "php_cassandra.h"
 
-zend_class_entry *cassandra_ce = NULL;
+zend_class_entry* cassandra_ce = NULL;
 
 ZEND_EXTERN_MODULE_GLOBALS(cassandra)
 
@@ -75,8 +75,5 @@ void cassandra_define_Cassandra(TSRMLS_D)
   zend_declare_class_constant_string(cassandra_ce, ZEND_STRL("TYPE_TIMEUUID"),  "timeuuid" TSRMLS_CC);
   zend_declare_class_constant_string(cassandra_ce, ZEND_STRL("TYPE_INET"),      "inet" TSRMLS_CC);
 
-  zend_declare_class_constant_long(cassandra_ce, ZEND_STRL("LOAD_BALANCING_ROUND_ROBIN"),          0 TSRMLS_CC);
-  zend_declare_class_constant_long(cassandra_ce, ZEND_STRL("LOAD_BALANCING_DC_AWARE_ROUND_ROBIN"), 1 TSRMLS_CC);
-
-  zend_declare_class_constant_string(cassandra_ce, ZEND_STRL("VERSION"), "1.0.0-beta" TSRMLS_CC);
+  zend_declare_class_constant_string(cassandra_ce, ZEND_STRL("VERSION"), PHP_CASSANDRA_VERSION TSRMLS_CC);
 }

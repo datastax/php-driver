@@ -18,11 +18,6 @@
 
 namespace Cassandra\Cluster;
 
-use Cassandra\Cluster;
-use Cassandra\SSLOptions;
-use Cassandra\ExecutionOptions;
-use Cassandra\Exception\InvalidArgumentException;
-
 /**
  * Cluster builder allows fluent configuration of the cluster instance.
  *
@@ -35,16 +30,16 @@ final class Builder
      *
      * @return Cluster Cluster instance
      */
-    public function Cluster build() {}
+    public function build() {}
 
     /**
      * Configures default consistency for all requests.
      *
      * @param int $consistency A consistency level, must be one of Cassandra::CONSISTENCY_* values
      *
-     * @return self
+     * @return Builder self
      */
-    public function Builder withDefaultConsistency(int $consistency) {}
+    public function withDefaultConsistency($consistency) {}
 
     /**
      * Configures default page size for all results.
@@ -52,9 +47,9 @@ final class Builder
      *
      * @param int|null $pageSize default page size
      *
-     * @return self
+     * @return Builder self
      */
-    public function Builder withDefaultPageSize(int|null $pageSize) {}
+    public function withDefaultPageSize($pageSize) {}
 
     /**
      * Configures default timeout for future resolution in blocking operations
@@ -62,9 +57,9 @@ final class Builder
      *
      * @param float|null $timeout timeout value
      *
-     * @return self
+     * @return Builder self
      */
-    public function Builder withDefaultTimeout(float|null $timeout) {}
+    public function withDefaultTimeout($timeout) {}
 
     /**
      * Configures the initial endpoints. Note that the driver will
@@ -72,16 +67,16 @@ final class Builder
      *
      * @param string $host,... one or more ip addresses or hostnames
      *
-     * @return self
+     * @return Builder self
      */
-    public function Builder withContactPoints(string $host) {}
+    public function withContactPoints($host) {}
 
     /**
      * Configures this cluster to use a round robin load balancing policy.
      *
-     * @return self
+     * @return Builder self
      */
-    public function Builder withRoundRobinLoadBalancingPolicy() {}
+    public function withRoundRobinLoadBalancingPolicy() {}
 
     /**
      * Configures this cluster to use a datacenter aware round robin load balancing policy.
@@ -90,18 +85,18 @@ final class Builder
      * @param int    $hostPerRemoteDatacenter                  Maximum number of hosts to try in remote datacenters
      * @param bool   $useRemoteDatacenterForLocalConsistencies Allow using hosts from remote datacenters to execute statements with local consistencies
      *
-     * @return self
+     * @return Builder self
      */
-    public function Builder withDatacenterAwareRoundRobinLoadBalancingPolicy(string $localDatacenter, int $hostPerRemoteDatacenter, bool $useRemoteDatacenterForLocalConsistencies) {}
+    public function withDatacenterAwareRoundRobinLoadBalancingPolicy($localDatacenter, $hostPerRemoteDatacenter, $useRemoteDatacenterForLocalConsistencies) {}
 
     /**
      * Enable token aware routing.
      *
      * @param bool $enabled Whether to enable token aware routing
      *
-     * @return self
+     * @return Builder self
      */
-    public function Builder withTokenAwareRouting(bool $enabled = true) {}
+    public function withTokenAwareRouting($enabled = true) {}
 
     /**
      * Configures cassandra authentication.
@@ -109,42 +104,42 @@ final class Builder
      * @param string $username Username
      * @param string $password Password
      *
-     * @return self
+     * @return Builder self
      */
-    public function Builder withCredentials(string $username, string $password) {}
+    public function withCredentials($username, $password) {}
 
     /**
      * Timeout used for establishing TCP connections.
      *
      * @param float $timeout Timeout value in seconds, can be fractional
      *
-     * @return self
+     * @return Builder self
      */
-    public function Builder withConnectTimeout(float $timeout) {}
+    public function withConnectTimeout($timeout) {}
     /**
      * Timeout used for waiting for a response from a node.
      *
      * @param float $timeout Timeout value in seconds, can be fractional
      *
-     * @return self
+     * @return Builder self
      */
-    public function Builder withRequestTimeout(float $timeout) {}
+    public function withRequestTimeout($timeout) {}
 
     /**
      * Set up ssl context.
      *
      * @param SSLOptions $options a preconfigured ssl context
      *
-     * @return self
+     * @return Builder self
      */
-    public function Builder withSSL(SSLOptions $options) {}
+    public function withSSL(SSLOptions $options) {}
 
     /**
      * Enable persistent sessions and clusters
      *
      * @param bool $enabled whether to enable persistent sessions and clusters.
      *
-     * @return self
+     * @return Builder self
      */
-    public function Builder withPersistentSessions(bool $enabled = true) {}
+    public function withPersistentSessions($enabled = true) {}
 }

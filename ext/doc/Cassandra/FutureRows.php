@@ -19,14 +19,14 @@
 namespace Cassandra;
 
 /**
- * This future results is resolved with `Cassandra::Rows`.
+ * This future results is resolved with `Cassandra\Rows`.
  *
- * @see Cassandra::Session::executeAsync()
+ * @see Cassandra\Session::executeAsync()
  */
 final class FutureRows implements Future
 {
     /**
      * {@inheritDoc}
      */
-    public function mixed get(float $timeout = null) {}
+    public function get($timeout = null) {}
 }

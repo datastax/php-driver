@@ -58,11 +58,11 @@ PHP_METHOD(Bigint, __construct)
 
   self = (cassandra_bigint*) zend_object_store_get_object(getThis() TSRMLS_CC);
 
-  if(Z_TYPE_P(num) == IS_LONG) {
+  if (Z_TYPE_P(num) == IS_LONG) {
     self->value = (cass_int64_t) Z_LVAL_P(num);
-  } else if(Z_TYPE_P(num) == IS_DOUBLE) {
+  } else if (Z_TYPE_P(num) == IS_DOUBLE) {
     self->value = (cass_int64_t) Z_DVAL_P(num);
-  } else if(Z_TYPE_P(num) == IS_STRING) {
+  } else if (Z_TYPE_P(num) == IS_STRING) {
     php_cassandra_parse_bigint(Z_STRVAL_P(num), Z_STRLEN_P(num), &self->value TSRMLS_CC);
   } else if (Z_TYPE_P(num) == IS_OBJECT &&
              instanceof_function(Z_OBJCE_P(num), cassandra_bigint_ce TSRMLS_CC)) {

@@ -27,31 +27,35 @@ final class Decimal
 {
     /**
      * Creates a decimal from a given decimal string:
-     * <code>
+     *
+     * ~~~{.php}
+     * <?php
      * $decimal = new Cassandra::Decimal("1313123123.234234234234234234123");
      *
      * $this->assertEquals(21, $decimal->scale());
      * $this->assertEquals("1313123123234234234234234234123", $decimal->value());
-     * </code>
-     * @param  string  $value  Any decimal string
+     * ~~~
+     *
+     *
+     * @param string $value Any decimal string
      */
-    public function __construct(string $value) {}
+    public function __construct($value) {}
 
     /**
      * String representation of this decimal
      * @return string Decimal value
      */
-    public function string __toString() {}
+    public function __toString() {}
 
     /**
      * Numeric value of this decimal as string
      * @return string Numeric value
      */
-    public function string value() {}
+    public function value() {}
 
     /**
      * Scale of this decimal as int
      * @return int Scale
      */
-    public function int scale() {}
+    public function scale() {}
 }

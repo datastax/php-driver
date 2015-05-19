@@ -31,11 +31,11 @@ PHP_METHOD(Float, __construct)
 
   self = (cassandra_float*) zend_object_store_get_object(getThis() TSRMLS_CC);
 
-  if(Z_TYPE_P(value) == IS_LONG) {
+  if (Z_TYPE_P(value) == IS_LONG) {
     self->value = (cass_float_t) Z_LVAL_P(value);
-  } else if(Z_TYPE_P(value) == IS_DOUBLE) {
+  } else if (Z_TYPE_P(value) == IS_DOUBLE) {
     self->value = (cass_float_t) Z_DVAL_P(value);
-  } else if(Z_TYPE_P(value) == IS_STRING) {
+  } else if (Z_TYPE_P(value) == IS_STRING) {
     php_cassandra_parse_float(Z_STRVAL_P(value), Z_STRLEN_P(value), &self->value TSRMLS_CC);
   } else if (Z_TYPE_P(value) == IS_OBJECT &&
              instanceof_function(Z_OBJCE_P(value), cassandra_float_ce TSRMLS_CC)) {

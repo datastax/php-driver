@@ -18,37 +18,35 @@
 
 namespace Cassandra\SSLOptions;
 
-use Cassandra\SSLOptions;
-
 /**
  * SSLOptions builder allows fluent configuration of ssl options.
  *
  * @see Cassandra::ssl()
- * @see Cassandra::Cluster::Builder::withSSL()
+ * @see Cassandra\Cluster\Builder::withSSL()
  */
 final class Builder
 {
     /**
      * Adds a trusted certificate. This is used to verify node's identity.
      *
-     * @throws Cassandra::Exception::InvalidArgumentException
+     * @throws Cassandra\Exception\InvalidArgumentException
      *
      * @param string $path,... one or more paths to files containing a PEM formatted certificate.
      *
      * @return Builder self
      */
-    public function Builder withTrustedCerts(string $path) {}
+    public function withTrustedCerts($path) {}
 
     /**
      * Disable certificate verification.
      *
-     * @throws Cassandra::Exception::InvalidArgumentException
+     * @throws Cassandra\Exception\InvalidArgumentException
      *
      * @param int $flags
      *
-     * @return self
+     * @return Builder self
      */
-    public function Builder withVerifyFlags(int $flags) {}
+    public function withVerifyFlags($flags) {}
 
     /**
      * Set client-side certificate chain.
@@ -56,31 +54,31 @@ final class Builder
      * This is used to authenticate the client on the server-side. This should contain the entire Certificate
      * chain starting with the certificate itself.
      *
-     * @throws Cassandra::Exception::InvalidArgumentException
+     * @throws Cassandra\Exception\InvalidArgumentException
      *
      * @param string $path path to a file containing a PEM formatted certificate.
      *
-     * @return self
+     * @return Builder self
      */
-    public function Builder withClientCert(string $path) {}
+    public function withClientCert($path) {}
 
     /**
      * Set client-side private key. This is used to authenticate the client on
      * the server-side.
      *
-     * @throws Cassandra::Exception::InvalidArgumentException
+     * @throws Cassandra\Exception\InvalidArgumentException
      *
      * @param string      $path       Path to the private key file
      * @param string|null $passphrase Passphrase for the private key, if any
      *
-     * @return self
+     * @return Builder self
      */
-    public function Builder withPrivateKey(string $path, string $passphrase = null) {}
+    public function withPrivateKey($path, $passphrase = null) {}
 
     /**
      * Builds SSL options.
      *
      * @return SSLOptions ssl options configured accordingly.
      */
-    public function SSLOptions build() {}
+    public function build() {}
 }

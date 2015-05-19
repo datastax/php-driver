@@ -21,11 +21,11 @@ namespace Cassandra\Exception;
 /**
  * ValidationException is raised on invalid request, before even attempting to
  * execute it.
- * @see Cassandra::Exception::InvalidSyntaxException
- * @see Cassandra::Exception::UnauthorizedException
- * @see Cassandra::Exception::InvalidQueryException
- * @see Cassandra::Exception::ConfigurationException
- * @see Cassandra::Exception::AlreadyExistsException
- * @see Cassandra::Exception::UnpreparedException
+ * @see Cassandra\Exception\InvalidSyntaxException
+ * @see Cassandra\Exception\UnauthorizedException
+ * @see Cassandra\Exception\InvalidQueryException
+ * @see Cassandra\Exception\ConfigurationException
+ * @see Cassandra\Exception\AlreadyExistsException
+ * @see Cassandra\Exception\UnpreparedException
  */
 class ValidationException extends ServerException {}

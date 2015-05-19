@@ -21,7 +21,7 @@ namespace Cassandra;
 /**
  * A session is used to prepare and execute statements.
  *
- * @see Cassandra::Cluster::connect()
+ * @see Cassandra\Cluster::connect()
  */
 interface Session
 {
@@ -63,7 +63,7 @@ interface Session
      *
      * @return PreparedStatement prepared statement
      */
-    public function PreparedStatement prepare(string $cql, ExecutionOptions $options = null);
+    public function PreparedStatement prepare($cql, ExecutionOptions $options = null);
 
     /**
      * Asynchronously prepares a statement and returns a future prepared statement.
@@ -75,14 +75,14 @@ interface Session
      *
      * @return Future statement
      */
-    public function Future prepareAsync(string $cql, ExecutionOptions $options = null);
+    public function Future prepareAsync($cql, ExecutionOptions $options = null);
 
     /**
      * Closes current session and all of its connections.
      *
      * @param float|null $timeout Timeout to wait for closure in seconds
      */
-    public function void close(float $timeout = null);
+    public function void close($timeout = null);
 
     /**
      * Asynchronously closes current session once all pending requests have finished.

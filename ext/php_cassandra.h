@@ -46,6 +46,10 @@ extern zend_module_entry cassandra_module_entry;
 #  define PHP_CASSANDRA_API
 #endif
 
+#ifndef ZEND_MOD_END
+#  define ZEND_MOD_END {NULL, NULL, NULL}
+#endif
+
 #ifndef PHP_FE_END
 #  define PHP_FE_END { NULL, NULL, NULL, 0, 0 }
 #endif

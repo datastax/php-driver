@@ -24,64 +24,317 @@
  */
 final class Cassandra
 {
-    const CONSISTENCY_ANY          = 0;
-    const CONSISTENCY_ONE          = 1;
-    const CONSISTENCY_TWO          = 2;
-    const CONSISTENCY_THREE        = 3;
-    const CONSISTENCY_QUORUM       = 4;
-    const CONSISTENCY_ALL          = 5;
-    const CONSISTENCY_LOCAL_QUORUM = 6;
-    const CONSISTENCY_EACH_QUORUM  = 7;
-    const CONSISTENCY_SERIAL       = 8;
-    const CONSISTENCY_LOCAL_SERIAL = 9;
-    const CONSISTENCY_LOCAL_ONE    = 10;
+    /**
+     * Consistency level ANY means the request is fulfilled as soon as the data
+     * has been written on the Coordinator. Requests with this consistency level
+     * are not guranteed to make it to Replica nodes.
+     *
+     * @see ExecutionOptions::__construct()
+     */
+    const CONSISTENCY_ANY = 0;
 
+    /**
+     * Consistency level ONE gurantess that data has been written to at least
+     * one Replica node.
+     *
+     * @see ExecutionOptions::__construct()
+     */
+    const CONSISTENCY_ONE = 1;
+
+    /**
+     * Same as `CONSISTENCY_ONE`, but confined to the local data center. This
+     * consistency level works only with `NetworkTopologyStrategy` replication.
+     *
+     * @see ExecutionOptions::__construct()
+     */
+    const CONSISTENCY_LOCAL_ONE = 10;
+    /**
+     * Consistency level TWO gurantess that data has been written to at least
+     * two Replica nodes.
+     *
+     * @see ExecutionOptions::__construct()
+     */
+    const CONSISTENCY_TWO = 2;
+
+    /**
+     * Consistency level THREE gurantess that data has been written to at least
+     * three Replica nodes.
+     *
+     * @see ExecutionOptions::__construct()
+     */
+    const CONSISTENCY_THREE = 3;
+
+    /**
+     * Consistency level QUORUM gurantess that data has been written to at least
+     * the majority of Replica nodes. How many nodes exactly are a majority
+     * depends on the replication factor of a given keyspace and is calculated
+     * using the formula `ceil(RF / 2 + 1)`, where `ceil` is a mathematical
+     * ceiling function and `RF` is the replication factor used. For example,
+     * for a replication factor of `5`, the majority is `ceil(5 / 2 + 1) = 3`.
+     *
+     * @see ExecutionOptions::__construct()
+     */
+    const CONSISTENCY_QUORUM = 4;
+
+    /**
+     * Same as `CONSISTENCY_QUORUM`, but confined to the local data center. This
+     * consistency level works only with `NetworkTopologyStrategy` replication.
+     *
+     * @see ExecutionOptions::__construct()
+     */
+    const CONSISTENCY_LOCAL_QUORUM = 6;
+
+    /**
+     * Consistency level EACH_QUORUM gurantess that data has been written to at
+     * least a majority Replica nodes in all datacenters. This consistency level
+     * works only with `NetworkTopologyStrategy` replication.
+     *
+     * @see ExecutionOptions::__construct()
+     */
+    const CONSISTENCY_EACH_QUORUM = 7;
+
+    /**
+     * Consistency level ALL gurantess that data has been written to all
+     * Replica nodes.
+     *
+     * @see ExecutionOptions::__construct()
+     */
+    const CONSISTENCY_ALL = 5;
+
+    /**
+     * This is a serial consistency level, it is used in conditional updates,
+     * e.g. (`CREATE|INSERT ... IF NOT EXISTS`), and should be specified as the
+     * `serial_consistency` option of the Cassandra\ExecutionOptions instance.
+     *
+     * Consistency level SERIAL, when set, ensures that a Paxos commit fails if
+     * any of the replicas is down.
+     *
+     * @see ExecutionOptions::__construct()
+     */
+    const CONSISTENCY_SERIAL = 8;
+
+    /**
+     * Same as `CONSISTENCY_SERIAL`, but confined to the local data center. This
+     * consistency level works only with `NetworkTopologyStrategy` replication.
+     *
+     * @see ExecutionOptions::__construct()
+     */
+    const CONSISTENCY_LOCAL_SERIAL = 9;
+
+    /**
+     * Perform no verification of Cassandra nodes when using SSL encryption.
+     *
+     * @see SSLOptions\Builder::withVerifyFlags()
+     */
     const VERIFY_NONE          = 0;
+
+    /**
+     * Verify presence and validity of SSL certificates of Cassandra.
+     *
+     * @see SSLOptions\Builder::withVerifyFlags()
+     */
     const VERIFY_PEER_CERT     = 1;
+
+    /**
+     * Verify that the IP address matches the SSL certificate’s common name or
+     * one of its subject alternative names. This implies the certificate is
+     * also present.
+     *
+     * @see SSLOptions\Builder::withVerifyFlags()
+     */
     const VERIFY_PEER_IDENTITY = 2;
 
-    const BATCH_LOGGED   = 0;
+    /**
+     * @see BatchStatement::__construct()
+     */
+    const BATCH_LOGGED = 0;
+
+    /**
+     * @see BatchStatement::__construct()
+     */
     const BATCH_UNLOGGED = 1;
-    const BATCH_COUNTER  = 2;
 
-    const LOG_DISABLED = 0;
-    const LOG_CRITICAL = 1;
-    const LOG_ERROR    = 2;
-    const LOG_WARN     = 3;
-    const LOG_INFO     = 4;
-    const LOG_DEBUG    = 5;
-    const LOG_TRACE    = 6;
+    /**
+     * @see BatchStatement::__construct()
+     */
+    const BATCH_COUNTER = 2;
 
-    const TYPE_TEXT      = 'text';
-    const TYPE_ASCII     = 'ascii';
-    const TYPE_VARCHAR   = 'varchar';
-    const TYPE_BIGINT    = 'bigint';
-    const TYPE_BLOB      = 'blob';
-    const TYPE_BOOLEAN   = 'boolean';
-    const TYPE_COUNTER   = 'counter';
-    const TYPE_DECIMAL   = 'decimal';
-    const TYPE_DOUBLE    = 'double';
-    const TYPE_FLOAT     = 'float';
-    const TYPE_INT       = 'int';
+    /**
+     * When using a map, collection or set of type text, all of its elements
+     * must be strings.
+     *
+     * @see Set::__construct()
+     * @see Collection::__construct()
+     * @see Map::__construct()
+     */
+    const TYPE_TEXT = 'text';
+
+    /**
+     * When using a map, collection or set of type ascii, all of its elements
+     * must be strings.
+     *
+     * @see Set::__construct()
+     * @see Collection::__construct()
+     * @see Map::__construct()
+     */
+    const TYPE_ASCII = 'ascii';
+
+    /**
+     * When using a map, collection or set of type varchar, all of its elements
+     * must be strings.
+     *
+     * @see Set::__construct()
+     * @see Collection::__construct()
+     * @see Map::__construct()
+     */
+    const TYPE_VARCHAR = 'varchar';
+
+    /**
+     * When using a map, collection or set of type bigint, all of its elements
+     * must be instances of Bigint.
+     *
+     * @see Set::__construct()
+     * @see Collection::__construct()
+     * @see Map::__construct()
+     */
+    const TYPE_BIGINT = 'bigint';
+
+    /**
+     * When using a map, collection or set of type blob, all of its elements
+     * must be instances of Blob.
+     *
+     * @see Set::__construct()
+     * @see Collection::__construct()
+     * @see Map::__construct()
+     */
+    const TYPE_BLOB = 'blob';
+
+    /**
+     * When using a map, collection or set of type boolean, all of its elements
+     * must be booleans.
+     *
+     * @see Set::__construct()
+     * @see Collection::__construct()
+     * @see Map::__construct()
+     */
+    const TYPE_BOOLEAN = 'boolean';
+
+    /**
+     * When using a map, collection or set of type counter, all of its elements
+     * must be instances of Bigint.
+     *
+     * @see Set::__construct()
+     * @see Collection::__construct()
+     * @see Map::__construct()
+     */
+    const TYPE_COUNTER = 'counter';
+
+    /**
+     * When using a map, collection or set of type decimal, all of its elements
+     * must be instances of Decimal.
+     *
+     * @see Set::__construct()
+     * @see Collection::__construct()
+     * @see Map::__construct()
+     */
+    const TYPE_DECIMAL = 'decimal';
+
+    /**
+     * When using a map, collection or set of type double, all of its elements
+     * must be doubles.
+     *
+     * @see Set::__construct()
+     * @see Collection::__construct()
+     * @see Map::__construct()
+     */
+    const TYPE_DOUBLE = 'double';
+
+    /**
+     * When using a map, collection or set of type float, all of its elements
+     * must be instances of Float.
+     *
+     * @see Set::__construct()
+     * @see Collection::__construct()
+     * @see Map::__construct()
+     */
+    const TYPE_FLOAT = 'float';
+
+    /**
+     * When using a map, collection or set of type int, all of its elements
+     * must be ints.
+     *
+     * @see Set::__construct()
+     * @see Collection::__construct()
+     * @see Map::__construct()
+     */
+    const TYPE_INT = 'int';
+
+    /**
+     * When using a map, collection or set of type timestamp, all of its elements
+     * must be instances of Timestamp.
+     *
+     * @see Set::__construct()
+     * @see Collection::__construct()
+     * @see Map::__construct()
+     */
     const TYPE_TIMESTAMP = 'timestamp';
-    const TYPE_UUID      = 'uuid';
-    const TYPE_VARINT    = 'varint';
-    const TYPE_TIMEUUID  = 'timeuuid';
-    const TYPE_INET      = 'inet';
 
+    /**
+     * When using a map, collection or set of type uuid, all of its elements
+     * must be instances of Uuid.
+     *
+     * @see Set::__construct()
+     * @see Collection::__construct()
+     * @see Map::__construct()
+     */
+    const TYPE_UUID = 'uuid';
+
+    /**
+     * When using a map, collection or set of type varint, all of its elements
+     * must be instances of Varint.
+     *
+     * @see Set::__construct()
+     * @see Collection::__construct()
+     * @see Map::__construct()
+     */
+    const TYPE_VARINT = 'varint';
+
+    /**
+     * When using a map, collection or set of type timeuuid, all of its elements
+     * must be instances of Timeuuid.
+     *
+     * @see Set::__construct()
+     * @see Collection::__construct()
+     * @see Map::__construct()
+     */
+    const TYPE_TIMEUUID = 'timeuuid';
+
+    /**
+     * When using a map, collection or set of type inet, all of its elements
+     * must be instances of Inet.
+     *
+     * @see Set::__construct()
+     * @see Collection::__construct()
+     * @see Map::__construct()
+     */
+    const TYPE_INET = 'inet';
+
+    /**
+     * Current version of the extension.
+     */
     const VERSION = '1.0.0-alpha';
 
     /**
      * Returns a Cluster Builder.
      *
-     * @return Cluster::Builder a Cluster Builder instance
+     * @return Cassandra\Cluster\Builder a Cluster Builder instance
      */
-    public static Cassandra::Cluster::Builder function cluster() {}
+    public static function cluster() {}
 
     /**
      * Returns SSL Options Builder.
      *
-     * @return SSLOptions::Builder an SSLOptions Builder instance
+     * @return Cassandra\SSLOptions\Builder an SSLOptions Builder instance
      */
-    public static Cassandra::SSLOptions::Builder function ssl() {}
+    public static function ssl() {}
 }

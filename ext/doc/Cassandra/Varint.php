@@ -28,17 +28,17 @@ final class Varint
      *
      * @param string $value integer value as a string
      */
-    public function __construct(string $value) {}
+    public function __construct($value) {}
 
     /**
      * Returns the integer value
      * @return string integer value
      */
-    public function string __toString() {}
+    public function __toString() {}
 
     /**
      * Returns the integer value
      * @return string integer value
      */
-    public function string value() {}
+    public function value() {}
 }
