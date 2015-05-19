@@ -15,6 +15,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
 {
     private $workingDir;
     private $phpBin;
+    private $phpBinOptions;
     private $process;
     private $ccm;
 
@@ -61,6 +62,16 @@ class FeatureContext implements Context, SnippetAcceptingContext
         $this->workingDir = $dir;
         $this->phpBin     = $php;
         $this->process    = new Process(null);
+    }
+
+    /**
+     * Reset the PHP binary options
+     *
+     * @AfterScenario
+     */
+    public function resetPHPOptions()
+    {
+        $this->phpBinOptions = '';
     }
 
     /**
@@ -141,7 +152,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
     {
         $this->process->setWorkingDirectory($this->workingDir);
         $this->process->setCommandLine(sprintf(
-            '%s %s', $this->phpBin, 'example.php'
+            '%s %s %s', $this->phpBin, $this->phpBinOptions, 'example.php'
         ));
         if (!empty($env)) {
             $this->process->setEnv(array_replace((array) $this->process->getEnv(), $env));
@@ -164,12 +175,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
     {
         $lines = preg_split("/\\r\\n|\\r|\\n/", $string->getRaw());
         foreach($lines as $key=>$line) {
-          $settings = explode('=', $line);
-            // Make sure the working directory for the log file is used
-            if ($settings[0] === 'cassandra.log') {
-              $settings[1] = $this->workingDir.DIRECTORY_SEPARATOR.$settings[1];
-            }
-            ini_set($settings[0], $settings[1]);
+            $this->phpBinOptions .= '-d '.$line.' ';
         }
     }
 
