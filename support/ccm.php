@@ -12,16 +12,20 @@ class CCM
     private $session;
     private $ssl;
     private $clientAuth;
+    private $dataCenterOneNodes;
+    private $dataCenterTwoNodes;
 
     public function __construct($name, $version)
     {
-        $this->name       = $name;
-        $this->version    = $version;
-        $this->process    = new Process(null);
-        $this->cluster    = null;
-        $this->session    = null;
-        $this->ssl        = false;
-        $this->clientAuth = false;
+        $this->name               = $name;
+        $this->version            = $version;
+        $this->process            = new Process(null);
+        $this->cluster            = null;
+        $this->session            = null;
+        $this->ssl                = false;
+        $this->clientAuth         = false;
+        $this->dataCenterOneNodes = 0;
+        $this->dataCenterTwoNodes = 0;
     }
 
     public function setupSchema($schema)
@@ -107,14 +111,21 @@ class CCM
         return $clusters;
     }
 
-    public function setup()
+    public function setup($dataCenterOneNodes, $dataCenterTwoNodes)
     {
+        $this->dataCenterOneNodes = $dataCenterOneNodes;
+        $this->dataCenterTwoNodes = $dataCenterTwoNodes;
+
         $clusters = $this->getClusters();
-        if (!(isset($active) && $clusters[$active] == $this->name)) {
-            if (in_array($this->name, $clusters)) {
-                $this->run('switch', $this->name);
+        $clusterName = $this->name.'_'.$dataCenterOneNodes.'-'.$dataCenterTwoNodes;
+        if (!(isset($active) && $clusters[$active] == $clusterName)) {
+            if (in_array($clusterName, $clusters)) {
+                $this->run('switch', $clusterName);
             } else {
-                $this->run('create', '-v', 'binary:' . $this->version, '-b', $this->name);
+                if (!empty($clusters)) {
+                    $this->stop();
+                }
+                $this->run('create', '-v', 'binary:' . $this->version, '-b', $clusterName);
 
                 $params = array(
                   'updateconf', '--rt', '1000', 'read_request_timeout_in_ms: 1000',
@@ -151,7 +162,7 @@ class CCM
                 $params[] = 'max_hints_delivery_threads: 1';
 
                 call_user_func_array(array($this, 'run'), $params);
-                $this->run('populate', '-n', '1', '-i', '127.0.0.');
+                $this->run('populate', '-n', $dataCenterOneNodes.':'.$dataCenterTwoNodes, '-i', '127.0.0.');
             }
         }
 
@@ -169,7 +180,7 @@ class CCM
     public function setupSSL()
     {
         if (!$this->ssl) {
-            $this->setup();
+            $this->setup(1, 0);
             $this->stop();
             $this->run('updateconf',
                 'client_encryption_options.enabled: true',
@@ -183,7 +194,7 @@ class CCM
     public function setupClientVerification()
     {
         if (!$this->clientAuth) {
-            $this->setup();
+            $this->setup(1, 0);
             $this->stop();
             $this->run('updateconf',
                 'client_encryption_options.enabled: true',
@@ -194,6 +205,14 @@ class CCM
                 'client_encryption_options.truststore_password: php-driver'
             );
             $this->clientAuth = true;
+        }
+    }
+
+    public function enableTracing($isEnabled)
+    {
+        $nodes = $this->dataCenterOneNodes + $this->dataCenterTwoNodes;
+        for($node = 1; $node <= $nodes; ++$node) {
+            $this->run('node'.$node, 'nodetool', 'settraceprobability', ((bool) $isEnabled) ? 1 : 0);
         }
     }
 

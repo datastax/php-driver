@@ -79,7 +79,16 @@ class FeatureContext implements Context, SnippetAcceptingContext
      */
     public function aRunningCassandraCluster()
     {
-        $this->ccm->setup();
+        $this->ccm->setup(1, 0);
+        $this->ccm->start();
+    }
+
+    /**
+     * @Given a running Cassandra cluster with :numberOfNodes nodes
+     */
+    public function aRunningCassandraClusterWithMultipleNode($numberOfNodes)
+    {
+        $this->ccm->setup($numberOfNodes, 0);
         $this->ccm->start();
     }
 
@@ -99,6 +108,22 @@ class FeatureContext implements Context, SnippetAcceptingContext
     {
         $this->ccm->setupClientVerification();
         $this->ccm->start();
+    }
+
+    /**
+     * @Given tracing is enabled
+     */
+    public function tracingIsEnabled()
+    {
+        $this->ccm->enableTracing(true);
+    }
+
+    /**
+     * @Given tracing is disabled
+     */
+    public function tracingIsDisabled()
+    {
+        $this->ccm->enableTracing(false);
     }
 
     /**
