@@ -97,7 +97,7 @@ class CCM
     private function getClusters()
     {
         $clusters = array();
-        foreach (explode("\r\n", $this->run('list')) as $cluster) {
+        foreach (explode(PHP_EOL, $this->run('list')) as $cluster) {
             $cluster = trim(substr($cluster, 2, strlen($cluster) - 2));
             if (!empty($cluster)) {
                 $clusters[] = $cluster;

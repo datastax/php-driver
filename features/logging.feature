@@ -9,7 +9,7 @@ Feature: Logging
      Given the following logger settings:
       """ini
       cassandra.log=feature-logging.log
-      cassandra.log_level=5
+      cassandra.log_level=TRACE
       """
     And the following example:
       """php
@@ -21,4 +21,4 @@ Feature: Logging
       """
     When it is executed
     Then a log file "feature-logging.log" should exist
-    And the log file "feature-logging.log" should contain "DEBUG"
+    And the log file "feature-logging.log" should contain "TRACE"
