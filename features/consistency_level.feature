@@ -21,8 +21,7 @@ Feature: Consistency Level
       );
       """
 
-  Scenario: Simple and prepared statement consistency levels are exercised
-            during statement execution via execute options
+  Scenario: Consistency levels are specified via execution options
     Given tracing is enabled
     And the following example:
       """php

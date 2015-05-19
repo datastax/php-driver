@@ -100,15 +100,23 @@ class CCM
 
     private function getClusters()
     {
+        $active = '';
         $clusters = array();
         foreach (explode(PHP_EOL, $this->run('list')) as $cluster) {
-            $cluster = trim(substr($cluster, 2, strlen($cluster) - 2));
-            if (!empty($cluster)) {
-                $clusters[] = $cluster;
+            $clusterName = trim(substr($cluster, 2, strlen($cluster) - 2));
+
+            // Determine if this cluster is the active cluster
+            if ($this->isActive($cluster)) {
+                $active = $clusterName;
+            }
+
+            // Add the cluster to the list
+            if (!empty($clusterName)) {
+                $clusters[] = $clusterName;
             }
         }
 
-        return $clusters;
+        return array('active' => $active, 'list' => $clusters);
     }
 
     public function setup($dataCenterOneNodes, $dataCenterTwoNodes)
@@ -118,13 +126,16 @@ class CCM
 
         $clusters = $this->getClusters();
         $clusterName = $this->name.'_'.$dataCenterOneNodes.'-'.$dataCenterTwoNodes;
-        if (!(isset($active) && $clusters[$active] == $clusterName)) {
-            if (in_array($clusterName, $clusters)) {
+        if ($clusters['active'] != $clusterName) {
+            // Ensure any active cluster is stopped
+            if (!empty($clusters['active'])) {
+                $this->stop();
+            }
+
+            // Determine if a cluster should be created or re-used
+            if (in_array($clusterName, $clusters['list'])) {
                 $this->run('switch', $clusterName);
             } else {
-                if (!empty($clusters)) {
-                    $this->stop();
-                }
                 $this->run('create', '-v', 'binary:' . $this->version, '-b', $clusterName);
 
                 $params = array(
@@ -258,7 +269,7 @@ class CCM
 
     public function removeAllClusters()
     {
-        $clusters = $this->getClusters();
+        $clusters = $this->getClusters()['list'];
         foreach ($clusters as $cluster) {
             $this->removeCluster($cluster);
         }
