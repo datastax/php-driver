@@ -20,7 +20,7 @@ Feature: Result paging
       """cql
       CREATE KEYSPACE simplex WITH replication = {
         'class': 'SimpleStrategy',
-        'replication_factor': 3
+        'replication_factor': 1
       };
       USE simplex;
       CREATE TABLE entries (key text, value int, PRIMARY KEY(key, value));
