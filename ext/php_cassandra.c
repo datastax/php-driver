@@ -231,9 +231,6 @@ static PHP_INI_MH(OnUpdateLog)
       if (VCWD_REALPATH(new_value, realpath)) {
         log_location = strdup(realpath);
       } else {
-        php_error_docref(NULL TSRMLS_CC, E_NOTICE,
-                         "cassandra | Unable to find log file '%s', "
-                         "we'll attempt to create it later", new_value);
         log_location = strdup(new_value);
       }
     } else {
