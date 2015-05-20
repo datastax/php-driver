@@ -130,7 +130,7 @@ $session->execute('USE measurements');
 $session->execute($createTable);
 ```
 
-You can also `ALTER` keyspaces and tables, and you can read more about that in the [CQL3 syntax documentation][1].
+You can also `ALTER` keyspaces and tables, and you can read more about that in the [CQL3 syntax documentation](https://github.com/apache/cassandra/blob/cassandra-2.0/doc/cql3/CQL.textile).
 
 ### Batch statements
 
@@ -155,7 +155,7 @@ $batch->add($statement, array('unicorn31'));
 $session->execute($batch);
 ```
 
-Batches can have one of three different types: `logged`, `unlogged` or `counter`, where `logged` is the default. Their exact semantics are defined in the [Cassandra documentation][2], but this is how you specify which one you want:
+Batches can have one of three different types: `logged`, `unlogged` or `counter`, where `logged` is the default. Their exact semantics are defined in the [Cassandra documentation](http://www.datastax.com/documentation/cql/3.1/webhelp/index.html), but this is how you specify which one you want:
 
 [Read more about `Cassandra\BatchStatement`](http://datastax.github.io/php-driver/api/class/Cassandra/BatchStatement/)
 
