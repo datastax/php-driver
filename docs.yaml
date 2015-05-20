@@ -1,5 +1,6 @@
-title:   DataStax PHP Driver
-summary: DataStax PHP Driver for Apache Cassandra
+title:    DataStax PHP Driver
+summary:  DataStax PHP Driver for Apache Cassandra
+homepage: http://datastax.github.io/php-driver/
 sections:
   - title:     Features
     prefix:    /features
