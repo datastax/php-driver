@@ -23,7 +23,7 @@ namespace Cassandra;
  *
  * The actual value of a decimal is `$value * pow(10, $scale * -1)`
  */
-final class Decimal
+final class Decimal implements Numeric
 {
     /**
      * Creates a decimal from a given decimal string:

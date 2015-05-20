@@ -21,7 +21,7 @@ namespace Cassandra;
 /**
  * A PHP representation of the CQL `bigint` datatype
  */
-final class Bigint
+final class Bigint implements Numeric
 {
     /**
      * Creates a new 64bit integer
