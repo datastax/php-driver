@@ -155,7 +155,15 @@ $batch->add($statement, array('unicorn31'));
 $session->execute($batch);
 ```
 
-Batches can have one of three different types: `logged`, `unlogged` or `counter`, where `logged` is the default. Their exact semantics are defined in the [Cassandra documentation](http://www.datastax.com/documentation/cql/3.1/webhelp/index.html), but this is how you specify which one you want:
+Batches can have one of three different types: `logged`, `unlogged` or `counter`, where `logged` is the default. Their exact semantics are defined in the [Cassandra documentation](http://docs.datastax.com/en/cql/3.1/cql/cql_reference/batch_r.html), but this is how you specify which one you want:
+
+```php
+<?php
+
+$batch = new Cassandra\BatchStatement(Cassandra::BATCH_LOGGED);
+$batch = new Cassandra\BatchStatement(Cassandra::BATCH_UNLOGGED);
+$batch = new Cassandra\BatchStatement(Cassandra::BATCH_COUNTER);
+```
 
 [Read more about `Cassandra\BatchStatement`](http://datastax.github.io/php-driver/api/class/Cassandra/BatchStatement/)
 
