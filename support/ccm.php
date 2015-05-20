@@ -250,7 +250,7 @@ class CCM
             if ($args[0] != "\"start\"") {
                 $keepWindowsContext = '/B ';
             }
-            $command = 'START "PHP Integration Tests" ' . $keepWindowsContext . '/MIN /WAIT ' . $command;
+            $command = 'START "PHP Driver - CCM" ' . $keepWindowsContext . '/MIN /WAIT ' . $command;
         }
         $this->process->setCommandLine($command);
 

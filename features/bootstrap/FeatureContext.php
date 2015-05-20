@@ -17,6 +17,9 @@ class FeatureContext implements Context, SnippetAcceptingContext
     private $phpBin;
     private $phpBinOptions;
     private $process;
+    private $webServerProcess;
+    private $webServerURL;
+    private $webServerRequestContents;
     private $ccm;
 
     /**
@@ -39,9 +42,9 @@ class FeatureContext implements Context, SnippetAcceptingContext
      */
     public static function cleanTestFolders()
     {
-        if (is_dir($dir = sys_get_temp_dir().DIRECTORY_SEPARATOR.'php-driver')) {
-            self::clearDirectory($dir);
-        }
+        //if (is_dir($dir = sys_get_temp_dir().DIRECTORY_SEPARATOR.'php-driver')) {
+        //    self::clearDirectory($dir);
+        //}
         $ccm = new \CCM('', '');
         $ccm->removeAllClusters();
     }
@@ -59,19 +62,26 @@ class FeatureContext implements Context, SnippetAcceptingContext
         if (false === $php = $phpFinder->find()) {
             throw new \RuntimeException('Unable to find the PHP executable.');
         }
-        $this->workingDir = $dir;
-        $this->phpBin     = $php;
-        $this->process    = new Process(null);
+        $this->workingDir               = $dir;
+        $this->phpBin                   = $php;
+        $this->process                  = new Process(null);
+        $this->webServerProcess         = null;
+        $this->webServerURL             = '';
+        $this->webServerRequestContents = '';
     }
 
     /**
-     * Reset the PHP binary options
+     * Perform scenario teardown operations
      *
      * @AfterScenario
      */
-    public function resetPHPOptions()
+    public function scenarioTeardown()
     {
-        $this->phpBinOptions = '';
+        $this->phpBinOptions            = '';
+        $this->webServerURL             = '';
+        $this->webServerRequestContents = '';
+
+        $this->terminateWebServer();
     }
 
     /**
@@ -143,6 +153,23 @@ class FeatureContext implements Context, SnippetAcceptingContext
     }
 
     /**
+     * @Given a web server on :ipPort
+     */
+    public function aWebServerOn($ipPort)
+    {
+        $this->startWebServer($ipPort);
+    }
+
+    /**
+     * @Given a web server request on :uri:
+     */
+    public function aWebServerRequestOn($uri, PyStringNode $string)
+    {
+        $this->createFile($this->workingDir.$uri.'/index.php', (string) $string);
+        $this->webServerRequestContents = file_get_contents($this->webServerURL.$uri.'/index.php');
+    }
+
+    /**
      * @When /^it is executed$/
      */
     public function itIsExecuted()
@@ -185,12 +212,39 @@ class FeatureContext implements Context, SnippetAcceptingContext
         $this->process->run();
     }
 
+    private function startWebServer($ipPort)
+    {
+        $this->webServerURL = 'http://' . $ipPort;
+        $this->createFile($this->workingDir.'/index.php', "<?php\nphpinfo();");
+        $command = sprintf('%s -S %s %s %s', $this->phpBin, $ipPort, $this->phpBinOptions, 'index.php');
+        $this->webServerProcess = new Process($command, $this->workingDir);
+        $this->webServerProcess->start();
+        echo 'Web Server Started: ' . $this->webServerProcess->getPid() . "\n";
+    }
+
+    private function terminateWebServer() {
+        if ($this->webServerProcess) {
+            echo 'Stopping Web Server: ' . $this->webServerProcess->getPid() . "\n";
+            $this->webServerProcess->stop();
+            $this->webServerProcess = null;
+            echo "Web Server Stopped\n";
+        }
+    }
+
     /**
      * @Then /^its output should contain:$/
      */
     public function itsOutputShouldContain(PyStringNode $string)
     {
         PHPUnit_Framework_Assert::assertContains((string) $string, $this->getOutput());
+    }
+
+    /**
+     * @Then the request output should contain:
+     */
+    public function theRequestOutputShouldContain(PyStringNode $string)
+    {
+        PHPUnit_Framework_Assert::assertContains((string) $string, $this->webServerRequestContents);
     }
 
     /**
