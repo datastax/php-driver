@@ -322,7 +322,7 @@ final class Cassandra
     /**
      * Current version of the extension.
      */
-    const VERSION = '1.0.0-alpha';
+    const VERSION = '1.0.0-beta';
 
     /**
      * Returns a Cluster Builder.

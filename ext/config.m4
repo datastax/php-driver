@@ -1,9 +1,14 @@
 PHP_ARG_WITH(cassandra, Enable Cassandra extension,
-[  --with-cassandra[=DIR] Enable the Cassandra extension.])
+[  --with-cassandra[=DIR]    Enable the Cassandra extension.])
+
+if test -z "$PHP_UV"; then
+  PHP_ARG_WITH(uv, libuv install dir,
+  [  --with-uv=DIR           Specify libuv install dir.])
+fi
 
 if test -z "$PHP_GMP"; then
   PHP_ARG_WITH(gmp, GNU MP install dir,
-  [  --with-gmp=DIR Specify GNU MP install dir.])
+  [  --with-gmp=DIR          Specify GNU MP install dir.])
 fi
 
 if test "$PHP_CASSANDRA" != "no"; then
@@ -86,15 +91,21 @@ if test "$PHP_CASSANDRA" != "no"; then
 
   case $(uname -s) in
     Linux)
-      CASSANDRA_CFLAGS="-Wall -pedantic -Wextra -Wno-long-long -Wno-deprecated-declarations -Wno-unused-parameter -Wno-variadic-macros -pthread"
+      CASSANDRA_CFLAGS="-Wall -pedantic -Wextra -Wno-long-long -Wno-deprecated-declarations -Wno-unused-parameter -Wno-variadic-macros -Wno-extra-semi -pthread"
       ;;
     Darwin)
-      CASSANDRA_CFLAGS="-Wall -pedantic -Wextra -Wno-long-long -Wno-deprecated-declarations -Wno-unused-parameter -Wno-variadic-macros"
+      CASSANDRA_CFLAGS="-Wall -pedantic -Wextra -Wno-long-long -Wno-deprecated-declarations -Wno-unused-parameter -Wno-variadic-macros -Wno-extra-semi"
       ;;
   esac
 
   PHP_NEW_EXTENSION(cassandra, php_cassandra.c $CASSANDRA_CLASSES \
     $CASSANDRA_TYPES $CASSANDRA_UTIL, $ext_shared, , $CASSANDRA_CFLAGS)
+  PHP_ADD_BUILD_DIR($ext_builddir/src)
+  PHP_ADD_BUILD_DIR($ext_builddir/src/Cassandra)
+  PHP_ADD_BUILD_DIR($ext_builddir/src/Cassandra/Cluster)
+  PHP_ADD_BUILD_DIR($ext_builddir/src/Cassandra/Exception)
+  PHP_ADD_BUILD_DIR($ext_builddir/src/Cassandra/SSLOptions)
+  PHP_ADD_BUILD_DIR($ext_builddir/util)
   PHP_SUBST(CASSANDRA_SHARED_LIBADD)
   PHP_SUBST(CASSANDRA_CFLAGS)
 
@@ -139,6 +150,44 @@ if test "$PHP_CASSANDRA" != "no"; then
   fi
 
   PHP_ADD_LIBRARY(gmp,, CASSANDRA_SHARED_LIBADD)
+
+  if test "$PHP_UV" != "no"; then
+    if test -f $PHP_UV/include/uv.h; then
+      UV_DIR=$PHP_UV
+    fi
+  else
+    for i in /usr/local /usr; do
+      if test -f $i/include/uv.h; then
+        UV_DIR=$i
+      fi
+    done
+  fi
+
+  if test -z "$UV_DIR"; then
+    ac_extra=
+  else
+    ac_extra=-L$UV_DIR/$PHP_LIBDIR
+  fi
+
+  PHP_CHECK_LIBRARY(uv, uv_version,
+    [
+      AC_DEFINE(HAVE_UVLIB,1,[ ])
+    ],
+    [
+      AC_MSG_ERROR([Unable to load libuv])
+    ],
+    [
+      $ac_extra
+    ]
+  )
+
+  if test -n "$UV_DIR"; then
+    PHP_ADD_LIBPATH($UV_DIR/$PHP_LIBDIR, CASSANDRA_SHARED_LIBADD)
+    PHP_ADD_INCLUDE($UV_DIR/include)
+  fi
+
+  PHP_ADD_LIBRARY(uv,, CASSANDRA_SHARED_LIBADD)
+  PHP_ADD_LIBRARY(m,, CASSANDRA_SHARED_LIBADD)
 
   if test "$PHP_CASSANDRA" != "yes"; then
     if test -f $PHP_CASSANDRA/include/cassandra.h; then

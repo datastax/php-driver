@@ -41,7 +41,7 @@ echo "Compiling and installing the extension..."
 phpize
 
 echo ./configure --with-cassandra=$builddir --with-libdir=lib
-LIBS="-lssl -lz -luv -lstdc++" LDFLAGS="-L$builddir/lib" ./configure --with-cassandra=$builddir --with-libdir=lib
+LIBS="-lssl -lz -luv -lm -lstdc++" LDFLAGS="-L$builddir/lib" ./configure --with-cassandra=$builddir --with-libdir=lib
 make
 make install
 
