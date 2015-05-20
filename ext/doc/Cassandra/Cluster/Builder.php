@@ -72,6 +72,15 @@ final class Builder
     public function withContactPoints($host) {}
 
     /**
+     * Specify a different port to be used when connecting to the cluster.
+     *
+     * @param int $port a number between 1 and 65535
+     *
+     * @return Builder self
+     */
+    public function withPort($port) {}
+
+    /**
      * Configures this cluster to use a round robin load balancing policy.
      *
      * @return Builder self

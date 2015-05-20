@@ -3,8 +3,11 @@
 This extension is a wrapper around the [DataStax C/C++ driver for Apache
 Cassandra](http://datastax.github.io/cpp-driver/).
 
-In order to install it, you must install the C/C++ driver and its dependencies,
-as well as the [The GNU Multiple Precision Arithmetic Library](https://gmplib.org/).
+In order to install it, you must install:
+
+* [The C/C++ driver and its dependencies](http://datastax.github.io/cpp-driver/topics/#installation).
+* [The GNU Multiple Precision Arithmetic Library](https://gmplib.org/).
+* [Libuv]
 
 ## Install dependencies
 
@@ -45,9 +48,15 @@ installing any of its dependencies.
 
 ### Installing with pecl
 
+Currently, the PHP driver is not published to the official PECL repository. You
+can still install it using pecl by specifying the provided `package.xml` file
+path as the argument to `pecl install` command.
+
 [Install the 2.0 version of the C/C++ driver](http://datastax.github.io/cpp-driver/topics/building/)
 
 ```bash
+git clone https://github.com/datastax/php-driver.git
+cd php-driver
 pecl install ext/package.xml
 ```
 
@@ -81,7 +90,7 @@ following build dependencies will need to be installed.
 
 - Download and install [Bison](http://gnuwin32.sourceforge.net/downlinks/bison.php).
  - Make sure Bison is in your system PATH and not installed in a directory with
-   spaces (e.g. %SYSTEMDRIVE%\GnuWin32)
+   spaces (e.g. `%SYSTEMDRIVE%\GnuWin32`)
 - Download and install [CMake](http://www.cmake.org/download).
  - Make sure to select the option "Add CMake to the system PATH for all users"
    or "Add CMake to the system PATH for current user".
