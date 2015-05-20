@@ -1,13 +1,12 @@
 # Cassandra PHP Extension
 
-This extension is a wrapper around the [DataStax C/C++ driver for Apache
-Cassandra](http://datastax.github.io/cpp-driver/).
-
-In order to install it, you must install:
+The Cassandra PHP Extension depends on the following libraries:
 
 * [The C/C++ driver and its dependencies](http://datastax.github.io/cpp-driver/topics/#installation).
 * [The GNU Multiple Precision Arithmetic Library](https://gmplib.org/).
-* [Libuv]
+* [Libuv](http://libuv.org/)
+
+You can build the extension yourself or use one of the provided scripts.
 
 ## Install dependencies
 
@@ -48,9 +47,9 @@ installing any of its dependencies.
 
 ### Installing with pecl
 
-Currently, the PHP driver is not published to the official PECL repository. You
-can still install it using pecl by specifying the provided `package.xml` file
-path as the argument to `pecl install` command.
+The PHP driver is not published to the official PECL repository yes. You can
+still install it using pecl by specifying the provided `package.xml` file path
+as the argument to `pecl install` command.
 
 [Install the 2.0 version of the C/C++ driver](http://datastax.github.io/cpp-driver/topics/building/)
 
