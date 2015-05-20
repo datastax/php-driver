@@ -2,37 +2,36 @@
 
 [![Build Status](https://travis-ci.org/datastax/php-driver.svg)](https://travis-ci.org/datastax/php-driver)
 
-This is a wrapper around the DataStax C/C++ driver for Apache Cassandra. This
-driver works exclusively with the Cassandra Query Language version 3 (CQL3) and
-Cassandra's native protocol.
+A modern, [feature-rich](features) and highly tunable PHP client library for [Apache Cassandra](http://cassandra.apache.org/) (1.2+) and [DataStax Enterprise](http://www.datastax.com/products/products-index) (3.1+) using exclusively Cassandra's binary protocol and Cassandra Query Language v3.
 
+This is a wrapper around [the DataStax C/C++ Driver for Apache Cassandra and DataStax Enterprise](http://datastax.github.io/cpp-driver/).
+
+* Docs: [http://datastax.github.io/php-driver/](http://datastax.github.io/php-driver/)
 * Code: [https://github.com/datastax/php-driver](https://github.com/datastax/php-driver)
 * Jira: [https://datastax-oss.atlassian.net/browse/PHP](https://datastax-oss.atlassian.net/browse/PHP)
 * Mailing List: [https://groups.google.com/a/lists.datastax.com/forum/#!forum/php-driver-user](https://groups.google.com/a/lists.datastax.com/forum/#!forum/php-driver-user)
 * IRC: #datastax-drivers on [irc.freenode.net](http://freenode.net>)
 * Twitter: Follow the latest news about DataStax Drivers - [@avalanche123](http://twitter.com/avalanche123), [@mfiguiere](http://twitter.com/mfiguiere), [@al3xandru](https://twitter.com/al3xandru)
 
-## Status of v1.0.0.alpha
+## Status of v1.0.0.beta
 
-The current release is an early alpha. This means that it lacks some features
-and stability, but should be enough to start testing and working with Apache
-Cassandra. Below, you'll find a list of functionality that is already supported
-as well as what's planned for the upcoming releases.
+This is the first beta release of the DataStax PHP Driver. This means that it
+is mostly feature complete but not entirely stable. Below, you'll find a list
+of functionality that is already supported as well as what's planned for the
+upcoming releases.
 
-## Features
+## What's new in v1.0.0.beta:
 
-* [All pre 2.1 Cassandra datatypes, including sets, lists and maps](features/datatypes.feature).
-* [Simple](features/simple_statements.feature), [prepared](features/prepared_statements.feature) and [batch statements](features/batch_statements.feature).
-* [Results paging](features/result_paging.feature).
-* [Asynchronous IO](src/Cassandra/Session.php#L24-L35).
-* [SSL encryption](features/ssl_encryption.feature).
-* [Credentials authentication](src/Cassandra/Cluster/Builder.php#L312-L320).
+* Persistent Sessions.
+* Windows support.
+* Math functions for numeric types and `Cassandra\Numeric` interface.
+* All classes moved into the extension.
 
 ## Planned
 
-* Windows support.
+* Ability to configure connection pooling.
+* Ability to configure latency aware load balancing
 * Expose [Schema Metadata](http://datastax.github.io/cpp-driver/api/struct_cass_session/#1afc51badec695483e4cde43ae0fc1e876).
-* Add arithmetic functions to numeric types.
 
 ## Quick Start
 
@@ -46,7 +45,7 @@ $statement = new Cassandra\SimpleStatement(       // also supports prepared and 
     'SELECT keyspace_name, columnfamily_name FROM schema_columnfamilies'
 );
 $future    = $session->executeAsync($statement);  // fully asynchronous and easy parallel execution
-$result    = $future->get();                      // wait for result to become available, optionally set a timeout
+$result    = $future->get();                      // wait for the result, with an optional timeout
 
 foreach ($result as $row) {                       // results and rows implement Iterator, Countable and ArrayAccess
     printf("The keyspace %s has a table called %s\n", $row['keyspace_name'], $row['columnfamily_name']);
@@ -55,14 +54,7 @@ foreach ($result as $row) {                       // results and rows implement 
 
 ## Installation
 
-**NOTE**: You must first [install and enable the `cassandra.so` PHP extension](ext/README.md).
-
-* First, [get composer](https://getcomposer.org/).
-* Then, install the DataStax PHP Driver for Apache Cassandra:
-
-```bash
-composer require datastax/php-driver 1.0.0-alpha
-```
+[Read detailed instructions on building and installing the extension](https://github.com/datastax/php-driver/blob/master/ext/README.md)
 
 ## Compatibility
 
@@ -79,7 +71,7 @@ __NOTE__: Windows support is planned for a later, more stable release.
 
 ## Contributing
 
-[Read our contribution policy](CONTRIBUTING.md) for a detailed description of the process.
+[Read our contribution policy](https://github.com/datastax/php-driver/blob/master/CONTRIBUTING.md) for a detailed description of the process.
 
 ## Code examples
 
