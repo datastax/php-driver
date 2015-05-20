@@ -47,7 +47,7 @@ BEGIN
       VALUE "LegalCopyright", "Copyright © 2015 DataStax, Inc."
       VALUE "OriginalFilename", FILE_NAME
       VALUE "ProductName", "Cassandra PHP driver " BUILD_INFORMATION
-      VALUE "ProductVersion", PHP_CASSANDRA_EXTVER
+      VALUE "ProductVersion", PHP_CASSANDRA_VERSION
       VALUE "URL", "http://www.datastax.com"
     END
   END

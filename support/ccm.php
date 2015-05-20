@@ -269,8 +269,8 @@ class CCM
 
     public function removeAllClusters()
     {
-        $clusters = $this->getClusters()['list'];
-        foreach ($clusters as $cluster) {
+        $clusters = $this->getClusters();
+        foreach ($clusters['list'] as $cluster) {
             $this->removeCluster($cluster);
         }
     }
