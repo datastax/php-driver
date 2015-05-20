@@ -21,6 +21,11 @@ namespace Cassandra;
 /**
  * Common interface implemented by all numeric types, providing basic
  * arithmetic functions.
+ *
+ * @see Bigint
+ * @see Decimal
+ * @see Float
+ * @see Varint
  */
 interface Numeric
 {
