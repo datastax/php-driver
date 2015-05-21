@@ -219,7 +219,6 @@
 
 <span class="nv">$statement</span> <span class="o">=</span> <span class="nv">$session</span><span class="o">-&gt;</span><span class="na">prepare</span><span class="p">(</span><span class="s2">"UPDATE users SET age = ? WHERE user_name = ?"</span><span class="p">);</span>
 <span class="nv">$futures</span>   <span class="o">=</span> <span class="k">array</span><span class="p">();</span>
-<span class="nv">$timeout</span>   <span class="o">=</span> <span class="mi">5</span><span class="p">;</span>
 
 <span class="c1">// execute all statements in background
 </span><span class="k">foreach</span> <span class="p">(</span><span class="nv">$data</span> <span class="k">as</span> <span class="nv">$arguments</span><span class="p">)</span> <span class="p">{</span>
@@ -394,7 +393,7 @@ EOD
 <h2 id="architecture">Architecture<a class="anchor" href="#architecture" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
 </h2>
 
-<p>The PHP Driver follows the architecture or <a href="http://datastax.github.io/cpp-driver/topics/#architecture">the C/C++ Driver</a> that it wraps.</p>
+<p>The PHP Driver follows the architecture of <a href="http://datastax.github.io/cpp-driver/topics/#architecture">the C/C++ Driver</a> that it wraps.</p>
 
 <h3 id="persistent-sessions">Persistent Sessions<a class="anchor" href="#persistent-sessions" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
 </h3>
