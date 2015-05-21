@@ -150,7 +150,6 @@ $data = array(
 
 $statement = $session->prepare("UPDATE users SET age = ? WHERE user_name = ?");
 $futures   = array();
-$timeout   = 5;
 
 // execute all statements in background
 foreach ($data as $arguments) {
