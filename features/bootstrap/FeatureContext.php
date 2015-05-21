@@ -3,6 +3,7 @@
 use Behat\Behat\Context\Context;
 use Behat\Behat\Context\SnippetAcceptingContext;
 use Behat\Gherkin\Node\PyStringNode;
+use Behat\Gherkin\Node\TableNode;
 use Symfony\Component\Process\PhpExecutableFinder;
 use Symfony\Component\Process\Process;
 
@@ -19,7 +20,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
     private $process;
     private $webServerProcess;
     private $webServerURL;
-    private $webServerRequestContents;
+    private $lastResponse;
     private $ccm;
 
     /**
@@ -67,7 +68,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
         $this->process                  = new Process(null);
         $this->webServerProcess         = null;
         $this->webServerURL             = '';
-        $this->webServerRequestContents = '';
+        $this->lastResponse             = '';
     }
 
     /**
@@ -79,7 +80,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
     {
         $this->phpBinOptions            = '';
         $this->webServerURL             = '';
-        $this->webServerRequestContents = '';
+        $this->lastResponse             = '';
 
         $this->terminateWebServer();
     }
@@ -153,20 +154,71 @@ class FeatureContext implements Context, SnippetAcceptingContext
     }
 
     /**
-     * @Given a web server on :ipPort
+     * @Given a file named :name with:
      */
-    public function aWebServerOn($ipPort)
+    public function aFileNamedWith($name, PyStringNode $string)
     {
-        $this->startWebServer($ipPort);
+        $this->createFile($this->workingDir.'/'.$name, (string) $string);
     }
 
     /**
-     * @Given a web server request on :uri:
+     * @Given a running web server
      */
-    public function aWebServerRequestOn($uri, PyStringNode $string)
+    public function aRunningWebServer()
     {
-        $this->createFile($this->workingDir.$uri.'/index.php', (string) $string);
-        $this->webServerRequestContents = file_get_contents($this->webServerURL.$uri.'/index.php');
+        $this->startWebServer();
+    }
+
+    /**
+     * @When I go to :path
+     */
+    public function iGoTo($path)
+    {
+        $this->lastResponse = file_get_contents($this->webServerURL.$path);
+    }
+
+    /**
+     * @Then I should see:
+     */
+    public function iShouldSee(TableNode $table)
+    {
+        $doc = new DOMDocument();
+        $doc->loadHTML($this->lastResponse);
+        $xpath = new DOMXpath($doc);
+        $nodes = $xpath->query("//h2/a[@name='module_cassandra']/../following-sibling::*[position()=1][name()='table']");
+        $html  = $nodes->item(0);
+        $table = $table->getRowsHash();
+
+        foreach ($html->childNodes as $tr) {
+            $name  = trim($tr->childNodes->item(0)->textContent);
+            $value = trim($tr->childNodes->item(1)->textContent);
+
+            if (isset($table[$name])) {
+                if ($value !== $table[$name]) {
+                    throw new Exception(sprintf(
+                        "Failed asserting the value of %s: %s expected, %s found",
+                        $name, $table[$name], $value
+                    ));
+                }
+                unset($table[$name]);
+            }
+        }
+
+        if (!empty($table)) {
+            throw new Exception(sprintf(
+                "Unable to find the following values %s", var_export($table, true)
+            ));
+        }
+    }
+
+    /**
+     * @When I go to :path :count times
+     */
+    public function iGoToTimes($path, $count)
+    {
+        for ($i = 0; $i < $count; $i++) {
+            $this->iGoTo($path);
+        }
     }
 
     /**
@@ -212,13 +264,14 @@ class FeatureContext implements Context, SnippetAcceptingContext
         $this->process->run();
     }
 
-    private function startWebServer($ipPort)
+    private function startWebServer()
     {
-        $this->webServerURL = 'http://' . $ipPort;
-        $this->createFile($this->workingDir.'/index.php', "<?php\nphpinfo();");
-        $command = sprintf('%s -S %s %s %s', $this->phpBin, $ipPort, $this->phpBinOptions, 'index.php');
+        $this->webServerURL = 'http://localhost:4312';
+        $command = sprintf('%s -S %s %s', $this->phpBin, 'localhost:4312', $this->phpBinOptions);
+        echo $command . "\n";
         $this->webServerProcess = new Process($command, $this->workingDir);
         $this->webServerProcess->start();
+        sleep(5);
         echo 'Web Server Started: ' . $this->webServerProcess->getPid() . "\n";
     }
 
@@ -237,14 +290,6 @@ class FeatureContext implements Context, SnippetAcceptingContext
     public function itsOutputShouldContain(PyStringNode $string)
     {
         PHPUnit_Framework_Assert::assertContains((string) $string, $this->getOutput());
-    }
-
-    /**
-     * @Then the request output should contain:
-     */
-    public function theRequestOutputShouldContain(PyStringNode $string)
-    {
-        PHPUnit_Framework_Assert::assertContains((string) $string, $this->webServerRequestContents);
     }
 
     /**

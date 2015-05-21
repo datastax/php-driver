@@ -5,24 +5,50 @@ Feature: Persistent Sessions
 
   Background:
     Given a running Cassandra cluster
-    And a web server on "127.0.0.1:4321"
-
-  Scenario: A persistent session can be created
-    Given a web server request on "/create":
-      """
+    And a file named "status.php" with:
+      """php
       <?php
+
+      echo phpinfo();
+      """
+    And a running web server
+
+  Scenario: No sessions have been created
+    When I go to "/status.php"
+    Then I should see:
+      | Persistent Clusters | 0 |
+      | Persistent Sessions | 0 |
+
+  Scenario: A single session is re-used for all requests
+    Given a file named "connect.php" with:
+      """php
+      <?php
+
       $cluster = Cassandra::cluster()
                          ->withContactPoints('127.0.0.1')
                          ->withPersistentSessions(true)
                          ->build();
       $session = $cluster->connect();
       """
-    And a web server request on "/info":
-      """
+    When I go to "/connect.php" 5 times
+    When I go to "/status.php"
+    Then I should see:
+      | Persistent Clusters | 1 |
+      | Persistent Sessions | 1 |
+
+  Scenario: Non-persistent sessions are recreated for each request
+    Given a file named "connect.php" with:
+      """php
       <?php
-      phpinfo();
+
+      $cluster = Cassandra::cluster()
+                         ->withContactPoints('127.0.0.1')
+                         ->withPersistentSessions(false)
+                         ->build();
+      $session = $cluster->connect();
       """
-    Then the request output should contain:
-      """
-      Persistent Sessions 1
-      """
+    When I go to "/connect.php"
+    When I go to "/status.php"
+    Then I should see:
+      | Persistent Clusters | 0 |
+      | Persistent Sessions | 0 |
