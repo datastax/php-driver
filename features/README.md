@@ -341,7 +341,7 @@ Most of the logging will be when the driver connects and discovers new nodes, wh
 
 ## Architecture
 
-The PHP Driver follows the architecture or [the C/C++ Driver](http://datastax.github.io/cpp-driver/topics/#architecture) that it wraps.
+The PHP Driver follows the architecture of [the C/C++ Driver](http://datastax.github.io/cpp-driver/topics/#architecture) that it wraps.
 
 ### Persistent Sessions
 
