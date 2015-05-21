@@ -18,7 +18,76 @@ $session = $cluster->connect();
 
 ### Discovering nodes in the cluster
 
-After the initial connection to one of the hosts specified via `withContactPoints` succeeded, the driver discovers the addresses and connects to all members of the cluster automatically. You can also see the nodes that the driver discovered by running `SELECT * FROM system.peers`.
+After the initial connection to one of the hosts specified via `withContactPoints()` succeeded, the driver discovers the addresses and connects to all members of the cluster automatically. You can also see the nodes that the driver discovered by running `SELECT * FROM system.peers`.
+
+### Configuring load balancing policy
+
+PHP Driver comes with a variety of load balancing policies. By default it uses a combination of token aware data center round robin.
+
+The token aware load balancing policy uses the same hashing algorithms as the Apache Cassandra to route prepared statements execution directly to replica nodes, avoiding an additional network hop to/from the coordinator. You can toggle its usage with [`Cassandra\Cluster\Builder::withTokenAwareRouting()`](http://datastax.github.io/php-driver/api/class/Cassandra/Cluster/Builder/#with-token-aware-routing).
+
+```php
+<?php
+
+$cluster = Cassandra::cluster()
+               ->withTokenAwareRouting(false)
+               ->build();
+$session = $cluster->connect();
+```
+
+The default datacenter aware round robin load balancing policy is configured to keep all traffic in the same datacenter. Upon connecting to a host from the initial list of contact points, the driver will consider that host's datacenter to be local. Only hosts from the same datacenter will be connected to and used for executing statements. You can override the name of the local datacenter. The number of hosts from remote datacenters that the driver may use and whether it should execute statements with local consistencies on those hosts in case none of the local hosts are available. All of that is configurable via [`Cassandra\Cluster\Builder::withDatacenterAwareRoundRobinLoadBalancingPolicy()`](http://datastax.github.io/php-driver/api/class/Cassandra/Cluster/Builder/#with-datacenter-aware-round-robin-load-balancing-policy).
+
+```php
+<?php
+
+$cluster = Cassandra::cluster()
+               ->withDatacenterAwareRoundRobinLoadBalancingPolicy("us-west", 2, true)
+               ->build();
+$session = $cluster->connect();
+```
+
+Finally, you may disable datacenter awareness by calling [`Cassandra\Cluster\Builder::withRoundRobinLoadBalancingPolicy()`](http://datastax.github.io/php-driver/api/class/Cassandra/Cluster/Builder/#with-round-robin-load-balancing-policy).
+
+```php
+<?php
+
+$cluster = Cassandra::cluster()
+               ->withRoundRobinLoadBalancingPolicy()
+               ->build();
+$session = $cluster->connect();
+```
+
+### Authenticating via `PasswordAuthenticator`
+
+The PHP Driver supports Apache Cassandra's built-in password authentication mechanism. To enable it, use [`Cassandra\Cluster\Builder::withCredentials()`](http://datastax.github.io/php-driver/api/class/Cassandra/Cluster/Builder/#with-credentials).
+
+```php
+<?php
+
+$cluster = Cassandra::cluster()
+               ->withCredentials("username", "password")
+               ->build();
+$session = $cluster->connect();
+```
+
+### Enabling SSL encryption
+
+The PHP Driver supports SSL encryption of network connections. You must configure [`Cassandra\SSLOptions`](http://datastax.github.io/php-driver/api/class/Cassandra/SSLOptions/) using the [`Cassandra\SSLOptions\Builder`](http://datastax.github.io/php-driver/api/class/Cassandra/SSLOptions/Builder/).
+
+```php
+<?php
+
+$ssl     = Cassandra::ssl()
+               ->withTrustedCerts('node1.pem', 'node2.pem')
+               ->withVerifyFlags(Cassandra::VERIFY_PEER_CERT | Cassandra::VERIFY_PEER_IDENTITY)
+               ->withClientCert('client.pem')
+               ->withPrivateKey('id_rsa', 'passphrase')
+               ->build()
+$cluster = Cassandra::cluster()
+               ->withSSL($ssl)
+               ->build();
+$session = $cluster->connect();
+```
 
 ### Executing queries
 
@@ -30,7 +99,7 @@ You run CQL statements by passing them to [`Cassandra\Session::execute()`](http:
 $result = $session->execute(new Cassandra\SimpleStatement('SELECT keyspace_name, columnfamily_name FROM system.schema_columnfamilies'));
 
 foreach ($result as $row) {
-  sprintf("The keyspace \"%s\" has a table \"%s\".\n", $row['keyspace_name'], $row['columnfamily_name']);
+    sprintf("The keyspace \"%s\" has a table \"%s\".\n", $row['keyspace_name'], $row['columnfamily_name']);
 }
 ```
 
@@ -42,10 +111,10 @@ foreach ($result as $row) {
 <?php
 
 $session->execute(
-  new Cassandra\SimpleStatement("UPDATE users SET age = ? WHERE user_name = ?"),
-  new Cassandra\ExecutionOptions(array(
-    'arguments' => array(41, 'Sam')
-  ))
+    new Cassandra\SimpleStatement("UPDATE users SET age = ? WHERE user_name = ?"),
+    new Cassandra\ExecutionOptions(array(
+        'arguments' => array(41, 'Sam')
+    ))
 );
 ```
 
@@ -61,7 +130,7 @@ The driver supports prepared statements. Use [`Cassandra\Session::prepare()`](ht
 $statement = $session->prepare('INSERT INTO users (username, email) VALUES (?, ?)');
 
 $session->execute($statement, new Cassandra\ExecutionOptions(array(
-  'arguments' => array('avalanche123', 'bulat.shakirzyanov@datastax.com')
+    'arguments' => array('avalanche123', 'bulat.shakirzyanov@datastax.com')
 )));
 ```
 
@@ -75,8 +144,8 @@ With fully asynchronous api, it is very easy to run queries in parallel:
 <?php
 
 $data = array(
-  array(41, 'Sam'),
-  array(35, 'Bob')
+    array(41, 'Sam'),
+    array(35, 'Bob')
 );
 
 $statement = $session->prepare("UPDATE users SET age = ? WHERE user_name = ?");
@@ -85,15 +154,15 @@ $timeout   = 5;
 
 // execute all statements in background
 foreach ($data as $arguments) {
-  $futures[]= $session->executeAsync($statement, new ExecutionOptions(
-                'arguments' => $arguments
-              ));
+    $futures[]= $session->executeAsync($statement, new ExecutionOptions(
+                    'arguments' => $arguments
+                ));
 }
 
 // wait for all statements to complete
 foreach ($futures as $future) {
-  // we will not wait for each result for more than 5 seconds
-  $future->get(5);
+    // we will not wait for each result for more than 5 seconds
+    $future->get(5);
 }
 ```
 
@@ -171,7 +240,20 @@ Cassandra 1.2 also supported batching, but only as a CQL feature, you had to bui
 
 ### Result paging
 
-If you're using Cassandra 2.0 or later you can page your query results by adding the `page_size` option to [`Cassandra\ExecutionOptions`](http://datastax.github.io/php-driver/api/class/Cassandra/ExecutionOptions/):
+**If you're using Cassandra 2.0** or later you can page your query results.
+
+By default, a page size of 10000 will be used, you can override the default page size via [`Cassandra\Cluster\Builder::withDefaultPageSize()`](http://datastax.github.io/php-driver/api/class/Cassandra/Cluster/Builder/#with-default-page-size).
+
+```php
+<?php
+
+$cluster = Cassandra::cluster()
+               ->withDefaultPageSize(200)
+               ->build();
+$session = $cluster->connect();
+```
+
+You can also override the page size on a per-execute basis by adding the `page_size` option to [`Cassandra\ExecutionOptions`](http://datastax.github.io/php-driver/api/class/Cassandra/ExecutionOptions/):
 
 ```php
 <?php
@@ -180,10 +262,10 @@ $statement = new Cassandra\SimpleStatement("SELECT * FROM large_table WHERE id =
 $result    = $session->execute($statement, new Cassandra\ExecutionOptions(array('page_size' => 100)));
 
 while ($result) {
-  foreach ($result as $row) {
-    var_dump($row);
-  }
-  $result = $result->nextPage();
+    foreach ($result as $row) {
+        var_dump($row);
+    }
+    $result = $result->nextPage();
 }
 ```
 
@@ -210,24 +292,25 @@ Consistency can also be passed via `Cassandra\ExecutionOptions`.
 <?php
 
 $session->execute(
-  new Cassandra\SimpleStatement('SELECT * FROM users'),
-  new Cassandra\ExecutionOptions(array('consistency' => Cassandra::CONSISTENCY_LOCAL_QUORUM))
+    new Cassandra\SimpleStatement('SELECT * FROM users'),
+    new Cassandra\ExecutionOptions(array('consistency' => Cassandra::CONSISTENCY_LOCAL_QUORUM))
 );
 
 $statement = $session->prepare('SELECT * FROM users');
 $session->execute($statement, new Cassandra\ExecutionOptions(array(
-  'consistency' => Cassandra::CONSISTENCY_LOCAL_QUORUM
+    'consistency' => Cassandra::CONSISTENCY_LOCAL_QUORUM
 )));
 
 $batch = new Cassandra\BatchStatement();
 $batch->add(new Cassandra\SimpleStatement("UPDATE users SET email = 'sue@foobar.com' WHERE id = 'sue'"));
 $batch->add(new Cassandra\SimpleStatement("UPDATE users SET email = 'tom@foobar.com' WHERE id = 'tom'"));
 $session->execute($batch, new Cassandra\ExecutionOptions(array(
-  'consistency' => Cassandra::CONSISTENCY_LOCAL_QUORUM
+    'consistency' => Cassandra::CONSISTENCY_LOCAL_QUORUM
 )));
 ```
 
 [Read more about `Cassandra\ExecutionOptions`](http://datastax.github.io/php-driver/api/class/Cassandra/ExecutionOptions/)
+
 [Read more about `Cassandra\Session::execute()`](http://datastax.github.io/php-driver/api/interface/Cassandra/Session/#execute)
 
 The default consistency level unless you've set it yourself is `Cassandra::CONSISTENCY_ONE`.
