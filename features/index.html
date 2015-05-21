@@ -107,6 +107,21 @@
 
 <p>After the initial connection to one of the hosts specified via <code>withContactPoints()</code> succeeded, the driver discovers the addresses and connects to all members of the cluster automatically. You can also see the nodes that the driver discovered by running <code>SELECT * FROM system.peers</code>.</p>
 
+<h3 id="persistent-sessions">Persistent sessions<a class="anchor" href="#persistent-sessions" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+</h3>
+
+<p>In order to limit the startup time and total number of connections to a Cassandra cluster, the PHP Driver enabled persistent sessions by default. All cluster and sessions using the same initial configuration will be shared across requests when persistent sessions are enabled. You can toggle this setting using <a href="../api/class/Cassandra/Cluster/Builder/#with-persistent-sessions"><code>Cassandra\Cluster\Builder::withPersistentSessions()</code></a>.</p>
+<pre class="highlight"><code><span class="cp">&lt;?php</span>
+
+<span class="nv">$cluster</span> <span class="o">=</span> <span class="nx">Cassandra</span><span class="o">::</span><span class="na">cluster</span><span class="p">()</span>
+               <span class="o">-&gt;</span><span class="na">withPersistentSessions</span><span class="p">(</span><span class="kc">false</span><span class="p">)</span>
+               <span class="o">-&gt;</span><span class="na">build</span><span class="p">();</span>
+<span class="nv">$session</span> <span class="o">=</span> <span class="nv">$cluster</span><span class="o">-&gt;</span><span class="na">connect</span><span class="p">();</span>
+</code></pre>
+<p>Note that disabling persistent sessions will cause significant slow down of cluster initialization as the connections will be forced to get re-established for every request.</p>
+
+<p>Once persistent sessions are enabled, you can view how many of them are currently active. They will be exposed in the Cassandra extension section of <code>phpinfo()</code>.</p>
+
 <h3 id="configuring-load-balancing-policy">Configuring load balancing policy<a class="anchor" href="#configuring-load-balancing-policy" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
 </h3>
 
@@ -421,6 +436,8 @@ EOD
 <li><a href="#specifying-addresses-of-cassandra-nodes">Specifying addresses of Cassandra nodes
 </a></li>
 <li><a href="#discovering-nodes-in-the-cluster">Discovering nodes in the cluster
+</a></li>
+<li><a href="#persistent-sessions">Persistent sessions
 </a></li>
 <li><a href="#configuring-load-balancing-policy">Configuring load balancing policy
 </a></li>
