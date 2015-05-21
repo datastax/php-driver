@@ -761,7 +761,7 @@ php_cassandra_default_session_new(zend_class_entry* class_type TSRMLS_DC)
   session->session             = NULL;
   session->persist             = 0;
   session->default_consistency = CASS_CONSISTENCY_ONE;
-  session->default_page_size   = 10000;
+  session->default_page_size   = 5000;
   session->default_timeout     = NULL;
 
   retval.handle   = zend_objects_store_put(session,

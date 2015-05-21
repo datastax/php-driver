@@ -258,7 +258,7 @@ Cassandra 1.2 also supported batching, but only as a CQL feature, you had to bui
 
 **If you're using Cassandra 2.0** or later you can page your query results.
 
-By default, a page size of 10000 will be used, you can override the default page size via [`Cassandra\Cluster\Builder::withDefaultPageSize()`](http://datastax.github.io/php-driver/api/class/Cassandra/Cluster/Builder/#with-default-page-size).
+By default, a page size of 5000 will be used, you can override the default page size via [`Cassandra\Cluster\Builder::withDefaultPageSize()`](http://datastax.github.io/php-driver/api/class/Cassandra/Cluster/Builder/#with-default-page-size).
 
 ```php
 <?php

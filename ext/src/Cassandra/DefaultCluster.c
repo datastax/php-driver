@@ -221,7 +221,7 @@ php_cassandra_default_cluster_new(zend_class_entry* class_type TSRMLS_DC)
 
   cluster->cluster             = NULL;
   cluster->default_consistency = CASS_CONSISTENCY_ONE;
-  cluster->default_page_size   = 10000;
+  cluster->default_page_size   = 5000;
   cluster->default_timeout     = NULL;
   cluster->persist             = 0;
   cluster->hash_key            = NULL;

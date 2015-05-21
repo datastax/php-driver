@@ -615,7 +615,7 @@ php_cassandra_cluster_builder_new(zend_class_entry* class_type TSRMLS_DC)
   builder->request_timeout = 12000;
   builder->ssl_options = NULL;
   builder->default_consistency = CASS_CONSISTENCY_ONE;
-  builder->default_page_size = 10000;
+  builder->default_page_size = 5000;
   builder->default_timeout = NULL;
   builder->persist = 1;
 
