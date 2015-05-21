@@ -105,8 +105,66 @@
 <h3 id="discovering-nodes-in-the-cluster">Discovering nodes in the cluster<a class="anchor" href="#discovering-nodes-in-the-cluster" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
 </h3>
 
-<p>After the initial connection to one of the hosts specified via <code>withContactPoints</code> succeeded, the driver discovers the addresses and connects to all members of the cluster automatically. You can also see the nodes that the driver discovered by running <code>SELECT * FROM system.peers</code>.</p>
+<p>After the initial connection to one of the hosts specified via <code>withContactPoints()</code> succeeded, the driver discovers the addresses and connects to all members of the cluster automatically. You can also see the nodes that the driver discovered by running <code>SELECT * FROM system.peers</code>.</p>
 
+<h3 id="configuring-load-balancing-policy">Configuring load balancing policy<a class="anchor" href="#configuring-load-balancing-policy" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+</h3>
+
+<p>PHP Driver comes with a variety of load balancing policies. By default it uses a combination of token aware data center round robin.</p>
+
+<p>The token aware load balancing policy uses the same hashing algorithms as the Apache Cassandra to route prepared statements execution directly to replica nodes, avoiding an additional network hop to/from the coordinator. You can toggle its usage with <a href="../api/class/Cassandra/Cluster/Builder/#with-token-aware-routing"><code>Cassandra\Cluster\Builder::withTokenAwareRouting()</code></a>.</p>
+<pre class="highlight"><code><span class="cp">&lt;?php</span>
+
+<span class="nv">$cluster</span> <span class="o">=</span> <span class="nx">Cassandra</span><span class="o">::</span><span class="na">cluster</span><span class="p">()</span>
+               <span class="o">-&gt;</span><span class="na">withTokenAwareRouting</span><span class="p">(</span><span class="kc">false</span><span class="p">)</span>
+               <span class="o">-&gt;</span><span class="na">build</span><span class="p">();</span>
+<span class="nv">$session</span> <span class="o">=</span> <span class="nv">$cluster</span><span class="o">-&gt;</span><span class="na">connect</span><span class="p">();</span>
+</code></pre>
+<p>The default datacenter aware round robin load balancing policy is configured to keep all traffic in the same datacenter. Upon connecting to a host from the initial list of contact points, the driver will consider that host’s datacenter to be local. Only hosts from the same datacenter will be connected to and used for executing statements. You can override the name of the local datacenter. The number of hosts from remote datacenters that the driver may use and whether it should execute statements with local consistencies on those hosts in case none of the local hosts are available. All of that is configurable via <a href="../api/class/Cassandra/Cluster/Builder/#with-datacenter-aware-round-robin-load-balancing-policy"><code>Cassandra\Cluster\Builder::withDatacenterAwareRoundRobinLoadBalancingPolicy()</code></a>.</p>
+<pre class="highlight"><code><span class="cp">&lt;?php</span>
+
+<span class="nv">$cluster</span> <span class="o">=</span> <span class="nx">Cassandra</span><span class="o">::</span><span class="na">cluster</span><span class="p">()</span>
+               <span class="o">-&gt;</span><span class="na">withDatacenterAwareRoundRobinLoadBalancingPolicy</span><span class="p">(</span><span class="s2">"us-west"</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="kc">true</span><span class="p">)</span>
+               <span class="o">-&gt;</span><span class="na">build</span><span class="p">();</span>
+<span class="nv">$session</span> <span class="o">=</span> <span class="nv">$cluster</span><span class="o">-&gt;</span><span class="na">connect</span><span class="p">();</span>
+</code></pre>
+<p>Finally, you may disable datacenter awareness by calling <a href="../api/class/Cassandra/Cluster/Builder/#with-round-robin-load-balancing-policy"><code>Cassandra\Cluster\Builder::withRoundRobinLoadBalancingPolicy()</code></a>.</p>
+<pre class="highlight"><code><span class="cp">&lt;?php</span>
+
+<span class="nv">$cluster</span> <span class="o">=</span> <span class="nx">Cassandra</span><span class="o">::</span><span class="na">cluster</span><span class="p">()</span>
+               <span class="o">-&gt;</span><span class="na">withRoundRobinLoadBalancingPolicy</span><span class="p">()</span>
+               <span class="o">-&gt;</span><span class="na">build</span><span class="p">();</span>
+<span class="nv">$session</span> <span class="o">=</span> <span class="nv">$cluster</span><span class="o">-&gt;</span><span class="na">connect</span><span class="p">();</span>
+</code></pre>
+<h3 id="authenticating-via-password-authenticator">Authenticating via <code>PasswordAuthenticator</code>
+<a class="anchor" href="#authenticating-via-password-authenticator" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+</h3>
+
+<p>The PHP Driver supports Apache Cassandra’s built-in password authentication mechanism. To enable it, use <a href="../api/class/Cassandra/Cluster/Builder/#with-credentials"><code>Cassandra\Cluster\Builder::withCredentials()</code></a>.</p>
+<pre class="highlight"><code><span class="cp">&lt;?php</span>
+
+<span class="nv">$cluster</span> <span class="o">=</span> <span class="nx">Cassandra</span><span class="o">::</span><span class="na">cluster</span><span class="p">()</span>
+               <span class="o">-&gt;</span><span class="na">withCredentials</span><span class="p">(</span><span class="s2">"username"</span><span class="p">,</span> <span class="s2">"password"</span><span class="p">)</span>
+               <span class="o">-&gt;</span><span class="na">build</span><span class="p">();</span>
+<span class="nv">$session</span> <span class="o">=</span> <span class="nv">$cluster</span><span class="o">-&gt;</span><span class="na">connect</span><span class="p">();</span>
+</code></pre>
+<h3 id="enabling-ssl-encryption">Enabling SSL encryption<a class="anchor" href="#enabling-ssl-encryption" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+</h3>
+
+<p>The PHP Driver supports SSL encryption of network connections. You must configure <a href="../api/class/Cassandra/SSLOptions/"><code>Cassandra\SSLOptions</code></a> using the <a href="../api/class/Cassandra/SSLOptions/Builder/"><code>Cassandra\SSLOptions\Builder</code></a>.</p>
+<pre class="highlight"><code><span class="cp">&lt;?php</span>
+
+<span class="nv">$ssl</span>     <span class="o">=</span> <span class="nx">Cassandra</span><span class="o">::</span><span class="na">ssl</span><span class="p">()</span>
+               <span class="o">-&gt;</span><span class="na">withTrustedCerts</span><span class="p">(</span><span class="s1">'node1.pem'</span><span class="p">,</span> <span class="s1">'node2.pem'</span><span class="p">)</span>
+               <span class="o">-&gt;</span><span class="na">withVerifyFlags</span><span class="p">(</span><span class="nx">Cassandra</span><span class="o">::</span><span class="na">VERIFY_PEER_CERT</span> <span class="o">|</span> <span class="nx">Cassandra</span><span class="o">::</span><span class="na">VERIFY_PEER_IDENTITY</span><span class="p">)</span>
+               <span class="o">-&gt;</span><span class="na">withClientCert</span><span class="p">(</span><span class="s1">'client.pem'</span><span class="p">)</span>
+               <span class="o">-&gt;</span><span class="na">withPrivateKey</span><span class="p">(</span><span class="s1">'id_rsa'</span><span class="p">,</span> <span class="s1">'passphrase'</span><span class="p">)</span>
+               <span class="o">-&gt;</span><span class="na">build</span><span class="p">()</span>
+<span class="nv">$cluster</span> <span class="o">=</span> <span class="nx">Cassandra</span><span class="o">::</span><span class="na">cluster</span><span class="p">()</span>
+               <span class="o">-&gt;</span><span class="na">withSSL</span><span class="p">(</span><span class="nv">$ssl</span><span class="p">)</span>
+               <span class="o">-&gt;</span><span class="na">build</span><span class="p">();</span>
+<span class="nv">$session</span> <span class="o">=</span> <span class="nv">$cluster</span><span class="o">-&gt;</span><span class="na">connect</span><span class="p">();</span>
+</code></pre>
 <h3 id="executing-queries">Executing queries<a class="anchor" href="#executing-queries" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
 </h3>
 
@@ -116,7 +174,7 @@
 <span class="nv">$result</span> <span class="o">=</span> <span class="nv">$session</span><span class="o">-&gt;</span><span class="na">execute</span><span class="p">(</span><span class="k">new</span> <span class="nx">Cassandra\SimpleStatement</span><span class="p">(</span><span class="s1">'SELECT keyspace_name, columnfamily_name FROM system.schema_columnfamilies'</span><span class="p">));</span>
 
 <span class="k">foreach</span> <span class="p">(</span><span class="nv">$result</span> <span class="k">as</span> <span class="nv">$row</span><span class="p">)</span> <span class="p">{</span>
-  <span class="nb">sprintf</span><span class="p">(</span><span class="s2">"The keyspace </span><span class="se">\"</span><span class="s2">%s</span><span class="se">\"</span><span class="s2"> has a table </span><span class="se">\"</span><span class="s2">%s</span><span class="se">\"</span><span class="s2">.</span><span class="se">\n</span><span class="s2">"</span><span class="p">,</span> <span class="nv">$row</span><span class="p">[</span><span class="s1">'keyspace_name'</span><span class="p">],</span> <span class="nv">$row</span><span class="p">[</span><span class="s1">'columnfamily_name'</span><span class="p">]);</span>
+    <span class="nb">sprintf</span><span class="p">(</span><span class="s2">"The keyspace </span><span class="se">\"</span><span class="s2">%s</span><span class="se">\"</span><span class="s2"> has a table </span><span class="se">\"</span><span class="s2">%s</span><span class="se">\"</span><span class="s2">.</span><span class="se">\n</span><span class="s2">"</span><span class="p">,</span> <span class="nv">$row</span><span class="p">[</span><span class="s1">'keyspace_name'</span><span class="p">],</span> <span class="nv">$row</span><span class="p">[</span><span class="s1">'columnfamily_name'</span><span class="p">]);</span>
 <span class="p">}</span>
 </code></pre>
 <h3 id="parameterized-queries">Parameterized queries<a class="anchor" href="#parameterized-queries" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
@@ -126,10 +184,10 @@
 <pre class="highlight"><code><span class="cp">&lt;?php</span>
 
 <span class="nv">$session</span><span class="o">-&gt;</span><span class="na">execute</span><span class="p">(</span>
-  <span class="k">new</span> <span class="nx">Cassandra\SimpleStatement</span><span class="p">(</span><span class="s2">"UPDATE users SET age = ? WHERE user_name = ?"</span><span class="p">),</span>
-  <span class="k">new</span> <span class="nx">Cassandra\ExecutionOptions</span><span class="p">(</span><span class="k">array</span><span class="p">(</span>
-    <span class="s1">'arguments'</span> <span class="o">=&gt;</span> <span class="k">array</span><span class="p">(</span><span class="mi">41</span><span class="p">,</span> <span class="s1">'Sam'</span><span class="p">)</span>
-  <span class="p">))</span>
+    <span class="k">new</span> <span class="nx">Cassandra\SimpleStatement</span><span class="p">(</span><span class="s2">"UPDATE users SET age = ? WHERE user_name = ?"</span><span class="p">),</span>
+    <span class="k">new</span> <span class="nx">Cassandra\ExecutionOptions</span><span class="p">(</span><span class="k">array</span><span class="p">(</span>
+        <span class="s1">'arguments'</span> <span class="o">=&gt;</span> <span class="k">array</span><span class="p">(</span><span class="mi">41</span><span class="p">,</span> <span class="s1">'Sam'</span><span class="p">)</span>
+    <span class="p">))</span>
 <span class="p">);</span>
 </code></pre>
 <p>If you find yourself doing this often, it’s better to use prepared statements. As a rule of thumb, if your application is sending a request more than once, a prepared statement is almost always the right choice.</p>
@@ -143,7 +201,7 @@
 <span class="nv">$statement</span> <span class="o">=</span> <span class="nv">$session</span><span class="o">-&gt;</span><span class="na">prepare</span><span class="p">(</span><span class="s1">'INSERT INTO users (username, email) VALUES (?, ?)'</span><span class="p">);</span>
 
 <span class="nv">$session</span><span class="o">-&gt;</span><span class="na">execute</span><span class="p">(</span><span class="nv">$statement</span><span class="p">,</span> <span class="k">new</span> <span class="nx">Cassandra\ExecutionOptions</span><span class="p">(</span><span class="k">array</span><span class="p">(</span>
-  <span class="s1">'arguments'</span> <span class="o">=&gt;</span> <span class="k">array</span><span class="p">(</span><span class="s1">'avalanche123'</span><span class="p">,</span> <span class="s1">'bulat.shakirzyanov@datastax.com'</span><span class="p">)</span>
+    <span class="s1">'arguments'</span> <span class="o">=&gt;</span> <span class="k">array</span><span class="p">(</span><span class="s1">'avalanche123'</span><span class="p">,</span> <span class="s1">'bulat.shakirzyanov@datastax.com'</span><span class="p">)</span>
 <span class="p">)));</span>
 </code></pre>
 <p>A prepared statement can be run many times, but the CQL parsing will only be done once on each node. Use prepared statements for queries you run over and over again.</p>
@@ -155,8 +213,8 @@
 <pre class="highlight"><code><span class="cp">&lt;?php</span>
 
 <span class="nv">$data</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span>
-  <span class="k">array</span><span class="p">(</span><span class="mi">41</span><span class="p">,</span> <span class="s1">'Sam'</span><span class="p">),</span>
-  <span class="k">array</span><span class="p">(</span><span class="mi">35</span><span class="p">,</span> <span class="s1">'Bob'</span><span class="p">)</span>
+    <span class="k">array</span><span class="p">(</span><span class="mi">41</span><span class="p">,</span> <span class="s1">'Sam'</span><span class="p">),</span>
+    <span class="k">array</span><span class="p">(</span><span class="mi">35</span><span class="p">,</span> <span class="s1">'Bob'</span><span class="p">)</span>
 <span class="p">);</span>
 
 <span class="nv">$statement</span> <span class="o">=</span> <span class="nv">$session</span><span class="o">-&gt;</span><span class="na">prepare</span><span class="p">(</span><span class="s2">"UPDATE users SET age = ? WHERE user_name = ?"</span><span class="p">);</span>
@@ -165,15 +223,15 @@
 
 <span class="c1">// execute all statements in background
 </span><span class="k">foreach</span> <span class="p">(</span><span class="nv">$data</span> <span class="k">as</span> <span class="nv">$arguments</span><span class="p">)</span> <span class="p">{</span>
-  <span class="nv">$futures</span><span class="p">[]</span><span class="o">=</span> <span class="nv">$session</span><span class="o">-&gt;</span><span class="na">executeAsync</span><span class="p">(</span><span class="nv">$statement</span><span class="p">,</span> <span class="k">new</span> <span class="nx">ExecutionOptions</span><span class="p">(</span>
-                <span class="s1">'arguments'</span> <span class="o">=&gt;</span> <span class="nv">$arguments</span>
-              <span class="p">));</span>
+    <span class="nv">$futures</span><span class="p">[]</span><span class="o">=</span> <span class="nv">$session</span><span class="o">-&gt;</span><span class="na">executeAsync</span><span class="p">(</span><span class="nv">$statement</span><span class="p">,</span> <span class="k">new</span> <span class="nx">ExecutionOptions</span><span class="p">(</span>
+                    <span class="s1">'arguments'</span> <span class="o">=&gt;</span> <span class="nv">$arguments</span>
+                <span class="p">));</span>
 <span class="p">}</span>
 
 <span class="c1">// wait for all statements to complete
 </span><span class="k">foreach</span> <span class="p">(</span><span class="nv">$futures</span> <span class="k">as</span> <span class="nv">$future</span><span class="p">)</span> <span class="p">{</span>
-  <span class="c1">// we will not wait for each result for more than 5 seconds
-</span>  <span class="nv">$future</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="mi">5</span><span class="p">);</span>
+    <span class="c1">// we will not wait for each result for more than 5 seconds
+</span>    <span class="nv">$future</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="mi">5</span><span class="p">);</span>
 <span class="p">}</span>
 </code></pre>
 <p>Note that it is not enough to simply create a <a href="../api/interface/Cassandra/Future/"><code>Cassandra\Future</code></a> by calling one of the <code>*Async()</code> methods, you must ensure that this future has enough time to be executed by calling <a href="../api/interface/Cassandra/Future/#get"><code>Cassandra\Future::get()</code></a>.</p>
@@ -244,17 +302,27 @@ EOD
 <h3 id="result-paging">Result paging<a class="anchor" href="#result-paging" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
 </h3>
 
-<p>If you’re using Cassandra 2.0 or later you can page your query results by adding the <code>page_size</code> option to <a href="../api/class/Cassandra/ExecutionOptions/"><code>Cassandra\ExecutionOptions</code></a>:</p>
+<p><strong>If you’re using Cassandra 2.0</strong> or later you can page your query results.</p>
+
+<p>By default, a page size of 10000 will be used, you can override the default page size via <a href="../api/class/Cassandra/Cluster/Builder/#with-default-page-size"><code>Cassandra\Cluster\Builder::withDefaultPageSize()</code></a>.</p>
+<pre class="highlight"><code><span class="cp">&lt;?php</span>
+
+<span class="nv">$cluster</span> <span class="o">=</span> <span class="nx">Cassandra</span><span class="o">::</span><span class="na">cluster</span><span class="p">()</span>
+               <span class="o">-&gt;</span><span class="na">withDefaultPageSize</span><span class="p">(</span><span class="mi">200</span><span class="p">)</span>
+               <span class="o">-&gt;</span><span class="na">build</span><span class="p">();</span>
+<span class="nv">$session</span> <span class="o">=</span> <span class="nv">$cluster</span><span class="o">-&gt;</span><span class="na">connect</span><span class="p">();</span>
+</code></pre>
+<p>You can also override the page size on a per-execute basis by adding the <code>page_size</code> option to <a href="../api/class/Cassandra/ExecutionOptions/"><code>Cassandra\ExecutionOptions</code></a>:</p>
 <pre class="highlight"><code><span class="cp">&lt;?php</span>
 
 <span class="nv">$statement</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Cassandra\SimpleStatement</span><span class="p">(</span><span class="s2">"SELECT * FROM large_table WHERE id = 'partition_with_lots_of_data'"</span><span class="p">);</span>
 <span class="nv">$result</span>    <span class="o">=</span> <span class="nv">$session</span><span class="o">-&gt;</span><span class="na">execute</span><span class="p">(</span><span class="nv">$statement</span><span class="p">,</span> <span class="k">new</span> <span class="nx">Cassandra\ExecutionOptions</span><span class="p">(</span><span class="k">array</span><span class="p">(</span><span class="s1">'page_size'</span> <span class="o">=&gt;</span> <span class="mi">100</span><span class="p">)));</span>
 
 <span class="k">while</span> <span class="p">(</span><span class="nv">$result</span><span class="p">)</span> <span class="p">{</span>
-  <span class="k">foreach</span> <span class="p">(</span><span class="nv">$result</span> <span class="k">as</span> <span class="nv">$row</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nb">var_dump</span><span class="p">(</span><span class="nv">$row</span><span class="p">);</span>
-  <span class="p">}</span>
-  <span class="nv">$result</span> <span class="o">=</span> <span class="nv">$result</span><span class="o">-&gt;</span><span class="na">nextPage</span><span class="p">();</span>
+    <span class="k">foreach</span> <span class="p">(</span><span class="nv">$result</span> <span class="k">as</span> <span class="nv">$row</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nb">var_dump</span><span class="p">(</span><span class="nv">$row</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="nv">$result</span> <span class="o">=</span> <span class="nv">$result</span><span class="o">-&gt;</span><span class="na">nextPage</span><span class="p">();</span>
 <span class="p">}</span>
 </code></pre>
 <p><a href="../api/class/Cassandra/Rows/#next-page">Read more about <code>Cassandra\Rows::nextPage()</code></a></p>
@@ -276,24 +344,25 @@ EOD
 <pre class="highlight"><code><span class="cp">&lt;?php</span>
 
 <span class="nv">$session</span><span class="o">-&gt;</span><span class="na">execute</span><span class="p">(</span>
-  <span class="k">new</span> <span class="nx">Cassandra\SimpleStatement</span><span class="p">(</span><span class="s1">'SELECT * FROM users'</span><span class="p">),</span>
-  <span class="k">new</span> <span class="nx">Cassandra\ExecutionOptions</span><span class="p">(</span><span class="k">array</span><span class="p">(</span><span class="s1">'consistency'</span> <span class="o">=&gt;</span> <span class="nx">Cassandra</span><span class="o">::</span><span class="na">CONSISTENCY_LOCAL_QUORUM</span><span class="p">))</span>
+    <span class="k">new</span> <span class="nx">Cassandra\SimpleStatement</span><span class="p">(</span><span class="s1">'SELECT * FROM users'</span><span class="p">),</span>
+    <span class="k">new</span> <span class="nx">Cassandra\ExecutionOptions</span><span class="p">(</span><span class="k">array</span><span class="p">(</span><span class="s1">'consistency'</span> <span class="o">=&gt;</span> <span class="nx">Cassandra</span><span class="o">::</span><span class="na">CONSISTENCY_LOCAL_QUORUM</span><span class="p">))</span>
 <span class="p">);</span>
 
 <span class="nv">$statement</span> <span class="o">=</span> <span class="nv">$session</span><span class="o">-&gt;</span><span class="na">prepare</span><span class="p">(</span><span class="s1">'SELECT * FROM users'</span><span class="p">);</span>
 <span class="nv">$session</span><span class="o">-&gt;</span><span class="na">execute</span><span class="p">(</span><span class="nv">$statement</span><span class="p">,</span> <span class="k">new</span> <span class="nx">Cassandra\ExecutionOptions</span><span class="p">(</span><span class="k">array</span><span class="p">(</span>
-  <span class="s1">'consistency'</span> <span class="o">=&gt;</span> <span class="nx">Cassandra</span><span class="o">::</span><span class="na">CONSISTENCY_LOCAL_QUORUM</span>
+    <span class="s1">'consistency'</span> <span class="o">=&gt;</span> <span class="nx">Cassandra</span><span class="o">::</span><span class="na">CONSISTENCY_LOCAL_QUORUM</span>
 <span class="p">)));</span>
 
 <span class="nv">$batch</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Cassandra\BatchStatement</span><span class="p">();</span>
 <span class="nv">$batch</span><span class="o">-&gt;</span><span class="na">add</span><span class="p">(</span><span class="k">new</span> <span class="nx">Cassandra\SimpleStatement</span><span class="p">(</span><span class="s2">"UPDATE users SET email = 'sue@foobar.com' WHERE id = 'sue'"</span><span class="p">));</span>
 <span class="nv">$batch</span><span class="o">-&gt;</span><span class="na">add</span><span class="p">(</span><span class="k">new</span> <span class="nx">Cassandra\SimpleStatement</span><span class="p">(</span><span class="s2">"UPDATE users SET email = 'tom@foobar.com' WHERE id = 'tom'"</span><span class="p">));</span>
 <span class="nv">$session</span><span class="o">-&gt;</span><span class="na">execute</span><span class="p">(</span><span class="nv">$batch</span><span class="p">,</span> <span class="k">new</span> <span class="nx">Cassandra\ExecutionOptions</span><span class="p">(</span><span class="k">array</span><span class="p">(</span>
-  <span class="s1">'consistency'</span> <span class="o">=&gt;</span> <span class="nx">Cassandra</span><span class="o">::</span><span class="na">CONSISTENCY_LOCAL_QUORUM</span>
+    <span class="s1">'consistency'</span> <span class="o">=&gt;</span> <span class="nx">Cassandra</span><span class="o">::</span><span class="na">CONSISTENCY_LOCAL_QUORUM</span>
 <span class="p">)));</span>
 </code></pre>
-<p><a href="../api/class/Cassandra/ExecutionOptions/">Read more about <code>Cassandra\ExecutionOptions</code></a>
-<a href="../api/interface/Cassandra/Session/#execute">Read more about <code>Cassandra\Session::execute()</code></a></p>
+<p><a href="../api/class/Cassandra/ExecutionOptions/">Read more about <code>Cassandra\ExecutionOptions</code></a></p>
+
+<p><a href="../api/interface/Cassandra/Session/#execute">Read more about <code>Cassandra\Session::execute()</code></a></p>
 
 <p>The default consistency level unless you’ve set it yourself is <code>Cassandra::CONSISTENCY_ONE</code>.</p>
 
@@ -353,6 +422,13 @@ EOD
 <li><a href="#specifying-addresses-of-cassandra-nodes">Specifying addresses of Cassandra nodes
 </a></li>
 <li><a href="#discovering-nodes-in-the-cluster">Discovering nodes in the cluster
+</a></li>
+<li><a href="#configuring-load-balancing-policy">Configuring load balancing policy
+</a></li>
+<li><a href="#authenticating-via-password-authenticator">Authenticating via PasswordAuthenticator
+
+</a></li>
+<li><a href="#enabling-ssl-encryption">Enabling SSL encryption
 </a></li>
 <li><a href="#executing-queries">Executing queries
 </a></li>
