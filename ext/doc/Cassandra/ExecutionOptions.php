@@ -29,6 +29,8 @@ namespace Cassandra;
 final class ExecutionOptions
 {
     /**
+     * Creates a new options object for execution.
+     *
      * @throws Cassandra\Exception\InvalidArgumentException
      *
      * array['arguments']          array    An array or positional or named arguments

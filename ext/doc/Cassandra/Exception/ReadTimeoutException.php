@@ -19,8 +19,8 @@
 namespace Cassandra\Exception;
 
 /**
- * ReadTimeoutException is raised when coordinator failed to receive acks from
- * the required number of replica nodes in time during a read.
+ * ReadTimeoutException is raised when a coordinator failed to receive acks
+ * from the required number of replica nodes in time during a read.
  * @see https://github.com/apache/cassandra/blob/trunk/doc/native_protocol_v1.spec#L709-L726 Description of ReadTimeout error in the native protocol spec
  */
 class ReadTimeoutException extends ExecutionException {}

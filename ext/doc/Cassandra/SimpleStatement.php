@@ -23,6 +23,8 @@ namespace Cassandra;
  * They are constructed with a CQL string that can contain positional
  * argument markers `?`.
  *
+ * NOTE: Positional argument are only valid for native protocol v2+.
+ *
  * @see Cassandra\Session::execute()
  */
 final class SimpleStatement implements Statement

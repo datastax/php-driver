@@ -74,6 +74,8 @@ final class Builder
     /**
      * Specify a different port to be used when connecting to the cluster.
      *
+     * @throws Cassandra\Exception\InvalidArgumentException
+     *
      * @param int $port a number between 1 and 65535
      *
      * @return Builder self
@@ -101,7 +103,7 @@ final class Builder
     /**
      * Enable token aware routing.
      *
-     * @param bool $enabled Whether to enable token aware routing
+     * @param bool $enabled Whether to enable token aware routing (optional)
      *
      * @return Builder self
      */
@@ -144,9 +146,10 @@ final class Builder
     public function withSSL(SSLOptions $options) {}
 
     /**
-     * Enable persistent sessions and clusters
+     * Enable persistent sessions and clusters.
      *
-     * @param bool $enabled whether to enable persistent sessions and clusters.
+     * @param bool $enabled whether to enable persistent sessions and clusters
+     *                      (optional)
      *
      * @return Builder self
      */

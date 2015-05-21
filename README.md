@@ -22,15 +22,18 @@ upcoming releases.
 
 ## What's new in v1.0.0.beta:
 
-* Persistent Sessions.
+* Persistent sessions.
 * Windows support.
+* Configurable logger (file/syslog and level).
 * Math functions for numeric types and `Cassandra\Numeric` interface.
 * All classes moved into the extension.
+* Upgraded to use the C/C++ driver v2.0.
+* Added stub files for IDEs.
 
 ## Planned
 
 * Ability to configure connection pooling.
-* Ability to configure latency aware load balancing
+* Ability to configure latency aware load balancing.
 * Expose [Schema Metadata](http://datastax.github.io/cpp-driver/api/struct_cass_session/#1afc51badec695483e4cde43ae0fc1e876).
 
 ## Quick Start
@@ -64,10 +67,9 @@ Cassandra's native protocol. The current version works with:
 * Apache Cassandra versions 1.2, 2.0 and partially 2.1
 * DataStax Enterprise 3.1, 3.2, 4.0 and 4.5
 * PHP 5.3+
+* Compilers: GCC 4.1.2+, Clang 3.4+, and MSVC 2010/2012/2013
 
-__NOTE__: Apache Cassandra 2.1 support is limited to the Cassandra 2.0 API, e.g. no user-defined types.
-
-__NOTE__: Windows support is planned for a later, more stable release.
+__NOTE__: Apache Cassandra 2.1 support is limited to the Cassandra 2.0 API (native protocol v2), e.g. no user-defined types.
 
 ## Contributing
 
@@ -93,13 +95,14 @@ vagrant up
 vagrant ssh
 ```
 
-Once you've logged in to the vagrant vm, run:
+Once you've logged in to the vagrant VM, run:
 
 ```bash
 cd /usr/local/src/php-driver
 ./bin/behat
 ./bin/phpunit
 ```
+
 ## Copyright
 
 Copyright 2015 DataStax, Inc.

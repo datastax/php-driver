@@ -21,6 +21,6 @@ namespace Cassandra\Exception;
 use Cassandra\Exception;
 
 /**
- * Cassandra-specific runtime exception
+ * Cassandra-specific runtime exception.
  */
 class RuntimeException extends \RuntimeException implements Exception {}

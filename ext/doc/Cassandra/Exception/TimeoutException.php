@@ -19,7 +19,7 @@
 namespace Cassandra\Exception;
 
 /**
- * Timeout exception, this is generally raised with future did not resolved
+ * TimeoutException is generally raised when a future did not resolve
  * within a given time interval.
  */
 class TimeoutException extends RuntimeException {}

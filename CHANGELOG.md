@@ -2,13 +2,14 @@
 
 Features:
 
-* Persistent Sessions (can be disabled via `Cassandra\Cluster\Builder::withPersistentSessions()`).
+* Persistent sessions (can be disabled via `Cassandra\Cluster\Builder::withPersistentSessions()`).
 * Windows support.
 * Configurable log location (via `cassandra.log` ini setting).
 * Configurable log level (via `cassandra.log_level` ini setting).
-* Upgraded to CPP driver v2.0.
+* Upgraded to C/C++ driver v2.0.
 * Added math functions to numeric types and `Cassandra\Numeric` interface.
 * All classes moved into the extension.
+* Added stub files for IDEs.
 
 Bug Fixes:
 

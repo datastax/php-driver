@@ -26,34 +26,40 @@ final class Timestamp
     /**
      * Creates a new timestamp from either unix timestamp and microseconds or
      * from the current time by default.
+     *
      * @param int $time Unix timestamp
      * @param int $usec Microseconds
      */
     public function __construct($time = null, $usec = null) {}
 
     /**
-     * Unix timestamp
-     * @see time
+     * Unix timestamp.
+     *
      * @return int seconds
+     * @see time
      */
     public function time() {}
 
     /**
      * Microtime from this timestamp
+     *
+     * @param bool $get_as_float Whther to get this value as float
+     *
+     * @return float|string Float or string representation
      * @see microtime
-     * @param  bool      $get_as_float Whther to get this value as float
-     * @return float|string               Float or string representation
      */
     public function microtime($get_as_float = false) {}
 
     /**
-     * Converts current timestamp to PHP DateTime
-     * @return DateTime
+     * Converts current timestamp to PHP DateTime.
+     *
+     * @return DateTime PHP representation
      */
     public function toDateTime() {}
 
     /**
-     * Returns a string representation of this timestamp
+     * Returns a string representation of this timestamp.
+     *
      * @return string timestamp
      */
     public function __toString() {}
