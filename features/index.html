@@ -94,6 +94,8 @@
 </h3>
 
 <p><a href="../api/class/Cassandra/Cluster/Builder/#with-contact-points"><code>withContactPoints()</code></a> and <a href="../api/class/Cassandra/Cluster/Builder/#with-port"><code>withPort()</code></a> methods of the <a href="../api/class/Cassandra/Cluster/Builder/"><code>Cassandra\Cluster\Builder</code></a> are used to specify ip addresses or hostnames and port number of the nodes in a given Cassandra cluster.</p>
+
+<p>Note that you don’t have to specify the addresses of all hosts in your cluster. Once the driver has established a connection to any host, it will perform auto-discovery of and connect to all hosts in the cluster.</p>
 <pre class="highlight"><code><span class="cp">&lt;?php</span>
 
 <span class="nv">$cluster</span> <span class="o">=</span> <span class="nx">Cassandra</span><span class="o">::</span><span class="na">cluster</span><span class="p">()</span>
@@ -110,7 +112,7 @@
 <h3 id="persistent-sessions">Persistent sessions<a class="anchor" href="#persistent-sessions" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
 </h3>
 
-<p>In order to limit the startup time and total number of connections to a Cassandra cluster, the PHP Driver enabled persistent sessions by default. All cluster and sessions using the same initial configuration will be shared across requests when persistent sessions are enabled. You can toggle this setting using <a href="../api/class/Cassandra/Cluster/Builder/#with-persistent-sessions"><code>Cassandra\Cluster\Builder::withPersistentSessions()</code></a>.</p>
+<p>In order to limit the startup time and total number of connections to a Cassandra cluster, the PHP Driver enables persistent sessions by default. All cluster and sessions using the same initial configuration will be shared across requests when persistent sessions are enabled. You can toggle this setting using <a href="../api/class/Cassandra/Cluster/Builder/#with-persistent-sessions"><code>Cassandra\Cluster\Builder::withPersistentSessions()</code></a>.</p>
 <pre class="highlight"><code><span class="cp">&lt;?php</span>
 
 <span class="nv">$cluster</span> <span class="o">=</span> <span class="nx">Cassandra</span><span class="o">::</span><span class="na">cluster</span><span class="p">()</span>
@@ -118,9 +120,11 @@
                <span class="o">-&gt;</span><span class="na">build</span><span class="p">();</span>
 <span class="nv">$session</span> <span class="o">=</span> <span class="nv">$cluster</span><span class="o">-&gt;</span><span class="na">connect</span><span class="p">();</span>
 </code></pre>
-<p>Note that disabling persistent sessions will cause significant slow down of cluster initialization as the connections will be forced to get re-established for every request.</p>
+<p>Note that disabling persistent sessions will cause a significant slow down of cluster initialization as the connections will be forced to get re-established for every request.</p>
 
 <p>Once persistent sessions are enabled, you can view how many of them are currently active. They will be exposed in the Cassandra extension section of <code>phpinfo()</code>.</p>
+
+<p>Persistent sessions stay alive for the duration of the parent process, typically a php-fpm worker or apache worker. These sessions will be reused for all requests served by that worker process. Once a worker process has reached its end of life, sessions will get cleaned up automatically and will be re-create in the new process.</p>
 
 <h3 id="configuring-load-balancing-policy">Configuring load balancing policy<a class="anchor" href="#configuring-load-balancing-policy" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
 </h3>
@@ -205,7 +209,7 @@
     <span class="p">))</span>
 <span class="p">);</span>
 </code></pre>
-<p>If you find yourself doing this often, it’s better to use prepared statements. As a rule of thumb, if your application is sending a request more than once, a prepared statement is almost always the right choice.</p>
+<p>For frequently executed queries, it’s strongly recommended to use prepared statements. As a rule of thumb, if your application is sending a request more than once, a prepared statement is almost always the right choice.</p>
 
 <h3 id="prepared-statements">Prepared Statements<a class="anchor" href="#prepared-statements" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
 </h3>
@@ -318,7 +322,7 @@ EOD
 
 <p><strong>If you’re using Cassandra 2.0</strong> or later you can page your query results.</p>
 
-<p>By default, a page size of 10000 will be used, you can override the default page size via <a href="../api/class/Cassandra/Cluster/Builder/#with-default-page-size"><code>Cassandra\Cluster\Builder::withDefaultPageSize()</code></a>.</p>
+<p>By default, a page size of 5000 will be used, you can override the default page size via <a href="../api/class/Cassandra/Cluster/Builder/#with-default-page-size"><code>Cassandra\Cluster\Builder::withDefaultPageSize()</code></a>.</p>
 <pre class="highlight"><code><span class="cp">&lt;?php</span>
 
 <span class="nv">$cluster</span> <span class="o">=</span> <span class="nx">Cassandra</span><span class="o">::</span><span class="na">cluster</span><span class="p">()</span>
@@ -344,7 +348,7 @@ EOD
 <h3 id="consistency">Consistency<a class="anchor" href="#consistency" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
 </h3>
 
-<p>You can specify the default consistency to use when you create a new <code>Cassandra\Cluster</code>:</p>
+<p>You can specify the default consistency to use for statements execution when you create a new <code>Cassandra\Cluster</code>:</p>
 <pre class="highlight"><code><span class="cp">&lt;?php</span>
 
 <span class="nv">$cluster</span> <span class="o">=</span> <span class="nx">Cassandra</span><span class="o">::</span><span class="na">cluster</span><span class="p">()</span>
