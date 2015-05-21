@@ -93,9 +93,9 @@
 <h3 id="specifying-addresses-of-cassandra-nodes">Specifying addresses of Cassandra nodes<a class="anchor" href="#specifying-addresses-of-cassandra-nodes" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
 </h3>
 
-<p><a href="../api/class/Cassandra/Cluster/Builder/#with-contact-points"><code>withContactPoints()</code></a> and <a href="../api/class/Cassandra/Cluster/Builder/#with-port"><code>withPort()</code></a> methods of the <a href="../api/class/Cassandra/Cluster/Builder/"><code>Cassandra\Cluster\Builder</code></a> are used to specify ip addresses or hostnames and port number of the nodes in a given Cassandra cluster.</p>
+<p><a href="../api/class/Cassandra/Cluster/Builder/#with-contact-points"><code>withContactPoints()</code></a> and <a href="../api/class/Cassandra/Cluster/Builder/#with-port"><code>withPort()</code></a> methods of the <a href="../api/class/Cassandra/Cluster/Builder/"><code>Cassandra\Cluster\Builder</code></a> are used to specify IP addresses or hostnames and port number of the nodes in a given Cassandra cluster.</p>
 
-<p>Note that you don’t have to specify the addresses of all hosts in your cluster. Once the driver has established a connection to any host, it will perform auto-discovery of and connect to all hosts in the cluster.</p>
+<p>Note that you don’t have to specify the addresses of all hosts in your cluster. Once the driver has established a connection to any host, it will perform auto-discovery and connect to all hosts in the cluster.</p>
 <pre class="highlight"><code><span class="cp">&lt;?php</span>
 
 <span class="nv">$cluster</span> <span class="o">=</span> <span class="nx">Cassandra</span><span class="o">::</span><span class="na">cluster</span><span class="p">()</span>
@@ -107,7 +107,7 @@
 <h3 id="discovering-nodes-in-the-cluster">Discovering nodes in the cluster<a class="anchor" href="#discovering-nodes-in-the-cluster" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
 </h3>
 
-<p>After the initial connection to one of the hosts specified via <code>withContactPoints()</code> succeeded, the driver discovers the addresses and connects to all members of the cluster automatically. You can also see the nodes that the driver discovered by running <code>SELECT * FROM system.peers</code>.</p>
+<p>After the initial connection to one of the hosts specified via <code>withContactPoints()</code> succeeds, the driver discovers the addresses and connects to all members of the cluster automatically. You can also see the nodes that the driver discovered by running <code>SELECT * FROM system.peers</code>.</p>
 
 <h3 id="persistent-sessions">Persistent sessions<a class="anchor" href="#persistent-sessions" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
 </h3>
@@ -129,9 +129,9 @@
 <h3 id="configuring-load-balancing-policy">Configuring load balancing policy<a class="anchor" href="#configuring-load-balancing-policy" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
 </h3>
 
-<p>PHP Driver comes with a variety of load balancing policies. By default it uses a combination of token aware data center round robin.</p>
+<p>The PHP Driver comes with a variety of load balancing policies. By default it uses a combination of token aware data center round robin.</p>
 
-<p>The token aware load balancing policy uses the same hashing algorithms as the Apache Cassandra to route prepared statements execution directly to replica nodes, avoiding an additional network hop to/from the coordinator. You can toggle its usage with <a href="../api/class/Cassandra/Cluster/Builder/#with-token-aware-routing"><code>Cassandra\Cluster\Builder::withTokenAwareRouting()</code></a>.</p>
+<p>The token aware load balancing policy uses the same hashing algorithms as the Apache Cassandra to directly route the execution of prepared statements to the replica node, avoiding an additional network hop to/from the coordinator. You can toggle its usage with <a href="../api/class/Cassandra/Cluster/Builder/#with-token-aware-routing"><code>Cassandra\Cluster\Builder::withTokenAwareRouting()</code></a>.</p>
 <pre class="highlight"><code><span class="cp">&lt;?php</span>
 
 <span class="nv">$cluster</span> <span class="o">=</span> <span class="nx">Cassandra</span><span class="o">::</span><span class="na">cluster</span><span class="p">()</span>
@@ -211,10 +211,10 @@
 </code></pre>
 <p>For frequently executed queries, it’s strongly recommended to use prepared statements. As a rule of thumb, if your application is sending a request more than once, a prepared statement is almost always the right choice.</p>
 
-<h3 id="prepared-statements">Prepared Statements<a class="anchor" href="#prepared-statements" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+<h3 id="prepared-statements">Prepared statements<a class="anchor" href="#prepared-statements" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
 </h3>
 
-<p>The driver supports prepared statements. Use <a href="../api/interface/Cassandra/Session/#prepare"><code>Cassandra\Session::prepare()</code></a> to create a <a href="../api/class/Cassandra/PreparedStatement/"><code>Cassandra\PreparedStatement</code> object</a>, and then call <a href="../api/interface/Cassandra/Session/#execute"><code>Cassandra\Session::execute()</code></a>.</p>
+<p>The driver supports prepared statements. Use <a href="../api/interface/Cassandra/Session/#prepare"><code>Cassandra\Session::prepare()</code></a> to create a <a href="../api/class/Cassandra/PreparedStatement/"><code>Cassandra\PreparedStatement</code></a> object, and then call <a href="../api/interface/Cassandra/Session/#execute"><code>Cassandra\Session::execute()</code></a>.</p>
 <pre class="highlight"><code><span class="cp">&lt;?php</span>
 
 <span class="nv">$statement</span> <span class="o">=</span> <span class="nv">$session</span><span class="o">-&gt;</span><span class="na">prepare</span><span class="p">(</span><span class="s1">'INSERT INTO users (username, email) VALUES (?, ?)'</span><span class="p">);</span>
@@ -228,7 +228,7 @@
 <h3 id="executing-statements-in-parallel">Executing statements in parallel<a class="anchor" href="#executing-statements-in-parallel" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
 </h3>
 
-<p>With fully asynchronous api, it is very easy to run queries in parallel:</p>
+<p>With fully asynchronous API, it is very easy to run queries in parallel:</p>
 <pre class="highlight"><code><span class="cp">&lt;?php</span>
 
 <span class="nv">$data</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span>
@@ -394,7 +394,9 @@ EOD
 <span class="py">cassandra.log</span><span class="p">=</span><span class="s">syslog</span>
 <span class="py">cassandra.log_level</span><span class="p">=</span><span class="s">INFO</span>
 </code></pre>
-<p>You can specify any file path as <code>cassandra.log</code>. The special value <code>syslog</code> can be used to for the driver to use syslog for logging.</p>
+<p>You can specify any file path as <code>cassandra.log</code>.</p>
+
+<p>The special value <code>syslog</code> can be used to for the driver to use syslog for logging. Syslog is only supported on *nix systems.</p>
 
 <p>The possible log levels are:</p>
 
@@ -414,7 +416,7 @@ EOD
 
 <p>The PHP Driver follows the architecture of <a href="http://datastax.github.io/cpp-driver/topics/#architecture">the C/C++ Driver</a> that it wraps.</p>
 
-<h3 id="persistent-sessions">Persistent Sessions<a class="anchor" href="#persistent-sessions" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+<h3 id="persistent-sessions">Persistent sessions<a class="anchor" href="#persistent-sessions" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
 </h3>
 
 <p>By default, the driver uses persistent sessions to prevent each request from creating completely new TCP connections to a Cassandra cluster. You can toggle this functionality using <a href="../api/class/Cassandra/Cluster/Builder/#with-persistent-sessions"><code>Cassandra\Cluster\Builder::withPersistentSessions</code></a></p>
@@ -454,7 +456,7 @@ EOD
 </a></li>
 <li><a href="#parameterized-queries">Parameterized queries
 </a></li>
-<li><a href="#prepared-statements">Prepared Statements
+<li><a href="#prepared-statements">Prepared statements
 </a></li>
 <li><a href="#executing-statements-in-parallel">Executing statements in parallel
 </a></li>
@@ -472,7 +474,7 @@ EOD
 </li>
 <li>
 <a href="#architecture">Architecture
-</a><ol class="nav nav-pills nav-stacked"><li><a href="#persistent-sessions">Persistent Sessions
+</a><ol class="nav nav-pills nav-stacked"><li><a href="#persistent-sessions">Persistent sessions
 </a></li></ol>
 </li>
 </ol>
