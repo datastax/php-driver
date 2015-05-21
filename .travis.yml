@@ -31,8 +31,12 @@ install:
 before_script:
   # Use the most-up-to-date run-tests. old ones like 5.3 don't report failure exit codes
   - wget -O ext/run-tests.php https://raw.githubusercontent.com/php/php-src/master/run-tests.php
+  # Use the BEHAT_EXTRA_OPTIONS to supply options to Behat runs
+  - BEHAT_EXTRA_OPTIONS=
+  - if [[ ${TRAVIS_PHP_VERSION:0:3} == "5.3" ]]; then BEHAT_EXTRA_OPTIONS="${BEHAT_EXTRA_OPTIONS} --tags=~@php-version-5.4"; fi
+  - export BEHAT_EXTRA_OPTIONS
 
 script:
   - cd ext && make test && cd "$TRAVIS_BUILD_DIR" # .phpt tests
   - ./bin/phpunit
-  - ./bin/behat
+  - ./bin/behat ${BEHAT_EXTRA_OPTIONS}

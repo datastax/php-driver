@@ -42,9 +42,9 @@ class FeatureContext implements Context, SnippetAcceptingContext
      */
     public static function cleanTestFolders()
     {
-        //if (is_dir($dir = sys_get_temp_dir().DIRECTORY_SEPARATOR.'php-driver')) {
-        //    self::clearDirectory($dir);
-        //}
+        if (is_dir($dir = sys_get_temp_dir().DIRECTORY_SEPARATOR.'php-driver')) {
+            self::clearDirectory($dir);
+        }
         $ccm = new \CCM('', '');
         $ccm->removeAllClusters();
     }

@@ -1,3 +1,4 @@
+@php-version-5.4
 Feature: Persistent Sessions
 
   PHP Driver sessions can persist
