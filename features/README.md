@@ -20,6 +20,23 @@ $session = $cluster->connect();
 
 After the initial connection to one of the hosts specified via `withContactPoints()` succeeded, the driver discovers the addresses and connects to all members of the cluster automatically. You can also see the nodes that the driver discovered by running `SELECT * FROM system.peers`.
 
+### Persistent sessions
+
+In order to limit the startup time and total number of connections to a Cassandra cluster, the PHP Driver enabled persistent sessions by default. All cluster and sessions using the same initial configuration will be shared across requests when persistent sessions are enabled. You can toggle this setting using [`Cassandra\Cluster\Builder::withPersistentSessions()`](http://datastax.github.io/php-driver/api/class/Cassandra/Cluster/Builder/#with-persistent-sessions).
+
+```php
+<?php
+
+$cluster = Cassandra::cluster()
+               ->withPersistentSessions(false)
+               ->build();
+$session = $cluster->connect();
+```
+
+Note that disabling persistent sessions will cause significant slow down of cluster initialization as the connections will be forced to get re-established for every request.
+
+Once persistent sessions are enabled, you can view how many of them are currently active. They will be exposed in the Cassandra extension section of `phpinfo()`.
+
 ### Configuring load balancing policy
 
 PHP Driver comes with a variety of load balancing policies. By default it uses a combination of token aware data center round robin.
