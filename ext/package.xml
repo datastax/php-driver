@@ -24,7 +24,7 @@ protocol and Cassandra Query Language v3.
     <release>beta</release>
     <api>beta</api>
   </stability>
-  <license uri="http://www.opensource.org/licenses/bsd-license.php">New BSD License</license>
+  <license uri="http://www.apache.org/licenses/LICENSE-2.0">Apache License 2.0</license>
   <notes>
 # 1.0.0-beta
 
