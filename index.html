@@ -83,11 +83,13 @@
 
 <p><a href="https://travis-ci.org/datastax/php-driver"><img src="https://travis-ci.org/datastax/php-driver.svg" alt="Build Status"></a></p>
 
-<p>This is a wrapper around the DataStax C/C++ driver for Apache Cassandra. This
-driver works exclusively with the Cassandra Query Language version 3 (CQL3) and
-Cassandra’s native protocol.</p>
+<p>A modern, <a href="features">feature-rich</a> and highly tunable PHP client library for <a href="http://cassandra.apache.org/">Apache Cassandra</a> (1.2+) and <a href="http://www.datastax.com/products/products-index">DataStax Enterprise</a> (3.1+) using exclusively Cassandra’s binary protocol and Cassandra Query Language v3.</p>
+
+<p>This is a wrapper around <a href="http://datastax.github.io/cpp-driver/">the DataStax C/C++ Driver for Apache Cassandra and DataStax Enterprise</a>.</p>
 
 <ul>
+<li>Docs: <a href="./">http://datastax.github.io/php-driver/</a>
+</li>
 <li>Code: <a href="https://github.com/datastax/php-driver">https://github.com/datastax/php-driver</a>
 </li>
 <li>Jira: <a href="https://datastax-oss.atlassian.net/browse/PHP">https://datastax-oss.atlassian.net/browse/PHP</a>
@@ -100,39 +102,31 @@ Cassandra’s native protocol.</p>
 </li>
 </ul>
 
-<h2 id="status-of-v1-0-0-alpha">Status of v1.0.0.alpha<a class="anchor" href="#status-of-v1-0-0-alpha" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+<h2 id="status-of-v1-0-0-beta">Status of v1.0.0.beta<a class="anchor" href="#status-of-v1-0-0-beta" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
 </h2>
 
-<p>The current release is an early alpha. This means that it lacks some features
-and stability, but should be enough to start testing and working with Apache
-Cassandra. Below, you’ll find a list of functionality that is already supported
-as well as what’s planned for the upcoming releases.</p>
+<p>This is the first beta release of the DataStax PHP Driver. This means that it
+is mostly feature complete but not entirely stable. Below, you’ll find a list
+of functionality that is already supported as well as what’s planned for the
+upcoming releases.</p>
 
-<h2 id="features">Features<a class="anchor" href="#features" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+<h2 id="what-s-new-in-v1-0-0-beta">What’s new in v1.0.0.beta:<a class="anchor" href="#what-s-new-in-v1-0-0-beta" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
 </h2>
 
 <ul>
-<li>
-<a href="features/datatypes.feature">All pre 2.1 Cassandra datatypes, including sets, lists and maps</a>.</li>
-<li>
-<a href="features/simple_statements.feature">Simple</a>, <a href="features/prepared_statements.feature">prepared</a> and <a href="features/batch_statements.feature">batch statements</a>.</li>
-<li>
-<a href="features/result_paging.feature">Results paging</a>.</li>
-<li>
-<a href="src/Cassandra/Session.php#L24-L35">Asynchronous IO</a>.</li>
-<li>
-<a href="features/ssl_encryption.feature">SSL encryption</a>.</li>
-<li>
-<a href="src/Cassandra/Cluster/Builder.php#L312-L320">Credentials authentication</a>.</li>
+<li>Persistent Sessions.</li>
+<li>Windows support.</li>
+<li>Math functions for numeric types and <code>Cassandra\Numeric</code> interface.</li>
+<li>All classes moved into the extension.</li>
 </ul>
 
 <h2 id="planned">Planned<a class="anchor" href="#planned" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
 </h2>
 
 <ul>
-<li>Windows support.</li>
+<li>Ability to configure connection pooling.</li>
+<li>Ability to configure latency aware load balancing</li>
 <li>Expose <a href="http://datastax.github.io/cpp-driver/api/struct_cass_session/#1afc51badec695483e4cde43ae0fc1e876">Schema Metadata</a>.</li>
-<li>Add arithmetic functions to numeric types.</li>
 </ul>
 
 <h2 id="quick-start">Quick Start<a class="anchor" href="#quick-start" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
@@ -146,7 +140,7 @@ as well as what’s planned for the upcoming releases.</p>
 </span>    <span class="s1">'SELECT keyspace_name, columnfamily_name FROM schema_columnfamilies'</span>
 <span class="p">);</span>
 <span class="nv">$future</span>    <span class="o">=</span> <span class="nv">$session</span><span class="o">-&gt;</span><span class="na">executeAsync</span><span class="p">(</span><span class="nv">$statement</span><span class="p">);</span>  <span class="c1">// fully asynchronous and easy parallel execution
-</span><span class="nv">$result</span>    <span class="o">=</span> <span class="nv">$future</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">();</span>                      <span class="c1">// wait for result to become available, optionally set a timeout
+</span><span class="nv">$result</span>    <span class="o">=</span> <span class="nv">$future</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">();</span>                      <span class="c1">// wait for the result, with an optional timeout
 </span>
 <span class="k">foreach</span> <span class="p">(</span><span class="nv">$result</span> <span class="k">as</span> <span class="nv">$row</span><span class="p">)</span> <span class="p">{</span>                       <span class="c1">// results and rows implement Iterator, Countable and ArrayAccess
 </span>    <span class="nb">printf</span><span class="p">(</span><span class="s2">"The keyspace %s has a table called %s</span><span class="se">\n</span><span class="s2">"</span><span class="p">,</span> <span class="nv">$row</span><span class="p">[</span><span class="s1">'keyspace_name'</span><span class="p">],</span> <span class="nv">$row</span><span class="p">[</span><span class="s1">'columnfamily_name'</span><span class="p">]);</span>
@@ -155,14 +149,8 @@ as well as what’s planned for the upcoming releases.</p>
 <h2 id="installation">Installation<a class="anchor" href="#installation" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
 </h2>
 
-<p><strong>NOTE</strong>: You must first <a href="ext/README.md">install and enable the <code>cassandra.so</code> PHP extension</a>.</p>
+<p><a href="https://github.com/datastax/php-driver/blob/master/ext/README.md">Read detailed instructions on building and installing the extension</a></p>
 
-<ul>
-<li>First, <a href="https://getcomposer.org/">get composer</a>.</li>
-<li>Then, install the DataStax PHP Driver for Apache Cassandra:</li>
-</ul>
-<pre class="highlight"><code>composer require datastax/php-driver 1.0.0-alpha
-</code></pre>
 <h2 id="compatibility">Compatibility<a class="anchor" href="#compatibility" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
 </h2>
 
@@ -182,7 +170,7 @@ Cassandra’s native protocol. The current version works with:</p>
 <h2 id="contributing">Contributing<a class="anchor" href="#contributing" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
 </h2>
 
-<p><a href="CONTRIBUTING.md">Read our contribution policy</a> for a detailed description of the process.</p>
+<p><a href="https://github.com/datastax/php-driver/blob/master/CONTRIBUTING.md">Read our contribution policy</a> for a detailed description of the process.</p>
 
 <h2 id="code-examples">Code examples<a class="anchor" href="#code-examples" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
 </h2>
@@ -222,7 +210,7 @@ vagrant ssh
 
         </div>
         <div class="col-md-3">
-          <div id="navigation" class="panel-group side-nav" data-spy="affix" data-offset-top="60" data-offset-bottom="54" role="tablist" aria-multiselectable="true">
+          <div id="navigation" class="panel-group side-nav" data-spy="affix" data-offset-top="60" data-offset-bottom="80" role="tablist" aria-multiselectable="true">
             <div id="table-of-contents-panel" class="panel panel-default">
               <div id="table-of-contents-heading" class="panel-heading" role="tab">
                 <h4 class="panel-title">
@@ -234,9 +222,9 @@ vagrant ssh
               <div id="table-of-contents" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="table-of-contents-heading">
                 <div class="panel-body">
                   <ol class="nav nav-pills nav-stacked toc">
-<li><a href="#status-of-v1-0-0-alpha">Status of v1.0.0.alpha
+<li><a href="#status-of-v1-0-0-beta">Status of v1.0.0.beta
 </a></li>
-<li><a href="#features">Features
+<li><a href="#what-s-new-in-v1-0-0-beta">What’s new in v1.0.0.beta:
 </a></li>
 <li><a href="#planned">Planned
 </a></li>

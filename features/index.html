@@ -87,15 +87,255 @@
 <h1 id="features">Features<a class="anchor" href="#features" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
 </h1>
 
-<h2 id="introduction">Introduction<a class="anchor" href="#introduction" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+<h2 id="usage">Usage<a class="anchor" href="#usage" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
 </h2>
 
-<p>Hello</p>
+<h3 id="specifying-addresses-of-cassandra-nodes">Specifying addresses of Cassandra nodes<a class="anchor" href="#specifying-addresses-of-cassandra-nodes" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+</h3>
+
+<p><a href="../api/class/Cassandra/Cluster/Builder/#with-contact-points"><code>withContactPoints()</code></a> and <a href="../api/class/Cassandra/Cluster/Builder/#with-port"><code>withPort()</code></a> methods of the <a href="../api/class/Cassandra/Cluster/Builder/"><code>Cassandra\Cluster\Builder</code></a> are used to specify ip addresses or hostnames and port number of the nodes in a given Cassandra cluster.</p>
+<pre class="highlight"><code><span class="cp">&lt;?php</span>
+
+<span class="nv">$cluster</span> <span class="o">=</span> <span class="nx">Cassandra</span><span class="o">::</span><span class="na">cluster</span><span class="p">()</span>
+               <span class="o">-&gt;</span><span class="na">withContactPoints</span><span class="p">(</span><span class="s1">'10.0.1.24'</span><span class="p">,</span> <span class="s1">'example.com'</span><span class="p">,</span> <span class="s1">'localhost'</span><span class="p">)</span>
+               <span class="o">-&gt;</span><span class="na">withPort</span><span class="p">(</span><span class="mi">9042</span><span class="p">)</span>
+               <span class="o">-&gt;</span><span class="na">build</span><span class="p">();</span>
+<span class="nv">$session</span> <span class="o">=</span> <span class="nv">$cluster</span><span class="o">-&gt;</span><span class="na">connect</span><span class="p">();</span>
+</code></pre>
+<h3 id="discovering-nodes-in-the-cluster">Discovering nodes in the cluster<a class="anchor" href="#discovering-nodes-in-the-cluster" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+</h3>
+
+<p>After the initial connection to one of the hosts specified via <code>withContactPoints</code> succeeded, the driver discovers the addresses and connects to all members of the cluster automatically. You can also see the nodes that the driver discovered by running <code>SELECT * FROM system.peers</code>.</p>
+
+<h3 id="executing-queries">Executing queries<a class="anchor" href="#executing-queries" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+</h3>
+
+<p>You run CQL statements by passing them to <a href="../api/interface/Cassandra/Session/"><code>Cassandra\Session::execute()</code></a>.</p>
+<pre class="highlight"><code><span class="cp">&lt;?php</span>
+
+<span class="nv">$result</span> <span class="o">=</span> <span class="nv">$session</span><span class="o">-&gt;</span><span class="na">execute</span><span class="p">(</span><span class="k">new</span> <span class="nx">Cassandra\SimpleStatement</span><span class="p">(</span><span class="s1">'SELECT keyspace_name, columnfamily_name FROM system.schema_columnfamilies'</span><span class="p">));</span>
+
+<span class="k">foreach</span> <span class="p">(</span><span class="nv">$result</span> <span class="k">as</span> <span class="nv">$row</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nb">sprintf</span><span class="p">(</span><span class="s2">"The keyspace </span><span class="se">\"</span><span class="s2">%s</span><span class="se">\"</span><span class="s2"> has a table </span><span class="se">\"</span><span class="s2">%s</span><span class="se">\"</span><span class="s2">.</span><span class="se">\n</span><span class="s2">"</span><span class="p">,</span> <span class="nv">$row</span><span class="p">[</span><span class="s1">'keyspace_name'</span><span class="p">],</span> <span class="nv">$row</span><span class="p">[</span><span class="s1">'columnfamily_name'</span><span class="p">]);</span>
+<span class="p">}</span>
+</code></pre>
+<h3 id="parameterized-queries">Parameterized queries<a class="anchor" href="#parameterized-queries" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+</h3>
+
+<p><strong>If you’re using Cassandra 2.0 or later</strong> you no longer have to build CQL strings when you want to insert a value in a query, there’s a new feature that lets you bind values with regular statements:</p>
+<pre class="highlight"><code><span class="cp">&lt;?php</span>
+
+<span class="nv">$session</span><span class="o">-&gt;</span><span class="na">execute</span><span class="p">(</span>
+  <span class="k">new</span> <span class="nx">Cassandra\SimpleStatement</span><span class="p">(</span><span class="s2">"UPDATE users SET age = ? WHERE user_name = ?"</span><span class="p">),</span>
+  <span class="k">new</span> <span class="nx">Cassandra\ExecutionOptions</span><span class="p">(</span><span class="k">array</span><span class="p">(</span>
+    <span class="s1">'arguments'</span> <span class="o">=&gt;</span> <span class="k">array</span><span class="p">(</span><span class="mi">41</span><span class="p">,</span> <span class="s1">'Sam'</span><span class="p">)</span>
+  <span class="p">))</span>
+<span class="p">);</span>
+</code></pre>
+<p>If you find yourself doing this often, it’s better to use prepared statements. As a rule of thumb, if your application is sending a request more than once, a prepared statement is almost always the right choice.</p>
+
+<h3 id="prepared-statements">Prepared Statements<a class="anchor" href="#prepared-statements" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+</h3>
+
+<p>The driver supports prepared statements. Use <a href="../api/interface/Cassandra/Session/#prepare"><code>Cassandra\Session::prepare()</code></a> to create a <a href="../api/class/Cassandra/PreparedStatement/"><code>Cassandra\PreparedStatement</code> object</a>, and then call <a href="../api/interface/Cassandra/Session/#execute"><code>Cassandra\Session::execute()</code></a>.</p>
+<pre class="highlight"><code><span class="cp">&lt;?php</span>
+
+<span class="nv">$statement</span> <span class="o">=</span> <span class="nv">$session</span><span class="o">-&gt;</span><span class="na">prepare</span><span class="p">(</span><span class="s1">'INSERT INTO users (username, email) VALUES (?, ?)'</span><span class="p">);</span>
+
+<span class="nv">$session</span><span class="o">-&gt;</span><span class="na">execute</span><span class="p">(</span><span class="nv">$statement</span><span class="p">,</span> <span class="k">new</span> <span class="nx">Cassandra\ExecutionOptions</span><span class="p">(</span><span class="k">array</span><span class="p">(</span>
+  <span class="s1">'arguments'</span> <span class="o">=&gt;</span> <span class="k">array</span><span class="p">(</span><span class="s1">'avalanche123'</span><span class="p">,</span> <span class="s1">'bulat.shakirzyanov@datastax.com'</span><span class="p">)</span>
+<span class="p">)));</span>
+</code></pre>
+<p>A prepared statement can be run many times, but the CQL parsing will only be done once on each node. Use prepared statements for queries you run over and over again.</p>
+
+<h3 id="executing-statements-in-parallel">Executing statements in parallel<a class="anchor" href="#executing-statements-in-parallel" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+</h3>
+
+<p>With fully asynchronous api, it is very easy to run queries in parallel:</p>
+<pre class="highlight"><code><span class="cp">&lt;?php</span>
+
+<span class="nv">$data</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span>
+  <span class="k">array</span><span class="p">(</span><span class="mi">41</span><span class="p">,</span> <span class="s1">'Sam'</span><span class="p">),</span>
+  <span class="k">array</span><span class="p">(</span><span class="mi">35</span><span class="p">,</span> <span class="s1">'Bob'</span><span class="p">)</span>
+<span class="p">);</span>
+
+<span class="nv">$statement</span> <span class="o">=</span> <span class="nv">$session</span><span class="o">-&gt;</span><span class="na">prepare</span><span class="p">(</span><span class="s2">"UPDATE users SET age = ? WHERE user_name = ?"</span><span class="p">);</span>
+<span class="nv">$futures</span>   <span class="o">=</span> <span class="k">array</span><span class="p">();</span>
+<span class="nv">$timeout</span>   <span class="o">=</span> <span class="mi">5</span><span class="p">;</span>
+
+<span class="c1">// execute all statements in background
+</span><span class="k">foreach</span> <span class="p">(</span><span class="nv">$data</span> <span class="k">as</span> <span class="nv">$arguments</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nv">$futures</span><span class="p">[]</span><span class="o">=</span> <span class="nv">$session</span><span class="o">-&gt;</span><span class="na">executeAsync</span><span class="p">(</span><span class="nv">$statement</span><span class="p">,</span> <span class="k">new</span> <span class="nx">ExecutionOptions</span><span class="p">(</span>
+                <span class="s1">'arguments'</span> <span class="o">=&gt;</span> <span class="nv">$arguments</span>
+              <span class="p">));</span>
+<span class="p">}</span>
+
+<span class="c1">// wait for all statements to complete
+</span><span class="k">foreach</span> <span class="p">(</span><span class="nv">$futures</span> <span class="k">as</span> <span class="nv">$future</span><span class="p">)</span> <span class="p">{</span>
+  <span class="c1">// we will not wait for each result for more than 5 seconds
+</span>  <span class="nv">$future</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="mi">5</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre>
+<p>Note that it is not enough to simply create a <a href="../api/interface/Cassandra/Future/"><code>Cassandra\Future</code></a> by calling one of the <code>*Async()</code> methods, you must ensure that this future has enough time to be executed by calling <a href="../api/interface/Cassandra/Future/#get"><code>Cassandra\Future::get()</code></a>.</p>
+
+<h3 id="creating-keyspaces-and-tables">Creating keyspaces and tables<a class="anchor" href="#creating-keyspaces-and-tables" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+</h3>
+
+<p>There is no special facility for creating keyspaces and tables, they are created by executing CQL:</p>
+<pre class="highlight"><code><span class="cp">&lt;?php</span>
+
+<span class="nv">$createKeyspace</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Cassandra\SimpleStatement</span><span class="p">(</span><span class="sh">&lt;&lt;&lt;EOD
+CREATE KEYSPACE measurements
+WITH replication = {
+  'class': 'SimpleStrategy',
+  'replication_factor': 1
+}
+EOD
+</span><span class="p">);</span>
+
+<span class="nv">$createTable</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Cassandra\SimpleStatement</span><span class="p">(</span><span class="sh">&lt;&lt;&lt;EOD
+CREATE TABLE events (
+  id INT,
+  date DATE,
+  comment VARCHAR,
+  PRIMARY KEY (id)
+)
+EOD
+</span><span class="p">);</span>
+
+<span class="nv">$session</span><span class="o">-&gt;</span><span class="na">execute</span><span class="p">(</span><span class="nv">$createKeyspace</span><span class="p">);</span>
+<span class="nv">$session</span><span class="o">-&gt;</span><span class="na">execute</span><span class="p">(</span><span class="s1">'USE measurements'</span><span class="p">);</span>
+<span class="nv">$session</span><span class="o">-&gt;</span><span class="na">execute</span><span class="p">(</span><span class="nv">$createTable</span><span class="p">);</span>
+</code></pre>
+<p>You can also <code>ALTER</code> keyspaces and tables, and you can read more about that in the <a href="https://github.com/apache/cassandra/blob/cassandra-2.0/doc/cql3/CQL.textile">CQL3 syntax documentation</a>.</p>
+
+<h3 id="batch-statements">Batch statements<a class="anchor" href="#batch-statements" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+</h3>
+
+<p><strong>If you’re using Cassandra 2.0 or later</strong> you can build batch requests, either from simple or prepared statements. Batches must not contain any select statements, only <code>INSERT</code>, <code>UPDATE</code> and <code>DELETE</code> statements are allowed.</p>
+
+<p>You can mix any combination of statements in a batch:</p>
+<pre class="highlight"><code><span class="cp">&lt;?php</span>
+
+<span class="nv">$batch</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Cassandra\BatchStatement</span><span class="p">();</span>
+
+<span class="nv">$statement</span> <span class="o">=</span> <span class="nv">$session</span><span class="o">-&gt;</span><span class="na">prepare</span><span class="p">(</span><span class="s2">"UPDATE users SET name = ? WHERE user_id = ?"</span><span class="p">);</span>
+<span class="nv">$batch</span><span class="o">-&gt;</span><span class="na">add</span><span class="p">(</span><span class="nv">$statement</span><span class="p">,</span> <span class="k">array</span><span class="p">(</span><span class="s1">'Sue'</span><span class="p">,</span> <span class="s1">'unicorn31'</span><span class="p">));</span>
+
+<span class="nv">$statement</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Cassandra\SimpleStatement</span><span class="p">(</span><span class="s2">"UPDATE users SET age = 19 WHERE user_id = 'unicorn31'"</span><span class="p">);</span>
+<span class="nv">$batch</span><span class="o">-&gt;</span><span class="na">add</span><span class="p">(</span><span class="nv">$statement</span><span class="p">);</span>
+
+<span class="nv">$statement</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Cassandra\SimpleStatement</span><span class="p">(</span><span class="s2">"INSERT INTO activity (user_id, what, when) VALUES (?, 'login', NOW())"</span><span class="p">);</span>
+<span class="nv">$batch</span><span class="o">-&gt;</span><span class="na">add</span><span class="p">(</span><span class="nv">$statement</span><span class="p">,</span> <span class="k">array</span><span class="p">(</span><span class="s1">'unicorn31'</span><span class="p">));</span>
+
+<span class="nv">$session</span><span class="o">-&gt;</span><span class="na">execute</span><span class="p">(</span><span class="nv">$batch</span><span class="p">);</span>
+</code></pre>
+<p>Batches can have one of three different types: <code>logged</code>, <code>unlogged</code> or <code>counter</code>, where <code>logged</code> is the default. Their exact semantics are defined in the <a href="http://docs.datastax.com/en/cql/3.1/cql/cql_reference/batch_r.html">Cassandra documentation</a>, but this is how you specify which one you want:</p>
+<pre class="highlight"><code><span class="cp">&lt;?php</span>
+
+<span class="nv">$batch</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Cassandra\BatchStatement</span><span class="p">(</span><span class="nx">Cassandra</span><span class="o">::</span><span class="na">BATCH_LOGGED</span><span class="p">);</span>
+<span class="nv">$batch</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Cassandra\BatchStatement</span><span class="p">(</span><span class="nx">Cassandra</span><span class="o">::</span><span class="na">BATCH_UNLOGGED</span><span class="p">);</span>
+<span class="nv">$batch</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Cassandra\BatchStatement</span><span class="p">(</span><span class="nx">Cassandra</span><span class="o">::</span><span class="na">BATCH_COUNTER</span><span class="p">);</span>
+</code></pre>
+<p><a href="../api/class/Cassandra/BatchStatement/">Read more about <code>Cassandra\BatchStatement</code></a></p>
+
+<p>Cassandra 1.2 also supported batching, but only as a CQL feature, you had to build the batch as a string, and it didn’t really play well with prepared statements.</p>
+
+<h3 id="result-paging">Result paging<a class="anchor" href="#result-paging" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+</h3>
+
+<p>If you’re using Cassandra 2.0 or later you can page your query results by adding the <code>page_size</code> option to <a href="../api/class/Cassandra/ExecutionOptions/"><code>Cassandra\ExecutionOptions</code></a>:</p>
+<pre class="highlight"><code><span class="cp">&lt;?php</span>
+
+<span class="nv">$statement</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Cassandra\SimpleStatement</span><span class="p">(</span><span class="s2">"SELECT * FROM large_table WHERE id = 'partition_with_lots_of_data'"</span><span class="p">);</span>
+<span class="nv">$result</span>    <span class="o">=</span> <span class="nv">$session</span><span class="o">-&gt;</span><span class="na">execute</span><span class="p">(</span><span class="nv">$statement</span><span class="p">,</span> <span class="k">new</span> <span class="nx">Cassandra\ExecutionOptions</span><span class="p">(</span><span class="k">array</span><span class="p">(</span><span class="s1">'page_size'</span> <span class="o">=&gt;</span> <span class="mi">100</span><span class="p">)));</span>
+
+<span class="k">while</span> <span class="p">(</span><span class="nv">$result</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">foreach</span> <span class="p">(</span><span class="nv">$result</span> <span class="k">as</span> <span class="nv">$row</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nb">var_dump</span><span class="p">(</span><span class="nv">$row</span><span class="p">);</span>
+  <span class="p">}</span>
+  <span class="nv">$result</span> <span class="o">=</span> <span class="nv">$result</span><span class="o">-&gt;</span><span class="na">nextPage</span><span class="p">();</span>
+<span class="p">}</span>
+</code></pre>
+<p><a href="../api/class/Cassandra/Rows/#next-page">Read more about <code>Cassandra\Rows::nextPage()</code></a></p>
+
+<h3 id="consistency">Consistency<a class="anchor" href="#consistency" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+</h3>
+
+<p>You can specify the default consistency to use when you create a new <code>Cassandra\Cluster</code>:</p>
+<pre class="highlight"><code><span class="cp">&lt;?php</span>
+
+<span class="nv">$cluster</span> <span class="o">=</span> <span class="nx">Cassandra</span><span class="o">::</span><span class="na">cluster</span><span class="p">()</span>
+               <span class="o">-&gt;</span><span class="na">withDefaultConsistency</span><span class="p">(</span><span class="nx">Cassandra</span><span class="o">::</span><span class="na">CONSISTENCY_LOCAL_QUORUM</span><span class="p">)</span>
+               <span class="o">-&gt;</span><span class="na">build</span><span class="p">();</span>
+<span class="nv">$session</span> <span class="o">=</span> <span class="nv">$cluster</span><span class="o">-&gt;</span><span class="na">connect</span><span class="p">();</span>
+</code></pre>
+<p><a href="../api/class/Cassandra/Cluster/Builder/#with-default-consistency">Read more <code>Cassandra\Cluster\Builder::withDefaultConsistency()</code></a></p>
+
+<p>Consistency can also be passed via <code>Cassandra\ExecutionOptions</code>.</p>
+<pre class="highlight"><code><span class="cp">&lt;?php</span>
+
+<span class="nv">$session</span><span class="o">-&gt;</span><span class="na">execute</span><span class="p">(</span>
+  <span class="k">new</span> <span class="nx">Cassandra\SimpleStatement</span><span class="p">(</span><span class="s1">'SELECT * FROM users'</span><span class="p">),</span>
+  <span class="k">new</span> <span class="nx">Cassandra\ExecutionOptions</span><span class="p">(</span><span class="k">array</span><span class="p">(</span><span class="s1">'consistency'</span> <span class="o">=&gt;</span> <span class="nx">Cassandra</span><span class="o">::</span><span class="na">CONSISTENCY_LOCAL_QUORUM</span><span class="p">))</span>
+<span class="p">);</span>
+
+<span class="nv">$statement</span> <span class="o">=</span> <span class="nv">$session</span><span class="o">-&gt;</span><span class="na">prepare</span><span class="p">(</span><span class="s1">'SELECT * FROM users'</span><span class="p">);</span>
+<span class="nv">$session</span><span class="o">-&gt;</span><span class="na">execute</span><span class="p">(</span><span class="nv">$statement</span><span class="p">,</span> <span class="k">new</span> <span class="nx">Cassandra\ExecutionOptions</span><span class="p">(</span><span class="k">array</span><span class="p">(</span>
+  <span class="s1">'consistency'</span> <span class="o">=&gt;</span> <span class="nx">Cassandra</span><span class="o">::</span><span class="na">CONSISTENCY_LOCAL_QUORUM</span>
+<span class="p">)));</span>
+
+<span class="nv">$batch</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Cassandra\BatchStatement</span><span class="p">();</span>
+<span class="nv">$batch</span><span class="o">-&gt;</span><span class="na">add</span><span class="p">(</span><span class="k">new</span> <span class="nx">Cassandra\SimpleStatement</span><span class="p">(</span><span class="s2">"UPDATE users SET email = 'sue@foobar.com' WHERE id = 'sue'"</span><span class="p">));</span>
+<span class="nv">$batch</span><span class="o">-&gt;</span><span class="na">add</span><span class="p">(</span><span class="k">new</span> <span class="nx">Cassandra\SimpleStatement</span><span class="p">(</span><span class="s2">"UPDATE users SET email = 'tom@foobar.com' WHERE id = 'tom'"</span><span class="p">));</span>
+<span class="nv">$session</span><span class="o">-&gt;</span><span class="na">execute</span><span class="p">(</span><span class="nv">$batch</span><span class="p">,</span> <span class="k">new</span> <span class="nx">Cassandra\ExecutionOptions</span><span class="p">(</span><span class="k">array</span><span class="p">(</span>
+  <span class="s1">'consistency'</span> <span class="o">=&gt;</span> <span class="nx">Cassandra</span><span class="o">::</span><span class="na">CONSISTENCY_LOCAL_QUORUM</span>
+<span class="p">)));</span>
+</code></pre>
+<p><a href="../api/class/Cassandra/ExecutionOptions/">Read more about <code>Cassandra\ExecutionOptions</code></a>
+<a href="../api/interface/Cassandra/Session/#execute">Read more about <code>Cassandra\Session::execute()</code></a></p>
+
+<p>The default consistency level unless you’ve set it yourself is <code>Cassandra::CONSISTENCY_ONE</code>.</p>
+
+<p>Consistency is ignored for <code>USE</code>, <code>TRUNCATE</code>, <code>CREATE</code> and <code>ALTER</code> statements, and some (like <code>Cassandra::CONSISTENCY_ANY</code>) aren’t allowed in all situations.</p>
+
+<h3 id="logging">Logging<a class="anchor" href="#logging" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+</h3>
+
+<p>You can configure the location of the log file for the driver as well as the log level using the following <code>php.ini</code> settings:</p>
+<pre class="highlight"><code><span class="nn">[cassandra]</span>
+<span class="py">cassandra.log</span><span class="p">=</span><span class="s">syslog</span>
+<span class="py">cassandra.log_level</span><span class="p">=</span><span class="s">INFO</span>
+</code></pre>
+<p>You can specify any file path as <code>cassandra.log</code>. The special value <code>syslog</code> can be used to for the driver to use syslog for logging.</p>
+
+<p>The possible log levels are:</p>
+
+<ul>
+<li>CRITICAL</li>
+<li>ERROR</li>
+<li>WARN</li>
+<li>INFO</li>
+<li>DEBUG</li>
+<li>TRACE</li>
+</ul>
+
+<p>Most of the logging will be when the driver connects and discovers new nodes, when connections fail and so on. The logging is designed to not cause much overhead and only relatively rare events are logged (e.g. normal requests are not logged).</p>
+
+<h2 id="architecture">Architecture<a class="anchor" href="#architecture" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+</h2>
+
+<p>The PHP Driver follows the architecture or <a href="http://datastax.github.io/cpp-driver/topics/#architecture">the C/C++ Driver</a> that it wraps.</p>
+
+<h3 id="persistent-sessions">Persistent Sessions<a class="anchor" href="#persistent-sessions" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+</h3>
+
+<p>By default, the driver uses persistent sessions to prevent each request from creating completely new TCP connections to a Cassandra cluster. You can toggle this functionality using <a href="../api/class/Cassandra/Cluster/Builder/#with-persistent-sessions"><code>Cassandra\Cluster\Builder::withPersistentSessions</code></a></p>
 
 
         </div>
         <div class="col-md-3">
-          <div id="navigation" class="panel-group side-nav" data-spy="affix" data-offset-top="60" data-offset-bottom="54" role="tablist" aria-multiselectable="true">
+          <div id="navigation" class="panel-group side-nav" data-spy="affix" data-offset-top="60" data-offset-bottom="80" role="tablist" aria-multiselectable="true">
             <div id="table-of-contents-panel" class="panel panel-default">
               <div id="table-of-contents-heading" class="panel-heading" role="tab">
                 <h4 class="panel-title">
@@ -106,8 +346,40 @@
               </div>
               <div id="table-of-contents" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="table-of-contents-heading">
                 <div class="panel-body">
-                  <ol class="nav nav-pills nav-stacked toc"><li><a href="#introduction">Introduction
+                  <ol class="nav nav-pills nav-stacked toc">
+<li>
+<a href="#usage">Usage
+</a><ol class="nav nav-pills nav-stacked">
+<li><a href="#specifying-addresses-of-cassandra-nodes">Specifying addresses of Cassandra nodes
+</a></li>
+<li><a href="#discovering-nodes-in-the-cluster">Discovering nodes in the cluster
+</a></li>
+<li><a href="#executing-queries">Executing queries
+</a></li>
+<li><a href="#parameterized-queries">Parameterized queries
+</a></li>
+<li><a href="#prepared-statements">Prepared Statements
+</a></li>
+<li><a href="#executing-statements-in-parallel">Executing statements in parallel
+</a></li>
+<li><a href="#creating-keyspaces-and-tables">Creating keyspaces and tables
+</a></li>
+<li><a href="#batch-statements">Batch statements
+</a></li>
+<li><a href="#result-paging">Result paging
+</a></li>
+<li><a href="#consistency">Consistency
+</a></li>
+<li><a href="#logging">Logging
+</a></li>
+</ol>
+</li>
+<li>
+<a href="#architecture">Architecture
+</a><ol class="nav nav-pills nav-stacked"><li><a href="#persistent-sessions">Persistent Sessions
 </a></li></ol>
+</li>
+</ol>
                 </div>
               </div>
             </div>
