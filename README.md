@@ -22,9 +22,9 @@ upcoming releases.
 
 ## What's new in v1.0.0.beta:
 
-* Persistent Sessions.
+* [Persistent Sessions](http://datastax.github.io/php-driver/features/#persistent-sessions).
 * Windows support.
-* Math functions for numeric types and `Cassandra\Numeric` interface.
+* Math functions for numeric types and [`Cassandra\Numeric`](http://datastax.github.io/php-driver/api/interface/Cassandra/Numeric/) interface.
 * All classes moved into the extension.
 
 ## Planned
@@ -67,8 +67,6 @@ Cassandra's native protocol. The current version works with:
 
 __NOTE__: Apache Cassandra 2.1 support is limited to the Cassandra 2.0 API, e.g. no user-defined types.
 
-__NOTE__: Windows support is planned for a later, more stable release.
-
 ## Contributing
 
 [Read our contribution policy](https://github.com/datastax/php-driver/blob/master/CONTRIBUTING.md) for a detailed description of the process.
@@ -77,8 +75,8 @@ __NOTE__: Windows support is planned for a later, more stable release.
 
 The DataStax PHP Driver uses the amazing [Behat Framework](http://docs.behat.org/)
 for both end-to-end, or acceptance, testing and documentation. All of the features
-supported by the driver have appropriate acceptance tests with easy-to-copy code
-examples in the `features/` directory.
+supported by the driver have appropriate acceptance tests with [easy-to-copy code
+examples in the `features/` directory](https://github.com/datastax/php-driver/tree/master/features).
 
 ## Running tests
 
