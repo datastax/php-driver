@@ -6,6 +6,8 @@
 
 [`withContactPoints()`](http://datastax.github.io/php-driver/api/class/Cassandra/Cluster/Builder/#with-contact-points) and [`withPort()`](http://datastax.github.io/php-driver/api/class/Cassandra/Cluster/Builder/#with-port) methods of the [`Cassandra\Cluster\Builder`](http://datastax.github.io/php-driver/api/class/Cassandra/Cluster/Builder/) are used to specify ip addresses or hostnames and port number of the nodes in a given Cassandra cluster.
 
+Note that you don't have to specify the addresses of all hosts in your cluster. Once the driver has established a connection to any host, it will perform auto-discovery of and connect to all hosts in the cluster.
+
 ```php
 <?php
 
@@ -22,7 +24,7 @@ After the initial connection to one of the hosts specified via `withContactPoint
 
 ### Persistent sessions
 
-In order to limit the startup time and total number of connections to a Cassandra cluster, the PHP Driver enabled persistent sessions by default. All cluster and sessions using the same initial configuration will be shared across requests when persistent sessions are enabled. You can toggle this setting using [`Cassandra\Cluster\Builder::withPersistentSessions()`](http://datastax.github.io/php-driver/api/class/Cassandra/Cluster/Builder/#with-persistent-sessions).
+In order to limit the startup time and total number of connections to a Cassandra cluster, the PHP Driver enables persistent sessions by default. All cluster and sessions using the same initial configuration will be shared across requests when persistent sessions are enabled. You can toggle this setting using [`Cassandra\Cluster\Builder::withPersistentSessions()`](http://datastax.github.io/php-driver/api/class/Cassandra/Cluster/Builder/#with-persistent-sessions).
 
 ```php
 <?php
@@ -33,9 +35,11 @@ $cluster = Cassandra::cluster()
 $session = $cluster->connect();
 ```
 
-Note that disabling persistent sessions will cause significant slow down of cluster initialization as the connections will be forced to get re-established for every request.
+Note that disabling persistent sessions will cause a significant slow down of cluster initialization as the connections will be forced to get re-established for every request.
 
 Once persistent sessions are enabled, you can view how many of them are currently active. They will be exposed in the Cassandra extension section of `phpinfo()`.
+
+Persistent sessions stay alive for the duration of the parent process, typically a php-fpm worker or apache worker. These sessions will be reused for all requests served by that worker process. Once a worker process has reached its end of life, sessions will get cleaned up automatically and will be re-create in the new process.
 
 ### Configuring load balancing policy
 
@@ -135,7 +139,7 @@ $session->execute(
 );
 ```
 
-If you find yourself doing this often, it's better to use prepared statements. As a rule of thumb, if your application is sending a request more than once, a prepared statement is almost always the right choice.
+For frequently executed queries, it's strongly recommended to use prepared statements. As a rule of thumb, if your application is sending a request more than once, a prepared statement is almost always the right choice.
 
 ### Prepared Statements
 
@@ -289,7 +293,7 @@ while ($result) {
 
 ### Consistency
 
-You can specify the default consistency to use when you create a new `Cassandra\Cluster`:
+You can specify the default consistency to use for statements execution when you create a new `Cassandra\Cluster`:
 
 ```php
 <?php
