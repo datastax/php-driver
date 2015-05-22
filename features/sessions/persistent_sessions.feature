@@ -11,7 +11,6 @@ Feature: Persistent Sessions
 
       echo phpinfo();
       """
-    And a running web server
 
   Scenario: No sessions have been created
     When I go to "/status.php"

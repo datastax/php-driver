@@ -162,24 +162,22 @@ class FeatureContext implements Context, SnippetAcceptingContext
     }
 
     /**
-     * @Given a running web server
-     */
-    public function aRunningWebServer()
-    {
-        $this->startWebServer();
-    }
-
-    /**
      * @When I go to :path
      */
     public function iGoTo($path)
     {
+        if (!$this->webServerProcess) {
+            $this->startWebServer();
+        }
 
         for ($retries = 1; $retries <= 10; $retries++) {
             $contents = @file_get_contents($this->webServerURL.$path);
 
             if ($contents === false) {
-                sleep($retries * 0.4);
+                $wait = $retries * 0.4;
+                printf("Unable to fetch %s, attempt %d, retrying in %d\n",
+                       $path, $retries, $wait);
+                sleep($wait);
                 continue;
             }
 
