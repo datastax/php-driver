@@ -22,6 +22,10 @@
 #include <Zend/zend_exceptions.h>
 #include <Zend/zend_interfaces.h>
 
+#if PHP_VERSION_ID < 50304
+#  error PHP 5.3.4 or later is required in order to build the driver
+#endif
+
 #if HAVE_SPL
 #  include <ext/spl/spl_iterators.h>
 #  include <ext/spl/spl_exceptions.h>
