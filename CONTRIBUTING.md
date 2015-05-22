@@ -7,6 +7,7 @@ help the maintainer to fix the bug that you've discovered quicker:
 
 * [Use the PHP Driver Jira](https://datastax-oss.atlassian.net/projects/PHP) to report all issues and bugs.
 * Include the version of the Driver, PHP and Cassandra or DSE in your Jira ticket.
+* Include the Driver dependency versions as well (e.g. libuv, C/C++ Driver, ...etc)
 * Include a complete stack trace of the failure as well as any available logs.
 * Include any additional information you think is relevant - the description of
   your setup, any non-default Driver configuration, etc.

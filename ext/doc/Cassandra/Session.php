@@ -28,10 +28,10 @@ interface Session
     /**
      * Executes a given statement and returns a result.
      *
-     * @param Statement        $statement statement to be executed
-     * @param ExecutionOptions $options   execution options
-     *
      * @throws Exception
+     *
+     * @param Statement        $statement statement to be executed
+     * @param ExecutionOptions $options   execution options (optional)
      *
      * @return Rows execution result
      */
@@ -44,7 +44,7 @@ interface Session
      * you can provide one to Future::get() instead.
      *
      * @param Statement             $statement statement to be executed
-     * @param ExecutionOptions|null $options   execution options
+     * @param ExecutionOptions|null $options   execution options (optional)
      *
      * @return Future future result
      */
@@ -56,10 +56,10 @@ interface Session
      * Note that this method only uses the ExecutionOptions::$timeout option,
      * all other options will be ignored.
      *
-     * @param string                $cql     CQL statement string
-     * @param ExecutionOptions|null $options execution options
-     *
      * @throws Exception
+     *
+     * @param string                $cql     CQL statement string
+     * @param ExecutionOptions|null $options execution options (optional)
      *
      * @return PreparedStatement prepared statement
      */

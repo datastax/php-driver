@@ -21,6 +21,6 @@ namespace Cassandra\Exception;
 use Cassandra\Exception;
 
 /**
- * Cassandra-specific domain exception
+ * Cassandra-specific domain exception.
  */
 class DomainException extends \DomainException implements Exception {}
