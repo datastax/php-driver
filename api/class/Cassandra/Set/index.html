@@ -242,6 +242,46 @@
   </div>
   <div class="panel panel-default member-definition">
     <div class="panel-heading method-heading">
+      <code>bool</code> <h3 id="has">has<a class="anchor" href="#has" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+</h3> <big>(</big> <code>mixed</code> $value <big>)</big>
+    </div>
+    <div class="panel-body method-body">
+      <p>Returns whether a value is in this set.</p>
+
+      <dl class="tags">
+<dt class="tag-title">Parameters:</dt>
+<dd class="tag-content"><table class="table table-striped param">
+<thead><tr>
+<th class="name">Name</th>
+<th class="type">Type</th>
+<th class="details">Details</th>
+</tr></thead>
+<tbody><tr>
+<td><var>$value</var></td>
+<td><code>mixed</code></td>
+<td>
+<p>Value</p>
+</td>
+</tr></tbody>
+</table></dd>
+<dt class="tag-title">Returns:</dt>
+<dd class="tag-content"><table class="table table-striped return">
+<thead><tr>
+<th class="type">Type</th>
+<th class="details">Details</th>
+</tr></thead>
+<tbody><tr>
+<td><code>bool</code></td>
+<td>
+<p>whether the value is in the set</p>
+</td>
+</tr></tbody>
+</table></dd>
+</dl>
+    </div>
+  </div>
+  <div class="panel panel-default member-definition">
+    <div class="panel-heading method-heading">
       <code>bool</code> <h3 id="remove">remove<a class="anchor" href="#remove" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
 </h3> <big>(</big> <code>mixed</code> $value <big>)</big>
     </div>
@@ -282,28 +322,111 @@
   </div>
   <div class="panel panel-default member-definition">
     <div class="panel-heading method-heading">
-      <code>bool</code> <h3 id="has">has<a class="anchor" href="#has" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
-</h3> <big>(</big> <code>mixed</code> $value <big>)</big>
+      <code>int</code> <h3 id="count">count<a class="anchor" href="#count" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+</h3> <big>(</big>  <big>)</big>
     </div>
     <div class="panel-body method-body">
-      <p>Returns whether a value is in this set.</p>
+      <p>Total number of elements in this set</p>
 
       <dl class="tags">
-<dt class="tag-title">Parameters:</dt>
-<dd class="tag-content"><table class="table table-striped param">
+<dt class="tag-title">Returns:</dt>
+<dd class="tag-content"><table class="table table-striped return">
 <thead><tr>
-<th class="name">Name</th>
 <th class="type">Type</th>
 <th class="details">Details</th>
 </tr></thead>
 <tbody><tr>
-<td><var>$value</var></td>
-<td><code>mixed</code></td>
+<td><code>int</code></td>
 <td>
-<p>Value</p>
+<p>count</p>
 </td>
 </tr></tbody>
 </table></dd>
+</dl>
+    </div>
+  </div>
+  <div class="panel panel-default member-definition">
+    <div class="panel-heading method-heading">
+      <code>mixed</code> <h3 id="current">current<a class="anchor" href="#current" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+</h3> <big>(</big>  <big>)</big>
+    </div>
+    <div class="panel-body method-body">
+      <p>Current element for iteration</p>
+
+      <dl class="tags">
+<dt class="tag-title">Returns:</dt>
+<dd class="tag-content"><table class="table table-striped return">
+<thead><tr>
+<th class="type">Type</th>
+<th class="details">Details</th>
+</tr></thead>
+<tbody><tr>
+<td><code>mixed</code></td>
+<td>
+<p>current element</p>
+</td>
+</tr></tbody>
+</table></dd>
+</dl>
+    </div>
+  </div>
+  <div class="panel panel-default member-definition">
+    <div class="panel-heading method-heading">
+      <code>int</code> <h3 id="key">key<a class="anchor" href="#key" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+</h3> <big>(</big>  <big>)</big>
+    </div>
+    <div class="panel-body method-body">
+      <p>Current key for iteration</p>
+
+      <dl class="tags">
+<dt class="tag-title">Returns:</dt>
+<dd class="tag-content"><table class="table table-striped return">
+<thead><tr>
+<th class="type">Type</th>
+<th class="details">Details</th>
+</tr></thead>
+<tbody><tr>
+<td><code>int</code></td>
+<td>
+<p>current key</p>
+</td>
+</tr></tbody>
+</table></dd>
+</dl>
+    </div>
+  </div>
+  <div class="panel panel-default member-definition">
+    <div class="panel-heading method-heading">
+      <code>void</code> <h3 id="next">next<a class="anchor" href="#next" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+</h3> <big>(</big>  <big>)</big>
+    </div>
+    <div class="panel-body method-body">
+      <p>Move internal iterator forward</p>
+
+      <dl class="tags">
+<dt class="tag-title">Returns:</dt>
+<dd class="tag-content"><table class="table table-striped return">
+<thead><tr>
+<th class="type">Type</th>
+<th class="details">Details</th>
+</tr></thead>
+<tbody><tr>
+<td><code>void</code></td>
+<td></td>
+</tr></tbody>
+</table></dd>
+</dl>
+    </div>
+  </div>
+  <div class="panel panel-default member-definition">
+    <div class="panel-heading method-heading">
+      <code>bool</code> <h3 id="valid">valid<a class="anchor" href="#valid" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+</h3> <big>(</big>  <big>)</big>
+    </div>
+    <div class="panel-body method-body">
+      <p>Check whether a current value exists</p>
+
+      <dl class="tags">
 <dt class="tag-title">Returns:</dt>
 <dd class="tag-content"><table class="table table-striped return">
 <thead><tr>
@@ -312,9 +435,30 @@
 </tr></thead>
 <tbody><tr>
 <td><code>bool</code></td>
-<td>
-<p>whether the value is in the set</p>
-</td>
+<td></td>
+</tr></tbody>
+</table></dd>
+</dl>
+    </div>
+  </div>
+  <div class="panel panel-default member-definition">
+    <div class="panel-heading method-heading">
+      <code>void</code> <h3 id="rewind">rewind<a class="anchor" href="#rewind" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+</h3> <big>(</big>  <big>)</big>
+    </div>
+    <div class="panel-body method-body">
+      <p>Rewind internal iterator</p>
+
+      <dl class="tags">
+<dt class="tag-title">Returns:</dt>
+<dd class="tag-content"><table class="table table-striped return">
+<thead><tr>
+<th class="type">Type</th>
+<th class="details">Details</th>
+</tr></thead>
+<tbody><tr>
+<td><code>void</code></td>
+<td></td>
 </tr></tbody>
 </table></dd>
 </dl>
@@ -350,9 +494,21 @@
 </a></li>
 <li><a href="#add">add
 </a></li>
+<li><a href="#has">has
+</a></li>
 <li><a href="#remove">remove
 </a></li>
-<li><a href="#has">has
+<li><a href="#count">count
+</a></li>
+<li><a href="#current">current
+</a></li>
+<li><a href="#key">key
+</a></li>
+<li><a href="#next">next
+</a></li>
+<li><a href="#valid">valid
+</a></li>
+<li><a href="#rewind">rewind
 </a></li>
 </ol>
 </li>

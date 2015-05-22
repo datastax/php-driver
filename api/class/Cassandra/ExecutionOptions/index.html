@@ -133,6 +133,15 @@
     <div class="panel-body method-body">
       <p>Creates a new options object for execution.</p>
 
+<ul>
+<li>array[‘arguments’] array An array or positional or named arguments</li>
+<li>array[&#8216;consistency’] int One of Cassandra::CONSISTENCY_*</li>
+<li>array[&#8216;timeout’] int|null A number of seconds or null</li>
+<li>array[&#8216;page_size’] int A number of rows to include in result for paging</li>
+<li>array[&#8216;serial_consistency’] int Either <code><a href="../#consistency-serial">Cassandra::CONSISTENCY_SERIAL</a></code> or <code><a href="../#consistency-local-serial">Cassandra::CONSISTENCY_LOCAL_SERIAL</a></code>
+</li>
+</ul>
+
       <dl class="tags">
 <dt class="tag-title">Parameters:</dt>
 <dd class="tag-content"><table class="table table-striped param">
@@ -157,9 +166,7 @@
 </tr></thead>
 <tbody><tr>
 <td><code><a href="../Exception/InvalidArgumentException/">Cassandra\Exception\InvalidArgumentException</a></code></td>
-<td>
-<p>array[‘arguments’] array An array or positional or named arguments array[&#8216;consistency’] int One of Cassandra::CONSISTENCY_* array[&#8216;timeout’] int|null A number of seconds or null array[&#8216;page_size’] int A number of rows to include in result for paging array[&#8216;serial_consistency’] int Either <code><a href="../#consistency-serial">Cassandra::CONSISTENCY_SERIAL</a></code> or <code><a href="../#consistency-local-serial">Cassandra::CONSISTENCY_LOCAL_SERIAL</a></code></p>
-</td>
+<td></td>
 </tr></tbody>
 </table></dd>
 </dl>
