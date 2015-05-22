@@ -36,25 +36,27 @@ final class Decimal implements Numeric
      * $this->assertEquals("1313123123234234234234234234123", $decimal->value());
      * ~~~
      *
-     *
      * @param string $value Any decimal string
      */
     public function __construct($value) {}
 
     /**
-     * String representation of this decimal
+     * String representation of this decimal.
+     *
      * @return string Decimal value
      */
     public function __toString() {}
 
     /**
-     * Numeric value of this decimal as string
+     * Numeric value of this decimal as string.
+     *
      * @return string Numeric value
      */
     public function value() {}
 
     /**
-     * Scale of this decimal as int
+     * Scale of this decimal as int.
+     *
      * @return int Scale
      */
     public function scale() {}

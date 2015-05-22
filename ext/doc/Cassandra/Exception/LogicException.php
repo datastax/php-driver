@@ -21,6 +21,6 @@ namespace Cassandra\Exception;
 use Cassandra\Exception;
 
 /**
- * Cassandra-specific logic exception
+ * Cassandra-specific logic exception.
  */
 class LogicException extends \LogicException implements Exception {}

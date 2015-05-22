@@ -24,19 +24,22 @@ namespace Cassandra;
 final class Bigint implements Numeric
 {
     /**
-     * Creates a new 64bit integer
+     * Creates a new 64bit integer.
+     *
      * @param string $value integer value as a string
      */
     public function __construct($value) {}
 
     /**
-     * Returns the integer value
+     * Returns the integer value.
+     *
      * @return string integer value
      */
     public function value() {}
 
     /**
-     * Returns string representation of the integer value
+     * Returns string representation of the integer value.
+     *
      * @return string integer value
      */
     public function __toString() {}

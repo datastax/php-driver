@@ -24,19 +24,22 @@ namespace Cassandra;
 final class Float implements Numeric
 {
     /**
-     * Creates a new float
+     * Creates a new float.
+     *
      * @param string $value float value as a string
      */
     public function __construct($value) {}
 
     /**
-     * Returns the float value
+     * Returns the float value.
+     *
      * @return string float value
      */
     public function value() {}
 
     /**
-     * Returns string representation of the float value
+     * Returns string representation of the float value.
+     *
      * @return string float value
      */
     public function __toString() {}
