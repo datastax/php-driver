@@ -76,6 +76,7 @@ class CCM
             try {
                 $this->cluster = $builder->build();
                 $this->session = $this->cluster->connect();
+                break;
             } catch (Cassandra\Exception\RuntimeException $e) {
                 $this->cluster = null;
                 $this->session = null;
