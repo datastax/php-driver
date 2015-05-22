@@ -27,6 +27,13 @@ final class FutureRows implements Future
 {
     /**
      * {@inheritDoc}
+     *
+     * @throws Cassandra\Exception\InvalidArgumentException
+     * @throws Cassandra\Exception\TimeoutException
+     *
+     * @param float|null $timeout
+     *
+     * @return mixed a value that the future has been resolved with
      */
     public function get($timeout = null) {}
 }

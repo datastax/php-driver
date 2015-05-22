@@ -28,11 +28,19 @@ final class DefaultCluster implements Cluster
 {
     /**
      * {@inheritDoc}
+     *
+     * @param string $keyspace Optional keyspace name
+     *
+     * @return Session Session instance
      */
     public function connect($keyspace = null) {}
 
     /**
      * {@inheritDoc}
+     *
+     * @param string $keyspace Optional keyspace name
+     *
+     * @return Future A Future Session instance
      */
     public function connectAsync($keyspace = null) {}
 }

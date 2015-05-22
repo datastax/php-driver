@@ -35,7 +35,7 @@ interface Session
      *
      * @return Rows execution result
      */
-    public function Rows execute(Statement $statement, ExecutionOptions $options = null);
+    public function execute(Statement $statement, ExecutionOptions $options = null);
 
     /**
      * Executes a given statement and returns a future result.
@@ -48,7 +48,7 @@ interface Session
      *
      * @return Future future result
      */
-    public function Future executeAsync(Statement $statement, ExecutionOptions $options = null);
+    public function executeAsync(Statement $statement, ExecutionOptions $options = null);
 
     /**
      * Creates a prepared statement from a given CQL string.
@@ -63,7 +63,7 @@ interface Session
      *
      * @return PreparedStatement prepared statement
      */
-    public function PreparedStatement prepare($cql, ExecutionOptions $options = null);
+    public function prepare($cql, ExecutionOptions $options = null);
 
     /**
      * Asynchronously prepares a statement and returns a future prepared statement.
@@ -75,19 +75,20 @@ interface Session
      *
      * @return Future statement
      */
-    public function Future prepareAsync($cql, ExecutionOptions $options = null);
+    public function prepareAsync($cql, ExecutionOptions $options = null);
 
     /**
      * Closes current session and all of its connections.
      *
      * @param float|null $timeout Timeout to wait for closure in seconds
+     * @return void
      */
-    public function void close($timeout = null);
+    public function close($timeout = null);
 
     /**
      * Asynchronously closes current session once all pending requests have finished.
      *
      * @return Future future
      */
-    public function Future closeAsync();
+    public function closeAsync();
 }
