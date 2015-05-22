@@ -4,9 +4,9 @@
 
 ### Specifying addresses of Cassandra nodes
 
-[`withContactPoints()`](http://datastax.github.io/php-driver/api/class/Cassandra/Cluster/Builder/#with-contact-points) and [`withPort()`](http://datastax.github.io/php-driver/api/class/Cassandra/Cluster/Builder/#with-port) methods of the [`Cassandra\Cluster\Builder`](http://datastax.github.io/php-driver/api/class/Cassandra/Cluster/Builder/) are used to specify ip addresses or hostnames and port number of the nodes in a given Cassandra cluster.
+[`withContactPoints()`](http://datastax.github.io/php-driver/api/class/Cassandra/Cluster/Builder/#with-contact-points) and [`withPort()`](http://datastax.github.io/php-driver/api/class/Cassandra/Cluster/Builder/#with-port) methods of the [`Cassandra\Cluster\Builder`](http://datastax.github.io/php-driver/api/class/Cassandra/Cluster/Builder/) are used to specify IP addresses or hostnames and port number of the nodes in a given Cassandra cluster.
 
-Note that you don't have to specify the addresses of all hosts in your cluster. Once the driver has established a connection to any host, it will perform auto-discovery of and connect to all hosts in the cluster.
+Note that you don't have to specify the addresses of all hosts in your cluster. Once the driver has established a connection to any host, it will perform auto-discovery and connect to all hosts in the cluster.
 
 ```php
 <?php
@@ -20,7 +20,7 @@ $session = $cluster->connect();
 
 ### Discovering nodes in the cluster
 
-After the initial connection to one of the hosts specified via `withContactPoints()` succeeded, the driver discovers the addresses and connects to all members of the cluster automatically. You can also see the nodes that the driver discovered by running `SELECT * FROM system.peers`.
+After the initial connection to one of the hosts specified via `withContactPoints()` succeeds, the driver discovers the addresses and connects to all members of the cluster automatically. You can also see the nodes that the driver discovered by running `SELECT * FROM system.peers`.
 
 ### Persistent sessions
 
@@ -43,9 +43,9 @@ Persistent sessions stay alive for the duration of the parent process, typically
 
 ### Configuring load balancing policy
 
-PHP Driver comes with a variety of load balancing policies. By default it uses a combination of token aware data center round robin.
+The PHP Driver comes with a variety of load balancing policies. By default it uses a combination of token aware data center round robin.
 
-The token aware load balancing policy uses the same hashing algorithms as the Apache Cassandra to route prepared statements execution directly to replica nodes, avoiding an additional network hop to/from the coordinator. You can toggle its usage with [`Cassandra\Cluster\Builder::withTokenAwareRouting()`](http://datastax.github.io/php-driver/api/class/Cassandra/Cluster/Builder/#with-token-aware-routing).
+The token aware load balancing policy uses the same hashing algorithms as the Apache Cassandra to directly route the execution of prepared statements to the replica node, avoiding an additional network hop to/from the coordinator. You can toggle its usage with [`Cassandra\Cluster\Builder::withTokenAwareRouting()`](http://datastax.github.io/php-driver/api/class/Cassandra/Cluster/Builder/#with-token-aware-routing).
 
 ```php
 <?php
@@ -141,9 +141,9 @@ $session->execute(
 
 For frequently executed queries, it's strongly recommended to use prepared statements. As a rule of thumb, if your application is sending a request more than once, a prepared statement is almost always the right choice.
 
-### Prepared Statements
+### Prepared statements
 
-The driver supports prepared statements. Use [`Cassandra\Session::prepare()`](http://datastax.github.io/php-driver/api/interface/Cassandra/Session/#prepare) to create a [`Cassandra\PreparedStatement` object](http://datastax.github.io/php-driver/api/class/Cassandra/PreparedStatement/), and then call [`Cassandra\Session::execute()`](http://datastax.github.io/php-driver/api/interface/Cassandra/Session/#execute).
+The driver supports prepared statements. Use [`Cassandra\Session::prepare()`](http://datastax.github.io/php-driver/api/interface/Cassandra/Session/#prepare) to create a [`Cassandra\PreparedStatement`](http://datastax.github.io/php-driver/api/class/Cassandra/PreparedStatement/) object, and then call [`Cassandra\Session::execute()`](http://datastax.github.io/php-driver/api/interface/Cassandra/Session/#execute).
 
 ```php
 <?php
@@ -159,7 +159,7 @@ A prepared statement can be run many times, but the CQL parsing will only be don
 
 ### Executing statements in parallel
 
-With fully asynchronous api, it is very easy to run queries in parallel:
+With fully asynchronous API, it is very easy to run queries in parallel:
 
 ```php
 <?php
@@ -347,7 +347,9 @@ cassandra.log=syslog
 cassandra.log_level=INFO
 ```
 
-You can specify any file path as `cassandra.log`. The special value `syslog` can be used to for the driver to use syslog for logging.
+You can specify any file path as `cassandra.log`.
+
+The special value `syslog` can be used to for the driver to use syslog for logging. Syslog is only supported on \*nix systems.
 
 The possible log levels are:
 
@@ -364,6 +366,6 @@ Most of the logging will be when the driver connects and discovers new nodes, wh
 
 The PHP Driver follows the architecture of [the C/C++ Driver](http://datastax.github.io/cpp-driver/topics/#architecture) that it wraps.
 
-### Persistent Sessions
+### Persistent sessions
 
 By default, the driver uses persistent sessions to prevent each request from creating completely new TCP connections to a Cassandra cluster. You can toggle this functionality using [`Cassandra\Cluster\Builder::withPersistentSessions`](http://datastax.github.io/php-driver/api/class/Cassandra/Cluster/Builder/#with-persistent-sessions)
