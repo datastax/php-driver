@@ -174,7 +174,23 @@ class FeatureContext implements Context, SnippetAcceptingContext
      */
     public function iGoTo($path)
     {
-        $this->lastResponse = file_get_contents($this->webServerURL.$path);
+
+        for ($retries = 1; $retries <= 10; $retries++) {
+            $contents = @file_get_contents($this->webServerURL.$path);
+
+            if ($contents === false) {
+                sleep($retries * 0.4);
+                continue;
+            }
+
+            break;
+        }
+
+        if ($contents === false) {
+            throw new Exception(sprintf("Unable to fetch %s", $path));
+        }
+
+        $this->lastResponse = $contents;
     }
 
     /**
@@ -268,10 +284,8 @@ class FeatureContext implements Context, SnippetAcceptingContext
     {
         $this->webServerURL = 'http://127.0.0.1:4312';
         $command = sprintf('%s -S %s %s', $this->phpBin, 'localhost:4312', $this->phpBinOptions);
-        echo $command . "\n";
         $this->webServerProcess = new Process($command, $this->workingDir);
         $this->webServerProcess->start();
-        sleep(5);
         echo 'Web Server Started: ' . $this->webServerProcess->getPid() . "\n";
     }
 
