@@ -25,4 +25,4 @@ namespace Cassandra\Exception;
  * @see Cassandra\Exception\ReadTimeoutException
  * @see Cassandra\Exception\WriteTimeoutException
  */
-class ExecutionException extends ServerException {}
+class ExecutionException extends RuntimeException {}

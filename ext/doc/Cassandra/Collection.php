@@ -70,4 +70,46 @@ final class Collection implements \Countable, \IteratorAggregate
      * @return  int|null         Index
      */
     public function find($value) {}
+
+    /**
+     * Total number of elements in this collection
+     *
+     * @return int count
+     */
+    public function count() {}
+
+    /**
+     * Current element for iteration
+     *
+     * @return mixed current element
+     */
+    public function current() {}
+
+    /**
+     * Current key for iteration
+     *
+     * @return int current key
+     */
+    public function key() {}
+
+    /**
+     * Move internal iterator forward
+     *
+     * @return void
+     */
+    public function next() {}
+
+    /**
+     * Check whether a current value exists
+     *
+     * @return bool
+     */
+    public function valid() {}
+
+    /**
+     * Rewind internal iterator
+     *
+     * @return void
+     */
+    public function rewind() {}
 }

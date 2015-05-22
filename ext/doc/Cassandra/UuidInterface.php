@@ -19,35 +19,21 @@
 namespace Cassandra;
 
 /**
- * A PHP representation of the CQL `uuid` datatype
+ * A PHP representation of the CQL `timeuuid` datatype
  */
-final class Uuid implements UuidInterface
+interface UuidInterface
 {
     /**
-     * Creates a uuid from a given uuid string or a random one.
-     *
-     * @param string $uuid A uuid string
-     */
-    public function __construct($uuid = null) {}
-
-    /**
      * Returns this uuid as string.
      *
-     * @return string uuid
+     * @return string uuid as string
      */
-    public function __toString() {}
-
-    /**
-     * Returns this uuid as string.
-     *
-     * @return string uuid
-     */
-    public function uuid() {}
+    function uuid() {}
 
     /**
      * Returns the version of this uuid.
      *
      * @return int version of this uuid
      */
-    public function version() {}
+    function version() {}
 }

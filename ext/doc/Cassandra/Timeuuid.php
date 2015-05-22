@@ -21,7 +21,7 @@ namespace Cassandra;
 /**
  * A PHP representation of the CQL `timeuuid` datatype
  */
-final class Timeuuid
+final class Timeuuid implements UuidInterface
 {
     /**
      * Creates a timeuuid from a given timestamp or current time.

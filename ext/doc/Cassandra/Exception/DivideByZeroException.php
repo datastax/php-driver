@@ -19,7 +19,6 @@
 namespace Cassandra\Exception;
 
 /**
- * AuthenticationException is raised when client was not configured with valid
- * authentication credentials.
+ * Cassandra-specific domain exception.
  */
-class AuthenticationException extends RuntimeException {}
+class DivideByZeroException extends RangeException {}

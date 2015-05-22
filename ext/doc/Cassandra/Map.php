@@ -93,4 +93,91 @@ final class Map implements \Countable, \IteratorAggregate, \ArrayAccess
      * @return bool Whether the key is in the map or not
      */
     public function has($key) {}
+
+    /**
+     * Total number of elements in this map
+     *
+     * @return int count
+     */
+    public function count() {}
+
+    /**
+     * Current value for iteration
+     *
+     * @return mixed current value
+     */
+    public function current() {}
+
+    /**
+     * Current key for iteration
+     *
+     * @return int current key
+     */
+    public function key() {}
+
+    /**
+     * Move internal iterator forward
+     *
+     * @return void
+     */
+    public function next() {}
+
+    /**
+     * Check whether a current value exists
+     *
+     * @return bool
+     */
+    public function valid() {}
+
+    /**
+     * Rewind internal iterator
+     *
+     * @return void
+     */
+    public function rewind() {}
+
+    /**
+     * Sets the value at a given key
+     *
+     * @throws Cassandra\Exception\InvalidArgumentException when the type of key or value is wrong
+     *
+     * @param mixed $key   Key to use.
+     * @param mixed $value Value to set.
+     *
+     * @return void
+     */
+    public function offsetSet($key, $value) {}
+
+    /**
+     * Retrieves the value at a given key
+     *
+     * @throws Cassandra\Exception\InvalidArgumentException when the type of key is wrong
+     *
+     * @param mixed $key   Key to use.
+     *
+     * @return mixed|null  Value or `null`
+     */
+    public function offsetGet($key) {}
+
+    /**
+     * Deletes the value at a given key
+     *
+     * @throws Cassandra\Exception\InvalidArgumentException when the type of key is wrong
+     *
+     * @param mixed $key   Key to use.
+     *
+     * @return void
+     */
+    public function offsetUnset($key) {}
+
+    /**
+     * Returns whether the value a given key is present
+     *
+     * @throws Cassandra\Exception\InvalidArgumentException when the type of key is wrong
+     *
+     * @param mixed $key   Key to use.
+     *
+     * @return bool        Whether the value at a given key is present
+     */
+    public function offsetExists($key) {}
 }

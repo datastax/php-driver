@@ -35,7 +35,7 @@ final class Inet
      *
      * @return string address
      */
-    public function value() {}
+    public function address() {}
 
     /**
      * Returns the normalized string representation of the address.

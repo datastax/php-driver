@@ -23,4 +23,4 @@ namespace Cassandra\Exception;
  * protocol, e.g. sending a QUERY message before STARTUP. Seeing this error can
  * be considered a bug.
  */
-class ProtocolException extends ServerException {}
+class ProtocolException extends RuntimeException {}
