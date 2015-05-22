@@ -124,8 +124,8 @@
 <div class="methods-content">
   <div class="panel panel-default member-definition">
     <div class="panel-heading method-heading">
-       <h3 id="get">get<a class="anchor" href="#get" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
-</h3> <big>(</big>  $timeout <big>=</big> <var>null</var> <big>)</big>
+      <code>mixed</code> <h3 id="get">get<a class="anchor" href="#get" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+</h3> <big>(</big> <code>float</code> $timeout <big>=</big> <var>null</var> <big>)</big>
     </div>
     <div class="panel-body method-body">
       <p>Waits for a given future resource to resolve and throws errors if any.</p>
@@ -140,8 +140,38 @@
 </tr></thead>
 <tbody><tr>
 <td><var>$timeout</var></td>
+<td><code>float</code></td>
 <td></td>
+</tr></tbody>
+</table></dd>
+<dt class="tag-title">Throws:</dt>
+<dd class="tag-content"><table class="table table-striped throw">
+<thead><tr>
+<th class="type">Type</th>
+<th class="details">Details</th>
+</tr></thead>
+<tbody>
+<tr>
+<td><code><a href="../Exception/InvalidArgumentException/">Cassandra\Exception\InvalidArgumentException</a></code></td>
 <td></td>
+</tr>
+<tr>
+<td><code><a href="../Exception/TimeoutException/">Cassandra\Exception\TimeoutException</a></code></td>
+<td></td>
+</tr>
+</tbody>
+</table></dd>
+<dt class="tag-title">Returns:</dt>
+<dd class="tag-content"><table class="table table-striped return">
+<thead><tr>
+<th class="type">Type</th>
+<th class="details">Details</th>
+</tr></thead>
+<tbody><tr>
+<td><code>mixed</code></td>
+<td>
+<p>a value that the future has been resolved with</p>
+</td>
 </tr></tbody>
 </table></dd>
 </dl>
