@@ -115,10 +115,13 @@ upcoming releases.</p>
 
 <ul>
 <li>
-<a href="features/#persistent-sessions">Persistent Sessions</a>.</li>
+<a href="features/#persistent-sessions">Persistent sessions</a>.</li>
 <li>Windows support.</li>
+<li>Configurable logger (file/syslog and level).</li>
 <li>Math functions for numeric types and <a href="api/interface/Cassandra/Numeric/"><code>Cassandra\Numeric</code></a> interface.</li>
 <li>All classes moved into the extension.</li>
+<li>Upgraded to use the C/C++ driver v2.0.</li>
+<li>Added stub files for IDEs.</li>
 </ul>
 
 <h2 id="planned">Planned<a class="anchor" href="#planned" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
@@ -126,7 +129,7 @@ upcoming releases.</p>
 
 <ul>
 <li>Ability to configure connection pooling.</li>
-<li>Ability to configure latency aware load balancing</li>
+<li>Ability to configure latency aware load balancing.</li>
 <li>Expose <a href="http://datastax.github.io/cpp-driver/api/struct_cass_session/#1afc51badec695483e4cde43ae0fc1e876">Schema Metadata</a>.</li>
 </ul>
 
@@ -161,10 +164,11 @@ Cassandra’s native protocol. The current version works with:</p>
 <ul>
 <li>Apache Cassandra versions 1.2, 2.0 and partially 2.1</li>
 <li>DataStax Enterprise 3.1, 3.2, 4.0 and 4.5</li>
-<li>PHP 5.3+</li>
+<li>PHP 5.3.4+</li>
+<li>Compilers: GCC 4.1.2+, Clang 3.4+, and MSVC 2010/2012/2013</li>
 </ul>
 
-<p><strong>NOTE</strong>: Apache Cassandra 2.1 support is limited to the Cassandra 2.0 API, e.g. no user-defined types.</p>
+<p><strong>NOTE</strong>: Apache Cassandra 2.1 support is limited to the Cassandra 2.0 API (native protocol v2), e.g. no user-defined types.</p>
 
 <h2 id="contributing">Contributing<a class="anchor" href="#contributing" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
 </h2>
@@ -190,7 +194,7 @@ git submodule update --init
 vagrant up
 vagrant ssh
 </code></pre>
-<p>Once you’ve logged in to the vagrant vm, run:</p>
+<p>Once you’ve logged in to the vagrant VM, run:</p>
 <pre class="highlight"><code><span class="nb">cd</span> /usr/local/src/php-driver
 ./bin/behat
 ./bin/phpunit
