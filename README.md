@@ -63,7 +63,7 @@ Cassandra's native protocol. The current version works with:
 
 * Apache Cassandra versions 1.2, 2.0 and partially 2.1
 * DataStax Enterprise 3.1, 3.2, 4.0 and 4.5
-* PHP 5.3+
+* PHP 5.3.4+
 
 __NOTE__: Apache Cassandra 2.1 support is limited to the Cassandra 2.0 API, e.g. no user-defined types.
 
