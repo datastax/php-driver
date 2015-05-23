@@ -185,6 +185,9 @@ class FeatureContext implements Context, SnippetAcceptingContext
         }
 
         if ($contents === false) {
+            echo 'Web Server STDOUT: ' . $this->webServerProcess->getOutput() . "\n";
+            echo 'Web Server STDERR: ' . $this->webServerProcess->getErrorOutput() . "\n";
+
             throw new Exception(sprintf("Unable to fetch %s", $path));
         }
 
@@ -280,8 +283,8 @@ class FeatureContext implements Context, SnippetAcceptingContext
 
     private function startWebServer()
     {
-        $this->webServerURL = 'http://127.0.0.1:4312';
-        $command = sprintf('%s -S %s %s', $this->phpBin, 'localhost:4312', $this->phpBinOptions);
+        $this->webServerURL = 'http://127.0.0.1:10000';
+        $command = sprintf('%s -S %s %s', $this->phpBin, 'localhost:10000', $this->phpBinOptions);
         $this->webServerProcess = new Process($command, $this->workingDir);
         $this->webServerProcess->start();
         echo 'Web Server Started: ' . $this->webServerProcess->getPid() . "\n";
