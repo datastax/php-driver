@@ -20,7 +20,7 @@ while text.gsub!(/(\s+\*.*?)\\/, '\1::')
 end
 
 # method return typehints
-text.gsub!(/(\/\*\*[\s\S]*?@return\s+([^\s]*)[\s\S]*?\*\/[\s\S]*?)((public|protected|private)(\s+static)?)\s+function\s+([\S]*?)\s*?\(/, '\1 \3 \2 function \6(')
+text.gsub!(/(\/\*\*[\s\S]*?@return\s+([^\s]*)[\s\S]*?\*\/[\s\S]*?)((public|protected|private)(\s+static)?)?\s+function\s+([\S]*?)\s*?\(/, '\1 \3 \2 function \6(')
 text.gsub!(/\@return/, '@retval')
 
 puts text
