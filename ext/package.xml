@@ -14,8 +14,8 @@ protocol and Cassandra Query Language v3.
     <email>bulat.shakirzyanov@datastax.com</email>
     <active>yes</active>
   </lead>
-  <date>2015-05-19</date>
-  <time>12:00:00</time>
+  <date>2015-05-26</date>
+  <time>10:05:18</time>
   <version>
     <release>1.0.0</release>
     <api>1.0.0</api>
@@ -30,13 +30,14 @@ protocol and Cassandra Query Language v3.
 
 Features:
 
-* Persistent Sessions (can be disabled via `Cassandra\Cluster\Builder::withPersistentSessions()`).
+* Persistent sessions (can be disabled via `Cassandra\Cluster\Builder::withPersistentSessions()`).
 * Windows support.
 * Configurable log location (via `cassandra.log` ini setting).
 * Configurable log level (via `cassandra.log_level` ini setting).
-* Upgraded to CPP driver v2.0.
+* Upgraded to C/C++ driver v2.0.
 * Added math functions to numeric types and `Cassandra\Numeric` interface.
 * All classes moved into the extension.
+* Added stub files for IDEs.
 
 Bug Fixes:
 
@@ -46,63 +47,6 @@ Bug Fixes:
     <dir name="/">
       <file role="src" name="config.m4" />
       <file role="src" name="config.w32" />
-      <file role="doc" name="doc/Cassandra.php" />
-      <file role="doc" name="doc/Cassandra/BatchStatement.php" />
-      <file role="doc" name="doc/Cassandra/Bigint.php" />
-      <file role="doc" name="doc/Cassandra/Blob.php" />
-      <file role="doc" name="doc/Cassandra/Cluster.php" />
-      <file role="doc" name="doc/Cassandra/Cluster/Builder.php" />
-      <file role="doc" name="doc/Cassandra/Collection.php" />
-      <file role="doc" name="doc/Cassandra/Decimal.php" />
-      <file role="doc" name="doc/Cassandra/DefaultCluster.php" />
-      <file role="doc" name="doc/Cassandra/DefaultSession.php" />
-      <file role="doc" name="doc/Cassandra/Exception.php" />
-      <file role="doc" name="doc/Cassandra/Exception/AlreadyExistsException.php" />
-      <file role="doc" name="doc/Cassandra/Exception/AuthenticationException.php" />
-      <file role="doc" name="doc/Cassandra/Exception/ConfigurationException.php" />
-      <file role="doc" name="doc/Cassandra/Exception/DomainException.php" />
-      <file role="doc" name="doc/Cassandra/Exception/ExecutionException.php" />
-      <file role="doc" name="doc/Cassandra/Exception/InvalidArgumentException.php" />
-      <file role="doc" name="doc/Cassandra/Exception/InvalidQueryException.php" />
-      <file role="doc" name="doc/Cassandra/Exception/InvalidSyntaxException.php" />
-      <file role="doc" name="doc/Cassandra/Exception/IsBootstrappingException.php" />
-      <file role="doc" name="doc/Cassandra/Exception/LogicException.php" />
-      <file role="doc" name="doc/Cassandra/Exception/OverloadedException.php" />
-      <file role="doc" name="doc/Cassandra/Exception/ProtocolException.php" />
-      <file role="doc" name="doc/Cassandra/Exception/ReadTimeoutException.php" />
-      <file role="doc" name="doc/Cassandra/Exception/RuntimeException.php" />
-      <file role="doc" name="doc/Cassandra/Exception/ServerException.php" />
-      <file role="doc" name="doc/Cassandra/Exception/TimeoutException.php" />
-      <file role="doc" name="doc/Cassandra/Exception/TruncateException.php" />
-      <file role="doc" name="doc/Cassandra/Exception/UnauthorizedException.php" />
-      <file role="doc" name="doc/Cassandra/Exception/UnavailableException.php" />
-      <file role="doc" name="doc/Cassandra/Exception/UnpreparedException.php" />
-      <file role="doc" name="doc/Cassandra/Exception/ValidationException.php" />
-      <file role="doc" name="doc/Cassandra/Exception/WriteTimeout.php" />
-      <file role="doc" name="doc/Cassandra/ExecutionOptions.php" />
-      <file role="doc" name="doc/Cassandra/Float.php" />
-      <file role="doc" name="doc/Cassandra/Future.php" />
-      <file role="doc" name="doc/Cassandra/FutureClose.php" />
-      <file role="doc" name="doc/Cassandra/FutureException.php" />
-      <file role="doc" name="doc/Cassandra/FuturePreparedStatement.php" />
-      <file role="doc" name="doc/Cassandra/FutureRows.php" />
-      <file role="doc" name="doc/Cassandra/FutureSession.php" />
-      <file role="doc" name="doc/Cassandra/FutureValue.php" />
-      <file role="doc" name="doc/Cassandra/Inet.php" />
-      <file role="doc" name="doc/Cassandra/Map.php" />
-      <file role="doc" name="doc/Cassandra/Numeric.php" />
-      <file role="doc" name="doc/Cassandra/PreparedStatement.php" />
-      <file role="doc" name="doc/Cassandra/Rows.php" />
-      <file role="doc" name="doc/Cassandra/SSLOptions.php" />
-      <file role="doc" name="doc/Cassandra/SSLOptions/Builder.php" />
-      <file role="doc" name="doc/Cassandra/Session.php" />
-      <file role="doc" name="doc/Cassandra/Set.php" />
-      <file role="doc" name="doc/Cassandra/SimpleStatement.php" />
-      <file role="doc" name="doc/Cassandra/Statement.php" />
-      <file role="doc" name="doc/Cassandra/Timestamp.php" />
-      <file role="doc" name="doc/Cassandra/Timeuuid.php" />
-      <file role="doc" name="doc/Cassandra/Uuid.php" />
-      <file role="doc" name="doc/Cassandra/Varint.php" />
       <file role="src" name="php_cassandra.c" />
       <file role="src" name="php_cassandra.h" />
       <file role="src" name="php_cassandra_types.h" />
@@ -187,6 +131,68 @@ Bug Fixes:
       <file role="src" name="util/uuid_gen.c" />
       <file role="src" name="util/uuid_gen.h" />
       <file role="src" name="version.h" />
+      <file role="doc" name="doc/Cassandra.php" />
+      <file role="doc" name="doc/Cassandra/BatchStatement.php" />
+      <file role="doc" name="doc/Cassandra/Bigint.php" />
+      <file role="doc" name="doc/Cassandra/Blob.php" />
+      <file role="doc" name="doc/Cassandra/Cluster.php" />
+      <file role="doc" name="doc/Cassandra/Cluster/Builder.php" />
+      <file role="doc" name="doc/Cassandra/Collection.php" />
+      <file role="doc" name="doc/Cassandra/Decimal.php" />
+      <file role="doc" name="doc/Cassandra/DefaultCluster.php" />
+      <file role="doc" name="doc/Cassandra/DefaultSession.php" />
+      <file role="doc" name="doc/Cassandra/Exception.php" />
+      <file role="doc" name="doc/Cassandra/Exception/AlreadyExistsException.php" />
+      <file role="doc" name="doc/Cassandra/Exception/AuthenticationException.php" />
+      <file role="doc" name="doc/Cassandra/Exception/ConfigurationException.php" />
+      <file role="doc" name="doc/Cassandra/Exception/DivideByZeroException.php" />
+      <file role="doc" name="doc/Cassandra/Exception/DomainException.php" />
+      <file role="doc" name="doc/Cassandra/Exception/ExecutionException.php" />
+      <file role="doc" name="doc/Cassandra/Exception/InvalidArgumentException.php" />
+      <file role="doc" name="doc/Cassandra/Exception/InvalidQueryException.php" />
+      <file role="doc" name="doc/Cassandra/Exception/InvalidSyntaxException.php" />
+      <file role="doc" name="doc/Cassandra/Exception/IsBootstrappingException.php" />
+      <file role="doc" name="doc/Cassandra/Exception/LogicException.php" />
+      <file role="doc" name="doc/Cassandra/Exception/OverloadedException.php" />
+      <file role="doc" name="doc/Cassandra/Exception/ProtocolException.php" />
+      <file role="doc" name="doc/Cassandra/Exception/RangeException.php" />
+      <file role="doc" name="doc/Cassandra/Exception/ReadTimeoutException.php" />
+      <file role="doc" name="doc/Cassandra/Exception/RuntimeException.php" />
+      <file role="doc" name="doc/Cassandra/Exception/ServerException.php" />
+      <file role="doc" name="doc/Cassandra/Exception/TimeoutException.php" />
+      <file role="doc" name="doc/Cassandra/Exception/TruncateException.php" />
+      <file role="doc" name="doc/Cassandra/Exception/UnauthorizedException.php" />
+      <file role="doc" name="doc/Cassandra/Exception/UnavailableException.php" />
+      <file role="doc" name="doc/Cassandra/Exception/UnpreparedException.php" />
+      <file role="doc" name="doc/Cassandra/Exception/ValidationException.php" />
+      <file role="doc" name="doc/Cassandra/Exception/WriteTimeoutException.php" />
+      <file role="doc" name="doc/Cassandra/ExecutionOptions.php" />
+      <file role="doc" name="doc/Cassandra/Float.php" />
+      <file role="doc" name="doc/Cassandra/Future.php" />
+      <file role="doc" name="doc/Cassandra/FutureClose.php" />
+      <file role="doc" name="doc/Cassandra/FutureException.php" />
+      <file role="doc" name="doc/Cassandra/FuturePreparedStatement.php" />
+      <file role="doc" name="doc/Cassandra/FutureRows.php" />
+      <file role="doc" name="doc/Cassandra/FutureSession.php" />
+      <file role="doc" name="doc/Cassandra/FutureValue.php" />
+      <file role="doc" name="doc/Cassandra/Inet.php" />
+      <file role="doc" name="doc/Cassandra/Map.php" />
+      <file role="doc" name="doc/Cassandra/Numeric.php" />
+      <file role="doc" name="doc/Cassandra/PreparedStatement.php" />
+      <file role="doc" name="doc/Cassandra/Rows.php" />
+      <file role="doc" name="doc/Cassandra/SSLOptions.php" />
+      <file role="doc" name="doc/Cassandra/SSLOptions/Builder.php" />
+      <file role="doc" name="doc/Cassandra/Session.php" />
+      <file role="doc" name="doc/Cassandra/Set.php" />
+      <file role="doc" name="doc/Cassandra/SimpleStatement.php" />
+      <file role="doc" name="doc/Cassandra/Statement.php" />
+      <file role="doc" name="doc/Cassandra/Timestamp.php" />
+      <file role="doc" name="doc/Cassandra/Timeuuid.php" />
+      <file role="doc" name="doc/Cassandra/Uuid.php" />
+      <file role="doc" name="doc/Cassandra/UuidInterface.php" />
+      <file role="doc" name="doc/Cassandra/Varint.php" />
+      <file role="doc" name="doc/README.md" />
+      <file role="test" name="tests/statements/init.phpt" />
     </dir>
   </contents>
   <dependencies>
@@ -201,5 +207,5 @@ Bug Fixes:
   </required>
   </dependencies>
   <providesextension>cassandra</providesextension>
-  <extsrcrelease />
+  <extsrcrelease/>
 </package>
