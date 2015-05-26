@@ -1,4 +1,4 @@
-@php-version-5.4
+@php-version-5.4 @skip-travisci
 Feature: Persistent Sessions
 
   PHP Driver sessions can persist
