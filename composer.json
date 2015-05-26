@@ -1,4 +1,23 @@
 {
+  "name": "datastax/php-driver",
+  "type": "library",
+  "description": "DataStax PHP Driver for Apache Cassandra",
+  "keywords": [
+    "cassandra",
+    "nosql",
+    "database",
+    "driver",
+    "datastax"
+  ],
+  "homepage": "http://datastax.github.io/php-driver/",
+  "license": "Apache-2.0",
+  "authors": [
+    {
+      "name": "Bulat Shakirzyanov",
+      "email": "bulat.shakirzyanov@datastax.com",
+      "homepage": "http://avalanche123.com"
+    }
+  ],
   "require-dev": {
     "php": ">=5.3.4",
     "ext-cassandra": "*",
