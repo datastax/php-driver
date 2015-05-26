@@ -8,7 +8,7 @@ Feature: Simple Statements
       """cql
       CREATE KEYSPACE simplex WITH replication = {
         'class': 'SimpleStrategy',
-        'replication_factor': 3
+        'replication_factor': 1
       };
       USE simplex;
       CREATE TABLE playlists (
@@ -39,6 +39,7 @@ Feature: Simple Statements
       Result contains 0 rows
       """
 
+  @cassandra-version-2.0
   Scenario: Simple statements only support positional arguments
     Given the following example:
       """php

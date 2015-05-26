@@ -31,8 +31,14 @@ install:
 before_script:
   # Use the most-up-to-date run-tests. old ones like 5.3 don't report failure exit codes
   - wget -O ext/run-tests.php https://raw.githubusercontent.com/php/php-src/master/run-tests.php
+  # Use the BEHAT_EXTRA_OPTIONS to supply options to Behat runs
+  - BEHAT_EXTRA_OPTIONS=
+  # Use the BEHAT_SKIP_TAGS to skip tests on TravisCI
+  - BEHAT_SKIP_TAGS=~@skip-travisci
+  - if [[ ${TRAVIS_PHP_VERSION:0:3} == "5.3" ]]; then BEHAT_SKIP_TAGS="${BEHAT_SKIP_TAGS}&&~@php-version-5.4"; fi
+  - export BEHAT_EXTRA_OPTIONS BEHAT_SKIP_TAGS
 
 script:
   - cd ext && make test && cd "$TRAVIS_BUILD_DIR" # .phpt tests
   - ./bin/phpunit
-  - ./bin/behat
+  - ./bin/behat --tags="${BEHAT_SKIP_TAGS}" ${BEHAT_EXTRA_OPTIONS}

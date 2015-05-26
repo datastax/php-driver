@@ -3,6 +3,7 @@
 use Behat\Behat\Context\Context;
 use Behat\Behat\Context\SnippetAcceptingContext;
 use Behat\Gherkin\Node\PyStringNode;
+use Behat\Gherkin\Node\TableNode;
 use Symfony\Component\Process\PhpExecutableFinder;
 use Symfony\Component\Process\Process;
 
@@ -15,7 +16,11 @@ class FeatureContext implements Context, SnippetAcceptingContext
 {
     private $workingDir;
     private $phpBin;
+    private $phpBinOptions;
     private $process;
+    private $webServerProcess;
+    private $webServerURL;
+    private $lastResponse;
     private $ccm;
 
     /**
@@ -25,9 +30,9 @@ class FeatureContext implements Context, SnippetAcceptingContext
      * You can also pass arbitrary arguments to the
      * context constructor through behat.yml.
      */
-    public function __construct()
+    public function __construct($cluster_name, $cassandra_version)
     {
-        $this->ccm = new \CCM('php-driver-test-cluster', '2.1.3');
+        $this->ccm = new \CCM($cluster_name, $cassandra_version);
     }
 
     /**
@@ -41,6 +46,8 @@ class FeatureContext implements Context, SnippetAcceptingContext
         if (is_dir($dir = sys_get_temp_dir().DIRECTORY_SEPARATOR.'php-driver')) {
             self::clearDirectory($dir);
         }
+        $ccm = new \CCM('', '');
+        $ccm->removeAllClusters();
     }
 
     /**
@@ -56,9 +63,26 @@ class FeatureContext implements Context, SnippetAcceptingContext
         if (false === $php = $phpFinder->find()) {
             throw new \RuntimeException('Unable to find the PHP executable.');
         }
-        $this->workingDir = $dir;
-        $this->phpBin     = $php;
-        $this->process    = new Process(null);
+        $this->workingDir               = $dir;
+        $this->phpBin                   = $php;
+        $this->process                  = new Process(null);
+        $this->webServerProcess         = null;
+        $this->webServerURL             = '';
+        $this->lastResponse             = '';
+    }
+
+    /**
+     * Perform scenario teardown operations
+     *
+     * @AfterScenario
+     */
+    public function scenarioTeardown()
+    {
+        $this->phpBinOptions            = '';
+        $this->webServerURL             = '';
+        $this->lastResponse             = '';
+
+        $this->terminateWebServer();
     }
 
     /**
@@ -66,7 +90,16 @@ class FeatureContext implements Context, SnippetAcceptingContext
      */
     public function aRunningCassandraCluster()
     {
-        $this->ccm->setup();
+        $this->ccm->setup(1, 0);
+        $this->ccm->start();
+    }
+
+    /**
+     * @Given a running Cassandra cluster with :numberOfNodes nodes
+     */
+    public function aRunningCassandraClusterWithMultipleNode($numberOfNodes)
+    {
+        $this->ccm->setup($numberOfNodes, 0);
         $this->ccm->start();
     }
 
@@ -89,6 +122,22 @@ class FeatureContext implements Context, SnippetAcceptingContext
     }
 
     /**
+     * @Given tracing is enabled
+     */
+    public function tracingIsEnabled()
+    {
+        $this->ccm->enableTracing(true);
+    }
+
+    /**
+     * @Given tracing is disabled
+     */
+    public function tracingIsDisabled()
+    {
+        $this->ccm->enableTracing(false);
+    }
+
+    /**
      * @Given /^the following schema:$/
      */
     public function theFollowingSchema(PyStringNode $string)
@@ -102,6 +151,91 @@ class FeatureContext implements Context, SnippetAcceptingContext
     public function theFollowingExample(PyStringNode $string)
     {
         $this->createFile($this->workingDir.'/example.php', (string) $string);
+    }
+
+    /**
+     * @Given a file named :name with:
+     */
+    public function aFileNamedWith($name, PyStringNode $string)
+    {
+        $this->createFile($this->workingDir.'/'.$name, (string) $string);
+    }
+
+    /**
+     * @When I go to :path
+     */
+    public function iGoTo($path)
+    {
+        if (!$this->webServerProcess) {
+            $this->startWebServer();
+        }
+
+        for ($retries = 1; $retries <= 10; $retries++) {
+            $contents = @file_get_contents($this->webServerURL.$path);
+
+            if ($contents === false) {
+                $wait = $retries * 0.4;
+                printf("Unable to fetch %s, attempt %d, retrying in %d\n",
+                       $path, $retries, $wait);
+                sleep($wait);
+                continue;
+            }
+
+            break;
+        }
+
+        if ($contents === false) {
+            echo 'Web Server STDOUT: ' . $this->webServerProcess->getOutput() . "\n";
+            echo 'Web Server STDERR: ' . $this->webServerProcess->getErrorOutput() . "\n";
+
+            throw new Exception(sprintf("Unable to fetch %s", $path));
+        }
+
+        $this->lastResponse = $contents;
+    }
+
+    /**
+     * @Then I should see:
+     */
+    public function iShouldSee(TableNode $table)
+    {
+        $doc = new DOMDocument();
+        $doc->loadHTML($this->lastResponse);
+        $xpath = new DOMXpath($doc);
+        $nodes = $xpath->query("//h2/a[@name='module_cassandra']/../following-sibling::*[position()=1][name()='table']");
+        $html  = $nodes->item(0);
+        $table = $table->getRowsHash();
+
+        foreach ($html->childNodes as $tr) {
+            $name  = trim($tr->childNodes->item(0)->textContent);
+            $value = trim($tr->childNodes->item(1)->textContent);
+
+            if (isset($table[$name])) {
+                if ($value !== $table[$name]) {
+                    throw new Exception(sprintf(
+                        "Failed asserting the value of %s: %s expected, %s found",
+                        $name, $table[$name], $value
+                    ));
+                }
+                unset($table[$name]);
+            }
+        }
+
+        if (!empty($table)) {
+            throw new Exception(sprintf(
+                "Unable to find the following values %s", var_export($table, true)
+            ));
+        }
+    }
+
+    /**
+     * @When I go to :path :count times
+     */
+    public function iGoToTimes($path, $count)
+    {
+        for ($i = 0; $i < $count; $i++) {
+            $this->iGoTo($path);
+        }
     }
 
     /**
@@ -139,12 +273,30 @@ class FeatureContext implements Context, SnippetAcceptingContext
     {
         $this->process->setWorkingDirectory($this->workingDir);
         $this->process->setCommandLine(sprintf(
-            '%s %s', $this->phpBin, 'example.php'
+            '%s %s %s', $this->phpBin, $this->phpBinOptions, 'example.php'
         ));
         if (!empty($env)) {
             $this->process->setEnv(array_replace((array) $this->process->getEnv(), $env));
         }
         $this->process->run();
+    }
+
+    private function startWebServer()
+    {
+        $this->webServerURL = 'http://127.0.0.1:10000';
+        $command = sprintf('%s -S %s %s', $this->phpBin, 'localhost:10000', $this->phpBinOptions);
+        $this->webServerProcess = new Process($command, $this->workingDir);
+        $this->webServerProcess->start();
+        echo 'Web Server Started: ' . $this->webServerProcess->getPid() . "\n";
+    }
+
+    private function terminateWebServer() {
+        if ($this->webServerProcess) {
+            echo 'Stopping Web Server: ' . $this->webServerProcess->getPid() . "\n";
+            $this->webServerProcess->stop();
+            $this->webServerProcess = null;
+            echo "Web Server Stopped\n";
+        }
     }
 
     /**
@@ -153,6 +305,36 @@ class FeatureContext implements Context, SnippetAcceptingContext
     public function itsOutputShouldContain(PyStringNode $string)
     {
         PHPUnit_Framework_Assert::assertContains((string) $string, $this->getOutput());
+    }
+
+    /**
+     * @Given the following logger settings:
+     */
+    public function theFollowingLoggerSettings(PyStringNode $string)
+    {
+        $lines = preg_split("/\\r\\n|\\r|\\n/", $string->getRaw());
+        foreach($lines as $key=>$line) {
+            $this->phpBinOptions .= '-d '.$line.' ';
+        }
+    }
+
+    /**
+     * @Then a log file :filename should exist
+     */
+    public function aLogFileShouldExist($filename)
+    {
+        $absoluteFilename = $this->workingDir.DIRECTORY_SEPARATOR.((string) $filename);
+        PHPUnit_Framework_Assert::assertFileExists($absoluteFilename);
+    }
+
+    /**
+     * @Then the log file :filename should contain :contents
+     */
+    public function theLogFileShouldContain($filename, $contents)
+    {
+      $absoluteFilename = $this->workingDir.DIRECTORY_SEPARATOR.((string) $filename);
+      PHPUnit_Framework_Assert::assertFileExists($absoluteFilename);
+      PHPUnit_Framework_Assert::assertContains($contents, file_get_contents($absoluteFilename));
     }
 
     private function getOutput()

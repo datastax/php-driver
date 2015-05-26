@@ -9,7 +9,8 @@
 #include <fcntl.h>
 #include <uv.h>
 
-#define PHP_CASSANDRA_DEFAULT_LOG "php-driver.log"
+#define PHP_CASSANDRA_DEFAULT_LOG       "cassandra.log"
+#define PHP_CASSANDRA_DEFAULT_LOG_LEVEL "ERROR"
 
 static uv_once_t log_once = UV_ONCE_INIT;
 static char* log_location = NULL;
@@ -98,7 +99,7 @@ php_cassandra_log(const CassLogMessage* message, void* data)
     int fd = -1;
 #ifndef _WIN32
     if (!strcmp(log, "syslog")) {
-      php_syslog(LOG_NOTICE, "php-driver | [%s] %s (%s:%d)",
+      php_syslog(LOG_NOTICE, "cassandra | [%s] %s (%s:%d)",
                  cass_log_level_string(message->severity), message->message,
                  message->file, message->line);
       return;
@@ -143,7 +144,7 @@ php_cassandra_log(const CassLogMessage* message, void* data)
    * logging function are thread-safe.
    */
 
-  fprintf(stderr, "php-driver | [%s] %s (%s:%d)%s",
+  fprintf(stderr, "cassandra | [%s] %s (%s:%d)%s",
           cass_log_level_string(message->severity), message->message,
           message->file, message->line,
           PHP_EOL);
@@ -192,9 +193,24 @@ static PHP_INI_MH(OnUpdateLogLevel)
   /* If TSRM is enabled then the last thread to update this wins */
 
   if (new_value) {
-    long log_level = zend_atol(new_value, new_value_length);
-    if (log_level > CASS_LOG_DISABLED && log_level < CASS_LOG_LAST_ENTRY)
-      cass_log_set_level((CassLogLevel) log_level);
+    if (strcmp(new_value, "CRITICAL") == 0) {
+      cass_log_set_level(CASS_LOG_DISABLED);
+    } else if (strcmp(new_value, "ERROR") == 0) {
+      cass_log_set_level(CASS_LOG_ERROR);
+    } else if (strcmp(new_value, "WARN") == 0) {
+      cass_log_set_level(CASS_LOG_WARN);
+    } else if (strcmp(new_value, "INFO") == 0) {
+      cass_log_set_level(CASS_LOG_INFO);
+    } else if (strcmp(new_value, "DEBUG") == 0) {
+      cass_log_set_level(CASS_LOG_DEBUG);
+    } else if (strcmp(new_value, "TRACE") == 0) {
+      cass_log_set_level(CASS_LOG_TRACE);
+    } else {
+      php_error_docref(NULL TSRMLS_CC, E_NOTICE,
+                       "cassandra | Unknown log level '%s', using 'ERROR'",
+                       new_value);
+      cass_log_set_level(CASS_LOG_ERROR);
+    }
   }
 
   return SUCCESS;
@@ -212,8 +228,11 @@ static PHP_INI_MH(OnUpdateLog)
   if (new_value) {
     if (strcmp(new_value, "syslog") != 0) {
       char realpath[MAXPATHLEN + 1];
-      if (VCWD_REALPATH(new_value, realpath))
+      if (VCWD_REALPATH(new_value, realpath)) {
         log_location = strdup(realpath);
+      } else {
+        log_location = strdup(new_value);
+      }
     } else {
       log_location = strdup(new_value);
     }
@@ -224,8 +243,8 @@ static PHP_INI_MH(OnUpdateLog)
 }
 
 PHP_INI_BEGIN()
-PHP_INI_ENTRY("cassandra.log", PHP_CASSANDRA_DEFAULT_LOG, PHP_INI_ALL, OnUpdateLog)
-PHP_INI_ENTRY("cassandra.log_level", NULL, PHP_INI_ALL, OnUpdateLogLevel)
+PHP_INI_ENTRY("cassandra.log",       PHP_CASSANDRA_DEFAULT_LOG,       PHP_INI_ALL, OnUpdateLog)
+PHP_INI_ENTRY("cassandra.log_level", PHP_CASSANDRA_DEFAULT_LOG_LEVEL, PHP_INI_ALL, OnUpdateLogLevel)
 PHP_INI_END()
 
 static PHP_GINIT_FUNCTION(cassandra)
@@ -353,6 +372,8 @@ PHP_MINFO_FUNCTION(cassandra)
   php_info_print_table_row(2, "Persistent Sessions", buf);
 
   php_info_print_table_end();
+
+  DISPLAY_INI_ENTRIES();
 }
 
 zend_class_entry*
