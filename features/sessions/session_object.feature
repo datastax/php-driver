@@ -1,4 +1,4 @@
-Feature: Session object
+Feature: Session Object
 
   The DataStax drivers use session object(s) to perform operations against a
   Cassandra cluster
