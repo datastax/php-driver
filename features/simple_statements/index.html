@@ -101,7 +101,7 @@
 <dt>And </dt>
 <dd>the following schema:<pre class="highlight"><code><span class="k">CREATE</span> <span class="k">KEYSPACE</span> <span class="n">simplex</span> <span class="k">WITH</span> <span class="n">replication</span> <span class="o">=</span> <span class="p">{</span>
   <span class="s1">'class'</span><span class="p">:</span> <span class="s1">'SimpleStrategy'</span><span class="p">,</span>
-  <span class="s1">'replication_factor'</span><span class="p">:</span> <span class="mi">3</span>
+  <span class="s1">'replication_factor'</span><span class="p">:</span> <span class="mi">1</span>
 <span class="p">};</span>
 <span class="k">USE</span> <span class="n">simplex</span><span class="p">;</span>
 <span class="k">CREATE</span> <span class="k">TABLE</span> <span class="n">playlists</span> <span class="p">(</span>
@@ -136,6 +136,7 @@
 </code></pre>
 </dd>
 </dl>
+<div class="pull-right"><span class="label label-primary">since cassadra v2.0</span></div>
 <h2 id="simple-statements-only-support-positional-arguments">Simple statements only support positional arguments<a class="anchor" href="#simple-statements-only-support-positional-arguments" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
 </h2>
 <dl class="steps">

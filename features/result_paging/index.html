@@ -90,6 +90,7 @@
           </nav>
           
 <div class="feature-section">
+<div class="pull-right"><span class="label label-primary">since cassadra v2.0</span></div>
 <h1 id="result-paging">Result paging<a class="anchor" href="#result-paging" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
 </h1>
 <p>Starting with Cassandra native protocol v2 (used by Apache Cassandra 2.0),
@@ -112,7 +113,7 @@ methods for synchronous and asynchronous next page retrieval accordingly.</p>
 <dt>And </dt>
 <dd>the following schema:<pre class="highlight"><code><span class="k">CREATE</span> <span class="k">KEYSPACE</span> <span class="n">simplex</span> <span class="k">WITH</span> <span class="n">replication</span> <span class="o">=</span> <span class="p">{</span>
   <span class="s1">'class'</span><span class="p">:</span> <span class="s1">'SimpleStrategy'</span><span class="p">,</span>
-  <span class="s1">'replication_factor'</span><span class="p">:</span> <span class="mi">3</span>
+  <span class="s1">'replication_factor'</span><span class="p">:</span> <span class="mi">1</span>
 <span class="p">};</span>
 <span class="k">USE</span> <span class="n">simplex</span><span class="p">;</span>
 <span class="k">CREATE</span> <span class="k">TABLE</span> <span class="n">entries</span> <span class="p">(</span><span class="k">key</span> <span class="k">text</span><span class="p">,</span> <span class="n">value</span> <span class="k">int</span><span class="p">,</span> <span class="k">PRIMARY</span> <span class="k">KEY</span><span class="p">(</span><span class="k">key</span><span class="p">,</span> <span class="n">value</span><span class="p">));</span>

@@ -9,7 +9,7 @@
     <meta name="description" content="DataStax PHP Driver for Apache Cassandra">
     <meta name="author" content="DataStax">
 
-    <title>DataStax PHP Driver - Session management</title>
+    <title>DataStax PHP Driver - Consistency Level</title>
 
     <link rel="icon" href="../../favicon.ico">
     <link rel="apple-touch-icon" href="../../favicon.png">
@@ -82,7 +82,7 @@
               
               
               
-              <li class="active">Session management</li>
+              <li class="active">Consistency Level</li>
               
               
               
@@ -90,45 +90,15 @@
           </nav>
           
 <div class="feature-section">
-<h1 id="session-management">Session management<a class="anchor" href="#session-management" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+<h1 id="consistency-level">Consistency Level<a class="anchor" href="#consistency-level" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
 </h1>
-<p>Each PHP Driver session can be explicitly closed to cleanup its resources.</p>
+<p>PHP Driver supports consistency levels when executing statements.</p>
 <h2 id="background">Background<a class="anchor" href="#background" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
 </h2>
 <dl class="steps">
 <dt>Given </dt>
-<dd>a running Cassandra cluster</dd>
-</dl>
-<h2 id="session-can-only-be-closed-once">Session can only be closed once<a class="anchor" href="#session-can-only-be-closed-once" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
-</h2>
-<dl class="steps">
-<dt>Given </dt>
-<dd>the following example:<pre class="highlight"><code><span class="cp">&lt;?php</span>
-<span class="nv">$cluster</span> <span class="o">=</span> <span class="nx">Cassandra</span><span class="o">::</span><span class="na">cluster</span><span class="p">()</span>
-               <span class="o">-&gt;</span><span class="na">withContactPoints</span><span class="p">(</span><span class="s1">'127.0.0.1'</span><span class="p">)</span>
-               <span class="o">-&gt;</span><span class="na">withPersistentSessions</span><span class="p">(</span><span class="kc">false</span><span class="p">)</span>
-               <span class="o">-&gt;</span><span class="na">build</span><span class="p">();</span>
-<span class="nv">$session</span> <span class="o">=</span> <span class="nv">$cluster</span><span class="o">-&gt;</span><span class="na">connect</span><span class="p">();</span>
-<span class="nv">$session</span><span class="o">-&gt;</span><span class="na">close</span><span class="p">();</span>
-
-<span class="k">try</span> <span class="p">{</span>
-    <span class="nv">$session</span><span class="o">-&gt;</span><span class="na">close</span><span class="p">();</span>
-<span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="nx">Cassandra\Exception</span> <span class="nv">$e</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">echo</span> <span class="nb">get_class</span><span class="p">(</span><span class="nv">$e</span><span class="p">)</span> <span class="o">.</span> <span class="s2">": "</span> <span class="o">.</span> <span class="nv">$e</span><span class="o">-&gt;</span><span class="na">getMessage</span><span class="p">()</span> <span class="o">.</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">;</span>
-<span class="p">}</span>
-</code></pre>
-</dd>
-<dt>When </dt>
-<dd>it is executed</dd>
-<dt>Then </dt>
-<dd>its output should contain:<pre><code>Cassandra\Exception\RuntimeException: Already closing or closed
-</code></pre>
-</dd>
-</dl>
-<h2 id="session-closes-after-outstanding-requests-are-completed">Session closes after outstanding requests are completed<a class="anchor" href="#session-closes-after-outstanding-requests-are-completed" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
-</h2>
-<dl class="steps">
-<dt>Given </dt>
+<dd>a running Cassandra cluster with &#8220;3&#8221; nodes</dd>
+<dt>And </dt>
 <dd>the following schema:<pre class="highlight"><code><span class="k">CREATE</span> <span class="k">KEYSPACE</span> <span class="n">simplex</span> <span class="k">WITH</span> <span class="n">replication</span> <span class="o">=</span> <span class="p">{</span>
   <span class="s1">'class'</span><span class="p">:</span> <span class="s1">'SimpleStrategy'</span><span class="p">,</span>
   <span class="s1">'replication_factor'</span><span class="p">:</span> <span class="mi">3</span>
@@ -142,49 +112,51 @@
   <span class="n">song_id</span> <span class="k">uuid</span><span class="p">,</span>
   <span class="k">PRIMARY</span> <span class="k">KEY</span> <span class="p">(</span><span class="n">id</span><span class="p">,</span> <span class="n">title</span><span class="p">,</span> <span class="n">album</span><span class="p">,</span> <span class="n">artist</span><span class="p">)</span>
 <span class="p">);</span>
-<span class="k">INSERT</span> <span class="k">INTO</span> <span class="n">playlists</span> <span class="p">(</span><span class="n">id</span><span class="p">,</span> <span class="n">song_id</span><span class="p">,</span> <span class="n">artist</span><span class="p">,</span> <span class="n">title</span><span class="p">,</span> <span class="n">album</span><span class="p">)</span>
-<span class="k">VALUES</span> <span class="p">(</span>
-  <span class="mi">62c36092-82a1-3a00-93d1-46196ee77204</span><span class="p">,</span>
-  <span class="mi">756716f7-2e54-4715-9f00-91dcbea6cf50</span><span class="p">,</span>
-  <span class="s1">'Joséphine Baker'</span><span class="p">,</span>
-  <span class="s1">'La Petite Tonkinoise'</span><span class="p">,</span>
-  <span class="s1">'Bye Bye Blackbird'</span>
-<span class="p">);</span>
-<span class="k">INSERT</span> <span class="k">INTO</span> <span class="n">playlists</span> <span class="p">(</span><span class="n">id</span><span class="p">,</span> <span class="n">song_id</span><span class="p">,</span> <span class="n">artist</span><span class="p">,</span> <span class="n">title</span><span class="p">,</span> <span class="n">album</span><span class="p">)</span>
-<span class="k">VALUES</span> <span class="p">(</span>
-  <span class="mi">62c36092-82a1-3a00-93d1-46196ee77204</span><span class="p">,</span>
-  <span class="mi">f6071e72-48ec-4fcb-bf3e-379c8a696488</span><span class="p">,</span>
-  <span class="s1">'Willi Ostermann'</span><span class="p">,</span>
-  <span class="s1">'Die Mösch'</span><span class="p">,</span>
-  <span class="s1">'In Gold'</span>
-<span class="p">);</span>
-<span class="k">INSERT</span> <span class="k">INTO</span> <span class="n">playlists</span> <span class="p">(</span><span class="n">id</span><span class="p">,</span> <span class="n">song_id</span><span class="p">,</span> <span class="n">artist</span><span class="p">,</span> <span class="n">title</span><span class="p">,</span> <span class="n">album</span><span class="p">)</span>
-<span class="k">VALUES</span> <span class="p">(</span>
-  <span class="mi">62c36092-82a1-3a00-93d1-46196ee77204</span><span class="p">,</span>
-  <span class="mi">fbdf82ed-0063-4796-9c7c-a3d4f47b4b25</span><span class="p">,</span>
-  <span class="s1">'Mick Jager'</span><span class="p">,</span>
-  <span class="s1">'Memo From Turner'</span><span class="p">,</span>
-  <span class="s1">'Performance'</span>
-<span class="p">);</span>
 </code></pre>
 </dd>
+</dl>
+<h2 id="consistency-levels-are-specified-via-execution-options">Consistency levels are specified via execution options<a class="anchor" href="#consistency-levels-are-specified-via-execution-options" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+</h2>
+<dl class="steps">
+<dt>Given </dt>
+<dd>tracing is enabled</dd>
 <dt>And </dt>
 <dd>the following example:<pre class="highlight"><code><span class="cp">&lt;?php</span>
-<span class="nv">$cluster</span>   <span class="o">=</span> <span class="nx">Cassandra</span><span class="o">::</span><span class="na">cluster</span><span class="p">()</span>
-               <span class="o">-&gt;</span><span class="na">withContactPoints</span><span class="p">(</span><span class="s1">'127.0.0.1'</span><span class="p">)</span>
-               <span class="o">-&gt;</span><span class="na">build</span><span class="p">();</span>
-<span class="nv">$session</span>   <span class="o">=</span> <span class="nv">$cluster</span><span class="o">-&gt;</span><span class="na">connect</span><span class="p">(</span><span class="s2">"simplex"</span><span class="p">);</span>
-<span class="nv">$statement</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Cassandra\SimpleStatement</span><span class="p">(</span><span class="s2">"SELECT * FROM simplex.playlists"</span><span class="p">);</span>
-<span class="nv">$future</span>    <span class="o">=</span> <span class="nv">$session</span><span class="o">-&gt;</span><span class="na">executeAsync</span><span class="p">(</span><span class="nv">$statement</span><span class="p">);</span>
-<span class="nv">$session</span><span class="o">-&gt;</span><span class="na">close</span><span class="p">();</span>
+<span class="nv">$cluster</span>     <span class="o">=</span> <span class="nx">Cassandra</span><span class="o">::</span><span class="na">cluster</span><span class="p">()</span>
+                 <span class="o">-&gt;</span><span class="na">withContactPoints</span><span class="p">(</span><span class="s1">'127.0.0.1'</span><span class="p">)</span>
+                 <span class="o">-&gt;</span><span class="na">build</span><span class="p">();</span>
+                 <span class="nv">$session</span>     <span class="o">=</span> <span class="nv">$cluster</span><span class="o">-&gt;</span><span class="na">connect</span><span class="p">(</span><span class="s2">"simplex"</span><span class="p">);</span>
 
-<span class="k">echo</span> <span class="s2">"Result contains "</span> <span class="o">.</span> <span class="nv">$future</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">count</span><span class="p">()</span> <span class="o">.</span> <span class="s2">" rows"</span><span class="p">;</span>
+<span class="nv">$insertQuery</span> <span class="o">=</span> <span class="s2">"INSERT INTO playlists (id, song_id, artist, title, album) "</span> <span class="o">.</span>
+               <span class="s2">"VALUES (62c36092-82a1-3a00-93d1-46196ee77204, "</span> <span class="o">.</span>
+                   <span class="k">new</span> <span class="nx">Cassandra\Uuid</span><span class="p">(</span><span class="s1">'756716f7-2e54-4715-9f00-91dcbea6cf50'</span><span class="p">)</span> <span class="o">.</span> <span class="s2">", "</span> <span class="o">.</span>
+                   <span class="s2">"'Joséphine Baker', "</span> <span class="o">.</span>
+                   <span class="s2">"'La Petite Tonkinoise', "</span> <span class="o">.</span>
+                   <span class="s2">"'Bye Bye Blackbird')"</span><span class="p">;</span>
+<span class="nv">$statement</span>   <span class="o">=</span> <span class="k">new</span> <span class="nx">Cassandra\SimpleStatement</span><span class="p">(</span><span class="nv">$insertQuery</span><span class="p">);</span>
+<span class="nv">$options</span>     <span class="o">=</span> <span class="k">new</span> <span class="nx">Cassandra\ExecutionOptions</span><span class="p">(</span><span class="k">array</span><span class="p">(</span><span class="s1">'consistency'</span> <span class="o">=&gt;</span> <span class="nx">Cassandra</span><span class="o">::</span><span class="na">CONSISTENCY_ALL</span><span class="p">));</span>
+<span class="nv">$session</span><span class="o">-&gt;</span><span class="na">execute</span><span class="p">(</span><span class="nv">$statement</span><span class="p">,</span> <span class="nv">$options</span><span class="p">);</span>
+
+<span class="c1">// Below uses the system_traces.events table to verify consistency ALL is met
+</span><span class="nv">$statement</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Cassandra\SimpleStatement</span><span class="p">(</span><span class="s2">"SELECT source from system_traces.events"</span><span class="p">);</span>
+<span class="nv">$result</span>    <span class="o">=</span> <span class="nv">$session</span><span class="o">-&gt;</span><span class="na">execute</span><span class="p">(</span><span class="nv">$statement</span><span class="p">,</span> <span class="nv">$options</span><span class="p">);</span>
+<span class="nv">$sources</span>   <span class="o">=</span> <span class="k">array</span><span class="p">();</span>
+<span class="k">foreach</span> <span class="p">(</span><span class="nv">$result</span> <span class="k">as</span> <span class="nv">$row</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nb">array_push</span><span class="p">(</span><span class="nv">$sources</span><span class="p">,</span> <span class="p">(</span><span class="nx">string</span><span class="p">)</span> <span class="nv">$row</span><span class="p">[</span><span class="s1">'source'</span><span class="p">]);</span>
+<span class="p">}</span>
+<span class="nv">$sources</span> <span class="o">=</span> <span class="nb">array_unique</span><span class="p">(</span><span class="nv">$sources</span><span class="p">);</span>
+<span class="nb">asort</span><span class="p">(</span><span class="nv">$sources</span><span class="p">);</span>
+<span class="k">foreach</span> <span class="p">(</span><span class="nv">$sources</span> <span class="k">as</span> <span class="nv">$source</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">echo</span> <span class="nv">$source</span> <span class="o">.</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">;</span>
+<span class="p">}</span>
 </code></pre>
 </dd>
 <dt>When </dt>
 <dd>it is executed</dd>
 <dt>Then </dt>
-<dd>its output should contain:<pre><code>Result contains 3 rows
+<dd>its output should contain:<pre><code>127.0.0.1
+127.0.0.2
+127.0.0.3
 </code></pre>
 </dd>
 </dl>
@@ -206,9 +178,7 @@
                   <ol class="nav nav-pills nav-stacked toc">
 <li><a href="#background">Background
 </a></li>
-<li><a href="#session-can-only-be-closed-once">Session can only be closed once
-</a></li>
-<li><a href="#session-closes-after-outstanding-requests-are-completed">Session closes after outstanding requests are completed
+<li><a href="#consistency-levels-are-specified-via-execution-options">Consistency levels are specified via execution options
 </a></li>
 </ol>
                 </div>
