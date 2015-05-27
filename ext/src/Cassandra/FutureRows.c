@@ -44,6 +44,7 @@ PHP_METHOD(FutureRows, get)
 
   MAKE_STD_ZVAL(self->rows);
   object_init_ex(self->rows, cassandra_rows_ce);
+  Z_ADDREF_P(self->rows);
   rows = (cassandra_rows*) zend_object_store_get_object(self->rows TSRMLS_CC);
 
   if (php_cassandra_get_result(result, &rows->rows TSRMLS_CC) == FAILURE) {
