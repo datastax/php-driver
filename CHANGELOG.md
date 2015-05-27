@@ -1,3 +1,9 @@
+# 1.0.0-rc
+
+# Bug Fixes:
+
+* [PHP-30] Segfault when using FutureRows
+
 # 1.0.0-beta
 
 Features:
