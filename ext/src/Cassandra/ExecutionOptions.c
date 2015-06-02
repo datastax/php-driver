@@ -48,8 +48,8 @@ PHP_METHOD(ExecutionOptions, __construct)
   }
 
   if (zend_hash_find(Z_ARRVAL_P(options), "timeout", sizeof("timeout"), (void**)&timeout) == SUCCESS) {
-    if (!(Z_TYPE_P(*timeout) == IS_LONG   && Z_LVAL_P(*timeout) > 0) ||
-        !(Z_TYPE_P(*timeout) == IS_DOUBLE && Z_DVAL_P(*timeout) > 0) ||
+    if (!(Z_TYPE_P(*timeout) == IS_LONG   && Z_LVAL_P(*timeout) > 0) &&
+        !(Z_TYPE_P(*timeout) == IS_DOUBLE && Z_DVAL_P(*timeout) > 0) &&
         !(Z_TYPE_P(*timeout) == IS_NULL)) {
       INVALID_ARGUMENT(*timeout, "a number of seconds greater than zero or null");
     }
