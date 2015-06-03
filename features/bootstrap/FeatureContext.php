@@ -304,6 +304,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
         $this->webServerProcess = new Process($command, $this->workingDir);
         $this->webServerProcess->start();
         echo 'Web Server Started: ' . $this->webServerProcess->getPid() . "\n";
+        sleep(5);
     }
 
     private function terminateWebServer() {
