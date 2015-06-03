@@ -161,6 +161,22 @@ class FeatureContext implements Context, SnippetAcceptingContext
         $this->createFile($this->workingDir.'/'.$name, (string) $string);
     }
 
+    private function fetchPath($url)
+    {
+        $request = curl_init();
+
+        curl_setopt($request, CURLOPT_URL, $url);
+        curl_setopt($request, CURLOPT_HEADER, 0);
+        curl_setopt($request, CURLOPT_CONNECTTIMEOUT, 2);
+        curl_setopt($request, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($request, CURLOPT_USERAGENT, 'PHP Driver Tests');
+
+        $content = curl_exec($request);
+        curl_close($request);
+
+        return $content;
+    }
+
     /**
      * @When I go to :path
      */
@@ -171,7 +187,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
         }
 
         for ($retries = 1; $retries <= 10; $retries++) {
-            $contents = @file_get_contents($this->webServerURL.$path);
+            $contents = $this->fetchPath($this->webServerURL.$path);
 
             if ($contents === false) {
                 $wait = $retries * 0.4;
@@ -284,7 +300,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
     private function startWebServer()
     {
         $this->webServerURL = 'http://127.0.0.1:10000';
-        $command = sprintf('%s -S %s %s', $this->phpBin, 'localhost:10000', $this->phpBinOptions);
+        $command = sprintf('%s -S %s %s', $this->phpBin, '127.0.0.1:10000', $this->phpBinOptions);
         $this->webServerProcess = new Process($command, $this->workingDir);
         $this->webServerProcess->start();
         echo 'Web Server Started: ' . $this->webServerProcess->getPid() . "\n";
