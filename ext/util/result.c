@@ -34,6 +34,7 @@ php_cassandra_value(const CassValue* value, CassValueType type, zval** out TSRML
   cassandra_set* set = NULL;
 
   MAKE_STD_ZVAL(return_value);
+  RETVAL_NULL();
 
   if (cass_value_is_null(value)) {
     *out = return_value;
