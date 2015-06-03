@@ -336,14 +336,20 @@ php_cassandra_rows_free(void *object TSRMLS_DC)
   if (self->statement)
     php_cassandra_del_ref(&self->statement);
 
-  if (self->result)
+  if (self->result) {
     cass_result_free(self->result);
+    self->result = NULL;
+  }
 
-  if (self->session)
+  if (self->session) {
     zval_ptr_dtor(&self->session);
+    self->session = NULL;
+  }
 
-  if (self->rows)
+  if (self->rows) {
     zval_ptr_dtor(&self->rows);
+    self->rows = NULL;
+  }
 
   efree(self);
 }

@@ -98,17 +98,23 @@ php_cassandra_future_rows_free(void *object TSRMLS_DC)
 
   zend_object_std_dtor(&future->zval TSRMLS_CC);
 
-  if (future->rows)
+  if (future->rows) {
     zval_ptr_dtor(&future->rows);
+    future->rows = NULL;
+  }
 
   if (future->statement)
     php_cassandra_del_ref(&future->statement);
 
-  if (future->session)
+  if (future->session) {
     zval_ptr_dtor(&future->session);
+    future->session = NULL;
+  }
 
-  if (future->future)
+  if (future->future) {
     cass_future_free(future->future);
+    future->future = NULL;
+  }
 
   efree(future);
 }

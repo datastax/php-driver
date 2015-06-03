@@ -75,11 +75,15 @@ php_cassandra_future_prepared_statement_free(void *object TSRMLS_DC)
 
   zend_object_std_dtor(&future->zval TSRMLS_CC);
 
-  if (future->future)
+  if (future->future) {
     cass_future_free(future->future);
+    future->future = NULL;
+  }
 
-  if (future->prepared_statement)
+  if (future->prepared_statement) {
     zval_ptr_dtor(&future->prepared_statement);
+    future->prepared_statement = NULL;
+  }
 
   efree(future);
 }

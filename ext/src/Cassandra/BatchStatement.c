@@ -9,6 +9,7 @@ void cassandra_batch_statement_entry_dtor(void** dest)
   zval_ptr_dtor(&entry->statement);
   if (entry->arguments) {
     zval_ptr_dtor(&entry->arguments);
+    entry->arguments = NULL;
   }
 
   efree(entry);

@@ -572,21 +572,32 @@ php_cassandra_cluster_builder_free(void *object TSRMLS_DC)
 
   zend_object_std_dtor(&builder->zval TSRMLS_CC);
   efree(builder->contact_points);
+  builder->contact_points = NULL;
 
-  if (builder->local_dc)
+  if (builder->local_dc) {
     efree(builder->local_dc);
+    builder->local_dc = NULL;
+  }
 
-  if (builder->username)
+  if (builder->username) {
     efree(builder->username);
+    builder->username = NULL;
+  }
 
-  if (builder->password)
+  if (builder->password) {
     efree(builder->password);
+    builder->password = NULL;
+  }
 
-  if (builder->ssl_options)
+  if (builder->ssl_options) {
     zval_ptr_dtor(&builder->ssl_options);
+    builder->ssl_options = NULL;
+  }
 
-  if (builder->default_timeout)
+  if (builder->default_timeout) {
     zval_ptr_dtor(&builder->default_timeout);
+    builder->default_timeout = NULL;
+  }
 
   efree(builder);
 }

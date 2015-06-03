@@ -102,8 +102,10 @@ php_cassandra_execution_options_free(void *object TSRMLS_DC)
 {
   cassandra_execution_options* options = (cassandra_execution_options*) object;
 
-  if (options->arguments)
+  if (options->arguments) {
     zval_ptr_dtor(&options->arguments);
+    options->arguments = NULL;
+  }
 
   zend_object_std_dtor(&options->zval TSRMLS_CC);
   efree(options);
