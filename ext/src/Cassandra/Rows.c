@@ -359,12 +359,10 @@ php_cassandra_rows_new(zend_class_entry* class_type TSRMLS_DC)
   zend_object_std_init(&self->zval, class_type TSRMLS_CC);
   object_properties_init(&self->zval, class_type);
 
-  ALLOC_ZVAL(self->rows);
-  array_init(self->rows);
-
   self->statement = NULL;
   self->result    = NULL;
   self->session   = NULL;
+  self->rows      = NULL;
 
   retval.handle   = zend_objects_store_put(self,
                       (zend_objects_store_dtor_t) zend_objects_destroy_object,

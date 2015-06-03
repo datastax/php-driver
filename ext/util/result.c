@@ -171,6 +171,7 @@ php_cassandra_value(const CassValue* value, CassValueType type, zval** out TSRML
       }
 
       php_cassandra_collection_add(collection, v TSRMLS_CC);
+      zval_ptr_dtor(&v);
     }
 
     cass_iterator_free(iterator);
@@ -194,6 +195,8 @@ php_cassandra_value(const CassValue* value, CassValueType type, zval** out TSRML
       }
 
       php_cassandra_map_set(map, k, v TSRMLS_CC);
+      zval_ptr_dtor(&k);
+      zval_ptr_dtor(&v);
     }
 
     cass_iterator_free(iterator);
@@ -214,6 +217,7 @@ php_cassandra_value(const CassValue* value, CassValueType type, zval** out TSRML
       }
 
       php_cassandra_set_add(set, v TSRMLS_CC);
+      zval_ptr_dtor(&v);
     }
 
     cass_iterator_free(iterator);
