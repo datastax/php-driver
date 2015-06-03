@@ -15,9 +15,7 @@ PHP_METHOD(FuturePreparedStatement, get)
     (cassandra_future_prepared_statement*) zend_object_store_get_object(getThis() TSRMLS_CC);
 
   if (self->prepared_statement) {
-    *return_value = *self->prepared_statement;
-    Z_ADDREF_P(return_value);
-    return;
+    RETURN_ZVAL(self->prepared_statement, 1, 0);
   }
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "|z", &timeout) == FAILURE) {

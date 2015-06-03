@@ -15,8 +15,7 @@ PHP_METHOD(FutureValue, get)
   self = (cassandra_future_value*) zend_object_store_get_object(getThis() TSRMLS_CC);
 
   if (self->value) {
-    *return_value = *self->value;
-    Z_ADDREF_P(return_value);
+    RETURN_ZVAL(self->value, 1, 0);
   }
 }
 

@@ -17,9 +17,7 @@ PHP_METHOD(FutureRows, get)
     (cassandra_future_rows*) zend_object_store_get_object(getThis() TSRMLS_CC);
 
   if (self->rows) {
-    *return_value = *self->rows;
-    Z_ADDREF_P(return_value);
-    return;
+    RETURN_ZVAL(self->rows, 1, 0);
   }
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "|z", &timeout) == FAILURE) {
@@ -44,7 +42,6 @@ PHP_METHOD(FutureRows, get)
 
   MAKE_STD_ZVAL(self->rows);
   object_init_ex(self->rows, cassandra_rows_ce);
-  Z_ADDREF_P(self->rows);
   rows = (cassandra_rows*) zend_object_store_get_object(self->rows TSRMLS_CC);
 
   if (php_cassandra_get_result(result, &rows->rows TSRMLS_CC) == FAILURE) {
@@ -62,8 +59,7 @@ PHP_METHOD(FutureRows, get)
     cass_result_free(result);
   }
 
-  *return_value = *self->rows;
-  Z_ADDREF_P(return_value);
+  RETURN_ZVAL(self->rows, 1, 0);
 }
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_timeout, 0, ZEND_RETURN_VALUE, 0)
