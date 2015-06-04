@@ -54,6 +54,15 @@ final class Collection implements \Countable, \IteratorAggregate
     public function add($value) {}
 
     /**
+     * Deletes the value at a given index
+     *
+     * @param int $index   Index
+     *
+     * @return bool        Whether the value at a given index is correctly removed
+     */
+    public function remove($index) {}
+
+    /**
      * Retrieves the value at a given index.
      *
      * @param   int         $index  Index

@@ -16,6 +16,15 @@ php_cassandra_collection_add(cassandra_collection* collection, zval* object TSRM
 }
 
 static int
+php_cassandra_collection_del(cassandra_collection* collection, ulong index)
+{
+  if (zend_hash_index_del(&collection->values, index) == SUCCESS)
+    return 1;
+
+  return 0;
+}
+
+static int
 php_cassandra_collection_get(cassandra_collection* collection, ulong index, zval** zvalue)
 {
   zval** value;
@@ -228,6 +237,24 @@ PHP_METHOD(Collection, rewind)
 }
 /* }}} */
 
+/* {{{ Cassandra\Collection::remove(key) */
+PHP_METHOD(Collection, remove)
+{
+  zval* index;
+  cassandra_collection* collection = NULL;
+
+  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &index) == FAILURE)
+    return;
+
+  collection = (cassandra_collection*) zend_object_store_get_object(getThis() TSRMLS_CC);
+
+  if (php_cassandra_collection_del(collection, (ulong) index))
+      RETURN_TRUE;
+
+    RETURN_FALSE;
+}
+/* }}} */
+
 ZEND_BEGIN_ARG_INFO_EX(arginfo__construct, 0, ZEND_RETURN_VALUE, 1)
   ZEND_ARG_INFO(0, type)
 ZEND_END_ARG_INFO()
@@ -258,6 +285,7 @@ static zend_function_entry cassandra_collection_methods[] = {
   PHP_ME(Collection, next, arginfo_none, ZEND_ACC_PUBLIC)
   PHP_ME(Collection, valid, arginfo_none, ZEND_ACC_PUBLIC)
   PHP_ME(Collection, rewind, arginfo_none, ZEND_ACC_PUBLIC)
+  PHP_ME(Collection, remove, arginfo_index, ZEND_ACC_PUBLIC)
   PHP_FE_END
 };
 
