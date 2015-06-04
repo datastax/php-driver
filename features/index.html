@@ -241,9 +241,9 @@
 
 <span class="c1">// execute all statements in background
 </span><span class="k">foreach</span> <span class="p">(</span><span class="nv">$data</span> <span class="k">as</span> <span class="nv">$arguments</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nv">$futures</span><span class="p">[]</span><span class="o">=</span> <span class="nv">$session</span><span class="o">-&gt;</span><span class="na">executeAsync</span><span class="p">(</span><span class="nv">$statement</span><span class="p">,</span> <span class="k">new</span> <span class="nx">ExecutionOptions</span><span class="p">(</span>
+    <span class="nv">$futures</span><span class="p">[]</span><span class="o">=</span> <span class="nv">$session</span><span class="o">-&gt;</span><span class="na">executeAsync</span><span class="p">(</span><span class="nv">$statement</span><span class="p">,</span> <span class="k">new</span> <span class="nx">ExecutionOptions</span><span class="p">(</span><span class="k">array</span><span class="p">(</span>
                     <span class="s1">'arguments'</span> <span class="o">=&gt;</span> <span class="nv">$arguments</span>
-                <span class="p">));</span>
+                <span class="p">)));</span>
 <span class="p">}</span>
 
 <span class="c1">// wait for all statements to complete
