@@ -3,6 +3,7 @@
 # Bug Fixes:
 
 * [PHP-30] Segfault when using FutureRows
+* [PHP-31] Segfault during deserialization of NULL values
 
 # 1.0.0-beta
 
