@@ -1,5 +1,9 @@
 # 1.0.0-rc
 
+Features:
+
+* Added `Cassandra\Collection::remove()`.
+
 # Bug Fixes:
 
 * [PHP-30] Segfault when using FutureRows
