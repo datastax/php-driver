@@ -6,6 +6,11 @@
   float fabsf(float value) {
     return (float) fabs((float) value);
   }
+#  if defined _M_IX86
+     float sqrtf(float value) {
+       return (float) sqrt((float) value);
+     }
+#  endif
 #endif
 
 zend_class_entry* cassandra_float_ce = NULL;
