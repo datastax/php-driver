@@ -6,8 +6,8 @@ zend_class_entry *cassandra_timestamp_ce = NULL;
 /* {{{ Cassandra\Timestamp::__construct(string) */
 PHP_METHOD(Timestamp, __construct)
 {
-  long seconds = 0;
-  long microseconds = 0;
+  cass_int64_t seconds = 0;
+  cass_int64_t microseconds = 0;
   cassandra_timestamp* timestamp = NULL;
   cass_int64_t value = 0;
 
@@ -17,7 +17,7 @@ PHP_METHOD(Timestamp, __construct)
 
   if (ZEND_NUM_ARGS() == 0) {
 #ifdef WIN32
-    seconds = (long) time(0);
+    seconds = (cass_int64_t) time(0);
 #else
     struct timeval time;
 
@@ -29,7 +29,6 @@ PHP_METHOD(Timestamp, __construct)
 
   value += microseconds / 1000;
   value += (seconds * 1000);
-
 
   timestamp = (cassandra_timestamp*) zend_object_store_get_object(getThis() TSRMLS_CC);
   timestamp->timestamp = value;
