@@ -31,6 +31,10 @@ PHP_METHOD(DefaultCluster, connect)
   session->default_timeout     = cluster->default_timeout;
   session->persist             = cluster->persist;
 
+  if (session->default_timeout) {
+    Z_ADDREF_P(session->default_timeout);
+  }
+
   if (session->persist) {
     zend_rsrc_list_entry *le;
 

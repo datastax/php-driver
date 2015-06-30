@@ -18,10 +18,14 @@ PHP_METHOD(ClusterBuilder, build)
   object_init_ex(return_value, cassandra_default_cluster_ce);
   cluster = (cassandra_cluster*) zend_object_store_get_object(return_value TSRMLS_CC);
 
-  cluster->persist                 = builder->persist;
-  cluster->default_consistency     = builder->default_consistency;
-  cluster->default_page_size       = builder->default_page_size;
-  cluster->default_timeout         = builder->default_timeout;
+  cluster->persist             = builder->persist;
+  cluster->default_consistency = builder->default_consistency;
+  cluster->default_page_size   = builder->default_page_size;
+  cluster->default_timeout     = builder->default_timeout;
+
+  if (cluster->default_timeout) {
+    Z_ADDREF_P(cluster->default_timeout);
+  }
 
   if (builder->persist) {
     zend_rsrc_list_entry *le;
