@@ -21,7 +21,7 @@ namespace Cassandra;
 /**
  * A PHP representation of the CQL `set` datatype
  */
-final class Set implements \Countable, \IteratorAggregate
+final class Set implements \Countable, \Iterator
 {
     /**
      * Creates a new collection of a given type.
