@@ -21,10 +21,10 @@ namespace Cassandra;
 /**
  * Request execution options.
  *
- * @see Cassandra\Session::execute()
- * @see Cassandra\Session::executeAsync()
- * @see Cassandra\Session::prepare()
- * @see Cassandra\Session::prepareAsync()
+ * @see Session::execute()
+ * @see Session::executeAsync()
+ * @see Session::prepare()
+ * @see Session::prepareAsync()
  */
 final class ExecutionOptions
 {
@@ -37,7 +37,7 @@ final class ExecutionOptions
      * * array['page_size']          int      A number of rows to include in result for paging
      * * array['serial_consistency'] int      Either Cassandra::CONSISTENCY_SERIAL or Cassandra::CONSISTENCY_LOCAL_SERIAL
      *
-     * @throws Cassandra\Exception\InvalidArgumentException
+     * @throws Exception\InvalidArgumentException
      *
      * @param array $options various execution options
      */

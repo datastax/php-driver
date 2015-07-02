@@ -62,7 +62,7 @@ final class Timeuuid implements UuidInterface
     /**
      * Converts current timeuuid to PHP DateTime.
      *
-     * @return DateTime PHP representation
+     * @return \DateTime PHP representation
      */
     public function toDateTime() {}
 }

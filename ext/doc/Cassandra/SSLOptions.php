@@ -21,7 +21,7 @@ namespace Cassandra;
 /**
  * SSL options for Cassandra\Cluster.
  *
- * @see Cassandra\SSLOptions\Builder
+ * @see SSLOptions\Builder
  */
 final class SSLOptions
 {

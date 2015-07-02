@@ -21,14 +21,14 @@ namespace Cassandra\Cluster;
 /**
  * Cluster builder allows fluent configuration of the cluster instance.
  *
- * @see Cassandra::cluster()
+ * @see \Cassandra::cluster()
  */
 final class Builder
 {
     /**
      * Returns a Cluster Instance.
      *
-     * @return Cluster Cluster instance
+     * @return \Cassandra\Cluster Cluster instance
      */
     public function build() {}
 
@@ -74,7 +74,7 @@ final class Builder
     /**
      * Specify a different port to be used when connecting to the cluster.
      *
-     * @throws Cassandra\Exception\InvalidArgumentException
+     * @throws \Cassandra\Exception\InvalidArgumentException
      *
      * @param int $port a number between 1 and 65535
      *
@@ -139,11 +139,11 @@ final class Builder
     /**
      * Set up ssl context.
      *
-     * @param SSLOptions $options a preconfigured ssl context
+     * @param \Cassandra\SSLOptions $options a preconfigured ssl context
      *
      * @return Builder self
      */
-    public function withSSL(SSLOptions $options) {}
+    public function withSSL(\Cassandra\SSLOptions $options) {}
 
     /**
      * Enable persistent sessions and clusters.

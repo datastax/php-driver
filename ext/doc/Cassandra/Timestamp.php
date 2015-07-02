@@ -53,7 +53,7 @@ final class Timestamp
     /**
      * Converts current timestamp to PHP DateTime.
      *
-     * @return DateTime PHP representation
+     * @return \DateTime PHP representation
      */
     public function toDateTime() {}
 

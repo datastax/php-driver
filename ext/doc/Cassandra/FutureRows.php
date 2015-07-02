@@ -21,15 +21,15 @@ namespace Cassandra;
 /**
  * This future results is resolved with `Cassandra\Rows`.
  *
- * @see Cassandra\Session::executeAsync()
+ * @see Session::executeAsync()
  */
 final class FutureRows implements Future
 {
     /**
      * {@inheritDoc}
      *
-     * @throws Cassandra\Exception\InvalidArgumentException
-     * @throws Cassandra\Exception\TimeoutException
+     * @throws Exception\InvalidArgumentException
+     * @throws Exception\TimeoutException
      *
      * @param float|null $timeout
      *

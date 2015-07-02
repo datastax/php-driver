@@ -29,7 +29,7 @@ final class Cassandra
      * has been written on the Coordinator. Requests with this consistency level
      * are not guranteed to make it to Replica nodes.
      *
-     * @see ExecutionOptions::__construct()
+     * @see Cassandra\ExecutionOptions::__construct()
      */
     const CONSISTENCY_ANY = 0;
 
@@ -37,7 +37,7 @@ final class Cassandra
      * Consistency level ONE gurantess that data has been written to at least
      * one Replica node.
      *
-     * @see ExecutionOptions::__construct()
+     * @see Cassandra\ExecutionOptions::__construct()
      */
     const CONSISTENCY_ONE = 1;
 
@@ -45,14 +45,14 @@ final class Cassandra
      * Same as `CONSISTENCY_ONE`, but confined to the local data center. This
      * consistency level works only with `NetworkTopologyStrategy` replication.
      *
-     * @see ExecutionOptions::__construct()
+     * @see Cassandra\ExecutionOptions::__construct()
      */
     const CONSISTENCY_LOCAL_ONE = 10;
     /**
      * Consistency level TWO gurantess that data has been written to at least
      * two Replica nodes.
      *
-     * @see ExecutionOptions::__construct()
+     * @see Cassandra\ExecutionOptions::__construct()
      */
     const CONSISTENCY_TWO = 2;
 
@@ -60,7 +60,7 @@ final class Cassandra
      * Consistency level THREE gurantess that data has been written to at least
      * three Replica nodes.
      *
-     * @see ExecutionOptions::__construct()
+     * @see Cassandra\ExecutionOptions::__construct()
      */
     const CONSISTENCY_THREE = 3;
 
@@ -72,7 +72,7 @@ final class Cassandra
      * ceiling function and `RF` is the replication factor used. For example,
      * for a replication factor of `5`, the majority is `ceil(5 / 2 + 1) = 3`.
      *
-     * @see ExecutionOptions::__construct()
+     * @see Cassandra\ExecutionOptions::__construct()
      */
     const CONSISTENCY_QUORUM = 4;
 
@@ -80,7 +80,7 @@ final class Cassandra
      * Same as `CONSISTENCY_QUORUM`, but confined to the local data center. This
      * consistency level works only with `NetworkTopologyStrategy` replication.
      *
-     * @see ExecutionOptions::__construct()
+     * @see Cassandra\ExecutionOptions::__construct()
      */
     const CONSISTENCY_LOCAL_QUORUM = 6;
 
@@ -89,7 +89,7 @@ final class Cassandra
      * least a majority Replica nodes in all datacenters. This consistency level
      * works only with `NetworkTopologyStrategy` replication.
      *
-     * @see ExecutionOptions::__construct()
+     * @see Cassandra\ExecutionOptions::__construct()
      */
     const CONSISTENCY_EACH_QUORUM = 7;
 
@@ -97,7 +97,7 @@ final class Cassandra
      * Consistency level ALL gurantess that data has been written to all
      * Replica nodes.
      *
-     * @see ExecutionOptions::__construct()
+     * @see Cassandra\ExecutionOptions::__construct()
      */
     const CONSISTENCY_ALL = 5;
 
@@ -109,7 +109,7 @@ final class Cassandra
      * Consistency level SERIAL, when set, ensures that a Paxos commit fails if
      * any of the replicas is down.
      *
-     * @see ExecutionOptions::__construct()
+     * @see Cassandra\ExecutionOptions::__construct()
      */
     const CONSISTENCY_SERIAL = 8;
 
@@ -117,21 +117,21 @@ final class Cassandra
      * Same as `CONSISTENCY_SERIAL`, but confined to the local data center. This
      * consistency level works only with `NetworkTopologyStrategy` replication.
      *
-     * @see ExecutionOptions::__construct()
+     * @see Cassandra\ExecutionOptions::__construct()
      */
     const CONSISTENCY_LOCAL_SERIAL = 9;
 
     /**
      * Perform no verification of Cassandra nodes when using SSL encryption.
      *
-     * @see SSLOptions\Builder::withVerifyFlags()
+     * @see Cassandra\SSLOptions\Builder::withVerifyFlags()
      */
     const VERIFY_NONE          = 0;
 
     /**
      * Verify presence and validity of SSL certificates of Cassandra.
      *
-     * @see SSLOptions\Builder::withVerifyFlags()
+     * @see Cassandra\SSLOptions\Builder::withVerifyFlags()
      */
     const VERIFY_PEER_CERT     = 1;
 
@@ -140,22 +140,22 @@ final class Cassandra
      * one of its subject alternative names. This implies the certificate is
      * also present.
      *
-     * @see SSLOptions\Builder::withVerifyFlags()
+     * @see Cassandra\SSLOptions\Builder::withVerifyFlags()
      */
     const VERIFY_PEER_IDENTITY = 2;
 
     /**
-     * @see BatchStatement::__construct()
+     * @see Cassandra\BatchStatement::__construct()
      */
     const BATCH_LOGGED = 0;
 
     /**
-     * @see BatchStatement::__construct()
+     * @see Cassandra\BatchStatement::__construct()
      */
     const BATCH_UNLOGGED = 1;
 
     /**
-     * @see BatchStatement::__construct()
+     * @see Cassandra\BatchStatement::__construct()
      */
     const BATCH_COUNTER = 2;
 
@@ -163,9 +163,9 @@ final class Cassandra
      * When using a map, collection or set of type text, all of its elements
      * must be strings.
      *
-     * @see Set::__construct()
-     * @see Collection::__construct()
-     * @see Map::__construct()
+     * @see Cassandra\Set::__construct()
+     * @see Cassandra\Collection::__construct()
+     * @see Cassandra\Map::__construct()
      */
     const TYPE_TEXT = 'text';
 
@@ -173,9 +173,9 @@ final class Cassandra
      * When using a map, collection or set of type ascii, all of its elements
      * must be strings.
      *
-     * @see Set::__construct()
-     * @see Collection::__construct()
-     * @see Map::__construct()
+     * @see Cassandra\Set::__construct()
+     * @see Cassandra\Collection::__construct()
+     * @see Cassandra\Map::__construct()
      */
     const TYPE_ASCII = 'ascii';
 
@@ -183,9 +183,9 @@ final class Cassandra
      * When using a map, collection or set of type varchar, all of its elements
      * must be strings.
      *
-     * @see Set::__construct()
-     * @see Collection::__construct()
-     * @see Map::__construct()
+     * @see Cassandra\Set::__construct()
+     * @see Cassandra\Collection::__construct()
+     * @see Cassandra\Map::__construct()
      */
     const TYPE_VARCHAR = 'varchar';
 
@@ -193,9 +193,9 @@ final class Cassandra
      * When using a map, collection or set of type bigint, all of its elements
      * must be instances of Bigint.
      *
-     * @see Set::__construct()
-     * @see Collection::__construct()
-     * @see Map::__construct()
+     * @see Cassandra\Set::__construct()
+     * @see Cassandra\Collection::__construct()
+     * @see Cassandra\Map::__construct()
      */
     const TYPE_BIGINT = 'bigint';
 
@@ -203,9 +203,9 @@ final class Cassandra
      * When using a map, collection or set of type blob, all of its elements
      * must be instances of Blob.
      *
-     * @see Set::__construct()
-     * @see Collection::__construct()
-     * @see Map::__construct()
+     * @see Cassandra\Set::__construct()
+     * @see Cassandra\Collection::__construct()
+     * @see Cassandra\Map::__construct()
      */
     const TYPE_BLOB = 'blob';
 
@@ -213,9 +213,9 @@ final class Cassandra
      * When using a map, collection or set of type boolean, all of its elements
      * must be booleans.
      *
-     * @see Set::__construct()
-     * @see Collection::__construct()
-     * @see Map::__construct()
+     * @see Cassandra\Set::__construct()
+     * @see Cassandra\Collection::__construct()
+     * @see Cassandra\Map::__construct()
      */
     const TYPE_BOOLEAN = 'boolean';
 
@@ -223,9 +223,9 @@ final class Cassandra
      * When using a map, collection or set of type counter, all of its elements
      * must be instances of Bigint.
      *
-     * @see Set::__construct()
-     * @see Collection::__construct()
-     * @see Map::__construct()
+     * @see Cassandra\Set::__construct()
+     * @see Cassandra\Collection::__construct()
+     * @see Cassandra\Map::__construct()
      */
     const TYPE_COUNTER = 'counter';
 
@@ -233,9 +233,9 @@ final class Cassandra
      * When using a map, collection or set of type decimal, all of its elements
      * must be instances of Decimal.
      *
-     * @see Set::__construct()
-     * @see Collection::__construct()
-     * @see Map::__construct()
+     * @see Cassandra\Set::__construct()
+     * @see Cassandra\Collection::__construct()
+     * @see Cassandra\Map::__construct()
      */
     const TYPE_DECIMAL = 'decimal';
 
@@ -243,9 +243,9 @@ final class Cassandra
      * When using a map, collection or set of type double, all of its elements
      * must be doubles.
      *
-     * @see Set::__construct()
-     * @see Collection::__construct()
-     * @see Map::__construct()
+     * @see Cassandra\Set::__construct()
+     * @see Cassandra\Collection::__construct()
+     * @see Cassandra\Map::__construct()
      */
     const TYPE_DOUBLE = 'double';
 
@@ -253,9 +253,9 @@ final class Cassandra
      * When using a map, collection or set of type float, all of its elements
      * must be instances of Float.
      *
-     * @see Set::__construct()
-     * @see Collection::__construct()
-     * @see Map::__construct()
+     * @see Cassandra\Set::__construct()
+     * @see Cassandra\Collection::__construct()
+     * @see Cassandra\Map::__construct()
      */
     const TYPE_FLOAT = 'float';
 
@@ -263,9 +263,9 @@ final class Cassandra
      * When using a map, collection or set of type int, all of its elements
      * must be ints.
      *
-     * @see Set::__construct()
-     * @see Collection::__construct()
-     * @see Map::__construct()
+     * @see Cassandra\Set::__construct()
+     * @see Cassandra\Collection::__construct()
+     * @see Cassandra\Map::__construct()
      */
     const TYPE_INT = 'int';
 
@@ -273,9 +273,9 @@ final class Cassandra
      * When using a map, collection or set of type timestamp, all of its elements
      * must be instances of Timestamp.
      *
-     * @see Set::__construct()
-     * @see Collection::__construct()
-     * @see Map::__construct()
+     * @see Cassandra\Set::__construct()
+     * @see Cassandra\Collection::__construct()
+     * @see Cassandra\Map::__construct()
      */
     const TYPE_TIMESTAMP = 'timestamp';
 
@@ -283,9 +283,9 @@ final class Cassandra
      * When using a map, collection or set of type uuid, all of its elements
      * must be instances of Uuid.
      *
-     * @see Set::__construct()
-     * @see Collection::__construct()
-     * @see Map::__construct()
+     * @see Cassandra\Set::__construct()
+     * @see Cassandra\Collection::__construct()
+     * @see Cassandra\Map::__construct()
      */
     const TYPE_UUID = 'uuid';
 
@@ -293,9 +293,9 @@ final class Cassandra
      * When using a map, collection or set of type varint, all of its elements
      * must be instances of Varint.
      *
-     * @see Set::__construct()
-     * @see Collection::__construct()
-     * @see Map::__construct()
+     * @see Cassandra\Set::__construct()
+     * @see Cassandra\Collection::__construct()
+     * @see Cassandra\Map::__construct()
      */
     const TYPE_VARINT = 'varint';
 
@@ -303,9 +303,9 @@ final class Cassandra
      * When using a map, collection or set of type timeuuid, all of its elements
      * must be instances of Timeuuid.
      *
-     * @see Set::__construct()
-     * @see Collection::__construct()
-     * @see Map::__construct()
+     * @see Cassandra\Set::__construct()
+     * @see Cassandra\Collection::__construct()
+     * @see Cassandra\Map::__construct()
      */
     const TYPE_TIMEUUID = 'timeuuid';
 
@@ -313,9 +313,9 @@ final class Cassandra
      * When using a map, collection or set of type inet, all of its elements
      * must be instances of Inet.
      *
-     * @see Set::__construct()
-     * @see Collection::__construct()
-     * @see Map::__construct()
+     * @see Cassandra\Set::__construct()
+     * @see Cassandra\Collection::__construct()
+     * @see Cassandra\Map::__construct()
      */
     const TYPE_INET = 'inet';
 
