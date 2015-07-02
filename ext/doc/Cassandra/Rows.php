@@ -102,7 +102,7 @@ final class Rows implements \Iterator, \Countable, \ArrayAccess
      * @return void
      * @see ArrayAccess::offsetSet()
      */
-    public function offsetSet($offset, array $value) {}
+    public function offsetSet($offset, $value) {}
 
     /**
      * Removes a row at given index.
