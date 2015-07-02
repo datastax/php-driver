@@ -113,7 +113,7 @@
 </h2>
 <ul class="list-inline">
   <li><code>Countable</code></li>
-  <li><code>IteratorAggregate</code></li>
+  <li><code>Iterator</code></li>
 </ul>
 
 
@@ -234,6 +234,46 @@
 <td><code>int</code></td>
 <td>
 <p>total number of values in this collection</p>
+</td>
+</tr></tbody>
+</table></dd>
+</dl>
+    </div>
+  </div>
+  <div class="panel panel-default member-definition">
+    <div class="panel-heading method-heading">
+      <code>bool</code> <h3 id="remove">remove<a class="anchor" href="#remove" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+</h3> <big>(</big> <code>int</code> $index <big>)</big>
+    </div>
+    <div class="panel-body method-body">
+      <p>Deletes the value at a given index</p>
+
+      <dl class="tags">
+<dt class="tag-title">Parameters:</dt>
+<dd class="tag-content"><table class="table table-striped param">
+<thead><tr>
+<th class="name">Name</th>
+<th class="type">Type</th>
+<th class="details">Details</th>
+</tr></thead>
+<tbody><tr>
+<td><var>$index</var></td>
+<td><code>int</code></td>
+<td>
+<p>Index</p>
+</td>
+</tr></tbody>
+</table></dd>
+<dt class="tag-title">Returns:</dt>
+<dd class="tag-content"><table class="table table-striped return">
+<thead><tr>
+<th class="type">Type</th>
+<th class="details">Details</th>
+</tr></thead>
+<tbody><tr>
+<td><code>bool</code></td>
+<td>
+<p>Whether the value at a given index is correctly removed</p>
 </td>
 </tr></tbody>
 </table></dd>
@@ -493,6 +533,8 @@
 <li><a href="#values">values
 </a></li>
 <li><a href="#add">add
+</a></li>
+<li><a href="#remove">remove
 </a></li>
 <li><a href="#get">get
 </a></li>
