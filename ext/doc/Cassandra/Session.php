@@ -21,7 +21,7 @@ namespace Cassandra;
 /**
  * A session is used to prepare and execute statements.
  *
- * @see Cassandra\Cluster::connect()
+ * @see Cluster::connect()
  */
 interface Session
 {

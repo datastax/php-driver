@@ -21,15 +21,15 @@ namespace Cassandra;
 /**
  * A future returned from Cassandra\Session::closeAsync().
  *
- * @see Cassandra\Session::closeAsync()
+ * @see Session::closeAsync()
  */
 final class FutureClose implements Future
 {
     /**
      * {@inheritDoc}
      *
-     * @throws Cassandra\Exception\InvalidArgumentException
-     * @throws Cassandra\Exception\TimeoutException
+     * @throws Exception\InvalidArgumentException
+     * @throws Exception\TimeoutException
      *
      * @param float|null $timeout
      *

@@ -33,9 +33,9 @@ namespace Cassandra;
  *  * `Cassandra::BATCH_COUNTER`  - this batch is used for counter updates,
  *    which are, unlike other writes, not idempotent.
  *
- * @see Cassandra::BATCH_LOGGED
- * @see Cassandra::BATCH_UNLOGGED
- * @see Cassandra::BATCH_COUNTER
+ * @see \Cassandra::BATCH_LOGGED
+ * @see \Cassandra::BATCH_UNLOGGED
+ * @see \Cassandra::BATCH_COUNTER
  */
 final class BatchStatement implements Statement
 {
@@ -52,7 +52,7 @@ final class BatchStatement implements Statement
      * @param Statement  $statement the statement to add
      * @param array|null $arguments positional or named arguments
      *
-     * @throws Cassandra\Exception\InvalidArgumentException
+     * @throws Exception\InvalidArgumentException
      *
      * @return BatchStatement self
      */

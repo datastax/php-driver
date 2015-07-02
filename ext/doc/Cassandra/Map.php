@@ -139,7 +139,7 @@ final class Map implements \Countable, \Iterator, \ArrayAccess
     /**
      * Sets the value at a given key
      *
-     * @throws Cassandra\Exception\InvalidArgumentException when the type of key or value is wrong
+     * @throws Exception\InvalidArgumentException when the type of key or value is wrong
      *
      * @param mixed $key   Key to use.
      * @param mixed $value Value to set.
@@ -151,7 +151,7 @@ final class Map implements \Countable, \Iterator, \ArrayAccess
     /**
      * Retrieves the value at a given key
      *
-     * @throws Cassandra\Exception\InvalidArgumentException when the type of key is wrong
+     * @throws Exception\InvalidArgumentException when the type of key is wrong
      *
      * @param mixed $key   Key to use.
      *
@@ -162,7 +162,7 @@ final class Map implements \Countable, \Iterator, \ArrayAccess
     /**
      * Deletes the value at a given key
      *
-     * @throws Cassandra\Exception\InvalidArgumentException when the type of key is wrong
+     * @throws Exception\InvalidArgumentException when the type of key is wrong
      *
      * @param mixed $key   Key to use.
      *
@@ -173,7 +173,7 @@ final class Map implements \Countable, \Iterator, \ArrayAccess
     /**
      * Returns whether the value a given key is present
      *
-     * @throws Cassandra\Exception\InvalidArgumentException when the type of key is wrong
+     * @throws Exception\InvalidArgumentException when the type of key is wrong
      *
      * @param mixed $key   Key to use.
      *

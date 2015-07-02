@@ -27,7 +27,7 @@ final class Rows implements \Iterator, \Countable, \ArrayAccess
      * Returns the number of rows.
      *
      * @return int number of rows
-     * @see Countable::count()
+     * @see \Countable::count()
      */
     public function count() {}
 
@@ -35,7 +35,7 @@ final class Rows implements \Iterator, \Countable, \ArrayAccess
      * Resets the rows iterator.
      *
      * @return void
-     * @see Iterator::rewind()
+     * @see \Iterator::rewind()
      */
     public function rewind() {}
 
@@ -43,7 +43,7 @@ final class Rows implements \Iterator, \Countable, \ArrayAccess
      * Returns current row.
      *
      * @return array current row
-     * @see Iterator::current()
+     * @see \Iterator::current()
      */
     public function current() {}
 
@@ -51,7 +51,7 @@ final class Rows implements \Iterator, \Countable, \ArrayAccess
      * Returns current index.
      *
      * @return int index
-     * @see Iterator::key()
+     * @see \Iterator::key()
      */
     public function key() {}
 
@@ -59,7 +59,7 @@ final class Rows implements \Iterator, \Countable, \ArrayAccess
      * Advances the rows iterator by one.
      *
      * @return void
-     * @see Iterator::next()
+     * @see \Iterator::next()
      */
     public function next() {}
 
@@ -67,7 +67,7 @@ final class Rows implements \Iterator, \Countable, \ArrayAccess
      * Returns existence of more rows being available.
      *
      * @return bool whether there are more rows available for iteration
-     * @see Iterator::valid()
+     * @see \Iterator::valid()
      */
     public function valid() {}
 
@@ -77,7 +77,7 @@ final class Rows implements \Iterator, \Countable, \ArrayAccess
      * @param int $offset row index
      *
      * @return bool whether a row at a given index exists
-     * @see ArrayAccess::offsetExists()
+     * @see \ArrayAccess::offsetExists()
      */
     public function offsetExists($offset) {}
 
@@ -87,32 +87,32 @@ final class Rows implements \Iterator, \Countable, \ArrayAccess
      * @param int $offset row index
      *
      * @return array|null row at a given index
-     * @see ArrayAccess::offsetGet()
+     * @see \ArrayAccess::offsetGet()
      */
     public function offsetGet($offset) {}
 
     /**
      * Sets a row at given index.
      *
-     * @throws Cassandra\Exception\DomainException
+     * @throws Exception\DomainException
      *
      * @param int   $offset row index
      * @param array $value row value
      *
      * @return void
-     * @see ArrayAccess::offsetSet()
+     * @see \ArrayAccess::offsetSet()
      */
     public function offsetSet($offset, $value) {}
 
     /**
      * Removes a row at given index.
      *
-     * @throws Cassandra\Exception\DomainException
+     * @throws Exception\DomainException
      *
      * @param int $offset row index
      *
      * @return void
-     * @see ArrayAccess::offsetUnset()
+     * @see \ArrayAccess::offsetUnset()
      */
     public function offsetUnset($offset) {}
 

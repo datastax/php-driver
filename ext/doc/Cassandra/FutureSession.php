@@ -21,15 +21,15 @@ namespace Cassandra;
 /**
  * A future that resolves with `Cassandra\Session`.
  *
- * @see Cassandra\Cluster::connectAsync()
+ * @see Cluster::connectAsync()
  */
 final class FutureSession implements Future
 {
     /**
      * {@inheritDoc}
      *
-     * @throws Cassandra\Exception\InvalidArgumentException
-     * @throws Cassandra\Exception\TimeoutException
+     * @throws Exception\InvalidArgumentException
+     * @throws Exception\TimeoutException
      *
      * @param float|null $timeout
      *

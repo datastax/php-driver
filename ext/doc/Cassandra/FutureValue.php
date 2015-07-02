@@ -26,8 +26,8 @@ final class FutureValue implements Future
     /**
      * {@inheritDoc}
      *
-     * @throws Cassandra\Exception\InvalidArgumentException
-     * @throws Cassandra\Exception\TimeoutException
+     * @throws Exception\InvalidArgumentException
+     * @throws Exception\TimeoutException
      *
      * @param float|null $timeout
      *

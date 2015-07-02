@@ -21,18 +21,18 @@ namespace Cassandra;
 /**
  * Futures are returns from asynchronous methods.
  *
- * @see Cassandra\Cluster::connectAsync()
- * @see Cassandra\Session::executeAsync()
- * @see Cassandra\Session::prepareAsync()
- * @see Cassandra\Session::closeAsync()
+ * @see Cluster::connectAsync()
+ * @see Session::executeAsync()
+ * @see Session::prepareAsync()
+ * @see Session::closeAsync()
  */
 interface Future
 {
     /**
      * Waits for a given future resource to resolve and throws errors if any.
      *
-     * @throws Cassandra\Exception\InvalidArgumentException
-     * @throws Cassandra\Exception\TimeoutException
+     * @throws Exception\InvalidArgumentException
+     * @throws Exception\TimeoutException
      *
      * @param float|null $timeout
      *

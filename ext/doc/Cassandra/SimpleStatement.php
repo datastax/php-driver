@@ -25,7 +25,7 @@ namespace Cassandra;
  *
  * NOTE: Positional argument are only valid for native protocol v2+.
  *
- * @see Cassandra\Session::execute()
+ * @see Session::execute()
  */
 final class SimpleStatement implements Statement
 {
