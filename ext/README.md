@@ -77,7 +77,7 @@ have on your system, run `phpize`, `./configure` and `make install`.
 #### Enable the PHP extension
 
 ```bash
-echo "# DataStax PHP Driver\nextension=cassandra.so" >> `php --ini | grep "Loaded Configuration" | sed -e "s|.*:\s*||"`
+echo -e "; DataStax PHP Driver\nextension=cassandra.so" >> `php --ini | grep "Loaded Configuration" | sed -e "s|.*:\s*||"`
 ```
 
 ### Installing on Windows
