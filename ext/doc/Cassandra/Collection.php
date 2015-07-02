@@ -21,7 +21,7 @@ namespace Cassandra;
 /**
  * A PHP representation of the CQL `list` datatype
  */
-final class Collection implements \Countable, \IteratorAggregate
+final class Collection implements \Countable, \Iterator
 {
     /**
      * Creates a new collection of a given type.

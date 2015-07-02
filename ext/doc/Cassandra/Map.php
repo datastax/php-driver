@@ -21,7 +21,7 @@ namespace Cassandra;
 /**
  * A PHP representation of the CQL `map` datatype
  */
-final class Map implements \Countable, \IteratorAggregate, \ArrayAccess
+final class Map implements \Countable, \Iterator, \ArrayAccess
 {
     /**
      * Creates a new map of a given key and value type.
