@@ -28,12 +28,12 @@ interface UuidInterface
      *
      * @return string uuid as string
      */
-    function uuid() {}
+    public function uuid();
 
     /**
      * Returns the version of this uuid.
      *
      * @return int version of this uuid
      */
-    function version() {}
+    public function version();
 }
