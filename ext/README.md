@@ -80,12 +80,12 @@ have on your system, run `phpize`, `./configure` and `make install`.
 echo -e "; DataStax PHP Driver\nextension=cassandra.so" >> `php --ini | grep "Loaded Configuration" | sed -e "s|.*:\s*||"`
 ```
 
-### Installing on Windows
+## Building on Windows
 
 The library dependencies will automatically download and build; however the
 following build dependencies will need to be installed.
 
-#### Obtaining Build Dependencies
+### Obtaining Build Dependencies
 
 - Download and install [Bison](http://gnuwin32.sourceforge.net/downlinks/bison.php).
  - Make sure Bison is in your system PATH and not installed in a directory with
@@ -101,7 +101,7 @@ following build dependencies will need to be installed.
 - Download and install [Python v2.7.x](https://www.python.org/downloads)
  - Make sure to select/install the feature "Add python.exe to Path"
 
-#### Building the Driver
+### Building the Driver
 
 A batch script has been created to detect installed versions of Visual Studio
 to simplify the build process on Windows. If you have more than one version of
@@ -117,18 +117,20 @@ Usage: VC_BUILD.BAT [OPTION...]
     --RELEASE                         Enable release build (default)
     --DISABLE-CLEAN                   Disable clean build
     --DISABLE-THREAD-SAFETY           Disable thread safety
+    --ENABLE-PACKAGES [version]       Enable package generation (5.5 and 5.6) (*)
     --ENABLE-TEST-CONFIGURATION       Enable test configuration build
-    --PHP-VERSION [version]           PHP version 5.3, 5.4, 5.5, or 5.6 (*)
-    --X86                             Target 32-bit build (**)
-    --X64                             Target 64-bit build (**)
+    --PHP-VERSION [version]           PHP version 5.3, 5.4, 5.5, or 5.6 (**)
+    --X86                             Target 32-bit build (***)
+    --X64                             Target 64-bit build (***)
 
     C/C++ Driver Options
       --USE-BOOST-ATOMIC              Use Boost atomic
 
     --HELP                            Display this message
 
-*  Defaults to PHP v5.6 if --PHP-VERSION is not used
-** Default target architecture is determined based on system architecture
+*   Minimum supported officially released PHP binary installations
+**  Defaults to PHP v5.6 if --PHP-VERSION is not used
+*** Default target architecture is determined based on system architecture
 ```
 
 To build 32-bit extension library with Zend thread safety:
@@ -161,7 +163,7 @@ To build the default system architecture using Boost atomic implementation:
 VC_BUILD.BAT --USE-BOOST-ATOMIC
 ```
 
-#### Testing
+#### Enable Testing
 
 Ensure the driver is built with --ENABLE-TEST-CONFIGURATION in order to execute
 the [Behat](http://www.behat.org) test suite and PHPUnit unit tests. You will
