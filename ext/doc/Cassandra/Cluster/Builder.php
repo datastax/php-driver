@@ -127,6 +127,7 @@ final class Builder
      * @return Builder self
      */
     public function withConnectTimeout($timeout) {}
+
     /**
      * Timeout used for waiting for a response from a node.
      *
@@ -154,4 +155,83 @@ final class Builder
      * @return Builder self
      */
     public function withPersistentSessions($enabled = true) {}
+
+    /**
+     * Force the driver to use a specific binary protocol version.
+     *
+     * * Apache Cassandra 1.2+ supports protocol version 1
+     * * Apache Cassandra 2.0+ supports protocol version 2
+     *
+     * @param int $version the actual protocol version, only `1` or `2`
+     *                         are supported
+     *
+     * @return Builder self
+     */
+    public function withProtocolVersion($version) {}
+
+    /**
+     * Total number of IO threads to use for handling the requests.
+     *
+     * Note: number of io threads * core connections per host <= total number of connections <= number of io threads * max connections per host
+     *
+     * @param int $count total number of threads.
+     *
+     * @return Builder self
+     */
+    public function withIOThreads($count) {}
+
+    /**
+     * Set the size of connection pools used by the driver. Pools are fixed
+     * when only `$core` is given, when a `$max` is specified as well,
+     * additional connections will be created automatically based on current
+     * load until the maximum number of connection has been reached. When
+     * request load goes down, extra connections are automatically cleaned up
+     * until only the core number of connections is left.
+     *
+     * @param int $core minimum connections to keep open to any given host
+     * @param int $max  maximum connections to keep open to any given host
+     *
+     * @return Builder self
+     */
+    public function withConnectionsPerHost($core = 1, $max = 2) {}
+
+    /**
+     * Specify interval in seconds that the driver should wait before attempting
+     * to re-establish a closed connection.
+     *
+     * @param float $interval interval in seconds
+     *
+     * @return Builder self
+     */
+    public function withReconnectInterval($interval) {}
+
+    /**
+     * Enables/disables latency-aware routing.
+     *
+     * @param bool $enabled whether to actually enable or disable the routing.
+     *
+     * @return Builder self
+     */
+    public function withLatencyAwareRouting($enabled = true) {}
+
+    /**
+     * Disables nagle algorithm for lower latency.
+     *
+     * @param bool $enabled whether to actually enable or disable nodelay.
+     *
+     * @return Builder self
+     */
+    public function withTCPNodelay($enabled = true) {}
+
+    /**
+     * Enables/disables TCP keepalive.
+     *
+     * @param float|null $delay the period of inactivity in seconds, after
+     *                          which the keepalive probe should be sent over
+     *                          the connection. If set to `null`, disables
+     *                          keepalive probing.
+     *
+     * @return Builder self
+     */
+    public function withTCPKeepalive($delay) {}
 }

@@ -182,6 +182,15 @@ typedef struct {
   int default_page_size;
   zval* default_timeout;
   cass_bool_t persist;
+  int protocol_version;
+  int io_threads;
+  int core_connections_per_host;
+  int max_connections_per_host;
+  unsigned int reconnect_interval;
+  cass_bool_t enable_latency_aware_routing;
+  cass_bool_t enable_tcp_nodelay;
+  cass_bool_t enable_tcp_keepalive;
+  unsigned int tcp_keepalive_delay;
 } cassandra_cluster_builder;
 
 typedef struct {
