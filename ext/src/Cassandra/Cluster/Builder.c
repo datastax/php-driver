@@ -411,7 +411,7 @@ PHP_METHOD(ClusterBuilder, withProtocolVersion)
   builder = (cassandra_cluster_builder*) zend_object_store_get_object(getThis() TSRMLS_CC);
 
   if (Z_TYPE_P(version) == IS_LONG && Z_LVAL_P(version) < 3 && Z_LVAL_P(version) > 0) {
-    builder->protocol_version = version;
+    builder->protocol_version = Z_LVAL_P(version);
   } else {
     INVALID_ARGUMENT(version, "either 1 or 2");
   }
