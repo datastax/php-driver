@@ -68,12 +68,43 @@ PHP_METHOD(ExecutionOptions, __construct)
   }
 }
 
+PHP_METHOD(ExecutionOptions, __get)
+{
+  char *name;
+  int   name_len;
+
+  cassandra_execution_options* self = NULL;
+
+  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &name, &name_len) == FAILURE) {
+    return;
+  }
+
+  self = (cassandra_execution_options*) zend_object_store_get_object(getThis() TSRMLS_CC);
+
+  if (name_len == 11 && strncmp("consistency", name, name_len) == 0) {
+    RETURN_LONG(self->consistency);
+  } else if (name_len == 17 && strncmp("serialConsistency", name, name_len) == 0) {
+    RETURN_LONG(self->serial_consistency);
+  } else if (name_len == 8 && strncmp("pageSize", name, name_len) == 0) {
+    RETURN_LONG(self->page_size);
+  } else if (name_len == 7 && strncmp("timeout", name, name_len) == 0) {
+    RETURN_ZVAL(self->timeout, 1, 0);
+  } else if (name_len == 9 && strncmp("arguments", name, name_len) == 0) {
+    RETURN_ZVAL(self->arguments, 1, 0);
+  }
+}
+
 ZEND_BEGIN_ARG_INFO_EX(arginfo__construct, 0, ZEND_RETURN_VALUE, 0)
   ZEND_ARG_ARRAY_INFO(0, options, 1)
 ZEND_END_ARG_INFO()
 
+ZEND_BEGIN_ARG_INFO_EX(arginfo___get, 0, ZEND_RETURN_VALUE, 1)
+  ZEND_ARG_INFO(0, name)
+ZEND_END_ARG_INFO()
+
 static zend_function_entry cassandra_execution_options_methods[] = {
   PHP_ME(ExecutionOptions, __construct, arginfo__construct, ZEND_ACC_PUBLIC | ZEND_ACC_CTOR)
+  PHP_ME(ExecutionOptions, __get, arginfo___get, ZEND_ACC_PUBLIC)
   PHP_FE_END
 };
 
