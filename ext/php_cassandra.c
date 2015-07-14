@@ -66,8 +66,9 @@ php_cassandra_log_cleanup()
 {
   cass_log_cleanup();
   uv_rwlock_destroy(&log_lock);
-  if (log_location != NULL) {
+  if (log_location) {
     free(log_location);
+    log_location = NULL;
   }
 }
 
