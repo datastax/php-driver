@@ -15,9 +15,9 @@ PHP_METHOD(Blob, __construct)
   }
 
   blob = (cassandra_blob*) zend_object_store_get_object(getThis() TSRMLS_CC);
-  blob->data = emalloc(bytes_len + 1 * sizeof(cass_byte_t));
-  blob->size = bytes_len + 1;
-  memcpy(blob->data, bytes, bytes_len + 1);
+  blob->data = emalloc(bytes_len * sizeof(cass_byte_t));
+  blob->size = bytes_len;
+  memcpy(blob->data, bytes, bytes_len);
 }
 /* }}} */
 
@@ -45,6 +45,18 @@ PHP_METHOD(Blob, bytes)
 }
 /* }}} */
 
+/* {{{ Cassandra\Blob::toBinaryString() */
+PHP_METHOD(Blob, toBinaryString)
+{
+  cassandra_blob* blob = (cassandra_blob*) zend_object_store_get_object(getThis() TSRMLS_CC);
+  char* bytes = (char *) emalloc(sizeof(char) * (blob->size + 1));
+  memcpy(bytes, blob->data, blob->size);
+  bytes[blob->size] = '\0';
+
+  RETURN_STRINGL(bytes, blob->size, 0);
+}
+/* }}} */
+
 ZEND_BEGIN_ARG_INFO_EX(arginfo__construct, 0, ZEND_RETURN_VALUE, 1)
   ZEND_ARG_INFO(0, bytes)
 ZEND_END_ARG_INFO()
@@ -56,6 +68,7 @@ static zend_function_entry cassandra_blob_methods[] = {
   PHP_ME(Blob, __construct, arginfo__construct, ZEND_ACC_CTOR|ZEND_ACC_PUBLIC)
   PHP_ME(Blob, __toString, arginfo_none, ZEND_ACC_PUBLIC)
   PHP_ME(Blob, bytes, arginfo_none, ZEND_ACC_PUBLIC)
+  PHP_ME(Blob, toBinaryString, arginfo_none, ZEND_ACC_PUBLIC)
   PHP_FE_END
 };
 

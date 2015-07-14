@@ -43,4 +43,11 @@ final class Blob
      * @return string bytes as hexadecimal string
      */
     public function __toString() {}
+
+    /**
+     * Returns bytes as a binary string.
+     *
+     * @return string bytes as binary string
+     */
+    public function toBinaryString() {}
 }
