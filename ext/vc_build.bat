@@ -109,11 +109,11 @@ SET DEPENDENCIES_LIBRARIES_DIRECTORY=libs
 SET CPP_DRIVER_DIRECTORY=cpp-driver
 SET MPIR_REPOSITORY_URL=https://github.com/wbhart/mpir.git
 SET MPIR_DIRECTORY=mpir
-SET MPIR_BRANCH_TAG_VERSION=mpir-2.6.0
+SET MPIR_BRANCH_TAG_VERSION=mpir-2.7.0
 SET PHP_REPOSITORY_URL=https://github.com/php/php-src.git
 SET PHP_DIRECTORY=php
 SET PHP_5_3_BRANCH_TAG_VERSION=php-5.3.29
-SET PHP_5_4_BRANCH_TAG_VERSION=php-5.4.42
+SET PHP_5_4_BRANCH_TAG_VERSION=php-5.4.43
 SET PHP_5_5_BRANCH_TAG_VERSION=php-5.5.26
 SET PHP_5_6_BRANCH_TAG_VERSION=php-5.6.10
 SET "SUPPORTED_PHP_PACKAGE_VERSIONS=5_5 5_6"
@@ -455,13 +455,14 @@ IF "!ENABLE_BUILD_PACKAGES!" == "!FALSE!" (
   REM Display summary of build options
   ECHO Build Type:          !BUILD_TYPE!
   ECHO Clean Build:         !ENABLE_CLEAN_BUILD!
-  ECHO PHP Version:         !PHP_BRANCH_TAG_VERSION!
   ECHO Target Architecture: !TARGET_ARCHITECTURE!
   ECHO Test Configuration:  !ENABLE_TEST_CONFIGURATION!
-  ECHO Thread Safety:       !ENABLE_THREAD_SAFETY!
   ECHO Visual Studio:       !VISUAL_STUDIO_VERSION!
   ECHO C/C++ Driver
   ECHO   Use Boost Atomic:  !USE_BOOST_ATOMIC!
+  ECHO PHP Executable
+  ECHO   PHP Version:       !PHP_BRANCH_TAG_VERSION!
+  ECHO   ZTS:               !ENABLE_THREAD_SAFETY!
   ECHO.
 ) ELSE (
   REM Ensure package properties are set (ignore commandline arguments)
@@ -1228,7 +1229,7 @@ REM Build the libxml2 library
 REM
 REM @param source-directory Location of libxml2 source
 REM @param install-directory Installation location of libxml2 library
-REM @param libiconv-library-directory Library directory for cpp-driver
+REM @param libiconv-library-directory Library directory for libxml2 dependency
 REM @param log-filename Absolute path and filename for log output
 :BUILDLIBXML2 [source-directory] [install-directory] [libiconv-library-directory] [log-filename]
   REM Create libxml2 variables from arguments
@@ -1401,7 +1402,7 @@ REM @param log-filename Absolute path and filename for log output
   IF "!PHP_DRIVER_BUILD_TYPE!" == "!BUILD_TYPE_DEBUG!" (
     SET "DRIVER_CONFIGURE_COMMAND_LINE=!DRIVER_CONFIGURE_COMMAND_LINE! --enable-debug"
   )
-  IF !PHP_DRIVER_ENABLE_TEST_CONFIGURATION! EQU !TRUE! (
+  IF "!PHP_DRIVER_ENABLE_TEST_CONFIGURATION!" == "!TRUE!" (
     SET "DRIVER_CONFIGURE_COMMAND_LINE=!DRIVER_CONFIGURE_COMMAND_LINE! --enable-phar --enable-json --enable-filter --enable-hash --enable-ctype --enable-mbstring --enable-mbregex --enable-mbregex-backtrack --enable-tokenizer --enable-zip --with-libxml --with-dom --with-iconv=^"!PHP_DRIVER_LIBICONV_LIBRARY_DIRECTORY!^""
   )
   ECHO configure.bat !DRIVER_CONFIGURE_COMMAND_LINE! >> "!PHP_DRIVER_LOG_FILENAME!" 2>&1
