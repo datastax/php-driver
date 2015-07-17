@@ -1393,7 +1393,7 @@ REM @param log-filename Absolute path and filename for log output
     ECHO done.
   )
   ECHO | SET /P=Configuring PHP and enable driver extension ... 
-  SET "DRIVER_CONFIGURE_COMMAND_LINE=--with-prefix=^"!PHP_DRIVER_INSTALLATION_DIRECTORY!^" --with-extra-includes=^"!PHP_DRIVER_PHP_SOURCE_DIRECTORY!\..\deps\include^" --disable-all --enable-cli --with-openssl=^"!PHP_DRIVER_OPENSSL_LIBRARY_DIRECTORY!^" --enable-cassandra=shared --with-cassandra-cpp-driver=^"!PHP_DRIVER_CPP_DRIVER_LIBRARY_DIRECTORY!^" --with-libuv-libs=^"!PHP_DRIVER_LIBUV_LIBRARY_DIRECTORY!^" --with-mpir=^"!PHP_DRIVER_MPIR_LIBRARY_DIRECTORY!^" --with-zlib-libs=^"!PHP_DRIVER_ZLIB_LIBRARY_DIRECTORY!^""
+  SET "DRIVER_CONFIGURE_COMMAND_LINE=--with-prefix=^"!PHP_DRIVER_INSTALLATION_DIRECTORY!^" --with-extra-includes=^"!PHP_DRIVER_PHP_SOURCE_DIRECTORY!\..\deps\include^" --disable-all --enable-cli --enable-com-dotnet --with-openssl=^"!PHP_DRIVER_OPENSSL_LIBRARY_DIRECTORY!^" --enable-cassandra=shared --with-cassandra-cpp-driver=^"!PHP_DRIVER_CPP_DRIVER_LIBRARY_DIRECTORY!^" --with-libuv-libs=^"!PHP_DRIVER_LIBUV_LIBRARY_DIRECTORY!^" --with-mpir=^"!PHP_DRIVER_MPIR_LIBRARY_DIRECTORY!^" --with-zlib-libs=^"!PHP_DRIVER_ZLIB_LIBRARY_DIRECTORY!^""
   IF "!PHP_DRIVER_ENABLE_THREAD_SAFETY!" == "!TRUE!" (
     SET "DRIVER_CONFIGURE_COMMAND_LINE=!DRIVER_CONFIGURE_COMMAND_LINE! --enable-zts"
   ) ELSE (
