@@ -324,6 +324,7 @@ create_batch(cassandra_batch_statement* batch, CassConsistency consistency TSRML
       return NULL;
     }
     cass_batch_add_statement(cass_batch, stmt);
+    cass_statement_free(stmt);
     zend_hash_move_forward_ex(statements, &pos);
   }
 
