@@ -104,8 +104,9 @@ PHP_METHOD(SSLOptionsBuilder, withTrustedCerts)
   builder = (cassandra_ssl_builder*) zend_object_store_get_object(getThis() TSRMLS_CC);
 
   if (builder->trusted_certs) {
-    for (i = 0; i < builder->trusted_certs_cnt; i++)
+    for (i = 0; i < builder->trusted_certs_cnt; i++) {
       efree(builder->trusted_certs[i]);
+    }
 
     efree(builder->trusted_certs);
   }
