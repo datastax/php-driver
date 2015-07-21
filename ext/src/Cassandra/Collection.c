@@ -143,8 +143,9 @@ PHP_METHOD(Collection, add)
     }
   }
 
-  for (i = 0; i < argc; i++)
+  for (i = 0; i < argc; i++) {
     php_cassandra_collection_add(collection, *args[i] TSRMLS_CC);
+  }
 
   efree(args);
   RETVAL_LONG(zend_hash_num_elements(&collection->values));

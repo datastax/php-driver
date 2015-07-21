@@ -616,7 +616,6 @@ PHP_METHOD(DefaultSession, prepareAsync)
   zval *cql = NULL;
   zval *options = NULL;
   cassandra_session* self = NULL;
-  cassandra_execution_options* opts = NULL;
   CassFuture* future = NULL;
   cassandra_future_prepared_statement* future_prepared = NULL;
 
@@ -625,14 +624,6 @@ PHP_METHOD(DefaultSession, prepareAsync)
   }
 
   self = (cassandra_session*) zend_object_store_get_object(getThis() TSRMLS_CC);
-
-  if (options) {
-    if (!instanceof_function(Z_OBJCE_P(options), cassandra_execution_options_ce TSRMLS_CC)) {
-      INVALID_ARGUMENT(options, "an instance of Cassandra\\ExecutionOptions or null");
-    }
-
-    opts = (cassandra_execution_options*) zend_object_store_get_object(options TSRMLS_CC);
-  }
 
   future = cass_session_prepare_n(self->session, Z_STRVAL_P(cql), Z_STRLEN_P(cql));
 

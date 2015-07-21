@@ -9,7 +9,7 @@ ZEND_EXTERN_MODULE_GLOBALS(cassandra)
 PHP_METHOD(ClusterBuilder, build)
 {
   char* hash_key;
-  int   hash_key_len;
+  int   hash_key_len = 0;
   cassandra_cluster* cluster = NULL;
 
   cassandra_cluster_builder* builder =

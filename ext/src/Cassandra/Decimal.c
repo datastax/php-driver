@@ -46,7 +46,7 @@ to_mpf(mpf_t result, cassandra_decimal* decimal)
 static void
 from_double(cassandra_decimal* result, double value)
 {
-  cass_int64_t raw = *((cass_int64_t*) &value);
+  cass_int64_t raw = (cass_int64_t) value;
   cass_int64_t mantissa = raw & DOUBLE_MANITSSA_MASK;
   cass_int64_t exponent = (raw >> DOUBLE_MANTISSA_BITS) & DOUBLE_EXPONENT_MASK;
   char mantissa_str[32];
