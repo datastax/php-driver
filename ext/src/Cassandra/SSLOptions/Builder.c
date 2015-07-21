@@ -87,7 +87,8 @@ PHP_METHOD(SSLOptionsBuilder, withTrustedCerts)
     path = *args[i];
 
     if (Z_TYPE_P(path) != IS_STRING) {
-      INVALID_ARGUMENT(path, "a path to a trusted cert file");
+      throw_invalid_argument(path, "path", "a path to a trusted cert file" TSRMLS_CC);
+      efree(args);
     }
 
     php_stat(Z_STRVAL_P(path), Z_STRLEN_P(path), FS_IS_R, &readable TSRMLS_CC);
@@ -95,6 +96,7 @@ PHP_METHOD(SSLOptionsBuilder, withTrustedCerts)
     if (!Z_LVAL(readable)) {
       zend_throw_exception_ex(cassandra_invalid_argument_exception_ce, 0 TSRMLS_CC,
         "The path '%s' doesn't exist or is not readable", Z_STRVAL_P(path));
+      efree(args);
       return;
     }
   }
@@ -116,6 +118,7 @@ PHP_METHOD(SSLOptionsBuilder, withTrustedCerts)
 
     builder->trusted_certs[i] = estrndup(Z_STRVAL_P(path), Z_STRLEN_P(path));
   }
+  efree(args);
 
   RETURN_ZVAL(getThis(), 1, 0);
 }
