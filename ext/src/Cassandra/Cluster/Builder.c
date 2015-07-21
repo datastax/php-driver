@@ -187,7 +187,9 @@ PHP_METHOD(ClusterBuilder, withContactPoints)
 
     if (Z_TYPE_P(host) != IS_STRING) {
       smart_str_free(&contactPoints);
-      INVALID_ARGUMENT(host, "a string ip address or hostname");
+      throw_invalid_argument(host, "host", "a string ip address or hostname" TSRMLS_CC);
+      efree(args);
+      return;
     }
 
     if (i > 0) {
@@ -197,6 +199,7 @@ PHP_METHOD(ClusterBuilder, withContactPoints)
     smart_str_appendl(&contactPoints, Z_STRVAL_P(host), Z_STRLEN_P(host));
   }
 
+  efree(args);
   smart_str_0(&contactPoints);
 
   builder = (cassandra_cluster_builder*) zend_object_store_get_object(getThis() TSRMLS_CC);

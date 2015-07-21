@@ -137,8 +137,10 @@ PHP_METHOD(Collection, add)
   collection = (cassandra_collection*) zend_object_store_get_object(getThis() TSRMLS_CC);
 
   for (i = 0; i < argc; i++) {
-    if (!php_cassandra_validate_object(*args[i], collection->type TSRMLS_CC))
+    if (!php_cassandra_validate_object(*args[i], collection->type TSRMLS_CC)) {
+      efree(args);
       RETURN_FALSE;
+    }
   }
 
   for (i = 0; i < argc; i++)
