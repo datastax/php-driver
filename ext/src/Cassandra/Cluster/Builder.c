@@ -452,13 +452,13 @@ PHP_METHOD(ClusterBuilder, withConnectionsPerHost)
     return;
   }
 
+  builder = (cassandra_cluster_builder*) zend_object_store_get_object(getThis() TSRMLS_CC);
+
   if (Z_TYPE_P(core) == IS_LONG && Z_LVAL_P(core) < 129 && Z_LVAL_P(core) > 0) {
     builder->core_connections_per_host = Z_LVAL_P(core);
   } else {
     INVALID_ARGUMENT(core, "a number between 1 and 128");
   }
-
-  builder = (cassandra_cluster_builder*) zend_object_store_get_object(getThis() TSRMLS_CC);
 
   if (Z_TYPE_P(max) == IS_NULL) {
     builder->max_connections_per_host = Z_LVAL_P(core);
