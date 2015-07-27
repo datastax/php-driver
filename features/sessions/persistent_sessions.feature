@@ -4,7 +4,7 @@ Feature: Persistent Sessions
   PHP Driver sessions can persist
 
   Background:
-    Given a running Cassandra cluster
+    Given a running Cassandra cluster with 2 nodes
     And a file named "status.php" with:
       """php
       <?php
@@ -34,6 +34,34 @@ Feature: Persistent Sessions
     Then I should see:
       | Persistent Clusters | 1 |
       | Persistent Sessions | 1 |
+
+  Scenario: Multiple persistent sessions are used for requests
+    Given a file named "connect.php" with:
+      """php
+      <?php
+
+      $cluster = Cassandra::cluster()
+                         ->withContactPoints('127.0.0.1')
+                         ->withPersistentSessions(true)
+                         ->build();
+      $session = $cluster->connect();
+      """
+    And a file named "connect_system.php" with:
+      """php
+      <?php
+
+      $cluster = Cassandra::cluster()
+                         ->withContactPoints('127.0.0.1')
+                         ->withPersistentSessions(true)
+                         ->build();
+      $session = $cluster->connect("system");
+      """
+    When I go to "/connect.php"
+    When I go to "/connect_system.php"
+    When I go to "/status.php"
+    Then I should see:
+      | Persistent Clusters | 1 |
+      | Persistent Sessions | 2 |
 
   Scenario: Non-persistent sessions are recreated for each request
     Given a file named "connect.php" with:

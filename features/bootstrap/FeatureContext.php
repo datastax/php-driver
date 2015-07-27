@@ -163,16 +163,20 @@ class FeatureContext implements Context, SnippetAcceptingContext
 
     private function fetchPath($url)
     {
-        $request = curl_init();
+        if (in_array('curl', get_loaded_extensions())) {
+            $request = curl_init();
 
-        curl_setopt($request, CURLOPT_URL, $url);
-        curl_setopt($request, CURLOPT_HEADER, 0);
-        curl_setopt($request, CURLOPT_CONNECTTIMEOUT, 2);
-        curl_setopt($request, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($request, CURLOPT_USERAGENT, 'PHP Driver Tests');
+            curl_setopt($request, CURLOPT_URL, $url);
+            curl_setopt($request, CURLOPT_HEADER, 0);
+            curl_setopt($request, CURLOPT_CONNECTTIMEOUT, 2);
+            curl_setopt($request, CURLOPT_RETURNTRANSFER, 1);
+            curl_setopt($request, CURLOPT_USERAGENT, 'PHP Driver Tests');
 
-        $content = curl_exec($request);
-        curl_close($request);
+            $content = curl_exec($request);
+            curl_close($request);
+        } else {
+            $content = file_get_contents($url);
+        }
 
         return $content;
     }

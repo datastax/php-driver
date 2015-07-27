@@ -55,7 +55,7 @@ final class Builder
      * Configures default timeout for future resolution in blocking operations
      * Set to null to disable (default).
      *
-     * @param float|null $timeout timeout value
+     * @param float|null $timeout Timeout value in seconds, can be fractional
      *
      * @return Builder self
      */

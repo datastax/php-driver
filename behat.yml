@@ -6,7 +6,7 @@ default:
             contexts:
                 - FeatureContext:
                     cluster_name: php-driver-2.1-cluster
-                    cassandra_version: 2.1.5
+                    cassandra_version: 2.1.8
 
 cassandra-version-2.0:
     formatters:
@@ -17,7 +17,7 @@ cassandra-version-2.0:
             contexts:
                 - FeatureContext:
                     cluster_name: php-driver-2.0-cluster
-                    cassandra_version: 2.0.13
+                    cassandra_version: 2.0.16
 
 cassandra-version-1.2:
     formatters:
