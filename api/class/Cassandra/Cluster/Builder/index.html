@@ -247,7 +247,7 @@
 <td><var>$timeout</var></td>
 <td><code>float</code></td>
 <td>
-<p>timeout value</p>
+<p>Timeout value in seconds, can be fractional</p>
 </td>
 </tr></tbody>
 </table></dd>
@@ -688,6 +688,302 @@
 </dl>
     </div>
   </div>
+  <div class="panel panel-default member-definition">
+    <div class="panel-heading method-heading">
+      <code><a href="./">Cassandra\Cluster\Builder</a></code> <h3 id="with-protocol-version">withProtocolVersion<a class="anchor" href="#with-protocol-version" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+</h3> <big>(</big> <code>int</code> $version <big>)</big>
+    </div>
+    <div class="panel-body method-body">
+      <p>Force the driver to use a specific binary protocol version.</p>
+
+<ul>
+<li>Apache <code><a href="../../">Cassandra</a></code> 1.2+ supports protocol version 1</li>
+<li>Apache <code><a href="../../">Cassandra</a></code> 2.0+ supports protocol version 2</li>
+</ul>
+
+      <dl class="tags">
+<dt class="tag-title">Parameters:</dt>
+<dd class="tag-content"><table class="table table-striped param">
+<thead><tr>
+<th class="name">Name</th>
+<th class="type">Type</th>
+<th class="details">Details</th>
+</tr></thead>
+<tbody><tr>
+<td><var>$version</var></td>
+<td><code>int</code></td>
+<td>
+<p>the actual protocol version, only <code>1</code> or <code>2</code> are supported</p>
+</td>
+</tr></tbody>
+</table></dd>
+<dt class="tag-title">Returns:</dt>
+<dd class="tag-content"><table class="table table-striped return">
+<thead><tr>
+<th class="type">Type</th>
+<th class="details">Details</th>
+</tr></thead>
+<tbody><tr>
+<td><code><a href="./">Cassandra\Cluster\Builder</a></code></td>
+<td>
+<p>self</p>
+</td>
+</tr></tbody>
+</table></dd>
+</dl>
+    </div>
+  </div>
+  <div class="panel panel-default member-definition">
+    <div class="panel-heading method-heading">
+      <code><a href="./">Cassandra\Cluster\Builder</a></code> <h3 id="withio-threads">withIOThreads<a class="anchor" href="#withio-threads" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+</h3> <big>(</big> <code>int</code> $count <big>)</big>
+    </div>
+    <div class="panel-body method-body">
+      <p>Total number of IO threads to use for handling the requests.</p>
+
+<p>Note: number of io threads * core connections per host &lt;= total number of connections &lt;= number of io threads * max connections per host</p>
+
+      <dl class="tags">
+<dt class="tag-title">Parameters:</dt>
+<dd class="tag-content"><table class="table table-striped param">
+<thead><tr>
+<th class="name">Name</th>
+<th class="type">Type</th>
+<th class="details">Details</th>
+</tr></thead>
+<tbody><tr>
+<td><var>$count</var></td>
+<td><code>int</code></td>
+<td>
+<p>total number of threads.</p>
+</td>
+</tr></tbody>
+</table></dd>
+<dt class="tag-title">Returns:</dt>
+<dd class="tag-content"><table class="table table-striped return">
+<thead><tr>
+<th class="type">Type</th>
+<th class="details">Details</th>
+</tr></thead>
+<tbody><tr>
+<td><code><a href="./">Cassandra\Cluster\Builder</a></code></td>
+<td>
+<p>self</p>
+</td>
+</tr></tbody>
+</table></dd>
+</dl>
+    </div>
+  </div>
+  <div class="panel panel-default member-definition">
+    <div class="panel-heading method-heading">
+      <code><a href="./">Cassandra\Cluster\Builder</a></code> <h3 id="with-connections-per-host">withConnectionsPerHost<a class="anchor" href="#with-connections-per-host" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+</h3> <big>(</big> <code>int</code> $core <big>=</big> <var>1</var>, <code>int</code> $max <big>=</big> <var>2</var> <big>)</big>
+    </div>
+    <div class="panel-body method-body">
+      <p><code><a href="../../Set/">Cassandra\Set</a></code> the size of connection pools used by the driver. Pools are fixed when only <code>$core</code> is given, when a <code>$max</code> is specified as well, additional connections will be created automatically based on current load until the maximum number of connection has been reached. When request load goes down, extra connections are automatically cleaned up until only the core number of connections is left.</p>
+
+      <dl class="tags">
+<dt class="tag-title">Parameters:</dt>
+<dd class="tag-content"><table class="table table-striped param">
+<thead><tr>
+<th class="name">Name</th>
+<th class="type">Type</th>
+<th class="details">Details</th>
+</tr></thead>
+<tbody>
+<tr>
+<td><var>$core</var></td>
+<td><code>int</code></td>
+<td>
+<p>minimum connections to keep open to any given host</p>
+</td>
+</tr>
+<tr>
+<td><var>$max</var></td>
+<td><code>int</code></td>
+<td>
+<p>maximum connections to keep open to any given host</p>
+</td>
+</tr>
+</tbody>
+</table></dd>
+<dt class="tag-title">Returns:</dt>
+<dd class="tag-content"><table class="table table-striped return">
+<thead><tr>
+<th class="type">Type</th>
+<th class="details">Details</th>
+</tr></thead>
+<tbody><tr>
+<td><code><a href="./">Cassandra\Cluster\Builder</a></code></td>
+<td>
+<p>self</p>
+</td>
+</tr></tbody>
+</table></dd>
+</dl>
+    </div>
+  </div>
+  <div class="panel panel-default member-definition">
+    <div class="panel-heading method-heading">
+      <code><a href="./">Cassandra\Cluster\Builder</a></code> <h3 id="with-reconnect-interval">withReconnectInterval<a class="anchor" href="#with-reconnect-interval" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+</h3> <big>(</big> <code>float</code> $interval <big>)</big>
+    </div>
+    <div class="panel-body method-body">
+      <p>Specify interval in seconds that the driver should wait before attempting to re-establish a closed connection.</p>
+
+      <dl class="tags">
+<dt class="tag-title">Parameters:</dt>
+<dd class="tag-content"><table class="table table-striped param">
+<thead><tr>
+<th class="name">Name</th>
+<th class="type">Type</th>
+<th class="details">Details</th>
+</tr></thead>
+<tbody><tr>
+<td><var>$interval</var></td>
+<td><code>float</code></td>
+<td>
+<p>interval in seconds</p>
+</td>
+</tr></tbody>
+</table></dd>
+<dt class="tag-title">Returns:</dt>
+<dd class="tag-content"><table class="table table-striped return">
+<thead><tr>
+<th class="type">Type</th>
+<th class="details">Details</th>
+</tr></thead>
+<tbody><tr>
+<td><code><a href="./">Cassandra\Cluster\Builder</a></code></td>
+<td>
+<p>self</p>
+</td>
+</tr></tbody>
+</table></dd>
+</dl>
+    </div>
+  </div>
+  <div class="panel panel-default member-definition">
+    <div class="panel-heading method-heading">
+      <code><a href="./">Cassandra\Cluster\Builder</a></code> <h3 id="with-latency-aware-routing">withLatencyAwareRouting<a class="anchor" href="#with-latency-aware-routing" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+</h3> <big>(</big> <code>bool</code> $enabled <big>=</big> <var>true</var> <big>)</big>
+    </div>
+    <div class="panel-body method-body">
+      <p>Enables/disables latency-aware routing.</p>
+
+      <dl class="tags">
+<dt class="tag-title">Parameters:</dt>
+<dd class="tag-content"><table class="table table-striped param">
+<thead><tr>
+<th class="name">Name</th>
+<th class="type">Type</th>
+<th class="details">Details</th>
+</tr></thead>
+<tbody><tr>
+<td><var>$enabled</var></td>
+<td><code>bool</code></td>
+<td>
+<p>whether to actually enable or disable the routing.</p>
+</td>
+</tr></tbody>
+</table></dd>
+<dt class="tag-title">Returns:</dt>
+<dd class="tag-content"><table class="table table-striped return">
+<thead><tr>
+<th class="type">Type</th>
+<th class="details">Details</th>
+</tr></thead>
+<tbody><tr>
+<td><code><a href="./">Cassandra\Cluster\Builder</a></code></td>
+<td>
+<p>self</p>
+</td>
+</tr></tbody>
+</table></dd>
+</dl>
+    </div>
+  </div>
+  <div class="panel panel-default member-definition">
+    <div class="panel-heading method-heading">
+      <code><a href="./">Cassandra\Cluster\Builder</a></code> <h3 id="withtcp-nodelay">withTCPNodelay<a class="anchor" href="#withtcp-nodelay" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+</h3> <big>(</big> <code>bool</code> $enabled <big>=</big> <var>true</var> <big>)</big>
+    </div>
+    <div class="panel-body method-body">
+      <p>Disables nagle algorithm for lower latency.</p>
+
+      <dl class="tags">
+<dt class="tag-title">Parameters:</dt>
+<dd class="tag-content"><table class="table table-striped param">
+<thead><tr>
+<th class="name">Name</th>
+<th class="type">Type</th>
+<th class="details">Details</th>
+</tr></thead>
+<tbody><tr>
+<td><var>$enabled</var></td>
+<td><code>bool</code></td>
+<td>
+<p>whether to actually enable or disable nodelay.</p>
+</td>
+</tr></tbody>
+</table></dd>
+<dt class="tag-title">Returns:</dt>
+<dd class="tag-content"><table class="table table-striped return">
+<thead><tr>
+<th class="type">Type</th>
+<th class="details">Details</th>
+</tr></thead>
+<tbody><tr>
+<td><code><a href="./">Cassandra\Cluster\Builder</a></code></td>
+<td>
+<p>self</p>
+</td>
+</tr></tbody>
+</table></dd>
+</dl>
+    </div>
+  </div>
+  <div class="panel panel-default member-definition">
+    <div class="panel-heading method-heading">
+      <code><a href="./">Cassandra\Cluster\Builder</a></code> <h3 id="withtcp-keepalive">withTCPKeepalive<a class="anchor" href="#withtcp-keepalive" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+</h3> <big>(</big> <code>float</code> $delay <big>)</big>
+    </div>
+    <div class="panel-body method-body">
+      <p>Enables/disables TCP keepalive.</p>
+
+      <dl class="tags">
+<dt class="tag-title">Parameters:</dt>
+<dd class="tag-content"><table class="table table-striped param">
+<thead><tr>
+<th class="name">Name</th>
+<th class="type">Type</th>
+<th class="details">Details</th>
+</tr></thead>
+<tbody><tr>
+<td><var>$delay</var></td>
+<td><code>float</code></td>
+<td>
+<p>the period of inactivity in seconds, after which the keepalive probe should be sent over the connection. If set to <code>null</code>, disables keepalive probing.</p>
+</td>
+</tr></tbody>
+</table></dd>
+<dt class="tag-title">Returns:</dt>
+<dd class="tag-content"><table class="table table-striped return">
+<thead><tr>
+<th class="type">Type</th>
+<th class="details">Details</th>
+</tr></thead>
+<tbody><tr>
+<td><code><a href="./">Cassandra\Cluster\Builder</a></code></td>
+<td>
+<p>self</p>
+</td>
+</tr></tbody>
+</table></dd>
+</dl>
+    </div>
+  </div>
 </div>
 
 
@@ -734,6 +1030,20 @@
 <li><a href="#withssl">withSSL
 </a></li>
 <li><a href="#with-persistent-sessions">withPersistentSessions
+</a></li>
+<li><a href="#with-protocol-version">withProtocolVersion
+</a></li>
+<li><a href="#withio-threads">withIOThreads
+</a></li>
+<li><a href="#with-connections-per-host">withConnectionsPerHost
+</a></li>
+<li><a href="#with-reconnect-interval">withReconnectInterval
+</a></li>
+<li><a href="#with-latency-aware-routing">withLatencyAwareRouting
+</a></li>
+<li><a href="#withtcp-nodelay">withTCPNodelay
+</a></li>
+<li><a href="#withtcp-keepalive">withTCPKeepalive
 </a></li>
 </ol>
 </li></ol>

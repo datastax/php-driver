@@ -129,7 +129,7 @@
 <h3 id="configuring-load-balancing-policy">Configuring load balancing policy<a class="anchor" href="#configuring-load-balancing-policy" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
 </h3>
 
-<p>The PHP Driver comes with a variety of load balancing policies. By default it uses a combination of token aware data center round robin.</p>
+<p>The PHP Driver comes with a variety of load balancing policies. By default it uses a combination of latency aware, token aware and data center aware round robin load balancing.</p>
 
 <p>The token aware load balancing policy uses the same hashing algorithms as the Apache Cassandra to directly route the execution of prepared statements to the replica node, avoiding an additional network hop to/from the coordinator. You can toggle its usage with <a href="../api/class/Cassandra/Cluster/Builder/#with-token-aware-routing"><code>Cassandra\Cluster\Builder::withTokenAwareRouting()</code></a>.</p>
 <pre class="highlight"><code><span class="cp">&lt;?php</span>
@@ -147,11 +147,82 @@
                <span class="o">-&gt;</span><span class="na">build</span><span class="p">();</span>
 <span class="nv">$session</span> <span class="o">=</span> <span class="nv">$cluster</span><span class="o">-&gt;</span><span class="na">connect</span><span class="p">();</span>
 </code></pre>
-<p>Finally, you may disable datacenter awareness by calling <a href="../api/class/Cassandra/Cluster/Builder/#with-round-robin-load-balancing-policy"><code>Cassandra\Cluster\Builder::withRoundRobinLoadBalancingPolicy()</code></a>.</p>
+<p>You may disable datacenter awareness by calling <a href="../api/class/Cassandra/Cluster/Builder/#with-round-robin-load-balancing-policy"><code>Cassandra\Cluster\Builder::withRoundRobinLoadBalancingPolicy()</code></a>.</p>
 <pre class="highlight"><code><span class="cp">&lt;?php</span>
 
 <span class="nv">$cluster</span> <span class="o">=</span> <span class="nx">Cassandra</span><span class="o">::</span><span class="na">cluster</span><span class="p">()</span>
                <span class="o">-&gt;</span><span class="na">withRoundRobinLoadBalancingPolicy</span><span class="p">()</span>
+               <span class="o">-&gt;</span><span class="na">build</span><span class="p">();</span>
+<span class="nv">$session</span> <span class="o">=</span> <span class="nv">$cluster</span><span class="o">-&gt;</span><span class="na">connect</span><span class="p">();</span>
+</code></pre>
+<p>Finally, latency-aware routing ensures that requests are routed to the hosts that respond the fastest. You can switch it off via <a href="../api/class/Cassandra/Cluster/Builder/#with-latency-aware-routing"><code>Cassandra\Cluster\Builder::withLatencyAwareRouting()</code></a>.</p>
+<pre class="highlight"><code><span class="cp">&lt;?php</span>
+
+<span class="nv">$cluster</span> <span class="o">=</span> <span class="nx">Cassandra</span><span class="o">::</span><span class="na">cluster</span><span class="p">()</span>
+               <span class="o">-&gt;</span><span class="na">withLatencyAwareRouting</span><span class="p">(</span><span class="kc">false</span><span class="p">)</span>
+               <span class="o">-&gt;</span><span class="na">build</span><span class="p">();</span>
+<span class="nv">$session</span> <span class="o">=</span> <span class="nv">$cluster</span><span class="o">-&gt;</span><span class="na">connect</span><span class="p">();</span>
+</code></pre>
+<h3 id="setting-protocol-version">Setting protocol version<a class="anchor" href="#setting-protocol-version" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+</h3>
+
+<p>The PHP driver will automatically negotiate native protocol version of TCP connections to the latest supported by both the driver and Apache Cassandra servers. It does this by attempting connection at the highest supported protocol version (currently 2) and negotiating it down upon unsupported version responses from the server.</p>
+
+<p>In a scenario with an Apache Cassandra cluster consisting of nodes of mixed versions (e.g. 1.2.x and 2.0.x), this might pose problems as the driver could establish native protocol version to be 2, while some of the nodes don’t support it, causing connections to the rest of the cluster to fail.</p>
+
+<p>You can force the driver to start negotiation at a lower protocol version by using <a href="../api/class/Cassandra/Cluster/Builder/#with-protocol-version"><code>Cassandra\Cluster\Builder::withProtocolVersion()</code></a>.</p>
+<pre class="highlight"><code><span class="cp">&lt;?php</span>
+
+<span class="nv">$cluster</span> <span class="o">=</span> <span class="nx">Cassandra</span><span class="o">::</span><span class="na">cluster</span><span class="p">()</span>
+               <span class="o">-&gt;</span><span class="na">withProtocolVersion</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+               <span class="o">-&gt;</span><span class="na">build</span><span class="p">();</span>
+<span class="nv">$session</span> <span class="o">=</span> <span class="nv">$cluster</span><span class="o">-&gt;</span><span class="na">connect</span><span class="p">();</span>
+</code></pre>
+<h3 id="tweaking-driver-s-throughput">Tweaking driver’s throughput<a class="anchor" href="#tweaking-driver-s-throughput" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+</h3>
+
+<p>There are a few variables affecting the total throughput of the driver that can be tweaked client-side. The maximum number of requests that can be executed at the same time is calculated with the following formula:</p>
+<pre><code>inflight_requests = io_threads * requests_per_connection * maximum_number_of_connections_per_host * connected_hosts
+</code></pre>
+<p>Where <code>io_threads</code> by default is <code>1</code>, <code>requests_per_connection</code> for the currently supported protocol versions is <code>128</code>, <code>maximum_number_of_connections_per_host</code> by default is <code>2</code> and <code>connected_hosts</code> is the total number of hosts that can be connected to. This last variable depends on the load balancing policy used, data center aware policy only connects to the hosts in the same data center by default.</p>
+
+<p>You can change the value of <code>io_threads</code> from the formula above by using <a href="../api/class/Cassandra/Cluster/Builder/#with-iothreads"><code>Cassandra\Cluster\Builder::withIOThreads()</code></a>.</p>
+<pre class="highlight"><code><span class="cp">&lt;?php</span>
+
+<span class="nv">$cluster</span> <span class="o">=</span> <span class="nx">Cassandra</span><span class="o">::</span><span class="na">cluster</span><span class="p">()</span>
+               <span class="o">-&gt;</span><span class="na">withIOThreads</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+               <span class="o">-&gt;</span><span class="na">build</span><span class="p">();</span>
+<span class="nv">$session</span> <span class="o">=</span> <span class="nv">$cluster</span><span class="o">-&gt;</span><span class="na">connect</span><span class="p">();</span>
+</code></pre>
+<p>You can change the value of <code>maximum_number_of_connections_per_host</code> from the formula above by using <a href="../api/class/Cassandra/Cluster/Builder/#with-connections-per-host"><code>Cassandra\Cluster\Builder::withConnectionsPerHost()</code></a>.</p>
+<pre class="highlight"><code><span class="cp">&lt;?php</span>
+
+<span class="nv">$cluster</span> <span class="o">=</span> <span class="nx">Cassandra</span><span class="o">::</span><span class="na">cluster</span><span class="p">()</span>
+               <span class="o">-&gt;</span><span class="na">withConnectionsPerHost</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">8</span><span class="p">)</span>
+               <span class="o">-&gt;</span><span class="na">build</span><span class="p">();</span>
+<span class="nv">$session</span> <span class="o">=</span> <span class="nv">$cluster</span><span class="o">-&gt;</span><span class="na">connect</span><span class="p">();</span>
+</code></pre>
+<h3 id="disabling-tcp-nodelay">Disabling TCP nodelay<a class="anchor" href="#disabling-tcp-nodelay" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+</h3>
+
+<p>By default, the driver enables TCP nodelay (Nagle’s algorithm) on all connections it uses. Disabling it is not recommended but possible via <a href="../api/class/Cassandra/Cluster/Builder/#withtcp-nodelay"><code>Cassandra\Cluster\Builder::withTCPNodelay()</code></a>.</p>
+<pre class="highlight"><code><span class="cp">&lt;?php</span>
+
+<span class="nv">$cluster</span> <span class="o">=</span> <span class="nx">Cassandra</span><span class="o">::</span><span class="na">cluster</span><span class="p">()</span>
+               <span class="o">-&gt;</span><span class="na">withTCPNodelay</span><span class="p">(</span><span class="kc">false</span><span class="p">)</span>
+               <span class="o">-&gt;</span><span class="na">build</span><span class="p">();</span>
+<span class="nv">$session</span> <span class="o">=</span> <span class="nv">$cluster</span><span class="o">-&gt;</span><span class="na">connect</span><span class="p">();</span>
+</code></pre>
+<h3 id="enabling-tcp-keepalive">Enabling TCP keepalive<a class="anchor" href="#enabling-tcp-keepalive" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+</h3>
+
+<p>By default, TCP keepalive is disabled. It can be useful to make sure TCP connections are not silently dropped by a firewall or some other intermediary network device. You can enable it using <a href="../api/class/Cassandra/Cluster/Builder/#withtcp-keepalive"><code>Cassandra\Cluster\Builder::withTCPKeepalive()</code></a>.</p>
+<pre class="highlight"><code><span class="cp">&lt;?php</span>
+
+<span class="c1">// enable keepalive with a 10 second interval.
+</span>
+<span class="nv">$cluster</span> <span class="o">=</span> <span class="nx">Cassandra</span><span class="o">::</span><span class="na">cluster</span><span class="p">()</span>
+               <span class="o">-&gt;</span><span class="na">withTCPKeepalive</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
                <span class="o">-&gt;</span><span class="na">build</span><span class="p">();</span>
 <span class="nv">$session</span> <span class="o">=</span> <span class="nv">$cluster</span><span class="o">-&gt;</span><span class="na">connect</span><span class="p">();</span>
 </code></pre>
@@ -446,6 +517,14 @@ EOD
 <li><a href="#persistent-sessions">Persistent sessions
 </a></li>
 <li><a href="#configuring-load-balancing-policy">Configuring load balancing policy
+</a></li>
+<li><a href="#setting-protocol-version">Setting protocol version
+</a></li>
+<li><a href="#tweaking-driver-s-throughput">Tweaking driver’s throughput
+</a></li>
+<li><a href="#disabling-tcp-nodelay">Disabling TCP nodelay
+</a></li>
+<li><a href="#enabling-tcp-keepalive">Enabling TCP keepalive
 </a></li>
 <li><a href="#authenticating-via-password-authenticator">Authenticating via PasswordAuthenticator
 

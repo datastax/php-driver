@@ -88,6 +88,8 @@
 <p>This is a wrapper around <a href="http://datastax.github.io/cpp-driver/">the DataStax C/C++ Driver for Apache Cassandra and DataStax Enterprise</a>.</p>
 
 <ul>
+<li>Binaries: <a href="http://downloads.datastax.com/php-driver/1.0.0.rc/">http://downloads.datastax.com/php-driver/1.0.0.rc</a>
+</li>
 <li>Docs: <a href="./">http://datastax.github.io/php-driver/</a>
 </li>
 <li>Code: <a href="https://github.com/datastax/php-driver">https://github.com/datastax/php-driver</a>
@@ -102,36 +104,36 @@
 </li>
 </ul>
 
-<h2 id="status-of-v1-0-0-beta">Status of v1.0.0.beta<a class="anchor" href="#status-of-v1-0-0-beta" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+<h2 id="status-of-v1-0-0-rc">Status of v1.0.0.rc<a class="anchor" href="#status-of-v1-0-0-rc" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
 </h2>
 
-<p>This is the first beta release of the DataStax PHP Driver. This means that it
+<p>This is the first release candidate of the DataStax PHP Driver. This means that it
 is mostly feature complete but not entirely stable. Below, you’ll find a list
 of functionality that is already supported as well as what’s planned for the
 upcoming releases.</p>
 
-<h2 id="what-s-new-in-v1-0-0-beta">What’s new in v1.0.0.beta:<a class="anchor" href="#what-s-new-in-v1-0-0-beta" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+<h2 id="what-s-new-in-v1-0-0-rc">What’s new in v1.0.0.rc:<a class="anchor" href="#what-s-new-in-v1-0-0-rc" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
 </h2>
 
 <ul>
-<li>
-<a href="features/#persistent-sessions">Persistent sessions</a>.</li>
-<li>Windows support.</li>
-<li>Configurable logger (file/syslog and level).</li>
-<li>Math functions for numeric types and <a href="api/interface/Cassandra/Numeric/"><code>Cassandra\Numeric</code></a> interface.</li>
-<li>All classes moved into the extension.</li>
-<li>Upgraded to use the C/C++ driver v2.0.</li>
-<li>Added stub files for IDEs.</li>
+<li>Ability to <a href="features/#tweaking-driver-s-throughput">configure connection pooling</a>.</li>
+<li>Ability to <a href="api/class/Cassandra/Cluster/Builder/#with-latency-aware-routing">configure latency aware load balancing</a>.</li>
+<li>Ability to <a href="features/#setting-protocol-version">set native protocol version</a>
+</li>
+<li>Support for configuring <a href="features/#disabling-tcp-nodelay">TCP Nodelay</a> and <a href="features/#enabling-tcp-keepalive">TCP Keepalive</a>.</li>
 </ul>
 
 <h2 id="planned">Planned<a class="anchor" href="#planned" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
 </h2>
 
 <ul>
-<li>Ability to configure connection pooling.</li>
-<li>Ability to configure latency aware load balancing.</li>
-<li>Expose <a href="http://datastax.github.io/cpp-driver/api/struct_cass_session/#1afc51badec695483e4cde43ae0fc1e876">Schema Metadata</a>.</li>
+<li>Expose <a href="http://datastax.github.io/cpp-driver/api/CassSession/#cass-session-get-schema">Schema Metadata</a>.</li>
 </ul>
+
+<h2 id="feedback-requested">Feedback Requested<a class="anchor" href="#feedback-requested" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+</h2>
+
+<p><strong>Help us focus our efforts!</strong> <a href="http://goo.gl/forms/HbSiIJ2tLP">Provide your input</a> on the PHP Driver Platform and Runtime Survey (we kept it short).</p>
 
 <h2 id="quick-start">Quick Start<a class="anchor" href="#quick-start" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
 </h2>
@@ -225,11 +227,13 @@ vagrant ssh
               <div id="table-of-contents" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="table-of-contents-heading">
                 <div class="panel-body">
                   <ol class="nav nav-pills nav-stacked toc">
-<li><a href="#status-of-v1-0-0-beta">Status of v1.0.0.beta
+<li><a href="#status-of-v1-0-0-rc">Status of v1.0.0.rc
 </a></li>
-<li><a href="#what-s-new-in-v1-0-0-beta">What’s new in v1.0.0.beta:
+<li><a href="#what-s-new-in-v1-0-0-rc">What’s new in v1.0.0.rc:
 </a></li>
 <li><a href="#planned">Planned
+</a></li>
+<li><a href="#feedback-requested">Feedback Requested
 </a></li>
 <li><a href="#quick-start">Quick Start
 </a></li>
