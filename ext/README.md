@@ -112,6 +112,12 @@ Visual Studio installed you will be prompted to which version to use when
 compiling the driver.
 
 First you will need to open a "Command Prompt" to execute the batch script.
+Running the batch script without any arguments will build the driver for PHP
+v5.6 with Zend thread safety (ZTS) and for the current system architecture
+(e.g. x64).
+
+To perform advanced build configuration, execute the batch script with the
+`--HELP` argument to display the options available.
 
 ```dos
 Usage: VC_BUILD.BAT [OPTION...]
@@ -134,36 +140,6 @@ Usage: VC_BUILD.BAT [OPTION...]
 *   Minimum supported officially released PHP binary installations
 **  Defaults to PHP v5.6 if --PHP-VERSION is not used
 *** Default target architecture is determined based on system architecture
-```
-
-To build 32-bit extension library with Zend thread safety:
-
-```dos
-VC_BUILD.BAT --X86
-```
-
-To build 32-bit extension library with thread safety disabled:
-
-```dos
-VC_BUILD.BAT --X86 --DISABLE-THREAD-SAFETY
-```
-
-To build 64-bit shared library with Zend thread safety:
-
-```dos
-VC_BUILD.BAT --X64
-```
-
-To build the default system architecture using PHP v5.5:
-
-```dos
-VC_BUILD.BAT --PHP-VERSION 5.5
-```
-
-To build the default system architecture using Boost atomic implementation:
-
-```dos
-VC_BUILD.BAT --USE-BOOST-ATOMIC
 ```
 
 #### Enable Testing
