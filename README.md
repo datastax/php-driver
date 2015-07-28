@@ -23,8 +23,10 @@ upcoming releases.
 
 ## What's new in v1.0.0.rc:
 
-* Ability to configure connection pooling.
-* Ability to configure latency aware load balancing.
+* Ability to [configure connection pooling](http://datastax.github.io/php-driver/features/#tweaking-driver-s-throughput).
+* Ability to [configure latency aware load balancing](http://datastax.github.io/php-driver/api/class/Cassandra/Cluster/Builder/#with-latency-aware-routing).
+* Ability to [set native protocol version](http://datastax.github.io/php-driver/features/#setting-protocol-version)
+* Support for configuring [TCP Nodelay](http://datastax.github.io/php-driver/features/#disabling-tcp-nodelay) and [TCP Keepalive](http://datastax.github.io/php-driver/features/#enabling-tcp-keepalive).
 
 ## Planned
 
