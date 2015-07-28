@@ -9,7 +9,7 @@ Features:
 * Enabled TCP nodelay, added a way of disabling it.
 * Added configuration for TCP keepalive.
 
-# Bug Fixes:
+Bug Fixes:
 
 * [PHP-30] Segfault when using FutureRows
 * [PHP-31] Segfault during deserialization of NULL values
