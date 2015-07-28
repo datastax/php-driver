@@ -1,16 +1,17 @@
 # Cassandra PHP Extension
 
+You can build the extension yourself or use one of the provided scripts. Below
+you'll find installation instructions for [Linux/OS X](#linuxos-x) and [Windows](#windows).
+
+## Linux/OS X
+
+### Install dependencies
+
 The Cassandra PHP Extension depends on the following libraries:
 
 * [The C/C++ driver and its dependencies](http://datastax.github.io/cpp-driver/topics/#installation).
 * [The GNU Multiple Precision Arithmetic Library](https://gmplib.org/).
 * [Libuv](http://libuv.org/)
-
-You can build the extension yourself or use one of the provided scripts.
-
-## Install dependencies
-
-### Linux/OS X
 
 * homebrew
 
@@ -43,11 +44,11 @@ popd
 for the DataStax C/C++ Driver for Apache Cassandra in case you're having issues
 installing any of its dependencies.
 
-## Install the PHP extension
+### Install the PHP extension
 
-### Installing with pecl
+#### Installing with pecl
 
-The PHP driver is not published to the official PECL repository yes. You can
+The PHP driver is not published to the official PECL repository yet. You can
 still install it using pecl by specifying the provided `package.xml` file path
 as the argument to `pecl install` command.
 
@@ -59,7 +60,7 @@ cd php-driver
 pecl install ext/package.xml
 ```
 
-### Installing with submoduled, statically compiled version of the C/C++ driver
+#### Installing with submoduled, statically compiled version of the C/C++ driver
 
 ```bash
 git clone https://github.com/datastax/php-driver.git
@@ -74,13 +75,13 @@ statically link into the extension a submoduled version of the DataStax C/C++
 driver for Apache Cassandra. To use a version of cpp driver that you already
 have on your system, run `phpize`, `./configure` and `make install`.
 
-#### Enable the PHP extension
+Don't forget to enable the PHP extension after running [install.sh](install.sh):
 
 ```bash
 echo -e "; DataStax PHP Driver\nextension=cassandra.so" >> `php --ini | grep "Loaded Configuration" | sed -e "s|.*:\s*||"`
 ```
 
-## Building on Windows
+## Windows
 
 The library dependencies will automatically download and build; however the
 following build dependencies will need to be installed.
@@ -103,10 +104,10 @@ following build dependencies will need to be installed.
 
 ### Building the Driver
 
-A batch script has been created to detect installed versions of Visual Studio
-to simplify the build process on Windows. If you have more than one version of
-Visual Studio installed you will be prompted to which version to use when
-compiling the driver.
+A [batch script](vc_build.bat) has been created to detect installed versions of
+Visual Studio to simplify the build process on Windows. If you have more than
+one version of Visual Studio installed you will be prompted to which version to
+use when compiling the driver.
 
 First you will need to open a "Command Prompt" to execute the batch script.
 
