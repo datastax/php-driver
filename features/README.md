@@ -116,7 +116,7 @@ inflight_requests = io_threads * requests_per_connection * maximum_number_of_con
 
 Where `io_threads` by default is `1`, `requests_per_connection` for the currently supported protocol versions is `128`, `maximum_number_of_connections_per_host` by default is `2` and `connected_hosts` is the total number of hosts that can be connected to. This last variable depends on the load balancing policy used, data center aware policy only connects to the hosts in the same data center by default.
 
-You can change the value of `io_threads` from the formula above by using [`Cassandra\Cluster\Builder::withIOThreads()`](http://datastax.github.io/php-driver/api/class/Cassandra/Cluster/Builder/#with-io-threads).
+You can change the value of `io_threads` from the formula above by using [`Cassandra\Cluster\Builder::withIOThreads()`](http://datastax.github.io/php-driver/api/class/Cassandra/Cluster/Builder/#with-iothreads).
 
 ```php
 <?php
@@ -140,7 +140,7 @@ $session = $cluster->connect();
 
 ### Disabling TCP nodelay
 
-By default, the driver enables TCP nodelay (Nagle's algorithm) on all connections it uses. Disabling it is not recommended but possible via [`Cassandra\Cluster\Builder::withTCPNodelay()`](http://datastax.github.io/php-driver/api/class/Cassandra/Cluster/Builder/#with-tcp-nodelay).
+By default, the driver enables TCP nodelay (Nagle's algorithm) on all connections it uses. Disabling it is not recommended but possible via [`Cassandra\Cluster\Builder::withTCPNodelay()`](http://datastax.github.io/php-driver/api/class/Cassandra/Cluster/Builder/#withtcp-nodelay).
 
 ```php
 <?php
@@ -153,7 +153,7 @@ $session = $cluster->connect();
 
 ### Enabling TCP keepalive
 
-By default, TCP keepalive is disabled. It can be useful to make sure TCP connections are not silently dropped by a firewall or some other intermediary network device. You can enable it using [`Cassandra\Cluster\Builder::withTCPKeepalive()`](http://datastax.github.io/php-driver/api/class/Cassandra/Cluster/Builder/#with-tcp-keepalive).
+By default, TCP keepalive is disabled. It can be useful to make sure TCP connections are not silently dropped by a firewall or some other intermediary network device. You can enable it using [`Cassandra\Cluster\Builder::withTCPKeepalive()`](http://datastax.github.io/php-driver/api/class/Cassandra/Cluster/Builder/#withtcp-keepalive).
 
 ```php
 <?php
