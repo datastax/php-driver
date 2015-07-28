@@ -43,7 +43,7 @@ Persistent sessions stay alive for the duration of the parent process, typically
 
 ### Configuring load balancing policy
 
-The PHP Driver comes with a variety of load balancing policies. By default it uses a combination of token aware data center round robin.
+The PHP Driver comes with a variety of load balancing policies. By default it uses a combination of latency aware, token aware and data center aware round robin load balancing.
 
 The token aware load balancing policy uses the same hashing algorithms as the Apache Cassandra to directly route the execution of prepared statements to the replica node, avoiding an additional network hop to/from the coordinator. You can toggle its usage with [`Cassandra\Cluster\Builder::withTokenAwareRouting()`](http://datastax.github.io/php-driver/api/class/Cassandra/Cluster/Builder/#with-token-aware-routing).
 
@@ -67,13 +67,101 @@ $cluster = Cassandra::cluster()
 $session = $cluster->connect();
 ```
 
-Finally, you may disable datacenter awareness by calling [`Cassandra\Cluster\Builder::withRoundRobinLoadBalancingPolicy()`](http://datastax.github.io/php-driver/api/class/Cassandra/Cluster/Builder/#with-round-robin-load-balancing-policy).
+You may disable datacenter awareness by calling [`Cassandra\Cluster\Builder::withRoundRobinLoadBalancingPolicy()`](http://datastax.github.io/php-driver/api/class/Cassandra/Cluster/Builder/#with-round-robin-load-balancing-policy).
 
 ```php
 <?php
 
 $cluster = Cassandra::cluster()
                ->withRoundRobinLoadBalancingPolicy()
+               ->build();
+$session = $cluster->connect();
+```
+
+Finally, latency-aware routing ensures that requests are routed to the hosts that respond the fastest. You can switch it off via [`Cassandra\Cluster\Builder::withLatencyAwareRouting()`](http://datastax.github.io/php-driver/api/class/Cassandra/Cluster/Builder/#with-latency-aware-routing).
+
+```php
+<?php
+
+$cluster = Cassandra::cluster()
+               ->withLatencyAwareRouting(false)
+               ->build();
+$session = $cluster->connect();
+```
+
+### Setting protocol version
+
+The PHP driver will automatically negotiate native protocol version of TCP connections to the latest supported by both the driver and Apache Cassandra servers. It does this by attempting connection at the highest supported protocol version (currently 2) and negotiating it down upon unsupported version responses from the server.
+
+In a scenario with an Apache Cassandra cluster consisting of nodes of mixed versions (e.g. 1.2.x and 2.0.x), this might pose problems as the driver could establish native protocol version to be 2, while some of the nodes don't support it, causing connections to the rest of the cluster to fail.
+
+You can force the driver to start negotiation at a lower protocol version by using [`Cassandra\Cluster\Builder::withProtocolVersion()`](http://datastax.github.io/php-driver/api/class/Cassandra/Cluster/Builder/#with-protocol-version).
+
+```php
+<?php
+
+$cluster = Cassandra::cluster()
+               ->withProtocolVersion(1)
+               ->build();
+$session = $cluster->connect();
+```
+
+### Tweaking driver's throughput
+
+There are a few variables affecting the total throughput of the driver that can be tweaked client-side. The maximum number of requests that can be executed at the same time is calculated with the following formula:
+
+```
+inflight_requests = io_threads * requests_per_connection * maximum_number_of_connections_per_host * connected_hosts
+```
+
+Where `io_threads` by default is `1`, `requests_per_connection` for the currently supported protocol versions is `128`, `maximum_number_of_connections_per_host` by default is `2` and `connected_hosts` is the total number of hosts that can be connected to. This last variable depends on the load balancing policy used, data center aware policy only connects to the hosts in the same data center by default.
+
+You can change the value of `io_threads` from the formula above by using [`Cassandra\Cluster\Builder::withIOThreads()`](http://datastax.github.io/php-driver/api/class/Cassandra/Cluster/Builder/#with-io-threads).
+
+```php
+<?php
+
+$cluster = Cassandra::cluster()
+               ->withIOThreads(4)
+               ->build();
+$session = $cluster->connect();
+```
+
+You can change the value of `maximum_number_of_connections_per_host` from the formula above by using [`Cassandra\Cluster\Builder::withConnectionsPerHost()`](http://datastax.github.io/php-driver/api/class/Cassandra/Cluster/Builder/#with-connections-per-host).
+
+```php
+<?php
+
+$cluster = Cassandra::cluster()
+               ->withConnectionsPerHost(4, 8)
+               ->build();
+$session = $cluster->connect();
+```
+
+### Disabling TCP nodelay
+
+By default, the driver enables TCP nodelay (Nagle's algorithm) on all connections it uses. Disabling it is not recommended but possible via [`Cassandra\Cluster\Builder::withTCPNodelay()`](http://datastax.github.io/php-driver/api/class/Cassandra/Cluster/Builder/#with-tcp-nodelay).
+
+```php
+<?php
+
+$cluster = Cassandra::cluster()
+               ->withTCPNodelay(false)
+               ->build();
+$session = $cluster->connect();
+```
+
+### Enabling TCP keepalive
+
+By default, TCP keepalive is disabled. It can be useful to make sure TCP connections are not silently dropped by a firewall or some other intermediary network device. You can enable it using [`Cassandra\Cluster\Builder::withTCPKeepalive()`](http://datastax.github.io/php-driver/api/class/Cassandra/Cluster/Builder/#with-tcp-keepalive).
+
+```php
+<?php
+
+// enable keepalive with a 10 second interval.
+
+$cluster = Cassandra::cluster()
+               ->withTCPKeepalive(10)
                ->build();
 $session = $cluster->connect();
 ```
