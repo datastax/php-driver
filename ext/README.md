@@ -1,4 +1,4 @@
-# Cassandra PHP Extension
+# Installing Cassandra PHP Extension
 
 You can build the extension yourself or use one of the provided scripts. Below
 you'll find installation instructions for [Linux/OS X](#linuxos-x) and [Windows](#windows).
@@ -49,7 +49,7 @@ installing any of its dependencies.
 #### Installing with pecl
 
 The PHP driver is not published to the official PECL repository yet. You can
-still install it using pecl by specifying the provided `package.xml` file path
+still install it using pecl by specifying the provided [package.xml](package.xml) file path
 as the argument to `pecl install` command.
 
 [Install the 2.0 version of the C/C++ driver](http://datastax.github.io/cpp-driver/topics/building/)
@@ -83,8 +83,10 @@ echo -e "; DataStax PHP Driver\nextension=cassandra.so" >> `php --ini | grep "Lo
 
 ## Windows
 
-The library dependencies will automatically download and build; however the
-following build dependencies will need to be installed.
+We provide [a self-contained batch script](vc_build.bat) for building the PHP
+driver and all of its dependencies. In order to run it, you have to install the
+build dependencies and clone the repository with the DataStax PHP Driver for
+Apache Cassandra.
 
 ### Obtaining Build Dependencies
 
@@ -104,10 +106,10 @@ following build dependencies will need to be installed.
 
 ### Building the Driver
 
-A [batch script](vc_build.bat) has been created to detect installed versions of
-Visual Studio to simplify the build process on Windows. If you have more than
-one version of Visual Studio installed you will be prompted to which version to
-use when compiling the driver.
+The [batch script](vc_build.bat) detects installed versions of Visual Studio to
+simplify the build process on Windows. If you have more than one version of
+Visual Studio installed you will be prompted to which version to use when
+compiling the driver.
 
 First you will need to open a "Command Prompt" to execute the batch script.
 
