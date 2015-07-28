@@ -13,28 +13,25 @@ This is a wrapper around [the DataStax C/C++ Driver for Apache Cassandra and Dat
 * IRC: #datastax-drivers on [irc.freenode.net](http://freenode.net>)
 * Twitter: Follow the latest news about DataStax Drivers - [@avalanche123](http://twitter.com/avalanche123), [@mfiguiere](http://twitter.com/mfiguiere), [@al3xandru](https://twitter.com/al3xandru)
 
-## Status of v1.0.0.beta
+## Status of v1.0.0.rc
 
-This is the first beta release of the DataStax PHP Driver. This means that it
+This is the first release candidate of the DataStax PHP Driver. This means that it
 is mostly feature complete but not entirely stable. Below, you'll find a list
 of functionality that is already supported as well as what's planned for the
 upcoming releases.
 
-## What's new in v1.0.0.beta:
-
-* [Persistent sessions](http://datastax.github.io/php-driver/features/#persistent-sessions).
-* Windows support.
-* Configurable logger (file/syslog and level).
-* Math functions for numeric types and [`Cassandra\Numeric`](http://datastax.github.io/php-driver/api/interface/Cassandra/Numeric/) interface.
-* All classes moved into the extension.
-* Upgraded to use the C/C++ driver v2.0.
-* Added stub files for IDEs.
-
-## Planned
+## What's new in v1.0.0.rc:
 
 * Ability to configure connection pooling.
 * Ability to configure latency aware load balancing.
-* Expose [Schema Metadata](http://datastax.github.io/cpp-driver/api/struct_cass_session/#1afc51badec695483e4cde43ae0fc1e876).
+
+## Planned
+
+* Expose [Schema Metadata](http://datastax.github.io/cpp-driver/api/CassSession/#cass-session-get-schema).
+
+## Feedback Requested
+
+**Help us focus our efforts!** [Provide your input](http://goo.gl/forms/HbSiIJ2tLP) on the PHP Driver Platform and Runtime Survey (we kept it short).
 
 ## Quick Start
 
