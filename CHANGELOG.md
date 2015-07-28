@@ -3,11 +3,19 @@
 Features:
 
 * Added `Cassandra\Collection::remove()`.
+* Added `Cassandra\Blob::toBinaryString()`.
+* Added ability to configure io threads and connections per host.
+* Enabled latency aware routing by default and added a way of disabling it.
+* Enabled TCP nodelay, added a way of disabling it.
+* Added configuration for TCP keepalive.
 
 # Bug Fixes:
 
 * [PHP-30] Segfault when using FutureRows
 * [PHP-31] Segfault during deserialization of NULL values
+* [PHP-33] Fixed timestamps generation on 32bit systems
+* [PHP-37] Removed extra null byte when `Cassandra\Blob` created from string
+* [PHP-41] Fix memory leak when using batch statements
 
 # 1.0.0-beta
 
