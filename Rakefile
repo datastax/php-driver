@@ -120,8 +120,8 @@ protocol and Cassandra Query Language v3.
     <api><%= major %>.<%= minor %>.<%= release %></api>
   </version>
   <stability>
-    <release><%= stability %></release>
-    <api><%= stability %></api>
+    <release><%= release_stability %></release>
+    <api><%= api_stability %></api>
   </stability>
   <license uri="http://www.apache.org/licenses/LICENSE-2.0">Apache License 2.0</license>
   <notes>
@@ -173,13 +173,19 @@ end
   end
 
   def create_package_xml
-    stability = @stability
-    stability = 'stable' if stability.start_with?('rc')
+    if @stability.start_with?('rc')
+      api_stability     = 'stable'
+      release_stability = 'beta'
+    else
+      api_stability = release_stability = @stability
+    end
 
-    unless ["snapshot", "devel", "alpha", "beta", "stable"].include?(stability)
-      raise ::ArgumentError,
-            %[stability must be "snapshot", "devel", "alpha", "beta" or ] +
-            %["stable", #{stability.inspect} given]
+    [api_stability, release_stability].each do |stability|
+      unless ["snapshot", "devel", "alpha", "beta", "stable"].include?(stability)
+        raise ::ArgumentError,
+              %[stability must be "snapshot", "devel", "alpha", "beta" or ] +
+              %["stable", #{stability.inspect} given]
+      end
     end
 
     File.open(@dirname + '/ext/package.xml', 'w+') do |f|
