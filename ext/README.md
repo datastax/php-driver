@@ -13,19 +13,19 @@ The Cassandra PHP Extension depends on the following libraries:
 * [The GNU Multiple Precision Arithmetic Library](https://gmplib.org/).
 * [Libuv](http://libuv.org/)
 
-* homebrew
+#### homebrew
 
 ```bash
 brew install libuv cmake gmp
 ```
 
-* apt-get
+#### apt-get
 
 ```bash
 sudo apt-get install g++ make cmake libuv-dev libssl-dev libgmp-dev php5 php5-dev openssl libpcre3-dev
 ```
 
-* yum
+#### yum
 
 ```bash
 sudo yum install automake cmake gcc gcc-c++ git libtool openssl-devel wget gmp gmp-devel boost php-devel pcre-devel
