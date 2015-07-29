@@ -445,7 +445,7 @@ PHP_METHOD(ClusterBuilder, withIOThreads)
 PHP_METHOD(ClusterBuilder, withConnectionsPerHost)
 {
   zval* core;
-  zval* max;
+  zval* max = NULL;
   cassandra_cluster_builder* builder = NULL;
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z|z", &core, &max) == FAILURE) {
@@ -460,7 +460,7 @@ PHP_METHOD(ClusterBuilder, withConnectionsPerHost)
     INVALID_ARGUMENT(core, "a number between 1 and 128");
   }
 
-  if (ZEND_NUM_ARGS() == 1 || Z_TYPE_P(max) == IS_NULL) {
+  if (max == NULL || Z_TYPE_P(max) == IS_NULL) {
     builder->max_connections_per_host = Z_LVAL_P(core);
   } else if (Z_TYPE_P(max) == IS_LONG) {
     if (Z_LVAL_P(max) < Z_LVAL_P(core)) {
@@ -471,7 +471,7 @@ PHP_METHOD(ClusterBuilder, withConnectionsPerHost)
       builder->max_connections_per_host = Z_LVAL_P(max);
     }
   } else {
-    INVALID_ARGUMENT(core, "a number between 1 and 128");
+    INVALID_ARGUMENT(max, "a number between 1 and 128");
   }
 
   RETURN_ZVAL(getThis(), 1, 0);
