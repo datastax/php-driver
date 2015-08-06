@@ -6,7 +6,7 @@ A modern, [feature-rich](features) and highly tunable PHP client library for [Ap
 
 This is a wrapper around [the DataStax C/C++ Driver for Apache Cassandra and DataStax Enterprise](http://datastax.github.io/cpp-driver/).
 
-* Binaries: [http://downloads.datastax.com/php-driver/](http://downloads.datastax.com/php-driver/)
+* Binaries: [http://downloads.datastax.com/php-driver/1.0.0.rc](http://downloads.datastax.com/php-driver/1.0.0.rc/)
 * Docs: [http://datastax.github.io/php-driver/](http://datastax.github.io/php-driver/)
 * Code: [https://github.com/datastax/php-driver](https://github.com/datastax/php-driver)
 * Jira: [https://datastax-oss.atlassian.net/browse/PHP](https://datastax-oss.atlassian.net/browse/PHP)
@@ -23,8 +23,10 @@ upcoming releases.
 
 ## What's new in v1.0.0.rc:
 
-* Ability to configure connection pooling.
-* Ability to configure latency aware load balancing.
+* Ability to [configure connection pooling](http://datastax.github.io/php-driver/features/#tweaking-driver-s-throughput).
+* Ability to [configure latency aware load balancing](http://datastax.github.io/php-driver/api/class/Cassandra/Cluster/Builder/#with-latency-aware-routing).
+* Ability to [set native protocol version](http://datastax.github.io/php-driver/features/#setting-protocol-version)
+* Support for configuring [TCP Nodelay](http://datastax.github.io/php-driver/features/#disabling-tcp-nodelay) and [TCP Keepalive](http://datastax.github.io/php-driver/features/#enabling-tcp-keepalive).
 
 ## Planned
 
