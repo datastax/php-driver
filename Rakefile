@@ -11,14 +11,22 @@ class Release
     stability = parts[1] || 'stable'
     stability = 'devel'  if major < 1
     # strip release modifier e.g. beta.1 becomes beta
-    stability = stability.split('.').first
+    stability, number = stability.split('.', 2)
 
-    @version   = version
-    @major     = major
-    @minor     = minor
-    @release   = release
-    @stability = stability
-    @dirname   = File.expand_path(File.dirname(__FILE__))
+    pecl_stability = nil
+    pecl_number    = nil
+
+    pecl_number    = number unless number.nil?
+    pecl_stability = stability if stability != 'stable'
+    pecl_stability = pecl_stability.upcase if pecl_stability == 'rc'
+
+    @version      = version
+    @major        = major
+    @minor        = minor
+    @release      = release
+    @stability    = stability
+    @pecl_version = "#{major}.#{minor}.#{release}#{pecl_stability}#{pecl_number}"
+    @dirname      = File.expand_path(File.dirname(__FILE__))
   end
 
   def perform!
@@ -29,7 +37,7 @@ class Release
 
   private
 
-  attr_reader :version, :major, :minor, :release, :stability
+  attr_reader :version, :major, :minor, :release, :stability, :pecl_version
 
   def timestamp
     Time.now
@@ -46,8 +54,10 @@ class Release
   end
 
   def docs
-    Dir.glob(@dirname + '/ext/doc/**/*.*').
-      map {|p| p.gsub(@dirname + '/ext/', '') }.sort
+    (
+      Dir.glob(@dirname + '/ext/doc/**/*.*') <<
+      File.join(@dirname, 'ext/LICENSE')
+    ).map {|p| p.gsub(@dirname + '/ext/', '') }.sort
   end
 
   def tests
@@ -72,17 +82,7 @@ class Release
       when :start
         next unless line.start_with?("# ")
 
-        version   = line[2..-1].strip
-        parts     = version.split('.', 3).map(&:to_i)
-        major     = parts[0]
-        minor     = parts[1] || 0
-        release   = parts[2] || 0
-        parts     = version.split('-', 2)
-        stability = parts[1]
-        stability ||= 'stable'
-
-        if major == @major && minor == @minor &&
-           release == @release && stability == @stability
+        if @version == line[2..-1].strip
           notes << line
           state = :body
         end
@@ -116,8 +116,8 @@ protocol and Cassandra Query Language v3.
   <date><%= timestamp.strftime('%Y-%m-%d') %></date>
   <time><%= timestamp.strftime('%H:%M:%S') %></time>
   <version>
-    <release><%= major %>.<%= minor %>.<%= release %></release>
-    <api><%= major %>.<%= minor %>.<%= release %></api>
+    <release><%= pecl_version %></release>
+    <api><%= pecl_version %></api>
   </version>
   <stability>
     <release><%= release_stability %></release>
@@ -161,12 +161,13 @@ end
 #define PHP_CASSANDRA_VERSION_H
 
 /* Define Extension and Version Properties */
-#define PHP_CASSANDRA_NAME      "cassandra"
-#define PHP_CASSANDRA_MAJOR     <%= major %>
-#define PHP_CASSANDRA_MINOR     <%= minor %>
-#define PHP_CASSANDRA_RELEASE   <%= release %>
-#define PHP_CASSANDRA_STABILITY "<%= stability %>"
-#define PHP_CASSANDRA_VERSION   "<%= version %>"
+#define PHP_CASSANDRA_NAME         "cassandra"
+#define PHP_CASSANDRA_MAJOR        <%= major %>
+#define PHP_CASSANDRA_MINOR        <%= minor %>
+#define PHP_CASSANDRA_RELEASE      <%= release %>
+#define PHP_CASSANDRA_STABILITY    "<%= stability %>"
+#define PHP_CASSANDRA_VERSION      "<%= pecl_version %>"
+#define PHP_CASSANDRA_VERSION_FULL "<%= version %>"
 
 #endif /* PHP_CASSANDRA_VERSION_H */
     ERB
