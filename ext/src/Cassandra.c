@@ -75,5 +75,5 @@ void cassandra_define_Cassandra(TSRMLS_D)
   zend_declare_class_constant_string(cassandra_ce, ZEND_STRL("TYPE_TIMEUUID"),  "timeuuid" TSRMLS_CC);
   zend_declare_class_constant_string(cassandra_ce, ZEND_STRL("TYPE_INET"),      "inet" TSRMLS_CC);
 
-  zend_declare_class_constant_string(cassandra_ce, ZEND_STRL("VERSION"), PHP_CASSANDRA_VERSION TSRMLS_CC);
+  zend_declare_class_constant_string(cassandra_ce, ZEND_STRL("VERSION"), PHP_CASSANDRA_VERSION_FULL TSRMLS_CC);
 }

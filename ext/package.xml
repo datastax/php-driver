@@ -17,8 +17,8 @@ protocol and Cassandra Query Language v3.
   <date>2015-07-28</date>
   <time>11:42:14</time>
   <version>
-    <release>1.0.0</release>
-    <api>1.0.0</api>
+    <release>1.0.0RC</release>
+    <api>1.0.0RC</api>
   </version>
   <stability>
     <release>beta</release>
@@ -133,6 +133,7 @@ Bug Fixes:
       <file role="src" name="util/uuid_gen.c" />
       <file role="src" name="util/uuid_gen.h" />
       <file role="src" name="version.h" />
+      <file role="doc" name="LICENSE" />
       <file role="doc" name="doc/Cassandra.php" />
       <file role="doc" name="doc/Cassandra/BatchStatement.php" />
       <file role="doc" name="doc/Cassandra/Bigint.php" />
