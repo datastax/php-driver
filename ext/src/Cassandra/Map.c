@@ -26,9 +26,9 @@ php_cassandra_map_set(cassandra_map* map, zval* zkey, zval* zvalue TSRMLS_DC)
     return 0;
   }
 
-  if (zend_hash_update(&map->keys, key, key_len, (void*) &zkey, sizeof(zval*), NULL) == SUCCESS) {
+  if (zend_hash_update(&map->keys, key, key_len, (void*) &zkey, sizeof(zval*), NULL) == SUCCESS ||
+      zend_hash_update(&map->values, key, key_len, (void*) &zvalue, sizeof(zval*), NULL) == SUCCESS) {
     Z_ADDREF_P(zkey);
-    zend_hash_update(&map->values, key, key_len, (void*) &zvalue, sizeof(zval*), NULL);
     Z_ADDREF_P(zvalue);
     result = 1;
   }
