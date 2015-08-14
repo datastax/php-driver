@@ -166,6 +166,7 @@ php_cassandra_value(const CassValue* value, CassValueType type, zval** out TSRML
       zval *v;
 
       if (php_cassandra_value(cass_iterator_get_value(iterator), collection->type, &v TSRMLS_CC) == FAILURE) {
+        cass_iterator_free(iterator);
         zval_ptr_dtor(&return_value);
         return FAILURE;
       }
@@ -190,6 +191,7 @@ php_cassandra_value(const CassValue* value, CassValueType type, zval** out TSRML
 
       if (php_cassandra_value(cass_iterator_get_map_key(iterator), map->key_type, &k TSRMLS_CC) == FAILURE ||
           php_cassandra_value(cass_iterator_get_map_value(iterator), map->value_type, &v TSRMLS_CC) == FAILURE) {
+        cass_iterator_free(iterator);
         zval_ptr_dtor(&return_value);
         return FAILURE;
       }
@@ -212,6 +214,7 @@ php_cassandra_value(const CassValue* value, CassValueType type, zval** out TSRML
       zval* v;
 
       if (php_cassandra_value(cass_iterator_get_value(iterator), set->type, &v TSRMLS_CC) == FAILURE) {
+        cass_iterator_free(iterator);
         zval_ptr_dtor(&return_value);
         return FAILURE;
       }
