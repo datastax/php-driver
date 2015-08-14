@@ -160,7 +160,7 @@ PHP_METHOD(Rows, isLastPage)
 
   self = (cassandra_rows*) zend_object_store_get_object(getThis() TSRMLS_CC);
 
-  if (!(self->result && cass_result_has_more_pages(self->result)))
+  if (self->result == NULL)
     RETURN_TRUE;
 
   RETURN_FALSE;
@@ -176,7 +176,7 @@ PHP_METHOD(Rows, nextPage)
 
   cassandra_rows* self = (cassandra_rows*) zend_object_store_get_object(getThis() TSRMLS_CC);
 
-  if (!(self->result && cass_result_has_more_pages(self->result)))
+  if (self->result == NULL)
     return;
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "|z", &timeout) == FAILURE) {
@@ -214,10 +214,14 @@ PHP_METHOD(Rows, nextPage)
     return;
   }
 
-  Z_ADDREF_P(self->session);
-  rows->statement = php_cassandra_add_ref(self->statement);
-  rows->session   = self->session;
-  rows->result    = result;
+  if (cass_result_has_more_pages(result)) {
+    Z_ADDREF_P(self->session);
+    rows->statement = php_cassandra_add_ref(self->statement);
+    rows->session   = self->session;
+    rows->result    = result;
+  } else {
+    cass_result_free(result);
+  }
 }
 
 PHP_METHOD(Rows, nextPageAsync)
@@ -232,7 +236,7 @@ PHP_METHOD(Rows, nextPageAsync)
 
   self = (cassandra_rows*) zend_object_store_get_object(getThis() TSRMLS_CC);
 
-  if (!(self->result && cass_result_has_more_pages(self->result))) {
+  if (self->result == NULL) {
     object_init_ex(return_value, cassandra_future_value_ce);
     return;
   }

@@ -50,7 +50,7 @@ PHP_METHOD(FutureRows, get)
     return;
   }
 
-  if (self->statement) {
+  if (cass_result_has_more_pages(result)) {
     Z_ADDREF_P(self->session);
     rows->statement = php_cassandra_add_ref(self->statement);
     rows->session   = self->session;

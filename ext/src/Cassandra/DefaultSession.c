@@ -453,6 +453,7 @@ PHP_METHOD(DefaultSession, execute)
       break;
 
     result = cass_future_get_result(future);
+    cass_future_free(future);
 
     if (!result) {
       zend_throw_exception_ex(cassandra_runtime_exception_ce, 0 TSRMLS_CC,
@@ -468,13 +469,12 @@ PHP_METHOD(DefaultSession, execute)
       break;
     }
 
-    if (single) {
+    if (single && cass_result_has_more_pages(result)) {
       Z_ADDREF_P(getThis());
 
       rows->statement = php_cassandra_new_ref(single);
       rows->session   = getThis();
       rows->result    = result;
-      cass_future_free(future);
       return;
     }
 
@@ -486,8 +486,6 @@ PHP_METHOD(DefaultSession, execute)
 
   if (single)
     cass_statement_free(single);
-
-  cass_future_free(future);
 }
 
 PHP_METHOD(DefaultSession, executeAsync)
