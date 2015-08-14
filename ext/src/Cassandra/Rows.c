@@ -197,6 +197,7 @@ PHP_METHOD(Rows, nextPage)
   }
 
   result = cass_future_get_result(future);
+  cass_future_free(future);
 
   if (!result) {
     zend_throw_exception_ex(cassandra_runtime_exception_ce, 0 TSRMLS_CC,
