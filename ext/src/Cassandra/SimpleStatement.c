@@ -56,8 +56,10 @@ php_cassandra_simple_statement_free(void *object TSRMLS_DC)
 {
   cassandra_simple_statement* statement = (cassandra_simple_statement*) object;
 
-  if (statement->cql)
+  if (statement->cql) {
     efree(statement->cql);
+    statement->cql = NULL;
+  }
 
   zend_object_std_dtor(&statement->zval TSRMLS_CC);
   efree(statement);

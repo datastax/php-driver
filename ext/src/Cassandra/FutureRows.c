@@ -33,7 +33,7 @@ PHP_METHOD(FutureRows, get)
   }
 
   result = cass_future_get_result(self->future);
-
+  
   if (!result) {
     zend_throw_exception_ex(cassandra_runtime_exception_ce, 0 TSRMLS_CC,
                             "Future doesn't contain a result.");

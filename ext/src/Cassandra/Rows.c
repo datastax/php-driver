@@ -317,7 +317,7 @@ static HashTable*
 php_cassandra_rows_properties(zval *object TSRMLS_DC)
 {
   /* cassandra_rows* self = (cassandra_rows*) zend_object_store_get_object(object TSRMLS_CC); */
-  HashTable*      props = zend_std_get_properties(object TSRMLS_CC);
+  HashTable* props = zend_std_get_properties(object TSRMLS_CC);
 
   return props;
 }
@@ -338,8 +338,9 @@ php_cassandra_rows_free(void *object TSRMLS_DC)
 
   zend_object_std_dtor(&self->zval TSRMLS_CC);
 
-  if (self->statement)
+  if (self->statement) {
     php_cassandra_del_ref(&self->statement);
+  }
 
   if (self->result) {
     cass_result_free(self->result);

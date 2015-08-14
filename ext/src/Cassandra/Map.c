@@ -151,7 +151,7 @@ php_cassandra_map_populate(cassandra_map* map, zval* keys_array, zval* values_ar
   }
 }
 
-/* {{{ Cassandra\Map::__construct(string) */
+/* {{{ Cassandra\Map::__construct(string, string) */
 PHP_METHOD(Map, __construct)
 {
   char* key_type;
