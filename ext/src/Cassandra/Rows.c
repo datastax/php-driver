@@ -184,8 +184,11 @@ PHP_METHOD(Rows, isLastPage)
 
   self = (cassandra_rows*) zend_object_store_get_object(getThis() TSRMLS_CC);
 
-  if (self->result == NULL)
+  if (self->result           == NULL &&
+      self->next_page        == NULL &&
+      self->future_next_page == NULL) {
     RETURN_TRUE;
+  }
 
   RETURN_FALSE;
 }
