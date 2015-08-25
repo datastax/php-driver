@@ -382,7 +382,9 @@ void cassandra_define_Collection(TSRMLS_D)
   cassandra_collection_ce = zend_register_internal_class(&ce TSRMLS_CC);
   memcpy(&cassandra_collection_handlers, zend_get_std_object_handlers(), sizeof(zend_object_handlers));
   cassandra_collection_handlers.get_properties  = php_cassandra_collection_properties;
+#if PHP_VERSION_ID >= 50400
   cassandra_collection_handlers.get_gc          = php_cassandra_collection_gc;
+#endif
   cassandra_collection_handlers.compare_objects = php_cassandra_collection_compare;
   cassandra_collection_ce->ce_flags |= ZEND_ACC_FINAL_CLASS;
   cassandra_collection_ce->create_object = php_cassandra_collection_new;

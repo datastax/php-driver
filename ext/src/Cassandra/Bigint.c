@@ -483,7 +483,9 @@ void cassandra_define_Bigint(TSRMLS_D)
 
   memcpy(&cassandra_bigint_handlers, zend_get_std_object_handlers(), sizeof(zend_object_handlers));
   cassandra_bigint_handlers.get_properties  = php_cassandra_bigint_properties;
+#if PHP_VERSION_ID >= 50400
   cassandra_bigint_handlers.get_gc          = php_cassandra_bigint_gc;
+#endif
   cassandra_bigint_handlers.compare_objects = php_cassandra_bigint_compare;
   cassandra_bigint_handlers.cast_object     = php_cassandra_bigint_cast;
 }

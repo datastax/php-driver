@@ -943,6 +943,8 @@ void cassandra_define_ClusterBuilder(TSRMLS_D)
 
   memcpy(&cassandra_cluster_builder_handlers, zend_get_std_object_handlers(), sizeof(zend_object_handlers));
   cassandra_cluster_builder_handlers.get_properties  = php_cassandra_cluster_builder_properties;
+#if PHP_VERSION_ID >= 50400
   cassandra_cluster_builder_handlers.get_gc          = php_cassandra_cluster_builder_gc;
+#endif
   cassandra_cluster_builder_handlers.compare_objects = php_cassandra_cluster_builder_compare;
 }

@@ -173,7 +173,9 @@ cassandra_define_Uuid(TSRMLS_D)
   zend_class_implements(cassandra_uuid_ce TSRMLS_CC, 1, cassandra_uuid_interface_ce);
   memcpy(&cassandra_uuid_handlers, zend_get_std_object_handlers(), sizeof(zend_object_handlers));
   cassandra_uuid_handlers.get_properties  = php_cassandra_uuid_properties;
+#if PHP_VERSION_ID >= 50400
   cassandra_uuid_handlers.get_gc          = php_cassandra_uuid_gc;
+#endif
   cassandra_uuid_handlers.compare_objects = php_cassandra_uuid_compare;
   cassandra_uuid_ce->ce_flags |= ZEND_ACC_FINAL_CLASS;
   cassandra_uuid_ce->create_object = php_cassandra_uuid_new;

@@ -213,7 +213,9 @@ cassandra_define_Timeuuid(TSRMLS_D)
   zend_class_implements(cassandra_timeuuid_ce TSRMLS_CC, 1, cassandra_uuid_interface_ce);
   memcpy(&cassandra_timeuuid_handlers, zend_get_std_object_handlers(), sizeof(zend_object_handlers));
   cassandra_timeuuid_handlers.get_properties  = php_cassandra_timeuuid_properties;
+#if PHP_VERSION_ID >= 50400
   cassandra_timeuuid_handlers.get_gc          = php_cassandra_timeuuid_gc;
+#endif
   cassandra_timeuuid_handlers.compare_objects = php_cassandra_timeuuid_compare;
   cassandra_timeuuid_ce->ce_flags |= ZEND_ACC_FINAL_CLASS;
   cassandra_timeuuid_ce->create_object = php_cassandra_timeuuid_new;

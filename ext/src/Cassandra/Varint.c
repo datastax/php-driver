@@ -455,7 +455,9 @@ void cassandra_define_Varint(TSRMLS_D)
 
   memcpy(&cassandra_varint_handlers, zend_get_std_object_handlers(), sizeof(zend_object_handlers));
   cassandra_varint_handlers.get_properties  = php_cassandra_varint_properties;
+#if PHP_VERSION_ID >= 50400
   cassandra_varint_handlers.get_gc          = php_cassandra_varint_gc;
+#endif
   cassandra_varint_handlers.compare_objects = php_cassandra_varint_compare;
   cassandra_varint_handlers.cast_object = php_cassandra_varint_cast;
 }

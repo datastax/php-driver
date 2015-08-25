@@ -159,7 +159,9 @@ void cassandra_define_Blob(TSRMLS_D)
   cassandra_blob_ce = zend_register_internal_class(&ce TSRMLS_CC);
   memcpy(&cassandra_blob_handlers, zend_get_std_object_handlers(), sizeof(zend_object_handlers));
   cassandra_blob_handlers.get_properties  = php_cassandra_blob_properties;
+#if PHP_VERSION_ID >= 50400
   cassandra_blob_handlers.get_gc          = php_cassandra_blob_gc;
+#endif
   cassandra_blob_handlers.compare_objects = php_cassandra_blob_compare;
   cassandra_blob_ce->ce_flags |= ZEND_ACC_FINAL_CLASS;
   cassandra_blob_ce->create_object = php_cassandra_blob_new;

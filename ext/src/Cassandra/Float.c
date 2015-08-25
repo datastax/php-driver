@@ -453,7 +453,9 @@ void cassandra_define_Float(TSRMLS_D)
 
   memcpy(&cassandra_float_handlers, zend_get_std_object_handlers(), sizeof(zend_object_handlers));
   cassandra_float_handlers.get_properties  = php_cassandra_float_properties;
+#if PHP_VERSION_ID >= 50400
   cassandra_float_handlers.get_gc          = php_cassandra_float_gc;
+#endif
   cassandra_float_handlers.compare_objects = php_cassandra_float_compare;
   cassandra_float_handlers.cast_object     = php_cassandra_float_cast;
 }

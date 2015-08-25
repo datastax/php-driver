@@ -336,7 +336,9 @@ void cassandra_define_Set(TSRMLS_D)
   cassandra_set_ce = zend_register_internal_class(&ce TSRMLS_CC);
   memcpy(&cassandra_set_handlers, zend_get_std_object_handlers(), sizeof(zend_object_handlers));
   cassandra_set_handlers.get_properties  = php_cassandra_set_properties;
+#if PHP_VERSION_ID >= 50400
   cassandra_set_handlers.get_gc          = php_cassandra_set_gc;
+#endif
   cassandra_set_handlers.compare_objects = php_cassandra_set_compare;
   cassandra_set_ce->ce_flags |= ZEND_ACC_FINAL_CLASS;
   cassandra_set_ce->create_object = php_cassandra_set_new;

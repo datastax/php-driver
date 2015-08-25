@@ -476,7 +476,9 @@ void cassandra_define_Map(TSRMLS_D)
   cassandra_map_ce = zend_register_internal_class(&ce TSRMLS_CC);
   memcpy(&cassandra_map_handlers, zend_get_std_object_handlers(), sizeof(zend_object_handlers));
   cassandra_map_handlers.get_properties  = php_cassandra_map_properties;
+#if PHP_VERSION_ID >= 50400
   cassandra_map_handlers.get_gc          = php_cassandra_map_gc;
+#endif
   cassandra_map_handlers.compare_objects = php_cassandra_map_compare;
   cassandra_map_ce->ce_flags |= ZEND_ACC_FINAL_CLASS;
   cassandra_map_ce->create_object = php_cassandra_map_new;
