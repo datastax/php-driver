@@ -404,8 +404,8 @@ php_cassandra_map_properties(zval *object TSRMLS_DC)
   array_init(keys);
   php_cassandra_map_populate(&map->values, values);
   php_cassandra_map_populate(&map->keys, keys);
-  zend_hash_update(props, "values", sizeof("values"), &values, sizeof(zval*), NULL);
   zend_hash_update(props, "keys", sizeof("keys"), &keys, sizeof(zval*), NULL);
+  zend_hash_update(props, "values", sizeof("values"), &values, sizeof(zval*), NULL);
 
   return props;
 }
