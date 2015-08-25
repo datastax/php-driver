@@ -573,15 +573,11 @@ php_cassandra_decimal_new(zend_class_entry* class_type TSRMLS_DC)
   memset(self, 0, sizeof(cassandra_decimal));
 
   self->type = CASSANDRA_DECIMAL;
+  self->scale = 0;
 
   mpz_init(self->value);
   zend_object_std_init(&self->zval, class_type TSRMLS_CC);
-#if ZEND_MODULE_API_NO >= 20100525
   object_properties_init(&self->zval, class_type);
-#else
-  zend_hash_copy(self->zval.properties, &class_type->default_properties, (copy_ctor_func_t) zval_add_ref, (void*) NULL, sizeof(zval*));
-#endif
-  self->scale = 0;
 
   retval.handle   = zend_objects_store_put(self, (zend_objects_store_dtor_t) zend_objects_destroy_object, php_cassandra_decimal_free, NULL TSRMLS_CC);
   retval.handlers = &cassandra_decimal_handlers;
