@@ -295,7 +295,9 @@ php_cassandra_get_result(const CassResult* result, zval** out TSRMLS_DC)
   }
 
   for (i = 0; i < columns; i++) {
-    efree(column_names[i]);
+    if (column_names[i] != NULL) {
+      efree(column_names[i]);
+    }
   }
 
   efree(column_names);
