@@ -342,6 +342,14 @@ static zend_function_entry cassandra_float_methods[] = {
 static zend_object_handlers cassandra_float_handlers;
 
 static HashTable*
+php_cassandra_float_gc(zval *object, zval ***table, int *n TSRMLS_DC)
+{
+  *table = NULL;
+  *n = 0;
+  return zend_std_get_properties(object TSRMLS_CC);
+}
+
+static HashTable*
 php_cassandra_float_properties(zval *object TSRMLS_DC)
 {
   cassandra_float* self = (cassandra_float*) zend_object_store_get_object(object TSRMLS_CC);
@@ -448,7 +456,8 @@ void cassandra_define_Float(TSRMLS_D)
   cassandra_float_ce->create_object = php_cassandra_float_new;
 
   memcpy(&cassandra_float_handlers, zend_get_std_object_handlers(), sizeof(zend_object_handlers));
-  cassandra_float_handlers.get_properties = php_cassandra_float_properties;
+  cassandra_float_handlers.get_properties  = php_cassandra_float_properties;
+  cassandra_float_handlers.get_gc          = php_cassandra_float_gc;
   cassandra_float_handlers.compare_objects = php_cassandra_float_compare;
-  cassandra_float_handlers.cast_object = php_cassandra_float_cast;
+  cassandra_float_handlers.cast_object     = php_cassandra_float_cast;
 }

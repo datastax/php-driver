@@ -78,6 +78,14 @@ static zend_function_entry cassandra_uuid_methods[] = {
 static zend_object_handlers cassandra_uuid_handlers;
 
 static HashTable*
+php_cassandra_uuid_gc(zval *object, zval ***table, int *n TSRMLS_DC)
+{
+  *table = NULL;
+  *n = 0;
+  return zend_std_get_properties(object TSRMLS_CC);
+}
+
+static HashTable*
 php_cassandra_uuid_properties(zval *object TSRMLS_DC)
 {
   cassandra_uuid* uuid  = (cassandra_uuid*) zend_object_store_get_object(object TSRMLS_CC);
@@ -168,7 +176,8 @@ cassandra_define_Uuid(TSRMLS_D)
   cassandra_uuid_ce = zend_register_internal_class(&ce TSRMLS_CC);
   zend_class_implements(cassandra_uuid_ce TSRMLS_CC, 1, cassandra_uuid_interface_ce);
   memcpy(&cassandra_uuid_handlers, zend_get_std_object_handlers(), sizeof(zend_object_handlers));
-  cassandra_uuid_handlers.get_properties = php_cassandra_uuid_properties;
+  cassandra_uuid_handlers.get_properties  = php_cassandra_uuid_properties;
+  cassandra_uuid_handlers.get_gc          = php_cassandra_uuid_gc;
   cassandra_uuid_handlers.compare_objects = php_cassandra_uuid_compare;
   cassandra_uuid_ce->ce_flags |= ZEND_ACC_FINAL_CLASS;
   cassandra_uuid_ce->create_object = php_cassandra_uuid_new;

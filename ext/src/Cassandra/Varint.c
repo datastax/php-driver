@@ -349,6 +349,14 @@ static zend_function_entry cassandra_varint_methods[] = {
 static zend_object_handlers cassandra_varint_handlers;
 
 static HashTable*
+php_cassandra_varint_gc(zval *object, zval ***table, int *n TSRMLS_DC)
+{
+  *table = NULL;
+  *n = 0;
+  return zend_std_get_properties(object TSRMLS_CC);
+}
+
+static HashTable*
 php_cassandra_varint_properties(zval *object TSRMLS_DC)
 {
   cassandra_varint* self =
@@ -450,7 +458,8 @@ void cassandra_define_Varint(TSRMLS_D)
   cassandra_varint_ce->create_object = php_cassandra_varint_new;
 
   memcpy(&cassandra_varint_handlers, zend_get_std_object_handlers(), sizeof(zend_object_handlers));
-  cassandra_varint_handlers.get_properties = php_cassandra_varint_properties;
+  cassandra_varint_handlers.get_properties  = php_cassandra_varint_properties;
+  cassandra_varint_handlers.get_gc          = php_cassandra_varint_gc;
   cassandra_varint_handlers.compare_objects = php_cassandra_varint_compare;
   cassandra_varint_handlers.cast_object = php_cassandra_varint_cast;
 }

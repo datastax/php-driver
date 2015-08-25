@@ -118,6 +118,14 @@ static zend_function_entry cassandra_timeuuid_methods[] = {
 static zend_object_handlers cassandra_timeuuid_handlers;
 
 static HashTable*
+php_cassandra_timeuuid_gc(zval *object, zval ***table, int *n TSRMLS_DC)
+{
+  *table = NULL;
+  *n = 0;
+  return zend_std_get_properties(object TSRMLS_CC);
+}
+
+static HashTable*
 php_cassandra_timeuuid_properties(zval *object TSRMLS_DC)
 {
   cassandra_uuid* uuid  = (cassandra_uuid*) zend_object_store_get_object(object TSRMLS_CC);
@@ -208,7 +216,8 @@ cassandra_define_Timeuuid(TSRMLS_D)
   cassandra_timeuuid_ce = zend_register_internal_class(&ce TSRMLS_CC);
   zend_class_implements(cassandra_timeuuid_ce TSRMLS_CC, 1, cassandra_uuid_interface_ce);
   memcpy(&cassandra_timeuuid_handlers, zend_get_std_object_handlers(), sizeof(zend_object_handlers));
-  cassandra_timeuuid_handlers.get_properties = php_cassandra_timeuuid_properties;
+  cassandra_timeuuid_handlers.get_properties  = php_cassandra_timeuuid_properties;
+  cassandra_timeuuid_handlers.get_gc          = php_cassandra_timeuuid_gc;
   cassandra_timeuuid_handlers.compare_objects = php_cassandra_timeuuid_compare;
   cassandra_timeuuid_ce->ce_flags |= ZEND_ACC_FINAL_CLASS;
   cassandra_timeuuid_ce->create_object = php_cassandra_timeuuid_new;

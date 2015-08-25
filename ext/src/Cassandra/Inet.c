@@ -60,6 +60,14 @@ static zend_function_entry cassandra_inet_methods[] = {
 static zend_object_handlers cassandra_inet_handlers;
 
 static HashTable*
+php_cassandra_inet_gc(zval *object, zval ***table, int *n TSRMLS_DC)
+{
+  *table = NULL;
+  *n = 0;
+  return zend_std_get_properties(object TSRMLS_CC);
+}
+
+static HashTable*
 php_cassandra_inet_properties(zval *object TSRMLS_DC)
 {
   cassandra_inet* inet  = (cassandra_inet*) zend_object_store_get_object(object TSRMLS_CC);
@@ -136,7 +144,8 @@ void cassandra_define_Inet(TSRMLS_D)
   INIT_CLASS_ENTRY(ce, "Cassandra\\Inet", cassandra_inet_methods);
   cassandra_inet_ce = zend_register_internal_class(&ce TSRMLS_CC);
   memcpy(&cassandra_inet_handlers, zend_get_std_object_handlers(), sizeof(zend_object_handlers));
-  cassandra_inet_handlers.get_properties = php_cassandra_inet_properties;
+  cassandra_inet_handlers.get_properties  = php_cassandra_inet_properties;
+  cassandra_inet_handlers.get_gc          = php_cassandra_inet_gc;
   cassandra_inet_handlers.compare_objects = php_cassandra_inet_compare;
   cassandra_inet_ce->ce_flags |= ZEND_ACC_FINAL_CLASS;
   cassandra_inet_ce->create_object = php_cassandra_inet_new;

@@ -297,6 +297,14 @@ static zend_function_entry cassandra_collection_methods[] = {
 static zend_object_handlers cassandra_collection_handlers;
 
 static HashTable*
+php_cassandra_collection_gc(zval *object, zval ***table, int *n TSRMLS_DC)
+{
+  *table = NULL;
+  *n = 0;
+  return zend_std_get_properties(object TSRMLS_CC);
+}
+
+static HashTable*
 php_cassandra_collection_properties(zval *object TSRMLS_DC)
 {
   zval* values;
@@ -378,6 +386,7 @@ void cassandra_define_Collection(TSRMLS_D)
   cassandra_collection_ce = zend_register_internal_class(&ce TSRMLS_CC);
   memcpy(&cassandra_collection_handlers, zend_get_std_object_handlers(), sizeof(zend_object_handlers));
   cassandra_collection_handlers.get_properties  = php_cassandra_collection_properties;
+  cassandra_collection_handlers.get_gc          = php_cassandra_collection_gc;
   cassandra_collection_handlers.compare_objects = php_cassandra_collection_compare;
   cassandra_collection_ce->ce_flags |= ZEND_ACC_FINAL_CLASS;
   cassandra_collection_ce->create_object = php_cassandra_collection_new;
