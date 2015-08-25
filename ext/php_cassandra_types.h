@@ -154,6 +154,8 @@ typedef struct {
   zval* session;
   zval* rows;
   const CassResult* result;
+  zval* next_page;
+  zval* future_next_page;
 } cassandra_rows;
 
 typedef struct {
