@@ -7,6 +7,25 @@ zend_class_entry *cassandra_future_rows_ce = NULL;
 
 ZEND_EXTERN_MODULE_GLOBALS(cassandra)
 
+static void
+php_cassandra_future_clear(cassandra_future_rows* self)
+{
+  if (self->statement) {
+    php_cassandra_del_ref(&self->statement);
+    self->statement = NULL;
+  }
+
+  if (self->session) {
+    zval_ptr_dtor(&self->session);
+    self->session = NULL;
+  }
+
+  if (self->future) {
+    cass_future_free(self->future);
+    self->future = NULL;
+  }
+}
+
 PHP_METHOD(FutureRows, get)
 {
   zval* timeout = NULL;
@@ -59,6 +78,8 @@ PHP_METHOD(FutureRows, get)
     cass_result_free(result);
   }
 
+  php_cassandra_future_clear(self);
+
   RETURN_ZVAL(self->rows, 1, 0);
 }
 
@@ -103,19 +124,7 @@ php_cassandra_future_rows_free(void *object TSRMLS_DC)
     future->rows = NULL;
   }
 
-  if (future->statement)
-    php_cassandra_del_ref(&future->statement);
-
-  if (future->session) {
-    zval_ptr_dtor(&future->session);
-    future->session = NULL;
-  }
-
-  if (future->future) {
-    cass_future_free(future->future);
-    future->future = NULL;
-  }
-
+  php_cassandra_future_clear(future);
   efree(future);
 }
 

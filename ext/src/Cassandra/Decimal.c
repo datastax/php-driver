@@ -480,6 +480,14 @@ static zend_function_entry cassandra_decimal_methods[] = {
 static zend_object_handlers cassandra_decimal_handlers;
 
 static HashTable*
+php_cassandra_decimal_gc(zval *object, zval ***table, int *n TSRMLS_DC)
+{
+  *table = NULL;
+  *n = 0;
+  return zend_std_get_properties(object TSRMLS_CC);
+}
+
+static HashTable*
 php_cassandra_decimal_properties(zval *object TSRMLS_DC)
 {
   cassandra_decimal* self =
@@ -565,15 +573,11 @@ php_cassandra_decimal_new(zend_class_entry* class_type TSRMLS_DC)
   memset(self, 0, sizeof(cassandra_decimal));
 
   self->type = CASSANDRA_DECIMAL;
+  self->scale = 0;
 
   mpz_init(self->value);
   zend_object_std_init(&self->zval, class_type TSRMLS_CC);
-#if ZEND_MODULE_API_NO >= 20100525
   object_properties_init(&self->zval, class_type);
-#else
-  zend_hash_copy(self->zval.properties, &class_type->default_properties, (copy_ctor_func_t) zval_add_ref, (void*) NULL, sizeof(zval*));
-#endif
-  self->scale = 0;
 
   retval.handle   = zend_objects_store_put(self, (zend_objects_store_dtor_t) zend_objects_destroy_object, php_cassandra_decimal_free, NULL TSRMLS_CC);
   retval.handlers = &cassandra_decimal_handlers;
@@ -592,7 +596,10 @@ void cassandra_define_Decimal(TSRMLS_D)
   cassandra_decimal_ce->create_object = php_cassandra_decimal_new;
 
   memcpy(&cassandra_decimal_handlers, zend_get_std_object_handlers(), sizeof(zend_object_handlers));
-  cassandra_decimal_handlers.get_properties = php_cassandra_decimal_properties;
+  cassandra_decimal_handlers.get_properties  = php_cassandra_decimal_properties;
+#if PHP_VERSION_ID >= 50400
+  cassandra_decimal_handlers.get_gc          = php_cassandra_decimal_gc;
+#endif
   cassandra_decimal_handlers.compare_objects = php_cassandra_decimal_compare;
-  cassandra_decimal_handlers.cast_object = php_cassandra_decimal_cast;
+  cassandra_decimal_handlers.cast_object     = php_cassandra_decimal_cast;
 }

@@ -297,6 +297,14 @@ static zend_function_entry cassandra_collection_methods[] = {
 static zend_object_handlers cassandra_collection_handlers;
 
 static HashTable*
+php_cassandra_collection_gc(zval *object, zval ***table, int *n TSRMLS_DC)
+{
+  *table = NULL;
+  *n = 0;
+  return zend_std_get_properties(object TSRMLS_CC);
+}
+
+static HashTable*
 php_cassandra_collection_properties(zval *object TSRMLS_DC)
 {
   zval* values;
@@ -356,11 +364,7 @@ php_cassandra_collection_new(zend_class_entry* class_type TSRMLS_DC)
 
   zend_hash_init(&collection->values, 0, NULL, ZVAL_PTR_DTOR, 0);
   zend_object_std_init(&collection->zval, class_type TSRMLS_CC);
-#if ZEND_MODULE_API_NO >= 20100525
   object_properties_init(&collection->zval, class_type);
-#else
-  zend_hash_copy(collection->zval.properties, &class_type->default_properties, (copy_ctor_func_t) zval_add_ref, (void*) NULL, sizeof(zval*));
-#endif
 
   retval.handle   = zend_objects_store_put(collection,
                       (zend_objects_store_dtor_t) zend_objects_destroy_object,
@@ -378,6 +382,9 @@ void cassandra_define_Collection(TSRMLS_D)
   cassandra_collection_ce = zend_register_internal_class(&ce TSRMLS_CC);
   memcpy(&cassandra_collection_handlers, zend_get_std_object_handlers(), sizeof(zend_object_handlers));
   cassandra_collection_handlers.get_properties  = php_cassandra_collection_properties;
+#if PHP_VERSION_ID >= 50400
+  cassandra_collection_handlers.get_gc          = php_cassandra_collection_gc;
+#endif
   cassandra_collection_handlers.compare_objects = php_cassandra_collection_compare;
   cassandra_collection_ce->ce_flags |= ZEND_ACC_FINAL_CLASS;
   cassandra_collection_ce->create_object = php_cassandra_collection_new;
