@@ -142,6 +142,25 @@ Usage: VC_BUILD.BAT [OPTION...]
 *** Default target architecture is determined based on system architecture
 ```
 
+#### Manual/PHP Step-by-Step Windows Build
+
+The PHP driver extension can also be built using the
+[Build your own PHP on Windows](https://wiki.php.net/internals/windows/stepbystepbuild)
+instructions followed by the
+[Building PECL extensions](https://wiki.php.net/internals/windows/stepbystepbuild#building_pecl_extensions)
+instruction where the driver can be statically linked into the PHP executable
+or as an import (DLL) library. This process requires that the binary
+dependencies of the PHP driver extension be included in the
+`phpdev\vc##\x##\deps` directory along with the standard PHP library
+dependencies. Use `--enable-cassandra` to built library into the PHP executable
+and `--enable-cassandra=shared` for import (DLL) library.
+
+The PHP driver extension dependencies that are not included with the
+standard PHP library can be download [here](http://downloads.datastax.com/cpp-driver/windows/).
+
+**Note** The binary libraries downloaded must compatible with the MSVC compiler
+and the PHP driver extension.
+
 #### Enable Testing
 
 Ensure the driver is built with --ENABLE-TEST-CONFIGURATION in order to execute
