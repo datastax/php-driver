@@ -747,6 +747,18 @@ IF !ENABLE_BUILD_PACKAGES! EQU !FALSE! (
       EXIT /B !EXIT_CODE_CONFIGURATION_DRIVER_FAILED!
     )
     ECHO done.
+    IF EXIST bin\behat.bat (
+      RENAME bin\behat.bat behat.bak
+      ECHO @ECHO %%PATH%% ^| FIND /C /I ^"!ABSOLUTE_DRIVER_LIBRARY_DIRECTORY!^"^>NULL ^|^| @SET ^"PATH=!ABSOLUTE_DRIVER_LIBRARY_DIRECTORY!;%%PATH%%^" > bin\behat.bat
+      TYPE bin\behat.bak >> bin\behat.bat
+      ERASE bin\behat.bak
+    )
+    IF EXIST bin\phpunit.bat (
+      RENAME bin\phpunit.bat phpunit.bak
+      ECHO @ECHO %%PATH%% ^| FIND /C /I ^"!ABSOLUTE_DRIVER_LIBRARY_DIRECTORY!^"^>NULL ^|^| @SET ^"PATH=!ABSOLUTE_DRIVER_LIBRARY_DIRECTORY!;%%PATH%%^" > bin\phpunit.bat
+      TYPE bin\phpunit.bak >> bin\phpunit.bat
+      ERASE bin\phpunit.bak
+    )
     POPD
   )
 
