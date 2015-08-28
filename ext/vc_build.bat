@@ -114,9 +114,9 @@ SET MPIR_BRANCH_TAG_VERSION=mpir-2.7.0
 SET PHP_REPOSITORY_URL=https://github.com/php/php-src.git
 SET PHP_DIRECTORY=php
 SET PHP_5_3_BRANCH_TAG_VERSION=php-5.3.29
-SET PHP_5_4_BRANCH_TAG_VERSION=php-5.4.43
-SET PHP_5_5_BRANCH_TAG_VERSION=php-5.5.26
-SET PHP_5_6_BRANCH_TAG_VERSION=php-5.6.10
+SET PHP_5_4_BRANCH_TAG_VERSION=php-5.4.44
+SET PHP_5_5_BRANCH_TAG_VERSION=php-5.5.28
+SET PHP_5_6_BRANCH_TAG_VERSION=php-5.6.12
 SET "SUPPORTED_PHP_PACKAGE_VERSIONS=5_5 5_6"
 SET "SUPPORTED_PHP_PACKAGE_DISPLAY_VERSIONS=5.5 5.6"
 SET "SUPPORTED_PHP_PACKAGE_VISUAL_STUDIO_VERSIONS=2012 2012"
@@ -429,7 +429,12 @@ IF "!ENABLE_BUILD_PACKAGES!" == "!FALSE!" (
       SET /A INDEX+=1
       SET "SELECTION_OPTIONS=!SELECTION_OPTIONS!!INDEX!"
       CALL :GETARRAYELEMENT VISUAL_STUDIO_VERSIONS %%A VISUAL_STUDIO_VERSION
-      ECHO !INDEX!^) Visual Studio !VISUAL_STUDIO_VERSION!
+      REM Indicate PHP binary release compilers
+      SET PHP_BINARY_COMPILER_INFORMATION=
+      IF !VISUAL_STUDIO_VERSION! EQU 2012 (
+        SET "PHP_BINARY_COMPILER_INFORMATION=(Binary Release Compiler for PHP 5.5 - 5.6)"
+      )
+      ECHO !INDEX!^) Visual Studio !VISUAL_STUDIO_VERSION! !PHP_BINARY_COMPILER_INFORMATION!
     )
 
     REM Add the exit option
@@ -462,6 +467,16 @@ IF "!ENABLE_BUILD_PACKAGES!" == "!FALSE!" (
 
   REM Determine if Boost atomic should be enabled
   IF !VISUAL_STUDIO_VERSION! EQU 2010 SET USE_BOOST_ATOMIC=!TRUE!
+
+  REM Determine if PHP patch version should be downgraded
+  IF !VISUAL_STUDIO_VERSION! EQU 2010 (
+    IF "!PHP_VERSION!" == "5_5" (
+      SET PHP_BRANCH_TAG_VERSION=php-5.5.26
+    )
+    IF "!PHP_VERSION!" == "5_6" (
+      SET PHP_BRANCH_TAG_VERSION=php-5.6.10
+    )
+  )
 
   REM Ensure additional requirements are met for test environment
   IF !ENABLE_TEST_CONFIGURATION! EQU !TRUE! (
@@ -1158,12 +1173,18 @@ REM @param log-filename Absolute path and filename for log output
   SHIFT
   SET "MPIR_LOG_FILENAME=%~1"
 
-  REM Attempt to upgrade the solution
+  REM Determine the Visual Studio solution directory to use
   PUSHD "!MPIR_SOURCE_DIRECTORY!" > NUL
-  IF DEFINED DEVENV_FOUND (
-    IF NOT !MPIR_VISUAL_STUDIO_VERSION! EQU 2010 (
+  SET MPIR_VISUAL_STUDO_SOLUTION_DIRECTORY=INVALID
+  IF !MPIR_VISUAL_STUDIO_VERSION! EQU 2010 SET MPIR_VISUAL_STUDO_SOLUTION_DIRECTORY=build.vc10
+  IF !MPIR_VISUAL_STUDIO_VERSION! EQU 2012 SET MPIR_VISUAL_STUDO_SOLUTION_DIRECTORY=build.vc11
+  IF !MPIR_VISUAL_STUDIO_VERSION! EQU 2013 SET MPIR_VISUAL_STUDO_SOLUTION_DIRECTORY=build.vc12
+  IF !MPIR_VISUAL_STUDIO_VERSION! EQU 2015 SET MPIR_VISUAL_STUDO_SOLUTION_DIRECTORY=build.vc14
+  IF "!MPIR_VISUAL_STUDO_SOLUTION_DIRECTORY!" == "INVALID" (
+    SET MPIR_VISUAL_STUDO_SOLUTION_DIRECTORY=build.vc14
+    IF DEFINED DEVENV_FOUND (
       ECHO | SET /P=Upgrading MPIR solution ... 
-      !DEVENV! build.vc10\mpir.sln /upgrade >> "!MPIR_LOG_FILENAME!" 2>&1
+      !DEVENV! !MPIR_VISUAL_STUDO_SOLUTION_DIRECTORY!\mpir.sln /upgrade >> "!MPIR_LOG_FILENAME!" 2>&1
       IF NOT !ERRORLEVEL! EQU 0 (
         ECHO FAILED!
         ECHO 	See !MPIR_LOG_FILENAME! for more details
@@ -1177,11 +1198,11 @@ REM @param log-filename Absolute path and filename for log output
   SET MPIR_PLATFORM_ARCHITECTURE=Win32
   IF !MPIR_TARGET_ARCHITECTURE! EQU !ARCHITECTURE_64BIT! SET MPIR_PLATFORM_ARCHITECTURE=x64
   IF !MPIR_VISUAL_STUDIO_VERSION! EQU 2010 (
-    ECHO !MSBUILD! build.vc10\lib_mpir_gc\lib_mpir_gc.vcxproj /P:Configuration=!MPIR_BUILD_TYPE! /P:Platform=!MPIR_PLATFORM_ARCHITECTURE! /CLP:NoSummary;NoItemAndPropertyList;Verbosity=minimal /NOLOGO >> "!MPIR_LOG_FILENAME!" 2>&1
-    !MSBUILD! build.vc10\lib_mpir_gc\lib_mpir_gc.vcxproj /P:Configuration=!MPIR_BUILD_TYPE! /P:Platform=!MPIR_PLATFORM_ARCHITECTURE! /CLP:NoSummary;NoItemAndPropertyList;Verbosity=minimal /NOLOGO >> "!MPIR_LOG_FILENAME!" 2>&1
+    ECHO !MSBUILD! !MPIR_VISUAL_STUDO_SOLUTION_DIRECTORY!\lib_mpir_gc\lib_mpir_gc.vcxproj /P:Configuration=!MPIR_BUILD_TYPE! /P:Platform=!MPIR_PLATFORM_ARCHITECTURE! /CLP:NoSummary;NoItemAndPropertyList;Verbosity=minimal /NOLOGO >> "!MPIR_LOG_FILENAME!" 2>&1
+    !MSBUILD! !MPIR_VISUAL_STUDO_SOLUTION_DIRECTORY!\lib_mpir_gc\lib_mpir_gc.vcxproj /P:Configuration=!MPIR_BUILD_TYPE! /P:Platform=!MPIR_PLATFORM_ARCHITECTURE! /CLP:NoSummary;NoItemAndPropertyList;Verbosity=minimal /NOLOGO >> "!MPIR_LOG_FILENAME!" 2>&1
   ) ELSE (
-    ECHO !MSBUILD! build.vc10\mpir.sln /T:lib_mpir_gc /P:Configuration=!MPIR_BUILD_TYPE! /P:Platform=!MPIR_PLATFORM_ARCHITECTURE! /CLP:NoSummary;NoItemAndPropertyList;Verbosity=minimal /NOLOGO >> "!MPIR_LOG_FILENAME!" 2>&1
-    !MSBUILD! build.vc10\mpir.sln /T:lib_mpir_gc /P:Configuration=!MPIR_BUILD_TYPE! /P:Platform=!MPIR_PLATFORM_ARCHITECTURE! /CLP:NoSummary;NoItemAndPropertyList;Verbosity=minimal /NOLOGO >> "!MPIR_LOG_FILENAME!" 2>&1
+    ECHO !MSBUILD! !MPIR_VISUAL_STUDO_SOLUTION_DIRECTORY!\mpir.sln /T:lib_mpir_gc /P:Configuration=!MPIR_BUILD_TYPE! /P:Platform=!MPIR_PLATFORM_ARCHITECTURE! /CLP:NoSummary;NoItemAndPropertyList;Verbosity=minimal /NOLOGO >> "!MPIR_LOG_FILENAME!" 2>&1
+    !MSBUILD! !MPIR_VISUAL_STUDO_SOLUTION_DIRECTORY!\mpir.sln /T:lib_mpir_gc /P:Configuration=!MPIR_BUILD_TYPE! /P:Platform=!MPIR_PLATFORM_ARCHITECTURE! /CLP:NoSummary;NoItemAndPropertyList;Verbosity=minimal /NOLOGO >> "!MPIR_LOG_FILENAME!" 2>&1
   )
   IF NOT !ERRORLEVEL! EQU 0 (
     ECHO FAILED!
@@ -1208,7 +1229,7 @@ REM @param log-filename Absolute path and filename for log output
   )
   IF NOT EXIST "!MPIR_INSTALLATION_DIRECTORY!\lib" MKDIR "!MPIR_INSTALLATION_DIRECTORY!\lib"
   IF !MPIR_VISUAL_STUDIO_VERSION! EQU 2010 (
-    XCOPY /Y build.vc10\lib_mpir_gc\!MPIR_PLATFORM_ARCHITECTURE!\!MPIR_BUILD_TYPE!\*.* "!MPIR_INSTALLATION_DIRECTORY!\lib" >> "!MPIR_LOG_FILENAME!" 2>&1
+    XCOPY /Y !MPIR_VISUAL_STUDO_SOLUTION_DIRECTORY!\lib_mpir_gc\!MPIR_PLATFORM_ARCHITECTURE!\!MPIR_BUILD_TYPE!\*.* "!MPIR_INSTALLATION_DIRECTORY!\lib" >> "!MPIR_LOG_FILENAME!" 2>&1
     IF NOT !ERRORLEVEL! EQU 0 (
       ECHO FAILED!
       ECHO 	See !MPIR_LOG_FILENAME! for more details
@@ -1216,7 +1237,7 @@ REM @param log-filename Absolute path and filename for log output
       EXIT /B !EXIT_CODE_BUILD_DEPENDENCY_FAILED!
     )
   ) ELSE (
-    XCOPY /Y build.vc10\!MPIR_PLATFORM_ARCHITECTURE!\!MPIR_BUILD_TYPE!\*.* "!MPIR_INSTALLATION_DIRECTORY!\lib" >> "!MPIR_LOG_FILENAME!" 2>&1
+    XCOPY /Y !MPIR_VISUAL_STUDO_SOLUTION_DIRECTORY!\!MPIR_PLATFORM_ARCHITECTURE!\!MPIR_BUILD_TYPE!\*.* "!MPIR_INSTALLATION_DIRECTORY!\lib" >> "!MPIR_LOG_FILENAME!" 2>&1
     IF NOT !ERRORLEVEL! EQU 0 (
       ECHO FAILED!
       ECHO 	See !MPIR_LOG_FILENAME! for more details
@@ -1497,6 +1518,34 @@ REM @param log-filename Absolute path and filename for log output
       RMDIR /S /Q "!PHP_DRIVER_PHP_SOURCE_DIRECTORY!\..\deps" > NUL
       EXIT /B !EXIT_CODE_BUILD_DRIVER_FAILED!
     )
+    XCOPY /Y /E "!PHP_DRIVER_CPP_DRIVER_LIBRARY_DIRECTORY!\*.*" "!PHP_DRIVER_PHP_SOURCE_DIRECTORY!\..\deps" >> "!PHP_DRIVER_LOG_FILENAME!" 2>&1
+    IF NOT !ERRORLEVEL! EQU 0 (
+      ECHO FAILED!
+      ECHO 	See !PHP_DRIVER_LOG_FILENAME! for more details
+      RMDIR /S /Q "!PHP_DRIVER_PHP_SOURCE_DIRECTORY!\..\deps" > NUL
+      EXIT /B !EXIT_CODE_BUILD_DRIVER_FAILED!
+    )
+    XCOPY /Y /E "!PHP_DRIVER_LIBUV_LIBRARY_DIRECTORY!\*.*" "!PHP_DRIVER_PHP_SOURCE_DIRECTORY!\..\deps" >> "!PHP_DRIVER_LOG_FILENAME!" 2>&1
+    IF NOT !ERRORLEVEL! EQU 0 (
+      ECHO FAILED!
+      ECHO 	See !PHP_DRIVER_LOG_FILENAME! for more details
+      RMDIR /S /Q "!PHP_DRIVER_PHP_SOURCE_DIRECTORY!\..\deps" > NUL
+      EXIT /B !EXIT_CODE_BUILD_DRIVER_FAILED!
+    )
+    XCOPY /Y /E "!PHP_DRIVER_MPIR_LIBRARY_DIRECTORY!\*.*" "!PHP_DRIVER_PHP_SOURCE_DIRECTORY!\..\deps" >> "!PHP_DRIVER_LOG_FILENAME!" 2>&1
+    IF NOT !ERRORLEVEL! EQU 0 (
+      ECHO FAILED!
+      ECHO 	See !PHP_DRIVER_LOG_FILENAME! for more details
+      RMDIR /S /Q "!PHP_DRIVER_PHP_SOURCE_DIRECTORY!\..\deps" > NUL
+      EXIT /B !EXIT_CODE_BUILD_DRIVER_FAILED!
+    )
+    COPY /Y "!PHP_DRIVER_PHP_SOURCE_DIRECTORY!\..\deps\lib\mpir.lib" "!PHP_DRIVER_PHP_SOURCE_DIRECTORY!\..\deps\lib\mpir_a.lib" >> "!PHP_DRIVER_LOG_FILENAME!" 2>&1
+    IF NOT !ERRORLEVEL! EQU 0 (
+      ECHO FAILED!
+      ECHO 	See !PHP_DRIVER_LOG_FILENAME! for more details
+      RMDIR /S /Q "!PHP_DRIVER_PHP_SOURCE_DIRECTORY!\..\deps" > NUL
+      EXIT /B !EXIT_CODE_BUILD_DRIVER_FAILED!
+    )
     XCOPY /Y /E "!PHP_DRIVER_ZLIB_LIBRARY_DIRECTORY!\*.*" "!PHP_DRIVER_PHP_SOURCE_DIRECTORY!\..\deps" >> "!PHP_DRIVER_LOG_FILENAME!" 2>&1
     IF NOT !ERRORLEVEL! EQU 0 (
       ECHO FAILED!
@@ -1549,7 +1598,7 @@ REM @param log-filename Absolute path and filename for log output
     ECHO done.
   )
   ECHO | SET /P=Configuring PHP and enable driver extension ... 
-  SET "DRIVER_CONFIGURE_COMMAND_LINE=--with-prefix=^"!PHP_DRIVER_INSTALLATION_DIRECTORY!^" --with-extra-includes=^"!PHP_DRIVER_PHP_SOURCE_DIRECTORY!\..\deps\include^" --disable-all --enable-cli --enable-com-dotnet --enable-session --with-openssl=^"!PHP_DRIVER_OPENSSL_LIBRARY_DIRECTORY!^" --enable-cassandra=shared --with-cassandra-cpp-driver=^"!PHP_DRIVER_CPP_DRIVER_LIBRARY_DIRECTORY!^" --with-libuv-libs=^"!PHP_DRIVER_LIBUV_LIBRARY_DIRECTORY!^" --with-mpir=^"!PHP_DRIVER_MPIR_LIBRARY_DIRECTORY!^" --with-zlib-libs=^"!PHP_DRIVER_ZLIB_LIBRARY_DIRECTORY!^""
+  SET "DRIVER_CONFIGURE_COMMAND_LINE=--with-prefix=^"!PHP_DRIVER_INSTALLATION_DIRECTORY!^" --disable-all --enable-cli --enable-com-dotnet --enable-session --enable-zlib --with-gmp --with-openssl --enable-cassandra=shared"
   IF "!PHP_DRIVER_ENABLE_THREAD_SAFETY!" == "!TRUE!" (
     SET "DRIVER_CONFIGURE_COMMAND_LINE=!DRIVER_CONFIGURE_COMMAND_LINE! --enable-zts"
     IF "!PHP_DRIVER_ENABLE_PTHREADS!" == "!TRUE!" (
