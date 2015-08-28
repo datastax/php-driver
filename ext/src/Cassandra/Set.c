@@ -11,6 +11,12 @@ php_cassandra_set_add(cassandra_set* set, zval* object TSRMLS_DC)
   int   key_len;
   int   result = 0;
 
+  if (Z_TYPE_P(object) == IS_NULL) {
+    zend_throw_exception_ex(cassandra_invalid_argument_exception_ce, 0 TSRMLS_CC,
+                            "Invalid value: null is not supported inside sets");
+    return 0;
+  }
+
   if (!php_cassandra_hash_object(object, set->type, &key, &key_len TSRMLS_CC))
     return 0;
 

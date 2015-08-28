@@ -137,6 +137,13 @@ PHP_METHOD(Collection, add)
   collection = (cassandra_collection*) zend_object_store_get_object(getThis() TSRMLS_CC);
 
   for (i = 0; i < argc; i++) {
+    if (Z_TYPE_P(*args[i]) == IS_NULL) {
+      efree(args);
+      zend_throw_exception_ex(cassandra_invalid_argument_exception_ce, 0 TSRMLS_CC,
+                              "Invalid value: null is not supported inside collections");
+      RETURN_FALSE;
+    }
+
     if (!php_cassandra_validate_object(*args[i], collection->type TSRMLS_CC)) {
       efree(args);
       RETURN_FALSE;

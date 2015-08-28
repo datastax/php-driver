@@ -37,4 +37,14 @@ class MapTest extends \PHPUnit_Framework_TestCase
     {
         new Map(\Cassandra::TYPE_VARINT, 'another custom type');
     }
+
+    /**
+     * @expectedException         InvalidArgumentException
+     * @expectedExceptionMessage  Invalid value: null is not supported inside maps
+     */
+    public function testSupportsNullValues()
+    {
+        $map = new Map(\Cassandra::TYPE_VARCHAR, \Cassandra::TYPE_VARCHAR);
+        $map->set("test", null);
+    }
 }
