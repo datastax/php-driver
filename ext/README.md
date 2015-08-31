@@ -158,8 +158,8 @@ and `--enable-cassandra=shared` for import (DLL) library.
 The PHP driver extension dependencies that are not included with the
 standard PHP library can be download [here](http://downloads.datastax.com/cpp-driver/windows/).
 
-**Note** The binary libraries downloaded must compatible with the MSVC compiler
-and the PHP driver extension.
+**Note** The binary libraries downloaded/used must be compatible with the
+MSVC++ compiler and the PHP driver extension.
 
 #### Enable Testing
 
