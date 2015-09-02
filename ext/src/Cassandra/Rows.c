@@ -15,7 +15,6 @@ php_cassandra_rows_clear(cassandra_rows* self)
 
   if (self->statement) {
     php_cassandra_del_ref(&self->statement);
-    self->statement = NULL;
   }
 
   if (self->result) {
@@ -237,10 +236,10 @@ PHP_METHOD(Rows, nextPage)
       return;
     }
 
-    ASSERT_SUCCESS(cass_statement_set_paging_state(self->statement->statement, self->result));
+    ASSERT_SUCCESS(cass_statement_set_paging_state((CassStatement*) self->statement->data, self->result));
 
     session = (cassandra_session*) zend_object_store_get_object(self->session TSRMLS_CC);
-    future = cass_session_execute(session->session, self->statement->statement);
+    future = cass_session_execute(session->session, (CassStatement*) self->statement->data);
 
     if (php_cassandra_future_wait_timed(future, timeout TSRMLS_CC) == FAILURE) {
       return;
@@ -319,10 +318,10 @@ PHP_METHOD(Rows, nextPageAsync)
     return;
   }
 
-  ASSERT_SUCCESS(cass_statement_set_paging_state(self->statement->statement, self->result));
+  ASSERT_SUCCESS(cass_statement_set_paging_state((CassStatement*) self->statement->data, self->result));
 
   session = (cassandra_session*) zend_object_store_get_object(self->session TSRMLS_CC);
-  future = cass_session_execute(session->session, self->statement->statement);
+  future = cass_session_execute(session->session, (CassStatement*) self->statement->data);
 
   object_init_ex(self->future_next_page, cassandra_future_rows_ce);
   future_rows = (cassandra_future_rows*) zend_object_store_get_object(self->future_next_page TSRMLS_CC);

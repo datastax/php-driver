@@ -112,6 +112,22 @@ ZEND_BEGIN_MODULE_GLOBALS(cassandra)
   CassUuidGen*          uuid_gen;
   unsigned int          persistent_clusters;
   unsigned int          persistent_sessions;
+  zval*                 type_varchar;
+  zval*                 type_text;
+  zval*                 type_blob;
+  zval*                 type_ascii;
+  zval*                 type_bigint;
+  zval*                 type_counter;
+  zval*                 type_int;
+  zval*                 type_varint;
+  zval*                 type_boolean;
+  zval*                 type_decimal;
+  zval*                 type_double;
+  zval*                 type_float;
+  zval*                 type_inet;
+  zval*                 type_timestamp;
+  zval*                 type_uuid;
+  zval*                 type_timeuuid;
 ZEND_END_MODULE_GLOBALS(cassandra)
 
 #ifdef ZTS

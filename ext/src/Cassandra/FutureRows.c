@@ -12,7 +12,6 @@ php_cassandra_future_clear(cassandra_future_rows* self)
 {
   if (self->statement) {
     php_cassandra_del_ref(&self->statement);
-    self->statement = NULL;
   }
 
   if (self->session) {

@@ -26,6 +26,7 @@ static zend_function_entry cassandra_session_methods[] = {
   PHP_ABSTRACT_ME(Session, prepareAsync, arginfo_prepare)
   PHP_ABSTRACT_ME(Session, close, arginfo_timeout)
   PHP_ABSTRACT_ME(Session, closeAsync, arginfo_none)
+  PHP_ABSTRACT_ME(Session, schema, arginfo_none)
   PHP_FE_END
 };
 

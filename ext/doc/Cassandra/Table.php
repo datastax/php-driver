@@ -1,0 +1,122 @@
+<?php
+
+/**
+ * Copyright 2015 DataStax, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+namespace Cassandra;
+
+/**
+ * A PHP representation of a table
+ */
+interface Table
+{
+    /**
+     * Returns the name of this table
+     * @return string Name of the table
+     */
+    function name();
+
+    /**
+     * Description of the table, if any
+     * @return string|null Table description
+     */
+    function comment();
+
+    /**
+     * Returns read repair chance
+     * @return float Read repair chance
+     */
+    function readRepairChance();
+
+    /**
+     * Returns local read repair chance
+     * @return float Local read repair chance
+     */
+    function localReadRepairChance();
+
+    /**
+     * Returns GC grace seconds
+     * @return int GC grace seconds
+     */
+    function gcGraceSeconds();
+
+    /**
+     * Returns caching options
+     * @return string Caching options
+     */
+    function caching();
+
+    /**
+     * Returns bloom filter FP chance
+     * @return float Bloom filter FP chance
+     */
+    function bloomFilterFPChance();
+
+    /**
+     * Returns memtable flush period in miliseconds
+     * @return int Memtable flush period in miliseconds
+     */
+    function memtableFlushPeriodMs();
+
+    /**
+     * Returns default TTL.
+     * @return int Default TTL.
+     */
+    function defaultTTL();
+
+    /**
+     * Returns speculative retry.
+     * @return string Speculative retry.
+     */
+    function speculativeRetry();
+
+    /**
+     * Returns index interval
+     * @return int Index interval
+     */
+    function indexInterval();
+
+    /**
+     * Returns compaction strategy class name
+     * @return string Compaction strategy class name
+     */
+    function compactionStrategyClassName();
+
+    /**
+     * Returns compaction strategy options
+     * @return string Compaction strategy options
+     */
+    function compactionStrategyOptions();
+
+    /**
+     * Returns compression parameters
+     * @return string Compression parameters
+     */
+    function compressionParameters();
+
+    /**
+     * Returns column by name
+     * @param  string           $name Name of the column
+     * @return Cassandra\Column       Column instance
+     */
+    function column($name);
+
+    /**
+     * Returns all columns in this table
+     * @return array A list of `Cassandra\Column` instances
+     */
+    function columns();
+}

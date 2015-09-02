@@ -2,6 +2,8 @@
 
 namespace Cassandra;
 
+use Cassandra\Type;
+
 /**
  * @requires extension cassandra
  */
@@ -9,7 +11,7 @@ class MapTest extends \PHPUnit_Framework_TestCase
 {
     public function testSupportsKeyBasedAccess()
     {
-        $map = new Map(\Cassandra::TYPE_VARINT, \Cassandra::TYPE_VARCHAR);
+        $map = Type::map(Type::varint(), Type::varchar())->create();
         $this->assertEquals(0, count($map));
         $map->set(new Varint('123'), 'value');
         $this->assertEquals(1, count($map));

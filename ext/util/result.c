@@ -234,6 +234,15 @@ php_cassandra_value(const CassValue* value, CassValueType type, zval** out TSRML
 }
 
 int
+php_cassandra_get_schema_field(const CassSchemaMeta* metadata, const char* field_name, zval** out TSRMLS_DC)
+{
+  const CassSchemaMetaField* field = cass_schema_meta_get_field(metadata, field_name);
+  const CassValue*           value = cass_schema_meta_field_value(field);
+
+  return php_cassandra_value(value, cass_value_type(value), out TSRMLS_CC);
+}
+
+int
 php_cassandra_get_result(const CassResult* result, zval** out TSRMLS_DC)
 {
   zval*            rows;
