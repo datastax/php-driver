@@ -1,3 +1,16 @@
+# 1.0.0
+
+Features:
+
+* Added schema metadata support (via `Cassandra\Session::schema()`).
+* Added types API (via `Cassandra\Type` static methods).
+
+Bug Fixes:
+
+* [PHP-40] Fixed invalid pointer being free'd
+* [PHP-43] Fixed timeout handling in `Cassandra\ExecutionOptions`
+* [PHP-44] Fixed memory leak
+
 # 1.0.0-rc
 
 Features:
