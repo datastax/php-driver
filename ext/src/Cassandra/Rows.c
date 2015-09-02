@@ -199,7 +199,6 @@ PHP_METHOD(Rows, nextPage)
   CassFuture* future = NULL;
   const CassResult* result = NULL;
   cassandra_rows* rows = NULL;
-  cassandra_future_value* future_value;
   cassandra_future_rows* future_rows = NULL;
 
   cassandra_rows* self = (cassandra_rows*) zend_object_store_get_object(getThis() TSRMLS_CC);
