@@ -45,32 +45,47 @@ to_string(zval* result, cassandra_bigint* bigint TSRMLS_DC)
   return SUCCESS;
 }
 
-/* {{{ Cassandra\Bigint::__construct(string) */
-PHP_METHOD(Bigint, __construct)
+void
+php_cassandra_bigint_init(INTERNAL_FUNCTION_PARAMETERS)
 {
-  zval* num;
   cassandra_bigint* self;
-  cassandra_bigint* bigint;
+  zval* value;
 
-  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z", &num) == FAILURE) {
+  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z", &value) == FAILURE) {
     return;
   }
 
-  self = (cassandra_bigint*) zend_object_store_get_object(getThis() TSRMLS_CC);
+  if (getThis() && instanceof_function(Z_OBJCE_P(getThis()), cassandra_bigint_ce TSRMLS_CC)) {
+    self = (cassandra_bigint*) zend_object_store_get_object(getThis() TSRMLS_CC);
+  } else {
+    object_init_ex(return_value, cassandra_bigint_ce);
+    self = (cassandra_bigint*) zend_object_store_get_object(return_value TSRMLS_CC);
+  }
 
-  if (Z_TYPE_P(num) == IS_LONG) {
-    self->value = (cass_int64_t) Z_LVAL_P(num);
-  } else if (Z_TYPE_P(num) == IS_DOUBLE) {
-    self->value = (cass_int64_t) Z_DVAL_P(num);
-  } else if (Z_TYPE_P(num) == IS_STRING) {
-    php_cassandra_parse_bigint(Z_STRVAL_P(num), Z_STRLEN_P(num), &self->value TSRMLS_CC);
-  } else if (Z_TYPE_P(num) == IS_OBJECT &&
-             instanceof_function(Z_OBJCE_P(num), cassandra_bigint_ce TSRMLS_CC)) {
-    bigint = (cassandra_bigint*) zend_object_store_get_object(num TSRMLS_CC);
+  if (Z_TYPE_P(value) == IS_LONG) {
+    self->value = (cass_int64_t) Z_LVAL_P(value);
+  } else if (Z_TYPE_P(value) == IS_DOUBLE) {
+    self->value = (cass_int64_t) Z_DVAL_P(value);
+  } else if (Z_TYPE_P(value) == IS_STRING) {
+    if (!php_cassandra_parse_bigint(Z_STRVAL_P(value), Z_STRLEN_P(value),
+                                    &self->value TSRMLS_CC)) {
+      return;
+    }
+  } else if (Z_TYPE_P(value) == IS_OBJECT &&
+             instanceof_function(Z_OBJCE_P(value), cassandra_bigint_ce TSRMLS_CC)) {
+    cassandra_bigint* bigint = (cassandra_bigint*)
+                                 zend_object_store_get_object(value TSRMLS_CC);
     self->value = bigint->value;
   } else {
-    INVALID_ARGUMENT(num, "a long, a double, a numeric string or a Cassandra\\Bigint");
+    INVALID_ARGUMENT(value, "a long, a double, a numeric string or a " \
+                            "Cassandra\\Bigint");
   }
+}
+
+/* {{{ Cassandra\Bigint::__construct(string) */
+PHP_METHOD(Bigint, __construct)
+{
+  php_cassandra_bigint_init(INTERNAL_FUNCTION_PARAM_PASSTHRU);
 }
 /* }}} */
 

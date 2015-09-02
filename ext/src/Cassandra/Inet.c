@@ -3,21 +3,33 @@
 
 zend_class_entry *cassandra_inet_ce = NULL;
 
-/* {{{ Cassandra\Inet::__construct(string) */
-PHP_METHOD(Inet, __construct)
+void
+php_cassandra_inet_init(INTERNAL_FUNCTION_PARAMETERS)
 {
-  char *address;
-  int address_len;
-  cassandra_inet* inet;
+  cassandra_inet* self;
+  char* string;
+  int string_len;
 
-  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &address, &address_len) == FAILURE) {
+  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &string, &string_len) == FAILURE) {
     return;
   }
 
-  inet = (cassandra_inet*) zend_object_store_get_object(getThis() TSRMLS_CC);
+  if (getThis() && instanceof_function(Z_OBJCE_P(getThis()), cassandra_inet_ce TSRMLS_CC)) {
+    self = (cassandra_inet*) zend_object_store_get_object(getThis() TSRMLS_CC);
+  } else {
+    object_init_ex(return_value, cassandra_inet_ce);
+    self = (cassandra_inet*) zend_object_store_get_object(return_value TSRMLS_CC);
+  }
 
-  if (!php_cassandra_parse_ip_address(address, &inet->inet TSRMLS_CC))
+  if (!php_cassandra_parse_ip_address(string, &self->inet TSRMLS_CC)) {
     return;
+  }
+}
+
+/* {{{ Cassandra\Inet::__construct(string) */
+PHP_METHOD(Inet, __construct)
+{
+  php_cassandra_inet_init(INTERNAL_FUNCTION_PARAM_PASSTHRU);
 }
 /* }}} */
 
