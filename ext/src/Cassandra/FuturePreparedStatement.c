@@ -53,7 +53,6 @@ static zend_object_handlers cassandra_future_prepared_statement_handlers;
 static HashTable*
 php_cassandra_future_prepared_statement_properties(zval *object TSRMLS_DC)
 {
-  /* cassandra_future_prepared_statement* self = (cassandra_future_prepared_statement*) zend_object_store_get_object(object TSRMLS_CC); */
   HashTable* props = zend_std_get_properties(object TSRMLS_CC);
 
   return props;

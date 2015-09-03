@@ -86,7 +86,6 @@ static zend_object_handlers cassandra_default_schema_handlers;
 static HashTable*
 php_cassandra_default_schema_properties(zval *object TSRMLS_DC)
 {
-  /* cassandra_schema* self = (cassandra_schema*) zend_object_store_get_object(object TSRMLS_CC); */
   HashTable* props = zend_std_get_properties(object TSRMLS_CC);
 
   return props;

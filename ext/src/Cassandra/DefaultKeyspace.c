@@ -147,7 +147,6 @@ static zend_object_handlers cassandra_default_keyspace_handlers;
 static HashTable*
 php_cassandra_default_keyspace_properties(zval *object TSRMLS_DC)
 {
-  /* cassandra_keyspace* self = (cassandra_keyspace*) zend_object_store_get_object(object TSRMLS_CC); */
   HashTable* props = zend_std_get_properties(object TSRMLS_CC);
 
   return props;
