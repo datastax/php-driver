@@ -76,7 +76,7 @@ PHP_METHOD(DefaultKeyspace, table)
   meta = cass_schema_meta_get_entry(self->meta, name);
 
   if (meta == NULL) {
-    RETURN_NULL();
+    return;
   }
 
   object_init_ex(return_value, cassandra_default_table_ce);

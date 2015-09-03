@@ -260,13 +260,13 @@ PHP_METHOD(DefaultTable, column)
   metadata = cass_schema_meta_get_entry(self->meta, name);
 
   if (metadata == NULL) {
-    RETURN_NULL();
+    return;
   }
 
   column = php_cassandra_create_column(self->schema, metadata TSRMLS_CC);
 
   if (column == NULL) {
-    RETURN_NULL();
+    return;
   }
 
   RETURN_ZVAL(column, 0, 1);
