@@ -2,9 +2,9 @@
 #include "result.h"
 #include "math.h"
 #include "collections.h"
-#include "../src/Cassandra/Collection.h"
-#include "../src/Cassandra/Map.h"
-#include "../src/Cassandra/Set.h"
+#include "src/Cassandra/Collection.h"
+#include "src/Cassandra/Map.h"
+#include "src/Cassandra/Set.h"
 
 static int
 php_cassandra_value(const CassValue* value, CassValueType type, zval** out TSRMLS_DC)

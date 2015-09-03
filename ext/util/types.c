@@ -1,15 +1,15 @@
 #include "php_cassandra.h"
 #include "util/types.h"
 #include <ext/standard/php_smart_str.h>
-#include "../src/Cassandra/Bigint.h"
-#include "../src/Cassandra/Blob.h"
-#include "../src/Cassandra/Decimal.h"
-#include "../src/Cassandra/Float.h"
-#include "../src/Cassandra/Inet.h"
-#include "../src/Cassandra/Timestamp.h"
-#include "../src/Cassandra/Timeuuid.h"
-#include "../src/Cassandra/Uuid.h"
-#include "../src/Cassandra/Varint.h"
+#include "src/Cassandra/Bigint.h"
+#include "src/Cassandra/Blob.h"
+#include "src/Cassandra/Decimal.h"
+#include "src/Cassandra/Float.h"
+#include "src/Cassandra/Inet.h"
+#include "src/Cassandra/Timestamp.h"
+#include "src/Cassandra/Timeuuid.h"
+#include "src/Cassandra/Uuid.h"
+#include "src/Cassandra/Varint.h"
 
 ZEND_EXTERN_MODULE_GLOBALS(cassandra)
 

@@ -1,7 +1,7 @@
 #include "php_cassandra.h"
 #include "util/types.h"
 #include <ext/standard/php_smart_str.h>
-#include "../Set.h"
+#include "src/Cassandra/Set.h"
 
 zend_class_entry *cassandra_type_set_ce = NULL;
 

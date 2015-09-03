@@ -1,7 +1,7 @@
 #include "php_cassandra.h"
 #include "util/types.h"
 #include <ext/standard/php_smart_str.h>
-#include "../Map.h"
+#include "src/Cassandra/Map.h"
 
 zend_class_entry *cassandra_type_map_ce = NULL;
 
