@@ -309,8 +309,8 @@ struct node_s {
   size_t         name_length;
   struct node_s* first_child;
   struct node_s* last_child;
-  struct node_s* next_sibbling;
-  struct node_s* prev_sibbling;
+  struct node_s* next_sibling;
+  struct node_s* prev_sibling;
 };
 
 static struct node_s*
@@ -323,8 +323,8 @@ php_cassandra_parse_node_new()
   node->name_length   = 0;
   node->first_child   = NULL;
   node->last_child    = NULL;
-  node->next_sibbling = NULL;
-  node->prev_sibbling = NULL;
+  node->next_sibling  = NULL;
+  node->prev_sibling  = NULL;
 
   return node;
 }
@@ -338,9 +338,9 @@ php_cassandra_parse_node_free(struct node_s* node)
   }
   node->last_child = NULL;
 
-  if (node->next_sibbling) {
-    php_cassandra_parse_node_free(node->next_sibbling);
-    node->next_sibbling = NULL;
+  if (node->next_sibling) {
+    php_cassandra_parse_node_free(node->next_sibling);
+    node->next_sibling = NULL;
   }
 
   efree(node);
@@ -415,10 +415,10 @@ php_cassandra_parse_class_name(const char*     validator,
         }
 
         if (node->last_child) {
-          node->last_child->next_sibbling = child;
+          node->last_child->next_sibling = child;
         }
 
-        child->prev_sibbling = node->last_child;
+        child->prev_sibling = node->last_child;
         node->last_child = child;
 
         node = child;
@@ -428,8 +428,8 @@ php_cassandra_parse_class_name(const char*     validator,
 
         child = php_cassandra_parse_node_new();
         child->parent        = node->parent;
-        child->prev_sibbling = node;
-        node->next_sibbling  = child;
+        child->prev_sibling  = node;
+        node->next_sibling   = child;
         node->parent->last_child = child;
 
         node = child;
@@ -558,9 +558,9 @@ php_cassandra_node_dump_to(struct node_s* node, smart_str* text)
     smart_str_appendl(text, ")", 1);
   }
 
-  if (node->next_sibbling) {
+  if (node->next_sibling) {
     smart_str_appendl(text, ", ", 2);
-    php_cassandra_node_dump_to(node->next_sibbling, text);
+    php_cassandra_node_dump_to(node->next_sibling, text);
   }
 }
 
@@ -588,7 +588,7 @@ php_cassandra_create_type(struct node_s* node, zval** type_out TSRMLS_DC)
     *type_out = php_cassandra_type_custom(php_cassandra_node_dump(node) TSRMLS_CC);
   } else if (type == CASS_VALUE_TYPE_MAP) {
     *type_out = php_cassandra_type_map(php_cassandra_lookup_type(node->first_child TSRMLS_CC),
-                                       php_cassandra_lookup_type(node->first_child->next_sibbling TSRMLS_CC) TSRMLS_CC);
+                                       php_cassandra_lookup_type(node->first_child->next_sibling TSRMLS_CC) TSRMLS_CC);
   } else if (type == CASS_VALUE_TYPE_LIST) {
     *type_out = php_cassandra_type_collection(php_cassandra_lookup_type(node->first_child TSRMLS_CC) TSRMLS_CC);
   } else if (type == CASS_VALUE_TYPE_SET) {
