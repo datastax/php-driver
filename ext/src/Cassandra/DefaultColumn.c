@@ -8,8 +8,9 @@ PHP_METHOD(DefaultColumn, name)
 {
   cassandra_column* self;
 
-  if (zend_parse_parameters_none() == FAILURE)
+  if (zend_parse_parameters_none() == FAILURE) {
     return;
+  }
 
   self = (cassandra_column*) zend_object_store_get_object(getThis() TSRMLS_CC);
 
@@ -20,8 +21,9 @@ PHP_METHOD(DefaultColumn, type)
 {
   cassandra_column* self;
 
-  if (zend_parse_parameters_none() == FAILURE)
+  if (zend_parse_parameters_none() == FAILURE) {
     return;
+  }
 
   self = (cassandra_column*) zend_object_store_get_object(getThis() TSRMLS_CC);
 
@@ -32,8 +34,9 @@ PHP_METHOD(DefaultColumn, isReversed)
 {
   cassandra_column* self;
 
-  if (zend_parse_parameters_none() == FAILURE)
+  if (zend_parse_parameters_none() == FAILURE) {
     return;
+  }
 
   self = (cassandra_column*) zend_object_store_get_object(getThis() TSRMLS_CC);
 
@@ -48,8 +51,9 @@ PHP_METHOD(DefaultColumn, isStatic)
   const char*                str;
   size_t                     str_len;
 
-  if (zend_parse_parameters_none() == FAILURE)
+  if (zend_parse_parameters_none() == FAILURE) {
     return;
+  }
 
   self  = (cassandra_column*) zend_object_store_get_object(getThis() TSRMLS_CC);
   field = cass_schema_meta_get_field(self->meta, "type");
@@ -70,8 +74,9 @@ PHP_METHOD(DefaultColumn, isFrozen)
 {
   cassandra_column* self;
 
-  if (zend_parse_parameters_none() == FAILURE)
+  if (zend_parse_parameters_none() == FAILURE) {
     return;
+  }
 
   self = (cassandra_column*) zend_object_store_get_object(getThis() TSRMLS_CC);
 
@@ -83,8 +88,9 @@ PHP_METHOD(DefaultColumn, indexName)
   cassandra_column* self;
   zval* value;
 
-  if (zend_parse_parameters_none() == FAILURE)
+  if (zend_parse_parameters_none() == FAILURE) {
     return;
+  }
 
   self = (cassandra_column*) zend_object_store_get_object(getThis() TSRMLS_CC);
 
@@ -97,8 +103,9 @@ PHP_METHOD(DefaultColumn, indexOptions)
   cassandra_column* self;
   zval* value;
 
-  if (zend_parse_parameters_none() == FAILURE)
+  if (zend_parse_parameters_none() == FAILURE) {
     return;
+  }
 
   self = (cassandra_column*) zend_object_store_get_object(getThis() TSRMLS_CC);
 
