@@ -137,6 +137,7 @@ php_cassandra_type_scalar(CassValueType type TSRMLS_DC)
     if (CASSANDRA_G(TYPE_CODE(name)) == NULL) { \
       CASSANDRA_G(TYPE_CODE(name)) = php_cassandra_type_scalar_new(type TSRMLS_CC); \
     } \
+    Z_ADDREF_P(CASSANDRA_G(TYPE_CODE(name))); \
     return CASSANDRA_G(TYPE_CODE(name)); \
   }
   PHP_CASSANDRA_SCALAR_TYPES_MAP(XX_SCALAR)
@@ -595,7 +596,6 @@ php_cassandra_create_type(struct node_s* node, zval** type_out TSRMLS_DC)
     *type_out = php_cassandra_type_set(php_cassandra_lookup_type(node->first_child TSRMLS_CC) TSRMLS_CC);
   } else {
     *type_out = php_cassandra_type_scalar(type TSRMLS_CC);
-    Z_ADDREF_P(*type_out);
   }
 
   return SUCCESS;
