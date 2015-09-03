@@ -29,12 +29,10 @@ php_cassandra_map_set(cassandra_map* map, zval* zkey, zval* zvalue TSRMLS_DC)
   }
 
   if (!php_cassandra_hash_object(zkey, map->key_type, &key, &key_len TSRMLS_CC)) {
-    zend_throw_exception_ex(cassandra_invalid_argument_exception_ce, 0 TSRMLS_CC, "Invalid key");
     return 0;
   }
 
   if (!php_cassandra_validate_object(zvalue, map->value_type TSRMLS_CC)) {
-    zend_throw_exception_ex(cassandra_invalid_argument_exception_ce, 0 TSRMLS_CC, "Invalid value");
     return 0;
   }
 
@@ -58,7 +56,6 @@ php_cassandra_map_get(cassandra_map* map, zval* zkey, zval** zvalue TSRMLS_DC)
   zval** value;
 
   if (!php_cassandra_hash_object(zkey, map->key_type, &key, &key_len TSRMLS_CC)) {
-    zend_throw_exception_ex(cassandra_invalid_argument_exception_ce, 0 TSRMLS_CC, "Invalid key");
     return 0;
   }
 
@@ -79,7 +76,6 @@ php_cassandra_map_del(cassandra_map* map, zval* zkey TSRMLS_DC)
   int   result = 0;
 
   if (!php_cassandra_hash_object(zkey, map->key_type, &key, &key_len TSRMLS_CC)) {
-    zend_throw_exception_ex(cassandra_invalid_argument_exception_ce, 0 TSRMLS_CC, "Invalid key");
     return 0;
   }
 

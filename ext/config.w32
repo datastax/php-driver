@@ -67,7 +67,22 @@ if (PHP_CASSANDRA != "no" &&
             "Timeuuid.c " +
             "Uuid.c " +
             "UuidInterface.c " +
-            "Varint.c", "cassandra");
+            "Varint.c" +
+            "Column.c" +
+            "DefaultColumn.c" +
+            "DefaultKeyspace.c" +
+            "DefaultSchema.c" +
+            "DefaultTable.c" +
+            "Keyspace.c" +
+            "Schema.c" +
+            "Table.c" +
+            "Type.c", "cassandra");
+        ADD_SOURCES(configure_module_dirname + "/src/Cassandra/Type",
+            "Collection.c" +
+            "Map.c" +
+            "Scalar.c" +
+            "Set.c" +
+            "Custom.c", "cassandra");
         ADD_SOURCES(configure_module_dirname + "/src/Cassandra/Cluster",
             "Builder.c", "cassandra");
         ADD_SOURCES(configure_module_dirname + "/src/Cassandra/Exception",
@@ -107,6 +122,7 @@ if (PHP_CASSANDRA != "no" &&
             "math.c " +
             "ref.c " +
             "result.c " +
+            "types.c " +
             "uuid_gen.c", "cassandra");
 
         ADD_FLAG("LDFLAGS_CASSANDRA",
@@ -142,4 +158,3 @@ if (PHP_CASSANDRA != "no" &&
     ERROR("Unable to locate DataStax C/C++ driver or its dependencies");
   }
 }
-

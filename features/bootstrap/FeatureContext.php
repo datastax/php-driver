@@ -304,8 +304,12 @@ class FeatureContext implements Context, SnippetAcceptingContext
     private function startWebServer()
     {
         $this->webServerURL = 'http://127.0.0.1:10000';
-        $command = sprintf('%s -S %s %s', $this->phpBin, '127.0.0.1:10000', $this->phpBinOptions);
+        $command = sprintf('exec %s -S "%s"', $this->phpBin, '127.0.0.1:10000');
+        if ($this->phpBinOptions) {
+            $command = sprintf("%s %s", $command, $this->phpBinOptions);
+        }
         $this->webServerProcess = new Process($command, $this->workingDir);
+        $this->webServerProcess->setCommandLine($command);
         $this->webServerProcess->start();
         echo 'Web Server Started: ' . $this->webServerProcess->getPid() . "\n";
         sleep(5);

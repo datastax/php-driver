@@ -1,0 +1,6 @@
+#ifndef PHP_CASSANDRA_DECIMAL_H
+#define PHP_CASSANDRA_DECIMAL_H
+
+void php_cassandra_decimal_init(INTERNAL_FUNCTION_PARAMETERS);
+
+#endif /* PHP_CASSANDRA_DECIMAL_H */

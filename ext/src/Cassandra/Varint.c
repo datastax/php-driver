@@ -49,17 +49,22 @@ to_string(zval* result, cassandra_varint* varint TSRMLS_DC)
   return SUCCESS;
 }
 
-/* {{{ Cassandra\Varint::__construct(string) */
-PHP_METHOD(Varint, __construct)
+void
+php_cassandra_varint_init(INTERNAL_FUNCTION_PARAMETERS)
 {
   zval* num;
-  cassandra_varint* self = NULL;
+  cassandra_varint* self;
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z", &num) == FAILURE) {
     return;
   }
 
-  self = (cassandra_varint*) zend_object_store_get_object(getThis() TSRMLS_CC);
+  if (getThis() && instanceof_function(Z_OBJCE_P(getThis()), cassandra_varint_ce TSRMLS_CC)) {
+    self = (cassandra_varint*) zend_object_store_get_object(getThis() TSRMLS_CC);
+  } else {
+    object_init_ex(return_value, cassandra_varint_ce);
+    self = (cassandra_varint*) zend_object_store_get_object(return_value TSRMLS_CC);
+  }
 
   if (Z_TYPE_P(num) == IS_LONG) {
     mpz_set_si(self->value, Z_LVAL_P(num));
@@ -75,6 +80,12 @@ PHP_METHOD(Varint, __construct)
   } else {
     INVALID_ARGUMENT(num, "a long, double, numeric string or a Cassandra\\Varint instance");
   }
+}
+
+/* {{{ Cassandra\Varint::__construct(string) */
+PHP_METHOD(Varint, __construct)
+{
+  php_cassandra_varint_init(INTERNAL_FUNCTION_PARAM_PASSTHRU);
 }
 /* }}} */
 

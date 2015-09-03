@@ -255,12 +255,27 @@ static PHP_GINIT_FUNCTION(cassandra)
   cassandra_globals->uuid_gen            = cass_uuid_gen_new();
   cassandra_globals->persistent_clusters = 0;
   cassandra_globals->persistent_sessions = 0;
+  cassandra_globals->type_varchar        = NULL;
+  cassandra_globals->type_text           = NULL;
+  cassandra_globals->type_blob           = NULL;
+  cassandra_globals->type_ascii          = NULL;
+  cassandra_globals->type_bigint         = NULL;
+  cassandra_globals->type_counter        = NULL;
+  cassandra_globals->type_int            = NULL;
+  cassandra_globals->type_varint         = NULL;
+  cassandra_globals->type_boolean        = NULL;
+  cassandra_globals->type_decimal        = NULL;
+  cassandra_globals->type_double         = NULL;
+  cassandra_globals->type_float          = NULL;
+  cassandra_globals->type_inet           = NULL;
+  cassandra_globals->type_timestamp      = NULL;
+  cassandra_globals->type_uuid           = NULL;
+  cassandra_globals->type_timeuuid       = NULL;
 }
 
 static PHP_GSHUTDOWN_FUNCTION(cassandra)
 {
   cass_uuid_gen_free(cassandra_globals->uuid_gen);
-
   php_cassandra_log_cleanup();
 }
 
@@ -340,6 +355,22 @@ PHP_MINIT_FUNCTION(cassandra)
   cassandra_define_ExecutionOptions(TSRMLS_C);
   cassandra_define_Rows(TSRMLS_C);
 
+  cassandra_define_Schema(TSRMLS_C);
+  cassandra_define_DefaultSchema(TSRMLS_C);
+  cassandra_define_Keyspace(TSRMLS_C);
+  cassandra_define_DefaultKeyspace(TSRMLS_C);
+  cassandra_define_Table(TSRMLS_C);
+  cassandra_define_DefaultTable(TSRMLS_C);
+  cassandra_define_Column(TSRMLS_C);
+  cassandra_define_DefaultColumn(TSRMLS_C);
+
+  cassandra_define_Type(TSRMLS_C);
+  cassandra_define_TypeScalar(TSRMLS_C);
+  cassandra_define_TypeCollection(TSRMLS_C);
+  cassandra_define_TypeSet(TSRMLS_C);
+  cassandra_define_TypeMap(TSRMLS_C);
+  cassandra_define_TypeCustom(TSRMLS_C);
+
   return SUCCESS;
 }
 
@@ -357,6 +388,86 @@ PHP_RINIT_FUNCTION(cassandra)
 
 PHP_RSHUTDOWN_FUNCTION(cassandra)
 {
+  if (CASSANDRA_G(type_varchar)) {
+    zval_ptr_dtor(&CASSANDRA_G(type_varchar));
+    CASSANDRA_G(type_varchar) = NULL;
+  }
+
+  if (CASSANDRA_G(type_text)) {
+    zval_ptr_dtor(&CASSANDRA_G(type_text));
+    CASSANDRA_G(type_text) = NULL;
+  }
+
+  if (CASSANDRA_G(type_blob)) {
+    zval_ptr_dtor(&CASSANDRA_G(type_blob));
+    CASSANDRA_G(type_blob) = NULL;
+  }
+
+  if (CASSANDRA_G(type_ascii)) {
+    zval_ptr_dtor(&CASSANDRA_G(type_ascii));
+    CASSANDRA_G(type_ascii) = NULL;
+  }
+
+  if (CASSANDRA_G(type_bigint)) {
+    zval_ptr_dtor(&CASSANDRA_G(type_bigint));
+    CASSANDRA_G(type_bigint) = NULL;
+  }
+
+  if (CASSANDRA_G(type_counter)) {
+    zval_ptr_dtor(&CASSANDRA_G(type_counter));
+    CASSANDRA_G(type_counter) = NULL;
+  }
+
+  if (CASSANDRA_G(type_int)) {
+    zval_ptr_dtor(&CASSANDRA_G(type_int));
+    CASSANDRA_G(type_int) = NULL;
+  }
+
+  if (CASSANDRA_G(type_varint)) {
+    zval_ptr_dtor(&CASSANDRA_G(type_varint));
+    CASSANDRA_G(type_varint) = NULL;
+  }
+
+  if (CASSANDRA_G(type_boolean)) {
+    zval_ptr_dtor(&CASSANDRA_G(type_boolean));
+    CASSANDRA_G(type_boolean) = NULL;
+  }
+
+  if (CASSANDRA_G(type_decimal)) {
+    zval_ptr_dtor(&CASSANDRA_G(type_decimal));
+    CASSANDRA_G(type_decimal) = NULL;
+  }
+
+  if (CASSANDRA_G(type_double)) {
+    zval_ptr_dtor(&CASSANDRA_G(type_double));
+    CASSANDRA_G(type_double) = NULL;
+  }
+
+  if (CASSANDRA_G(type_float)) {
+    zval_ptr_dtor(&CASSANDRA_G(type_float));
+    CASSANDRA_G(type_float) = NULL;
+  }
+
+  if (CASSANDRA_G(type_inet)) {
+    zval_ptr_dtor(&CASSANDRA_G(type_inet));
+    CASSANDRA_G(type_inet) = NULL;
+  }
+
+  if (CASSANDRA_G(type_timestamp)) {
+    zval_ptr_dtor(&CASSANDRA_G(type_timestamp));
+    CASSANDRA_G(type_timestamp) = NULL;
+  }
+
+  if (CASSANDRA_G(type_uuid)) {
+    zval_ptr_dtor(&CASSANDRA_G(type_uuid));
+    CASSANDRA_G(type_uuid) = NULL;
+  }
+
+  if (CASSANDRA_G(type_timeuuid)) {
+    zval_ptr_dtor(&CASSANDRA_G(type_timeuuid));
+    CASSANDRA_G(type_timeuuid) = NULL;
+  }
+
   return SUCCESS;
 }
 

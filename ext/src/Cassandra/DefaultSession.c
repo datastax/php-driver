@@ -366,6 +366,12 @@ create_single(cassandra_statement* statement, HashTable* arguments,
   return stmt;
 }
 
+static void
+free_statement(void* statement)
+{
+  cass_statement_free((CassStatement*) statement);
+}
+
 PHP_METHOD(DefaultSession, execute)
 {
   zval *statement = NULL;
@@ -472,7 +478,7 @@ PHP_METHOD(DefaultSession, execute)
     if (single && cass_result_has_more_pages(result)) {
       Z_ADDREF_P(getThis());
 
-      rows->statement = php_cassandra_new_ref(single);
+      rows->statement = php_cassandra_new_ref(single, free_statement);
       rows->session   = getThis();
       rows->result    = result;
       return;
@@ -549,7 +555,7 @@ PHP_METHOD(DefaultSession, executeAsync)
 
       Z_ADDREF_P(getThis());
 
-      future_rows->statement = php_cassandra_new_ref(single);
+      future_rows->statement = php_cassandra_new_ref(single, free_statement);
       future_rows->session   = getThis();
       future_rows->future    = cass_session_execute(self->session, single);
       break;
@@ -676,6 +682,28 @@ PHP_METHOD(DefaultSession, closeAsync)
   future->future = cass_session_close(self->session);
 }
 
+static void
+free_schema(void* schema)
+{
+  cass_schema_free((CassSchema*) schema);
+}
+
+PHP_METHOD(DefaultSession, schema)
+{
+  cassandra_schema* schema;
+  cassandra_session* self =
+    (cassandra_session*) zend_object_store_get_object(getThis() TSRMLS_CC);
+
+  if (zend_parse_parameters_none() == FAILURE)
+    return;
+
+  object_init_ex(return_value, cassandra_default_schema_ce);
+  schema = (cassandra_schema*) zend_object_store_get_object(return_value TSRMLS_CC);
+
+  schema->schema = php_cassandra_new_ref((void*) cass_session_get_schema(self->session),
+                                         free_schema);
+}
+
 ZEND_BEGIN_ARG_INFO_EX(arginfo_execute, 0, ZEND_RETURN_VALUE, 1)
   ZEND_ARG_OBJ_INFO(0, statement, Cassandra\\Statement, 0)
   ZEND_ARG_OBJ_INFO(0, options, Cassandra\\ExecutionOptions, 0)
@@ -700,6 +728,7 @@ static zend_function_entry cassandra_default_session_methods[] = {
   PHP_ME(DefaultSession, prepareAsync, arginfo_prepare, ZEND_ACC_PUBLIC)
   PHP_ME(DefaultSession, close, arginfo_timeout, ZEND_ACC_PUBLIC)
   PHP_ME(DefaultSession, closeAsync, arginfo_none, ZEND_ACC_PUBLIC)
+  PHP_ME(DefaultSession, schema, arginfo_none, ZEND_ACC_PUBLIC)
   PHP_FE_END
 };
 
@@ -708,7 +737,6 @@ static zend_object_handlers cassandra_default_session_handlers;
 static HashTable*
 php_cassandra_default_session_properties(zval *object TSRMLS_DC)
 {
-  /* cassandra_session* self = (cassandra_session*) zend_object_store_get_object(object TSRMLS_CC); */
   HashTable* props = zend_std_get_properties(object TSRMLS_CC);
 
   return props;

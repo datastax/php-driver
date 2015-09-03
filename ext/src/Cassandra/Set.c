@@ -1,6 +1,6 @@
 #include "php_cassandra.h"
 #include "util/collections.h"
-#include "Set.h"
+#include "src/Cassandra/Set.h"
 
 zend_class_entry *cassandra_set_ce = NULL;
 

@@ -207,7 +207,7 @@ php_cassandra_parse_decimal(char* in, int in_len, mpz_t* number, long* scale TSR
 
   maybe_octal = (in[point] == '0');
 
-  // Hex or binary
+  /* Hex or binary */
   if (maybe_octal && (in[point + 1] == 'b' || in[point + 1] == 'x')) {
     *scale = 0;
     return php_cassandra_parse_varint(in, in_len, number TSRMLS_CC);
