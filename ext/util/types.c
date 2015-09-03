@@ -399,7 +399,7 @@ php_cassandra_parse_class_name(const char*     validator,
       } else if (token == TOKEN_END) {
         break;
       } else {
-        EXPECTING_TOKEN("a coma, a closing parenthesis or an end of string");
+        EXPECTING_TOKEN("a comma, a closing parenthesis or an end of string");
       }
     }
 
@@ -441,7 +441,7 @@ php_cassandra_parse_class_name(const char*     validator,
         break;
       } else {
         php_cassandra_parse_node_free(root);
-        EXPECTING_TOKEN("opening/closing parenthesis or coma");
+        EXPECTING_TOKEN("opening/closing parenthesis or comma");
       }
     }
 
