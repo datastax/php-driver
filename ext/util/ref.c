@@ -24,11 +24,14 @@ void
 php_cassandra_del_ref(cassandra_ref** ref_ptr)
 {
   cassandra_ref* ref = *ref_ptr;
-  ref->count--;
+  if (ref) {
+    ref->count--;
 
-  if (ref->count <= 0) {
-    ref->destruct(ref->data);
-    efree(ref);
-    ref_ptr = NULL;
+    if (ref->count <= 0) {
+      ref->destruct(ref->data);
+      ref->data = NULL;
+      efree(ref);
+      *ref_ptr = NULL;
+    }
   }
 }

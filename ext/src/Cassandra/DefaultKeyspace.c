@@ -170,6 +170,7 @@ php_cassandra_default_keyspace_free(void *object TSRMLS_DC)
 
   if (keyspace->schema) {
     php_cassandra_del_ref(&keyspace->schema);
+    keyspace->schema = NULL;
   }
   keyspace->meta = NULL;
 

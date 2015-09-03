@@ -12,6 +12,7 @@ php_cassandra_future_clear(cassandra_future_rows* self)
 {
   if (self->statement) {
     php_cassandra_del_ref(&self->statement);
+    self->statement = NULL;
   }
 
   if (self->session) {
@@ -65,6 +66,7 @@ PHP_METHOD(FutureRows, get)
   if (php_cassandra_get_result(result, &rows->rows TSRMLS_CC) == FAILURE) {
     cass_result_free(result);
     zval_ptr_dtor(&self->rows);
+    self->rows = NULL;
     return;
   }
 

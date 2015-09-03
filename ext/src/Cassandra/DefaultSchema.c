@@ -109,6 +109,7 @@ php_cassandra_default_schema_free(void *object TSRMLS_DC)
 
   if (schema->schema) {
     php_cassandra_del_ref(&schema->schema);
+    schema->schema = NULL;
   }
 
   efree(schema);

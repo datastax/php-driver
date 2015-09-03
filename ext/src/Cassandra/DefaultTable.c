@@ -366,6 +366,7 @@ php_cassandra_default_table_free(void *object TSRMLS_DC)
 
   if (table->schema) {
     php_cassandra_del_ref(&table->schema);
+    table->schema = NULL;
   }
   table->meta = NULL;
 

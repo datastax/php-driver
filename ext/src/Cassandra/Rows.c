@@ -10,16 +10,12 @@ php_cassandra_rows_clear(cassandra_rows* self)
 {
   if (self->result) {
     cass_result_free(self->result);
-    self->result  = NULL;
+    self->result = NULL;
   }
 
   if (self->statement) {
     php_cassandra_del_ref(&self->statement);
-  }
-
-  if (self->result) {
-    cass_result_free(self->result);
-    self->result = NULL;
+    self->statement = NULL;
   }
 
   if (self->session) {
