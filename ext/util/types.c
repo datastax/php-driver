@@ -217,7 +217,7 @@ enum token_type {
   TOKEN_ILLEGAL = 0,
   TOKEN_PAREN_OPEN,
   TOKEN_PAREN_CLOSE,
-  TOKEN_COMA,
+  TOKEN_COMMA,
   TOKEN_COLON,
   TOKEN_NAME,
   TOKEN_END
@@ -237,7 +237,7 @@ describe_token(enum token_type token)
   case TOKEN_ILLEGAL:     return "illegal character";      break;
   case TOKEN_PAREN_OPEN:  return "opening parenthesis";    break;
   case TOKEN_PAREN_CLOSE: return "closing parenthesis";    break;
-  case TOKEN_COMA:        return "coma";                   break;
+  case TOKEN_COMMA:       return "comma";                  break;
   case TOKEN_COLON:       return "colon";                  break;
   case TOKEN_NAME:        return "alphanumeric character"; break;
   case TOKEN_END:         return "end of string";          break;
@@ -283,7 +283,7 @@ next_token(const char*  str,       size_t  len,
         i++;
         break;
       case ',':
-        type = TOKEN_COMA;
+        type = TOKEN_COMMA;
         i++;
         break;
       case ':':
@@ -381,7 +381,7 @@ php_cassandra_parse_class_name(const char*     validator,
     }
 
     if (state == STATE_AFTER_PARENS) {
-      if (token == TOKEN_COMA) {
+      if (token == TOKEN_COMMA) {
         if (node->parent == NULL) {
           EXPECTING_TOKEN("end of string");
         }
@@ -423,7 +423,7 @@ php_cassandra_parse_class_name(const char*     validator,
 
         node = child;
         continue;
-      } else if (token == TOKEN_COMA) {
+      } else if (token == TOKEN_COMMA) {
         state = STATE_CLASS;
 
         child = php_cassandra_parse_node_new();
