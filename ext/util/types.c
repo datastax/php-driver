@@ -259,6 +259,10 @@ next_token(const char*  str,       size_t  len,
 {
   enum token_type type;
 
+  if (len == 0) {
+    return TOKEN_END;
+  }
+
   unsigned int i = 0;
   char         c = str[i];
 
