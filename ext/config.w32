@@ -42,9 +42,14 @@ if (PHP_CASSANDRA != "no") {
               "Blob.c " +
               "Cluster.c " +
               "Collection.c " +
+              "Column.c " +
               "Decimal.c " +
               "DefaultCluster.c " +
+              "DefaultColumn.c " +
+              "DefaultKeyspace.c " +
+              "DefaultSchema.c " +
               "DefaultSession.c " +
+              "DefaultTable.c " +
               "Exception.c " +
               "ExecutionOptions.c " +
               "Float.c " +
@@ -55,17 +60,21 @@ if (PHP_CASSANDRA != "no") {
               "FutureSession.c " +
               "FutureValue.c " +
               "Inet.c " +
+              "Keyspace.c " +
               "Map.c " +
               "Numeric.c " +
               "PreparedStatement.c " +
               "Rows.c " +
+              "Schema.c " +
               "Session.c " +
               "Set.c " +
               "SimpleStatement.c " +
               "SSLOptions.c " +
               "Statement.c " +
+              "Table.c " +
               "Timestamp.c " +
               "Timeuuid.c " +
+              "Type.c " +
               "Uuid.c " +
               "UuidInterface.c " +
               "Varint.c", "cassandra");
@@ -98,6 +107,12 @@ if (PHP_CASSANDRA != "no") {
               "WriteTimeoutException.c", "cassandra");
           ADD_SOURCES(configure_module_dirname + "/src/Cassandra/SSLOptions",
               "Builder.c", "cassandra");
+          ADD_SOURCES(configure_module_dirname + "/src/Cassandra/Type",
+              "Collection.c " +
+              "Custom.c " +
+              "Map.c " +
+              "Scalar.c " +
+              "Set.c", "cassandra");
 
           ADD_SOURCES(configure_module_dirname + "/util",
               "bytes.c " +
@@ -108,6 +123,7 @@ if (PHP_CASSANDRA != "no") {
               "math.c " +
               "ref.c " +
               "result.c " +
+              "types.c " +
               "uuid_gen.c", "cassandra");
 
           ADD_FLAG("LDFLAGS_CASSANDRA",
@@ -119,7 +135,7 @@ if (PHP_CASSANDRA != "no") {
               "/I " + configure_module_dirname + " " +
               "/I " + PHP_CASSANDRA_CPP_DRIVER + "/include " +
               "/I " + PHP_LIBUV + "/include " +
-              "/I " + configure_module_dirname + "/src/Cassandra " +
+              "/I " + configure_module_dirname + "/src " +
               "/DCASS_STATIC " +
               "/wd4267");
 
@@ -146,4 +162,3 @@ if (PHP_CASSANDRA != "no") {
     ERROR("Unable to Locate DataStax C/C++ driver Library/Header: https://wiki.php.net/internals/windows/stepbystepbuild");
   }
 }
-

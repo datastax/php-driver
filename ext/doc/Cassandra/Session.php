@@ -26,6 +26,17 @@ namespace Cassandra;
 interface Session
 {
     /**
+     * Returns current schema.
+     *
+     * NOTE: the returned Schema instance will not be updated as the actual
+     *       schema changes, instead an updated instance should be requested by
+     *       calling Session::schema() again.
+     *
+     * @return Schema current schema.
+     */
+    public function schema();
+
+    /**
      * Executes a given statement and returns a result.
      *
      * @throws Exception

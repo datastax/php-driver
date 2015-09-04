@@ -3,27 +3,39 @@
 
 zend_class_entry *cassandra_uuid_ce = NULL;
 
-/* {{{ Cassandra\Uuid::__construct(string) */
-PHP_METHOD(Uuid, __construct)
+void
+php_cassandra_uuid_init(INTERNAL_FUNCTION_PARAMETERS)
 {
   char *value;
   int value_len;
-  cassandra_uuid* uuid;
+  cassandra_uuid* self;
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "|s", &value, &value_len) == FAILURE) {
     return;
   }
 
-  uuid = (cassandra_uuid*) zend_object_store_get_object(getThis() TSRMLS_CC);
+  if (getThis() && instanceof_function(Z_OBJCE_P(getThis()), cassandra_uuid_ce TSRMLS_CC)) {
+    self = (cassandra_uuid*) zend_object_store_get_object(getThis() TSRMLS_CC);
+  } else {
+    object_init_ex(return_value, cassandra_uuid_ce);
+    self = (cassandra_uuid*) zend_object_store_get_object(return_value TSRMLS_CC);
+  }
 
-  if (ZEND_NUM_ARGS() == 0)
-    php_cassandra_uuid_generate_random(&uuid->uuid TSRMLS_CC);
-  else {
-    if (cass_uuid_from_string(value, &uuid->uuid) != CASS_OK) {
-      zend_throw_exception_ex(cassandra_invalid_argument_exception_ce, 0 TSRMLS_CC, "Invalid uuid value: '%s'", value);
+  if (ZEND_NUM_ARGS() == 0) {
+    php_cassandra_uuid_generate_random(&self->uuid TSRMLS_CC);
+  } else {
+    if (cass_uuid_from_string(value, &self->uuid) != CASS_OK) {
+      zend_throw_exception_ex(cassandra_invalid_argument_exception_ce, 0 TSRMLS_CC,
+                              "Invalid UUID: '%.*s'", value_len, value);
       return;
     }
   }
+}
+
+/* {{{ Cassandra\Uuid::__construct(string) */
+PHP_METHOD(Uuid, __construct)
+{
+  php_cassandra_uuid_init(INTERNAL_FUNCTION_PARAM_PASSTHRU);
 }
 /* }}} */
 

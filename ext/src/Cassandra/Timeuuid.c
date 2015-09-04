@@ -4,27 +4,38 @@
 
 zend_class_entry *cassandra_timeuuid_ce = NULL;
 
-/* {{{ Cassandra\Timeuuid::__construct(string) */
-PHP_METHOD(Timeuuid, __construct)
+void
+php_cassandra_timeuuid_init(INTERNAL_FUNCTION_PARAMETERS)
 {
   long timestamp;
-  cassandra_uuid* uuid;
+  cassandra_uuid* self;
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "|l", &timestamp) == FAILURE) {
     return;
   }
 
-  uuid = (cassandra_uuid*) zend_object_store_get_object(getThis() TSRMLS_CC);
+  if (getThis() && instanceof_function(Z_OBJCE_P(getThis()), cassandra_timeuuid_ce TSRMLS_CC)) {
+    self = (cassandra_uuid*) zend_object_store_get_object(getThis() TSRMLS_CC);
+  } else {
+    object_init_ex(return_value, cassandra_timeuuid_ce);
+    self = (cassandra_uuid*) zend_object_store_get_object(return_value TSRMLS_CC);
+  }
 
   if (ZEND_NUM_ARGS() == 0) {
-    php_cassandra_uuid_generate_time(&uuid->uuid TSRMLS_CC);
+    php_cassandra_uuid_generate_time(&self->uuid TSRMLS_CC);
   } else {
     if (timestamp < 0) {
       zend_throw_exception_ex(cassandra_invalid_argument_exception_ce, 0 TSRMLS_CC, "Timestamp must be a positive integer, %d given", timestamp);
       return;
     }
-    php_cassandra_uuid_generate_from_time(timestamp, &uuid->uuid TSRMLS_CC);
+    php_cassandra_uuid_generate_from_time(timestamp, &self->uuid TSRMLS_CC);
   }
+}
+
+/* {{{ Cassandra\Timeuuid::__construct(string) */
+PHP_METHOD(Timeuuid, __construct)
+{
+  php_cassandra_timeuuid_init(INTERNAL_FUNCTION_PARAM_PASSTHRU);
 }
 /* }}} */
 

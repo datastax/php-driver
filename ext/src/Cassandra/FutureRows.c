@@ -52,7 +52,7 @@ PHP_METHOD(FutureRows, get)
   }
 
   result = cass_future_get_result(self->future);
-  
+
   if (!result) {
     zend_throw_exception_ex(cassandra_runtime_exception_ce, 0 TSRMLS_CC,
                             "Future doesn't contain a result.");
@@ -66,6 +66,7 @@ PHP_METHOD(FutureRows, get)
   if (php_cassandra_get_result(result, &rows->rows TSRMLS_CC) == FAILURE) {
     cass_result_free(result);
     zval_ptr_dtor(&self->rows);
+    self->rows = NULL;
     return;
   }
 
@@ -97,7 +98,6 @@ static zend_object_handlers cassandra_future_rows_handlers;
 static HashTable*
 php_cassandra_future_rows_properties(zval *object TSRMLS_DC)
 {
-  /* cassandra_future_rows* self = (cassandra_future_rows*) zend_object_store_get_object(object TSRMLS_CC); */
   HashTable* props = zend_std_get_properties(object TSRMLS_CC);
 
   return props;

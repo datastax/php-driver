@@ -28,6 +28,13 @@ final class DefaultSession implements Session
     /**
      * {@inheritDoc}
      *
+     * @return Schema current schema.
+     */
+    public function schema() {}
+
+    /**
+     * {@inheritDoc}
+     *
      * @throws Exception
      *
      * @param Statement        $statement statement to be executed

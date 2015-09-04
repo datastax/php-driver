@@ -1,0 +1,6 @@
+#ifndef PHP_CASSANDRA_VARINT_H
+#define PHP_CASSANDRA_VARINT_H
+
+void php_cassandra_varint_init(INTERNAL_FUNCTION_PARAMETERS);
+
+#endif /* PHP_CASSANDRA_VARINT_H */

@@ -10,17 +10,12 @@ php_cassandra_rows_clear(cassandra_rows* self)
 {
   if (self->result) {
     cass_result_free(self->result);
-    self->result  = NULL;
+    self->result = NULL;
   }
 
   if (self->statement) {
     php_cassandra_del_ref(&self->statement);
     self->statement = NULL;
-  }
-
-  if (self->result) {
-    cass_result_free(self->result);
-    self->result = NULL;
   }
 
   if (self->session) {
@@ -200,7 +195,6 @@ PHP_METHOD(Rows, nextPage)
   CassFuture* future = NULL;
   const CassResult* result = NULL;
   cassandra_rows* rows = NULL;
-  cassandra_future_value* future_value;
   cassandra_future_rows* future_rows = NULL;
 
   cassandra_rows* self = (cassandra_rows*) zend_object_store_get_object(getThis() TSRMLS_CC);
@@ -237,10 +231,10 @@ PHP_METHOD(Rows, nextPage)
       return;
     }
 
-    ASSERT_SUCCESS(cass_statement_set_paging_state(self->statement->statement, self->result));
+    ASSERT_SUCCESS(cass_statement_set_paging_state((CassStatement*) self->statement->data, self->result));
 
     session = (cassandra_session*) zend_object_store_get_object(self->session TSRMLS_CC);
-    future = cass_session_execute(session->session, self->statement->statement);
+    future = cass_session_execute(session->session, (CassStatement*) self->statement->data);
 
     if (php_cassandra_future_wait_timed(future, timeout TSRMLS_CC) == FAILURE) {
       return;
@@ -319,10 +313,10 @@ PHP_METHOD(Rows, nextPageAsync)
     return;
   }
 
-  ASSERT_SUCCESS(cass_statement_set_paging_state(self->statement->statement, self->result));
+  ASSERT_SUCCESS(cass_statement_set_paging_state((CassStatement*) self->statement->data, self->result));
 
   session = (cassandra_session*) zend_object_store_get_object(self->session TSRMLS_CC);
-  future = cass_session_execute(session->session, self->statement->statement);
+  future = cass_session_execute(session->session, (CassStatement*) self->statement->data);
 
   object_init_ex(self->future_next_page, cassandra_future_rows_ce);
   future_rows = (cassandra_future_rows*) zend_object_store_get_object(self->future_next_page TSRMLS_CC);
@@ -397,7 +391,6 @@ static zend_object_handlers cassandra_rows_handlers;
 static HashTable*
 php_cassandra_rows_properties(zval *object TSRMLS_DC)
 {
-  /* cassandra_rows* self = (cassandra_rows*) zend_object_store_get_object(object TSRMLS_CC); */
   HashTable* props = zend_std_get_properties(object TSRMLS_CC);
 
   return props;

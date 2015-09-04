@@ -2,9 +2,9 @@
 #include "result.h"
 #include "math.h"
 #include "collections.h"
-#include "../src/Cassandra/Collection.h"
-#include "../src/Cassandra/Map.h"
-#include "../src/Cassandra/Set.h"
+#include "src/Cassandra/Collection.h"
+#include "src/Cassandra/Map.h"
+#include "src/Cassandra/Set.h"
 
 static int
 php_cassandra_value(const CassValue* value, CassValueType type, zval** out TSRMLS_DC)
@@ -231,6 +231,15 @@ php_cassandra_value(const CassValue* value, CassValueType type, zval** out TSRML
 
   *out = return_value;
   return SUCCESS;
+}
+
+int
+php_cassandra_get_schema_field(const CassSchemaMeta* metadata, const char* field_name, zval** out TSRMLS_DC)
+{
+  const CassSchemaMetaField* field = cass_schema_meta_get_field(metadata, field_name);
+  const CassValue*           value = cass_schema_meta_field_value(field);
+
+  return php_cassandra_value(value, cass_value_type(value), out TSRMLS_CC);
 }
 
 int
