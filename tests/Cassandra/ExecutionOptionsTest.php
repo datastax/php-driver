@@ -23,4 +23,15 @@ class ExecutionOptionsTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(15, $options->timeout);
         $this->assertEquals(array('a', 1, 'b', 2, 'c', 3), $options->arguments);
     }
+
+    public function testReturnsNullValuesWhenRetrievingUndefinedSettingsByName()
+    {
+        $options = new ExecutionOptions(array());
+
+        $this->assertNull($options->consistency);
+        $this->assertNull($options->serialConsistency);
+        $this->assertNull($options->pageSize);
+        $this->assertNull($options->timeout);
+        $this->assertNull($options->arguments);
+    }
 }

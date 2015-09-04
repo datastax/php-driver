@@ -82,23 +82,30 @@ PHP_METHOD(ExecutionOptions, __get)
   self = (cassandra_execution_options*) zend_object_store_get_object(getThis() TSRMLS_CC);
 
   if (name_len == 11 && strncmp("consistency", name, name_len) == 0) {
+    if (self->consistency == -1) {
+      RETURN_NULL();
+    }
     RETURN_LONG(self->consistency);
   } else if (name_len == 17 && strncmp("serialConsistency", name, name_len) == 0) {
+    if (self->serial_consistency == -1) {
+      RETURN_NULL();
+    }
     RETURN_LONG(self->serial_consistency);
   } else if (name_len == 8 && strncmp("pageSize", name, name_len) == 0) {
+    if (self->page_size == -1) {
+      RETURN_NULL();
+    }
     RETURN_LONG(self->page_size);
   } else if (name_len == 7 && strncmp("timeout", name, name_len) == 0) {
-    if (self->timeout) {
-      RETURN_ZVAL(self->timeout, 1, 0);
-    } else {
+    if (self->timeout == NULL) {
       RETURN_NULL();
     }
+    RETURN_ZVAL(self->timeout, 1, 0);
   } else if (name_len == 9 && strncmp("arguments", name, name_len) == 0) {
-    if (self->arguments) {
-      RETURN_ZVAL(self->arguments, 1, 0);
-    } else {
+    if (self->arguments == NULL) {
       RETURN_NULL();
     }
+    RETURN_ZVAL(self->arguments, 1, 0);
   }
 }
 
