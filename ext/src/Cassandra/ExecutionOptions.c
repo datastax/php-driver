@@ -88,9 +88,17 @@ PHP_METHOD(ExecutionOptions, __get)
   } else if (name_len == 8 && strncmp("pageSize", name, name_len) == 0) {
     RETURN_LONG(self->page_size);
   } else if (name_len == 7 && strncmp("timeout", name, name_len) == 0) {
-    RETURN_ZVAL(self->timeout, 1, 0);
+    if (self->timeout) {
+      RETURN_ZVAL(self->timeout, 1, 0);
+    } else {
+      RETURN_NULL();
+    }
   } else if (name_len == 9 && strncmp("arguments", name, name_len) == 0) {
-    RETURN_ZVAL(self->arguments, 1, 0);
+    if (self->arguments) {
+      RETURN_ZVAL(self->arguments, 1, 0);
+    } else {
+      RETURN_NULL();
+    }
   }
 }
 
