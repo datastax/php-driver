@@ -31,7 +31,7 @@ interface Table
 
     /**
      * Description of the table, if any
-     * @return string|null Table description
+     * @return string Table description or null
      */
     function comment();
 
@@ -109,25 +109,25 @@ interface Table
 
     /**
      * Returns whether or not the `populate_io_cache_on_flush` is true
-     * @return boolean|null Value of `populate_io_cache_on_flush`
+     * @return boolean Value of `populate_io_cache_on_flush` or null
      */
     function populateIOCacheOnFlush();
 
     /**
      * Returns whether or not the `replicate_on_write` is true
-     * @return boolean|null Value of `replicate_on_write`
+     * @return boolean Value of `replicate_on_write` or null
      */
     function replicateOnWrite();
 
     /**
      * Returns the value of `max_index_interval`
-     * @return int|null Value of `max_index_interval`
+     * @return int Value of `max_index_interval` or null
      */
     function maxIndexInterval();
 
     /**
      * Returns the value of `min_index_interval`
-     * @return int|null Value of `min_index_interval`
+     * @return int Value of `min_index_interval` or null
      */
     function minIndexInterval();
 

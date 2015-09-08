@@ -65,18 +65,16 @@ final class Collection implements \Countable, \Iterator
     /**
      * Retrieves the value at a given index.
      *
-     * @param   int         $index  Index
-     *
-     * @return  mixed|null          Value
+     * @param   int   $index  Index
+     * @return  mixed         Value or null
      */
     public function get($index) {}
 
     /**
      * Finds index of a value in this collection.
      *
-     * @param   mixed     $value Value
-     *
-     * @return  int|null         Index
+     * @param   mixed  $value  Value
+     * @return  int            Index or null
      */
     public function find($value) {}
 

@@ -54,8 +54,8 @@ final class DefaultKeyspace implements Keyspace
     /**
      * {@inheritDoc}
      *
-     * @param  string                $name  Table name
-     * @return Cassandra\Table|null         Table instance or null
+     * @param  string          $name  Table name
+     * @return Cassandra\Table        Table instance or null
      */
     public function table($name) {}
 

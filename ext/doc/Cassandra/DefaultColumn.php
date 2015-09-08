@@ -26,7 +26,7 @@ final class DefaultColumn implements Column
     /**
      * {@inheritDoc}
      *
-     * @return string|null Name of the column or null
+     * @return string Name of the column or null
      */
     public function name() {}
 
@@ -61,14 +61,14 @@ final class DefaultColumn implements Column
     /**
      * {@inheritDoc}
      *
-     * @return string|null Name of the index if defined
+     * @return string Name of the index if defined or null
      */
     public function indexName() {}
 
     /**
      * {@inheritDoc}
-     * 
-     * @return string|null Index options if present
+     *
+     * @return string Index options if present or null
      */
     public function indexOptions() {}
 }

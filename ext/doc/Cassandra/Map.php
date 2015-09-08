@@ -153,9 +153,8 @@ final class Map implements \Countable, \Iterator, \ArrayAccess
      *
      * @throws Exception\InvalidArgumentException when the type of key is wrong
      *
-     * @param mixed $key   Key to use.
-     *
-     * @return mixed|null  Value or `null`
+     * @param  mixed $key Key to use.
+     * @return mixed      Value or `null`
      */
     public function offsetGet($key) {}
 

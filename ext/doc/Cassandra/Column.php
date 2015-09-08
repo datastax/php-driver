@@ -25,7 +25,7 @@ interface Column
 {
     /**
      * Returns the name of the column.
-     * @return string|null Name of the column or null
+     * @return string Name of the column or null
      */
     function name();
 
@@ -55,13 +55,13 @@ interface Column
 
     /**
      * Returns name of the index if defined.
-     * @return string|null Name of the index if defined
+     * @return string Name of the index if defined or null
      */
     function indexName();
 
     /**
      * Returns index options if present.
-     * @return string|null Index options if present
+     * @return string Index options if present or null
      */
     function indexOptions();
 }
