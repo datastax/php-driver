@@ -3,17 +3,20 @@ default:
         pretty: true
     suites:
         default:
+            filters:
+              tags: "~@cassandra-version-1.2&&~@cassandra-version-2.0&&~@cassandra-version-less-2.1"
             contexts:
                 - FeatureContext:
                     cluster_name: php-driver-2.1-cluster
-                    cassandra_version: 2.1.8
+                    cassandra_version: 2.1.9
 
 cassandra-version-2.0:
     formatters:
         pretty: true
     suites:
         default:
-            filters: "~@cassandra-version-2.1"
+            filters: 
+              tags: "~@cassandra-version-1.2&&~@cassandra-version-2.1&&~@cassandra-version-greater-2.0"
             contexts:
                 - FeatureContext:
                     cluster_name: php-driver-2.0-cluster
@@ -25,7 +28,7 @@ cassandra-version-1.2:
     suites:
         default:
             filters:
-              tags: "~@cassandra-version-2.0&&~@cassandra-version-2.1"
+              tags: "~@cassandra-version-2.0&&~@cassandra-version-2.1&&~@cassandra-version-greater-1.2&&~@cassandra-version-greater-2.0"
             contexts:
                 - FeatureContext:
                     cluster_name: php-driver-1.2-cluster
