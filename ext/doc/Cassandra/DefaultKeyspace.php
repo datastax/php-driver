@@ -40,7 +40,7 @@ final class DefaultKeyspace implements Keyspace
     /**
      * {@inheritDoc}
      *
-     * @return string Replication options
+     * @return array Replication options
      */
     public function replicationOptions() {}
 

@@ -37,7 +37,7 @@ interface Keyspace
 
     /**
      * Returns replication options
-     * @return string Replication options
+     * @return array Replication options
      */
     function replicationOptions();
 
