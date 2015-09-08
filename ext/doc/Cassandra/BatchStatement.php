@@ -33,16 +33,16 @@ namespace Cassandra;
  *  * `Cassandra::BATCH_COUNTER`  - this batch is used for counter updates,
  *    which are, unlike other writes, not idempotent.
  *
- * @see \Cassandra::BATCH_LOGGED
- * @see \Cassandra::BATCH_UNLOGGED
- * @see \Cassandra::BATCH_COUNTER
+ * @see Cassandra::BATCH_LOGGED
+ * @see Cassandra::BATCH_UNLOGGED
+ * @see Cassandra::BATCH_COUNTER
  */
 final class BatchStatement implements Statement
 {
     /**
      * Creates a new batch statement.
      *
-     * @param int $type must be one of Cassandra::BATCH_*
+     * @param int $type must be one of Cassandra::BATCH_* (default: Cassandra::BATCH_LOGGED).
      */
     public function __construct($type = \Cassandra::BATCH_LOGGED) {}
 
