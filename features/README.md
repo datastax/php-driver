@@ -481,7 +481,7 @@ foreach ($schema->keyspaces() as $keyspace) {
 }
 ```
 
-**NOTE** A new instance of `Cassandra\Schema` is returned each time `Cassandra\Session::schema()` is called. This instance is a simple value object and its information, such as keyspaces, tables and columns will not be kept up-to-date with the state of the cluster. In order to obtain the latest schema metadata, you have to call `Cassandra\Session::schema()` again.
+**NOTE** A new instance of [`Cassandra\Schema`](http://datastax.github.io/php-driver/api/Cassandra/interface.Schema/) is returned each time [`Cassandra\Session::schema()`](http://datastax.github.io/php-driver/api/Cassandra/interface.Session/#method.schema) is called. This instance is a simple value object and its information, such as keyspaces, tables and columns will not be kept up-to-date with the state of the cluster. In order to obtain the latest schema metadata, you have to call [`Cassandra\Session::schema()`](http://datastax.github.io/php-driver/api/Cassandra/interface.Session/#method.schema) again.
 
 ### Logging
 
