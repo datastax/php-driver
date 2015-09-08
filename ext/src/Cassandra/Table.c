@@ -24,6 +24,10 @@ static zend_function_entry cassandra_table_methods[] = {
   PHP_ABSTRACT_ME(Table, compactionStrategyClassName, arginfo_none)
   PHP_ABSTRACT_ME(Table, compactionStrategyOptions, arginfo_none)
   PHP_ABSTRACT_ME(Table, compressionParameters, arginfo_none)
+  PHP_ABSTRACT_ME(Table, populateIOCacheOnFlush, arginfo_none)
+  PHP_ABSTRACT_ME(Table, replicateOnWrite, arginfo_none)
+  PHP_ABSTRACT_ME(Table, maxIndexInterval, arginfo_none)
+  PHP_ABSTRACT_ME(Table, minIndexInterval, arginfo_none)
   PHP_ABSTRACT_ME(Table, column, arginfo_name)
   PHP_ABSTRACT_ME(Table, columns, arginfo_none)
   PHP_FE_END

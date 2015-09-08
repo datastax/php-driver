@@ -37,7 +37,7 @@ interface Keyspace
 
     /**
      * Returns replication options
-     * @return array Replication options
+     * @return Cassandra\Map Replication options
      */
     function replicationOptions();
 

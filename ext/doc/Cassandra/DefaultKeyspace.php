@@ -40,7 +40,7 @@ final class DefaultKeyspace implements Keyspace
     /**
      * {@inheritDoc}
      *
-     * @return array Replication options
+     * @return Cassandra\Map Replication options
      */
     public function replicationOptions() {}
 

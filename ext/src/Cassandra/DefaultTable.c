@@ -310,6 +310,61 @@ PHP_METHOD(DefaultTable, columns)
   cass_iterator_free(iterator);
 }
 
+PHP_METHOD(DefaultTable, populateIOCacheOnFlush)
+{
+  cassandra_table* self;
+  zval* value;
+
+  if (zend_parse_parameters_none() == FAILURE)
+    return;
+
+  self = (cassandra_table*) zend_object_store_get_object(getThis() TSRMLS_CC);
+
+  php_cassandra_get_schema_field(self->meta, "populate_io_cache_on_flush", &value TSRMLS_CC);
+  RETURN_ZVAL(value, 0, 1);
+}
+
+PHP_METHOD(DefaultTable, replicateOnWrite)
+{
+  cassandra_table* self;
+  zval* value;
+
+  if (zend_parse_parameters_none() == FAILURE)
+    return;
+
+  self = (cassandra_table*) zend_object_store_get_object(getThis() TSRMLS_CC);
+
+  php_cassandra_get_schema_field(self->meta, "replicate_on_write", &value TSRMLS_CC);
+  RETURN_ZVAL(value, 0, 1);
+}
+
+PHP_METHOD(DefaultTable, maxIndexInterval)
+{
+  cassandra_table* self;
+  zval* value;
+
+  if (zend_parse_parameters_none() == FAILURE)
+    return;
+
+  self = (cassandra_table*) zend_object_store_get_object(getThis() TSRMLS_CC);
+
+  php_cassandra_get_schema_field(self->meta, "max_index_interval", &value TSRMLS_CC);
+  RETURN_ZVAL(value, 0, 1);
+}
+
+PHP_METHOD(DefaultTable, minIndexInterval)
+{
+  cassandra_table* self;
+  zval* value;
+
+  if (zend_parse_parameters_none() == FAILURE)
+    return;
+
+  self = (cassandra_table*) zend_object_store_get_object(getThis() TSRMLS_CC);
+
+  php_cassandra_get_schema_field(self->meta, "min_index_interval", &value TSRMLS_CC);
+  RETURN_ZVAL(value, 0, 1);
+}
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_name, 0, ZEND_RETURN_VALUE, 1)
   ZEND_ARG_INFO(0, name)
@@ -333,6 +388,10 @@ static zend_function_entry cassandra_default_table_methods[] = {
   PHP_ME(DefaultTable, compactionStrategyClassName, arginfo_none, ZEND_ACC_PUBLIC)
   PHP_ME(DefaultTable, compactionStrategyOptions, arginfo_none, ZEND_ACC_PUBLIC)
   PHP_ME(DefaultTable, compressionParameters, arginfo_none, ZEND_ACC_PUBLIC)
+  PHP_ME(DefaultTable, populateIOCacheOnFlush, arginfo_none, ZEND_ACC_PUBLIC)
+  PHP_ME(DefaultTable, replicateOnWrite, arginfo_none, ZEND_ACC_PUBLIC)
+  PHP_ME(DefaultTable, maxIndexInterval, arginfo_none, ZEND_ACC_PUBLIC)
+  PHP_ME(DefaultTable, minIndexInterval, arginfo_none, ZEND_ACC_PUBLIC)
   PHP_ME(DefaultTable, column, arginfo_name, ZEND_ACC_PUBLIC)
   PHP_ME(DefaultTable, columns, arginfo_none, ZEND_ACC_PUBLIC)
   PHP_FE_END

@@ -110,16 +110,40 @@ final class DefaultTable implements Table
     /**
      * {@inheritDoc}
      *
-     * @return string Compaction strategy options
+     * @return Cassandra\Map Compaction strategy options
      */
     public function compactionStrategyOptions() {}
 
     /**
      * {@inheritDoc}
      *
-     * @return string Compression parameters
+     * @return Cassandra\Map Compression parameters
      */
     public function compressionParameters() {}
+
+    /**
+     * {@inheritDoc}
+     * @return boolean|null Value of `populate_io_cache_on_flush`
+     */
+    public function populateIOCacheOnFlush();
+
+    /**
+     * {@inheritDoc}
+     * @return boolean|null Value of `replicate_on_write`
+     */
+    public function replicateOnWrite();
+
+    /**
+     * {@inheritDoc}
+     * @return int|null Value of `max_index_interval`
+     */
+    public function maxIndexInterval();
+
+    /**
+     * {@inheritDoc}
+     * @return int|null Value of `min_index_interval`
+     */
+    public function minIndexInterval();
 
     /**
      * {@inheritDoc}

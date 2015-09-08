@@ -97,15 +97,39 @@ interface Table
 
     /**
      * Returns compaction strategy options
-     * @return string Compaction strategy options
+     * @return Cassandra\Map Compaction strategy options
      */
     function compactionStrategyOptions();
 
     /**
      * Returns compression parameters
-     * @return string Compression parameters
+     * @return Cassandra\Map Compression parameters
      */
     function compressionParameters();
+
+    /**
+     * Returns whether or not the `populate_io_cache_on_flush` is true
+     * @return boolean|null Value of `populate_io_cache_on_flush`
+     */
+    function populateIOCacheOnFlush();
+
+    /**
+     * Returns whether or not the `replicate_on_write` is true
+     * @return boolean|null Value of `replicate_on_write`
+     */
+    function replicateOnWrite();
+
+    /**
+     * Returns the value of `max_index_interval`
+     * @return int|null Value of `max_index_interval`
+     */
+    function maxIndexInterval();
+
+    /**
+     * Returns the value of `min_index_interval`
+     * @return int|null Value of `min_index_interval`
+     */
+    function minIndexInterval();
 
     /**
      * Returns column by name
