@@ -483,6 +483,25 @@ foreach ($schema->keyspaces() as $keyspace) {
 
 **NOTE** A new instance of [`Cassandra\Schema`](http://datastax.github.io/php-driver/api/Cassandra/interface.Schema/) is returned each time [`Cassandra\Session::schema()`](http://datastax.github.io/php-driver/api/Cassandra/interface.Session/#method.schema) is called. This instance is a simple value object and its information, such as keyspaces, tables and columns will not be kept up-to-date with the state of the cluster. In order to obtain the latest schema metadata, you have to call [`Cassandra\Session::schema()`](http://datastax.github.io/php-driver/api/Cassandra/interface.Session/#method.schema) again.
 
+### Data Types
+
+The PHP driver for Apache Cassandra supports [a variety of datatypes](http://datastax.github.io/php-driver/features/datatypes/).
+
+You can also use the rich type metadata API to define and inspect types, as well as validate data objects.
+
+The example below defines and creates a [`Cassandra\Map`](http://datastax.github.io/php-driver/api/Cassandra/class.Map/) using [`Cassandra\Type`](http://datastax.github.io/php-driver/api/Cassandra/interface.Type/) interface.
+
+```php
+<?php
+
+$map = Cassandra\Type::map(Cassandra\Type::varchar(), Cassandra\Type::int())
+                     ->create('a', 1, 'b', 2, 'c', 3, 'd', 4);
+
+var_dump(array_combine($map->keys(), $map->values()));
+```
+
+**NOTE** The `create()` method or various types validates and coerces provided values into the target type.
+
 ### Logging
 
 You can configure the location of the log file for the driver as well as the log level using the following `php.ini` settings:

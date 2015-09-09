@@ -14,13 +14,10 @@ This is a wrapper around [the DataStax C/C++ Driver for Apache Cassandra and Dat
 * IRC: #datastax-drivers on [irc.freenode.net](http://freenode.net>)
 * Twitter: Follow the latest news about DataStax Drivers - [@avalanche123](http://twitter.com/avalanche123), [@al3xandru](https://twitter.com/al3xandru)
 
-## Status of v1.0.0
-
-This is the first stable release of the DataStax PHP Driver.
-
 ## What's new in v1.0.0:
 
 * [Schema Metadata API](http://datastax.github.io/php-driver/features/#schema-metadata).
+* [Type Metadata API](http://datastax.github.io/php-driver/features/#data-types).
 
 ## Feedback Requested
 
