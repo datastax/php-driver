@@ -144,7 +144,7 @@ Feature: Schema Metadata
       Replicate on Write: False
       """
 
-    @cassandra-version-2.0
+    @cassandra-version-only-2.0
     Scenario: Additional table metadata will only exist for Cassandra versions
               2.0
     Given the following example:
@@ -167,7 +167,7 @@ Feature: Schema Metadata
       Index Interval: 512
       """
 
-    @cassandra-version-greater-1.2
+    @cassandra-version-2.0
     Scenario: Additional table metadata will only exist for Cassandra versions
               2.0+
     Given the following example:
@@ -196,7 +196,7 @@ Feature: Schema Metadata
       Speculative Retry: 10
       """
 
-    @cassandra-version-greater-2.0
+    @cassandra-version-2.1
     Scenario: Additional table metadata will only exist for Cassandra versions
               2.1+
     Given the following example:
@@ -222,7 +222,7 @@ Feature: Schema Metadata
       Minimum Index Interval: 4
       """
 
-    @cassandra-version-greater-1.2
+    @cassandra-version-2.0
     Scenario: Data types can be determined by the column metadata for Cassandra
               versions 2.0+
     Given the following example:
@@ -233,47 +233,44 @@ Feature: Schema Metadata
                          ->build();
       $session   = $cluster->connect("simplex");
       $schema    = $session->schema();
-      $id        = $schema->keyspace("simplex")->table("values")->column("id");
-      $bigint    = $schema->keyspace("simplex")->table("values")->column("bigint_value");
-      $decimal   = $schema->keyspace("simplex")->table("values")->column("decimal_value");
-      $double    = $schema->keyspace("simplex")->table("values")->column("double_value");
-      $float     = $schema->keyspace("simplex")->table("values")->column("float_value");
-      $int       = $schema->keyspace("simplex")->table("values")->column("int_value");
-      $varint    = $schema->keyspace("simplex")->table("values")->column("varint_value");
-      $ascii     = $schema->keyspace("simplex")->table("values")->column("ascii_value");
-      $text      = $schema->keyspace("simplex")->table("values")->column("text_value");
-      $varchar   = $schema->keyspace("simplex")->table("values")->column("varchar_value");
-      $timestamp = $schema->keyspace("simplex")->table("values")->column("timestamp_value");
-      $blob      = $schema->keyspace("simplex")->table("values")->column("blob_value");
-      $uuid      = $schema->keyspace("simplex")->table("values")->column("uuid_value");
-      $timeuuid  = $schema->keyspace("simplex")->table("values")->column("timeuuid_value");
-      $inet      = $schema->keyspace("simplex")->table("values")->column("inet_value");
-      $list      = $schema->keyspace("simplex")->table("values")->column("list_value");
-      $map       = $schema->keyspace("simplex")->table("values")->column("map_value");
-      $set       = $schema->keyspace("simplex")->table("values")->column("set_value");
+      $table     = $schema->keyspace("simplex")->table("values");
+      $id        = $table->column("id")->type();
+      $bigint    = $table->column("bigint_value")->type();
+      $decimal   = $table->column("decimal_value")->type();
+      $double    = $table->column("double_value")->type();
+      $float     = $table->column("float_value")->type();
+      $int       = $table->column("int_value")->type();
+      $varint    = $table->column("varint_value")->type();
+      $ascii     = $table->column("ascii_value")->type();
+      $text      = $table->column("text_value")->type();
+      $varchar   = $table->column("varchar_value")->type();
+      $timestamp = $table->column("timestamp_value")->type();
+      $blob      = $table->column("blob_value")->type();
+      $uuid      = $table->column("uuid_value")->type();
+      $timeuuid  = $table->column("timeuuid_value")->type();
+      $inet      = $table->column("inet_value")->type();
+      $list      = $table->column("list_value")->type();
+      $map       = $table->column("map_value")->type();
+      $set       = $table->column("set_value")->type();
 
-      echo $id->type()->name() . "\n";
-      echo $bigint->type()->name() . "\n";
-      echo $decimal->type()->name() . "\n";
-      echo $double->type()->name() . "\n";
-      echo $float->type()->name() . "\n";
-      echo $int->type()->name() . "\n";
-      echo $varint->type()->name() . "\n";
-      echo $ascii->type()->name() . "\n";
-      echo $text->type()->name() . "\n";
-      echo $varchar->type()->name() . "\n";
-      echo $timestamp->type()->name() . "\n";
-      echo $blob->type()->name() . "\n";
-      echo $uuid->type()->name() . "\n";
-      echo $timeuuid->type()->name() . "\n";
-      echo $inet->type()->name() . "\n";
-      echo $list->type()->name() . "\n";
-      echo $list->type()->type()->name() . "\n";
-      echo $map->type()->name() . "\n";
-      echo $map->type()->keyType()->name() . "\n";
-      echo $map->type()->valueType()->name() . "\n";
-      echo $set->type()->name() . "\n";
-      echo $set->type()->type()->name() . "\n";
+      echo $id . "\n";
+      echo $bigint . "\n";
+      echo $decimal . "\n";
+      echo $double . "\n";
+      echo $float . "\n";
+      echo $int . "\n";
+      echo $varint . "\n";
+      echo $ascii . "\n";
+      echo $text . "\n";
+      echo $varchar . "\n";
+      echo $timestamp . "\n";
+      echo $blob . "\n";
+      echo $uuid . "\n";
+      echo $timeuuid . "\n";
+      echo $inet . "\n";
+      echo $list . "\n";
+      echo $map . "\n";
+      echo $set . "\n";
       """
     When it is executed
     Then its output should contain:
@@ -293,11 +290,7 @@ Feature: Schema Metadata
       uuid
       timeuuid
       inet
-      list
-      varchar
-      map
-      timestamp
-      double
-      set
-      float
+      list<varchar>
+      map<timestamp, double>
+      set<float>
       """

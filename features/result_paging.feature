@@ -1,4 +1,4 @@
-@cassandra-version-greater-1.2
+@cassandra-version-2.0
 Feature: Result paging
 
   Starting with Cassandra native protocol v2 (used by Apache Cassandra 2.0),

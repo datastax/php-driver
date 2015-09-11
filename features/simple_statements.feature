@@ -39,7 +39,7 @@ Feature: Simple Statements
       Result contains 0 rows
       """
 
-  @cassandra-version-greater-1.2
+  @cassandra-version-2.0
   Scenario: Simple statements only support positional arguments
     Given the following example:
       """php
