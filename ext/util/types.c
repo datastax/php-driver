@@ -258,13 +258,12 @@ next_token(const char*  str,       size_t  len,
            const char** str_out,   size_t* len_out)
 {
   enum token_type type;
+  unsigned int i = 0;
+  char         c = str[i];
 
   if (len == 0) {
     return TOKEN_END;
   }
-
-  unsigned int i = 0;
-  char         c = str[i];
 
   if (isalpha(c)) {
     type = TOKEN_NAME;

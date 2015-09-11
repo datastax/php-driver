@@ -305,6 +305,9 @@ class FeatureContext implements Context, SnippetAcceptingContext
     {
         $this->webServerURL = 'http://127.0.0.1:10000';
         $command = sprintf('exec %s -S "%s"', $this->phpBin, '127.0.0.1:10000');
+        if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+            $command = sprintf('%s -S "%s"', $this->phpBin, '127.0.0.1:10000');
+        }
         if ($this->phpBinOptions) {
             $command = sprintf("%s %s", $command, $this->phpBinOptions);
         }
