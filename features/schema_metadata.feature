@@ -44,7 +44,7 @@ Feature: Schema Metadata
           replicate_on_write='false';
       """
 
-  Scenario: Keyspace metadata will exist for all major Cassandra versions
+  Scenario: Getting keyspace metadata
     Given the following example:
       """php
       <?php
@@ -72,7 +72,7 @@ Feature: Schema Metadata
       Has Durable Writes: False
       """
 
-    Scenario: Table metadata will exist for all major Cassandra versions
+    Scenario: Getting table metadata
     Given the following example:
       """php
       <?php
@@ -86,11 +86,7 @@ Feature: Schema Metadata
 
       echo "Name: " . $table->name() . "\n";
       echo "Bloom Filter: " . $table->bloomFilterFPChance() . "\n";
-      $patterns = array();
-      $patterns[0] = '/{/';
-      $patterns[1] = '/"/';
-      $patterns[2] = '/:/';
-      $patterns[3] = '/keys/';
+      $patterns = array('/{/', '/"/', '/:/', '/keys/');
       $table_caching = explode(",", $table->caching());
       echo "Caching: " . preg_replace($patterns, "", $table_caching[0]) . "\n";
       echo "Comment: " . $table->comment() . "\n";
@@ -121,8 +117,7 @@ Feature: Schema Metadata
       """
 
     @cassandra-version-less-2.1
-    Scenario: Additional table metadata will only exist for Cassandra versions
-              1.2 and v2.0
+    Scenario: Getting table metadata for io cache and replicate on write
     Given the following example:
       """php
       <?php
@@ -145,8 +140,7 @@ Feature: Schema Metadata
       """
 
     @cassandra-version-only-2.0
-    Scenario: Additional table metadata will only exist for Cassandra versions
-              2.0
+    Scenario: Getting table metadata for index interval
     Given the following example:
       """php
       <?php
@@ -168,8 +162,8 @@ Feature: Schema Metadata
       """
 
     @cassandra-version-2.0
-    Scenario: Additional table metadata will only exist for Cassandra versions
-              2.0+
+    Scenario: Getting table metadata for default TTL, memtable flush period and
+              speculative retry
     Given the following example:
       """php
       <?php
@@ -197,8 +191,7 @@ Feature: Schema Metadata
       """
 
     @cassandra-version-2.1
-    Scenario: Additional table metadata will only exist for Cassandra versions
-              2.1+
+    Scenario: Getting table metadata for max and min index intervals
     Given the following example:
       """php
       <?php
@@ -223,8 +216,7 @@ Feature: Schema Metadata
       """
 
     @cassandra-version-2.0
-    Scenario: Data types can be determined by the column metadata for Cassandra
-              versions 2.0+
+    Scenario: Getting metadata for column and types
     Given the following example:
       """php
       <?php
@@ -234,63 +226,29 @@ Feature: Schema Metadata
       $session   = $cluster->connect("simplex");
       $schema    = $session->schema();
       $table     = $schema->keyspace("simplex")->table("values");
-      $id        = $table->column("id")->type();
-      $bigint    = $table->column("bigint_value")->type();
-      $decimal   = $table->column("decimal_value")->type();
-      $double    = $table->column("double_value")->type();
-      $float     = $table->column("float_value")->type();
-      $int       = $table->column("int_value")->type();
-      $varint    = $table->column("varint_value")->type();
-      $ascii     = $table->column("ascii_value")->type();
-      $text      = $table->column("text_value")->type();
-      $varchar   = $table->column("varchar_value")->type();
-      $timestamp = $table->column("timestamp_value")->type();
-      $blob      = $table->column("blob_value")->type();
-      $uuid      = $table->column("uuid_value")->type();
-      $timeuuid  = $table->column("timeuuid_value")->type();
-      $inet      = $table->column("inet_value")->type();
-      $list      = $table->column("list_value")->type();
-      $map       = $table->column("map_value")->type();
-      $set       = $table->column("set_value")->type();
-
-      echo $id . "\n";
-      echo $bigint . "\n";
-      echo $decimal . "\n";
-      echo $double . "\n";
-      echo $float . "\n";
-      echo $int . "\n";
-      echo $varint . "\n";
-      echo $ascii . "\n";
-      echo $text . "\n";
-      echo $varchar . "\n";
-      echo $timestamp . "\n";
-      echo $blob . "\n";
-      echo $uuid . "\n";
-      echo $timeuuid . "\n";
-      echo $inet . "\n";
-      echo $list . "\n";
-      echo $map . "\n";
-      echo $set . "\n";
+      foreach ($table->columns() as $column) {
+          echo $column->name() . ': ' . $column->type();
+      }
       """
     When it is executed
     Then its output should contain:
       """
-      int
-      bigint
-      decimal
-      double
-      float
-      int
-      varint
-      ascii
-      varchar
-      varchar
-      timestamp
-      blob
-      uuid
-      timeuuid
-      inet
-      list<varchar>
-      map<timestamp, double>
-      set<float>
+      id: int
+      bigint_value: bigint
+      decimal_value: decimal
+      double_value: double
+      float_value: float
+      int_value: int
+      varint_value: varint
+      ascii_value: ascii
+      text_value: varchar
+      varchar_value: varchar
+      timestamp_value: timestamp
+      blob_value: blob
+      uuid_value: uuid
+      timeuuid_value: timeuuid
+      inet_value: inet
+      list_value: list<text>
+      map_value: map<timestamp, double>
+      set_value: set<float>
       """
