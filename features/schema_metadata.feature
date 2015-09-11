@@ -227,7 +227,7 @@ Feature: Schema Metadata
       $schema    = $session->schema();
       $table     = $schema->keyspace("simplex")->table("values");
       foreach ($table->columns() as $column) {
-          echo $column->name() . ': ' . $column->type();
+          echo $column->name() . ': ' . $column->type() . "\n";
       }
       """
     When it is executed
