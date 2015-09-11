@@ -233,22 +233,22 @@ Feature: Schema Metadata
     When it is executed
     Then its output should contain:
       """
-      id: int
+      ascii_value: ascii
       bigint_value: bigint
+      blob_value: blob
       decimal_value: decimal
       double_value: double
       float_value: float
-      int_value: int
-      varint_value: varint
-      ascii_value: ascii
-      text_value: varchar
-      varchar_value: varchar
-      timestamp_value: timestamp
-      blob_value: blob
-      uuid_value: uuid
-      timeuuid_value: timeuuid
+      id: int
       inet_value: inet
-      list_value: list<text>
+      int_value: int
+      list_value: list<varchar>
       map_value: map<timestamp, double>
       set_value: set<float>
+      text_value: varchar
+      timestamp_value: timestamp
+      timeuuid_value: timeuuid
+      uuid_value: uuid
+      varchar_value: varchar
+      varint_value: varint
       """
