@@ -208,7 +208,7 @@ You run CQL statements by passing them to [`Cassandra\Session::execute()`](http:
 $result = $session->execute(new Cassandra\SimpleStatement('SELECT keyspace_name, columnfamily_name FROM system.schema_columnfamilies'));
 
 foreach ($result as $row) {
-    sprintf("The keyspace \"%s\" has a table \"%s\".\n", $row['keyspace_name'], $row['columnfamily_name']);
+    printf("The keyspace \"%s\" has a table \"%s\".\n", $row['keyspace_name'], $row['columnfamily_name']);
 }
 ```
 
