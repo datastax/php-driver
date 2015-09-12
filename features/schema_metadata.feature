@@ -162,8 +162,7 @@ Feature: Schema Metadata
       """
 
     @cassandra-version-2.0
-    Scenario: Getting table metadata for default TTL, memtable flush period and
-              speculative retry
+    Scenario: Getting table metadata for default TTL, memtable flush period and speculative retry
     Given the following example:
       """php
       <?php
