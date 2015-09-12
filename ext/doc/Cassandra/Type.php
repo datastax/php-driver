@@ -121,12 +121,15 @@ interface Type
 
     /**
      * Initialize a Collection type
-     * <code>
+     * @code{.php}
+     * <?php
      * use Cassandra\Type;
+     *
      * $collection = Type::collection(Type::int())
      *                   ->create(1, 2, 3, 4, 5, 6, 7, 8, 9);
+     *
      * var_dump($collection);
-     * </code>
+     * @endcode
      * @param  Type $type The type of values
      * @return Type       The collection type
      */
@@ -134,12 +137,15 @@ interface Type
 
     /**
      * Initialize a map type
-     * <code>
+     * @code{.php}
+     * <?php
      * use Cassandra\Type;
+     *
      * $map = Type::map(Type::int(), Type::varchar())
      *            ->create(1, "a", 2, "b", 3, "c", 4, "d", 5, "e", 6, "f")
+     *
      * var_dump($map);
-     * </code>
+     * @endcode
      * @param  Type $key_type   The type of keys
      * @param  Type $value_type The type of values
      * @return Type             The map type
@@ -148,12 +154,15 @@ interface Type
 
     /**
      * Initialize a set type
-     * <code>
+     * @code{.php}
+     * <?php
      * use Cassandra\Type;
+     *
      * $set = Type::set(Type::varchar)
      *            ->create("a", "b", "c", "d", "e", "f", "g", "h", "i", "j");
+     *
      * var_dump($set);
-     * </code>
+     * @endcode
      * @param Type $type [description]
      */
     final static function set(Type $type) {}

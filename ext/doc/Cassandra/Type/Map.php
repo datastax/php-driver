@@ -49,27 +49,18 @@ final class Map implements Type
     /**
      * Creates a new Cassandra\Map from the given values.
      *
-     * <code>
+     * @code{.php}
      * <?php
      * use Cassandra\Type;
      * use Cassandra\Uuid;
      *
      * $type = Type::map(Type::uuid(), Type::varchar());
-     * // all examples below are equivalent
      * $map = $type->create(new Uuid(), 'first uuid',
      *                      new Uuid(), 'second uuid',
      *                      new Uuid(), 'third uuid');
-     * // or
-     * $map = $type->create(array(
-     *     new Uuid(), 'first uuid',
-     *     new Uuid(), 'second uuid',
-     *     new Uuid(), 'third uuid'
-     * ));
-     * // or
-     * $map = $type->create(array(new Uuid(), 'first uuid'),
-     *                      array(new Uuid(), 'second uuid'),
-     *                      array(new Uuid(), 'third uuid'));
-     * </code>
+     *
+     * var_dump($map);
+     * @endcode
      *
      * @throws Exception\InvalidArgumentException when keys or values given are
      *                                            of a different type than what
@@ -79,7 +70,7 @@ final class Map implements Type
      *                          is a key and each even value is a value for the
      *                          map, e.g. `create(key, value, key, value)`.
      *                          When no values given, creates an empty map.
-     * @return Cassandra\Set    A set with given values.
+     * @return Cassandra\Map    A set with given values.
      */
     public function create($value = null) {}
 }
