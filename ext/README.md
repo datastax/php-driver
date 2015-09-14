@@ -48,11 +48,16 @@ installing any of its dependencies.
 
 #### Installing with pecl
 
-The PHP driver is not published to the official PECL repository yet. You can
-still install it using pecl by specifying the provided [package.xml](package.xml) file path
-as the argument to `pecl install` command.
+The PHP driver is published to the official PECL repository, in order to install it,
+you have to first [install the 2.0 version of the C/C++ driver](http://datastax.github.io/cpp-driver/topics/building/)
+and then run the following command.
 
-[Install the 2.0 version of the C/C++ driver](http://datastax.github.io/cpp-driver/topics/building/)
+```bash
+pecl install cassandra
+```
+
+You can also use PECL to install the driver from source by specifying the
+provided [package.xml](package.xml) file path as the argument to `pecl install` command.
 
 ```bash
 git clone https://github.com/datastax/php-driver.git
