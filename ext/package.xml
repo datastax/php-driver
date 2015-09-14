@@ -14,8 +14,8 @@ protocol and Cassandra Query Language v3.
     <email>bulat.shakirzyanov@datastax.com</email>
     <active>yes</active>
   </lead>
-  <date>2015-09-02</date>
-  <time>16:36:23</time>
+  <date>2015-09-14</date>
+  <time>10:28:02</time>
   <version>
     <release>1.0.0</release>
     <api>1.0.0</api>
