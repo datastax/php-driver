@@ -6,7 +6,7 @@ A modern, [feature-rich](features) and highly tunable PHP client library for [Ap
 
 This is a wrapper around [the DataStax C/C++ Driver for Apache Cassandra and DataStax Enterprise](http://datastax.github.io/cpp-driver/).
 
-* Binaries: [http://downloads.datastax.com/php-driver/1.0.0.rc](http://downloads.datastax.com/php-driver/1.0.0.rc/)
+* Binaries: [http://downloads.datastax.com/php-driver/1.0.0](http://downloads.datastax.com/php-driver/1.0.0/)
 * Docs: [http://datastax.github.io/php-driver/](http://datastax.github.io/php-driver/)
 * Code: [https://github.com/datastax/php-driver](https://github.com/datastax/php-driver)
 * Jira: [https://datastax-oss.atlassian.net/browse/PHP](https://datastax-oss.atlassian.net/browse/PHP)
