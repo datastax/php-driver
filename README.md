@@ -44,6 +44,10 @@ foreach ($result as $row) {                       // results and rows implement 
 
 ## Installation
 
+```bash
+pecl install cassandra
+```
+
 [Read detailed instructions on building and installing the extension](https://github.com/datastax/php-driver/blob/master/ext/README.md)
 
 ## Compatibility
