@@ -1,6 +1,7 @@
 title:    DataStax PHP Driver
 summary:  DataStax PHP Driver for Apache Cassandra
 homepage: http://datastax.github.io/php-driver/
+theme:    datastax
 sections:
   - title:     Features
     prefix:    /features
@@ -19,6 +20,8 @@ sections:
       FILE_PATTERNS = *.php
       INPUT_FILTER  = ./doxygen.rb
 links:
+  - title: Binaries
+    href:  http://downloads.datastax.com/php-driver/
   - title: Code
     href:  https://github.com/datastax/php-driver/
   - title: Docs
@@ -31,3 +34,8 @@ links:
     href:  irc://irc.freenode.net/datastax-drivers
   - title: Releases
     href:  https://github.com/datastax/php-driver/releases
+versions:
+  - name: v1.0.0
+    ref:  HEAD
+  - name: v1.0.0-rc
+    ref:  v1.0.0-rc
