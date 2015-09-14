@@ -1,0 +1,985 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <meta name="description" content="DataStax PHP Driver for Apache Cassandra">
+    <meta name="author" content="DataStax">
+
+    <title>DataStax PHP Driver - Rows</title>
+
+    <link rel="icon" href="../../../favicon.ico">
+    <link rel="apple-touch-icon" href="../../../favicon.png">
+    <link href="../../../css/style.css" rel="stylesheet">
+    <link href="../../../css/pygments.css" rel="stylesheet">
+    <link href="../../../css/hotkeys.css" rel="stylesheet">
+
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  </head>
+  <body ng-app="docs" data-spy="scroll" data-target="#table-of-contents" data-offset="69">
+    <header class="container-fluid navbar">
+      <div class="row">
+        <div class="col-sm-4">
+          <a class="navbar-brand" href="../../../"><img alt="Brand" src="../../../img/logo.png">DataStax PHP Driver</a>
+        </div>
+        <div class="col-md-4 col-md-offset-4">
+          <div class="row">
+            <div class="col-md-12">
+              <ul class="list-inline" role="nav">
+                <li><a href="https://academy.datastax.com/" class="navbar-link">DataStax Academy</a></li>
+                <li><a href="http://www.datastax.com/dev/blog" class="navbar-link">Tech Blog</a></li>
+                <li><a href="http://www.datastax.com/what-we-offer/products-services/support" class="navbar-link">Support</a></li>
+              </ul>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-8">
+              <form id="search" class="form-search dropdown visible-lg-block" ng-controller="search" ng-class="{open: hasResults}" role="search" ng-submit="submit()" data-spy="affix" data-offset-top="130">
+                <div class="form-group has-feedback">
+                  <input type="search" class="form-control input-sm mousetrap" placeholder="Search..." ng-model="q" ng-change="search('v1.0.0')" ng-disabled="!searchReady" disabled data-hotkey="{down: moveDown, up: moveUp, esc: reset}" data-search>
+                </div>
+                <ul class="dropdown-menu search-results" role="menu">
+                  <li ng-repeat="result in results" ng-class="{'bg-warning': $index == current}"><a ng-href="{{basePath}}{{result.path}}"><span ng-bind-html="summary(result)"></span></a></li>
+                </ul>
+              </form>
+            </div>
+            <div class="col-md-4">
+              <a href="http://www.datastax.com/download" class="btn btn-primary btn-sm">Download</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row crumbs-wrapper">
+        <div class="col-md-12">
+          <nav id="crumbs" data-spy="affix" data-offset-top="130">
+            <ol class="breadcrumb">
+              
+              <li>
+                <div class="btn-group">
+                  <button id="current-version" class="btn btn-default btn-sm dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    v1.0.0
+                    <span class="caret"></span>
+                  </button>
+                  <ul class="dropdown-menu" role="menu" aria-labelledby="current-version">
+                  
+                    <li class="disabled"><a href="./">v1.0.0</a></li>
+                  
+                    <li><a href="../../../v1.0.0-rc/api/Cassandra/class.Rows/">v1.0.0-rc</a></li>
+                  
+                  </ul>
+                </div>
+              </li>
+              
+              
+              
+              
+              <li><a href="../../../">Home</a></li>
+              
+              
+              
+              
+              
+              <li><a href="../../">API docs</a></li>
+              
+              
+              
+              
+              
+              <li><a href="../">Cassandra</a></li>
+              
+              
+              
+              
+              
+              <li class="active">Rows</li>
+              <li class="dropdown" id="table-of-contents">
+                <div class="btn-group">
+                  <button id="current-section" type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown">
+                    Jump to&#8230; <span class="caret"></span><span class="sr-only">Table of Contents</span>
+                  </button>
+                  <ul class="dropdown-menu nav nav-pills nav-stacked">
+                    <li><a href="#class-Rows">Page Top <span class="glyphicon glyphicon-chevron-up" aria-hidden="true"></span></a></li>
+<li><a href="#implements">Implements
+</a></li>
+<li>
+<a href="#methods">Methods
+</a><ul class="nav nav-pills nav-stacked">
+<li><a href="#method-count">count
+</a></li>
+<li><a href="#method-rewind">rewind
+</a></li>
+<li><a href="#method-current">current
+</a></li>
+<li><a href="#method-key">key
+</a></li>
+<li><a href="#method-next">next
+</a></li>
+<li><a href="#method-valid">valid
+</a></li>
+<li><a href="#method-offsetExists">offsetExists
+</a></li>
+<li><a href="#method-offsetGet">offsetGet
+</a></li>
+<li><a href="#method-offsetSet">offsetSet
+</a></li>
+<li><a href="#method-offsetUnset">offsetUnset
+</a></li>
+<li><a href="#method-isLastPage">isLastPage
+</a></li>
+<li><a href="#method-nextPage">nextPage
+</a></li>
+<li><a href="#method-nextPageAsync">nextPageAsync
+</a></li>
+<li><a href="#method-first">first
+</a></li>
+</ul>
+</li>
+                  </ul>
+                </div>
+              </li>
+              
+              
+              
+            </ol>
+          </nav>
+        </div>
+      </div>
+    </header>
+
+    <div class="container-fluid" id="content">
+      <div class="row">
+        <div class="col-md-3">
+          <div id="navigation" class="side-nav" role="tablist" aria-multiselectable="true">
+            <h3>Contents</h3>
+            <ul class="nav nav-pills nav-stacked">
+  
+  
+  
+  <li class="active">
+    <a href="../../">API docs <small>index</small></a>
+    <ul class="nav nav-pills nav-stacked">
+  
+  
+  
+  <li><a href="../../class.Cassandra/">Cassandra <small>class</small></a></li>
+  
+  
+  
+  
+  <li class="active">
+    <a href="../">Cassandra <small>namespace</small></a>
+    <ul class="nav nav-pills nav-stacked">
+  
+  
+  
+  <li><a href="../class.BatchStatement/">BatchStatement <small>class</small></a></li>
+  
+  
+  
+  
+  <li><a href="../class.Bigint/">Bigint <small>class</small></a></li>
+  
+  
+  
+  
+  <li><a href="../class.Blob/">Blob <small>class</small></a></li>
+  
+  
+  
+  
+  <li><a href="../interface.Cluster/">Cluster <small>interface</small></a></li>
+  
+  
+  
+  
+  <li><a href="../Cluster/">Cluster <small>namespace</small></a></li>
+  
+  
+  
+  
+  <li><a href="../class.Collection/">Collection <small>class</small></a></li>
+  
+  
+  
+  
+  <li><a href="../interface.Column/">Column <small>interface</small></a></li>
+  
+  
+  
+  
+  <li><a href="../class.Decimal/">Decimal <small>class</small></a></li>
+  
+  
+  
+  
+  <li><a href="../class.DefaultCluster/">DefaultCluster <small>class</small></a></li>
+  
+  
+  
+  
+  <li><a href="../class.DefaultColumn/">DefaultColumn <small>class</small></a></li>
+  
+  
+  
+  
+  <li><a href="../class.DefaultKeyspace/">DefaultKeyspace <small>class</small></a></li>
+  
+  
+  
+  
+  <li><a href="../class.DefaultSchema/">DefaultSchema <small>class</small></a></li>
+  
+  
+  
+  
+  <li><a href="../class.DefaultSession/">DefaultSession <small>class</small></a></li>
+  
+  
+  
+  
+  <li><a href="../class.DefaultTable/">DefaultTable <small>class</small></a></li>
+  
+  
+  
+  
+  <li><a href="../interface.Exception/">Exception <small>interface</small></a></li>
+  
+  
+  
+  
+  <li><a href="../Exception/">Exception <small>namespace</small></a></li>
+  
+  
+  
+  
+  <li><a href="../class.ExecutionOptions/">ExecutionOptions <small>class</small></a></li>
+  
+  
+  
+  
+  <li><a href="../class.Float/">Float <small>class</small></a></li>
+  
+  
+  
+  
+  <li><a href="../interface.Future/">Future <small>interface</small></a></li>
+  
+  
+  
+  
+  <li><a href="../class.FutureClose/">FutureClose <small>class</small></a></li>
+  
+  
+  
+  
+  <li><a href="../class.FutureException/">FutureException <small>class</small></a></li>
+  
+  
+  
+  
+  <li><a href="../class.FuturePreparedStatement/">FuturePreparedStatement <small>class</small></a></li>
+  
+  
+  
+  
+  <li><a href="../class.FutureRows/">FutureRows <small>class</small></a></li>
+  
+  
+  
+  
+  <li><a href="../class.FutureSession/">FutureSession <small>class</small></a></li>
+  
+  
+  
+  
+  <li><a href="../class.FutureValue/">FutureValue <small>class</small></a></li>
+  
+  
+  
+  
+  <li><a href="../class.Inet/">Inet <small>class</small></a></li>
+  
+  
+  
+  
+  <li><a href="../interface.Keyspace/">Keyspace <small>interface</small></a></li>
+  
+  
+  
+  
+  <li><a href="../class.Map/">Map <small>class</small></a></li>
+  
+  
+  
+  
+  <li><a href="../interface.Numeric/">Numeric <small>interface</small></a></li>
+  
+  
+  
+  
+  <li><a href="../class.PreparedStatement/">PreparedStatement <small>class</small></a></li>
+  
+  
+  
+  
+  <li class="active">
+    <a href="./" class="current">Rows <small>class</small></a>
+    
+  </li>
+  
+  
+  
+  
+  <li><a href="../SSLOptions/">SSLOptions <small>namespace</small></a></li>
+  
+  
+  
+  
+  <li><a href="../class.SSLOptions/">SSLOptions <small>class</small></a></li>
+  
+  
+  
+  
+  <li><a href="../interface.Schema/">Schema <small>interface</small></a></li>
+  
+  
+  
+  
+  <li><a href="../interface.Session/">Session <small>interface</small></a></li>
+  
+  
+  
+  
+  <li><a href="../class.Set/">Set <small>class</small></a></li>
+  
+  
+  
+  
+  <li><a href="../class.SimpleStatement/">SimpleStatement <small>class</small></a></li>
+  
+  
+  
+  
+  <li><a href="../interface.Statement/">Statement <small>interface</small></a></li>
+  
+  
+  
+  
+  <li><a href="../interface.Table/">Table <small>interface</small></a></li>
+  
+  
+  
+  
+  <li><a href="../class.Timestamp/">Timestamp <small>class</small></a></li>
+  
+  
+  
+  
+  <li><a href="../class.Timeuuid/">Timeuuid <small>class</small></a></li>
+  
+  
+  
+  
+  <li><a href="../interface.Type/">Type <small>interface</small></a></li>
+  
+  
+  
+  
+  <li><a href="../Type/">Type <small>namespace</small></a></li>
+  
+  
+  
+  
+  <li><a href="../class.Uuid/">Uuid <small>class</small></a></li>
+  
+  
+  
+  
+  <li><a href="../interface.UuidInterface/">UuidInterface <small>interface</small></a></li>
+  
+  
+  
+  
+  <li><a href="../class.Varint/">Varint <small>class</small></a></li>
+  
+  
+</ul>
+
+  </li>
+  
+  
+</ul>
+
+  </li>
+  
+  
+  
+  
+  <li><a href="../../../features/">Features <small>page</small></a></li>
+  
+  
+</ul>
+
+          </div>
+        </div>
+        <div class="col-md-9 content">
+          
+
+<div class="page-header">
+  <h1 id="class-Rows" class="target">
+    <small>class</small>
+    Rows
+  <a class="anchor" href="#class-Rows" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+</h1>
+</div>
+
+<p><code><a href="./">Cassandra\Rows</a></code> represent a result of statement execution.</p>
+
+
+<h2 id="implements" class="target">Implements<a class="anchor" href="#implements" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+</h2>
+<ul class="list-inline">
+  <li><code>Iterator</code></li>
+  <li><code>Countable</code></li>
+  <li><code>ArrayAccess</code></li>
+</ul>
+
+
+
+
+<h2 id="methods" class="target">Methods<a class="anchor" href="#methods" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+</h2>
+
+<div class="methods-content">
+  <div class="panel panel-default member-definition">
+    <div class="panel-heading method-heading">
+      <code>int</code> <h3 id="method-count" class="target">count<a class="anchor" href="#method-count" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+</h3> <big>(</big>  <big>)</big>
+    </div>
+    <div class="panel-body method-body">
+      <p>Returns the number of rows.</p>
+
+      <dl class="tags">
+<dt class="tag-title">Returns:</dt>
+<dd class="tag-content"><table class="table table-striped return">
+<thead><tr>
+<th class="type">Type</th>
+<th class="details">Details</th>
+</tr></thead>
+<tbody><tr>
+<td><code>int</code></td>
+<td>
+<p>number of rows</p>
+</td>
+</tr></tbody>
+</table></dd>
+<dt class="tag-title">See Also:</dt>
+<dd class="tag-content"><ul class="see"><li>Countable::count()</li></ul></dd>
+</dl>
+    </div>
+  </div>
+  <div class="panel panel-default member-definition">
+    <div class="panel-heading method-heading">
+      <code>void</code> <h3 id="method-rewind" class="target">rewind<a class="anchor" href="#method-rewind" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+</h3> <big>(</big>  <big>)</big>
+    </div>
+    <div class="panel-body method-body">
+      <p>Resets the rows iterator.</p>
+
+      <dl class="tags">
+<dt class="tag-title">Returns:</dt>
+<dd class="tag-content"><table class="table table-striped return">
+<thead><tr>
+<th class="type">Type</th>
+<th class="details">Details</th>
+</tr></thead>
+<tbody><tr>
+<td><code>void</code></td>
+<td></td>
+</tr></tbody>
+</table></dd>
+<dt class="tag-title">See Also:</dt>
+<dd class="tag-content"><ul class="see"><li>Iterator::rewind()</li></ul></dd>
+</dl>
+    </div>
+  </div>
+  <div class="panel panel-default member-definition">
+    <div class="panel-heading method-heading">
+      <code>array</code> <h3 id="method-current" class="target">current<a class="anchor" href="#method-current" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+</h3> <big>(</big>  <big>)</big>
+    </div>
+    <div class="panel-body method-body">
+      <p>Returns current row.</p>
+
+      <dl class="tags">
+<dt class="tag-title">Returns:</dt>
+<dd class="tag-content"><table class="table table-striped return">
+<thead><tr>
+<th class="type">Type</th>
+<th class="details">Details</th>
+</tr></thead>
+<tbody><tr>
+<td><code>array</code></td>
+<td>
+<p>current row</p>
+</td>
+</tr></tbody>
+</table></dd>
+<dt class="tag-title">See Also:</dt>
+<dd class="tag-content"><ul class="see"><li>Iterator::current()</li></ul></dd>
+</dl>
+    </div>
+  </div>
+  <div class="panel panel-default member-definition">
+    <div class="panel-heading method-heading">
+      <code>int</code> <h3 id="method-key" class="target">key<a class="anchor" href="#method-key" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+</h3> <big>(</big>  <big>)</big>
+    </div>
+    <div class="panel-body method-body">
+      <p>Returns current index.</p>
+
+      <dl class="tags">
+<dt class="tag-title">Returns:</dt>
+<dd class="tag-content"><table class="table table-striped return">
+<thead><tr>
+<th class="type">Type</th>
+<th class="details">Details</th>
+</tr></thead>
+<tbody><tr>
+<td><code>int</code></td>
+<td>
+<p>index</p>
+</td>
+</tr></tbody>
+</table></dd>
+<dt class="tag-title">See Also:</dt>
+<dd class="tag-content"><ul class="see"><li>Iterator::key()</li></ul></dd>
+</dl>
+    </div>
+  </div>
+  <div class="panel panel-default member-definition">
+    <div class="panel-heading method-heading">
+      <code>void</code> <h3 id="method-next" class="target">next<a class="anchor" href="#method-next" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+</h3> <big>(</big>  <big>)</big>
+    </div>
+    <div class="panel-body method-body">
+      <p>Advances the rows iterator by one.</p>
+
+      <dl class="tags">
+<dt class="tag-title">Returns:</dt>
+<dd class="tag-content"><table class="table table-striped return">
+<thead><tr>
+<th class="type">Type</th>
+<th class="details">Details</th>
+</tr></thead>
+<tbody><tr>
+<td><code>void</code></td>
+<td></td>
+</tr></tbody>
+</table></dd>
+<dt class="tag-title">See Also:</dt>
+<dd class="tag-content"><ul class="see"><li>Iterator::next()</li></ul></dd>
+</dl>
+    </div>
+  </div>
+  <div class="panel panel-default member-definition">
+    <div class="panel-heading method-heading">
+      <code>bool</code> <h3 id="method-valid" class="target">valid<a class="anchor" href="#method-valid" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+</h3> <big>(</big>  <big>)</big>
+    </div>
+    <div class="panel-body method-body">
+      <p>Returns existence of more rows being available.</p>
+
+      <dl class="tags">
+<dt class="tag-title">Returns:</dt>
+<dd class="tag-content"><table class="table table-striped return">
+<thead><tr>
+<th class="type">Type</th>
+<th class="details">Details</th>
+</tr></thead>
+<tbody><tr>
+<td><code>bool</code></td>
+<td>
+<p>whether there are more rows available for iteration</p>
+</td>
+</tr></tbody>
+</table></dd>
+<dt class="tag-title">See Also:</dt>
+<dd class="tag-content"><ul class="see"><li>Iterator::valid()</li></ul></dd>
+</dl>
+    </div>
+  </div>
+  <div class="panel panel-default member-definition">
+    <div class="panel-heading method-heading">
+      <code>bool</code> <h3 id="method-offsetExists" class="target">offsetExists<a class="anchor" href="#method-offsetExists" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+</h3> <big>(</big> <code>int</code> $offset <big>)</big>
+    </div>
+    <div class="panel-body method-body">
+      <p>Returns existence of a given row.</p>
+
+      <dl class="tags">
+<dt class="tag-title">Parameters:</dt>
+<dd class="tag-content"><table class="table table-striped param">
+<thead><tr>
+<th class="name">Name</th>
+<th class="type">Type</th>
+<th class="details">Details</th>
+</tr></thead>
+<tbody><tr>
+<td><var>$offset</var></td>
+<td><code>int</code></td>
+<td>
+<p>row index</p>
+</td>
+</tr></tbody>
+</table></dd>
+<dt class="tag-title">Returns:</dt>
+<dd class="tag-content"><table class="table table-striped return">
+<thead><tr>
+<th class="type">Type</th>
+<th class="details">Details</th>
+</tr></thead>
+<tbody><tr>
+<td><code>bool</code></td>
+<td>
+<p>whether a row at a given index exists</p>
+</td>
+</tr></tbody>
+</table></dd>
+<dt class="tag-title">See Also:</dt>
+<dd class="tag-content"><ul class="see"><li>ArrayAccess::offsetExists()</li></ul></dd>
+</dl>
+    </div>
+  </div>
+  <div class="panel panel-default member-definition">
+    <div class="panel-heading method-heading">
+      <code>array null</code> <h3 id="method-offsetGet" class="target">offsetGet<a class="anchor" href="#method-offsetGet" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+</h3> <big>(</big> <code>int</code> $offset <big>)</big>
+    </div>
+    <div class="panel-body method-body">
+      <p>Returns a row at given index.</p>
+
+      <dl class="tags">
+<dt class="tag-title">Parameters:</dt>
+<dd class="tag-content"><table class="table table-striped param">
+<thead><tr>
+<th class="name">Name</th>
+<th class="type">Type</th>
+<th class="details">Details</th>
+</tr></thead>
+<tbody><tr>
+<td><var>$offset</var></td>
+<td><code>int</code></td>
+<td>
+<p>row index</p>
+</td>
+</tr></tbody>
+</table></dd>
+<dt class="tag-title">Returns:</dt>
+<dd class="tag-content"><table class="table table-striped return">
+<thead><tr>
+<th class="type">Type</th>
+<th class="details">Details</th>
+</tr></thead>
+<tbody><tr>
+<td><code>array|null</code></td>
+<td>
+<p>row at a given index</p>
+</td>
+</tr></tbody>
+</table></dd>
+<dt class="tag-title">See Also:</dt>
+<dd class="tag-content"><ul class="see"><li>ArrayAccess::offsetGet()</li></ul></dd>
+</dl>
+    </div>
+  </div>
+  <div class="panel panel-default member-definition">
+    <div class="panel-heading method-heading">
+      <code>void</code> <h3 id="method-offsetSet" class="target">offsetSet<a class="anchor" href="#method-offsetSet" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+</h3> <big>(</big> <code>int</code> $offset, <code>array</code> $value <big>)</big>
+    </div>
+    <div class="panel-body method-body">
+      <p>Sets a row at given index.</p>
+
+      <dl class="tags">
+<dt class="tag-title">Parameters:</dt>
+<dd class="tag-content"><table class="table table-striped param">
+<thead><tr>
+<th class="name">Name</th>
+<th class="type">Type</th>
+<th class="details">Details</th>
+</tr></thead>
+<tbody>
+<tr>
+<td><var>$offset</var></td>
+<td><code>int</code></td>
+<td>
+<p>row index</p>
+</td>
+</tr>
+<tr>
+<td><var>$value</var></td>
+<td><code>array</code></td>
+<td>
+<p>row value</p>
+</td>
+</tr>
+</tbody>
+</table></dd>
+<dt class="tag-title">Throws:</dt>
+<dd class="tag-content"><table class="table table-striped throw">
+<thead><tr>
+<th class="type">Type</th>
+<th class="details">Details</th>
+</tr></thead>
+<tbody><tr>
+<td><code><a href="../Exception/class.DomainException/">Exception\DomainException</a></code></td>
+<td></td>
+</tr></tbody>
+</table></dd>
+<dt class="tag-title">Returns:</dt>
+<dd class="tag-content"><table class="table table-striped return">
+<thead><tr>
+<th class="type">Type</th>
+<th class="details">Details</th>
+</tr></thead>
+<tbody><tr>
+<td><code>void</code></td>
+<td></td>
+</tr></tbody>
+</table></dd>
+<dt class="tag-title">See Also:</dt>
+<dd class="tag-content"><ul class="see"><li>ArrayAccess::offsetSet()</li></ul></dd>
+</dl>
+    </div>
+  </div>
+  <div class="panel panel-default member-definition">
+    <div class="panel-heading method-heading">
+      <code>void</code> <h3 id="method-offsetUnset" class="target">offsetUnset<a class="anchor" href="#method-offsetUnset" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+</h3> <big>(</big> <code>int</code> $offset <big>)</big>
+    </div>
+    <div class="panel-body method-body">
+      <p>Removes a row at given index.</p>
+
+      <dl class="tags">
+<dt class="tag-title">Parameters:</dt>
+<dd class="tag-content"><table class="table table-striped param">
+<thead><tr>
+<th class="name">Name</th>
+<th class="type">Type</th>
+<th class="details">Details</th>
+</tr></thead>
+<tbody><tr>
+<td><var>$offset</var></td>
+<td><code>int</code></td>
+<td>
+<p>row index</p>
+</td>
+</tr></tbody>
+</table></dd>
+<dt class="tag-title">Throws:</dt>
+<dd class="tag-content"><table class="table table-striped throw">
+<thead><tr>
+<th class="type">Type</th>
+<th class="details">Details</th>
+</tr></thead>
+<tbody><tr>
+<td><code><a href="../Exception/class.DomainException/">Exception\DomainException</a></code></td>
+<td></td>
+</tr></tbody>
+</table></dd>
+<dt class="tag-title">Returns:</dt>
+<dd class="tag-content"><table class="table table-striped return">
+<thead><tr>
+<th class="type">Type</th>
+<th class="details">Details</th>
+</tr></thead>
+<tbody><tr>
+<td><code>void</code></td>
+<td></td>
+</tr></tbody>
+</table></dd>
+<dt class="tag-title">See Also:</dt>
+<dd class="tag-content"><ul class="see"><li>ArrayAccess::offsetUnset()</li></ul></dd>
+</dl>
+    </div>
+  </div>
+  <div class="panel panel-default member-definition">
+    <div class="panel-heading method-heading">
+      <code>bool</code> <h3 id="method-isLastPage" class="target">isLastPage<a class="anchor" href="#method-isLastPage" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+</h3> <big>(</big>  <big>)</big>
+    </div>
+    <div class="panel-body method-body">
+      <p>Check for the last page when paging.</p>
+
+      <dl class="tags">
+<dt class="tag-title">Returns:</dt>
+<dd class="tag-content"><table class="table table-striped return">
+<thead><tr>
+<th class="type">Type</th>
+<th class="details">Details</th>
+</tr></thead>
+<tbody><tr>
+<td><code>bool</code></td>
+<td>
+<p>whether this is the last page or not</p>
+</td>
+</tr></tbody>
+</table></dd>
+</dl>
+    </div>
+  </div>
+  <div class="panel panel-default member-definition">
+    <div class="panel-heading method-heading">
+      <code><a href="./">Cassandra\Rows</a> null</code> <h3 id="method-nextPage" class="target">nextPage<a class="anchor" href="#method-nextPage" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+</h3> <big>(</big> <code>float</code> $timeout <big>=</big> <var>null</var> <big>)</big>
+    </div>
+    <div class="panel-body method-body">
+      <p>Get the next page of results.</p>
+
+      <dl class="tags">
+<dt class="tag-title">Parameters:</dt>
+<dd class="tag-content"><table class="table table-striped param">
+<thead><tr>
+<th class="name">Name</th>
+<th class="type">Type</th>
+<th class="details">Details</th>
+</tr></thead>
+<tbody><tr>
+<td><var>$timeout</var></td>
+<td><code>float</code></td>
+<td></td>
+</tr></tbody>
+</table></dd>
+<dt class="tag-title">Returns:</dt>
+<dd class="tag-content"><table class="table table-striped return">
+<thead><tr>
+<th class="type">Type</th>
+<th class="details">Details</th>
+</tr></thead>
+<tbody><tr>
+<td><code>Rows|null</code></td>
+<td>
+<p>loads and returns next result page</p>
+</td>
+</tr></tbody>
+</table></dd>
+</dl>
+    </div>
+  </div>
+  <div class="panel panel-default member-definition">
+    <div class="panel-heading method-heading">
+      <code><a href="../interface.Future/">Cassandra\Future</a></code> <h3 id="method-nextPageAsync" class="target">nextPageAsync<a class="anchor" href="#method-nextPageAsync" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+</h3> <big>(</big>  <big>)</big>
+    </div>
+    <div class="panel-body method-body">
+      <p>Get the next page of results asynchronously.</p>
+
+      <dl class="tags">
+<dt class="tag-title">Returns:</dt>
+<dd class="tag-content"><table class="table table-striped return">
+<thead><tr>
+<th class="type">Type</th>
+<th class="details">Details</th>
+</tr></thead>
+<tbody><tr>
+<td><code><a href="../interface.Future/">Cassandra\Future</a></code></td>
+<td>
+<p>returns future of the next result page</p>
+</td>
+</tr></tbody>
+</table></dd>
+</dl>
+    </div>
+  </div>
+  <div class="panel panel-default member-definition">
+    <div class="panel-heading method-heading">
+      <code>array null</code> <h3 id="method-first" class="target">first<a class="anchor" href="#method-first" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+</h3> <big>(</big>  <big>)</big>
+    </div>
+    <div class="panel-body method-body">
+      <p>Get the first row.</p>
+
+      <dl class="tags">
+<dt class="tag-title">Returns:</dt>
+<dd class="tag-content"><table class="table table-striped return">
+<thead><tr>
+<th class="type">Type</th>
+<th class="details">Details</th>
+</tr></thead>
+<tbody><tr>
+<td><code>array|null</code></td>
+<td>
+<p>returns first row if any</p>
+</td>
+</tr></tbody>
+</table></dd>
+</dl>
+    </div>
+  </div>
+</div>
+
+
+        </div>
+      </div>
+    </div>
+
+    
+    <footer class="container text-muted">
+      <ul class="list-inline">
+      
+        
+        <li>
+          <a href="http://downloads.datastax.com/php-driver/">Binaries</a>
+        </li>
+      
+        <li>·</li>
+        <li>
+          <a href="https://github.com/datastax/php-driver/">Code</a>
+        </li>
+      
+        <li>·</li>
+        <li>
+          <a href="http://datastax.github.io/php-driver/">Docs</a>
+        </li>
+      
+        <li>·</li>
+        <li>
+          <a href="https://datastax-oss.atlassian.net/browse/PHP/">Issues</a>
+        </li>
+      
+        <li>·</li>
+        <li>
+          <a href="https://groups.google.com/a/lists.datastax.com/forum/#!forum/php-driver-user">Mailing List</a>
+        </li>
+      
+        <li>·</li>
+        <li>
+          <a href="irc://irc.freenode.net/datastax-drivers">IRC Channel</a>
+        </li>
+      
+        <li>·</li>
+        <li>
+          <a href="https://github.com/datastax/php-driver/releases">Releases</a>
+        </li>
+      
+      </ul>
+    </footer>
+    
+
+    <script src="../../../js/jquery.js"></script>
+    <script src="../../../js/bootstrap.js"></script>
+    <script src="../../../js/angular.js"></script>
+    <script src="../../../js/mousetrap.js"></script>
+    <script src="../../../js/hotkeys.js"></script>
+    <script src="../../../js/ZeroClipboard.js"></script>
+    <script src="../../../js/lunr.js"></script>
+    <script src="../../../js/app.js"></script>
+  </body>
+</html>
