@@ -318,6 +318,7 @@ PHP_METHOD(Rows, nextPageAsync)
   session = (cassandra_session*) zend_object_store_get_object(self->session TSRMLS_CC);
   future = cass_session_execute(session->session, (CassStatement*) self->statement->data);
 
+  MAKE_STD_ZVAL(self->future_next_page);
   object_init_ex(self->future_next_page, cassandra_future_rows_ce);
   future_rows = (cassandra_future_rows*) zend_object_store_get_object(self->future_next_page TSRMLS_CC);
 
