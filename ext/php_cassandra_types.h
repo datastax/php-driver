@@ -1,6 +1,12 @@
 #ifndef PHP_CASSANDRA_TYPES_H
 #define PHP_CASSANDRA_TYPES_H
 
+#define PHP_CASSANDRA_DRIVER_VERSION(major, minor, patch) \
+  (((major) << 16) + ((minor) << 8) + (patch))
+
+#define PHP_CASSANDRA_CURRENT_DRIVER_VERSION \
+  PHP_CASSANDRA_DRIVER_VERSION(CASS_VERSION_MAJOR, CASS_VERSION_MINOR, CASS_VERSION_PATCH)
+
 typedef enum {
   CASSANDRA_BIGINT,
   CASSANDRA_DECIMAL,
@@ -260,17 +266,35 @@ typedef struct {
   cassandra_ref* schema;
 } cassandra_schema;
 
-typedef struct {
-  zend_object zval;
-  cassandra_ref* schema;
-  const CassSchemaMeta* meta;
-} cassandra_keyspace;
+#if PHP_CASSANDRA_CURRENT_DRIVER_VERSION >= PHP_CASSANDRA_DRIVER_VERSION(2, 2, 0)
+typedef const CassKeyspaceMeta cassandra_keyspace_meta;
+#else
+typedef const CassSchemaMeta cassandra_keyspace_meta;
+#endif
 
 typedef struct {
   zend_object zval;
   cassandra_ref* schema;
-  const CassSchemaMeta* meta;
+  cassandra_keyspace_meta* meta;
+} cassandra_keyspace;
+
+#if PHP_CASSANDRA_CURRENT_DRIVER_VERSION >= PHP_CASSANDRA_DRIVER_VERSION(2, 2, 0)
+typedef const CassTableMeta cassandra_table_meta;
+#else
+typedef const CassSchemaMeta cassandra_table_meta;
+#endif
+
+typedef struct {
+  zend_object zval;
+  cassandra_ref* schema;
+  cassandra_table_meta* meta;
 } cassandra_table;
+
+#if PHP_CASSANDRA_CURRENT_DRIVER_VERSION >= PHP_CASSANDRA_DRIVER_VERSION(2, 2, 0)
+typedef const CassColumnMeta cassandra_column_meta;
+#else
+typedef const CassSchemaMeta cassandra_column_meta;
+#endif
 
 typedef struct {
   zend_object zval;
@@ -279,7 +303,7 @@ typedef struct {
   int reversed;
   int frozen;
   cassandra_ref* schema;
-  const CassSchemaMeta* meta;
+  cassandra_column_meta* meta;
 } cassandra_column;
 
 typedef struct {

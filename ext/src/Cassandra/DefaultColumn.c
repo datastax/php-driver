@@ -45,19 +45,27 @@ PHP_METHOD(DefaultColumn, isReversed)
 
 PHP_METHOD(DefaultColumn, isStatic)
 {
-  cassandra_column*          self;
+  cassandra_column* self;
+  const CassValue*  value;
+  const char*       str;
+  size_t            str_len;
+
+#if PHP_CASSANDRA_CURRENT_DRIVER_VERSION < PHP_CASSANDRA_DRIVER_VERSION(2, 2, 0)
   const CassSchemaMetaField* field;
-  const CassValue*           value;
-  const char*                str;
-  size_t                     str_len;
+#endif
 
   if (zend_parse_parameters_none() == FAILURE) {
     return;
   }
 
   self  = (cassandra_column*) zend_object_store_get_object(getThis() TSRMLS_CC);
+
+#if PHP_CASSANDRA_CURRENT_DRIVER_VERSION >= PHP_CASSANDRA_DRIVER_VERSION(2, 2, 0)
+  value = cass_column_meta_field_by_name(self->meta, "type");
+#else
   field = cass_schema_meta_get_field(self->meta, "type");
   value = cass_schema_meta_field_value(field);
+#endif
 
   ASSERT_SUCCESS_BLOCK(cass_value_get_string(value, &str, &str_len),
     RETURN_FALSE;
@@ -94,7 +102,7 @@ PHP_METHOD(DefaultColumn, indexName)
 
   self = (cassandra_column*) zend_object_store_get_object(getThis() TSRMLS_CC);
 
-  php_cassandra_get_schema_field(self->meta, "index_name", &value TSRMLS_CC);
+  php_cassandra_get_column_field(self->meta, "index_name", &value TSRMLS_CC);
   RETURN_ZVAL(value, 0, 1);
 }
 
@@ -109,7 +117,7 @@ PHP_METHOD(DefaultColumn, indexOptions)
 
   self = (cassandra_column*) zend_object_store_get_object(getThis() TSRMLS_CC);
 
-  php_cassandra_get_schema_field(self->meta, "index_options", &value TSRMLS_CC);
+  php_cassandra_get_column_field(self->meta, "index_options", &value TSRMLS_CC);
   RETURN_ZVAL(value, 0, 1);
 }
 

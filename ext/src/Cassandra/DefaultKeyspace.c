@@ -14,7 +14,7 @@ PHP_METHOD(DefaultKeyspace, name)
 
   self = (cassandra_keyspace*) zend_object_store_get_object(getThis() TSRMLS_CC);
 
-  php_cassandra_get_schema_field(self->meta, "keyspace_name", &value TSRMLS_CC);
+  php_cassandra_get_keyspace_field(self->meta, "keyspace_name", &value TSRMLS_CC);
   RETURN_ZVAL(value, 0, 1);
 }
 
@@ -28,7 +28,7 @@ PHP_METHOD(DefaultKeyspace, replicationClassName)
 
   self = (cassandra_keyspace*) zend_object_store_get_object(getThis() TSRMLS_CC);
 
-  php_cassandra_get_schema_field(self->meta, "strategy_class", &value TSRMLS_CC);
+  php_cassandra_get_keyspace_field(self->meta, "strategy_class", &value TSRMLS_CC);
   RETURN_ZVAL(value, 0, 1);
 }
 
@@ -42,7 +42,7 @@ PHP_METHOD(DefaultKeyspace, replicationOptions)
 
   self = (cassandra_keyspace*) zend_object_store_get_object(getThis() TSRMLS_CC);
 
-  php_cassandra_get_schema_field(self->meta, "strategy_options", &value TSRMLS_CC);
+  php_cassandra_get_keyspace_field(self->meta, "strategy_options", &value TSRMLS_CC);
   RETURN_ZVAL(value, 0, 1);
 }
 
@@ -56,7 +56,7 @@ PHP_METHOD(DefaultKeyspace, hasDurableWrites)
 
   self = (cassandra_keyspace*) zend_object_store_get_object(getThis() TSRMLS_CC);
 
-  php_cassandra_get_schema_field(self->meta, "durable_writes", &value TSRMLS_CC);
+  php_cassandra_get_keyspace_field(self->meta, "durable_writes", &value TSRMLS_CC);
   RETURN_ZVAL(value, 0, 1);
 }
 
@@ -66,14 +66,18 @@ PHP_METHOD(DefaultKeyspace, table)
   int                   name_len;
   cassandra_keyspace*   self;
   cassandra_table*      table;
-  const CassSchemaMeta* meta;
+  cassandra_table_meta* meta;
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &name, &name_len) == FAILURE) {
     return;
   }
 
   self = (cassandra_keyspace*) zend_object_store_get_object(getThis() TSRMLS_CC);
+#if PHP_CASSANDRA_CURRENT_DRIVER_VERSION >= PHP_CASSANDRA_DRIVER_VERSION(2, 2, 0)
+  meta = cass_keyspace_meta_table_by_name(self->meta, name);
+#else
   meta = cass_schema_meta_get_entry(self->meta, name);
+#endif
 
   if (meta == NULL) {
     return;
@@ -87,27 +91,39 @@ PHP_METHOD(DefaultKeyspace, table)
 
 PHP_METHOD(DefaultKeyspace, tables)
 {
-  cassandra_keyspace*        self;
-  cassandra_table*           table;
-  const CassSchemaMeta*      meta;
-  CassIterator*              iterator;
-  const CassSchemaMetaField* field;
-  const CassValue*           value;
-  const char*                table_name;
-  size_t                     table_name_len;
-  zval*                      zend_table;
-
+  cassandra_keyspace* self;
+  CassIterator*       iterator;
   if (zend_parse_parameters_none() == FAILURE)
     return;
 
   self     = (cassandra_keyspace*) zend_object_store_get_object(getThis() TSRMLS_CC);
+#if PHP_CASSANDRA_CURRENT_DRIVER_VERSION >= PHP_CASSANDRA_DRIVER_VERSION(2, 2, 0)
+  iterator = cass_iterator_tables_from_keyspace_meta(self->meta);
+#else
   iterator = cass_iterator_from_schema_meta(self->meta);
+#endif
 
   array_init(return_value);
   while (cass_iterator_next(iterator)) {
+    cassandra_table_meta* meta;
+    const CassValue*      value;
+    const char*           table_name;
+    size_t                table_name_len;
+    zval*                 zend_table;
+    cassandra_table*      table;
+
+#if PHP_CASSANDRA_CURRENT_DRIVER_VERSION < PHP_CASSANDRA_DRIVER_VERSION(2, 2, 0)
+    const CassSchemaMetaField* field;
+#endif
+
+#if PHP_CASSANDRA_CURRENT_DRIVER_VERSION >= PHP_CASSANDRA_DRIVER_VERSION(2, 2, 0)
+    meta = cass_iterator_get_table_meta(iterator);
+    value = cass_table_meta_field_by_name(meta, "columnfamily_name");
+#else
     meta  = cass_iterator_get_schema_meta(iterator);
     field = cass_schema_meta_get_field(meta, "columnfamily_name");
     value = cass_schema_meta_field_value(field);
+#endif
 
     ASSERT_SUCCESS_BLOCK(cass_value_get_string(value, &table_name, &table_name_len),
       zval_ptr_dtor(&return_value);

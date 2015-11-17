@@ -336,6 +336,18 @@ class FeatureContext implements Context, SnippetAcceptingContext
     }
 
     /**
+     * @Then /^its output should contain these lines in any order:$/
+     */
+    public function itsOutputShouldContainTheseLinesInAnyOrder(PyStringNode $string)
+    {
+        $expected = explode("\n", $string);
+        sort($expected, SORT_STRING);
+        $actual = explode("\n", $this->getOutput());
+        sort($actual, SORT_STRING);
+        PHPUnit_Framework_Assert::assertContains(implode("\n", $expected), implode("\n", $actual));
+    }
+
+    /**
      * @Given the following logger settings:
      */
     public function theFollowingLoggerSettings(PyStringNode $string)
