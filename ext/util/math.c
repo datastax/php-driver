@@ -459,25 +459,65 @@ import_twos_complement(cass_byte_t* data, size_t size, mpz_t* number)
 
   /* negative value */
   if ((data[0] & 0x80) == 0x80) {
-    /* invert bits */
-    mpz_com(*number, *number);
-    /* add one */
-    mpz_add_ui(*number, *number, 1);
-    /* negate the value */
-    mpz_neg(*number, *number);
+    /* mpz_import() imports the two's complement value as an unsigned integer
+     * so this needs to subtract 2^(8 * num_bytes) to get the negative value.
+     */
+    mpz_t temp;
+    mpz_init(temp);
+    mpz_set_ui(temp, 1);
+    mpz_mul_2exp(temp, temp, 8 * size);
+    mpz_sub(*number, *number, temp);
+    mpz_clear(temp);
   }
 }
 
 cass_byte_t*
 export_twos_complement(mpz_t number, size_t* size)
 {
-  /* negative, do two's complement */
-  if (mpz_sgn(number) == -1) {
-    /* invert bits */
-    mpz_com(number, number);
-    /* add one */
-    mpz_add_ui(number, number, 1);
+  cass_byte_t* bytes;
+
+  if (mpz_sgn(number) == 0) {
+    /* mpz_export() returns NULL for 0 */
+    bytes = (cass_byte_t*) malloc(sizeof(cass_byte_t));
+    *bytes = 0;
+    *size = 1;
+  } else if (mpz_sgn(number) == -1) {
+    /*  mpz_export() ignores sign and only exports abs(number)
+     *  so this needs to convert the number to the two's complement
+     *  unsigned value.
+     */
+    size_t n;
+    mpz_t temp;
+
+    /* determine the number of bytes used in the two's complement
+     * respresentation.
+     */
+    n = mpz_sizeinbase(number, 2) / 8 + 1;
+
+    /* there's a special case for -2^(8 * n) numbers e.g. -128 (1000 0000) and
+     * -32768 (100 0000 0000 0000), etc. that can be handled by n - 1 bytes in
+     *  two's complement.
+     */
+    if (mpz_scan1(number, 0) ==  (8 * (n - 1)) - 1) {
+      n--;
+    }
+
+    /* Add 2^(8 * num_bytes) to get the unsigned value e.g.
+     * -1   + 2^8 = 255
+     * -128 + 2^8 = 128
+     * -129 + 2^16 = 65407
+     * -32768 + 2^16 = 32768
+     *  ...
+     */
+    mpz_init(temp);
+    mpz_set_ui(temp, 1);
+    mpz_mul_2exp(temp, temp, 8 * n);
+    mpz_add(temp, number, temp);
+    bytes = (cass_byte_t*) mpz_export(NULL, size, 1, sizeof(cass_byte_t), 1, 0, temp);
+    mpz_clear(temp);
+  } else {
+    bytes = (cass_byte_t*) mpz_export(NULL, size, 1, sizeof(cass_byte_t), 1, 0, number);
   }
 
-  return (cass_byte_t*) mpz_export(NULL, size, 1, sizeof(cass_byte_t), 1, 0, number);
+  return bytes;
 }
