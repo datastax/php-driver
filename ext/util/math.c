@@ -498,7 +498,7 @@ export_twos_complement(mpz_t number, size_t* size)
      * -32768 (100 0000 0000 0000), etc. that can be handled by n - 1 bytes in
      *  two's complement.
      */
-    if (mpz_scan1(number, 0) ==  (8 * (n - 1)) - 1) {
+    if (mpz_scan1(number, 0) == (8 * (n - 1)) - 1) {
       n--;
     }
 
