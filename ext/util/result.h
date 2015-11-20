@@ -1,7 +1,7 @@
 #ifndef PHP_CASSANDRA_RESULT_H
 #define PHP_CASSANDRA_RESULT_H
 
-#if PHP_CASSANDRA_CURRENT_DRIVER_VERSION >= PHP_CASSANDRA_DRIVER_VERSION(2, 2, 0)
+#if CURRENT_DRIVER_VERSION >= DRIVER_VERSION(2, 2, 0)
 int php_cassandra_get_keyspace_field(const CassKeyspaceMeta* metadata, const char* field_name, zval** out TSRMLS_DC);
 int php_cassandra_get_table_field(const CassTableMeta* metadata, const char* field_name, zval** out TSRMLS_DC);
 int php_cassandra_get_column_field(const CassColumnMeta* metadata, const char* field_name, zval** out TSRMLS_DC);

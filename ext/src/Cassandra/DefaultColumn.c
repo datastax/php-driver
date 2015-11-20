@@ -50,7 +50,7 @@ PHP_METHOD(DefaultColumn, isStatic)
   const char*       str;
   size_t            str_len;
 
-#if PHP_CASSANDRA_CURRENT_DRIVER_VERSION < PHP_CASSANDRA_DRIVER_VERSION(2, 2, 0)
+#if CURRENT_DRIVER_VERSION < DRIVER_VERSION(2, 2, 0)
   const CassSchemaMetaField* field;
 #endif
 
@@ -60,7 +60,7 @@ PHP_METHOD(DefaultColumn, isStatic)
 
   self  = (cassandra_column*) zend_object_store_get_object(getThis() TSRMLS_CC);
 
-#if PHP_CASSANDRA_CURRENT_DRIVER_VERSION >= PHP_CASSANDRA_DRIVER_VERSION(2, 2, 0)
+#if CURRENT_DRIVER_VERSION >= DRIVER_VERSION(2, 2, 0)
   value = cass_column_meta_field_by_name(self->meta, "type");
 #else
   field = cass_schema_meta_get_field(self->meta, "type");
