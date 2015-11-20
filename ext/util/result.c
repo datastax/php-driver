@@ -233,6 +233,55 @@ php_cassandra_value(const CassValue* value, CassValueType type, zval** out TSRML
   return SUCCESS;
 }
 
+#if CURRENT_CPP_DRIVER_VERSION >= CPP_DRIVER_VERSION(2, 2, 0)
+int
+php_cassandra_get_keyspace_field(const CassKeyspaceMeta* metadata, const char* field_name, zval** out TSRMLS_DC)
+{
+  const CassValue* value;
+
+  value = cass_keyspace_meta_field_by_name(metadata, field_name);
+
+  if (value == NULL) {
+    MAKE_STD_ZVAL(*out);
+    ZVAL_NULL(*out);
+    return SUCCESS;
+  }
+
+  return php_cassandra_value(value, cass_value_type(value), out TSRMLS_CC);
+}
+
+int
+php_cassandra_get_table_field(const CassTableMeta* metadata, const char* field_name, zval** out TSRMLS_DC)
+{
+  const CassValue* value;
+
+  value = cass_table_meta_field_by_name(metadata, field_name);
+
+  if (value == NULL) {
+    MAKE_STD_ZVAL(*out);
+    ZVAL_NULL(*out);
+    return SUCCESS;
+  }
+
+  return php_cassandra_value(value, cass_value_type(value), out TSRMLS_CC);
+}
+
+int
+php_cassandra_get_column_field(const CassColumnMeta* metadata, const char* field_name, zval** out TSRMLS_DC)
+{
+  const CassValue* value;
+
+  value = cass_column_meta_field_by_name(metadata, field_name);
+
+  if (value == NULL) {
+    MAKE_STD_ZVAL(*out);
+    ZVAL_NULL(*out);
+    return SUCCESS;
+  }
+
+  return php_cassandra_value(value, cass_value_type(value), out TSRMLS_CC);
+}
+#else
 int
 php_cassandra_get_schema_field(const CassSchemaMeta* metadata, const char* field_name, zval** out TSRMLS_DC)
 {
@@ -257,6 +306,7 @@ php_cassandra_get_schema_field(const CassSchemaMeta* metadata, const char* field
 
   return php_cassandra_value(value, cass_value_type(value), out TSRMLS_CC);
 }
+#endif
 
 int
 php_cassandra_get_result(const CassResult* result, zval** out TSRMLS_DC)

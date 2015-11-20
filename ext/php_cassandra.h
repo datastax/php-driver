@@ -100,6 +100,12 @@ void throw_invalid_argument(zval* object,
 
 #define ASSERT_SUCCESS_VALUE(rc, value) ASSERT_SUCCESS_BLOCK(rc, return value;)
 
+#define CPP_DRIVER_VERSION(major, minor, patch) \
+  (((major) << 16) + ((minor) << 8) + (patch))
+
+#define CURRENT_CPP_DRIVER_VERSION \
+  CPP_DRIVER_VERSION(CASS_VERSION_MAJOR, CASS_VERSION_MINOR, CASS_VERSION_PATCH)
+
 #include "php_cassandra_types.h"
 
 PHP_MINIT_FUNCTION(cassandra);

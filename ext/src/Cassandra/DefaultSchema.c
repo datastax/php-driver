@@ -9,14 +9,18 @@ PHP_METHOD(DefaultSchema, keyspace)
   int name_len;
   cassandra_schema*     self;
   cassandra_keyspace*   keyspace;
-  const CassSchemaMeta* meta;
+  cassandra_keyspace_meta* meta;
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &name, &name_len) == FAILURE) {
     return;
   }
 
   self = (cassandra_schema*) zend_object_store_get_object(getThis() TSRMLS_CC);
+#if CURRENT_CPP_DRIVER_VERSION >= CPP_DRIVER_VERSION(2, 2, 0)
+  meta = cass_schema_meta_keyspace_by_name_n((CassSchemaMeta*) self->schema->data, name, name_len);
+#else
   meta = cass_schema_get_keyspace_n((CassSchema*) self->schema->data, name, name_len);
+#endif
 
   if (meta == NULL) {
     RETURN_NULL();
@@ -31,26 +35,39 @@ PHP_METHOD(DefaultSchema, keyspace)
 PHP_METHOD(DefaultSchema, keyspaces)
 {
   cassandra_schema* self;
-  CassIterator* iterator;
-  const CassSchemaMeta* meta;
-  const CassSchemaMetaField* field;
-  const CassValue* value;
-  const char* keyspace_name;
-  size_t keyspace_name_len;
-  zval* zend_keyspace;
-  cassandra_keyspace* keyspace;
+  CassIterator*     iterator;
 
   if (zend_parse_parameters_none() == FAILURE)
     return;
 
   self     = (cassandra_schema*) zend_object_store_get_object(getThis() TSRMLS_CC);
+#if CURRENT_CPP_DRIVER_VERSION >= CPP_DRIVER_VERSION(2, 2, 0)
+  iterator = cass_iterator_keyspaces_from_schema_meta((CassSchemaMeta*) self->schema->data);
+#else
   iterator = cass_iterator_from_schema((CassSchema*) self->schema->data);
+#endif
 
   array_init(return_value);
   while (cass_iterator_next(iterator)) {
+    cassandra_keyspace_meta* meta;
+    const CassValue*         value;
+    const char*              keyspace_name;
+    size_t                   keyspace_name_len;
+    zval*                    zend_keyspace;
+    cassandra_keyspace*      keyspace;
+
+#if CURRENT_CPP_DRIVER_VERSION < CPP_DRIVER_VERSION(2, 2, 0)
+    const CassSchemaMetaField* field;
+#endif
+
+#if CURRENT_CPP_DRIVER_VERSION >= CPP_DRIVER_VERSION(2, 2, 0)
+    meta = cass_iterator_get_keyspace_meta(iterator);
+    value = cass_keyspace_meta_field_by_name(meta, "keyspace_name");
+#else
     meta  = cass_iterator_get_schema_meta(iterator);
     field = cass_schema_meta_get_field(meta, "keyspace_name");
     value = cass_schema_meta_field_value(field);
+#endif
 
     ASSERT_SUCCESS_BLOCK(cass_value_get_string(value, &keyspace_name, &keyspace_name_len),
       zval_ptr_dtor(&return_value);

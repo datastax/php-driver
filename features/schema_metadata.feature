@@ -52,7 +52,7 @@ Feature: Schema Metadata
                          ->withContactPoints('127.0.0.1')
                          ->build();
       $session  = $cluster->connect("simplex");
-      
+
       $schema   = $session->schema();
       $keyspace = $schema->keyspace("simplex");
 
@@ -80,7 +80,7 @@ Feature: Schema Metadata
                          ->withContactPoints('127.0.0.1')
                          ->build();
       $session = $cluster->connect("simplex");
-      
+
       $schema  = $session->schema();
       $table   = $schema->keyspace("simplex")->table("values");
 
@@ -125,7 +125,7 @@ Feature: Schema Metadata
                          ->withContactPoints('127.0.0.1')
                          ->build();
       $session = $cluster->connect("simplex");
-      
+
       $schema  = $session->schema();
       $table   = $schema->keyspace("simplex")->table("values");
 
@@ -230,7 +230,7 @@ Feature: Schema Metadata
       }
       """
     When it is executed
-    Then its output should contain:
+    Then its output should contain these lines in any order:
       """
       ascii_value: ascii
       bigint_value: bigint

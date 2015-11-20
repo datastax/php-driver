@@ -15,7 +15,8 @@ PHP_METHOD(DefaultTable, name)
 
   self = (cassandra_table*) zend_object_store_get_object(getThis() TSRMLS_CC);
 
-  php_cassandra_get_schema_field(self->meta, "columnfamily_name", &value TSRMLS_CC);
+  php_cassandra_get_table_field(self->meta, "columnfamily_name", &value TSRMLS_CC);
+  php_cassandra_get_table_field(self->meta, "columnfamily_name", &value TSRMLS_CC);
   RETURN_ZVAL(value, 0, 1);
 }
 
@@ -29,7 +30,7 @@ PHP_METHOD(DefaultTable, comment)
 
   self = (cassandra_table*) zend_object_store_get_object(getThis() TSRMLS_CC);
 
-  php_cassandra_get_schema_field(self->meta, "comment", &value TSRMLS_CC);
+  php_cassandra_get_table_field(self->meta, "comment", &value TSRMLS_CC);
   RETURN_ZVAL(value, 0, 1);
 }
 
@@ -43,7 +44,7 @@ PHP_METHOD(DefaultTable, readRepairChance)
 
   self = (cassandra_table*) zend_object_store_get_object(getThis() TSRMLS_CC);
 
-  php_cassandra_get_schema_field(self->meta, "read_repair_chance", &value TSRMLS_CC);
+  php_cassandra_get_table_field(self->meta, "read_repair_chance", &value TSRMLS_CC);
   RETURN_ZVAL(value, 0, 1);
 }
 
@@ -57,7 +58,7 @@ PHP_METHOD(DefaultTable, localReadRepairChance)
 
   self = (cassandra_table*) zend_object_store_get_object(getThis() TSRMLS_CC);
 
-  php_cassandra_get_schema_field(self->meta, "local_read_repair_chance", &value TSRMLS_CC);
+  php_cassandra_get_table_field(self->meta, "local_read_repair_chance", &value TSRMLS_CC);
   RETURN_ZVAL(value, 0, 1);
 }
 
@@ -71,7 +72,7 @@ PHP_METHOD(DefaultTable, gcGraceSeconds)
 
   self = (cassandra_table*) zend_object_store_get_object(getThis() TSRMLS_CC);
 
-  php_cassandra_get_schema_field(self->meta, "gc_grace_seconds", &value TSRMLS_CC);
+  php_cassandra_get_table_field(self->meta, "gc_grace_seconds", &value TSRMLS_CC);
   RETURN_ZVAL(value, 0, 1);
 }
 
@@ -85,7 +86,7 @@ PHP_METHOD(DefaultTable, caching)
 
   self = (cassandra_table*) zend_object_store_get_object(getThis() TSRMLS_CC);
 
-  php_cassandra_get_schema_field(self->meta, "caching", &value TSRMLS_CC);
+  php_cassandra_get_table_field(self->meta, "caching", &value TSRMLS_CC);
   RETURN_ZVAL(value, 0, 1);
 }
 
@@ -99,7 +100,7 @@ PHP_METHOD(DefaultTable, bloomFilterFPChance)
 
   self = (cassandra_table*) zend_object_store_get_object(getThis() TSRMLS_CC);
 
-  php_cassandra_get_schema_field(self->meta, "bloom_filter_fp_chance", &value TSRMLS_CC);
+  php_cassandra_get_table_field(self->meta, "bloom_filter_fp_chance", &value TSRMLS_CC);
   RETURN_ZVAL(value, 0, 1);
 }
 
@@ -113,7 +114,7 @@ PHP_METHOD(DefaultTable, memtableFlushPeriodMs)
 
   self = (cassandra_table*) zend_object_store_get_object(getThis() TSRMLS_CC);
 
-  php_cassandra_get_schema_field(self->meta, "memtable_flush_period_in_ms", &value TSRMLS_CC);
+  php_cassandra_get_table_field(self->meta, "memtable_flush_period_in_ms", &value TSRMLS_CC);
   RETURN_ZVAL(value, 0, 1);
 }
 
@@ -127,7 +128,7 @@ PHP_METHOD(DefaultTable, defaultTTL)
 
   self = (cassandra_table*) zend_object_store_get_object(getThis() TSRMLS_CC);
 
-  php_cassandra_get_schema_field(self->meta, "default_time_to_live", &value TSRMLS_CC);
+  php_cassandra_get_table_field(self->meta, "default_time_to_live", &value TSRMLS_CC);
   RETURN_ZVAL(value, 0, 1);
 }
 
@@ -141,7 +142,7 @@ PHP_METHOD(DefaultTable, speculativeRetry)
 
   self = (cassandra_table*) zend_object_store_get_object(getThis() TSRMLS_CC);
 
-  php_cassandra_get_schema_field(self->meta, "speculative_retry", &value TSRMLS_CC);
+  php_cassandra_get_table_field(self->meta, "speculative_retry", &value TSRMLS_CC);
   RETURN_ZVAL(value, 0, 1);
 }
 
@@ -155,7 +156,7 @@ PHP_METHOD(DefaultTable, indexInterval)
 
   self = (cassandra_table*) zend_object_store_get_object(getThis() TSRMLS_CC);
 
-  php_cassandra_get_schema_field(self->meta, "index_interval", &value TSRMLS_CC);
+  php_cassandra_get_table_field(self->meta, "index_interval", &value TSRMLS_CC);
   RETURN_ZVAL(value, 0, 1);
 }
 
@@ -169,7 +170,7 @@ PHP_METHOD(DefaultTable, compactionStrategyClassName)
 
   self = (cassandra_table*) zend_object_store_get_object(getThis() TSRMLS_CC);
 
-  php_cassandra_get_schema_field(self->meta, "compaction_strategy_class", &value TSRMLS_CC);
+  php_cassandra_get_table_field(self->meta, "compaction_strategy_class", &value TSRMLS_CC);
   RETURN_ZVAL(value, 0, 1);
 }
 
@@ -183,7 +184,7 @@ PHP_METHOD(DefaultTable, compactionStrategyOptions)
 
   self = (cassandra_table*) zend_object_store_get_object(getThis() TSRMLS_CC);
 
-  php_cassandra_get_schema_field(self->meta, "compaction_strategy_options", &value TSRMLS_CC);
+  php_cassandra_get_table_field(self->meta, "compaction_strategy_options", &value TSRMLS_CC);
   RETURN_ZVAL(value, 0, 1);
 }
 
@@ -197,25 +198,31 @@ PHP_METHOD(DefaultTable, compressionParameters)
 
   self = (cassandra_table*) zend_object_store_get_object(getThis() TSRMLS_CC);
 
-  php_cassandra_get_schema_field(self->meta, "compression_parameters", &value TSRMLS_CC);
+  php_cassandra_get_table_field(self->meta, "compression_parameters", &value TSRMLS_CC);
   RETURN_ZVAL(value, 0, 1);
 }
 
 static zval*
-php_cassandra_create_column(cassandra_ref*        schema,
-                            const CassSchemaMeta* metadata TSRMLS_DC)
+php_cassandra_create_column(cassandra_ref*         schema,
+                            cassandra_column_meta* meta TSRMLS_DC)
 {
   zval*             zcolumn;
   cassandra_column* column;
 
+#if CURRENT_CPP_DRIVER_VERSION < CPP_DRIVER_VERSION(2, 2, 0)
   const CassSchemaMetaField* field;
+#endif
   const CassValue*           value;
 
   const char* validator;
   size_t      validator_length;
 
-  field = cass_schema_meta_get_field(metadata, "validator");
+#if CURRENT_CPP_DRIVER_VERSION >= CPP_DRIVER_VERSION(2, 2, 0)
+  value = cass_column_meta_field_by_name(meta, "validator");
+#else
+  field = cass_schema_meta_get_field(meta, "validator");
   value = cass_schema_meta_field_value(field);
+#endif
 
   ASSERT_SUCCESS_VALUE(cass_value_get_string(value, &validator,
                                              &validator_length), NULL);
@@ -225,7 +232,7 @@ php_cassandra_create_column(cassandra_ref*        schema,
 
   column = (cassandra_column*) zend_object_store_get_object(zcolumn TSRMLS_CC);
 
-  ASSERT_SUCCESS_BLOCK(php_cassandra_get_schema_field(metadata, "column_name",
+  ASSERT_SUCCESS_BLOCK(php_cassandra_get_column_field(meta, "column_name",
                                                       &column->name TSRMLS_CC),
     zval_ptr_dtor(&zcolumn);
     return NULL;
@@ -238,7 +245,7 @@ php_cassandra_create_column(cassandra_ref*        schema,
     return NULL;
   }
 
-  column->meta   = metadata;
+  column->meta   = meta;
   column->schema = php_cassandra_add_ref(schema);
 
   return zcolumn;
@@ -250,20 +257,24 @@ PHP_METHOD(DefaultTable, column)
   char* name;
   int   name_len;
   zval* column;
-  const CassSchemaMeta* metadata;
+  cassandra_column_meta* meta;
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &name, &name_len) == FAILURE) {
     return;
   }
 
   self     = (cassandra_table*) zend_object_store_get_object(getThis() TSRMLS_CC);
-  metadata = cass_schema_meta_get_entry(self->meta, name);
+#if CURRENT_CPP_DRIVER_VERSION >= CPP_DRIVER_VERSION(2, 2, 0)
+  meta = cass_table_meta_column_by_name(self->meta, name);
+#else
+  meta = cass_schema_meta_get_entry(self->meta, name);
+#endif
 
-  if (metadata == NULL) {
+  if (meta == NULL) {
     return;
   }
 
-  column = php_cassandra_create_column(self->schema, metadata TSRMLS_CC);
+  column = php_cassandra_create_column(self->schema, meta TSRMLS_CC);
 
   if (column == NULL) {
     return;
@@ -274,21 +285,30 @@ PHP_METHOD(DefaultTable, column)
 
 PHP_METHOD(DefaultTable, columns)
 {
-  cassandra_table*      self;
-  const CassSchemaMeta* meta;
-  CassIterator*         iterator;
-  zval*                 zcolumn;
-  cassandra_column*     column;
+  cassandra_table* self;
+  CassIterator*    iterator;
 
   if (zend_parse_parameters_none() == FAILURE)
     return;
 
   self     = (cassandra_table*) zend_object_store_get_object(getThis() TSRMLS_CC);
+#if CURRENT_CPP_DRIVER_VERSION >= CPP_DRIVER_VERSION(2, 2, 0)
+  iterator = cass_iterator_columns_from_table_meta(self->meta);
+#else
   iterator = cass_iterator_from_schema_meta(self->meta);
+#endif
 
   array_init(return_value);
   while (cass_iterator_next(iterator)) {
+    cassandra_column_meta* meta;
+    zval*                  zcolumn;
+    cassandra_column*      column;
+
+#if CURRENT_CPP_DRIVER_VERSION >= CPP_DRIVER_VERSION(2, 2, 0)
+    meta    = cass_iterator_get_column_meta(iterator);
+#else
     meta    = cass_iterator_get_schema_meta(iterator);
+#endif
     zcolumn = php_cassandra_create_column(self->schema, meta TSRMLS_CC);
 
     if (zcolumn == NULL) {
@@ -320,7 +340,7 @@ PHP_METHOD(DefaultTable, populateIOCacheOnFlush)
 
   self = (cassandra_table*) zend_object_store_get_object(getThis() TSRMLS_CC);
 
-  php_cassandra_get_schema_field(self->meta, "populate_io_cache_on_flush", &value TSRMLS_CC);
+  php_cassandra_get_table_field(self->meta, "populate_io_cache_on_flush", &value TSRMLS_CC);
   RETURN_ZVAL(value, 0, 1);
 }
 
@@ -334,7 +354,7 @@ PHP_METHOD(DefaultTable, replicateOnWrite)
 
   self = (cassandra_table*) zend_object_store_get_object(getThis() TSRMLS_CC);
 
-  php_cassandra_get_schema_field(self->meta, "replicate_on_write", &value TSRMLS_CC);
+  php_cassandra_get_table_field(self->meta, "replicate_on_write", &value TSRMLS_CC);
   RETURN_ZVAL(value, 0, 1);
 }
 
@@ -348,7 +368,7 @@ PHP_METHOD(DefaultTable, maxIndexInterval)
 
   self = (cassandra_table*) zend_object_store_get_object(getThis() TSRMLS_CC);
 
-  php_cassandra_get_schema_field(self->meta, "max_index_interval", &value TSRMLS_CC);
+  php_cassandra_get_table_field(self->meta, "max_index_interval", &value TSRMLS_CC);
   RETURN_ZVAL(value, 0, 1);
 }
 
@@ -362,7 +382,7 @@ PHP_METHOD(DefaultTable, minIndexInterval)
 
   self = (cassandra_table*) zend_object_store_get_object(getThis() TSRMLS_CC);
 
-  php_cassandra_get_schema_field(self->meta, "min_index_interval", &value TSRMLS_CC);
+  php_cassandra_get_table_field(self->meta, "min_index_interval", &value TSRMLS_CC);
   RETURN_ZVAL(value, 0, 1);
 }
 
