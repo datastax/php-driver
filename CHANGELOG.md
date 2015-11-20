@@ -1,3 +1,13 @@
+# 1.0.1
+
+Features:
+
+* Added support for the 2.2.x release of the C/C++ driver
+
+Bug Fixes:
+
+* [PHP-53] Error when inserting a "0" Decimal
+
 # 1.0.0
 
 Features:

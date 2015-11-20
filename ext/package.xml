@@ -14,11 +14,11 @@ protocol and Cassandra Query Language v3.
     <email>bulat.shakirzyanov@datastax.com</email>
     <active>yes</active>
   </lead>
-  <date>2015-09-14</date>
-  <time>10:28:02</time>
+  <date>2015-11-20</date>
+  <time>12:39:30</time>
   <version>
-    <release>1.0.0</release>
-    <api>1.0.0</api>
+    <release>1.0.1</release>
+    <api>1.0.1</api>
   </version>
   <stability>
     <release>stable</release>
@@ -26,18 +26,15 @@ protocol and Cassandra Query Language v3.
   </stability>
   <license uri="http://www.apache.org/licenses/LICENSE-2.0">Apache License 2.0</license>
   <notes>
-# 1.0.0
+# 1.0.1
 
 Features:
 
-* Added schema metadata support (via `Cassandra\Session::schema()`).
-* Added types API (via `Cassandra\Type` static methods).
+* Added support for the 2.2.x release of the C/C++ driver
 
 Bug Fixes:
 
-* [PHP-40] Fixed invalid pointer being free'd
-* [PHP-43] Fixed timeout handling in `Cassandra\ExecutionOptions`
-* [PHP-44] Fixed memory leak
+* [PHP-53] Error when inserting a "0" Decimal
   </notes>
   <contents>
     <dir name="/">
