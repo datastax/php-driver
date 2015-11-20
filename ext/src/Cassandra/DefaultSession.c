@@ -685,7 +685,7 @@ PHP_METHOD(DefaultSession, closeAsync)
 static void
 free_schema(void* schema)
 {
-#if CURRENT_DRIVER_VERSION >= DRIVER_VERSION(2, 2, 0)
+#if CURRENT_CPP_DRIVER_VERSION >= CPP_DRIVER_VERSION(2, 2, 0)
   cass_schema_meta_free((CassSchemaMeta*) schema);
 #else
   cass_schema_free((CassSchema*) schema);
@@ -704,7 +704,7 @@ PHP_METHOD(DefaultSession, schema)
   object_init_ex(return_value, cassandra_default_schema_ce);
   schema = (cassandra_schema*) zend_object_store_get_object(return_value TSRMLS_CC);
 
-#if CURRENT_DRIVER_VERSION >= DRIVER_VERSION(2, 2, 0)
+#if CURRENT_CPP_DRIVER_VERSION >= CPP_DRIVER_VERSION(2, 2, 0)
   schema->schema = php_cassandra_new_ref((void*) cass_session_get_schema_meta(self->session),
                                          free_schema);
 #else

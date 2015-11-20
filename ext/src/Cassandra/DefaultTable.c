@@ -209,7 +209,7 @@ php_cassandra_create_column(cassandra_ref*         schema,
   zval*             zcolumn;
   cassandra_column* column;
 
-#if CURRENT_DRIVER_VERSION < DRIVER_VERSION(2, 2, 0)
+#if CURRENT_CPP_DRIVER_VERSION < CPP_DRIVER_VERSION(2, 2, 0)
   const CassSchemaMetaField* field;
 #endif
   const CassValue*           value;
@@ -217,7 +217,7 @@ php_cassandra_create_column(cassandra_ref*         schema,
   const char* validator;
   size_t      validator_length;
 
-#if CURRENT_DRIVER_VERSION >= DRIVER_VERSION(2, 2, 0)
+#if CURRENT_CPP_DRIVER_VERSION >= CPP_DRIVER_VERSION(2, 2, 0)
   value = cass_column_meta_field_by_name(meta, "validator");
 #else
   field = cass_schema_meta_get_field(meta, "validator");
@@ -264,7 +264,7 @@ PHP_METHOD(DefaultTable, column)
   }
 
   self     = (cassandra_table*) zend_object_store_get_object(getThis() TSRMLS_CC);
-#if CURRENT_DRIVER_VERSION >= DRIVER_VERSION(2, 2, 0)
+#if CURRENT_CPP_DRIVER_VERSION >= CPP_DRIVER_VERSION(2, 2, 0)
   meta = cass_table_meta_column_by_name(self->meta, name);
 #else
   meta = cass_schema_meta_get_entry(self->meta, name);
@@ -292,7 +292,7 @@ PHP_METHOD(DefaultTable, columns)
     return;
 
   self     = (cassandra_table*) zend_object_store_get_object(getThis() TSRMLS_CC);
-#if CURRENT_DRIVER_VERSION >= DRIVER_VERSION(2, 2, 0)
+#if CURRENT_CPP_DRIVER_VERSION >= CPP_DRIVER_VERSION(2, 2, 0)
   iterator = cass_iterator_columns_from_table_meta(self->meta);
 #else
   iterator = cass_iterator_from_schema_meta(self->meta);
@@ -304,7 +304,7 @@ PHP_METHOD(DefaultTable, columns)
     zval*                  zcolumn;
     cassandra_column*      column;
 
-#if CURRENT_DRIVER_VERSION >= DRIVER_VERSION(2, 2, 0)
+#if CURRENT_CPP_DRIVER_VERSION >= CPP_DRIVER_VERSION(2, 2, 0)
     meta    = cass_iterator_get_column_meta(iterator);
 #else
     meta    = cass_iterator_get_schema_meta(iterator);

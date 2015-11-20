@@ -16,7 +16,7 @@ PHP_METHOD(DefaultSchema, keyspace)
   }
 
   self = (cassandra_schema*) zend_object_store_get_object(getThis() TSRMLS_CC);
-#if CURRENT_DRIVER_VERSION >= DRIVER_VERSION(2, 2, 0)
+#if CURRENT_CPP_DRIVER_VERSION >= CPP_DRIVER_VERSION(2, 2, 0)
   meta = cass_schema_meta_keyspace_by_name_n((CassSchemaMeta*) self->schema->data, name, name_len);
 #else
   meta = cass_schema_get_keyspace_n((CassSchema*) self->schema->data, name, name_len);
@@ -41,7 +41,7 @@ PHP_METHOD(DefaultSchema, keyspaces)
     return;
 
   self     = (cassandra_schema*) zend_object_store_get_object(getThis() TSRMLS_CC);
-#if CURRENT_DRIVER_VERSION >= DRIVER_VERSION(2, 2, 0)
+#if CURRENT_CPP_DRIVER_VERSION >= CPP_DRIVER_VERSION(2, 2, 0)
   iterator = cass_iterator_keyspaces_from_schema_meta((CassSchemaMeta*) self->schema->data);
 #else
   iterator = cass_iterator_from_schema((CassSchema*) self->schema->data);
@@ -56,11 +56,11 @@ PHP_METHOD(DefaultSchema, keyspaces)
     zval*                    zend_keyspace;
     cassandra_keyspace*      keyspace;
 
-#if CURRENT_DRIVER_VERSION < DRIVER_VERSION(2, 2, 0)
+#if CURRENT_CPP_DRIVER_VERSION < CPP_DRIVER_VERSION(2, 2, 0)
     const CassSchemaMetaField* field;
 #endif
 
-#if CURRENT_DRIVER_VERSION >= DRIVER_VERSION(2, 2, 0)
+#if CURRENT_CPP_DRIVER_VERSION >= CPP_DRIVER_VERSION(2, 2, 0)
     meta = cass_iterator_get_keyspace_meta(iterator);
     value = cass_keyspace_meta_field_by_name(meta, "keyspace_name");
 #else

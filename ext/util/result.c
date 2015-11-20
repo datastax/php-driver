@@ -233,7 +233,7 @@ php_cassandra_value(const CassValue* value, CassValueType type, zval** out TSRML
   return SUCCESS;
 }
 
-#if CURRENT_DRIVER_VERSION >= DRIVER_VERSION(2, 2, 0)
+#if CURRENT_CPP_DRIVER_VERSION >= CPP_DRIVER_VERSION(2, 2, 0)
 int
 php_cassandra_get_keyspace_field(const CassKeyspaceMeta* metadata, const char* field_name, zval** out TSRMLS_DC)
 {

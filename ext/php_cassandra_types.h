@@ -260,7 +260,7 @@ typedef struct {
   cassandra_ref* schema;
 } cassandra_schema;
 
-#if CURRENT_DRIVER_VERSION >= DRIVER_VERSION(2, 2, 0)
+#if CURRENT_CPP_DRIVER_VERSION >= CPP_DRIVER_VERSION(2, 2, 0)
 typedef const CassKeyspaceMeta cassandra_keyspace_meta;
 #else
 typedef const CassSchemaMeta cassandra_keyspace_meta;
@@ -272,7 +272,7 @@ typedef struct {
   cassandra_keyspace_meta* meta;
 } cassandra_keyspace;
 
-#if CURRENT_DRIVER_VERSION >= DRIVER_VERSION(2, 2, 0)
+#if CURRENT_CPP_DRIVER_VERSION >= CPP_DRIVER_VERSION(2, 2, 0)
 typedef const CassTableMeta cassandra_table_meta;
 #else
 typedef const CassSchemaMeta cassandra_table_meta;
@@ -284,7 +284,7 @@ typedef struct {
   cassandra_table_meta* meta;
 } cassandra_table;
 
-#if CURRENT_DRIVER_VERSION >= DRIVER_VERSION(2, 2, 0)
+#if CURRENT_CPP_DRIVER_VERSION >= CPP_DRIVER_VERSION(2, 2, 0)
 typedef const CassColumnMeta cassandra_column_meta;
 #else
 typedef const CassSchemaMeta cassandra_column_meta;
