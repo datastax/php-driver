@@ -217,6 +217,10 @@ if test "$PHP_CASSANDRA" != "no"; then
     done
   fi
 
+#changed by mohamad zeynali mohammad.basu@gmail.com (apache license) to fix undefined reference to `deflateInit_' bug
+##
+LIBS="-lz $LIBS"
+
   if test -z "$CPP_DRIVER_DIR"; then
     ac_extra=
   else
