@@ -1,0 +1,6 @@
+cassandra-php (0.1.0) precise; urgency=low
+
+  * Initial Version, imported code from Datastax 
+
+ -- Sandro Lex <sandro.lex@orange.com>  Mon, 30 Nov 2015 14:03:49 +0100
+
