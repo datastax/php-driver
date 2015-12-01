@@ -1,7 +1,7 @@
 #!/bin/bash
 git clone https://github.com/datastax/cpp-driver.git
-mkdir build
-cd build
+mkdir cpp-build
+cd cpp-build
 builddir=`pwd`
 cmake -DCMAKE_CXX_FLAGS="-fPIC" -DCMAKE_INSTALL_PREFIX:PATH=$builddir -DCASS_BUILD_STATIC=ON \
   -DCASS_BUILD_SHARED=OFF -DCMAKE_BUILD_TYPE=RELEASE -DCASS_USE_ZLIB=ON \
