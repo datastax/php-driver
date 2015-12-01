@@ -8,10 +8,11 @@
 configure: configure-stamp
 configure-stamp:
 	dh_testdir
-	git clone https://github.com/datastax/php-driver.git
+	cd lib/
+	./build-cassandra-cpp.sh
+	cd ../ext
 	phpize
-	$(CURDIR)/configure --prefix=/usr
-
+	LIBS="-lssl -lz -luv -lm -lstdc++" LDFLAGS="-L$builddir/lib" ./configure --with-cassandra=$builddir --with-libdir=lib
 	touch configure-stampbuild: build-stamp
 
 build: build-stamp
