@@ -10,7 +10,7 @@ configure-stamp:
 	dh_testdir
 	./build-cassandra-cpp.sh
 	phpize
-	LIBS="-lssl -lz -luv -lm -lstdc++" LDFLAGS="-L$builddir/lib" ./configure --with-cassandra=$builddir --with-libdir=lib
+	LIBS="-lssl -lz -luv -lm -lstdc++" LDFLAGS="-Lcpp-build/lib" ./configure --with-cassandra=cpp-build --with-libdir=lib
 	touch configure-stampbuild: build-stamp
 
 build: build-stamp
@@ -74,7 +74,7 @@ binary-arch: build install
 #	dh_python
 	dh_makeshlibs
 	dh_installdeb
-	dh_shlibdeps
+	dh_shlibdeps --dpkg-shlibdeps-params=--ignore-missing-info
 	echo "php:Depends=phpapi-$(shell /usr/bin/php-config5 --phpapi)" >> debian/libcassandra-pdo-php5.substvars
 	dh_gencontrol
 	dh_md5sums
