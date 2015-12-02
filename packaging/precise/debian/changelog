@@ -1,3 +1,9 @@
+cassandra-php (0.1.1) precise; urgency=low
+
+  * Using libuv 1.5.x 
+
+ -- Sandro <sandro.lex@orange.com>  Wed, 02 Dec 2015 11:37:34 +0100
+
 cassandra-php (0.1.0) precise; urgency=low
 
   * Initial Version, imported code from Datastax 
