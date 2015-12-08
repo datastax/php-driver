@@ -1,5 +1,6 @@
 #include "php_cassandra.h"
 #include "util/math.h"
+#include "util/types.h"
 #include <gmp.h>
 #include <float.h>
 #include <math.h>
@@ -255,6 +256,14 @@ PHP_METHOD(Decimal, __toString)
 }
 /* }}} */
 
+/* {{{ Cassandra\Decimal::type() */
+PHP_METHOD(Decimal, type)
+{
+  cassandra_decimal* self = (cassandra_decimal*) zend_object_store_get_object(getThis() TSRMLS_CC);
+  RETURN_ZVAL(self->type, 1, 0);
+}
+/* }}} */
+
 /* {{{ Cassandra\Decimal::value() */
 PHP_METHOD(Decimal, value)
 {
@@ -476,6 +485,7 @@ ZEND_END_ARG_INFO()
 static zend_function_entry cassandra_decimal_methods[] = {
   PHP_ME(Decimal, __construct, arginfo__construct, ZEND_ACC_CTOR|ZEND_ACC_PUBLIC)
   PHP_ME(Decimal, __toString, arginfo_none, ZEND_ACC_PUBLIC)
+  PHP_ME(Decimal, type, arginfo_none, ZEND_ACC_PUBLIC)
   PHP_ME(Decimal, value, arginfo_none, ZEND_ACC_PUBLIC)
   PHP_ME(Decimal, scale, arginfo_none, ZEND_ACC_PUBLIC)
   PHP_ME(Decimal, add, arginfo_num, ZEND_ACC_PUBLIC)
@@ -572,6 +582,8 @@ php_cassandra_decimal_free(void *object TSRMLS_DC)
   cassandra_decimal* self = (cassandra_decimal*) object;
 
   mpz_clear(self->value);
+
+  zval_ptr_dtor(&self->type);
   zend_object_std_dtor(&self->zval TSRMLS_CC);
 
   efree(self);
@@ -586,7 +598,8 @@ php_cassandra_decimal_new(zend_class_entry* class_type TSRMLS_DC)
   self = (cassandra_decimal*) emalloc(sizeof(cassandra_decimal));
   memset(self, 0, sizeof(cassandra_decimal));
 
-  self->type = CASSANDRA_DECIMAL;
+  self->type = php_cassandra_type_scalar(CASS_VALUE_TYPE_DECIMAL TSRMLS_CC);
+  Z_ADDREF_P(self->type);
   self->scale = 0;
 
   mpz_init(self->value);

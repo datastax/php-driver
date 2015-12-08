@@ -1,85 +1,88 @@
 #ifndef PHP_CASSANDRA_TYPES_H
 #define PHP_CASSANDRA_TYPES_H
 
-typedef enum {
-  CASSANDRA_BIGINT,
-  CASSANDRA_DECIMAL,
-  CASSANDRA_FLOAT,
-  CASSANDRA_VARINT
-} cassandra_numeric_type;
-
-#define NUMERIC_FIELDS \
-  zend_object zval;    \
-  cassandra_numeric_type type;
+#define VALUE_FIELDS  \
+  zend_object zval;   \
+  zval* type;
 
 typedef struct {
-  NUMERIC_FIELDS
-} cassandra_numeric;
+  VALUE_FIELDS
+} cassandra_value;
 
 typedef struct {
-  NUMERIC_FIELDS
+  VALUE_FIELDS
   cass_int64_t value;
 } cassandra_bigint;
 
 typedef struct {
-  NUMERIC_FIELDS
+  VALUE_FIELDS
   mpz_t value;
   long scale;
 } cassandra_decimal;
 
 typedef struct {
-  NUMERIC_FIELDS
+  VALUE_FIELDS
   cass_float_t value;
 } cassandra_float;
 
 typedef struct {
-  NUMERIC_FIELDS
+  VALUE_FIELDS
   mpz_t value;
 } cassandra_varint;
 
-#undef NUMERIC_FIELDS
-
 typedef struct {
-  zend_object zval;
+  VALUE_FIELDS
   cass_int64_t timestamp;
 } cassandra_timestamp;
 
 typedef struct {
-  zend_object zval;
+  VALUE_FIELDS
   cass_byte_t* data;
   size_t size;
 } cassandra_blob;
 
 typedef struct {
-  zend_object zval;
+  VALUE_FIELDS
   CassUuid uuid;
 } cassandra_uuid;
 
 typedef struct {
-  zend_object zval;
+  VALUE_FIELDS
   CassInet inet;
 } cassandra_inet;
 
 typedef struct {
-  zend_object zval;
-  CassValueType type;
+  VALUE_FIELDS
   HashTable values;
-  int pos;
-} cassandra_set;
+  unsigned hashv;
+  int dirty;
+} cassandra_collection;
+
+typedef struct cassandra_map_entry_ cassandra_map_entry;
 
 typedef struct {
-  zend_object zval;
-  CassValueType key_type;
-  HashTable keys;
-  CassValueType value_type;
-  HashTable values;
+  VALUE_FIELDS
+  cassandra_map_entry* entries;
+  unsigned hashv;
+  int dirty;
+  cassandra_map_entry* iter_curr;
+  cassandra_map_entry* iter_temp;
 } cassandra_map;
 
+typedef struct cassandra_set_entry_ cassandra_set_entry;
+
 typedef struct {
-  zend_object zval;
-  CassValueType type;
-  HashTable values;
-} cassandra_collection;
+  VALUE_FIELDS
+  CassValueType value_type;
+  cassandra_set_entry* entries;
+  unsigned hashv;
+  int dirty;
+  cassandra_set_entry* iter_curr;
+  cassandra_set_entry* iter_temp;
+  int iter_index;
+} cassandra_set;
+
+#undef VALUE_FIELDS
 
 typedef struct {
   zend_object zval;
@@ -300,32 +303,43 @@ typedef struct {
   cassandra_column_meta* meta;
 } cassandra_column;
 
+#define TYPE_FIELDS   \
+  zend_object zval;   \
+  CassValueType type;
+
+typedef struct {
+  TYPE_FIELDS
+} cassandra_type;
+
 typedef struct {
   zend_object zval;
   CassValueType type;
 } cassandra_type_scalar;
 
 typedef struct {
-  zend_object zval;
-  CassValueType type;
+  TYPE_FIELDS
+  zval* value_type;
 } cassandra_type_collection;
 
 typedef struct {
-  zend_object zval;
-  CassValueType type;
+  TYPE_FIELDS
+  zval* value_type;
 } cassandra_type_set;
 
 typedef struct {
-  zend_object zval;
-  CassValueType key_type;
-  CassValueType value_type;
+  TYPE_FIELDS
+  zval* key_type;
+  zval* value_type;
 } cassandra_type_map;
 
 typedef struct {
-  zend_object zval;
-  char*       name;
+  TYPE_FIELDS
+  char* name;
 } cassandra_type_custom;
 
+#undef TYPE_FIELDS
+
+extern PHP_CASSANDRA_API zend_class_entry* cassandra_value_ce;
 extern PHP_CASSANDRA_API zend_class_entry* cassandra_numeric_ce;
 extern PHP_CASSANDRA_API zend_class_entry* cassandra_bigint_ce;
 extern PHP_CASSANDRA_API zend_class_entry* cassandra_blob_ce;
@@ -370,6 +384,7 @@ void cassandra_define_DivideByZeroException(TSRMLS_D);
 void cassandra_define_RangeException(TSRMLS_D);
 
 /* Types */
+void cassandra_define_Value(TSRMLS_D);
 void cassandra_define_Numeric(TSRMLS_D);
 void cassandra_define_Bigint(TSRMLS_D);
 void cassandra_define_Blob(TSRMLS_D);

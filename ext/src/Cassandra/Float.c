@@ -1,5 +1,6 @@
 #include "php_cassandra.h"
 #include "util/math.h"
+#include "util/types.h"
 #include <float.h>
 
 zend_class_entry* cassandra_float_ce = NULL;
@@ -60,10 +61,17 @@ PHP_METHOD(Float, __construct)
 /* {{{ Cassandra\Float::__toString() */
 PHP_METHOD(Float, __toString)
 {
-  cassandra_float* self =
-      (cassandra_float*) zend_object_store_get_object(getThis() TSRMLS_CC);
+  cassandra_float* self = (cassandra_float*) zend_object_store_get_object(getThis() TSRMLS_CC);
 
   to_string(return_value, self TSRMLS_CC);
+}
+/* }}} */
+
+/* {{{ Cassandra\Float::type() */
+PHP_METHOD(Float, type)
+{
+  cassandra_float* self = (cassandra_float*) zend_object_store_get_object(getThis() TSRMLS_CC);
+  RETURN_ZVAL(self->type, 1, 0);
 }
 /* }}} */
 
@@ -293,7 +301,6 @@ PHP_METHOD(Float, toDouble)
 PHP_METHOD(Float, min)
 {
   cassandra_float* flt = NULL;
-
   object_init_ex(return_value, cassandra_float_ce);
   flt = (cassandra_float*) zend_object_store_get_object(return_value TSRMLS_CC);
   flt->value = FLT_MIN;
@@ -324,6 +331,7 @@ ZEND_END_ARG_INFO()
 static zend_function_entry cassandra_float_methods[] = {
   PHP_ME(Float, __construct, arginfo__construct, ZEND_ACC_CTOR|ZEND_ACC_PUBLIC)
   PHP_ME(Float, __toString, arginfo_none, ZEND_ACC_PUBLIC)
+  PHP_ME(Float, type, arginfo_none, ZEND_ACC_PUBLIC)
   PHP_ME(Float, value, arginfo_none, ZEND_ACC_PUBLIC)
   PHP_ME(Float, isInfinite, arginfo_none, ZEND_ACC_PUBLIC)
   PHP_ME(Float, isFinite, arginfo_none, ZEND_ACC_PUBLIC)
@@ -420,6 +428,7 @@ php_cassandra_float_free(void *object TSRMLS_DC)
 {
   cassandra_float* self = (cassandra_float*) object;
 
+  zval_ptr_dtor(&self->type);
   zend_object_std_dtor(&self->zval TSRMLS_CC);
 
   efree(self);
@@ -434,7 +443,8 @@ php_cassandra_float_new(zend_class_entry* class_type TSRMLS_DC)
   self = (cassandra_float*) emalloc(sizeof(cassandra_float));
   memset(self, 0, sizeof(cassandra_float));
 
-  self->type = CASSANDRA_FLOAT;
+  self->type = php_cassandra_type_scalar(CASS_VALUE_TYPE_FLOAT TSRMLS_CC);
+  Z_ADDREF_P(self->type);
 
   zend_object_std_init(&self->zval, class_type TSRMLS_CC);
   object_properties_init(&self->zval, class_type);

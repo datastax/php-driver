@@ -43,6 +43,90 @@ php_cassandra_parse_float(char* in, int in_len, cass_float_t* number TSRMLS_DC)
 }
 
 int
+php_cassandra_parse_double(char* in, int in_len, cass_double_t* number TSRMLS_DC)
+{
+  char* end;
+  errno = 0;
+
+  *number = (cass_double_t) strtod(in, &end);
+
+  if (errno == ERANGE) {
+    zend_throw_exception_ex(cassandra_range_exception_ce, 0 TSRMLS_CC, "Value is too small or too big for double: '%s'", in);
+    return 0;
+  }
+
+  if (errno || end == in) {
+    zend_throw_exception_ex(cassandra_invalid_argument_exception_ce, 0 TSRMLS_CC, "Invalid double value: '%s'", in);
+    return 0;
+  }
+
+  if (end != &in[in_len]) {
+    zend_throw_exception_ex(cassandra_invalid_argument_exception_ce, 0 TSRMLS_CC, "Invalid characters were found in value: '%s'", in);
+    return 0;
+  }
+
+  return 1;
+}
+
+int
+php_cassandra_parse_int(char* in, int in_len, cass_int32_t* number TSRMLS_DC)
+{
+  char* end = NULL;
+
+  int point = 0;
+  int base = 10;
+
+  /*  Determine the sign of the number. */
+  int negative = 0;
+  if (in[point] == '+') {
+    point++;
+  } else if (in[point] == '-') {
+    point++;
+    negative = 1;
+  }
+
+  if (in[point] == '0') {
+    switch(in[point + 1]) {
+    case 'b':
+      point += 2;
+      base = 2;
+      break;
+    case 'x':
+      point += 2;
+      base = 16;
+      break;
+    default:
+      base = 8;
+      break;
+    }
+  }
+
+  errno = 0;
+
+  *number = (cass_int32_t) strtol(&(in[point]), &end, base);
+
+  if (negative)
+    *number = *number * -1;
+
+  if (errno == ERANGE) {
+    zend_throw_exception_ex(cassandra_range_exception_ce, 0 TSRMLS_CC, "Value is too small or too big for int: '%s'", in);
+    return 0;
+  }
+
+  if (errno || end == &in[point]) {
+    zend_throw_exception_ex(cassandra_invalid_argument_exception_ce, 0 TSRMLS_CC, "Invalid integer value: '%s'", in);
+    return 0;
+  }
+
+  if (end != &in[in_len]) {
+    zend_throw_exception_ex(cassandra_invalid_argument_exception_ce, 0 TSRMLS_CC, "Invalid characters were found in value: '%s'", in);
+    return 0;
+  }
+
+  return 1;
+}
+
+int
 php_cassandra_parse_bigint(char* in, int in_len, cass_int64_t* number TSRMLS_DC)
 {
   char* end = NULL;

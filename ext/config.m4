@@ -89,6 +89,7 @@ if test "$PHP_CASSANDRA" != "no"; then
     src/Cassandra/Set.c \
     src/Cassandra/Map.c \
     src/Cassandra/Collection.c \
+    src/Cassandra/Value.c \
   ";
 
   CASSANDRA_UTIL="\

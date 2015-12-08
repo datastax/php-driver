@@ -1,5 +1,6 @@
 #include "php_cassandra.h"
 #include "util/math.h"
+#include "util/types.h"
 #include <float.h>
 
 zend_class_entry *cassandra_varint_ce = NULL;
@@ -96,6 +97,14 @@ PHP_METHOD(Varint, __toString)
       (cassandra_varint*) zend_object_store_get_object(getThis() TSRMLS_CC);
 
   to_string(return_value, self TSRMLS_CC);
+}
+/* }}} */
+
+/* {{{ Cassandra\Varint::type() */
+PHP_METHOD(Varint, type)
+{
+  cassandra_varint* self = (cassandra_varint*) zend_object_store_get_object(getThis() TSRMLS_CC);
+  RETURN_ZVAL(self->type, 1, 0);
 }
 /* }}} */
 
@@ -343,6 +352,7 @@ ZEND_END_ARG_INFO()
 static zend_function_entry cassandra_varint_methods[] = {
   PHP_ME(Varint, __construct, arginfo__construct, ZEND_ACC_CTOR|ZEND_ACC_PUBLIC)
   PHP_ME(Varint, __toString, arginfo_none, ZEND_ACC_PUBLIC)
+  PHP_ME(Varint, type, arginfo_none, ZEND_ACC_PUBLIC)
   PHP_ME(Varint, value, arginfo_none, ZEND_ACC_PUBLIC)
   PHP_ME(Varint, add, arginfo_num, ZEND_ACC_PUBLIC)
   PHP_ME(Varint, sub, arginfo_num, ZEND_ACC_PUBLIC)
@@ -428,6 +438,8 @@ php_cassandra_varint_free(void *object TSRMLS_DC)
   cassandra_varint* self = (cassandra_varint*) object;
 
   mpz_clear(self->value);
+
+  zval_ptr_dtor(&self->type);
   zend_object_std_dtor(&self->zval TSRMLS_CC);
 
   efree(self);
@@ -442,7 +454,8 @@ php_cassandra_varint_new(zend_class_entry* class_type TSRMLS_DC)
   self = (cassandra_varint*) emalloc(sizeof(cassandra_varint));
   memset(self, 0, sizeof(cassandra_varint));
 
-  self->type = CASSANDRA_VARINT;
+  self->type = php_cassandra_type_scalar(CASS_VALUE_TYPE_VARINT TSRMLS_CC);
+  Z_ADDREF_P(self->type);
 
   mpz_init(self->value);
   zend_object_std_init(&self->zval, class_type TSRMLS_CC);

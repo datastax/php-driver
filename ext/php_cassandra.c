@@ -9,6 +9,8 @@
 #include <fcntl.h>
 #include <uv.h>
 
+#include "util/types.h"
+
 #define PHP_CASSANDRA_DEFAULT_LOG       "cassandra.log"
 #define PHP_CASSANDRA_DEFAULT_LOG_LEVEL "ERROR"
 
@@ -318,6 +320,7 @@ PHP_MINIT_FUNCTION(cassandra)
   cassandra_define_RangeException(TSRMLS_C);
   cassandra_define_DivideByZeroException(TSRMLS_C);
 
+  cassandra_define_Value(TSRMLS_C);
   cassandra_define_Numeric(TSRMLS_C);
   cassandra_define_Bigint(TSRMLS_C);
   cassandra_define_Blob(TSRMLS_C);
@@ -388,85 +391,16 @@ PHP_RINIT_FUNCTION(cassandra)
 
 PHP_RSHUTDOWN_FUNCTION(cassandra)
 {
-  if (CASSANDRA_G(type_varchar)) {
-    zval_ptr_dtor(&CASSANDRA_G(type_varchar));
-    CASSANDRA_G(type_varchar) = NULL;
-  }
+#define TYPE_CODE(m) type_ ## m
+#define XX_SCALAR(name, value) \
+    if (CASSANDRA_G(TYPE_CODE(name)) != NULL) { \
+      zval_ptr_dtor(&CASSANDRA_G(TYPE_CODE(name))); \
+      CASSANDRA_G(TYPE_CODE(name)) = NULL; \
+    }
 
-  if (CASSANDRA_G(type_text)) {
-    zval_ptr_dtor(&CASSANDRA_G(type_text));
-    CASSANDRA_G(type_text) = NULL;
-  }
-
-  if (CASSANDRA_G(type_blob)) {
-    zval_ptr_dtor(&CASSANDRA_G(type_blob));
-    CASSANDRA_G(type_blob) = NULL;
-  }
-
-  if (CASSANDRA_G(type_ascii)) {
-    zval_ptr_dtor(&CASSANDRA_G(type_ascii));
-    CASSANDRA_G(type_ascii) = NULL;
-  }
-
-  if (CASSANDRA_G(type_bigint)) {
-    zval_ptr_dtor(&CASSANDRA_G(type_bigint));
-    CASSANDRA_G(type_bigint) = NULL;
-  }
-
-  if (CASSANDRA_G(type_counter)) {
-    zval_ptr_dtor(&CASSANDRA_G(type_counter));
-    CASSANDRA_G(type_counter) = NULL;
-  }
-
-  if (CASSANDRA_G(type_int)) {
-    zval_ptr_dtor(&CASSANDRA_G(type_int));
-    CASSANDRA_G(type_int) = NULL;
-  }
-
-  if (CASSANDRA_G(type_varint)) {
-    zval_ptr_dtor(&CASSANDRA_G(type_varint));
-    CASSANDRA_G(type_varint) = NULL;
-  }
-
-  if (CASSANDRA_G(type_boolean)) {
-    zval_ptr_dtor(&CASSANDRA_G(type_boolean));
-    CASSANDRA_G(type_boolean) = NULL;
-  }
-
-  if (CASSANDRA_G(type_decimal)) {
-    zval_ptr_dtor(&CASSANDRA_G(type_decimal));
-    CASSANDRA_G(type_decimal) = NULL;
-  }
-
-  if (CASSANDRA_G(type_double)) {
-    zval_ptr_dtor(&CASSANDRA_G(type_double));
-    CASSANDRA_G(type_double) = NULL;
-  }
-
-  if (CASSANDRA_G(type_float)) {
-    zval_ptr_dtor(&CASSANDRA_G(type_float));
-    CASSANDRA_G(type_float) = NULL;
-  }
-
-  if (CASSANDRA_G(type_inet)) {
-    zval_ptr_dtor(&CASSANDRA_G(type_inet));
-    CASSANDRA_G(type_inet) = NULL;
-  }
-
-  if (CASSANDRA_G(type_timestamp)) {
-    zval_ptr_dtor(&CASSANDRA_G(type_timestamp));
-    CASSANDRA_G(type_timestamp) = NULL;
-  }
-
-  if (CASSANDRA_G(type_uuid)) {
-    zval_ptr_dtor(&CASSANDRA_G(type_uuid));
-    CASSANDRA_G(type_uuid) = NULL;
-  }
-
-  if (CASSANDRA_G(type_timeuuid)) {
-    zval_ptr_dtor(&CASSANDRA_G(type_timeuuid));
-    CASSANDRA_G(type_timeuuid) = NULL;
-  }
+  PHP_CASSANDRA_SCALAR_TYPES_MAP(XX_SCALAR)
+#undef XX_SCALAR
+#undef TYPE_CODE
 
   return SUCCESS;
 }

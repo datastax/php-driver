@@ -67,27 +67,28 @@ static zend_object_handlers cassandra_type_scalar_handlers;
 static void
 php_cassandra_type_scalar_free(void *object TSRMLS_DC)
 {
-  cassandra_type_scalar* scalar = (cassandra_type_scalar*) object;
+  cassandra_type_scalar* self = (cassandra_type_scalar*) object;
 
-  zend_object_std_dtor(&scalar->zval TSRMLS_CC);
+  zend_object_std_dtor(&self->zval TSRMLS_CC);
 
-  efree(scalar);
+  efree(self);
 }
 
 static zend_object_value
 php_cassandra_type_scalar_new(zend_class_entry* class_type TSRMLS_DC)
 {
   zend_object_value retval;
-  cassandra_type_scalar* scalar;
+  cassandra_type_scalar* self;
 
-  scalar = (cassandra_type_scalar*) ecalloc(1, sizeof(cassandra_type_scalar));
+  self = (cassandra_type_scalar*) ecalloc(1, sizeof(cassandra_type_scalar));
+  memset(self, 0, sizeof(cassandra_type_scalar));
 
-  zend_object_std_init(&scalar->zval, class_type TSRMLS_CC);
-  object_properties_init(&scalar->zval, class_type);
+  self->type = CASS_VALUE_TYPE_UNKNOWN;
 
-  scalar->type = CASS_VALUE_TYPE_UNKNOWN;
+  zend_object_std_init(&self->zval, class_type TSRMLS_CC);
+  object_properties_init(&self->zval, class_type);
 
-  retval.handle   = zend_objects_store_put(scalar,
+  retval.handle   = zend_objects_store_put(self,
                       (zend_objects_store_dtor_t) zend_objects_destroy_object,
                       php_cassandra_type_scalar_free, NULL TSRMLS_CC);
   retval.handlers = &cassandra_type_scalar_handlers;

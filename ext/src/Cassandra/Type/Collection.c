@@ -1,6 +1,5 @@
 #include "php_cassandra.h"
 #include "util/types.h"
-#include <ext/standard/php_smart_str.h>
 #include "src/Cassandra/Collection.h"
 #include "util/collections.h"
 
@@ -26,13 +25,13 @@ PHP_METHOD(TypeCollection, type)
 
   self = (cassandra_type_collection*) zend_object_store_get_object(getThis() TSRMLS_CC);
   type = php_cassandra_type_scalar(self->type TSRMLS_CC);
+
   RETURN_ZVAL(type, 1, 0);
 }
 
 PHP_METHOD(TypeCollection, __toString)
 {
   cassandra_type_collection* self;
-  const char* type;
   smart_str string = {NULL, 0, 0};
 
   if (zend_parse_parameters_none() == FAILURE) {
@@ -40,13 +39,9 @@ PHP_METHOD(TypeCollection, __toString)
   }
 
   self = (cassandra_type_collection*) zend_object_store_get_object(getThis() TSRMLS_CC);
-  type = php_cassandra_scalar_type_name(self->type TSRMLS_CC);
 
-  smart_str_appendl(&string, "list<", 5);
-  smart_str_appendl(&string, type, strlen(type));
-  smart_str_appendl(&string, ">", 1);
+  php_cassandra_type_string((cassandra_type*)self, &string TSRMLS_CC);
   smart_str_0(&string);
-
   RETURN_STRING(string.c, 0);
 }
 
@@ -66,11 +61,13 @@ PHP_METHOD(TypeCollection, create)
 
   object_init_ex(return_value, cassandra_collection_ce);
   collection = (cassandra_collection*) zend_object_store_get_object(return_value TSRMLS_CC);
-  collection->type = self->type;
+
+  collection->type = getThis();
+  Z_ADDREF_P(collection->type);
 
   if (argc > 0) {
     for (i = 0; i < argc; i++) {
-      if (!php_cassandra_validate_object(*args[i], collection->type TSRMLS_CC)) {
+      if (!php_cassandra_validate_object(*args[i], self->value_type TSRMLS_CC)) {
         efree(args);
         return;
       }
@@ -105,27 +102,31 @@ static zend_object_handlers cassandra_type_collection_handlers;
 static void
 php_cassandra_type_collection_free(void *object TSRMLS_DC)
 {
-  cassandra_type_collection* collection = (cassandra_type_collection*) object;
+  cassandra_type_collection* self = (cassandra_type_collection*) object;
 
-  zend_object_std_dtor(&collection->zval TSRMLS_CC);
+  if (self->value_type) zval_ptr_dtor(&self->value_type);
 
-  efree(collection);
+  zend_object_std_dtor(&self->zval TSRMLS_CC);
+
+  efree(self);
 }
 
 static zend_object_value
 php_cassandra_type_collection_new(zend_class_entry* class_type TSRMLS_DC)
 {
   zend_object_value retval;
-  cassandra_type_collection* collection;
+  cassandra_type_collection* self;
 
-  collection = (cassandra_type_collection*) ecalloc(1, sizeof(cassandra_type_collection));
+  self = (cassandra_type_collection*) ecalloc(1, sizeof(cassandra_type_collection));
+  memset(self, 0, sizeof(cassandra_type_collection));
 
-  zend_object_std_init(&collection->zval, class_type TSRMLS_CC);
-  object_properties_init(&collection->zval, class_type);
+  self->type = CASS_VALUE_TYPE_LIST;
+  self->value_type = NULL;
 
-  collection->type = CASS_VALUE_TYPE_UNKNOWN;
+  zend_object_std_init(&self->zval, class_type TSRMLS_CC);
+  object_properties_init(&self->zval, class_type);
 
-  retval.handle   = zend_objects_store_put(collection,
+  retval.handle   = zend_objects_store_put(self,
                       (zend_objects_store_dtor_t) zend_objects_destroy_object,
                       php_cassandra_type_collection_free, NULL TSRMLS_CC);
   retval.handlers = &cassandra_type_collection_handlers;

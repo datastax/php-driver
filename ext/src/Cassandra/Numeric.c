@@ -30,5 +30,6 @@ cassandra_define_Numeric(TSRMLS_D)
 
   INIT_CLASS_ENTRY(ce, "Cassandra\\Numeric", cassandra_numeric_methods);
   cassandra_numeric_ce = zend_register_internal_class(&ce TSRMLS_CC);
+  zend_class_implements(cassandra_numeric_ce TSRMLS_CC, 1, cassandra_value_ce);
   cassandra_numeric_ce->ce_flags |= ZEND_ACC_INTERFACE;
 }

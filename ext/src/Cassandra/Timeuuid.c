@@ -42,50 +42,58 @@ PHP_METHOD(Timeuuid, __construct)
 /* {{{ Cassandra\Timeuuid::__toString() */
 PHP_METHOD(Timeuuid, __toString)
 {
-  cassandra_uuid* uuid   = (cassandra_uuid*) zend_object_store_get_object(getThis() TSRMLS_CC);
+  cassandra_uuid* self   = (cassandra_uuid*) zend_object_store_get_object(getThis() TSRMLS_CC);
   char*           string = emalloc((CASS_UUID_STRING_LENGTH) * sizeof(char));
 
-  cass_uuid_string(uuid->uuid, string);
+  cass_uuid_string(self->uuid, string);
 
   RETURN_STRING(string, 0);
+}
+/* }}} */
+
+/* {{{ Cassandra\Timeuuid::type() */
+PHP_METHOD(Timeuuid, type)
+{
+  cassandra_uuid* self = (cassandra_uuid*) zend_object_store_get_object(getThis() TSRMLS_CC);
+  RETURN_ZVAL(self->type, 1, 0);
 }
 /* }}} */
 
 /* {{{ Cassandra\Timeuuid::value() */
 PHP_METHOD(Timeuuid, uuid)
 {
-  cassandra_uuid* uuid   = (cassandra_uuid*) zend_object_store_get_object(getThis() TSRMLS_CC);
+  cassandra_uuid* self   = (cassandra_uuid*) zend_object_store_get_object(getThis() TSRMLS_CC);
   char*           string = emalloc((CASS_UUID_STRING_LENGTH) * sizeof(char));
 
-  cass_uuid_string(uuid->uuid, string);
+  cass_uuid_string(self->uuid, string);
 
   RETURN_STRING(string, 0);
 }
 /* }}} */
 
-/* {{{ Cassandra\Timeuuid::value() */
+/* {{{ Cassandra\Timeuuid::version() */
 PHP_METHOD(Timeuuid, version)
 {
-  cassandra_uuid* uuid = (cassandra_uuid*) zend_object_store_get_object(getThis() TSRMLS_CC);
+  cassandra_uuid* self = (cassandra_uuid*) zend_object_store_get_object(getThis() TSRMLS_CC);
 
-  RETURN_LONG((long) cass_uuid_version(uuid->uuid));
+  RETURN_LONG((long) cass_uuid_version(self->uuid));
 }
 /* }}} */
 
-/* {{{ Cassandra\Timeuuid::value() */
+/* {{{ Cassandra\Timeuuid::time() */
 PHP_METHOD(Timeuuid, time)
 {
-  cassandra_uuid* uuid;
+  cassandra_uuid* self;
 
-  uuid = (cassandra_uuid*) zend_object_store_get_object(getThis() TSRMLS_CC);
-  RETURN_LONG((long) (cass_uuid_timestamp(uuid->uuid) / 1000));
+  self = (cassandra_uuid*) zend_object_store_get_object(getThis() TSRMLS_CC);
+  RETURN_LONG((long) (cass_uuid_timestamp(self->uuid) / 1000));
 }
 /* }}} */
 
-/* {{{ Cassandra\Timeuuid::value() */
+/* {{{ Cassandra\Timeuuid::toDateTime() */
 PHP_METHOD(Timeuuid, toDateTime)
 {
-  cassandra_uuid* uuid;
+  cassandra_uuid* self;
   zval* datetime;
   php_date_obj* datetime_obj;
   char* str;
@@ -95,13 +103,13 @@ PHP_METHOD(Timeuuid, toDateTime)
     return;
   }
 
-  uuid = (cassandra_uuid*) zend_object_store_get_object(getThis() TSRMLS_CC);
+  self = (cassandra_uuid*) zend_object_store_get_object(getThis() TSRMLS_CC);
 
   MAKE_STD_ZVAL(datetime);
   php_date_instantiate(php_date_get_date_ce(), datetime TSRMLS_CC);
 
   datetime_obj = zend_object_store_get_object(datetime TSRMLS_CC);
-  str_len      = spprintf(&str, 0, "@%ld", (long) (cass_uuid_timestamp(uuid->uuid) / 1000));
+  str_len      = spprintf(&str, 0, "@%ld", (long) (cass_uuid_timestamp(self->uuid) / 1000));
   php_date_initialize(datetime_obj, str, str_len, NULL, NULL, 0 TSRMLS_CC);
   efree(str);
 
@@ -119,6 +127,7 @@ ZEND_END_ARG_INFO()
 static zend_function_entry cassandra_timeuuid_methods[] = {
   PHP_ME(Timeuuid, __construct, arginfo__construct, ZEND_ACC_CTOR|ZEND_ACC_PUBLIC)
   PHP_ME(Timeuuid, __toString, arginfo_none, ZEND_ACC_PUBLIC)
+  PHP_ME(Timeuuid, type, arginfo_none, ZEND_ACC_PUBLIC)
   PHP_ME(Timeuuid, uuid, arginfo_none, ZEND_ACC_PUBLIC)
   PHP_ME(Timeuuid, version, arginfo_none, ZEND_ACC_PUBLIC)
   PHP_ME(Timeuuid, time, arginfo_none, ZEND_ACC_PUBLIC)
@@ -139,7 +148,7 @@ php_cassandra_timeuuid_gc(zval *object, zval ***table, int *n TSRMLS_DC)
 static HashTable*
 php_cassandra_timeuuid_properties(zval *object TSRMLS_DC)
 {
-  cassandra_uuid* uuid  = (cassandra_uuid*) zend_object_store_get_object(object TSRMLS_CC);
+  cassandra_uuid* self  = (cassandra_uuid*) zend_object_store_get_object(object TSRMLS_CC);
   HashTable*      props = zend_std_get_properties(object TSRMLS_CC);
 
   zval* uuid_str;
@@ -147,12 +156,12 @@ php_cassandra_timeuuid_properties(zval *object TSRMLS_DC)
 
   char* string = emalloc((CASS_UUID_STRING_LENGTH) * sizeof(char));
 
-  cass_uuid_string(uuid->uuid, string);
+  cass_uuid_string(self->uuid, string);
 
   MAKE_STD_ZVAL(uuid_str);
   ZVAL_STRING(uuid_str, string, 0);
   MAKE_STD_ZVAL(version);
-  ZVAL_LONG(version, (long) cass_uuid_version(uuid->uuid));
+  ZVAL_LONG(version, (long) cass_uuid_version(self->uuid));
 
   zend_hash_update(props, "uuid", sizeof("uuid"), &uuid_str, sizeof(zval), NULL);
   zend_hash_update(props, "version", sizeof("version"), &version, sizeof(zval), NULL);
@@ -189,11 +198,12 @@ php_cassandra_timeuuid_compare(zval *obj1, zval *obj2 TSRMLS_DC)
 static void
 php_cassandra_timeuuid_free(void *object TSRMLS_DC)
 {
-  cassandra_uuid* uuid = (cassandra_uuid*) object;
+  cassandra_uuid* self = (cassandra_uuid*) object;
 
-  zend_object_std_dtor(&uuid->zval TSRMLS_CC);
+  zval_ptr_dtor(&self->type);
+  zend_object_std_dtor(&self->zval TSRMLS_CC);
 
-  efree(uuid);
+  efree(self);
 }
 
 static zend_object_value

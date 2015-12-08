@@ -18,5 +18,6 @@ cassandra_define_UuidInterface(TSRMLS_D)
 
   INIT_CLASS_ENTRY(ce, "Cassandra\\UuidInterface", cassandra_uuid_interface_methods);
   cassandra_uuid_interface_ce = zend_register_internal_class(&ce TSRMLS_CC);
+  zend_class_implements(cassandra_uuid_interface_ce TSRMLS_CC, 1, cassandra_value_ce);
   cassandra_uuid_interface_ce->ce_flags |= ZEND_ACC_INTERFACE;
 }

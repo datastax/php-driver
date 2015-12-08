@@ -1,6 +1,5 @@
 #include "php_cassandra.h"
 #include "util/types.h"
-#include <ext/standard/php_smart_str.h>
 #include "src/Cassandra/Set.h"
 
 zend_class_entry *cassandra_type_set_ce = NULL;
@@ -31,7 +30,6 @@ PHP_METHOD(TypeSet, type)
 PHP_METHOD(TypeSet, __toString)
 {
   cassandra_type_set* self;
-  const char* type;
   smart_str string = {NULL, 0, 0};
 
   if (zend_parse_parameters_none() == FAILURE) {
@@ -39,13 +37,9 @@ PHP_METHOD(TypeSet, __toString)
   }
 
   self = (cassandra_type_set*) zend_object_store_get_object(getThis() TSRMLS_CC);
-  type = php_cassandra_scalar_type_name(self->type TSRMLS_CC);
 
-  smart_str_appendl(&string, "set<", 4);
-  smart_str_appendl(&string, type, strlen(type));
-  smart_str_appendl(&string, ">", 1);
+  php_cassandra_type_string((cassandra_type*)self, &string TSRMLS_CC);
   smart_str_0(&string);
-
   RETURN_STRING(string.c, 0);
 }
 
@@ -65,7 +59,9 @@ PHP_METHOD(TypeSet, create)
 
   object_init_ex(return_value, cassandra_set_ce);
   set = (cassandra_set*) zend_object_store_get_object(return_value TSRMLS_CC);
-  set->type = self->type;
+
+  set->type = getThis();
+  Z_ADDREF_P(set->type);
 
   if (argc > 0) {
     for (i = 0; i < argc; i++) {
@@ -101,6 +97,8 @@ php_cassandra_type_set_free(void *object TSRMLS_DC)
 {
   cassandra_type_set* self = (cassandra_type_set*) object;
 
+  if (self->value_type) zval_ptr_dtor(&self->value_type);
+
   zend_object_std_dtor(&self->zval TSRMLS_CC);
 
   efree(self);
@@ -110,16 +108,18 @@ static zend_object_value
 php_cassandra_type_set_new(zend_class_entry* class_type TSRMLS_DC)
 {
   zend_object_value retval;
-  cassandra_type_set* set;
+  cassandra_type_set* self;
 
-  set = (cassandra_type_set*) ecalloc(1, sizeof(cassandra_type_set));
+  self = (cassandra_type_set*) ecalloc(1, sizeof(cassandra_type_set));
+  memset(self, 0, sizeof(cassandra_type_set));
 
-  zend_object_std_init(&set->zval, class_type TSRMLS_CC);
-  object_properties_init(&set->zval, class_type);
+  self->type = CASS_VALUE_TYPE_SET;
+  self->value_type = NULL;
 
-  set->type = CASS_VALUE_TYPE_UNKNOWN;
+  zend_object_std_init(&self->zval, class_type TSRMLS_CC);
+  object_properties_init(&self->zval, class_type);
 
-  retval.handle   = zend_objects_store_put(set,
+  retval.handle   = zend_objects_store_put(self,
                       (zend_objects_store_dtor_t) zend_objects_destroy_object,
                       php_cassandra_type_set_free, NULL TSRMLS_CC);
   retval.handlers = &cassandra_type_set_handlers;
