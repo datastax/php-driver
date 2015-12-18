@@ -455,7 +455,6 @@ php_cassandra_varint_new(zend_class_entry* class_type TSRMLS_DC)
   memset(self, 0, sizeof(cassandra_varint));
 
   self->type = php_cassandra_type_scalar(CASS_VALUE_TYPE_VARINT TSRMLS_CC);
-  Z_ADDREF_P(self->type);
 
   mpz_init(self->value);
   zend_object_std_init(&self->zval, class_type TSRMLS_CC);

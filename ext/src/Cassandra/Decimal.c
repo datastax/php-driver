@@ -599,7 +599,6 @@ php_cassandra_decimal_new(zend_class_entry* class_type TSRMLS_DC)
   memset(self, 0, sizeof(cassandra_decimal));
 
   self->type = php_cassandra_type_scalar(CASS_VALUE_TYPE_DECIMAL TSRMLS_CC);
-  Z_ADDREF_P(self->type);
   self->scale = 0;
 
   mpz_init(self->value);

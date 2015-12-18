@@ -411,6 +411,11 @@ PHP_MINFO_FUNCTION(cassandra)
   php_info_print_table_start();
   php_info_print_table_header(2, "Cassandra support", "enabled");
 
+  snprintf(buf, sizeof(buf), "%d.%d.%d%s",
+           CASS_VERSION_MAJOR, CASS_VERSION_MINOR, CASS_VERSION_PATCH,
+           strlen(CASS_VERSION_SUFFIX) > 0 ? "-" CASS_VERSION_SUFFIX : "");
+  php_info_print_table_row(2, "C/C++ driver version", buf);
+
   snprintf(buf, sizeof(buf), "%d", CASSANDRA_G(persistent_clusters));
   php_info_print_table_row(2, "Persistent Clusters", buf);
 

@@ -277,6 +277,7 @@ static zend_function_entry cassandra_set_methods[] = {
   PHP_ME(Set, valueType, arginfo_none, ZEND_ACC_PUBLIC)
   PHP_ME(Set, values, arginfo_none, ZEND_ACC_PUBLIC)
   PHP_ME(Set, add, arginfo_one, ZEND_ACC_PUBLIC)
+  PHP_ME(Set, has, arginfo_one, ZEND_ACC_PUBLIC)
   PHP_ME(Set, remove, arginfo_one, ZEND_ACC_PUBLIC)
   /* Countable */
   PHP_ME(Set, count, arginfo_none, ZEND_ACC_PUBLIC)

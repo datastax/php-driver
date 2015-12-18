@@ -154,8 +154,8 @@ php_cassandra_map_populate_values(const cassandra_map* map, zval* array)
 PHP_METHOD(Map, __construct)
 {
   cassandra_map* self;
-  zval* key_type;
-  zval* value_type;
+  zval* key_type = NULL;
+  zval* value_type = NULL;
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "zz", &key_type, &value_type) == FAILURE)
     return;
@@ -167,8 +167,10 @@ PHP_METHOD(Map, __construct)
     if (!php_cassandra_value_type(Z_STRVAL_P(key_type), &type TSRMLS_CC))
       return;
     key_type = php_cassandra_type_scalar(type TSRMLS_CC);
-  } else if (Z_TYPE_P(key_type) != IS_OBJECT &&
-             !instanceof_function(Z_OBJCE_P(key_type), cassandra_type_ce TSRMLS_CC)) {
+  } else if (Z_TYPE_P(key_type) == IS_OBJECT &&
+             instanceof_function(Z_OBJCE_P(key_type), cassandra_type_ce TSRMLS_CC)) {
+    Z_ADDREF_P(key_type);
+  } else {
     INVALID_ARGUMENT(key_type, "a string or an instance of Cassandra\\Type");
   }
 
@@ -177,14 +179,15 @@ PHP_METHOD(Map, __construct)
     if (!php_cassandra_value_type(Z_STRVAL_P(value_type), &type TSRMLS_CC))
       return;
     value_type = php_cassandra_type_scalar(type TSRMLS_CC);
-  } else if (Z_TYPE_P(value_type) != IS_OBJECT ||
-             !instanceof_function(Z_OBJCE_P(value_type), cassandra_type_ce TSRMLS_CC)) {
+  } else if (Z_TYPE_P(value_type) == IS_OBJECT &&
+             instanceof_function(Z_OBJCE_P(value_type), cassandra_type_ce TSRMLS_CC)) {
+    Z_ADDREF_P(value_type);
+  } else {
+    zval_ptr_dtor(&key_type);
     INVALID_ARGUMENT(value_type, "a string or an instance of Cassandra\\Type");
   }
 
   self->type = php_cassandra_type_map(key_type, value_type TSRMLS_CC);
-  Z_ADDREF_P(key_type);
-  Z_ADDREF_P(value_type);
 }
 /* }}} */
 
@@ -452,7 +455,7 @@ php_cassandra_map_properties(zval *object TSRMLS_DC)
   zval* keys;
 
   cassandra_map* self   = (cassandra_map*) zend_object_store_get_object(object TSRMLS_CC);
-  HashTable*     props = zend_std_get_properties(object TSRMLS_CC);
+  HashTable*     props  = zend_std_get_properties(object TSRMLS_CC);
 
   MAKE_STD_ZVAL(values);
   MAKE_STD_ZVAL(keys);

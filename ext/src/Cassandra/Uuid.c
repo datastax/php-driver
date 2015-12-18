@@ -178,7 +178,6 @@ php_cassandra_uuid_new(zend_class_entry* class_type TSRMLS_DC)
   memset(self, 0, sizeof(cassandra_uuid));
 
   self->type = php_cassandra_type_scalar(CASS_VALUE_TYPE_UUID TSRMLS_CC);
-  Z_ADDREF_P(self->type);
 
   zend_object_std_init(&self->zval, class_type TSRMLS_CC);
   object_properties_init(&self->zval, class_type);

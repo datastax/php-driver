@@ -914,7 +914,7 @@ php_cassandra_cluster_builder_new(zend_class_entry* class_type TSRMLS_DC)
   builder->default_page_size = 5000;
   builder->default_timeout = NULL;
   builder->persist = 1;
-  builder->protocol_version = 2;
+  builder->protocol_version = 3;
   builder->io_threads = 1;
   builder->core_connections_per_host = 1;
   builder->max_connections_per_host = 2;

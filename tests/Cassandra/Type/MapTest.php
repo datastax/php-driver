@@ -4,8 +4,6 @@ namespace Cassandra\Type;
 
 use Cassandra\Type;
 
-include_once("UnsupportedType.php");
-
 /**
  * @requires extension cassandra
  */

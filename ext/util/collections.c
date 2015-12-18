@@ -326,6 +326,8 @@ collection_compare(cassandra_collection* collection1,
          zend_hash_get_current_data(&collection2->values, (void**) &current2) == SUCCESS) {
     int r = php_cassandra_value_compare(*current1, *current2 TSRMLS_CC);
     if (r != 0) return r;
+    zend_hash_move_forward(&collection1->values);
+    zend_hash_move_forward(&collection2->values);
   }
 
   zend_hash_set_pointer(&collection1->values, &ptr1);
@@ -375,6 +377,8 @@ set_compare(cassandra_set* set1, cassandra_set* set2 TSRMLS_DC) {
   while (iter1 && iter2) {
     int r = php_cassandra_value_compare(iter1->value, iter2->value TSRMLS_CC);
     if (r != 0) return r;
+    iter1 = (cassandra_set_entry*)iter1->hh.next;
+    iter2 = (cassandra_set_entry*)iter2->hh.next;
   }
 
   return 0;
@@ -764,7 +768,7 @@ php_cassandra_collection_from_set(cassandra_set* set, CassCollection** collectio
   cassandra_type* value_type;
   cassandra_set_entry* curr, * temp;
 
-  collection = cass_collection_new(CASS_COLLECTION_TYPE_MAP, HASH_COUNT(set->entries));
+  collection = cass_collection_new(CASS_COLLECTION_TYPE_SET, HASH_COUNT(set->entries));
 
   type = (cassandra_type_set*) zend_object_store_get_object(set->type TSRMLS_CC);
   value_type = (cassandra_type*) zend_object_store_get_object(type->value_type TSRMLS_CC);
