@@ -608,6 +608,50 @@ php_cassandra_validate_object(zval* object, zval* ztype TSRMLS_DC)
   }
 }
 
+int
+php_cassandra_value_type(char* type, CassValueType* value_type TSRMLS_DC)
+{
+  if (strcmp("ascii", type) == 0) {
+    *value_type = CASS_VALUE_TYPE_ASCII;
+  } else if (strcmp("bigint", type) == 0) {
+    *value_type = CASS_VALUE_TYPE_BIGINT;
+  } else if (strcmp("blob", type) == 0) {
+    *value_type = CASS_VALUE_TYPE_BLOB;
+  } else if (strcmp("boolean", type) == 0) {
+    *value_type = CASS_VALUE_TYPE_BOOLEAN;
+  } else if (strcmp("counter", type) == 0) {
+    *value_type = CASS_VALUE_TYPE_COUNTER;
+  } else if (strcmp("decimal", type) == 0) {
+    *value_type = CASS_VALUE_TYPE_DECIMAL;
+  } else if (strcmp("double", type) == 0) {
+    *value_type = CASS_VALUE_TYPE_DOUBLE;
+  } else if (strcmp("float", type) == 0) {
+    *value_type = CASS_VALUE_TYPE_FLOAT;
+  } else if (strcmp("int", type) == 0) {
+    *value_type = CASS_VALUE_TYPE_INT;
+  } else if (strcmp("text", type) == 0) {
+    *value_type = CASS_VALUE_TYPE_TEXT;
+  } else if (strcmp("timestamp", type) == 0) {
+    *value_type = CASS_VALUE_TYPE_TIMESTAMP;
+  } else if (strcmp("uuid", type) == 0) {
+    *value_type = CASS_VALUE_TYPE_UUID;
+  } else if (strcmp("varchar", type) == 0) {
+    *value_type = CASS_VALUE_TYPE_VARCHAR;
+  } else if (strcmp("varint", type) == 0) {
+    *value_type = CASS_VALUE_TYPE_VARINT;
+  } else if (strcmp("timeuuid", type) == 0) {
+    *value_type = CASS_VALUE_TYPE_TIMEUUID;
+  } else if (strcmp("inet", type) == 0) {
+    *value_type = CASS_VALUE_TYPE_INET;
+  } else {
+    zend_throw_exception_ex(cassandra_invalid_argument_exception_ce, 0 TSRMLS_CC,
+      "Unsupported type '%s'", type);
+    return 0;
+  }
+
+  return 1;
+}
+
 static int
 php_cassandra_collection_append(CassCollection* collection, zval* value, CassValueType type TSRMLS_DC)
 {

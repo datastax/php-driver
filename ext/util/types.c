@@ -14,7 +14,7 @@ ZEND_EXTERN_MODULE_GLOBALS(cassandra)
 
 #if CURRENT_CPP_DRIVER_VERSION >= CPP_DRIVER_VERSION(2, 1, 0)
 zval*
-php_cassandara_type_from_data_type(const CassDataType* data_type TSRMLS_DC) {
+php_cassandra_type_from_data_type(const CassDataType* data_type TSRMLS_DC) {
   zval* ztype = NULL;
   CassValueType type = cass_data_type_type(data_type);
 
@@ -22,27 +22,28 @@ php_cassandara_type_from_data_type(const CassDataType* data_type TSRMLS_DC) {
 #define XX_SCALAR(name, value) \
   case value: \
       ztype = php_cassandra_type_scalar(value TSRMLS_CC); \
+      Z_ADDREF_P(ztype); \
     break;
    PHP_CASSANDRA_SCALAR_TYPES_MAP(XX_SCALAR)
 #undef XX_SCALAR
 
   case CASS_VALUE_TYPE_LIST:
     ztype = php_cassandra_type_collection(
-              php_cassandara_type_from_data_type(
+              php_cassandra_type_from_data_type(
                 cass_data_type_sub_data_type(data_type, 0) TSRMLS_CC) TSRMLS_CC);
     break;
 
   case CASS_VALUE_TYPE_MAP:
     ztype = php_cassandra_type_map(
-              php_cassandara_type_from_data_type(
+              php_cassandra_type_from_data_type(
                 cass_data_type_sub_data_type(data_type, 0) TSRMLS_CC),
-              php_cassandara_type_from_data_type(
+              php_cassandra_type_from_data_type(
                 cass_data_type_sub_data_type(data_type, 1) TSRMLS_CC) TSRMLS_CC);
     break;
 
   case CASS_VALUE_TYPE_SET:
     ztype = php_cassandra_type_set(
-              php_cassandara_type_from_data_type(
+              php_cassandra_type_from_data_type(
                 cass_data_type_sub_data_type(data_type, 0) TSRMLS_CC) TSRMLS_CC);
     break;
 
@@ -53,6 +54,38 @@ php_cassandara_type_from_data_type(const CassDataType* data_type TSRMLS_DC) {
   return ztype;
 }
 #endif
+
+int php_cassandra_type_validate(zval* object, const char* object_name TSRMLS_DC)
+{
+  if (!instanceof_function(Z_OBJCE_P(object), cassandra_type_scalar_ce TSRMLS_CC) &&
+      !instanceof_function(Z_OBJCE_P(object), cassandra_type_collection_ce TSRMLS_CC) &&
+      !instanceof_function(Z_OBJCE_P(object), cassandra_type_map_ce TSRMLS_CC) &&
+      !instanceof_function(Z_OBJCE_P(object), cassandra_type_set_ce TSRMLS_CC)) {
+    throw_invalid_argument(object, object_name,
+                           "Cassandra\\Type::varchar(), " \
+                           "Cassandra\\Type::text(), " \
+                           "Cassandra\\Type::blob(), " \
+                           "Cassandra\\Type::ascii(), " \
+                           "Cassandra\\Type::bigint(), " \
+                           "Cassandra\\Type::counter(), " \
+                           "Cassandra\\Type::int(), " \
+                           "Cassandra\\Type::varint(), " \
+                           "Cassandra\\Type::boolean(), " \
+                           "Cassandra\\Type::decimal(), " \
+                           "Cassandra\\Type::double(), " \
+                           "Cassandra\\Type::float(), " \
+                           "Cassandra\\Type::inet(), " \
+                           "Cassandra\\Type::timestamp(), " \
+                           "Cassandra\\Type::uuid() or " \
+                           "Cassandra\\Type::timeuuid()" \
+                           "Cassandra\\Type::map()" \
+                           "Cassandra\\Type::set()" \
+                           "Cassandra\\Type::collection()" \
+                           TSRMLS_CC);
+    return 0;
+  }
+  return 1;
+}
 
 static inline int
 collection_compare(cassandra_type_collection* type1, cassandra_type_collection* type2 TSRMLS_DC) {

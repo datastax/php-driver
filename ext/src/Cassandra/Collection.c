@@ -58,7 +58,7 @@ php_cassandra_collection_find(cassandra_collection* collection, zval* object, lo
   zend_hash_internal_pointer_reset(&collection->values);
 
   while (zend_hash_get_current_data(&collection->values, (void**) &current) == SUCCESS) {
-    if (php_cassandra_value_compare(object, *current TSRMLS_CC) &&
+    if (php_cassandra_value_compare(object, *current TSRMLS_CC) == 0 &&
         zend_hash_get_current_key(&collection->values, NULL, &idx, 0) == HASH_KEY_IS_LONG) {
       *index = (long) idx;
       return 1;
@@ -100,14 +100,23 @@ PHP_METHOD(Collection, __construct)
   cassandra_collection* self;
   zval* value_type;
 
-  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "O",
-                            &value_type, cassandra_type_ce) == FAILURE) {
+  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z", &value_type) == FAILURE)
     return;
-  }
 
   self = (cassandra_collection*) zend_object_store_get_object(getThis() TSRMLS_CC);
-  self->type = php_cassandra_type_collection(value_type TSRMLS_CC);
-  Z_ADDREF_P(value_type);
+
+  if (Z_TYPE_P(value_type) == IS_STRING) {
+    CassValueType type;
+    if (!php_cassandra_value_type(Z_STRVAL_P(value_type), &type TSRMLS_CC))
+      return;
+    self->type = php_cassandra_type_set_from_value_type(type TSRMLS_CC);
+  } else if (Z_TYPE_P(value_type) == IS_OBJECT &&
+             instanceof_function(Z_OBJCE_P(value_type), cassandra_type_ce TSRMLS_CC)) {
+    self->type = php_cassandra_type_collection(value_type TSRMLS_CC);
+    Z_ADDREF_P(value_type);
+  } else {
+    INVALID_ARGUMENT(value_type, "a string or an instance of Cassandra\\Type");
+  }
 }
 /* }}} */
 
@@ -364,7 +373,7 @@ php_cassandra_collection_free(void *object TSRMLS_DC)
 
   zend_hash_destroy(&self->values);
 
-  zval_ptr_dtor(&self->type);
+  if (self->type) zval_ptr_dtor(&self->type);
   zend_object_std_dtor(&self->zval TSRMLS_CC);
 
   efree(self);

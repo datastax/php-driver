@@ -4,6 +4,8 @@ namespace Cassandra\Type;
 
 use Cassandra\Type;
 
+include_once("UnsupportedType.php");
+
 /**
  * @requires extension cassandra
  */
@@ -14,7 +16,7 @@ class SetTest extends \PHPUnit_Framework_TestCase
         $type = Type::set(Type::varchar());
         $this->assertEquals("set", $type->name());
         $this->assertEquals("set<varchar>", (string) $type);
-        $this->assertEquals(Type::varchar(), $type->type());
+        $this->assertEquals(Type::varchar(), $type->valueType());
     }
 
     public function testCreatesSetFromValues()

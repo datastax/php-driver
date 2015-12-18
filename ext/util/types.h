@@ -25,6 +25,7 @@
 zval* php_cassandra_type_from_data_type(const CassDataType* data_type TSRMLS_DC);
 #endif
 
+int php_cassandra_type_validate(zval* object, const char* object_name TSRMLS_DC);
 int php_cassandra_type_compare(cassandra_type* type1, cassandra_type* type2 TSRMLS_DC);
 void php_cassandra_type_string(cassandra_type* type, smart_str* smart TSRMLS_DC);
 

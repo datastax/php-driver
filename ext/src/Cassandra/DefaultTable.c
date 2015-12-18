@@ -16,7 +16,6 @@ PHP_METHOD(DefaultTable, name)
   self = (cassandra_table*) zend_object_store_get_object(getThis() TSRMLS_CC);
 
   php_cassandra_get_table_field(self->meta, "columnfamily_name", &value TSRMLS_CC);
-  php_cassandra_get_table_field(self->meta, "columnfamily_name", &value TSRMLS_CC);
   RETURN_ZVAL(value, 0, 1);
 }
 

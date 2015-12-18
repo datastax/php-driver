@@ -40,7 +40,7 @@ class SetTest extends \PHPUnit_Framework_TestCase
     public function testReturnsItsType($type)
     {
         $set = new Set($type);
-        $this->assertEquals($type, $set->type());
+        $this->assertEquals($type, $set->valueType());
     }
 
     public function cassandraTypes()
@@ -117,6 +117,8 @@ class SetTest extends \PHPUnit_Framework_TestCase
         foreach ($numbers as $number) {
             $set->add($number);
         }
+
+        $set->rewind();
 
         $this->assertEquals(1, $set->current());
         $set->next();

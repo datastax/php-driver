@@ -13,18 +13,16 @@ PHP_METHOD(TypeSet, name)
   RETURN_STRING("set", 1);
 }
 
-PHP_METHOD(TypeSet, type)
+PHP_METHOD(TypeSet, valueType)
 {
   cassandra_type_set* self;
-  zval* type;
 
   if (zend_parse_parameters_none() == FAILURE) {
     return;
   }
 
   self = (cassandra_type_set*) zend_object_store_get_object(getThis() TSRMLS_CC);
-  type = php_cassandra_type_scalar(self->type TSRMLS_CC);
-  RETURN_ZVAL(type, 1, 0);
+  RETURN_ZVAL(self->value_type, 1, 0);
 }
 
 PHP_METHOD(TypeSet, __toString)
@@ -84,7 +82,7 @@ ZEND_END_ARG_INFO()
 
 static zend_function_entry cassandra_type_set_methods[] = {
   PHP_ME(TypeSet, name,       arginfo_none,  ZEND_ACC_PUBLIC)
-  PHP_ME(TypeSet, type,       arginfo_none,  ZEND_ACC_PUBLIC)
+  PHP_ME(TypeSet, valueType,  arginfo_none,  ZEND_ACC_PUBLIC)
   PHP_ME(TypeSet, __toString, arginfo_none,  ZEND_ACC_PUBLIC)
   PHP_ME(TypeSet, create,     arginfo_value, ZEND_ACC_PUBLIC)
   PHP_FE_END

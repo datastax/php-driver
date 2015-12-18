@@ -26,6 +26,10 @@ PHP_METHOD(Type, collection)
     return;
   }
 
+  if (!php_cassandra_type_validate(value_type, "type" TSRMLS_CC)) {
+    return;
+  }
+
   ztype = php_cassandra_type_collection(value_type TSRMLS_CC);
   Z_ADDREF_P(value_type);
   RETURN_ZVAL(ztype, 0, 1);
@@ -38,6 +42,10 @@ PHP_METHOD(Type, set)
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "O",
                             &value_type, cassandra_type_ce) == FAILURE) {
+    return;
+  }
+
+  if (!php_cassandra_type_validate(value_type, "type" TSRMLS_CC)) {
     return;
   }
 
@@ -55,6 +63,14 @@ PHP_METHOD(Type, map)
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "OO",
                             &key_type, cassandra_type_ce,
                             &value_type, cassandra_type_ce) == FAILURE) {
+    return;
+  }
+
+  if (!php_cassandra_type_validate(key_type, "keyType" TSRMLS_CC)) {
+    return;
+  }
+
+  if (!php_cassandra_type_validate(value_type, "valueType" TSRMLS_CC)) {
     return;
   }
 

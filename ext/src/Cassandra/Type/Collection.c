@@ -14,19 +14,16 @@ PHP_METHOD(TypeCollection, name)
   RETURN_STRING("list", 1);
 }
 
-PHP_METHOD(TypeCollection, type)
+PHP_METHOD(TypeCollection, valueType)
 {
   cassandra_type_collection* self;
-  zval* type;
 
   if (zend_parse_parameters_none() == FAILURE) {
     return;
   }
 
   self = (cassandra_type_collection*) zend_object_store_get_object(getThis() TSRMLS_CC);
-  type = php_cassandra_type_scalar(self->type TSRMLS_CC);
-
-  RETURN_ZVAL(type, 1, 0);
+  RETURN_ZVAL(self->value_type, 1, 0);
 }
 
 PHP_METHOD(TypeCollection, __toString)
@@ -91,7 +88,7 @@ ZEND_END_ARG_INFO()
 
 static zend_function_entry cassandra_type_collection_methods[] = {
   PHP_ME(TypeCollection, name,       arginfo_none,  ZEND_ACC_PUBLIC)
-  PHP_ME(TypeCollection, type,       arginfo_none,  ZEND_ACC_PUBLIC)
+  PHP_ME(TypeCollection, valueType,  arginfo_none,  ZEND_ACC_PUBLIC)
   PHP_ME(TypeCollection, __toString, arginfo_none,  ZEND_ACC_PUBLIC)
   PHP_ME(TypeCollection, create,     arginfo_value, ZEND_ACC_PUBLIC)
   PHP_FE_END

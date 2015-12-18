@@ -1,5 +1,6 @@
 #include "php_cassandra.h"
 #include "util/bytes.h"
+#include "util/types.h"
 
 zend_class_entry *cassandra_blob_ce = NULL;
 
@@ -160,15 +161,18 @@ static zend_object_value
 php_cassandra_blob_new(zend_class_entry* class_type TSRMLS_DC)
 {
   zend_object_value retval;
-  cassandra_blob *blob;
+  cassandra_blob* self;
 
-  blob = (cassandra_blob*) emalloc(sizeof(cassandra_blob));
-  memset(blob, 0, sizeof(cassandra_blob));
+  self = (cassandra_blob*) emalloc(sizeof(cassandra_blob));
+  memset(self, 0, sizeof(cassandra_blob));
 
-  zend_object_std_init(&blob->zval, class_type TSRMLS_CC);
-  object_properties_init(&blob->zval, class_type);
+  self->type = php_cassandra_type_scalar(CASS_VALUE_TYPE_BLOB TSRMLS_CC);
+  Z_ADDREF_P(self->type);
 
-  retval.handle   = zend_objects_store_put(blob, (zend_objects_store_dtor_t) zend_objects_destroy_object, php_cassandra_blob_free, NULL TSRMLS_CC);
+  zend_object_std_init(&self->zval, class_type TSRMLS_CC);
+  object_properties_init(&self->zval, class_type);
+
+  retval.handle   = zend_objects_store_put(self, (zend_objects_store_dtor_t) zend_objects_destroy_object, php_cassandra_blob_free, NULL TSRMLS_CC);
   retval.handlers = &cassandra_blob_handlers;
 
   return retval;

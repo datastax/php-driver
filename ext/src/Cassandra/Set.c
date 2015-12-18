@@ -106,14 +106,23 @@ PHP_METHOD(Set, __construct)
   cassandra_set* self;
   zval* value_type;
 
-  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "O",
-                            &value_type, cassandra_type_ce) == FAILURE) {
+  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z", &value_type) == FAILURE)
     return;
-  }
 
   self = (cassandra_set*) zend_object_store_get_object(getThis() TSRMLS_CC);
-  self->type = php_cassandra_type_set(value_type TSRMLS_CC);
-  Z_ADDREF_P(value_type);
+
+  if (Z_TYPE_P(value_type) == IS_STRING) {
+    CassValueType type;
+    if (!php_cassandra_value_type(Z_STRVAL_P(value_type), &type TSRMLS_CC))
+      return;
+    self->type = php_cassandra_type_set_from_value_type(type TSRMLS_CC);
+  } else if (Z_TYPE_P(value_type) == IS_OBJECT &&
+             instanceof_function(Z_OBJCE_P(value_type), cassandra_type_ce TSRMLS_CC)) {
+    self->type = php_cassandra_type_set(value_type TSRMLS_CC);
+    Z_ADDREF_P(value_type);
+  } else {
+    INVALID_ARGUMENT(value_type, "a string or an instance of Cassandra\\Type");
+  }
 }
 /* }}} */
 
@@ -325,15 +334,13 @@ php_cassandra_set_free(void *object TSRMLS_DC)
   cassandra_set* self = (cassandra_set*) object;
   cassandra_set_entry* curr, * temp;
 
-  zval_ptr_dtor(&self->type); /* TODO(mpenick): Move to Value dtor? */
-
   HASH_ITER(hh, self->entries, curr, temp) {
     zval_ptr_dtor(&curr->value);
     HASH_DEL(self->entries, curr);
     efree(curr);
   }
 
-  zval_ptr_dtor(&self->type);
+  if (self->type) zval_ptr_dtor(&self->type);
   zend_object_std_dtor(&self->zval TSRMLS_CC);
 
   efree(self);
