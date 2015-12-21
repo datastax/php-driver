@@ -27,7 +27,7 @@ namespace Cassandra;
  * @see Float
  * @see Varint
  */
-interface Numeric
+interface Numeric implements Value
 {
     /**
      * @param Numeric $addend a number to add to this one

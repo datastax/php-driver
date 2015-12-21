@@ -322,7 +322,12 @@ final class Cassandra
     /**
      * Current version of the extension.
      */
-    const VERSION = '1.0.0-beta';
+    const VERSION = '1.1';
+
+    /**
+     * Version of the cpp-driver the extension is compiled against.
+     */
+    const CPP_DRIVER_VERSION = '2.2.2';
 
     /**
      * Returns a Cluster Builder.

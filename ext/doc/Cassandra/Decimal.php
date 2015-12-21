@@ -41,6 +41,13 @@ final class Decimal implements Numeric
     public function __construct($value) {}
 
     /**
+     * The type of this decimal.
+     *
+     * @return Type
+     */
+    public function type() {}
+
+    /**
      * String representation of this decimal.
      *
      * @return string Decimal value

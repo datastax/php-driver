@@ -38,6 +38,13 @@ final class Varint implements Numeric
     public function __toString() {}
 
     /**
+     * The type of this varint.
+     *
+     * @return Type
+     */
+    public function type() {}
+
+    /**
      * Returns the integer value.
      *
      * @return string integer value

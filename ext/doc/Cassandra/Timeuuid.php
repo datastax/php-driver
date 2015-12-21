@@ -31,6 +31,13 @@ final class Timeuuid implements UuidInterface
     public function __construct($timestamp = null) {}
 
     /**
+     * The type of this timeuuid.
+     *
+     * @return Type
+     */
+    public function type() {}
+
+    /**
      * Returns this timeuuid as string.
      *
      * @return string timeuuid

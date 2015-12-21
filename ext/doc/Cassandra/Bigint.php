@@ -45,6 +45,13 @@ final class Bigint implements Numeric
     public function __construct($value) {}
 
     /**
+     * The type of this bigint.
+     *
+     * @return Type
+     */
+    public function type() {}
+
+    /**
      * Returns the integer value.
      *
      * @return string integer value

@@ -21,21 +21,28 @@ namespace Cassandra;
 /**
  * A PHP representation of the CQL `list` datatype
  */
-final class Collection implements \Countable, \Iterator
+final class Collection implements Value, \Countable, \Iterator
 {
     /**
      * Creates a new collection of a given type.
      *
-     * @param string $type one of `Cassandra::TYPE_*`
+     * @param Type $type
      */
     public function __construct($type) {}
 
     /**
      * The type of this collection.
      *
-     * @return string one of `Cassandra::TYPE_*`
+     * @return Type
      */
     public function type() {}
+
+    /**
+     * The type of the values in this collection.
+     *
+     * @return Type
+     */
+    public function valueType() {}
 
     /**
      * Array of values in this collection.

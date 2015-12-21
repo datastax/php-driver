@@ -45,6 +45,13 @@ final class Float implements Numeric
     public function __construct($value) {}
 
     /**
+     * The type of this float.
+     *
+     * @return Type
+     */
+    public function type() {}
+
+    /**
      * Returns the float value.
      *
      * @return string float value

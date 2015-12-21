@@ -38,6 +38,13 @@ final class Uuid implements UuidInterface
     public function __toString() {}
 
     /**
+     * The type of this uuid.
+     *
+     * @return Type
+     */
+    public function type() {}
+
+    /**
      * Returns this uuid as string.
      *
      * @return string uuid

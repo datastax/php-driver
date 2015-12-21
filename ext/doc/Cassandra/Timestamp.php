@@ -21,7 +21,7 @@ namespace Cassandra;
 /**
  * A PHP representation of the CQL `timestamp` datatype
  */
-final class Timestamp
+final class Timestamp implements Value
 {
     /**
      * Creates a new timestamp from either unix timestamp and microseconds or
@@ -31,6 +31,13 @@ final class Timestamp
      * @param int $usec Microseconds
      */
     public function __construct($time = null, $usec = null) {}
+
+    /**
+     * The type of this timestamp.
+     *
+     * @return Type
+     */
+    public function type() {}
 
     /**
      * Unix timestamp.

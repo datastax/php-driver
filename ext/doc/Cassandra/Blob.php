@@ -21,7 +21,7 @@ namespace Cassandra;
 /**
  * A PHP representation of the CQL `blob` datatype
  */
-final class Blob
+final class Blob implements Value
 {
     /**
      * Creates a new bytes array.
@@ -29,6 +29,13 @@ final class Blob
      * @param string $bytes any bytes
      */
     public function __construct($bytes) {}
+
+    /**
+     * The type of this blob.
+     *
+     * @return Type
+     */
+    public function type() {}
 
     /**
      * Returns bytes as a hex string.
