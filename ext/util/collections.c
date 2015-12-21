@@ -62,15 +62,14 @@ static inline unsigned
 mpz_hash(unsigned seed, mpz_t n) {
   size_t i;
   size_t size = mpz_size(n);
-  const mp_limb_t* limbs = mpz_limbs_read(n);
   unsigned hashv = seed;
 #if GMP_LIMB_BITS == 32
     for (i = 0; i < size; ++i) {
-      hashv = combine_hash(hashv, limbs[i]);
+      hashv = combine_hash(hashv, mpz_getlimbn(m, i));
     }
 #elif GMP_LIMB_BITS == 64
     for (i = 0; i < size; ++i) {
-      hashv = combine_hash(hashv, bigint_hash(limbs[i]));
+      hashv = combine_hash(hashv, bigint_hash(mpz_getlimbn(n, i)));
     }
 #else
 #error "Unexpected GMP limb bits size"
