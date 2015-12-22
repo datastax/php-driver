@@ -1,3 +1,9 @@
+cassandra-php (1.0.0) precise; urgency=low
+
+  * Sync with datastax v1.0.0
+
+ -- Sandro Lex <sandro.lex@orange.com>  Tue, 22 Dec 2015 12:01:44 +0100
+
 cassandra-php (0.1.1) precise; urgency=low
 
   * Using libuv 1.5.x 
