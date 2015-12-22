@@ -58,6 +58,20 @@ if test "$PHP_CASSANDRA" != "no"; then
     src/Cassandra/PreparedStatement.c \
     src/Cassandra/BatchStatement.c \
     src/Cassandra/Rows.c \
+    src/Cassandra/Column.c \
+    src/Cassandra/DefaultColumn.c \
+    src/Cassandra/DefaultKeyspace.c \
+    src/Cassandra/DefaultSchema.c \
+    src/Cassandra/DefaultTable.c \
+    src/Cassandra/Keyspace.c \
+    src/Cassandra/Schema.c \
+    src/Cassandra/Table.c \
+    src/Cassandra/Type.c \
+    src/Cassandra/Type/Collection.c \
+    src/Cassandra/Type/Map.c \
+    src/Cassandra/Type/Scalar.c \
+    src/Cassandra/Type/Set.c \
+    src/Cassandra/Type/Custom.c \
   ";
 
   CASSANDRA_TYPES="\
@@ -86,15 +100,16 @@ if test "$PHP_CASSANDRA" != "no"; then
     util/math.c \
     util/ref.c \
     util/result.c \
+    util/types.c \
     util/uuid_gen.c \
   ";
 
   case $(uname -s) in
     Linux)
-      CASSANDRA_CFLAGS="-Wall -pedantic -Wextra -Wno-long-long -Wno-deprecated-declarations -Wno-unused-parameter -Wno-variadic-macros -Wno-extra-semi -pthread"
+      CASSANDRA_CFLAGS="-Wall -pedantic -Wextra -Wno-long-long -Wno-deprecated-declarations -Wno-unused-parameter -Wno-unused-result -Wno-variadic-macros -Wno-extra-semi -pthread"
       ;;
     Darwin)
-      CASSANDRA_CFLAGS="-Wall -pedantic -Wextra -Wno-long-long -Wno-deprecated-declarations -Wno-unused-parameter -Wno-variadic-macros -Wno-extra-semi"
+      CASSANDRA_CFLAGS="-Wall -pedantic -Wextra -Wno-long-long -Wno-deprecated-declarations -Wno-unused-parameter -Wno-unused-result -Wno-variadic-macros -Wno-extra-semi"
       ;;
   esac
 
@@ -105,6 +120,7 @@ if test "$PHP_CASSANDRA" != "no"; then
   PHP_ADD_BUILD_DIR($ext_builddir/src/Cassandra/Cluster)
   PHP_ADD_BUILD_DIR($ext_builddir/src/Cassandra/Exception)
   PHP_ADD_BUILD_DIR($ext_builddir/src/Cassandra/SSLOptions)
+  PHP_ADD_BUILD_DIR($ext_builddir/src/Cassandra/Type)
   PHP_ADD_BUILD_DIR($ext_builddir/util)
   PHP_SUBST(CASSANDRA_SHARED_LIBADD)
   PHP_SUBST(CASSANDRA_CFLAGS)

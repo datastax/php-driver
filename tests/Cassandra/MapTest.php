@@ -2,6 +2,8 @@
 
 namespace Cassandra;
 
+use Cassandra\Type;
+
 /**
  * @requires extension cassandra
  */
@@ -9,7 +11,7 @@ class MapTest extends \PHPUnit_Framework_TestCase
 {
     public function testSupportsKeyBasedAccess()
     {
-        $map = new Map(\Cassandra::TYPE_VARINT, \Cassandra::TYPE_VARCHAR);
+        $map = Type::map(Type::varint(), Type::varchar())->create();
         $this->assertEquals(0, count($map));
         $map->set(new Varint('123'), 'value');
         $this->assertEquals(1, count($map));
@@ -36,5 +38,15 @@ class MapTest extends \PHPUnit_Framework_TestCase
     public function testSupportsOnlyCassandraTypesForValues()
     {
         new Map(\Cassandra::TYPE_VARINT, 'another custom type');
+    }
+
+    /**
+     * @expectedException         InvalidArgumentException
+     * @expectedExceptionMessage  Invalid value: null is not supported inside maps
+     */
+    public function testSupportsNullValues()
+    {
+        $map = new Map(\Cassandra::TYPE_VARCHAR, \Cassandra::TYPE_VARCHAR);
+        $map->set("test", null);
     }
 }

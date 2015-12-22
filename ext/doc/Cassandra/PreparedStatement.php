@@ -20,13 +20,13 @@ namespace Cassandra;
 
 /**
  * Prepared statements are faster to execute because the server doesn't need
- * to process statement's CQL during the execution.
+ * to process a statement's CQL during the execution.
  *
  * With token-awareness enabled in the driver, prepared statements are even
  * faster, because they are sent directly to replica nodes and avoid the extra
  * network hop.
  *
- * @see Cassandra\Session::prepare()
+ * @see Session::prepare()
  */
 final class PreparedStatement implements Statement
 {

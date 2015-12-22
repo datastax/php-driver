@@ -22,6 +22,10 @@
 #include <Zend/zend_exceptions.h>
 #include <Zend/zend_interfaces.h>
 
+#if PHP_VERSION_ID < 50304
+#  error PHP 5.3.4 or later is required in order to build the driver
+#endif
+
 #if HAVE_SPL
 #  include <ext/spl/spl_iterators.h>
 #  include <ext/spl/spl_exceptions.h>
@@ -96,6 +100,12 @@ void throw_invalid_argument(zval* object,
 
 #define ASSERT_SUCCESS_VALUE(rc, value) ASSERT_SUCCESS_BLOCK(rc, return value;)
 
+#define CPP_DRIVER_VERSION(major, minor, patch) \
+  (((major) << 16) + ((minor) << 8) + (patch))
+
+#define CURRENT_CPP_DRIVER_VERSION \
+  CPP_DRIVER_VERSION(CASS_VERSION_MAJOR, CASS_VERSION_MINOR, CASS_VERSION_PATCH)
+
 #include "php_cassandra_types.h"
 
 PHP_MINIT_FUNCTION(cassandra);
@@ -108,6 +118,22 @@ ZEND_BEGIN_MODULE_GLOBALS(cassandra)
   CassUuidGen*          uuid_gen;
   unsigned int          persistent_clusters;
   unsigned int          persistent_sessions;
+  zval*                 type_varchar;
+  zval*                 type_text;
+  zval*                 type_blob;
+  zval*                 type_ascii;
+  zval*                 type_bigint;
+  zval*                 type_counter;
+  zval*                 type_int;
+  zval*                 type_varint;
+  zval*                 type_boolean;
+  zval*                 type_decimal;
+  zval*                 type_double;
+  zval*                 type_float;
+  zval*                 type_inet;
+  zval*                 type_timestamp;
+  zval*                 type_uuid;
+  zval*                 type_timeuuid;
 ZEND_END_MODULE_GLOBALS(cassandra)
 
 #ifdef ZTS

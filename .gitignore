@@ -1,8 +1,8 @@
 /composer.phar
-/composer.lock
 /vendor/
 /bin/
 /.vagrant/
 /venv/
 /tmp/*
 /docs/
+/cassandra.log

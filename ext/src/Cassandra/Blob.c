@@ -3,21 +3,33 @@
 
 zend_class_entry *cassandra_blob_ce = NULL;
 
-/* {{{ Cassandra\Blob::__construct(string) */
-PHP_METHOD(Blob, __construct)
+void
+php_cassandra_blob_init(INTERNAL_FUNCTION_PARAMETERS)
 {
-  char *bytes;
-  int bytes_len;
-  cassandra_blob* blob = NULL;
+  cassandra_blob* self;
+  char* string;
+  int string_len;
 
-  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &bytes, &bytes_len) == FAILURE) {
+  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &string, &string_len) == FAILURE) {
     return;
   }
 
-  blob = (cassandra_blob*) zend_object_store_get_object(getThis() TSRMLS_CC);
-  blob->data = emalloc(bytes_len + 1 * sizeof(cass_byte_t));
-  blob->size = bytes_len + 1;
-  memcpy(blob->data, bytes, bytes_len + 1);
+  if (getThis() && instanceof_function(Z_OBJCE_P(getThis()), cassandra_blob_ce TSRMLS_CC)) {
+    self = (cassandra_blob*) zend_object_store_get_object(getThis() TSRMLS_CC);
+  } else {
+    object_init_ex(return_value, cassandra_blob_ce);
+    self = (cassandra_blob*) zend_object_store_get_object(return_value TSRMLS_CC);
+  }
+
+  self->data = emalloc(string_len * sizeof(cass_byte_t));
+  self->size = string_len;
+  memcpy(self->data, string, string_len);
+}
+
+/* {{{ Cassandra\Blob::__construct(string) */
+PHP_METHOD(Blob, __construct)
+{
+  php_cassandra_blob_init(INTERNAL_FUNCTION_PARAM_PASSTHRU);
 }
 /* }}} */
 
@@ -45,6 +57,18 @@ PHP_METHOD(Blob, bytes)
 }
 /* }}} */
 
+/* {{{ Cassandra\Blob::toBinaryString() */
+PHP_METHOD(Blob, toBinaryString)
+{
+  cassandra_blob* blob = (cassandra_blob*) zend_object_store_get_object(getThis() TSRMLS_CC);
+  char* bytes = (char *) emalloc(sizeof(char) * (blob->size + 1));
+  memcpy(bytes, blob->data, blob->size);
+  bytes[blob->size] = '\0';
+
+  RETURN_STRINGL(bytes, blob->size, 0);
+}
+/* }}} */
+
 ZEND_BEGIN_ARG_INFO_EX(arginfo__construct, 0, ZEND_RETURN_VALUE, 1)
   ZEND_ARG_INFO(0, bytes)
 ZEND_END_ARG_INFO()
@@ -56,10 +80,19 @@ static zend_function_entry cassandra_blob_methods[] = {
   PHP_ME(Blob, __construct, arginfo__construct, ZEND_ACC_CTOR|ZEND_ACC_PUBLIC)
   PHP_ME(Blob, __toString, arginfo_none, ZEND_ACC_PUBLIC)
   PHP_ME(Blob, bytes, arginfo_none, ZEND_ACC_PUBLIC)
+  PHP_ME(Blob, toBinaryString, arginfo_none, ZEND_ACC_PUBLIC)
   PHP_FE_END
 };
 
 static zend_object_handlers cassandra_blob_handlers;
+
+static HashTable*
+php_cassandra_blob_gc(zval *object, zval ***table, int *n TSRMLS_DC)
+{
+  *table = NULL;
+  *n = 0;
+  return zend_std_get_properties(object TSRMLS_CC);
+}
 
 static HashTable*
 php_cassandra_blob_properties(zval *object TSRMLS_DC)
@@ -122,11 +155,7 @@ php_cassandra_blob_new(zend_class_entry* class_type TSRMLS_DC)
   memset(blob, 0, sizeof(cassandra_blob));
 
   zend_object_std_init(&blob->zval, class_type TSRMLS_CC);
-#if ZEND_MODULE_API_NO >= 20100525
   object_properties_init(&blob->zval, class_type);
-#else
-  zend_hash_copy(blob->zval.properties, &class_type->default_properties, (copy_ctor_func_t) zval_add_ref, (void*) NULL, sizeof(zval*));
-#endif
 
   retval.handle   = zend_objects_store_put(blob, (zend_objects_store_dtor_t) zend_objects_destroy_object, php_cassandra_blob_free, NULL TSRMLS_CC);
   retval.handlers = &cassandra_blob_handlers;
@@ -141,7 +170,10 @@ void cassandra_define_Blob(TSRMLS_D)
   INIT_CLASS_ENTRY(ce, "Cassandra\\Blob", cassandra_blob_methods);
   cassandra_blob_ce = zend_register_internal_class(&ce TSRMLS_CC);
   memcpy(&cassandra_blob_handlers, zend_get_std_object_handlers(), sizeof(zend_object_handlers));
-  cassandra_blob_handlers.get_properties = php_cassandra_blob_properties;
+  cassandra_blob_handlers.get_properties  = php_cassandra_blob_properties;
+#if PHP_VERSION_ID >= 50400
+  cassandra_blob_handlers.get_gc          = php_cassandra_blob_gc;
+#endif
   cassandra_blob_handlers.compare_objects = php_cassandra_blob_compare;
   cassandra_blob_ce->ce_flags |= ZEND_ACC_FINAL_CLASS;
   cassandra_blob_ce->create_object = php_cassandra_blob_new;

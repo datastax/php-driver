@@ -2,9 +2,9 @@
 #include "result.h"
 #include "math.h"
 #include "collections.h"
-#include "../src/Cassandra/Collection.h"
-#include "../src/Cassandra/Map.h"
-#include "../src/Cassandra/Set.h"
+#include "src/Cassandra/Collection.h"
+#include "src/Cassandra/Map.h"
+#include "src/Cassandra/Set.h"
 
 static int
 php_cassandra_value(const CassValue* value, CassValueType type, zval** out TSRMLS_DC)
@@ -34,6 +34,7 @@ php_cassandra_value(const CassValue* value, CassValueType type, zval** out TSRML
   cassandra_set* set = NULL;
 
   MAKE_STD_ZVAL(return_value);
+  RETVAL_NULL();
 
   if (cass_value_is_null(value)) {
     *out = return_value;
@@ -165,11 +166,13 @@ php_cassandra_value(const CassValue* value, CassValueType type, zval** out TSRML
       zval *v;
 
       if (php_cassandra_value(cass_iterator_get_value(iterator), collection->type, &v TSRMLS_CC) == FAILURE) {
+        cass_iterator_free(iterator);
         zval_ptr_dtor(&return_value);
         return FAILURE;
       }
 
       php_cassandra_collection_add(collection, v TSRMLS_CC);
+      zval_ptr_dtor(&v);
     }
 
     cass_iterator_free(iterator);
@@ -188,11 +191,14 @@ php_cassandra_value(const CassValue* value, CassValueType type, zval** out TSRML
 
       if (php_cassandra_value(cass_iterator_get_map_key(iterator), map->key_type, &k TSRMLS_CC) == FAILURE ||
           php_cassandra_value(cass_iterator_get_map_value(iterator), map->value_type, &v TSRMLS_CC) == FAILURE) {
+        cass_iterator_free(iterator);
         zval_ptr_dtor(&return_value);
         return FAILURE;
       }
 
       php_cassandra_map_set(map, k, v TSRMLS_CC);
+      zval_ptr_dtor(&k);
+      zval_ptr_dtor(&v);
     }
 
     cass_iterator_free(iterator);
@@ -208,11 +214,13 @@ php_cassandra_value(const CassValue* value, CassValueType type, zval** out TSRML
       zval* v;
 
       if (php_cassandra_value(cass_iterator_get_value(iterator), set->type, &v TSRMLS_CC) == FAILURE) {
+        cass_iterator_free(iterator);
         zval_ptr_dtor(&return_value);
         return FAILURE;
       }
 
       php_cassandra_set_add(set, v TSRMLS_CC);
+      zval_ptr_dtor(&v);
     }
 
     cass_iterator_free(iterator);
@@ -224,6 +232,81 @@ php_cassandra_value(const CassValue* value, CassValueType type, zval** out TSRML
   *out = return_value;
   return SUCCESS;
 }
+
+#if CURRENT_CPP_DRIVER_VERSION >= CPP_DRIVER_VERSION(2, 2, 0)
+int
+php_cassandra_get_keyspace_field(const CassKeyspaceMeta* metadata, const char* field_name, zval** out TSRMLS_DC)
+{
+  const CassValue* value;
+
+  value = cass_keyspace_meta_field_by_name(metadata, field_name);
+
+  if (value == NULL) {
+    MAKE_STD_ZVAL(*out);
+    ZVAL_NULL(*out);
+    return SUCCESS;
+  }
+
+  return php_cassandra_value(value, cass_value_type(value), out TSRMLS_CC);
+}
+
+int
+php_cassandra_get_table_field(const CassTableMeta* metadata, const char* field_name, zval** out TSRMLS_DC)
+{
+  const CassValue* value;
+
+  value = cass_table_meta_field_by_name(metadata, field_name);
+
+  if (value == NULL) {
+    MAKE_STD_ZVAL(*out);
+    ZVAL_NULL(*out);
+    return SUCCESS;
+  }
+
+  return php_cassandra_value(value, cass_value_type(value), out TSRMLS_CC);
+}
+
+int
+php_cassandra_get_column_field(const CassColumnMeta* metadata, const char* field_name, zval** out TSRMLS_DC)
+{
+  const CassValue* value;
+
+  value = cass_column_meta_field_by_name(metadata, field_name);
+
+  if (value == NULL) {
+    MAKE_STD_ZVAL(*out);
+    ZVAL_NULL(*out);
+    return SUCCESS;
+  }
+
+  return php_cassandra_value(value, cass_value_type(value), out TSRMLS_CC);
+}
+#else
+int
+php_cassandra_get_schema_field(const CassSchemaMeta* metadata, const char* field_name, zval** out TSRMLS_DC)
+{
+  const CassSchemaMetaField* field;
+  const CassValue* value;
+
+  field = cass_schema_meta_get_field(metadata, field_name);
+
+  if (field == NULL) {
+    MAKE_STD_ZVAL(*out);
+    ZVAL_NULL(*out);
+    return SUCCESS;
+  }
+
+  value = cass_schema_meta_field_value(field);
+
+  if (value == NULL) {
+    MAKE_STD_ZVAL(*out);
+    ZVAL_NULL(*out);
+    return SUCCESS;
+  }
+
+  return php_cassandra_value(value, cass_value_type(value), out TSRMLS_CC);
+}
+#endif
 
 int
 php_cassandra_get_result(const CassResult* result, zval** out TSRMLS_DC)
@@ -237,6 +320,8 @@ php_cassandra_get_result(const CassResult* result, zval** out TSRMLS_DC)
   const CassValue* column_value;
   CassIterator*    iterator = NULL;
   size_t           columns = -1;
+  char**           column_names;
+  unsigned         i;
 
   MAKE_STD_ZVAL(rows);
   array_init(rows);
@@ -244,8 +329,9 @@ php_cassandra_get_result(const CassResult* result, zval** out TSRMLS_DC)
   iterator = cass_iterator_from_result(result);
   columns  = cass_result_column_count(result);
 
+  column_names = (char**) ecalloc(columns, sizeof(char*));
+
   while (cass_iterator_next(iterator)) {
-    unsigned i;
     MAKE_STD_ZVAL(row);
     array_init(row);
     cass_row = cass_iterator_get_row(iterator);
@@ -253,7 +339,11 @@ php_cassandra_get_result(const CassResult* result, zval** out TSRMLS_DC)
     for (i = 0; i < columns; i++) {
       zval* php_value;
 
-      cass_result_column_name(result, i, &column_name, &column_name_len);
+      if (column_names[i] == NULL) {
+        cass_result_column_name(result, i, &column_name, &column_name_len);
+        column_names[i] = estrndup(column_name, column_name_len);
+      }
+
       column_type  = cass_result_column_type(result, i);
       column_value = cass_row_get_column(cass_row, i);
 
@@ -261,15 +351,31 @@ php_cassandra_get_result(const CassResult* result, zval** out TSRMLS_DC)
         zval_ptr_dtor(&row);
         zval_ptr_dtor(&rows);
 
+        for (i = 0; i < columns; i++) {
+          if (column_names[i]) {
+            efree(column_names[i]);
+          }
+        }
+
+        efree(column_names);
+        cass_iterator_free(iterator);
+
         return FAILURE;
       }
 
-      add_assoc_zval_ex(row, column_name, column_name_len + 1, php_value);
+      add_assoc_zval_ex(row, column_names[i], strlen(column_names[i]) + 1, php_value);
     }
 
     add_next_index_zval(rows, row);
   }
 
+  for (i = 0; i < columns; i++) {
+    if (column_names[i] != NULL) {
+      efree(column_names[i]);
+    }
+  }
+
+  efree(column_names);
   cass_iterator_free(iterator);
 
   *out = rows;

@@ -9,7 +9,7 @@ PHP_METHOD(DefaultCluster, connect)
 {
   CassFuture* future = NULL;
   char* hash_key;
-  int   hash_key_len;
+  int   hash_key_len = 0;
   char* keyspace = NULL;
   int   keyspace_len;
   zval* timeout = NULL;
@@ -31,6 +31,10 @@ PHP_METHOD(DefaultCluster, connect)
   session->default_timeout     = cluster->default_timeout;
   session->persist             = cluster->persist;
 
+  if (session->default_timeout) {
+    Z_ADDREF_P(session->default_timeout);
+  }
+
   if (session->persist) {
     zend_rsrc_list_entry *le;
 
@@ -48,10 +52,11 @@ PHP_METHOD(DefaultCluster, connect)
   if (future == NULL) {
     session->session = cass_session_new();
 
-    if (keyspace)
+    if (keyspace) {
       future = cass_session_connect_keyspace(session->session, cluster->cluster, keyspace);
-    else
+    } else {
       future = cass_session_connect(session->session, cluster->cluster);
+    }
 
     if (session->persist) {
       zend_rsrc_list_entry pe;
@@ -98,7 +103,7 @@ PHP_METHOD(DefaultCluster, connect)
 PHP_METHOD(DefaultCluster, connectAsync)
 {
   char* hash_key;
-  int   hash_key_len;
+  int   hash_key_len = 0;
   char* keyspace = NULL;
   int   keyspace_len;
   cassandra_cluster* cluster = NULL;
@@ -177,7 +182,6 @@ static zend_object_handlers cassandra_default_cluster_handlers;
 static HashTable*
 php_cassandra_default_cluster_properties(zval *object TSRMLS_DC)
 {
-  /* cassandra_cluster* self = (cassandra_cluster*) zend_object_store_get_object(object TSRMLS_CC); */
   HashTable* props = zend_std_get_properties(object TSRMLS_CC);
 
   return props;

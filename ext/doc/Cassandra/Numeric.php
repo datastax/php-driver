@@ -30,32 +30,37 @@ namespace Cassandra;
 interface Numeric
 {
     /**
-     * @param  Numeric $addend a number to add to this one
+     * @param Numeric $addend a number to add to this one
+     *
      * @return Numeric sum
      */
     function add(Numeric $addend);
 
     /**
-     * @param  Numeric $subtrahend a number to subtract from this one
-     * @return Numeric             difference
+     * @param Numeric $subtrahend a number to subtract from this one
+     *
+     * @return Numeric difference
      */
     function sub(Numeric $subtrahend);
 
     /**
-     * @param  Numeric $multiplier a number to multiply this one by
-     * @return Numeric             product
+     * @param Numeric $multiplier a number to multiply this one by
+     *
+     * @return Numeric product
      */
     function mul(Numeric $multiplier);
 
     /**
-     * @param  Numeric $divisor a number to divide this one by
-     * @return Numeric          quotient
+     * @param Numeric $divisor a number to divide this one by
+     *
+     * @return Numeric quotient
      */
     function div(Numeric $divisor);
 
     /**
-     * @param  Numeric $divisor a number to divide this one by
-     * @return Numeric          remainder
+     * @param Numeric $divisor a number to divide this one by
+     *
+     * @return Numeric remainder
      */
     function mod(Numeric $divisor);
 

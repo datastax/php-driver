@@ -9,7 +9,8 @@
 #include <fcntl.h>
 #include <uv.h>
 
-#define PHP_CASSANDRA_DEFAULT_LOG "php-driver.log"
+#define PHP_CASSANDRA_DEFAULT_LOG       "cassandra.log"
+#define PHP_CASSANDRA_DEFAULT_LOG_LEVEL "ERROR"
 
 static uv_once_t log_once = UV_ONCE_INIT;
 static char* log_location = NULL;
@@ -65,8 +66,9 @@ php_cassandra_log_cleanup()
 {
   cass_log_cleanup();
   uv_rwlock_destroy(&log_lock);
-  if (log_location != NULL) {
+  if (log_location) {
     free(log_location);
+    log_location = NULL;
   }
 }
 
@@ -98,7 +100,7 @@ php_cassandra_log(const CassLogMessage* message, void* data)
     int fd = -1;
 #ifndef _WIN32
     if (!strcmp(log, "syslog")) {
-      php_syslog(LOG_NOTICE, "php-driver | [%s] %s (%s:%d)",
+      php_syslog(LOG_NOTICE, "cassandra | [%s] %s (%s:%d)",
                  cass_log_level_string(message->severity), message->message,
                  message->file, message->line);
       return;
@@ -143,7 +145,7 @@ php_cassandra_log(const CassLogMessage* message, void* data)
    * logging function are thread-safe.
    */
 
-  fprintf(stderr, "php-driver | [%s] %s (%s:%d)%s",
+  fprintf(stderr, "cassandra | [%s] %s (%s:%d)%s",
           cass_log_level_string(message->severity), message->message,
           message->file, message->line,
           PHP_EOL);
@@ -192,9 +194,24 @@ static PHP_INI_MH(OnUpdateLogLevel)
   /* If TSRM is enabled then the last thread to update this wins */
 
   if (new_value) {
-    long log_level = zend_atol(new_value, new_value_length);
-    if (log_level > CASS_LOG_DISABLED && log_level < CASS_LOG_LAST_ENTRY)
-      cass_log_set_level((CassLogLevel) log_level);
+    if (strcmp(new_value, "CRITICAL") == 0) {
+      cass_log_set_level(CASS_LOG_DISABLED);
+    } else if (strcmp(new_value, "ERROR") == 0) {
+      cass_log_set_level(CASS_LOG_ERROR);
+    } else if (strcmp(new_value, "WARN") == 0) {
+      cass_log_set_level(CASS_LOG_WARN);
+    } else if (strcmp(new_value, "INFO") == 0) {
+      cass_log_set_level(CASS_LOG_INFO);
+    } else if (strcmp(new_value, "DEBUG") == 0) {
+      cass_log_set_level(CASS_LOG_DEBUG);
+    } else if (strcmp(new_value, "TRACE") == 0) {
+      cass_log_set_level(CASS_LOG_TRACE);
+    } else {
+      php_error_docref(NULL TSRMLS_CC, E_NOTICE,
+                       "cassandra | Unknown log level '%s', using 'ERROR'",
+                       new_value);
+      cass_log_set_level(CASS_LOG_ERROR);
+    }
   }
 
   return SUCCESS;
@@ -212,8 +229,11 @@ static PHP_INI_MH(OnUpdateLog)
   if (new_value) {
     if (strcmp(new_value, "syslog") != 0) {
       char realpath[MAXPATHLEN + 1];
-      if (VCWD_REALPATH(new_value, realpath))
+      if (VCWD_REALPATH(new_value, realpath)) {
         log_location = strdup(realpath);
+      } else {
+        log_location = strdup(new_value);
+      }
     } else {
       log_location = strdup(new_value);
     }
@@ -224,8 +244,8 @@ static PHP_INI_MH(OnUpdateLog)
 }
 
 PHP_INI_BEGIN()
-PHP_INI_ENTRY("cassandra.log", PHP_CASSANDRA_DEFAULT_LOG, PHP_INI_ALL, OnUpdateLog)
-PHP_INI_ENTRY("cassandra.log_level", NULL, PHP_INI_ALL, OnUpdateLogLevel)
+PHP_INI_ENTRY("cassandra.log",       PHP_CASSANDRA_DEFAULT_LOG,       PHP_INI_ALL, OnUpdateLog)
+PHP_INI_ENTRY("cassandra.log_level", PHP_CASSANDRA_DEFAULT_LOG_LEVEL, PHP_INI_ALL, OnUpdateLogLevel)
 PHP_INI_END()
 
 static PHP_GINIT_FUNCTION(cassandra)
@@ -235,12 +255,27 @@ static PHP_GINIT_FUNCTION(cassandra)
   cassandra_globals->uuid_gen            = cass_uuid_gen_new();
   cassandra_globals->persistent_clusters = 0;
   cassandra_globals->persistent_sessions = 0;
+  cassandra_globals->type_varchar        = NULL;
+  cassandra_globals->type_text           = NULL;
+  cassandra_globals->type_blob           = NULL;
+  cassandra_globals->type_ascii          = NULL;
+  cassandra_globals->type_bigint         = NULL;
+  cassandra_globals->type_counter        = NULL;
+  cassandra_globals->type_int            = NULL;
+  cassandra_globals->type_varint         = NULL;
+  cassandra_globals->type_boolean        = NULL;
+  cassandra_globals->type_decimal        = NULL;
+  cassandra_globals->type_double         = NULL;
+  cassandra_globals->type_float          = NULL;
+  cassandra_globals->type_inet           = NULL;
+  cassandra_globals->type_timestamp      = NULL;
+  cassandra_globals->type_uuid           = NULL;
+  cassandra_globals->type_timeuuid       = NULL;
 }
 
 static PHP_GSHUTDOWN_FUNCTION(cassandra)
 {
   cass_uuid_gen_free(cassandra_globals->uuid_gen);
-
   php_cassandra_log_cleanup();
 }
 
@@ -320,6 +355,22 @@ PHP_MINIT_FUNCTION(cassandra)
   cassandra_define_ExecutionOptions(TSRMLS_C);
   cassandra_define_Rows(TSRMLS_C);
 
+  cassandra_define_Schema(TSRMLS_C);
+  cassandra_define_DefaultSchema(TSRMLS_C);
+  cassandra_define_Keyspace(TSRMLS_C);
+  cassandra_define_DefaultKeyspace(TSRMLS_C);
+  cassandra_define_Table(TSRMLS_C);
+  cassandra_define_DefaultTable(TSRMLS_C);
+  cassandra_define_Column(TSRMLS_C);
+  cassandra_define_DefaultColumn(TSRMLS_C);
+
+  cassandra_define_Type(TSRMLS_C);
+  cassandra_define_TypeScalar(TSRMLS_C);
+  cassandra_define_TypeCollection(TSRMLS_C);
+  cassandra_define_TypeSet(TSRMLS_C);
+  cassandra_define_TypeMap(TSRMLS_C);
+  cassandra_define_TypeCustom(TSRMLS_C);
+
   return SUCCESS;
 }
 
@@ -337,6 +388,86 @@ PHP_RINIT_FUNCTION(cassandra)
 
 PHP_RSHUTDOWN_FUNCTION(cassandra)
 {
+  if (CASSANDRA_G(type_varchar)) {
+    zval_ptr_dtor(&CASSANDRA_G(type_varchar));
+    CASSANDRA_G(type_varchar) = NULL;
+  }
+
+  if (CASSANDRA_G(type_text)) {
+    zval_ptr_dtor(&CASSANDRA_G(type_text));
+    CASSANDRA_G(type_text) = NULL;
+  }
+
+  if (CASSANDRA_G(type_blob)) {
+    zval_ptr_dtor(&CASSANDRA_G(type_blob));
+    CASSANDRA_G(type_blob) = NULL;
+  }
+
+  if (CASSANDRA_G(type_ascii)) {
+    zval_ptr_dtor(&CASSANDRA_G(type_ascii));
+    CASSANDRA_G(type_ascii) = NULL;
+  }
+
+  if (CASSANDRA_G(type_bigint)) {
+    zval_ptr_dtor(&CASSANDRA_G(type_bigint));
+    CASSANDRA_G(type_bigint) = NULL;
+  }
+
+  if (CASSANDRA_G(type_counter)) {
+    zval_ptr_dtor(&CASSANDRA_G(type_counter));
+    CASSANDRA_G(type_counter) = NULL;
+  }
+
+  if (CASSANDRA_G(type_int)) {
+    zval_ptr_dtor(&CASSANDRA_G(type_int));
+    CASSANDRA_G(type_int) = NULL;
+  }
+
+  if (CASSANDRA_G(type_varint)) {
+    zval_ptr_dtor(&CASSANDRA_G(type_varint));
+    CASSANDRA_G(type_varint) = NULL;
+  }
+
+  if (CASSANDRA_G(type_boolean)) {
+    zval_ptr_dtor(&CASSANDRA_G(type_boolean));
+    CASSANDRA_G(type_boolean) = NULL;
+  }
+
+  if (CASSANDRA_G(type_decimal)) {
+    zval_ptr_dtor(&CASSANDRA_G(type_decimal));
+    CASSANDRA_G(type_decimal) = NULL;
+  }
+
+  if (CASSANDRA_G(type_double)) {
+    zval_ptr_dtor(&CASSANDRA_G(type_double));
+    CASSANDRA_G(type_double) = NULL;
+  }
+
+  if (CASSANDRA_G(type_float)) {
+    zval_ptr_dtor(&CASSANDRA_G(type_float));
+    CASSANDRA_G(type_float) = NULL;
+  }
+
+  if (CASSANDRA_G(type_inet)) {
+    zval_ptr_dtor(&CASSANDRA_G(type_inet));
+    CASSANDRA_G(type_inet) = NULL;
+  }
+
+  if (CASSANDRA_G(type_timestamp)) {
+    zval_ptr_dtor(&CASSANDRA_G(type_timestamp));
+    CASSANDRA_G(type_timestamp) = NULL;
+  }
+
+  if (CASSANDRA_G(type_uuid)) {
+    zval_ptr_dtor(&CASSANDRA_G(type_uuid));
+    CASSANDRA_G(type_uuid) = NULL;
+  }
+
+  if (CASSANDRA_G(type_timeuuid)) {
+    zval_ptr_dtor(&CASSANDRA_G(type_timeuuid));
+    CASSANDRA_G(type_timeuuid) = NULL;
+  }
+
   return SUCCESS;
 }
 
@@ -353,6 +484,8 @@ PHP_MINFO_FUNCTION(cassandra)
   php_info_print_table_row(2, "Persistent Sessions", buf);
 
   php_info_print_table_end();
+
+  DISPLAY_INI_ENTRIES();
 }
 
 zend_class_entry*

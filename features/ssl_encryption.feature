@@ -1,3 +1,4 @@
+@SSL
 Feature: SSL encryption
 
   PHP Driver supports SSL encryption.

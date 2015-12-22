@@ -21,15 +21,15 @@ namespace Cassandra\SSLOptions;
 /**
  * SSLOptions builder allows fluent configuration of ssl options.
  *
- * @see Cassandra::ssl()
- * @see Cassandra\Cluster\Builder::withSSL()
+ * @see \Cassandra::ssl()
+ * @see \Cassandra\Cluster\Builder::withSSL()
  */
 final class Builder
 {
     /**
      * Adds a trusted certificate. This is used to verify node's identity.
      *
-     * @throws Cassandra\Exception\InvalidArgumentException
+     * @throws \Cassandra\Exception\InvalidArgumentException
      *
      * @param string $path,... one or more paths to files containing a PEM formatted certificate.
      *
@@ -40,7 +40,7 @@ final class Builder
     /**
      * Disable certificate verification.
      *
-     * @throws Cassandra\Exception\InvalidArgumentException
+     * @throws \Cassandra\Exception\InvalidArgumentException
      *
      * @param int $flags
      *
@@ -54,7 +54,7 @@ final class Builder
      * This is used to authenticate the client on the server-side. This should contain the entire Certificate
      * chain starting with the certificate itself.
      *
-     * @throws Cassandra\Exception\InvalidArgumentException
+     * @throws \Cassandra\Exception\InvalidArgumentException
      *
      * @param string $path path to a file containing a PEM formatted certificate.
      *
@@ -66,7 +66,7 @@ final class Builder
      * Set client-side private key. This is used to authenticate the client on
      * the server-side.
      *
-     * @throws Cassandra\Exception\InvalidArgumentException
+     * @throws \Cassandra\Exception\InvalidArgumentException
      *
      * @param string      $path       Path to the private key file
      * @param string|null $passphrase Passphrase for the private key, if any
@@ -78,7 +78,7 @@ final class Builder
     /**
      * Builds SSL options.
      *
-     * @return SSLOptions ssl options configured accordingly.
+     * @return \Cassandra\SSLOptions ssl options configured accordingly.
      */
     public function build() {}
 }

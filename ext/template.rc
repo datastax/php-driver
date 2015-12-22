@@ -5,19 +5,13 @@
 #include "winresrc.h"
 #include "version.h"
 
-#ifdef ZTS
-#define THREAD_INFORMATION "(TS)"
-#else
-#define THREAD_INFORMATION "(NTS)"
-#endif
-
 #ifdef _DEBUG
 #  define DEBUG_INFORMATION "[DEBUG]"
 #else
 #  define DEBUG_INFORMATION ""
 #endif
 
-#define BUILD_INFORMATION THREAD_INFORMATION " " DEBUG_INFORMATION
+#define BUILD_INFORMATION " " DEBUG_INFORMATION
 
 LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 #pragma code_page(1252)
@@ -47,7 +41,7 @@ BEGIN
       VALUE "LegalCopyright", "Copyright © 2015 DataStax, Inc."
       VALUE "OriginalFilename", FILE_NAME
       VALUE "ProductName", "Cassandra PHP driver " BUILD_INFORMATION
-      VALUE "ProductVersion", PHP_CASSANDRA_EXTVER
+      VALUE "ProductVersion", PHP_CASSANDRA_VERSION
       VALUE "URL", "http://www.datastax.com"
     END
   END

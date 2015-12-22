@@ -22,4 +22,4 @@ namespace Cassandra\Exception;
  * AuthenticationException is raised when client was not configured with valid
  * authentication credentials.
  */
-class AuthenticationException extends ServerException {}
+class AuthenticationException extends RuntimeException {}

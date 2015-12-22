@@ -1,6 +1,6 @@
 #include "php_cassandra.h"
 #include "util/collections.h"
-#include "Set.h"
+#include "src/Cassandra/Set.h"
 
 zend_class_entry *cassandra_set_ce = NULL;
 
@@ -10,6 +10,12 @@ php_cassandra_set_add(cassandra_set* set, zval* object TSRMLS_DC)
   char* key;
   int   key_len;
   int   result = 0;
+
+  if (Z_TYPE_P(object) == IS_NULL) {
+    zend_throw_exception_ex(cassandra_invalid_argument_exception_ce, 0 TSRMLS_CC,
+                            "Invalid value: null is not supported inside sets");
+    return 0;
+  }
 
   if (!php_cassandra_hash_object(object, set->type, &key, &key_len TSRMLS_CC))
     return 0;
@@ -251,6 +257,14 @@ static zend_function_entry cassandra_set_methods[] = {
 static zend_object_handlers cassandra_set_handlers;
 
 static HashTable*
+php_cassandra_set_gc(zval *object, zval ***table, int *n TSRMLS_DC)
+{
+  *table = NULL;
+  *n = 0;
+  return zend_std_get_properties(object TSRMLS_CC);
+}
+
+static HashTable*
 php_cassandra_set_properties(zval *object TSRMLS_DC)
 {
   zval* values;
@@ -310,11 +324,7 @@ php_cassandra_set_new(zend_class_entry* class_type TSRMLS_DC)
 
   zend_hash_init(&set->values, 0, NULL, ZVAL_PTR_DTOR, 0);
   zend_object_std_init(&set->zval, class_type TSRMLS_CC);
-#if ZEND_MODULE_API_NO >= 20100525
   object_properties_init(&set->zval, class_type);
-#else
-  zend_hash_copy(set->zval.properties, &class_type->default_properties, (copy_ctor_func_t) zval_add_ref, (void*) NULL, sizeof(zval*));
-#endif
 
   retval.handle   = zend_objects_store_put(set,
                       (zend_objects_store_dtor_t) zend_objects_destroy_object,
@@ -331,7 +341,10 @@ void cassandra_define_Set(TSRMLS_D)
   INIT_CLASS_ENTRY(ce, "Cassandra\\Set", cassandra_set_methods);
   cassandra_set_ce = zend_register_internal_class(&ce TSRMLS_CC);
   memcpy(&cassandra_set_handlers, zend_get_std_object_handlers(), sizeof(zend_object_handlers));
-  cassandra_set_handlers.get_properties = php_cassandra_set_properties;
+  cassandra_set_handlers.get_properties  = php_cassandra_set_properties;
+#if PHP_VERSION_ID >= 50400
+  cassandra_set_handlers.get_gc          = php_cassandra_set_gc;
+#endif
   cassandra_set_handlers.compare_objects = php_cassandra_set_compare;
   cassandra_set_ce->ce_flags |= ZEND_ACC_FINAL_CLASS;
   cassandra_set_ce->create_object = php_cassandra_set_new;

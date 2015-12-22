@@ -7,6 +7,25 @@ zend_class_entry *cassandra_future_rows_ce = NULL;
 
 ZEND_EXTERN_MODULE_GLOBALS(cassandra)
 
+static void
+php_cassandra_future_clear(cassandra_future_rows* self)
+{
+  if (self->statement) {
+    php_cassandra_del_ref(&self->statement);
+    self->statement = NULL;
+  }
+
+  if (self->session) {
+    zval_ptr_dtor(&self->session);
+    self->session = NULL;
+  }
+
+  if (self->future) {
+    cass_future_free(self->future);
+    self->future = NULL;
+  }
+}
+
 PHP_METHOD(FutureRows, get)
 {
   zval* timeout = NULL;
@@ -17,9 +36,7 @@ PHP_METHOD(FutureRows, get)
     (cassandra_future_rows*) zend_object_store_get_object(getThis() TSRMLS_CC);
 
   if (self->rows) {
-    *return_value = *self->rows;
-    Z_ADDREF_P(return_value);
-    return;
+    RETURN_ZVAL(self->rows, 1, 0);
   }
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "|z", &timeout) == FAILURE) {
@@ -49,10 +66,11 @@ PHP_METHOD(FutureRows, get)
   if (php_cassandra_get_result(result, &rows->rows TSRMLS_CC) == FAILURE) {
     cass_result_free(result);
     zval_ptr_dtor(&self->rows);
+    self->rows = NULL;
     return;
   }
 
-  if (self->statement) {
+  if (cass_result_has_more_pages(result)) {
     Z_ADDREF_P(self->session);
     rows->statement = php_cassandra_add_ref(self->statement);
     rows->session   = self->session;
@@ -61,8 +79,9 @@ PHP_METHOD(FutureRows, get)
     cass_result_free(result);
   }
 
-  *return_value = *self->rows;
-  Z_ADDREF_P(return_value);
+  php_cassandra_future_clear(self);
+
+  RETURN_ZVAL(self->rows, 1, 0);
 }
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_timeout, 0, ZEND_RETURN_VALUE, 0)
@@ -79,7 +98,6 @@ static zend_object_handlers cassandra_future_rows_handlers;
 static HashTable*
 php_cassandra_future_rows_properties(zval *object TSRMLS_DC)
 {
-  /* cassandra_future_rows* self = (cassandra_future_rows*) zend_object_store_get_object(object TSRMLS_CC); */
   HashTable* props = zend_std_get_properties(object TSRMLS_CC);
 
   return props;
@@ -101,18 +119,12 @@ php_cassandra_future_rows_free(void *object TSRMLS_DC)
 
   zend_object_std_dtor(&future->zval TSRMLS_CC);
 
-  if (future->rows)
+  if (future->rows) {
     zval_ptr_dtor(&future->rows);
+    future->rows = NULL;
+  }
 
-  if (future->statement)
-    php_cassandra_del_ref(&future->statement);
-
-  if (future->session)
-    zval_ptr_dtor(&future->session);
-
-  if (future->future)
-    cass_future_free(future->future);
-
+  php_cassandra_future_clear(future);
   efree(future);
 }
 

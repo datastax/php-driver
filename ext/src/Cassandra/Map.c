@@ -16,19 +16,29 @@ php_cassandra_map_set(cassandra_map* map, zval* zkey, zval* zvalue TSRMLS_DC)
   int   key_len;
   int   result = 0;
 
+  if (Z_TYPE_P(zkey) == IS_NULL) {
+    zend_throw_exception_ex(cassandra_invalid_argument_exception_ce, 0 TSRMLS_CC,
+                            "Invalid key: null is not supported inside maps");
+    return 0;
+  }
+
+  if (Z_TYPE_P(zvalue) == IS_NULL) {
+    zend_throw_exception_ex(cassandra_invalid_argument_exception_ce, 0 TSRMLS_CC,
+                            "Invalid value: null is not supported inside maps");
+    return 0;
+  }
+
   if (!php_cassandra_hash_object(zkey, map->key_type, &key, &key_len TSRMLS_CC)) {
-    zend_throw_exception_ex(cassandra_invalid_argument_exception_ce, 0 TSRMLS_CC, "Invalid key");
     return 0;
   }
 
   if (!php_cassandra_validate_object(zvalue, map->value_type TSRMLS_CC)) {
-    zend_throw_exception_ex(cassandra_invalid_argument_exception_ce, 0 TSRMLS_CC, "Invalid value");
     return 0;
   }
 
-  if (zend_hash_update(&map->keys, key, key_len, (void*) &zkey, sizeof(zval*), NULL) == SUCCESS) {
+  if (zend_hash_update(&map->keys, key, key_len, (void*) &zkey, sizeof(zval*), NULL) == SUCCESS &&
+      zend_hash_update(&map->values, key, key_len, (void*) &zvalue, sizeof(zval*), NULL) == SUCCESS) {
     Z_ADDREF_P(zkey);
-    zend_hash_update(&map->values, key, key_len, (void*) &zvalue, sizeof(zval*), NULL);
     Z_ADDREF_P(zvalue);
     result = 1;
   }
@@ -46,7 +56,6 @@ php_cassandra_map_get(cassandra_map* map, zval* zkey, zval** zvalue TSRMLS_DC)
   zval** value;
 
   if (!php_cassandra_hash_object(zkey, map->key_type, &key, &key_len TSRMLS_CC)) {
-    zend_throw_exception_ex(cassandra_invalid_argument_exception_ce, 0 TSRMLS_CC, "Invalid key");
     return 0;
   }
 
@@ -67,7 +76,6 @@ php_cassandra_map_del(cassandra_map* map, zval* zkey TSRMLS_DC)
   int   result = 0;
 
   if (!php_cassandra_hash_object(zkey, map->key_type, &key, &key_len TSRMLS_CC)) {
-    zend_throw_exception_ex(cassandra_invalid_argument_exception_ce, 0 TSRMLS_CC, "Invalid key");
     return 0;
   }
 
@@ -97,61 +105,27 @@ php_cassandra_map_has(cassandra_map* map, zval* zkey TSRMLS_DC)
 }
 
 static void
-php_cassandra_map_populate(cassandra_map* map, zval* keys_array, zval* values_array)
+php_cassandra_map_populate(HashTable* hash, zval* array)
 {
-  HashPointer values_ptr, keys_ptr;
+  HashPointer ptr;
   zval** current;
 
-  if (values_array) {
-    zend_hash_get_pointer(&map->values, &values_ptr);
-    zend_hash_internal_pointer_reset(&map->values);
+  zend_hash_get_pointer(hash, &ptr);
+  zend_hash_internal_pointer_reset(hash);
 
-    if (keys_array) {
-      zend_hash_get_pointer(&map->keys, &keys_ptr);
-      zend_hash_internal_pointer_reset(&map->keys);
+  while (zend_hash_get_current_data(hash, (void**) &current) == SUCCESS) {
+    if (add_next_index_zval(array, *current) != SUCCESS) {
+      break;
     }
 
-    while (zend_hash_get_current_data(&map->values, (void**) &current) == SUCCESS) {
-      if (add_next_index_zval(values_array, *current) == SUCCESS) {
-        Z_ADDREF_PP(current);
-
-        if (keys_array) {
-          zend_hash_get_current_data(&map->keys, (void**) &current);
-          add_next_index_zval(keys_array, *current);
-          Z_ADDREF_PP(current);
-        }
-      } else {
-        break;
-      }
-
-      zend_hash_move_forward(&map->values);
-
-      if (keys_array)
-        zend_hash_move_forward(&map->keys);
-    }
-
-    zend_hash_set_pointer(&map->values, &values_ptr);
-
-    if (keys_array)
-      zend_hash_set_pointer(&map->keys, &keys_ptr);
-  } else if (keys_array) {
-    zend_hash_get_pointer(&map->keys, &keys_ptr);
-    zend_hash_internal_pointer_reset(&map->keys);
-
-    while (zend_hash_get_current_data(&map->keys, (void**) &current) == SUCCESS) {
-      if (add_next_index_zval(keys_array, *current) == SUCCESS)
-        Z_ADDREF_PP(current);
-      else
-        break;
-
-      zend_hash_move_forward(&map->keys);
-    }
-
-    zend_hash_set_pointer(&map->keys, &keys_ptr);
+    Z_ADDREF_PP(current);
+    zend_hash_move_forward(hash);
   }
+
+  zend_hash_set_pointer(hash, &ptr);
 }
 
-/* {{{ Cassandra\Map::__construct(string) */
+/* {{{ Cassandra\Map::__construct(string, string) */
 PHP_METHOD(Map, __construct)
 {
   char* key_type;
@@ -194,7 +168,7 @@ PHP_METHOD(Map, keys)
   cassandra_map* map = NULL;
   array_init(return_value);
   map = (cassandra_map*) zend_object_store_get_object(getThis() TSRMLS_CC);
-  php_cassandra_map_populate(map, return_value, NULL);
+  php_cassandra_map_populate(&map->keys, return_value);
 }
 
 PHP_METHOD(Map, values)
@@ -202,7 +176,7 @@ PHP_METHOD(Map, values)
   cassandra_map* map = NULL;
   array_init(return_value);
   map = (cassandra_map*) zend_object_store_get_object(getThis() TSRMLS_CC);
-  php_cassandra_map_populate(map, NULL, return_value);
+  php_cassandra_map_populate(&map->values, return_value);
 }
 
 PHP_METHOD(Map, set)
@@ -416,6 +390,14 @@ static zend_function_entry cassandra_map_methods[] = {
 static zend_object_handlers cassandra_map_handlers;
 
 static HashTable*
+php_cassandra_map_gc(zval *object, zval ***table, int *n TSRMLS_DC)
+{
+  *table = NULL;
+  *n = 0;
+  return zend_std_get_properties(object TSRMLS_CC);
+}
+
+static HashTable*
 php_cassandra_map_properties(zval *object TSRMLS_DC)
 {
   zval* values;
@@ -428,11 +410,10 @@ php_cassandra_map_properties(zval *object TSRMLS_DC)
   MAKE_STD_ZVAL(keys);
   array_init(values);
   array_init(keys);
-
-  php_cassandra_map_populate(map, keys, values);
-
-  zend_hash_update(props, "keys", sizeof("keys"), &keys, sizeof(zval), NULL);
-  zend_hash_update(props, "values", sizeof("values"), &values, sizeof(zval), NULL);
+  php_cassandra_map_populate(&map->values, values);
+  php_cassandra_map_populate(&map->keys, keys);
+  zend_hash_update(props, "keys", sizeof("keys"), &keys, sizeof(zval*), NULL);
+  zend_hash_update(props, "values", sizeof("values"), &values, sizeof(zval*), NULL);
 
   return props;
 }
@@ -485,11 +466,7 @@ php_cassandra_map_new(zend_class_entry* class_type TSRMLS_DC)
   zend_hash_init(&map->keys, 0, NULL, ZVAL_PTR_DTOR, 0);
   zend_hash_init(&map->values, 0, NULL, ZVAL_PTR_DTOR, 0);
   zend_object_std_init(&map->zval, class_type TSRMLS_CC);
-#if ZEND_MODULE_API_NO >= 20100525
   object_properties_init(&map->zval, class_type);
-#else
-  zend_hash_copy(map->zval.properties, &class_type->default_properties, (copy_ctor_func_t) zval_add_ref, (void*) NULL, sizeof(zval*));
-#endif
 
   retval.handle   = zend_objects_store_put(map,
                       (zend_objects_store_dtor_t) zend_objects_destroy_object,
@@ -506,7 +483,10 @@ void cassandra_define_Map(TSRMLS_D)
   INIT_CLASS_ENTRY(ce, "Cassandra\\Map", cassandra_map_methods);
   cassandra_map_ce = zend_register_internal_class(&ce TSRMLS_CC);
   memcpy(&cassandra_map_handlers, zend_get_std_object_handlers(), sizeof(zend_object_handlers));
-  cassandra_map_handlers.get_properties = php_cassandra_map_properties;
+  cassandra_map_handlers.get_properties  = php_cassandra_map_properties;
+#if PHP_VERSION_ID >= 50400
+  cassandra_map_handlers.get_gc          = php_cassandra_map_gc;
+#endif
   cassandra_map_handlers.compare_objects = php_cassandra_map_compare;
   cassandra_map_ce->ce_flags |= ZEND_ACC_FINAL_CLASS;
   cassandra_map_ce->create_object = php_cassandra_map_new;

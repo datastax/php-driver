@@ -1,0 +1,6 @@
+#ifndef PHP_CASSANDRA_TIMESTAMP_H
+#define PHP_CASSANDRA_TIMESTAMP_H
+
+void php_cassandra_timestamp_init(INTERNAL_FUNCTION_PARAMETERS);
+
+#endif /* PHP_CASSANDRA_TIMESTAMP_H */

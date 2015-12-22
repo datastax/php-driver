@@ -125,7 +125,7 @@ php_cassandra_hash_object(zval* object, CassValueType type, char** key, int* len
   cassandra_inet* inet = NULL;
 
   if (Z_TYPE_P(object) == IS_NULL) {
-    *key = strdup("C:NULL");
+    *key = estrdup("C:NULL");
     *len = strlen("C:NULL");
     return 1;
   }

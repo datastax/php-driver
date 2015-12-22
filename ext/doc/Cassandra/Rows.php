@@ -24,15 +24,18 @@ namespace Cassandra;
 final class Rows implements \Iterator, \Countable, \ArrayAccess
 {
     /**
+     * Returns the number of rows.
+     *
      * @return int number of rows
-     * @see Countable::count()
+     * @see \Countable::count()
      */
     public function count() {}
 
     /**
      * Resets the rows iterator.
+     *
      * @return void
-     * @see Iterator::rewind()
+     * @see \Iterator::rewind()
      */
     public function rewind() {}
 
@@ -40,7 +43,7 @@ final class Rows implements \Iterator, \Countable, \ArrayAccess
      * Returns current row.
      *
      * @return array current row
-     * @see Iterator::current()
+     * @see \Iterator::current()
      */
     public function current() {}
 
@@ -48,60 +51,81 @@ final class Rows implements \Iterator, \Countable, \ArrayAccess
      * Returns current index.
      *
      * @return int index
-     * @see Iterator::key()
+     * @see \Iterator::key()
      */
     public function key() {}
 
     /**
      * Advances the rows iterator by one.
+     *
      * @return void
-     * @see Iterator::next()
+     * @see \Iterator::next()
      */
     public function next() {}
 
     /**
+     * Returns existence of more rows being available.
+     *
      * @return bool whether there are more rows available for iteration
-     * @see Iterator::valid()
+     * @see \Iterator::valid()
      */
     public function valid() {}
 
     /**
-     * @param int $offset
+     * Returns existence of a given row.
+     *
+     * @param int $offset row index
+     *
      * @return bool whether a row at a given index exists
-     * @see ArrayAccess::offsetExists()
+     * @see \ArrayAccess::offsetExists()
      */
     public function offsetExists($offset) {}
 
     /**
-     * @param int $offset
+     * Returns a row at given index.
+     *
+     * @param int $offset row index
+     *
      * @return array|null row at a given index
-     * @see ArrayAccess::offsetGet()
+     * @see \ArrayAccess::offsetGet()
      */
     public function offsetGet($offset) {}
 
     /**
-     * @param int   $offset
-     * @param array $value
+     * Sets a row at given index.
+     *
+     * @throws Exception\DomainException
+     *
+     * @param int   $offset row index
+     * @param array $value row value
+     *
      * @return void
-     * @throws Cassandra\Exception\DomainException
-     * @see ArrayAccess::offsetSet()
+     * @see \ArrayAccess::offsetSet()
      */
-    public function offsetSet($offset, array $value) {}
+    public function offsetSet($offset, $value) {}
 
     /**
-     * @param int $offset
+     * Removes a row at given index.
+     *
+     * @throws Exception\DomainException
+     *
+     * @param int $offset row index
+     *
      * @return void
-     * @throws Cassandra\Exception\DomainException
-     * @see ArrayAccess::offsetUnset()
+     * @see \ArrayAccess::offsetUnset()
      */
     public function offsetUnset($offset) {}
 
     /**
+     * Check for the last page when paging.
+     *
      * @return bool whether this is the last page or not
      */
     public function isLastPage() {}
 
     /**
+     * Get the next page of results.
+     *
      * @param float|null $timeout
      *
      * @return Rows|null loads and returns next result page
@@ -109,11 +133,15 @@ final class Rows implements \Iterator, \Countable, \ArrayAccess
     public function nextPage($timeout = null) {}
 
     /**
+     * Get the next page of results asynchronously.
+     *
      * @return Future returns future of the next result page
      */
     public function nextPageAsync() {}
 
     /**
+     * Get the first row.
+     *
      * @return array|null returns first row if any
      */
     public function first() {}

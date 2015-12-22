@@ -16,9 +16,7 @@ PHP_METHOD(FutureSession, get)
     (cassandra_future_session*) zend_object_store_get_object(getThis() TSRMLS_CC);
 
   if (future->default_session) {
-    *return_value = *future->default_session;
-    Z_ADDREF_P(return_value);
-    return;
+    RETURN_ZVAL(future->default_session, 1, 0);
   }
 
   if (future->exception_message) {
@@ -83,7 +81,6 @@ static zend_object_handlers cassandra_future_session_handlers;
 static HashTable*
 php_cassandra_future_session_properties(zval *object TSRMLS_DC)
 {
-  /* cassandra_future_session* self = (cassandra_future_session*) zend_object_store_get_object(object TSRMLS_CC); */
   HashTable* props = zend_std_get_properties(object TSRMLS_CC);
 
   return props;

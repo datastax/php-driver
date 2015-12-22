@@ -2,8 +2,6 @@
 
 zend_class_entry* cassandra_ce = NULL;
 
-ZEND_EXTERN_MODULE_GLOBALS(cassandra)
-
 PHP_METHOD(Cassandra, cluster)
 {
   object_init_ex(return_value, cassandra_cluster_builder_ce);
@@ -18,8 +16,8 @@ ZEND_BEGIN_ARG_INFO_EX(arginfo_none, 0, ZEND_RETURN_VALUE, 0)
 ZEND_END_ARG_INFO()
 
 static zend_function_entry Cassandra_methods[] = {
-  PHP_ME(Cassandra, cluster,     arginfo_none,  ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
-  PHP_ME(Cassandra, ssl,         arginfo_none,  ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
+  PHP_ME(Cassandra, cluster, arginfo_none,  ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
+  PHP_ME(Cassandra, ssl,     arginfo_none,  ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
   PHP_FE_END
 };
 
@@ -75,5 +73,5 @@ void cassandra_define_Cassandra(TSRMLS_D)
   zend_declare_class_constant_string(cassandra_ce, ZEND_STRL("TYPE_TIMEUUID"),  "timeuuid" TSRMLS_CC);
   zend_declare_class_constant_string(cassandra_ce, ZEND_STRL("TYPE_INET"),      "inet" TSRMLS_CC);
 
-  zend_declare_class_constant_string(cassandra_ce, ZEND_STRL("VERSION"), PHP_CASSANDRA_VERSION TSRMLS_CC);
+  zend_declare_class_constant_string(cassandra_ce, ZEND_STRL("VERSION"), PHP_CASSANDRA_VERSION_FULL TSRMLS_CC);
 }

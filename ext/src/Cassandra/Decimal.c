@@ -46,7 +46,7 @@ to_mpf(mpf_t result, cassandra_decimal* decimal)
 static void
 from_double(cassandra_decimal* result, double value)
 {
-  cass_int64_t raw = *((cass_int64_t*) &value);
+  cass_int64_t raw = (cass_int64_t) value;
   cass_int64_t mantissa = raw & DOUBLE_MANITSSA_MASK;
   cass_int64_t exponent = (raw >> DOUBLE_MANTISSA_BITS) & DOUBLE_EXPONENT_MASK;
   char mantissa_str[32];
@@ -193,41 +193,55 @@ align_decimals(cassandra_decimal* lhs, cassandra_decimal* rhs)
   mpz_clear(pow_10);
 }
 
-/* {{{ Cassandra\Decimal::__construct(string) */
-PHP_METHOD(Decimal, __construct)
+void
+php_cassandra_decimal_init(INTERNAL_FUNCTION_PARAMETERS)
 {
-  zval* num;
-  cassandra_decimal* self = NULL;
+  cassandra_decimal* self;
+  zval* value;
 
-  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z", &num) == FAILURE) {
+  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z", &value) == FAILURE) {
     return;
   }
 
-  
-  self = (cassandra_decimal*) zend_object_store_get_object(getThis() TSRMLS_CC);
+  if (getThis() && instanceof_function(Z_OBJCE_P(getThis()), cassandra_decimal_ce TSRMLS_CC)) {
+    self = (cassandra_decimal*) zend_object_store_get_object(getThis() TSRMLS_CC);
+  } else {
+    object_init_ex(return_value, cassandra_decimal_ce);
+    self = (cassandra_decimal*) zend_object_store_get_object(return_value TSRMLS_CC);
+  }
 
-  if (Z_TYPE_P(num) == IS_LONG) {
-    mpz_set_si(self->value, Z_LVAL_P(num));
+  if (Z_TYPE_P(value) == IS_LONG) {
+    mpz_set_si(self->value, Z_LVAL_P(value));
     self->scale = 0;
-  } else if (Z_TYPE_P(num) == IS_DOUBLE) {
-    double value = Z_DVAL_P(num);
-    if (zend_isnan(value) || zend_isinf(value)) {
+  } else if (Z_TYPE_P(value) == IS_DOUBLE) {
+    double val = Z_DVAL_P(value);
+    if (zend_isnan(val) || zend_isinf(val)) {
       zend_throw_exception_ex(cassandra_invalid_argument_exception_ce, 0 TSRMLS_CC,
-                              "Value is NaN or +/- infinity");
+                              "Value of NaN or +/- infinity is not supported");
+      return;
     }
-    from_double(self, value);
-  } else if (Z_TYPE_P(num) == IS_STRING) {
-    php_cassandra_parse_decimal(Z_STRVAL_P(num), Z_STRLEN_P(num),
-                                &self->value, &self->scale TSRMLS_CC);
-  } else if (Z_TYPE_P(num) == IS_OBJECT &&
-             instanceof_function(Z_OBJCE_P(num), cassandra_decimal_ce TSRMLS_CC)) {
+    from_double(self, val);
+  } else if (Z_TYPE_P(value) == IS_STRING) {
+    if (!php_cassandra_parse_decimal(Z_STRVAL_P(value), Z_STRLEN_P(value),
+                                     &self->value, &self->scale TSRMLS_CC)) {
+      return;
+    }
+  } else if (Z_TYPE_P(value) == IS_OBJECT &&
+             instanceof_function(Z_OBJCE_P(value), cassandra_decimal_ce TSRMLS_CC)) {
     cassandra_decimal* decimal =
-        (cassandra_decimal*) zend_object_store_get_object(num TSRMLS_CC);
+        (cassandra_decimal*) zend_object_store_get_object(value TSRMLS_CC);
     mpz_set(self->value, decimal->value);
     self->scale = decimal->scale;
   } else {
-    INVALID_ARGUMENT(num, "a long, a double, a numeric string or a Cassandra\\Bigint");
+    INVALID_ARGUMENT(value, "a long, a double, a numeric string or a " \
+                            "Cassandra\\Decimal");
   }
+}
+
+/* {{{ Cassandra\Decimal::__construct(string) */
+PHP_METHOD(Decimal, __construct)
+{
+  php_cassandra_decimal_init(INTERNAL_FUNCTION_PARAM_PASSTHRU);
 }
 /* }}} */
 
@@ -480,6 +494,14 @@ static zend_function_entry cassandra_decimal_methods[] = {
 static zend_object_handlers cassandra_decimal_handlers;
 
 static HashTable*
+php_cassandra_decimal_gc(zval *object, zval ***table, int *n TSRMLS_DC)
+{
+  *table = NULL;
+  *n = 0;
+  return zend_std_get_properties(object TSRMLS_CC);
+}
+
+static HashTable*
 php_cassandra_decimal_properties(zval *object TSRMLS_DC)
 {
   cassandra_decimal* self =
@@ -565,15 +587,11 @@ php_cassandra_decimal_new(zend_class_entry* class_type TSRMLS_DC)
   memset(self, 0, sizeof(cassandra_decimal));
 
   self->type = CASSANDRA_DECIMAL;
+  self->scale = 0;
 
   mpz_init(self->value);
   zend_object_std_init(&self->zval, class_type TSRMLS_CC);
-#if ZEND_MODULE_API_NO >= 20100525
   object_properties_init(&self->zval, class_type);
-#else
-  zend_hash_copy(self->zval.properties, &class_type->default_properties, (copy_ctor_func_t) zval_add_ref, (void*) NULL, sizeof(zval*));
-#endif
-  self->scale = 0;
 
   retval.handle   = zend_objects_store_put(self, (zend_objects_store_dtor_t) zend_objects_destroy_object, php_cassandra_decimal_free, NULL TSRMLS_CC);
   retval.handlers = &cassandra_decimal_handlers;
@@ -592,7 +610,10 @@ void cassandra_define_Decimal(TSRMLS_D)
   cassandra_decimal_ce->create_object = php_cassandra_decimal_new;
 
   memcpy(&cassandra_decimal_handlers, zend_get_std_object_handlers(), sizeof(zend_object_handlers));
-  cassandra_decimal_handlers.get_properties = php_cassandra_decimal_properties;
+  cassandra_decimal_handlers.get_properties  = php_cassandra_decimal_properties;
+#if PHP_VERSION_ID >= 50400
+  cassandra_decimal_handlers.get_gc          = php_cassandra_decimal_gc;
+#endif
   cassandra_decimal_handlers.compare_objects = php_cassandra_decimal_compare;
-  cassandra_decimal_handlers.cast_object = php_cassandra_decimal_cast;
+  cassandra_decimal_handlers.cast_object     = php_cassandra_decimal_cast;
 }

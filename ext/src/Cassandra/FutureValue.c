@@ -15,8 +15,7 @@ PHP_METHOD(FutureValue, get)
   self = (cassandra_future_value*) zend_object_store_get_object(getThis() TSRMLS_CC);
 
   if (self->value) {
-    *return_value = *self->value;
-    Z_ADDREF_P(return_value);
+    RETURN_ZVAL(self->value, 1, 0);
   }
 }
 
@@ -34,7 +33,6 @@ static zend_object_handlers cassandra_future_value_handlers;
 static HashTable*
 php_cassandra_future_value_properties(zval *object TSRMLS_DC)
 {
-  /* cassandra_future_value* self = (cassandra_future_value*) zend_object_store_get_object(object TSRMLS_CC); */
   HashTable* props = zend_std_get_properties(object TSRMLS_CC);
 
   return props;
@@ -56,8 +54,10 @@ php_cassandra_future_value_free(void *object TSRMLS_DC)
 
   zend_object_std_dtor(&future->zval TSRMLS_CC);
 
-  if (future->value)
+  if (future->value) {
     zval_ptr_dtor(&future->value);
+    future->value = NULL;
+  }
 
   efree(future);
 }

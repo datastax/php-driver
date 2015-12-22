@@ -143,22 +143,27 @@ typedef enum {
   LOAD_BALANCING_DC_AWARE_ROUND_ROBIN
 } cassandra_load_balancing;
 
+typedef void (*cassandra_free_function)(void* data);
+
 typedef struct {
-  size_t count;
-  CassStatement* statement;
-} cassandra_statement_ref;
+  size_t                  count;
+  cassandra_free_function destruct;
+  void*                   data;
+} cassandra_ref;
 
 typedef struct {
   zend_object zval;
-  cassandra_statement_ref* statement;
+  cassandra_ref* statement;
   zval* session;
   zval* rows;
   const CassResult* result;
+  zval* next_page;
+  zval* future_next_page;
 } cassandra_rows;
 
 typedef struct {
   zend_object zval;
-  cassandra_statement_ref* statement;
+  cassandra_ref* statement;
   zval* session;
   zval* rows;
   CassFuture* future;
@@ -182,6 +187,15 @@ typedef struct {
   int default_page_size;
   zval* default_timeout;
   cass_bool_t persist;
+  int protocol_version;
+  int io_threads;
+  int core_connections_per_host;
+  int max_connections_per_host;
+  unsigned int reconnect_interval;
+  cass_bool_t enable_latency_aware_routing;
+  cass_bool_t enable_tcp_nodelay;
+  cass_bool_t enable_tcp_keepalive;
+  unsigned int tcp_keepalive_delay;
 } cassandra_cluster_builder;
 
 typedef struct {
@@ -240,6 +254,77 @@ typedef struct {
   char* private_key;
   char* passphrase;
 } cassandra_ssl_builder;
+
+typedef struct {
+  zend_object zval;
+  cassandra_ref* schema;
+} cassandra_schema;
+
+#if CURRENT_CPP_DRIVER_VERSION >= CPP_DRIVER_VERSION(2, 2, 0)
+typedef const CassKeyspaceMeta cassandra_keyspace_meta;
+#else
+typedef const CassSchemaMeta cassandra_keyspace_meta;
+#endif
+
+typedef struct {
+  zend_object zval;
+  cassandra_ref* schema;
+  cassandra_keyspace_meta* meta;
+} cassandra_keyspace;
+
+#if CURRENT_CPP_DRIVER_VERSION >= CPP_DRIVER_VERSION(2, 2, 0)
+typedef const CassTableMeta cassandra_table_meta;
+#else
+typedef const CassSchemaMeta cassandra_table_meta;
+#endif
+
+typedef struct {
+  zend_object zval;
+  cassandra_ref* schema;
+  cassandra_table_meta* meta;
+} cassandra_table;
+
+#if CURRENT_CPP_DRIVER_VERSION >= CPP_DRIVER_VERSION(2, 2, 0)
+typedef const CassColumnMeta cassandra_column_meta;
+#else
+typedef const CassSchemaMeta cassandra_column_meta;
+#endif
+
+typedef struct {
+  zend_object zval;
+  zval* name;
+  zval* type;
+  int reversed;
+  int frozen;
+  cassandra_ref* schema;
+  cassandra_column_meta* meta;
+} cassandra_column;
+
+typedef struct {
+  zend_object zval;
+  CassValueType type;
+} cassandra_type_scalar;
+
+typedef struct {
+  zend_object zval;
+  CassValueType type;
+} cassandra_type_collection;
+
+typedef struct {
+  zend_object zval;
+  CassValueType type;
+} cassandra_type_set;
+
+typedef struct {
+  zend_object zval;
+  CassValueType key_type;
+  CassValueType value_type;
+} cassandra_type_map;
+
+typedef struct {
+  zend_object zval;
+  char*       name;
+} cassandra_type_custom;
 
 extern PHP_CASSANDRA_API zend_class_entry* cassandra_numeric_ce;
 extern PHP_CASSANDRA_API zend_class_entry* cassandra_bigint_ce;
@@ -369,6 +454,38 @@ void cassandra_define_PreparedStatement(TSRMLS_D);
 void cassandra_define_BatchStatement(TSRMLS_D);
 void cassandra_define_ExecutionOptions(TSRMLS_D);
 void cassandra_define_Rows(TSRMLS_D);
+
+extern PHP_CASSANDRA_API zend_class_entry* cassandra_schema_ce;
+extern PHP_CASSANDRA_API zend_class_entry* cassandra_default_schema_ce;
+extern PHP_CASSANDRA_API zend_class_entry* cassandra_keyspace_ce;
+extern PHP_CASSANDRA_API zend_class_entry* cassandra_default_keyspace_ce;
+extern PHP_CASSANDRA_API zend_class_entry* cassandra_table_ce;
+extern PHP_CASSANDRA_API zend_class_entry* cassandra_default_table_ce;
+extern PHP_CASSANDRA_API zend_class_entry* cassandra_column_ce;
+extern PHP_CASSANDRA_API zend_class_entry* cassandra_default_column_ce;
+
+void cassandra_define_Schema(TSRMLS_D);
+void cassandra_define_DefaultSchema(TSRMLS_D);
+void cassandra_define_Keyspace(TSRMLS_D);
+void cassandra_define_DefaultKeyspace(TSRMLS_D);
+void cassandra_define_Table(TSRMLS_D);
+void cassandra_define_DefaultTable(TSRMLS_D);
+void cassandra_define_Column(TSRMLS_D);
+void cassandra_define_DefaultColumn(TSRMLS_D);
+
+extern PHP_CASSANDRA_API zend_class_entry* cassandra_type_ce;
+extern PHP_CASSANDRA_API zend_class_entry* cassandra_type_scalar_ce;
+extern PHP_CASSANDRA_API zend_class_entry* cassandra_type_collection_ce;
+extern PHP_CASSANDRA_API zend_class_entry* cassandra_type_set_ce;
+extern PHP_CASSANDRA_API zend_class_entry* cassandra_type_map_ce;
+extern PHP_CASSANDRA_API zend_class_entry* cassandra_type_custom_ce;
+
+void cassandra_define_Type(TSRMLS_D);
+void cassandra_define_TypeScalar(TSRMLS_D);
+void cassandra_define_TypeCollection(TSRMLS_D);
+void cassandra_define_TypeSet(TSRMLS_D);
+void cassandra_define_TypeMap(TSRMLS_D);
+void cassandra_define_TypeCustom(TSRMLS_D);
 
 extern int php_le_cassandra_cluster();
 extern int php_le_cassandra_session();

@@ -11,7 +11,7 @@ Vagrant.configure("2") do |config|
   config.vm.provision "shell", inline: <<-SHELL
   echo "Installing all necessary packages"
   sudo apt-get update
-  sudo apt-get install -y g++ make cmake libuv-dev libssl-dev libgmp-dev php5 php5-dev openssl libpcre3-dev
+  sudo apt-get install -y g++ make cmake libuv-dev libssl-dev libgmp-dev php5 php5-dev php5-dbg openssl libpcre3-dev
   sudo apt-get install -y python-pip default-jdk
   sudo apt-get install -y git valgrind
 
@@ -42,7 +42,7 @@ Vagrant.configure("2") do |config|
   echo "Compiling and installing the extension..."
   pushd /usr/local/src/php-driver/ext
   phpize
-  LDFLAGS="-L$builddir/lib" LIBS="-lssl -lz -luv -lgmp -lstdc++" ./configure --with-cassandra=/tmp/php-driver-installation/build --with-gmp=/tmp/php-driver-installation/build --with-libdir=lib
+  LDFLAGS="-L$builddir/lib" LIBS="-lssl -lz -luv -lm -lgmp -lstdc++" ./configure --with-cassandra=/tmp/php-driver-installation/build --with-gmp=/tmp/php-driver-installation/build --with-libdir=lib
   make
   sudo make install
   sudo sh -c 'echo "extension=cassandra.so" > /etc/php5/cli/conf.d/100-cassandra.ini'

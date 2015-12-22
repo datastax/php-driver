@@ -48,8 +48,8 @@ PHP_METHOD(ExecutionOptions, __construct)
   }
 
   if (zend_hash_find(Z_ARRVAL_P(options), "timeout", sizeof("timeout"), (void**)&timeout) == SUCCESS) {
-    if (!(Z_TYPE_P(*timeout) == IS_LONG   && Z_LVAL_P(*timeout) > 0) ||
-        !(Z_TYPE_P(*timeout) == IS_DOUBLE && Z_DVAL_P(*timeout) > 0) ||
+    if (!(Z_TYPE_P(*timeout) == IS_LONG   && Z_LVAL_P(*timeout) > 0) &&
+        !(Z_TYPE_P(*timeout) == IS_DOUBLE && Z_DVAL_P(*timeout) > 0) &&
         !(Z_TYPE_P(*timeout) == IS_NULL)) {
       INVALID_ARGUMENT(*timeout, "a number of seconds greater than zero or null");
     }
@@ -68,12 +68,58 @@ PHP_METHOD(ExecutionOptions, __construct)
   }
 }
 
+PHP_METHOD(ExecutionOptions, __get)
+{
+  char *name;
+  int   name_len;
+
+  cassandra_execution_options* self = NULL;
+
+  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &name, &name_len) == FAILURE) {
+    return;
+  }
+
+  self = (cassandra_execution_options*) zend_object_store_get_object(getThis() TSRMLS_CC);
+
+  if (name_len == 11 && strncmp("consistency", name, name_len) == 0) {
+    if (self->consistency == -1) {
+      RETURN_NULL();
+    }
+    RETURN_LONG(self->consistency);
+  } else if (name_len == 17 && strncmp("serialConsistency", name, name_len) == 0) {
+    if (self->serial_consistency == -1) {
+      RETURN_NULL();
+    }
+    RETURN_LONG(self->serial_consistency);
+  } else if (name_len == 8 && strncmp("pageSize", name, name_len) == 0) {
+    if (self->page_size == -1) {
+      RETURN_NULL();
+    }
+    RETURN_LONG(self->page_size);
+  } else if (name_len == 7 && strncmp("timeout", name, name_len) == 0) {
+    if (self->timeout == NULL) {
+      RETURN_NULL();
+    }
+    RETURN_ZVAL(self->timeout, 1, 0);
+  } else if (name_len == 9 && strncmp("arguments", name, name_len) == 0) {
+    if (self->arguments == NULL) {
+      RETURN_NULL();
+    }
+    RETURN_ZVAL(self->arguments, 1, 0);
+  }
+}
+
 ZEND_BEGIN_ARG_INFO_EX(arginfo__construct, 0, ZEND_RETURN_VALUE, 0)
   ZEND_ARG_ARRAY_INFO(0, options, 1)
 ZEND_END_ARG_INFO()
 
+ZEND_BEGIN_ARG_INFO_EX(arginfo___get, 0, ZEND_RETURN_VALUE, 1)
+  ZEND_ARG_INFO(0, name)
+ZEND_END_ARG_INFO()
+
 static zend_function_entry cassandra_execution_options_methods[] = {
   PHP_ME(ExecutionOptions, __construct, arginfo__construct, ZEND_ACC_PUBLIC | ZEND_ACC_CTOR)
+  PHP_ME(ExecutionOptions, __get, arginfo___get, ZEND_ACC_PUBLIC)
   PHP_FE_END
 };
 
@@ -82,7 +128,6 @@ static zend_object_handlers cassandra_execution_options_handlers;
 static HashTable*
 php_cassandra_execution_options_properties(zval *object TSRMLS_DC)
 {
-  /* cassandra_execution_options* self = (cassandra_execution_options*) zend_object_store_get_object(object TSRMLS_CC); */
   HashTable* props = zend_std_get_properties(object TSRMLS_CC);
 
   return props;
@@ -102,8 +147,10 @@ php_cassandra_execution_options_free(void *object TSRMLS_DC)
 {
   cassandra_execution_options* options = (cassandra_execution_options*) object;
 
-  if (options->arguments)
+  if (options->arguments) {
     zval_ptr_dtor(&options->arguments);
+    options->arguments = NULL;
+  }
 
   zend_object_std_dtor(&options->zval TSRMLS_CC);
   efree(options);

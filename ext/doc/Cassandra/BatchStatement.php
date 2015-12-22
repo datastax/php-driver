@@ -42,7 +42,7 @@ final class BatchStatement implements Statement
     /**
      * Creates a new batch statement.
      *
-     * @param int $type must be one of Cassandra::BATCH_*
+     * @param int $type must be one of Cassandra::BATCH_* (default: Cassandra::BATCH_LOGGED).
      */
     public function __construct($type = \Cassandra::BATCH_LOGGED) {}
 
@@ -52,7 +52,7 @@ final class BatchStatement implements Statement
      * @param Statement  $statement the statement to add
      * @param array|null $arguments positional or named arguments
      *
-     * @throws Cassandra\Exception\InvalidArgumentException
+     * @throws Exception\InvalidArgumentException
      *
      * @return BatchStatement self
      */

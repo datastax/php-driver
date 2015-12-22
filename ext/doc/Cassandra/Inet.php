@@ -24,19 +24,22 @@ namespace Cassandra;
 final class Inet
 {
     /**
-     * Creates a new IPv4 or IPv6 inet address
+     * Creates a new IPv4 or IPv6 inet address.
+     *
      * @param string $address any IPv4 or IPv6 address
      */
     public function __construct($address) {}
 
     /**
-     * Returns the normalized string representation of the address
+     * Returns the normalized string representation of the address.
+     *
      * @return string address
      */
-    public function value() {}
+    public function address() {}
 
     /**
-     * Returns the normalized string representation of the address
+     * Returns the normalized string representation of the address.
+     *
      * @return string address
      */
     public function __toString() {}

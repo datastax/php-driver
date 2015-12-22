@@ -24,20 +24,30 @@ namespace Cassandra;
 final class Blob
 {
     /**
-     * Creates a new bytes array
+     * Creates a new bytes array.
+     *
      * @param string $bytes any bytes
      */
     public function __construct($bytes) {}
 
     /**
-     * Returns bytes as a hex string
+     * Returns bytes as a hex string.
+     *
      * @return string bytes as hexadecimal string
      */
     public function bytes() {}
 
     /**
-     * Returns bytes as a hex string
+     * Returns bytes as a hex string.
+     *
      * @return string bytes as hexadecimal string
      */
     public function __toString() {}
+
+    /**
+     * Returns bytes as a binary string.
+     *
+     * @return string bytes as binary string
+     */
+    public function toBinaryString() {}
 }

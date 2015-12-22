@@ -3,12 +3,12 @@
 
 zend_class_entry *cassandra_timestamp_ce = NULL;
 
-/* {{{ Cassandra\Timestamp::__construct(string) */
-PHP_METHOD(Timestamp, __construct)
+void
+php_cassandra_timestamp_init(INTERNAL_FUNCTION_PARAMETERS)
 {
-  long seconds = 0;
-  long microseconds = 0;
-  cassandra_timestamp* timestamp = NULL;
+  cass_int64_t seconds = 0;
+  cass_int64_t microseconds = 0;
+  cassandra_timestamp* self;
   cass_int64_t value = 0;
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "|ll", &seconds, &microseconds) == FAILURE) {
@@ -17,7 +17,7 @@ PHP_METHOD(Timestamp, __construct)
 
   if (ZEND_NUM_ARGS() == 0) {
 #ifdef WIN32
-    seconds = (long) time(0);
+    seconds = (cass_int64_t) time(0);
 #else
     struct timeval time;
 
@@ -30,9 +30,20 @@ PHP_METHOD(Timestamp, __construct)
   value += microseconds / 1000;
   value += (seconds * 1000);
 
+  if (getThis() && instanceof_function(Z_OBJCE_P(getThis()), cassandra_timestamp_ce TSRMLS_CC)) {
+    self = (cassandra_timestamp*) zend_object_store_get_object(getThis() TSRMLS_CC);
+  } else {
+    object_init_ex(return_value, cassandra_timestamp_ce);
+    self = (cassandra_timestamp*) zend_object_store_get_object(return_value TSRMLS_CC);
+  }
 
-  timestamp = (cassandra_timestamp*) zend_object_store_get_object(getThis() TSRMLS_CC);
-  timestamp->timestamp = value;
+  self->timestamp = value;
+}
+
+/* {{{ Cassandra\Timestamp::__construct(string) */
+PHP_METHOD(Timestamp, __construct)
+{
+  php_cassandra_timestamp_init(INTERNAL_FUNCTION_PARAM_PASSTHRU);
 }
 /* }}} */
 
@@ -136,6 +147,14 @@ static zend_function_entry cassandra_timestamp_methods[] = {
 static zend_object_handlers cassandra_timestamp_handlers;
 
 static HashTable*
+php_cassandra_timestamp_gc(zval *object, zval ***table, int *n TSRMLS_DC)
+{
+  *table = NULL;
+  *n = 0;
+  return zend_std_get_properties(object TSRMLS_CC);
+}
+
+static HashTable*
 php_cassandra_timestamp_properties(zval *object TSRMLS_DC)
 {
   cassandra_timestamp* timestamp = (cassandra_timestamp*) zend_object_store_get_object(object TSRMLS_CC);
@@ -197,11 +216,7 @@ php_cassandra_timestamp_new(zend_class_entry* class_type TSRMLS_DC)
   memset(timestamp, 0, sizeof(cassandra_timestamp));
 
   zend_object_std_init(&timestamp->zval, class_type TSRMLS_CC);
-#if ZEND_MODULE_API_NO >= 20100525
   object_properties_init(&timestamp->zval, class_type);
-#else
-  zend_hash_copy(timestamp->zval.properties, &class_type->default_properties, (copy_ctor_func_t) zval_add_ref, (void*) NULL, sizeof(zval*));
-#endif
 
   retval.handle   = zend_objects_store_put(timestamp, (zend_objects_store_dtor_t) zend_objects_destroy_object, php_cassandra_timestamp_free, NULL TSRMLS_CC);
   retval.handlers = &cassandra_timestamp_handlers;
@@ -216,7 +231,10 @@ void cassandra_define_Timestamp(TSRMLS_D)
   INIT_CLASS_ENTRY(ce, "Cassandra\\Timestamp", cassandra_timestamp_methods);
   cassandra_timestamp_ce = zend_register_internal_class(&ce TSRMLS_CC);
   memcpy(&cassandra_timestamp_handlers, zend_get_std_object_handlers(), sizeof(zend_object_handlers));
-  cassandra_timestamp_handlers.get_properties = php_cassandra_timestamp_properties;
+  cassandra_timestamp_handlers.get_properties  = php_cassandra_timestamp_properties;
+#if PHP_VERSION_ID >= 50400
+  cassandra_timestamp_handlers.get_gc          = php_cassandra_timestamp_gc;
+#endif
   cassandra_timestamp_handlers.compare_objects = php_cassandra_timestamp_compare;
   cassandra_timestamp_ce->ce_flags |= ZEND_ACC_FINAL_CLASS;
   cassandra_timestamp_ce->create_object = php_cassandra_timestamp_new;

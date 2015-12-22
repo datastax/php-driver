@@ -1,0 +1,9 @@
+datatypes
+simple_statements
+prepared_statements
+batch_statements
+consistency_level
+result_paging
+sessions
+ssl_encryption
+logging

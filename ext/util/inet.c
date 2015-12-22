@@ -110,7 +110,7 @@ php_cassandra_parse_ip_address(char* in, CassInet* inet TSRMLS_DC)
   enum parser_state state                        = STATE_START;
   int               pos                          = -1;
   int               compress_pos                 = -1;
-  int               ipv4_pos;
+  int               ipv4_pos                     = -1;
   int               ipv4_byte;
   cass_uint8_t      address[CASS_INET_V6_LENGTH] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
   int               domain                       = 0;

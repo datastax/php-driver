@@ -16,11 +16,33 @@
  * limitations under the License.
  */
 
-namespace Cassandra\Exception;
+namespace Cassandra\Type;
 
-/**
- * WriteTimeoutException is raised when coordinator failed to receive acks from
- * the required number of replica nodes in time during a write.
- * @see https://github.com/apache/cassandra/blob/trunk/doc/native_protocol_v1.spec#L683-L708 Description of WriteTimeout error in the native protocol spec
- */
-class WriteTimeoutException extends ExecutionException {}
+use Cassandra\Type;
+
+final class Custom implements Type
+{
+    /**
+     * {@inheritDoc}
+     *
+     * @return string The name of this type
+     */
+    public function name() {}
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return string String representation of this type
+     */
+    public function __toString() {}
+
+    /**
+     * Creation of custom type instances is not supported
+     *
+     * @throws Cassandra\Exception\LogicException
+     *
+     * @param  mixed $value the value
+     * @return null         nothing
+     */
+    public function create($value = null) {}
+}

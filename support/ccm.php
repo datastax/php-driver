@@ -12,16 +12,20 @@ class CCM
     private $session;
     private $ssl;
     private $clientAuth;
+    private $dataCenterOneNodes;
+    private $dataCenterTwoNodes;
 
     public function __construct($name, $version)
     {
-        $this->name       = $name;
-        $this->version    = $version;
-        $this->process    = new Process(null);
-        $this->cluster    = null;
-        $this->session    = null;
-        $this->ssl        = false;
-        $this->clientAuth = false;
+        $this->name               = $name;
+        $this->version            = $version;
+        $this->process            = new Process(null);
+        $this->cluster            = null;
+        $this->session            = null;
+        $this->ssl                = false;
+        $this->clientAuth         = false;
+        $this->dataCenterOneNodes = 0;
+        $this->dataCenterTwoNodes = 0;
     }
 
     public function setupSchema($schema)
@@ -72,6 +76,7 @@ class CCM
             try {
                 $this->cluster = $builder->build();
                 $this->session = $this->cluster->connect();
+                break;
             } catch (Cassandra\Exception\RuntimeException $e) {
                 $this->cluster = null;
                 $this->session = null;
@@ -94,21 +99,45 @@ class CCM
         $this->run('stop');
     }
 
-    public function setup()
+    private function getClusters()
     {
+        $active = '';
         $clusters = array();
-        foreach (explode("\n", $this->run('list')) as $cluster) {
+        foreach (explode(PHP_EOL, $this->run('list')) as $cluster) {
+            $clusterName = trim(substr($cluster, 2, strlen($cluster) - 2));
+
+            // Determine if this cluster is the active cluster
             if ($this->isActive($cluster)) {
-                $active = count($clusters);
+                $active = $clusterName;
             }
-            $clusters[] = substr($cluster, 2, strlen($cluster) - 2);
+
+            // Add the cluster to the list
+            if (!empty($clusterName)) {
+                $clusters[] = $clusterName;
+            }
         }
 
-        if (!(isset($active) && $clusters[$active] == $this->name)) {
-            if (in_array($this->name, $clusters)) {
-                $this->run('switch', $this->name);
+        return array('active' => $active, 'list' => $clusters);
+    }
+
+    public function setup($dataCenterOneNodes, $dataCenterTwoNodes)
+    {
+        $this->dataCenterOneNodes = $dataCenterOneNodes;
+        $this->dataCenterTwoNodes = $dataCenterTwoNodes;
+
+        $clusters = $this->getClusters();
+        $clusterName = $this->name.'_'.$dataCenterOneNodes.'-'.$dataCenterTwoNodes;
+        if ($clusters['active'] != $clusterName) {
+            // Ensure any active cluster is stopped
+            if (!empty($clusters['active'])) {
+                $this->stop();
+            }
+
+            // Determine if a cluster should be created or re-used
+            if (in_array($clusterName, $clusters['list'])) {
+                $this->run('switch', $clusterName);
             } else {
-                $this->run('create', '-v', 'binary:' . $this->version, '-b', $this->name);
+                $this->run('create', '-v', 'binary:' . $this->version, '-b', $clusterName);
 
                 $params = array(
                   'updateconf', '--rt', '1000', 'read_request_timeout_in_ms: 1000',
@@ -145,7 +174,7 @@ class CCM
                 $params[] = 'max_hints_delivery_threads: 1';
 
                 call_user_func_array(array($this, 'run'), $params);
-                $this->run('populate', '-n', '1', '-i', '127.0.0.');
+                $this->run('populate', '-n', $dataCenterOneNodes.':'.$dataCenterTwoNodes, '-i', '127.0.0.');
             }
         }
 
@@ -163,7 +192,7 @@ class CCM
     public function setupSSL()
     {
         if (!$this->ssl) {
-            $this->setup();
+            $this->setup(1, 0);
             $this->stop();
             $this->run('updateconf',
                 'client_encryption_options.enabled: true',
@@ -177,7 +206,7 @@ class CCM
     public function setupClientVerification()
     {
         if (!$this->clientAuth) {
-            $this->setup();
+            $this->setup(1, 0);
             $this->stop();
             $this->run('updateconf',
                 'client_encryption_options.enabled: true',
@@ -188,6 +217,14 @@ class CCM
                 'client_encryption_options.truststore_password: php-driver'
             );
             $this->clientAuth = true;
+        }
+    }
+
+    public function enableTracing($isEnabled)
+    {
+        $nodes = $this->dataCenterOneNodes + $this->dataCenterTwoNodes;
+        for($node = 1; $node <= $nodes; ++$node) {
+            $this->run('node'.$node, 'nodetool', 'settraceprobability', ((bool) $isEnabled) ? 1 : 0);
         }
     }
 
@@ -210,7 +247,11 @@ class CCM
 
         $command = sprintf('ccm %s', implode(' ', $args));
         if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN' || strtoupper(substr(PHP_OS, 0, 6)) === 'CYGWIN') {
-          $command = 'START "PHP Integration Tests" /MIN /WAIT ' . $command;
+            $keepWindowsContext = '';
+            if ($args[0] != "\"start\"") {
+                $keepWindowsContext = '/B ';
+            }
+            $command = 'START "PHP Driver - CCM" ' . $keepWindowsContext . '/MIN /WAIT ' . $command;
         }
         $this->process->setCommandLine($command);
 
@@ -220,5 +261,18 @@ class CCM
         });
 
         return $this->process->getOutput();
+    }
+
+    public function removeCluster($cluster)
+    {
+      return $this->run('remove', $cluster);
+    }
+
+    public function removeAllClusters()
+    {
+        $clusters = $this->getClusters();
+        foreach ($clusters['list'] as $cluster) {
+            $this->removeCluster($cluster);
+        }
     }
 }
