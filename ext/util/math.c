@@ -17,9 +17,9 @@
 extern zend_class_entry *cassandra_invalid_argument_exception_ce;
 
 int
-php_cassandra_parse_float(char* in, int in_len, cass_float_t* number TSRMLS_DC)
+php_cassandra_parse_float(char *in, int in_len, cass_float_t *number TSRMLS_DC)
 {
-  char* end;
+  char *end;
   errno = 0;
 
   *number = (cass_float_t) strtof(in, &end);
@@ -43,9 +43,9 @@ php_cassandra_parse_float(char* in, int in_len, cass_float_t* number TSRMLS_DC)
 }
 
 int
-php_cassandra_parse_bigint(char* in, int in_len, cass_int64_t* number TSRMLS_DC)
+php_cassandra_parse_bigint(char *in, int in_len, cass_int64_t *number TSRMLS_DC)
 {
-  char* end = NULL;
+  char *end = NULL;
 
   int point = 0;
   int base = 10;
@@ -101,7 +101,7 @@ php_cassandra_parse_bigint(char* in, int in_len, cass_int64_t* number TSRMLS_DC)
 }
 
 int
-php_cassandra_parse_varint(char* in, int in_len, mpz_t* number TSRMLS_DC)
+php_cassandra_parse_varint(char *in, int in_len, mpz_t *number TSRMLS_DC)
 {
   int point = 0;
   int base = 10;
@@ -143,7 +143,7 @@ php_cassandra_parse_varint(char* in, int in_len, mpz_t* number TSRMLS_DC)
 }
 
 int
-php_cassandra_parse_decimal(char* in, int in_len, mpz_t* number, long* scale TSRMLS_DC)
+php_cassandra_parse_decimal(char *in, int in_len, mpz_t *number, long *scale TSRMLS_DC)
 {
   /*  start is the index into the char array where the significand starts */
   int start = 0;
@@ -321,10 +321,10 @@ php_cassandra_parse_decimal(char* in, int in_len, mpz_t* number, long* scale TSR
 }
 
 void
-php_cassandra_format_integer(mpz_t number, char** out, int* out_len)
+php_cassandra_format_integer(mpz_t number, char **out, int *out_len)
 {
   size_t len;
-  char* tmp;
+  char *tmp;
 
   len = mpz_sizeinbase(number, 10);
   if (mpz_sgn(number) < 0)
@@ -345,9 +345,9 @@ php_cassandra_format_integer(mpz_t number, char** out, int* out_len)
 
 
 void
-php_cassandra_format_decimal(mpz_t number, long scale, char** out, int* out_len)
+php_cassandra_format_decimal(mpz_t number, long scale, char **out, int *out_len)
 {
-  char* tmp = NULL;
+  char *tmp = NULL;
   size_t total = 0;
   size_t len   = mpz_sizeinbase(number, 10);
   int negative = 0;
@@ -453,7 +453,7 @@ php_cassandra_format_decimal(mpz_t number, long scale, char** out, int* out_len)
 }
 
 void
-import_twos_complement(cass_byte_t* data, size_t size, mpz_t* number)
+import_twos_complement(cass_byte_t *data, size_t size, mpz_t *number)
 {
   mpz_import(*number, size, 1, sizeof(cass_byte_t), 1, 0, data);
 
@@ -472,9 +472,9 @@ import_twos_complement(cass_byte_t* data, size_t size, mpz_t* number)
 }
 
 cass_byte_t*
-export_twos_complement(mpz_t number, size_t* size)
+export_twos_complement(mpz_t number, size_t *size)
 {
-  cass_byte_t* bytes;
+  cass_byte_t *bytes;
 
   if (mpz_sgn(number) == 0) {
     /* mpz_export() returns NULL for 0 */

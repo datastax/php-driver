@@ -9,11 +9,13 @@
 #include <fcntl.h>
 #include <uv.h>
 
+#include "util/types.h"
+
 #define PHP_CASSANDRA_DEFAULT_LOG       "cassandra.log"
 #define PHP_CASSANDRA_DEFAULT_LOG_LEVEL "ERROR"
 
 static uv_once_t log_once = UV_ONCE_INIT;
-static char* log_location = NULL;
+static char *log_location = NULL;
 static uv_rwlock_t log_lock;
 
 ZEND_DECLARE_MODULE_GLOBALS(cassandra)
@@ -59,7 +61,7 @@ ZEND_GET_MODULE(cassandra)
 #endif
 
 static void
-php_cassandra_log(const CassLogMessage* message, void* data);
+php_cassandra_log(const CassLogMessage *message, void *data);
 
 void
 php_cassandra_log_cleanup()
@@ -81,7 +83,7 @@ php_cassandra_log_initialize()
 }
 
 static void
-php_cassandra_log(const CassLogMessage* message, void* data)
+php_cassandra_log(const CassLogMessage *message, void *data)
 {
   char log[MAXPATHLEN + 1];
   uint log_length = 0;
@@ -114,7 +116,7 @@ php_cassandra_log(const CassLogMessage* message, void* data)
       struct tm log_tm;
       char log_time_str[32];
       size_t needed = 0;
-      char* tmp     = NULL;
+      char *tmp     = NULL;
 
       time(&log_time);
       php_localtime_r(&log_time, &log_tm);
@@ -158,9 +160,9 @@ php_le_cassandra_cluster()
   return le_cassandra_cluster_res;
 }
 static void
-php_cassandra_cluster_dtor(zend_rsrc_list_entry* rsrc TSRMLS_DC)
+php_cassandra_cluster_dtor(php5to7_zend_resource rsrc TSRMLS_DC)
 {
-  CassCluster* cluster = (CassCluster*) rsrc->ptr;
+  CassCluster *cluster = (CassCluster*) rsrc->ptr;
 
   if (cluster) {
     cass_cluster_free(cluster);
@@ -176,9 +178,9 @@ php_le_cassandra_session()
   return le_cassandra_session_res;
 }
 static void
-php_cassandra_session_dtor(zend_rsrc_list_entry* rsrc TSRMLS_DC)
+php_cassandra_session_dtor(php5to7_zend_resource rsrc TSRMLS_DC)
 {
-  cassandra_psession* psession = (cassandra_psession*) rsrc->ptr;
+  cassandra_psession *psession = (cassandra_psession*) rsrc->ptr;
 
   if (psession) {
     cass_future_free(psession->future);
@@ -194,17 +196,17 @@ static PHP_INI_MH(OnUpdateLogLevel)
   /* If TSRM is enabled then the last thread to update this wins */
 
   if (new_value) {
-    if (strcmp(new_value, "CRITICAL") == 0) {
+    if (PHP5TO7_STRCMP(new_value, "CRITICAL") == 0) {
       cass_log_set_level(CASS_LOG_DISABLED);
-    } else if (strcmp(new_value, "ERROR") == 0) {
+    } else if (PHP5TO7_STRCMP(new_value, "ERROR") == 0) {
       cass_log_set_level(CASS_LOG_ERROR);
-    } else if (strcmp(new_value, "WARN") == 0) {
+    } else if (PHP5TO7_STRCMP(new_value, "WARN") == 0) {
       cass_log_set_level(CASS_LOG_WARN);
-    } else if (strcmp(new_value, "INFO") == 0) {
+    } else if (PHP5TO7_STRCMP(new_value, "INFO") == 0) {
       cass_log_set_level(CASS_LOG_INFO);
-    } else if (strcmp(new_value, "DEBUG") == 0) {
+    } else if (PHP5TO7_STRCMP(new_value, "DEBUG") == 0) {
       cass_log_set_level(CASS_LOG_DEBUG);
-    } else if (strcmp(new_value, "TRACE") == 0) {
+    } else if (PHP5TO7_STRCMP(new_value, "TRACE") == 0) {
       cass_log_set_level(CASS_LOG_TRACE);
     } else {
       php_error_docref(NULL TSRMLS_CC, E_NOTICE,
@@ -227,15 +229,15 @@ static PHP_INI_MH(OnUpdateLog)
     log_location = NULL;
   }
   if (new_value) {
-    if (strcmp(new_value, "syslog") != 0) {
+    if (PHP5TO7_STRCMP(new_value, "syslog") != 0) {
       char realpath[MAXPATHLEN + 1];
-      if (VCWD_REALPATH(new_value, realpath)) {
+      if (VCWD_REALPATH(PHP5TO7_STRVAL(new_value), realpath)) {
         log_location = strdup(realpath);
       } else {
-        log_location = strdup(new_value);
+        log_location = strdup(PHP5TO7_STRVAL(new_value));
       }
     } else {
-      log_location = strdup(new_value);
+      log_location = strdup(PHP5TO7_STRVAL(new_value));
     }
   }
   uv_rwlock_wrunlock(&log_lock);
@@ -255,22 +257,22 @@ static PHP_GINIT_FUNCTION(cassandra)
   cassandra_globals->uuid_gen            = cass_uuid_gen_new();
   cassandra_globals->persistent_clusters = 0;
   cassandra_globals->persistent_sessions = 0;
-  cassandra_globals->type_varchar        = NULL;
-  cassandra_globals->type_text           = NULL;
-  cassandra_globals->type_blob           = NULL;
-  cassandra_globals->type_ascii          = NULL;
-  cassandra_globals->type_bigint         = NULL;
-  cassandra_globals->type_counter        = NULL;
-  cassandra_globals->type_int            = NULL;
-  cassandra_globals->type_varint         = NULL;
-  cassandra_globals->type_boolean        = NULL;
-  cassandra_globals->type_decimal        = NULL;
-  cassandra_globals->type_double         = NULL;
-  cassandra_globals->type_float          = NULL;
-  cassandra_globals->type_inet           = NULL;
-  cassandra_globals->type_timestamp      = NULL;
-  cassandra_globals->type_uuid           = NULL;
-  cassandra_globals->type_timeuuid       = NULL;
+  PHP5TO7_ZVAL_UNDEF(cassandra_globals->type_varchar);
+  PHP5TO7_ZVAL_UNDEF(cassandra_globals->type_text);
+  PHP5TO7_ZVAL_UNDEF(cassandra_globals->type_blob);
+  PHP5TO7_ZVAL_UNDEF(cassandra_globals->type_ascii);
+  PHP5TO7_ZVAL_UNDEF(cassandra_globals->type_bigint);
+  PHP5TO7_ZVAL_UNDEF(cassandra_globals->type_counter);
+  PHP5TO7_ZVAL_UNDEF(cassandra_globals->type_int);
+  PHP5TO7_ZVAL_UNDEF(cassandra_globals->type_varint);
+  PHP5TO7_ZVAL_UNDEF(cassandra_globals->type_boolean);
+  PHP5TO7_ZVAL_UNDEF(cassandra_globals->type_decimal);
+  PHP5TO7_ZVAL_UNDEF(cassandra_globals->type_double);
+  PHP5TO7_ZVAL_UNDEF(cassandra_globals->type_float);
+  PHP5TO7_ZVAL_UNDEF(cassandra_globals->type_inet);
+  PHP5TO7_ZVAL_UNDEF(cassandra_globals->type_timestamp);
+  PHP5TO7_ZVAL_UNDEF(cassandra_globals->type_uuid);
+  PHP5TO7_ZVAL_UNDEF(cassandra_globals->type_timeuuid);
 }
 
 static PHP_GSHUTDOWN_FUNCTION(cassandra)
@@ -388,85 +390,11 @@ PHP_RINIT_FUNCTION(cassandra)
 
 PHP_RSHUTDOWN_FUNCTION(cassandra)
 {
-  if (CASSANDRA_G(type_varchar)) {
-    zval_ptr_dtor(&CASSANDRA_G(type_varchar));
-    CASSANDRA_G(type_varchar) = NULL;
-  }
+#define XX_SCALAR(name, value) \
+  PHP5TO7_ZVAL_MAYBE_DESTROY(CASSANDRA_G(type_##name));
 
-  if (CASSANDRA_G(type_text)) {
-    zval_ptr_dtor(&CASSANDRA_G(type_text));
-    CASSANDRA_G(type_text) = NULL;
-  }
-
-  if (CASSANDRA_G(type_blob)) {
-    zval_ptr_dtor(&CASSANDRA_G(type_blob));
-    CASSANDRA_G(type_blob) = NULL;
-  }
-
-  if (CASSANDRA_G(type_ascii)) {
-    zval_ptr_dtor(&CASSANDRA_G(type_ascii));
-    CASSANDRA_G(type_ascii) = NULL;
-  }
-
-  if (CASSANDRA_G(type_bigint)) {
-    zval_ptr_dtor(&CASSANDRA_G(type_bigint));
-    CASSANDRA_G(type_bigint) = NULL;
-  }
-
-  if (CASSANDRA_G(type_counter)) {
-    zval_ptr_dtor(&CASSANDRA_G(type_counter));
-    CASSANDRA_G(type_counter) = NULL;
-  }
-
-  if (CASSANDRA_G(type_int)) {
-    zval_ptr_dtor(&CASSANDRA_G(type_int));
-    CASSANDRA_G(type_int) = NULL;
-  }
-
-  if (CASSANDRA_G(type_varint)) {
-    zval_ptr_dtor(&CASSANDRA_G(type_varint));
-    CASSANDRA_G(type_varint) = NULL;
-  }
-
-  if (CASSANDRA_G(type_boolean)) {
-    zval_ptr_dtor(&CASSANDRA_G(type_boolean));
-    CASSANDRA_G(type_boolean) = NULL;
-  }
-
-  if (CASSANDRA_G(type_decimal)) {
-    zval_ptr_dtor(&CASSANDRA_G(type_decimal));
-    CASSANDRA_G(type_decimal) = NULL;
-  }
-
-  if (CASSANDRA_G(type_double)) {
-    zval_ptr_dtor(&CASSANDRA_G(type_double));
-    CASSANDRA_G(type_double) = NULL;
-  }
-
-  if (CASSANDRA_G(type_float)) {
-    zval_ptr_dtor(&CASSANDRA_G(type_float));
-    CASSANDRA_G(type_float) = NULL;
-  }
-
-  if (CASSANDRA_G(type_inet)) {
-    zval_ptr_dtor(&CASSANDRA_G(type_inet));
-    CASSANDRA_G(type_inet) = NULL;
-  }
-
-  if (CASSANDRA_G(type_timestamp)) {
-    zval_ptr_dtor(&CASSANDRA_G(type_timestamp));
-    CASSANDRA_G(type_timestamp) = NULL;
-  }
-
-  if (CASSANDRA_G(type_uuid)) {
-    zval_ptr_dtor(&CASSANDRA_G(type_uuid));
-    CASSANDRA_G(type_uuid) = NULL;
-  }
-
-  if (CASSANDRA_G(type_timeuuid)) {
-    zval_ptr_dtor(&CASSANDRA_G(type_timeuuid));
-    CASSANDRA_G(type_timeuuid) = NULL;
-  }
+  PHP_CASSANDRA_SCALAR_TYPES_MAP(XX_SCALAR)
+#undef XX_SCALAR
 
   return SUCCESS;
 }
@@ -560,9 +488,9 @@ exception_class(CassError rc)
 }
 
 void
-throw_invalid_argument(zval* object,
-                       const char* object_name,
-                       const char* expected_type TSRMLS_DC)
+throw_invalid_argument(zval *object,
+                       const char *object_name,
+                       const char *expected_type TSRMLS_DC)
 {
   if (Z_TYPE_P(object) == IS_OBJECT) {
 #if ZEND_MODULE_API_NO >= 20100525
@@ -570,14 +498,29 @@ throw_invalid_argument(zval* object,
 #else
     char* cls_name = NULL;
 #endif
-    zend_uint cls_len;
 
+#if PHP_MAJOR_VERSION >= 7
+    size_t cls_len;
+#else
+    zend_uint cls_len;
+#endif
+
+#if PHP_MAJOR_VERSION >= 7
+    zend_string* str  = Z_OBJ_HANDLER_P(object, get_class_name)(Z_OBJ_P(object) TSRMLS_CC);
+    cls_name = str->val;
+    cls_len = str->len;
+#else
     Z_OBJ_HANDLER_P(object, get_class_name)(object, &cls_name, &cls_len, 0 TSRMLS_CC);
+#endif
     if (cls_name) {
       zend_throw_exception_ex(cassandra_invalid_argument_exception_ce, 0 TSRMLS_CC,
                               "%s must be %s, an instance of %.*s given",
                               object_name, expected_type, cls_len, cls_name);
+#if PHP_MAJOR_VERSION >= 7
+      zend_string_release(str);
+#else
       efree((void*) cls_name);
+#endif
     } else {
       zend_throw_exception_ex(cassandra_invalid_argument_exception_ce, 0 TSRMLS_CC,
                               "%s must be %s, an instance of Unknown Class given",

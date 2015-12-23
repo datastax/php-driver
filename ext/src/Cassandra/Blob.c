@@ -6,8 +6,8 @@ zend_class_entry *cassandra_blob_ce = NULL;
 void
 php_cassandra_blob_init(INTERNAL_FUNCTION_PARAMETERS)
 {
-  cassandra_blob* self;
-  char* string;
+  cassandra_blob *self;
+  char *string;
   int string_len;
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &string, &string_len) == FAILURE) {
@@ -15,10 +15,10 @@ php_cassandra_blob_init(INTERNAL_FUNCTION_PARAMETERS)
   }
 
   if (getThis() && instanceof_function(Z_OBJCE_P(getThis()), cassandra_blob_ce TSRMLS_CC)) {
-    self = (cassandra_blob*) zend_object_store_get_object(getThis() TSRMLS_CC);
+    self = PHP_CASSANDRA_GET_BLOB(getThis());
   } else {
     object_init_ex(return_value, cassandra_blob_ce);
-    self = (cassandra_blob*) zend_object_store_get_object(return_value TSRMLS_CC);
+    self = PHP_CASSANDRA_GET_BLOB(return_value);
   }
 
   self->data = emalloc(string_len * sizeof(cass_byte_t));
@@ -36,36 +36,35 @@ PHP_METHOD(Blob, __construct)
 /* {{{ Cassandra\Blob::__toString() */
 PHP_METHOD(Blob, __toString)
 {
-  cassandra_blob* blob = (cassandra_blob*) zend_object_store_get_object(getThis() TSRMLS_CC);
-  char* hex;
+  cassandra_blob *blob = PHP_CASSANDRA_GET_BLOB(getThis());
+  char *hex;
   int hex_len;
   php_cassandra_bytes_to_hex((const char *) blob->data, blob->size, &hex, &hex_len);
 
-  RETURN_STRINGL(hex, hex_len, 0);
+  PHP5TO7_RETURN_STRINGL(hex, hex_len);
+  efree(hex);
 }
 /* }}} */
 
 /* {{{ Cassandra\Blob::bytes() */
 PHP_METHOD(Blob, bytes)
 {
-  cassandra_blob* blob = (cassandra_blob*) zend_object_store_get_object(getThis() TSRMLS_CC);
-  char* hex;
+  cassandra_blob *blob = PHP_CASSANDRA_GET_BLOB(getThis());
+  char *hex;
   int hex_len;
   php_cassandra_bytes_to_hex((const char *) blob->data, blob->size, &hex, &hex_len);
 
-  RETURN_STRINGL(hex, hex_len, 0);
+  PHP5TO7_RETURN_STRINGL(hex, hex_len);
+  efree(hex);
 }
 /* }}} */
 
 /* {{{ Cassandra\Blob::toBinaryString() */
 PHP_METHOD(Blob, toBinaryString)
 {
-  cassandra_blob* blob = (cassandra_blob*) zend_object_store_get_object(getThis() TSRMLS_CC);
-  char* bytes = (char *) emalloc(sizeof(char) * (blob->size + 1));
-  memcpy(bytes, blob->data, blob->size);
-  bytes[blob->size] = '\0';
+  cassandra_blob *blob = PHP_CASSANDRA_GET_BLOB(getThis());
 
-  RETURN_STRINGL(bytes, blob->size, 0);
+  PHP5TO7_RETURN_STRINGL((const char *)blob->data, blob->size);
 }
 /* }}} */
 
@@ -87,7 +86,7 @@ static zend_function_entry cassandra_blob_methods[] = {
 static zend_object_handlers cassandra_blob_handlers;
 
 static HashTable*
-php_cassandra_blob_gc(zval *object, zval ***table, int *n TSRMLS_DC)
+php_cassandra_blob_gc(zval *object, php5to7_zval_gc table, int *n TSRMLS_DC)
 {
   *table = NULL;
   *n = 0;
@@ -97,18 +96,19 @@ php_cassandra_blob_gc(zval *object, zval ***table, int *n TSRMLS_DC)
 static HashTable*
 php_cassandra_blob_properties(zval *object TSRMLS_DC)
 {
-  cassandra_blob* blob  = (cassandra_blob*) zend_object_store_get_object(object TSRMLS_CC);
-  HashTable*      props = zend_std_get_properties(object TSRMLS_CC);
+  cassandra_blob *blob  = PHP_CASSANDRA_GET_BLOB(object);
+  HashTable      *props = zend_std_get_properties(object TSRMLS_CC);
 
-  zval* bytes;
-  char* hex;
+  zval *bytes = NULL;
+  char *hex;
   int hex_len;
   php_cassandra_bytes_to_hex((const char *) blob->data, blob->size, &hex, &hex_len);
 
-  MAKE_STD_ZVAL(bytes);
-  ZVAL_STRINGL(bytes, hex, hex_len, 0);
+  PHP5TO7_ZVAL_MAYBE_MAKE(bytes);
+  PHP5TO7_ZVAL_STRINGL(bytes, hex, hex_len);
+  efree(hex);
 
-  zend_hash_update(props, "bytes", sizeof("bytes"), &bytes, sizeof(zval), NULL);
+  PHP5TO7_ZEND_HASH_UPDATE(props, "bytes", sizeof("bytes"), bytes, sizeof(zval));
 
   return props;
 }
@@ -116,14 +116,14 @@ php_cassandra_blob_properties(zval *object TSRMLS_DC)
 static int
 php_cassandra_blob_compare(zval *obj1, zval *obj2 TSRMLS_DC)
 {
-  cassandra_blob* blob1 = NULL;
-  cassandra_blob* blob2 = NULL;
+  cassandra_blob *blob1 = NULL;
+  cassandra_blob *blob2 = NULL;
 
   if (Z_OBJCE_P(obj1) != Z_OBJCE_P(obj2))
     return 1; /* different classes */
 
-  blob1 = (cassandra_blob*) zend_object_store_get_object(obj1 TSRMLS_CC);
-  blob2 = (cassandra_blob*) zend_object_store_get_object(obj2 TSRMLS_CC);
+  blob1 = PHP_CASSANDRA_GET_BLOB(obj1);
+  blob2 = PHP_CASSANDRA_GET_BLOB(obj2);
 
   if (blob1->size == blob2->size) {
     return memcmp((const char*) blob1->data, (const char*) blob2->data, blob1->size);
@@ -135,32 +135,23 @@ php_cassandra_blob_compare(zval *obj1, zval *obj2 TSRMLS_DC)
 }
 
 static void
-php_cassandra_blob_free(void *object TSRMLS_DC)
+php_cassandra_blob_free(php5to7_zend_object_free *object TSRMLS_DC)
 {
-  cassandra_blob* blob = (cassandra_blob*) object;
+  cassandra_blob *self = (cassandra_blob*) object;
 
-  zend_object_std_dtor(&blob->zval TSRMLS_CC);
+  efree(self->data);
 
-  efree(blob->data);
-  efree(blob);
+  zend_object_std_dtor(&self->zval TSRMLS_CC);
+  PHP5TO7_ZEND_OBJECT_MAYBE_EFREE(self);
 }
 
-static zend_object_value
-php_cassandra_blob_new(zend_class_entry* class_type TSRMLS_DC)
+static php5to7_zend_object
+php_cassandra_blob_new(zend_class_entry *ce TSRMLS_DC)
 {
-  zend_object_value retval;
-  cassandra_blob *blob;
+  cassandra_blob *self =
+      PHP5TO7_ZEND_OBJECT_ECALLOC(blob, ce);
 
-  blob = (cassandra_blob*) emalloc(sizeof(cassandra_blob));
-  memset(blob, 0, sizeof(cassandra_blob));
-
-  zend_object_std_init(&blob->zval, class_type TSRMLS_CC);
-  object_properties_init(&blob->zval, class_type);
-
-  retval.handle   = zend_objects_store_put(blob, (zend_objects_store_dtor_t) zend_objects_destroy_object, php_cassandra_blob_free, NULL TSRMLS_CC);
-  retval.handlers = &cassandra_blob_handlers;
-
-  return retval;
+  PHP5TO7_ZEND_OBJECT_INIT(blob, self, ce);
 }
 
 void cassandra_define_Blob(TSRMLS_D)
@@ -175,6 +166,6 @@ void cassandra_define_Blob(TSRMLS_D)
   cassandra_blob_handlers.get_gc          = php_cassandra_blob_gc;
 #endif
   cassandra_blob_handlers.compare_objects = php_cassandra_blob_compare;
-  cassandra_blob_ce->ce_flags |= ZEND_ACC_FINAL_CLASS;
+  cassandra_blob_ce->ce_flags |= PHP5TO7_ZEND_ACC_FINAL;
   cassandra_blob_ce->create_object = php_cassandra_blob_new;
 }

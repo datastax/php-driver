@@ -5,13 +5,13 @@ zend_class_entry *cassandra_future_close_ce = NULL;
 
 PHP_METHOD(FutureClose, get)
 {
-  zval* timeout = NULL;
-  cassandra_future_close* self = NULL;
+  zval *timeout = NULL;
+  cassandra_future_close *self = NULL;
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "|z", &timeout) == FAILURE)
     return;
 
-  self = (cassandra_future_close*) zend_object_store_get_object(getThis() TSRMLS_CC);
+  self = PHP_CASSANDRA_GET_FUTURE_CLOSE(getThis());
 
   if (php_cassandra_future_wait_timed(self->future, timeout TSRMLS_CC) == FAILURE)
     return;
@@ -31,10 +31,10 @@ static zend_function_entry cassandra_future_close_methods[] = {
 
 static zend_object_handlers cassandra_future_close_handlers;
 
-static HashTable*
+static HashTable *
 php_cassandra_future_close_properties(zval *object TSRMLS_DC)
 {
-  HashTable* props = zend_std_get_properties(object TSRMLS_CC);
+  HashTable *props = zend_std_get_properties(object TSRMLS_CC);
 
   return props;
 }
@@ -49,37 +49,26 @@ php_cassandra_future_close_compare(zval *obj1, zval *obj2 TSRMLS_DC)
 }
 
 static void
-php_cassandra_future_close_free(void *object TSRMLS_DC)
+php_cassandra_future_close_free(php5to7_zend_object_free *object TSRMLS_DC)
 {
-  cassandra_future_close* future = (cassandra_future_close*) object;
+  cassandra_future_close *self = (cassandra_future_close *) object;
 
-  zend_object_std_dtor(&future->zval TSRMLS_CC);
+  if (self->future)
+    cass_future_free(self->future);
 
-  if (future->future)
-    cass_future_free(future->future);
-
-  efree(future);
+  zend_object_std_dtor(&self->zval TSRMLS_CC);
+  PHP5TO7_ZEND_OBJECT_MAYBE_EFREE(self);
 }
 
-static zend_object_value
-php_cassandra_future_close_new(zend_class_entry* class_type TSRMLS_DC)
+static php5to7_zend_object
+php_cassandra_future_close_new(zend_class_entry *ce TSRMLS_DC)
 {
-  zend_object_value retval;
-  cassandra_future_close *future;
+  cassandra_future_close *self =
+      PHP5TO7_ZEND_OBJECT_ECALLOC(future_close, ce);
 
-  future = (cassandra_future_close*) ecalloc(1, sizeof(cassandra_future_close));
+  self->future = NULL;
 
-  zend_object_std_init(&future->zval, class_type TSRMLS_CC);
-  object_properties_init(&future->zval, class_type);
-
-  future->future = NULL;
-
-  retval.handle   = zend_objects_store_put(future,
-                      (zend_objects_store_dtor_t) zend_objects_destroy_object,
-                      php_cassandra_future_close_free, NULL TSRMLS_CC);
-  retval.handlers = &cassandra_future_close_handlers;
-
-  return retval;
+  PHP5TO7_ZEND_OBJECT_INIT(future_close, self, ce);
 }
 
 void cassandra_define_FutureClose(TSRMLS_D)
@@ -89,7 +78,7 @@ void cassandra_define_FutureClose(TSRMLS_D)
   INIT_CLASS_ENTRY(ce, "Cassandra\\FutureClose", cassandra_future_close_methods);
   cassandra_future_close_ce = zend_register_internal_class(&ce TSRMLS_CC);
   zend_class_implements(cassandra_future_close_ce TSRMLS_CC, 1, cassandra_future_ce);
-  cassandra_future_close_ce->ce_flags     |= ZEND_ACC_FINAL_CLASS;
+  cassandra_future_close_ce->ce_flags     |= PHP5TO7_ZEND_ACC_FINAL;
   cassandra_future_close_ce->create_object = php_cassandra_future_close_new;
 
   memcpy(&cassandra_future_close_handlers, zend_get_std_object_handlers(), sizeof(zend_object_handlers));

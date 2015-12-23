@@ -8,14 +8,13 @@ ZEND_EXTERN_MODULE_GLOBALS(cassandra)
 
 PHP_METHOD(FuturePreparedStatement, get)
 {
-  zval* timeout = NULL;
-  cassandra_prepared_statement* prepared_statement = NULL;
+  zval *timeout = NULL;
+  cassandra_statement *prepared_statement = NULL;
 
-  cassandra_future_prepared_statement* self =
-    (cassandra_future_prepared_statement*) zend_object_store_get_object(getThis() TSRMLS_CC);
+  cassandra_future_prepared_statement *self = PHP_CASSANDRA_GET_FUTURE_PREPARED_STATEMENT(getThis());
 
-  if (self->prepared_statement) {
-    RETURN_ZVAL(self->prepared_statement, 1, 0);
+  if (!PHP5TO7_ZVAL_IS_UNDEF(self->prepared_statement)) {
+    RETURN_ZVAL(PHP5TO7_ZVAL_MAYBE_P(self->prepared_statement), 1, 0);
   }
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "|z", &timeout) == FAILURE) {
@@ -30,11 +29,10 @@ PHP_METHOD(FuturePreparedStatement, get)
     return;
   }
 
-  object_init_ex(return_value, cassandra_prepared_statement_ce);
-  self->prepared_statement = return_value;
-  Z_ADDREF_P(self->prepared_statement);
+  object_init_ex(return_value, cassandra_statement_ce);
+  PHP5TO7_ZVAL_COPY(PHP5TO7_ZVAL_MAYBE_P(self->prepared_statement), return_value);
 
-  prepared_statement = (cassandra_prepared_statement*) zend_object_store_get_object(return_value TSRMLS_CC);
+  prepared_statement = PHP_CASSANDRA_GET_STATEMENT(return_value);
 
   prepared_statement->prepared = cass_future_get_prepared(self->future);
 }
@@ -50,10 +48,10 @@ static zend_function_entry cassandra_future_prepared_statement_methods[] = {
 
 static zend_object_handlers cassandra_future_prepared_statement_handlers;
 
-static HashTable*
+static HashTable *
 php_cassandra_future_prepared_statement_properties(zval *object TSRMLS_DC)
 {
-  HashTable* props = zend_std_get_properties(object TSRMLS_CC);
+  HashTable *props = zend_std_get_properties(object TSRMLS_CC);
 
   return props;
 }
@@ -68,44 +66,32 @@ php_cassandra_future_prepared_statement_compare(zval *obj1, zval *obj2 TSRMLS_DC
 }
 
 static void
-php_cassandra_future_prepared_statement_free(void *object TSRMLS_DC)
+php_cassandra_future_prepared_statement_free(php5to7_zend_object_free *object TSRMLS_DC)
 {
-  cassandra_future_prepared_statement* future = (cassandra_future_prepared_statement*) object;
+  cassandra_future_prepared_statement *self =
+      (cassandra_future_prepared_statement *) object;
 
-  zend_object_std_dtor(&future->zval TSRMLS_CC);
-
-  if (future->future) {
-    cass_future_free(future->future);
-    future->future = NULL;
+  if (self->future) {
+    cass_future_free(self->future);
+    self->future = NULL;
   }
 
-  if (future->prepared_statement) {
-    zval_ptr_dtor(&future->prepared_statement);
-    future->prepared_statement = NULL;
-  }
+  PHP5TO7_ZVAL_MAYBE_DESTROY(self->prepared_statement);
 
-  efree(future);
+  zend_object_std_dtor(&self->zval TSRMLS_CC);
+  PHP5TO7_ZEND_OBJECT_MAYBE_EFREE(self);
 }
 
-static zend_object_value
-php_cassandra_future_prepared_statement_new(zend_class_entry* class_type TSRMLS_DC)
+static php5to7_zend_object
+php_cassandra_future_prepared_statement_new(zend_class_entry *ce TSRMLS_DC)
 {
-  zend_object_value retval;
-  cassandra_future_prepared_statement *future;
+  cassandra_future_prepared_statement *self =
+      PHP5TO7_ZEND_OBJECT_ECALLOC(future_prepared_statement, ce);
 
-  future = (cassandra_future_prepared_statement*) ecalloc(1, sizeof(cassandra_future_prepared_statement));
-  zend_object_std_init(&future->zval, class_type TSRMLS_CC);
-  object_properties_init(&future->zval, class_type);
+  self->future = NULL;
+  PHP5TO7_ZVAL_UNDEF(self->prepared_statement);
 
-  future->future             = NULL;
-  future->prepared_statement = NULL;
-
-  retval.handle   = zend_objects_store_put(future,
-                      (zend_objects_store_dtor_t) zend_objects_destroy_object,
-                      php_cassandra_future_prepared_statement_free, NULL TSRMLS_CC);
-  retval.handlers = &cassandra_future_prepared_statement_handlers;
-
-  return retval;
+  PHP5TO7_ZEND_OBJECT_INIT(future_prepared_statement, self, ce);
 }
 
 void cassandra_define_FuturePreparedStatement(TSRMLS_D)
@@ -115,7 +101,7 @@ void cassandra_define_FuturePreparedStatement(TSRMLS_D)
   INIT_CLASS_ENTRY(ce, "Cassandra\\FuturePreparedStatement", cassandra_future_prepared_statement_methods);
   cassandra_future_prepared_statement_ce = zend_register_internal_class(&ce TSRMLS_CC);
   zend_class_implements(cassandra_future_prepared_statement_ce TSRMLS_CC, 1, cassandra_future_ce);
-  cassandra_future_prepared_statement_ce->ce_flags     |= ZEND_ACC_FINAL_CLASS;
+  cassandra_future_prepared_statement_ce->ce_flags     |= PHP5TO7_ZEND_ACC_FINAL;
   cassandra_future_prepared_statement_ce->create_object = php_cassandra_future_prepared_statement_new;
 
   memcpy(&cassandra_future_prepared_statement_handlers, zend_get_std_object_handlers(), sizeof(zend_object_handlers));

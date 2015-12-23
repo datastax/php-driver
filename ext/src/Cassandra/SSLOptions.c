@@ -8,10 +8,10 @@ static zend_function_entry cassandra_ssl_methods[] = {
 
 static zend_object_handlers cassandra_ssl_handlers;
 
-static HashTable*
+static HashTable *
 php_cassandra_ssl_properties(zval *object TSRMLS_DC)
 {
-  HashTable* props = zend_std_get_properties(object TSRMLS_CC);
+  HashTable *props = zend_std_get_properties(object TSRMLS_CC);
 
   return props;
 }
@@ -26,34 +26,25 @@ php_cassandra_ssl_compare(zval *obj1, zval *obj2 TSRMLS_DC)
 }
 
 static void
-php_cassandra_ssl_free(void *object TSRMLS_DC)
+php_cassandra_ssl_free(php5to7_zend_object_free *object TSRMLS_DC)
 {
-  cassandra_ssl* options = (cassandra_ssl*) object;
+  cassandra_ssl *self = (cassandra_ssl *) object;
 
-  zend_object_std_dtor(&options->zval TSRMLS_CC);
-  cass_ssl_free(options->ssl);
-  efree(options);
+  cass_ssl_free(self->ssl);
+
+  zend_object_std_dtor(&self->zval TSRMLS_CC);
+  PHP5TO7_ZEND_OBJECT_MAYBE_EFREE(self);
 }
 
-static zend_object_value
-php_cassandra_ssl_new(zend_class_entry* class_type TSRMLS_DC)
+static php5to7_zend_object
+php_cassandra_ssl_new(zend_class_entry *ce TSRMLS_DC)
 {
-  zend_object_value retval;
-  cassandra_ssl *options;
+  cassandra_ssl *self =
+      PHP5TO7_ZEND_OBJECT_ECALLOC(ssl, ce);
 
-  options = (cassandra_ssl*) ecalloc(1, sizeof(cassandra_ssl));
+  self->ssl = cass_ssl_new();
 
-  zend_object_std_init(&options->zval, class_type TSRMLS_CC);
-  object_properties_init(&options->zval, class_type);
-
-  options->ssl = cass_ssl_new();
-
-  retval.handle   = zend_objects_store_put(options,
-                      (zend_objects_store_dtor_t) zend_objects_destroy_object,
-                      php_cassandra_ssl_free, NULL TSRMLS_CC);
-  retval.handlers = &cassandra_ssl_handlers;
-
-  return retval;
+  PHP5TO7_ZEND_OBJECT_INIT(ssl, self, ce);
 }
 
 void cassandra_define_SSLOptions(TSRMLS_D)
@@ -62,7 +53,7 @@ void cassandra_define_SSLOptions(TSRMLS_D)
 
   INIT_CLASS_ENTRY(ce, "Cassandra\\SSLOptions", cassandra_ssl_methods);
   cassandra_ssl_ce = zend_register_internal_class(&ce TSRMLS_CC);
-  cassandra_ssl_ce->ce_flags     |= ZEND_ACC_FINAL_CLASS;
+  cassandra_ssl_ce->ce_flags     |= PHP5TO7_ZEND_ACC_FINAL;
   cassandra_ssl_ce->create_object = php_cassandra_ssl_new;
 
   memcpy(&cassandra_ssl_handlers, zend_get_std_object_handlers(), sizeof(zend_object_handlers));

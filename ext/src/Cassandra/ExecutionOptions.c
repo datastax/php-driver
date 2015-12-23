@@ -8,13 +8,13 @@ ZEND_EXTERN_MODULE_GLOBALS(cassandra)
 
 PHP_METHOD(ExecutionOptions, __construct)
 {
-  zval* options = NULL;
-  cassandra_execution_options* self = NULL;
-  zval** consistency = NULL;
-  zval** serial_consistency = NULL;
-  zval** page_size = NULL;
-  zval** timeout = NULL;
-  zval** arguments = NULL;
+  zval *options = NULL;
+  cassandra_execution_options *self = NULL;
+  zval *consistency = NULL;
+  zval *serial_consistency = NULL;
+  zval *page_size = NULL;
+  zval *timeout = NULL;
+  zval *arguments = NULL;
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z", &options) == FAILURE) {
     return;
@@ -26,45 +26,43 @@ PHP_METHOD(ExecutionOptions, __construct)
     INVALID_ARGUMENT(options, "an array");
   }
 
-  self = (cassandra_execution_options*) zend_object_store_get_object(getThis() TSRMLS_CC);
+  self = PHP_CASSANDRA_GET_EXECUTION_OPTIONS(getThis());
 
-  if (zend_hash_find(Z_ARRVAL_P(options), "consistency", sizeof("consistency"), (void**)&consistency) == SUCCESS) {
-    if (php_cassandra_get_consistency(*consistency, &self->consistency TSRMLS_CC) == FAILURE) {
+  if (PHP5TO7_ZEND_HASH_FIND(Z_ARRVAL_P(options), "consistency", sizeof("consistency"), consistency)) {
+    if (php_cassandra_get_consistency(consistency, &self->consistency TSRMLS_CC) == FAILURE) {
       return;
     }
   }
 
-  if (zend_hash_find(Z_ARRVAL_P(options), "serial_consistency", sizeof("serial_consistency"), (void**)&serial_consistency) == SUCCESS) {
-    if (php_cassandra_get_serial_consistency(*serial_consistency, &self->serial_consistency TSRMLS_CC) == FAILURE) {
+  if (PHP5TO7_ZEND_HASH_FIND(Z_ARRVAL_P(options), "serial_consistency", sizeof("serial_consistency"), serial_consistency)) {
+    if (php_cassandra_get_serial_consistency(serial_consistency, &self->serial_consistency TSRMLS_CC) == FAILURE) {
       return;
     }
   }
 
-  if (zend_hash_find(Z_ARRVAL_P(options), "page_size", sizeof("page_size"), (void**)&page_size) == SUCCESS) {
-    if (Z_TYPE_P(*page_size) != IS_LONG || Z_LVAL_P(*page_size) <= 0) {
-      INVALID_ARGUMENT(*page_size, "greater than zero");
+  if (PHP5TO7_ZEND_HASH_FIND(Z_ARRVAL_P(options), "page_size", sizeof("page_size"), page_size)) {
+    if (Z_TYPE_P(page_size) != IS_LONG || Z_LVAL_P(page_size) <= 0) {
+      INVALID_ARGUMENT(page_size, "greater than zero");
     }
-    self->page_size = Z_LVAL_P(*page_size);
+    self->page_size = Z_LVAL_P(page_size);
   }
 
-  if (zend_hash_find(Z_ARRVAL_P(options), "timeout", sizeof("timeout"), (void**)&timeout) == SUCCESS) {
-    if (!(Z_TYPE_P(*timeout) == IS_LONG   && Z_LVAL_P(*timeout) > 0) &&
-        !(Z_TYPE_P(*timeout) == IS_DOUBLE && Z_DVAL_P(*timeout) > 0) &&
-        !(Z_TYPE_P(*timeout) == IS_NULL)) {
-      INVALID_ARGUMENT(*timeout, "a number of seconds greater than zero or null");
+  if (PHP5TO7_ZEND_HASH_FIND(Z_ARRVAL_P(options), "timeout", sizeof("timeout"), timeout)) {
+    if (!(Z_TYPE_P(timeout) == IS_LONG   && Z_LVAL_P(timeout) > 0) &&
+        !(Z_TYPE_P(timeout) == IS_DOUBLE && Z_DVAL_P(timeout) > 0) &&
+        !(Z_TYPE_P(timeout) == IS_NULL)) {
+      INVALID_ARGUMENT(timeout, "a number of seconds greater than zero or null");
     }
 
-    self->timeout = *timeout;
-    Z_ADDREF_P(self->timeout);
+    PHP5TO7_ZVAL_COPY(PHP5TO7_ZVAL_MAYBE_P(self->timeout), timeout);
   }
 
-  if (zend_hash_find(Z_ARRVAL_P(options), "arguments", sizeof("arguments"), (void**)&arguments) == SUCCESS) {
-    if (Z_TYPE_P(*arguments) != IS_ARRAY) {
-      INVALID_ARGUMENT(*arguments, "an array");
+  if (PHP5TO7_ZEND_HASH_FIND(Z_ARRVAL_P(options), "arguments", sizeof("arguments"), arguments)) {
+    if (Z_TYPE_P(arguments) != IS_ARRAY) {
+      INVALID_ARGUMENT(arguments, "an array");
       return;
     }
-    self->arguments = *arguments;
-    Z_ADDREF_P(self->arguments);
+    PHP5TO7_ZVAL_COPY(PHP5TO7_ZVAL_MAYBE_P(self->arguments), arguments);
   }
 }
 
@@ -73,13 +71,13 @@ PHP_METHOD(ExecutionOptions, __get)
   char *name;
   int   name_len;
 
-  cassandra_execution_options* self = NULL;
+  cassandra_execution_options *self = NULL;
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &name, &name_len) == FAILURE) {
     return;
   }
 
-  self = (cassandra_execution_options*) zend_object_store_get_object(getThis() TSRMLS_CC);
+  self = PHP_CASSANDRA_GET_EXECUTION_OPTIONS(getThis());
 
   if (name_len == 11 && strncmp("consistency", name, name_len) == 0) {
     if (self->consistency == -1) {
@@ -97,15 +95,15 @@ PHP_METHOD(ExecutionOptions, __get)
     }
     RETURN_LONG(self->page_size);
   } else if (name_len == 7 && strncmp("timeout", name, name_len) == 0) {
-    if (self->timeout == NULL) {
+    if (PHP5TO7_ZVAL_IS_UNDEF(self->timeout)) {
       RETURN_NULL();
     }
-    RETURN_ZVAL(self->timeout, 1, 0);
+    RETURN_ZVAL(PHP5TO7_ZVAL_MAYBE_P(self->timeout), 1, 0);
   } else if (name_len == 9 && strncmp("arguments", name, name_len) == 0) {
-    if (self->arguments == NULL) {
+    if (PHP5TO7_ZVAL_IS_UNDEF(self->arguments)) {
       RETURN_NULL();
     }
-    RETURN_ZVAL(self->arguments, 1, 0);
+    RETURN_ZVAL(PHP5TO7_ZVAL_MAYBE_P(self->arguments), 1, 0);
   }
 }
 
@@ -125,10 +123,10 @@ static zend_function_entry cassandra_execution_options_methods[] = {
 
 static zend_object_handlers cassandra_execution_options_handlers;
 
-static HashTable*
+static HashTable *
 php_cassandra_execution_options_properties(zval *object TSRMLS_DC)
 {
-  HashTable* props = zend_std_get_properties(object TSRMLS_CC);
+  HashTable *props = zend_std_get_properties(object TSRMLS_CC);
 
   return props;
 }
@@ -143,42 +141,30 @@ php_cassandra_execution_options_compare(zval *obj1, zval *obj2 TSRMLS_DC)
 }
 
 static void
-php_cassandra_execution_options_free(void *object TSRMLS_DC)
+php_cassandra_execution_options_free(php5to7_zend_object_free *object TSRMLS_DC)
 {
-  cassandra_execution_options* options = (cassandra_execution_options*) object;
+  cassandra_execution_options *self = (cassandra_execution_options *) object;
 
-  if (options->arguments) {
-    zval_ptr_dtor(&options->arguments);
-    options->arguments = NULL;
-  }
+  PHP5TO7_ZVAL_MAYBE_DESTROY(self->arguments);
 
-  zend_object_std_dtor(&options->zval TSRMLS_CC);
-  efree(options);
+  zend_object_std_dtor(&self->zval TSRMLS_CC);
+  PHP5TO7_ZEND_OBJECT_MAYBE_EFREE(self);
 }
 
-static zend_object_value
-php_cassandra_execution_options_new(zend_class_entry* class_type TSRMLS_DC)
+static php5to7_zend_object
+php_cassandra_execution_options_new(zend_class_entry *ce TSRMLS_DC)
 {
-  zend_object_value retval;
-  cassandra_execution_options *options;
+  cassandra_execution_options *self =
+      PHP5TO7_ZEND_OBJECT_ECALLOC(execution_options, ce);
 
-  options = (cassandra_execution_options*) ecalloc(1, sizeof(cassandra_execution_options));
+  self->consistency = -1;
+  self->serial_consistency = -1;
+  self->page_size = -1;
+  PHP5TO7_ZVAL_UNDEF(self->arguments);
+  PHP5TO7_ZVAL_UNDEF(self->timeout);
 
-  zend_object_std_init(&options->zval, class_type TSRMLS_CC);
-  object_properties_init(&options->zval, class_type);
+  PHP5TO7_ZEND_OBJECT_INIT(execution_options, self, ce);
 
-  options->consistency = -1;
-  options->serial_consistency = -1;
-  options->page_size = -1;
-  options->timeout = NULL;
-  options->arguments = NULL;
-
-  retval.handle   = zend_objects_store_put(options,
-                      (zend_objects_store_dtor_t) zend_objects_destroy_object,
-                      php_cassandra_execution_options_free, NULL TSRMLS_CC);
-  retval.handlers = &cassandra_execution_options_handlers;
-
-  return retval;
 }
 
 void cassandra_define_ExecutionOptions(TSRMLS_D)
@@ -187,7 +173,7 @@ void cassandra_define_ExecutionOptions(TSRMLS_D)
 
   INIT_CLASS_ENTRY(ce, "Cassandra\\ExecutionOptions", cassandra_execution_options_methods);
   cassandra_execution_options_ce = zend_register_internal_class(&ce TSRMLS_CC);
-  cassandra_execution_options_ce->ce_flags     |= ZEND_ACC_FINAL_CLASS;
+  cassandra_execution_options_ce->ce_flags     |= PHP5TO7_ZEND_ACC_FINAL;
   cassandra_execution_options_ce->create_object = php_cassandra_execution_options_new;
 
   memcpy(&cassandra_execution_options_handlers, zend_get_std_object_handlers(), sizeof(zend_object_handlers));

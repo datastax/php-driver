@@ -19,18 +19,18 @@
   XX(timeuuid, CASS_VALUE_TYPE_TIMEUUID) \
   XX(inet, CASS_VALUE_TYPE_INET)
 
-zval* php_cassandra_type_scalar(CassValueType type TSRMLS_DC);
-const char* php_cassandra_scalar_type_name(CassValueType type TSRMLS_DC);
-zval* php_cassandra_type_set(CassValueType type TSRMLS_DC);
-zval* php_cassandra_type_collection(CassValueType type TSRMLS_DC);
-zval* php_cassandra_type_map(CassValueType key_type,
-                             CassValueType value_type TSRMLS_DC);
-zval* php_cassandra_type_custom(char* name TSRMLS_DC);
-int php_cassandra_parse_column_type(const char* validator,
-                                    size_t      validator_len,
-                                    int*        reversed_out,
-                                    int*        frozen_out,
-                                    zval**      type_out TSRMLS_DC);
+php5to7_zval php_cassandra_type_scalar(CassValueType type TSRMLS_DC);
+const char *php_cassandra_scalar_type_name(CassValueType type TSRMLS_DC);
+php5to7_zval php_cassandra_type_set(CassValueType type TSRMLS_DC);
+php5to7_zval php_cassandra_type_collection(CassValueType type TSRMLS_DC);
+php5to7_zval php_cassandra_type_map(CassValueType key_type,
+                                    CassValueType value_type TSRMLS_DC);
+php5to7_zval php_cassandra_type_custom(char *name TSRMLS_DC);
+int php_cassandra_parse_column_type(const char   *validator,
+                                    size_t        validator_len,
+                                    int          *reversed_out,
+                                    int          *frozen_out,
+                                    php5to7_zval *type_out TSRMLS_DC);
 
 void php_cassandra_scalar_init(INTERNAL_FUNCTION_PARAMETERS);
 

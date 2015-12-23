@@ -2,7 +2,7 @@
 #include "future.h"
 
 int
-php_cassandra_future_wait_timed(CassFuture* future, zval* timeout TSRMLS_DC)
+php_cassandra_future_wait_timed(CassFuture *future, zval *timeout TSRMLS_DC)
 {
   cass_duration_t timeout_us;
 
@@ -30,11 +30,11 @@ php_cassandra_future_wait_timed(CassFuture* future, zval* timeout TSRMLS_DC)
 }
 
 int
-php_cassandra_future_is_error(CassFuture* future TSRMLS_DC)
+php_cassandra_future_is_error(CassFuture *future TSRMLS_DC)
 {
   int rc = cass_future_error_code(future);
   if (rc != CASS_OK) {
-    const char* message;
+    const char *message;
     size_t      message_len;
     cass_future_error_message(future, &message, &message_len);
     zend_throw_exception_ex(exception_class(rc), rc TSRMLS_CC,

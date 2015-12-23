@@ -8,6 +8,8 @@
 *.lai
 *.libs
 *.sw*
+*.loT
+ex*.php
 Makefile
 Makefile.fragments
 Makefile.global
@@ -29,3 +31,4 @@ libtool
 ltmain.sh
 missing
 /autom4te.cache/
+cassandra.log
