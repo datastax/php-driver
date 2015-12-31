@@ -16,6 +16,7 @@ PHP_METHOD(ClusterBuilder, build)
   char *hash_key;
   int   hash_key_len = 0;
   cassandra_cluster *cluster = NULL;
+  php5to7_zend_resource_le resource;
 
   cassandra_cluster_builder *builder = PHP_CASSANDRA_GET_CLUSTER_BUILDER(getThis());
 
@@ -94,14 +95,21 @@ PHP_METHOD(ClusterBuilder, build)
   cass_cluster_set_tcp_keepalive(cluster->cluster, builder->enable_tcp_keepalive, builder->tcp_keepalive_delay);
 
   if (builder->persist) {
-    php5to7_zend_resource_le le;
-    // TODO(mpenick) need to set the zval type to resource
-    Z_RES(le)->type = php_le_cassandra_cluster();
-    Z_RES(le)->ptr  = cluster->cluster;
+#if PHP_MAJOR_VERSION >= 7
+    ZVAL_NEW_PERSISTENT_RES(&resource, 0, cluster->cluster, php_le_cassandra_cluster());
 
-    if (PHP5TO7_ZEND_HASH_UPDATE(&EG(persistent_list), hash_key, hash_key_len + 1, &le, sizeof(php5to7_zend_resource_le))) {
+    if (PHP5TO7_ZEND_HASH_UPDATE(&EG(persistent_list), hash_key, hash_key_len + 1, &resource, sizeof(php5to7_zend_resource_le))) {
       CASSANDRA_G(persistent_clusters)++;
     }
+#else
+    resource.type = php_le_cassandra_cluster();
+    resource.ptr = cluster->cluster;
+
+    if (PHP5TO7_ZEND_HASH_UPDATE(&EG(persistent_list), hash_key, hash_key_len + 1, resource, sizeof(php5to7_zend_resource_le))) {
+      CASSANDRA_G(persistent_clusters)++;
+    }
+#endif
+
   }
 }
 
@@ -173,9 +181,9 @@ PHP_METHOD(ClusterBuilder, withDefaultTimeout)
 
 PHP_METHOD(ClusterBuilder, withContactPoints)
 {
-  zval   ***args = NULL;
-  zval     *host = NULL;
-  int       argc, i;
+  zval *host = NULL;
+  php5to7_zval_args args = NULL;
+  int argc = 0, i;
   smart_str contactPoints = PHP5TO7_SMART_STR_INIT;
   cassandra_cluster_builder *builder = NULL;
 
@@ -184,12 +192,12 @@ PHP_METHOD(ClusterBuilder, withContactPoints)
   }
 
   for (i = 0; i < argc; i++) {
-    host = *args[i];
+    host = PHP5TO7_ZVAL_ARG(args[i]);
 
     if (Z_TYPE_P(host) != IS_STRING) {
       smart_str_free(&contactPoints);
       throw_invalid_argument(host, "host", "a string ip address or hostname" TSRMLS_CC);
-      efree(args);
+      PHP5TO7_MAYBE_EFREE(args);
       return;
     }
 
@@ -200,7 +208,7 @@ PHP_METHOD(ClusterBuilder, withContactPoints)
     smart_str_appendl(&contactPoints, Z_STRVAL_P(host), Z_STRLEN_P(host));
   }
 
-  efree(args);
+  PHP5TO7_MAYBE_EFREE(args);
   smart_str_0(&contactPoints);
 
   builder = PHP_CASSANDRA_GET_CLUSTER_BUILDER(getThis());
@@ -208,6 +216,7 @@ PHP_METHOD(ClusterBuilder, withContactPoints)
   efree(builder->contact_points);
 #if PHP_MAJOR_VERSION >= 7
   builder->contact_points = estrndup(contactPoints.s->val, contactPoints.s->len);
+  smart_str_free(&contactPoints);
 #else
   builder->contact_points = contactPoints.c;
 #endif
@@ -259,10 +268,10 @@ PHP_METHOD(ClusterBuilder, withRoundRobinLoadBalancingPolicy)
 
 PHP_METHOD(ClusterBuilder, withDatacenterAwareRoundRobinLoadBalancingPolicy)
 {
-  char        *local_dc;
-  int          local_dc_len;
-  zval        *hostPerRemoteDatacenter = NULL;
-  zend_bool    allow_remote_dcs_for_local_cl;
+  char *local_dc;
+  php5to7_size local_dc_len;
+  zval *hostPerRemoteDatacenter = NULL;
+  zend_bool allow_remote_dcs_for_local_cl;
   cassandra_cluster_builder *builder = NULL;
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "szb", &local_dc, &local_dc_len, &hostPerRemoteDatacenter, &allow_remote_dcs_for_local_cl) == FAILURE) {
@@ -690,8 +699,8 @@ php_cassandra_cluster_builder_gc(zval *object, php5to7_zval_gc table, int *n TSR
 static HashTable*
 php_cassandra_cluster_builder_properties(zval *object TSRMLS_DC)
 {
-  cassandra_cluster_builder *builder = PHP_CASSANDRA_GET_CLUSTER_BUILDER(object);
-  HashTable *props  = zend_std_get_properties(object TSRMLS_CC);
+  cassandra_cluster_builder *self = PHP_CASSANDRA_GET_CLUSTER_BUILDER(object);
+  HashTable *props = zend_std_get_properties(object TSRMLS_CC);
 
   php5to7_zval contactPoints;
   php5to7_zval loadBalancingPolicy;
@@ -718,18 +727,18 @@ php_cassandra_cluster_builder_properties(zval *object TSRMLS_DC)
   php5to7_zval tcpKeepalive;
 
   PHP5TO7_ZVAL_MAYBE_MAKE(contactPoints);
-  PHP5TO7_ZVAL_STRING(PHP5TO7_ZVAL_MAYBE_P(contactPoints), builder->contact_points);
+  PHP5TO7_ZVAL_STRING(PHP5TO7_ZVAL_MAYBE_P(contactPoints), self->contact_points);
 
   PHP5TO7_ZVAL_MAYBE_MAKE(loadBalancingPolicy);
-  ZVAL_DOUBLE(PHP5TO7_ZVAL_MAYBE_P(loadBalancingPolicy), builder->load_balancing_policy);
+  ZVAL_DOUBLE(PHP5TO7_ZVAL_MAYBE_P(loadBalancingPolicy), self->load_balancing_policy);
 
   PHP5TO7_ZVAL_MAYBE_MAKE(localDatacenter);
   PHP5TO7_ZVAL_MAYBE_MAKE(hostPerRemoteDatacenter);
   PHP5TO7_ZVAL_MAYBE_MAKE(useRemoteDatacenterForLocalConsistencies);
-  if (builder->load_balancing_policy == LOAD_BALANCING_DC_AWARE_ROUND_ROBIN) {
-    PHP5TO7_ZVAL_STRING(PHP5TO7_ZVAL_MAYBE_P(localDatacenter), builder->local_dc);
-    ZVAL_LONG(PHP5TO7_ZVAL_MAYBE_P(hostPerRemoteDatacenter), builder->used_hosts_per_remote_dc);
-    ZVAL_BOOL(PHP5TO7_ZVAL_MAYBE_P(useRemoteDatacenterForLocalConsistencies), builder->allow_remote_dcs_for_local_cl);
+  if (self->load_balancing_policy == LOAD_BALANCING_DC_AWARE_ROUND_ROBIN) {
+    PHP5TO7_ZVAL_STRING(PHP5TO7_ZVAL_MAYBE_P(localDatacenter), self->local_dc);
+    ZVAL_LONG(PHP5TO7_ZVAL_MAYBE_P(hostPerRemoteDatacenter), self->used_hosts_per_remote_dc);
+    ZVAL_BOOL(PHP5TO7_ZVAL_MAYBE_P(useRemoteDatacenterForLocalConsistencies), self->allow_remote_dcs_for_local_cl);
   } else {
     ZVAL_NULL(PHP5TO7_ZVAL_MAYBE_P(localDatacenter));
     ZVAL_NULL(PHP5TO7_ZVAL_MAYBE_P(hostPerRemoteDatacenter));
@@ -737,68 +746,68 @@ php_cassandra_cluster_builder_properties(zval *object TSRMLS_DC)
   }
 
   PHP5TO7_ZVAL_MAYBE_MAKE(useTokenAwareRouting);
-  ZVAL_BOOL(PHP5TO7_ZVAL_MAYBE_P(useTokenAwareRouting), builder->use_token_aware_routing);
+  ZVAL_BOOL(PHP5TO7_ZVAL_MAYBE_P(useTokenAwareRouting), self->use_token_aware_routing);
 
   PHP5TO7_ZVAL_MAYBE_MAKE(username);
   PHP5TO7_ZVAL_MAYBE_MAKE(password);
-  if (builder->username) {
-    PHP5TO7_ZVAL_STRING(PHP5TO7_ZVAL_MAYBE_P(username), builder->username);
-    PHP5TO7_ZVAL_STRING(PHP5TO7_ZVAL_MAYBE_P(password), builder->password);
+  if (self->username) {
+    PHP5TO7_ZVAL_STRING(PHP5TO7_ZVAL_MAYBE_P(username), self->username);
+    PHP5TO7_ZVAL_STRING(PHP5TO7_ZVAL_MAYBE_P(password), self->password);
   } else {
     ZVAL_NULL(PHP5TO7_ZVAL_MAYBE_P(username));
     ZVAL_NULL(PHP5TO7_ZVAL_MAYBE_P(password));
   }
 
   PHP5TO7_ZVAL_MAYBE_MAKE(connectTimeout);
-  ZVAL_DOUBLE(PHP5TO7_ZVAL_MAYBE_P(connectTimeout), (double) builder->connect_timeout / 1000);
+  ZVAL_DOUBLE(PHP5TO7_ZVAL_MAYBE_P(connectTimeout), (double) self->connect_timeout / 1000);
   PHP5TO7_ZVAL_MAYBE_MAKE(requestTimeout);
-  ZVAL_DOUBLE(PHP5TO7_ZVAL_MAYBE_P(requestTimeout), (double) builder->request_timeout / 1000);
+  ZVAL_DOUBLE(PHP5TO7_ZVAL_MAYBE_P(requestTimeout), (double) self->request_timeout / 1000);
 
   PHP5TO7_ZVAL_MAYBE_MAKE(sslOptions);
-  if (!PHP5TO7_ZVAL_IS_UNDEF(builder->ssl_options)) {
-    PHP5TO7_ZVAL_COPY(PHP5TO7_ZVAL_MAYBE_P(sslOptions), PHP5TO7_ZVAL_MAYBE_P(builder->ssl_options));
+  if (!PHP5TO7_ZVAL_IS_UNDEF(self->ssl_options)) {
+    PHP5TO7_ZVAL_COPY(PHP5TO7_ZVAL_MAYBE_P(sslOptions), PHP5TO7_ZVAL_MAYBE_P(self->ssl_options));
   } else {
     ZVAL_NULL(PHP5TO7_ZVAL_MAYBE_P(sslOptions));
   }
 
   PHP5TO7_ZVAL_MAYBE_MAKE(defaultConsistency);
-  ZVAL_LONG(PHP5TO7_ZVAL_MAYBE_P(defaultConsistency), builder->default_consistency);
+  ZVAL_LONG(PHP5TO7_ZVAL_MAYBE_P(defaultConsistency), self->default_consistency);
   PHP5TO7_ZVAL_MAYBE_MAKE(defaultPageSize);
-  ZVAL_LONG(PHP5TO7_ZVAL_MAYBE_P(defaultPageSize), builder->default_page_size);
+  ZVAL_LONG(PHP5TO7_ZVAL_MAYBE_P(defaultPageSize), self->default_page_size);
   PHP5TO7_ZVAL_MAYBE_MAKE(defaultTimeout);
-  if (!PHP5TO7_ZVAL_IS_UNDEF(builder->default_timeout)) {
-    ZVAL_LONG(PHP5TO7_ZVAL_MAYBE_P(defaultTimeout), PHP5TO7_Z_LVAL_MAYBE_P(builder->default_timeout));
+  if (!PHP5TO7_ZVAL_IS_UNDEF(self->default_timeout)) {
+    ZVAL_LONG(PHP5TO7_ZVAL_MAYBE_P(defaultTimeout), PHP5TO7_Z_LVAL_MAYBE_P(self->default_timeout));
   } else {
     ZVAL_NULL(PHP5TO7_ZVAL_MAYBE_P(defaultTimeout));
   }
 
   PHP5TO7_ZVAL_MAYBE_MAKE(usePersistentSessions);
-  ZVAL_BOOL(PHP5TO7_ZVAL_MAYBE_P(usePersistentSessions), builder->persist);
+  ZVAL_BOOL(PHP5TO7_ZVAL_MAYBE_P(usePersistentSessions), self->persist);
 
   PHP5TO7_ZVAL_MAYBE_MAKE(protocolVersion);
-  ZVAL_LONG(PHP5TO7_ZVAL_MAYBE_P(protocolVersion), builder->protocol_version);
+  ZVAL_LONG(PHP5TO7_ZVAL_MAYBE_P(protocolVersion), self->protocol_version);
 
   PHP5TO7_ZVAL_MAYBE_MAKE(ioThreads);
-  ZVAL_LONG(PHP5TO7_ZVAL_MAYBE_P(ioThreads), builder->io_threads);
+  ZVAL_LONG(PHP5TO7_ZVAL_MAYBE_P(ioThreads), self->io_threads);
 
   PHP5TO7_ZVAL_MAYBE_MAKE(coreConnectionPerHost);
-  ZVAL_LONG(PHP5TO7_ZVAL_MAYBE_P(coreConnectionPerHost), builder->core_connections_per_host);
+  ZVAL_LONG(PHP5TO7_ZVAL_MAYBE_P(coreConnectionPerHost), self->core_connections_per_host);
 
   PHP5TO7_ZVAL_MAYBE_MAKE(maxConnectionsPerHost);
-  ZVAL_LONG(PHP5TO7_ZVAL_MAYBE_P(maxConnectionsPerHost), builder->max_connections_per_host);
+  ZVAL_LONG(PHP5TO7_ZVAL_MAYBE_P(maxConnectionsPerHost), self->max_connections_per_host);
 
   PHP5TO7_ZVAL_MAYBE_MAKE(reconnectInterval);
-  ZVAL_DOUBLE(PHP5TO7_ZVAL_MAYBE_P(reconnectInterval), (double) builder->reconnect_interval / 1000);
+  ZVAL_DOUBLE(PHP5TO7_ZVAL_MAYBE_P(reconnectInterval), (double) self->reconnect_interval / 1000);
 
   PHP5TO7_ZVAL_MAYBE_MAKE(latencyAwareRouting);
-  ZVAL_BOOL(PHP5TO7_ZVAL_MAYBE_P(latencyAwareRouting), builder->enable_latency_aware_routing);
+  ZVAL_BOOL(PHP5TO7_ZVAL_MAYBE_P(latencyAwareRouting), self->enable_latency_aware_routing);
 
   PHP5TO7_ZVAL_MAYBE_MAKE(tcpNodelay);
-  ZVAL_BOOL(PHP5TO7_ZVAL_MAYBE_P(tcpNodelay), builder->enable_tcp_nodelay);
+  ZVAL_BOOL(PHP5TO7_ZVAL_MAYBE_P(tcpNodelay), self->enable_tcp_nodelay);
 
   PHP5TO7_ZVAL_MAYBE_MAKE(tcpKeepalive);
-  if (builder->enable_tcp_keepalive) {
-    ZVAL_DOUBLE(PHP5TO7_ZVAL_MAYBE_P(tcpKeepalive), (double) builder->tcp_keepalive_delay / 1000);
+  if (self->enable_tcp_keepalive) {
+    ZVAL_DOUBLE(PHP5TO7_ZVAL_MAYBE_P(tcpKeepalive), (double) self->tcp_keepalive_delay / 1000);
   } else {
     ZVAL_NULL(PHP5TO7_ZVAL_MAYBE_P(tcpKeepalive));
   }
@@ -865,7 +874,8 @@ php_cassandra_cluster_builder_compare(zval *obj1, zval *obj2 TSRMLS_DC)
 static void
 php_cassandra_cluster_builder_free(php5to7_zend_object_free *object TSRMLS_DC)
 {
-  cassandra_cluster_builder *self = (cassandra_cluster_builder *) object;
+  cassandra_cluster_builder *self =
+      PHP5TO7_ZEND_OBJECT_GET(cluster_builder, object);
 
   efree(self->contact_points);
   self->contact_points = NULL;
@@ -889,7 +899,7 @@ php_cassandra_cluster_builder_free(php5to7_zend_object_free *object TSRMLS_DC)
   PHP5TO7_ZVAL_MAYBE_DESTROY(self->default_timeout);
 
   zend_object_std_dtor(&self->zval TSRMLS_CC);
-  PHP5TO7_ZEND_OBJECT_MAYBE_EFREE(self);
+  PHP5TO7_MAYBE_EFREE(self);
 }
 
 static php5to7_zend_object

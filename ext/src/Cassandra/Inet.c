@@ -8,7 +8,7 @@ php_cassandra_inet_init(INTERNAL_FUNCTION_PARAMETERS)
 {
   cassandra_inet *self;
   char *string;
-  int string_len;
+  php5to7_size string_len;
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &string, &string_len) == FAILURE) {
     return;
@@ -40,7 +40,7 @@ PHP_METHOD(Inet, __toString)
   char *string;
   php_cassandra_format_address(inet->inet, &string);
 
-  PHP5TO7_RETURN_STRING(string);
+  PHP5TO7_RETVAL_STRING(string);
   efree(string);
 }
 /* }}} */
@@ -52,7 +52,7 @@ PHP_METHOD(Inet, address)
   char *string;
   php_cassandra_format_address(inet->inet, &string);
 
-  PHP5TO7_RETURN_STRING(string);
+  PHP5TO7_RETVAL_STRING(string);
   efree(string);
 }
 /* }}} */
@@ -84,18 +84,18 @@ php_cassandra_inet_gc(zval *object, php5to7_zval_gc table, int *n TSRMLS_DC)
 static HashTable *
 php_cassandra_inet_properties(zval *object TSRMLS_DC)
 {
-  cassandra_inet *inet  = PHP_CASSANDRA_GET_INET(object);
+  cassandra_inet *self = PHP_CASSANDRA_GET_INET(object);
   HashTable      *props = zend_std_get_properties(object TSRMLS_CC);
-  zval           *value = NULL;
+  php5to7_zval    address;
 
   char *string;
-  php_cassandra_format_address(inet->inet, &string);
+  php_cassandra_format_address(self->inet, &string);
 
-  PHP5TO7_ZVAL_MAYBE_MAKE(value);
-  PHP5TO7_ZVAL_STRING(value, string);
+  PHP5TO7_ZVAL_MAYBE_MAKE(address);
+  PHP5TO7_ZVAL_STRING(PHP5TO7_ZVAL_MAYBE_P(address), string);
   efree(string);
 
-  PHP5TO7_ZEND_HASH_UPDATE(props, "address", sizeof("address"), value, sizeof(zval));
+  PHP5TO7_ZEND_HASH_UPDATE(props, "address", sizeof("address"), PHP5TO7_ZVAL_MAYBE_P(address), sizeof(zval));
 
   return props;
 }
@@ -123,10 +123,10 @@ php_cassandra_inet_compare(zval *obj1, zval *obj2 TSRMLS_DC)
 static void
 php_cassandra_inet_free(php5to7_zend_object_free *object TSRMLS_DC)
 {
-  cassandra_inet *self = (cassandra_inet *) object;
+  cassandra_inet *self = PHP5TO7_ZEND_OBJECT_GET(inet, object);
 
   zend_object_std_dtor(&self->zval TSRMLS_CC);
-  PHP5TO7_ZEND_OBJECT_MAYBE_EFREE(self);
+  PHP5TO7_MAYBE_EFREE(self);
 }
 
 static php5to7_zend_object

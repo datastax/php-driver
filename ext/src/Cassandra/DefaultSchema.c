@@ -6,9 +6,9 @@ zend_class_entry *cassandra_default_schema_ce = NULL;
 PHP_METHOD(DefaultSchema, keyspace)
 {
   char *name;
-  int name_len;
-  cassandra_schema        *self;
-  cassandra_keyspace      *keyspace;
+  php5to7_size name_len;
+  cassandra_schema *self;
+  cassandra_keyspace *keyspace;
   cassandra_keyspace_meta *meta;
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &name, &name_len) == FAILURE) {
@@ -79,7 +79,9 @@ PHP_METHOD(DefaultSchema, keyspaces)
     keyspace = PHP_CASSANDRA_GET_KEYSPACE(PHP5TO7_ZVAL_MAYBE_P(zkeyspace));
     keyspace->schema = php_cassandra_add_ref(self->schema);
     keyspace->meta   = meta;
-    add_assoc_zval_ex(return_value, keyspace_name, keyspace_name_len + 1, PHP5TO7_ZVAL_MAYBE_P(zkeyspace));
+    PHP5TO7_ADD_ASSOC_ZVAL_EX(return_value,
+                              keyspace_name, keyspace_name_len + 1,
+                              PHP5TO7_ZVAL_MAYBE_P(zkeyspace));
   }
 
   cass_iterator_free(iterator);
@@ -120,7 +122,7 @@ php_cassandra_default_schema_compare(zval *obj1, zval *obj2 TSRMLS_DC)
 static void
 php_cassandra_default_schema_free(php5to7_zend_object_free *object TSRMLS_DC)
 {
-  cassandra_schema *self = (cassandra_schema *) object;
+  cassandra_schema *self = PHP5TO7_ZEND_OBJECT_GET(schema, object);
 
   if (self->schema) {
     php_cassandra_del_ref(&self->schema);
@@ -128,7 +130,7 @@ php_cassandra_default_schema_free(php5to7_zend_object_free *object TSRMLS_DC)
   }
 
   zend_object_std_dtor(&self->zval TSRMLS_CC);
-  PHP5TO7_ZEND_OBJECT_MAYBE_EFREE(self);
+  PHP5TO7_MAYBE_EFREE(self);
 }
 
 static php5to7_zend_object

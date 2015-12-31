@@ -15,7 +15,7 @@ PHP_METHOD(TypeSet, name)
     return;
   }
 
-  PHP5TO7_RETURN_STRING("set");
+  PHP5TO7_RETVAL_STRING("set");
 }
 
 PHP_METHOD(TypeSet, type)
@@ -50,7 +50,7 @@ PHP_METHOD(TypeSet, __toString)
   smart_str_appendl(&string, ">", 1);
   smart_str_0(&string);
 
-  PHP5TO7_RETURN_STRING(PHP5TO7_SMART_STR_VAL(string));
+  PHP5TO7_RETVAL_STRING(PHP5TO7_SMART_STR_VAL(string));
   smart_str_free(&string);
 }
 
@@ -58,7 +58,7 @@ PHP_METHOD(TypeSet, create)
 {
   cassandra_type_set *self;
   cassandra_set *set;
-  php5to7_zval_args args;
+  php5to7_zval_args args = NULL;
   int argc = 0, i;
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "*",
@@ -75,12 +75,12 @@ PHP_METHOD(TypeSet, create)
   if (argc > 0) {
     for (i = 0; i < argc; i++) {
       if (!php_cassandra_set_add(set, PHP5TO7_ZVAL_ARG(args[i]) TSRMLS_CC)) {
-        efree(args);
+        PHP5TO7_MAYBE_EFREE(args);
         return;
       }
     }
 
-    efree(args);
+    PHP5TO7_MAYBE_EFREE(args);
   }
 }
 
@@ -104,10 +104,10 @@ static zend_object_handlers cassandra_type_set_handlers;
 static void
 php_cassandra_type_set_free(php5to7_zend_object_free *object TSRMLS_DC)
 {
-  cassandra_type_set *self = (cassandra_type_set *) object;
+  cassandra_type_set *self = PHP5TO7_ZEND_OBJECT_GET(type_set, object);
 
   zend_object_std_dtor(&self->zval TSRMLS_CC);
-  PHP5TO7_ZEND_OBJECT_MAYBE_EFREE(self);
+  PHP5TO7_MAYBE_EFREE(self);
 }
 
 static php5to7_zend_object

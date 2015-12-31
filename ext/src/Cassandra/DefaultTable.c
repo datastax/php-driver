@@ -259,7 +259,7 @@ PHP_METHOD(DefaultTable, column)
 {
   cassandra_table *self;
   char *name;
-  int   name_len;
+  php5to7_size name_len;
   php5to7_zval column;
   cassandra_column_meta *meta;
 
@@ -323,9 +323,10 @@ PHP_METHOD(DefaultTable, columns)
       column = PHP_CASSANDRA_GET_COLUMN(PHP5TO7_ZVAL_MAYBE_P(zcolumn));
 
       if (PHP5TO7_Z_TYPE_MAYBE_P(column->name) == IS_STRING) {
-        add_assoc_zval_ex(return_value,
-                          PHP5TO7_Z_STRVAL_MAYBE_P(column->name),
-                          PHP5TO7_Z_STRLEN_MAYBE_P(column->name) + 1, PHP5TO7_ZVAL_MAYBE_P(zcolumn));
+        PHP5TO7_ADD_ASSOC_ZVAL_EX(return_value,
+                                  PHP5TO7_Z_STRVAL_MAYBE_P(column->name),
+                                  PHP5TO7_Z_STRLEN_MAYBE_P(column->name) + 1,
+                                  PHP5TO7_ZVAL_MAYBE_P(zcolumn));
       } else {
         add_next_index_zval(return_value, PHP5TO7_ZVAL_MAYBE_P(zcolumn));
       }
@@ -444,7 +445,7 @@ php_cassandra_default_table_compare(zval *obj1, zval *obj2 TSRMLS_DC)
 static void
 php_cassandra_default_table_free(php5to7_zend_object_free *object TSRMLS_DC)
 {
-  cassandra_table *self = (cassandra_table *) object;
+  cassandra_table *self = PHP5TO7_ZEND_OBJECT_GET(table, object);
 
   if (self->schema) {
     php_cassandra_del_ref(&self->schema);
@@ -453,7 +454,7 @@ php_cassandra_default_table_free(php5to7_zend_object_free *object TSRMLS_DC)
   self->meta = NULL;
 
   zend_object_std_dtor(&self->zval TSRMLS_CC);
-  PHP5TO7_ZEND_OBJECT_MAYBE_EFREE(self);
+  PHP5TO7_MAYBE_EFREE(self);
 }
 
 static php5to7_zend_object

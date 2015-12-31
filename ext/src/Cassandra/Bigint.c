@@ -371,14 +371,14 @@ php_cassandra_bigint_gc(zval *object, php5to7_zval_gc table, int *n TSRMLS_DC)
 static HashTable*
 php_cassandra_bigint_properties(zval *object TSRMLS_DC)
 {
-  cassandra_numeric *self  = PHP_CASSANDRA_GET_NUMERIC(object);
+  cassandra_numeric *self = PHP_CASSANDRA_GET_NUMERIC(object);
   HashTable         *props = zend_std_get_properties(object TSRMLS_CC);
-  zval              *value = NULL;
+  php5to7_zval       value;
 
   PHP5TO7_ZVAL_MAYBE_MAKE(value);
-  to_string(value, self TSRMLS_CC);
+  to_string(PHP5TO7_ZVAL_MAYBE_P(value), self TSRMLS_CC);
 
-  PHP5TO7_ZEND_HASH_UPDATE(props, "value", sizeof("value"), value, sizeof(zval));
+  PHP5TO7_ZEND_HASH_UPDATE(props, "value", sizeof("value"), PHP5TO7_ZVAL_MAYBE_P(value), sizeof(zval));
 
   return props;
 }
@@ -406,7 +406,7 @@ php_cassandra_bigint_compare(zval *obj1, zval *obj2 TSRMLS_DC)
 static int
 php_cassandra_bigint_cast(zval *object, zval *retval, int type TSRMLS_DC)
 {
-  cassandra_numeric *self = (cassandra_numeric*) object;
+  cassandra_numeric *self = PHP_CASSANDRA_GET_NUMERIC(object);
 
   switch (type) {
   case IS_LONG:
@@ -425,10 +425,10 @@ php_cassandra_bigint_cast(zval *object, zval *retval, int type TSRMLS_DC)
 static void
 php_cassandra_bigint_free(php5to7_zend_object_free *object TSRMLS_DC)
 {
-  cassandra_numeric *self = (cassandra_numeric*) object;
+  cassandra_numeric *self = PHP5TO7_ZEND_OBJECT_GET(numeric, object);
 
   zend_object_std_dtor(&self->zval TSRMLS_CC);
-  PHP5TO7_ZEND_OBJECT_MAYBE_EFREE(self);
+  PHP5TO7_MAYBE_EFREE(self);
 }
 
 static php5to7_zend_object

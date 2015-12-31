@@ -8,7 +8,7 @@ php_cassandra_blob_init(INTERNAL_FUNCTION_PARAMETERS)
 {
   cassandra_blob *self;
   char *string;
-  int string_len;
+  php5to7_size string_len;
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &string, &string_len) == FAILURE) {
     return;
@@ -41,7 +41,7 @@ PHP_METHOD(Blob, __toString)
   int hex_len;
   php_cassandra_bytes_to_hex((const char *) blob->data, blob->size, &hex, &hex_len);
 
-  PHP5TO7_RETURN_STRINGL(hex, hex_len);
+  PHP5TO7_RETVAL_STRINGL(hex, hex_len);
   efree(hex);
 }
 /* }}} */
@@ -54,7 +54,7 @@ PHP_METHOD(Blob, bytes)
   int hex_len;
   php_cassandra_bytes_to_hex((const char *) blob->data, blob->size, &hex, &hex_len);
 
-  PHP5TO7_RETURN_STRINGL(hex, hex_len);
+  PHP5TO7_RETVAL_STRINGL(hex, hex_len);
   efree(hex);
 }
 /* }}} */
@@ -64,7 +64,7 @@ PHP_METHOD(Blob, toBinaryString)
 {
   cassandra_blob *blob = PHP_CASSANDRA_GET_BLOB(getThis());
 
-  PHP5TO7_RETURN_STRINGL((const char *)blob->data, blob->size);
+  PHP5TO7_RETVAL_STRINGL((const char *)blob->data, blob->size);
 }
 /* }}} */
 
@@ -96,19 +96,19 @@ php_cassandra_blob_gc(zval *object, php5to7_zval_gc table, int *n TSRMLS_DC)
 static HashTable*
 php_cassandra_blob_properties(zval *object TSRMLS_DC)
 {
-  cassandra_blob *blob  = PHP_CASSANDRA_GET_BLOB(object);
+  cassandra_blob *self = PHP_CASSANDRA_GET_BLOB(object);
   HashTable      *props = zend_std_get_properties(object TSRMLS_CC);
+  php5to7_zval    bytes;
 
-  zval *bytes = NULL;
   char *hex;
   int hex_len;
-  php_cassandra_bytes_to_hex((const char *) blob->data, blob->size, &hex, &hex_len);
+  php_cassandra_bytes_to_hex((const char *) self->data, self->size, &hex, &hex_len);
 
   PHP5TO7_ZVAL_MAYBE_MAKE(bytes);
-  PHP5TO7_ZVAL_STRINGL(bytes, hex, hex_len);
+  PHP5TO7_ZVAL_STRINGL(PHP5TO7_ZVAL_MAYBE_P(bytes), hex, hex_len);
   efree(hex);
 
-  PHP5TO7_ZEND_HASH_UPDATE(props, "bytes", sizeof("bytes"), bytes, sizeof(zval));
+  PHP5TO7_ZEND_HASH_UPDATE(props, "bytes", sizeof("bytes"), PHP5TO7_ZVAL_MAYBE_P(bytes), sizeof(zval));
 
   return props;
 }
@@ -137,12 +137,12 @@ php_cassandra_blob_compare(zval *obj1, zval *obj2 TSRMLS_DC)
 static void
 php_cassandra_blob_free(php5to7_zend_object_free *object TSRMLS_DC)
 {
-  cassandra_blob *self = (cassandra_blob*) object;
+  cassandra_blob *self = PHP5TO7_ZEND_OBJECT_GET(blob, object);
 
   efree(self->data);
 
   zend_object_std_dtor(&self->zval TSRMLS_CC);
-  PHP5TO7_ZEND_OBJECT_MAYBE_EFREE(self);
+  PHP5TO7_MAYBE_EFREE(self);
 }
 
 static php5to7_zend_object

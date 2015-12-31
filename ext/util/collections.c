@@ -445,32 +445,21 @@ int
 php_cassandra_collection_from_set(cassandra_set *set, CassCollection **collection_ptr TSRMLS_DC)
 {
   int result = 1;
-  // TODO(mpenick)
-#if 0
-  HashPointer ptr;
-  zval **current;
-  CassCollection *collection = NULL;
+  php5to7_zval *current;
+  CassCollection *collection =
+      cass_collection_new(CASS_COLLECTION_TYPE_SET, zend_hash_num_elements(&set->values));
 
-  zend_hash_get_pointer(&set->values, &ptr);
-  zend_hash_internal_pointer_reset(&set->values);
-
-  collection = cass_collection_new(CASS_COLLECTION_TYPE_SET, zend_hash_num_elements(&set->values));
-
-  while (zend_hash_get_current_data(&set->values, (void**) &current) == SUCCESS) {
-    if (!php_cassandra_collection_append(collection, *current, set->type TSRMLS_CC)) {
+  PHP5TO7_ZEND_HASH_FOREACH_VAL(&set->values, current) {
+    if (!php_cassandra_collection_append(collection, PHP5TO7_ZVAL_MAYBE_DEREF(current), set->type TSRMLS_CC)) {
       result = 0;
       break;
     }
-    zend_hash_move_forward(&set->values);
-  }
-
-  zend_hash_set_pointer(&set->values, &ptr);
+  } PHP5TO7_ZEND_HASH_FOREACH_END(&set->values);
 
   if (result)
     *collection_ptr = collection;
   else
     cass_collection_free(collection);
-#endif
 
   return result;
 }
@@ -479,32 +468,21 @@ int
 php_cassandra_collection_from_collection(cassandra_collection *coll, CassCollection **collection_ptr TSRMLS_DC)
 {
   int result = 1;
-  // TODO(mpenick)
-#if 0
-  HashPointer ptr;
-  zval **current;
-  CassCollection *collection = NULL;
+  php5to7_zval *current;
+  CassCollection *collection =
+      cass_collection_new(CASS_COLLECTION_TYPE_LIST, zend_hash_num_elements(&coll->values));
 
-  zend_hash_get_pointer(&coll->values, &ptr);
-  zend_hash_internal_pointer_reset(&coll->values);
-
-  collection = cass_collection_new(CASS_COLLECTION_TYPE_LIST, zend_hash_num_elements(&coll->values));
-
-  while (zend_hash_get_current_data(&coll->values, (void**) &current) == SUCCESS) {
-    if (!php_cassandra_collection_append(collection, *current, coll->type TSRMLS_CC)) {
+  PHP5TO7_ZEND_HASH_FOREACH_VAL(&coll->values, current) {
+    if (!php_cassandra_collection_append(collection, PHP5TO7_ZVAL_MAYBE_DEREF(current), coll->type TSRMLS_CC)) {
       result = 0;
       break;
     }
-    zend_hash_move_forward(&coll->values);
-  }
-
-  zend_hash_set_pointer(&coll->values, &ptr);
+  } PHP5TO7_ZEND_HASH_FOREACH_END(&coll->values);
 
   if (result)
     *collection_ptr = collection;
   else
     cass_collection_free(collection);
-#endif
 
   return result;
 }
@@ -513,24 +491,21 @@ int
 php_cassandra_collection_from_map(cassandra_map *map, CassCollection **collection_ptr TSRMLS_DC)
 {
   int result = 1;
-  // TODO(mpenick)
-#if 0
-  HashPointer keys_ptr, values_ptr;
-  zval **current;
-  CassCollection *collection = NULL;
+  HashPosition keys_pos;
+  HashPosition values_pos;
+  php5to7_zval *current;
+  CassCollection *collection =
+      cass_collection_new(CASS_COLLECTION_TYPE_MAP, zend_hash_num_elements(&map->keys));
 
-  zend_hash_get_pointer(&map->keys, &keys_ptr);
-  zend_hash_internal_pointer_reset(&map->keys);
-
-  zend_hash_get_pointer(&map->values, &values_ptr);
-  zend_hash_internal_pointer_reset(&map->values);
+  zend_hash_internal_pointer_reset_ex(&map->keys, &keys_pos);
+  zend_hash_internal_pointer_reset_ex(&map->values, &values_pos);
 
   collection = cass_collection_new(CASS_COLLECTION_TYPE_MAP, zend_hash_num_elements(&map->keys));
 
-  while (zend_hash_get_current_data(&map->keys, (void**) &current) == SUCCESS) {
-    if (php_cassandra_collection_append(collection, *current, map->key_type TSRMLS_CC)) {
-      zend_hash_get_current_data(&map->values, (void**) &current);
-      if (!php_cassandra_collection_append(collection, *current, map->value_type TSRMLS_CC)) {
+  while (PHP5TO7_ZEND_HASH_GET_CURRENT_DATA(&map->keys, current)) {
+    if (php_cassandra_collection_append(collection, PHP5TO7_ZVAL_MAYBE_DEREF(current), map->key_type TSRMLS_CC)) {
+      PHP5TO7_ZEND_HASH_GET_CURRENT_DATA(&map->values, current);
+      if (!php_cassandra_collection_append(collection, PHP5TO7_ZVAL_MAYBE_DEREF(current), map->value_type TSRMLS_CC)) {
         result = 0;
         break;
       }
@@ -539,18 +514,14 @@ php_cassandra_collection_from_map(cassandra_map *map, CassCollection **collectio
       break;
     }
 
-    zend_hash_move_forward(&map->keys);
-    zend_hash_move_forward(&map->values);
+    zend_hash_move_forward_ex(&map->keys, &keys_pos);
+    zend_hash_move_forward_ex(&map->values, &values_pos);
   }
-
-  zend_hash_set_pointer(&map->keys, &keys_ptr);
-  zend_hash_set_pointer(&map->values, &values_ptr);
 
   if (result)
     *collection_ptr = collection;
   else
     cass_collection_free(collection);
-#endif
 
   return result;
 }

@@ -50,13 +50,13 @@ static void
 php_cassandra_varchar_init(INTERNAL_FUNCTION_PARAMETERS)
 {
   char *string;
-  int string_len;
+  php5to7_size string_len;
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &string, &string_len) == FAILURE) {
     return;
   }
 
-  PHP5TO7_RETURN_STRINGL(string, string_len);
+  PHP5TO7_RETVAL_STRINGL(string, string_len);
 }
 
 static void

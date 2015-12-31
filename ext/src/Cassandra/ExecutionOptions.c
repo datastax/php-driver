@@ -10,11 +10,11 @@ PHP_METHOD(ExecutionOptions, __construct)
 {
   zval *options = NULL;
   cassandra_execution_options *self = NULL;
-  zval *consistency = NULL;
-  zval *serial_consistency = NULL;
-  zval *page_size = NULL;
-  zval *timeout = NULL;
-  zval *arguments = NULL;
+  php5to7_zval *consistency = NULL;
+  php5to7_zval *serial_consistency = NULL;
+  php5to7_zval *page_size = NULL;
+  php5to7_zval *timeout = NULL;
+  php5to7_zval *arguments = NULL;
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z", &options) == FAILURE) {
     return;
@@ -29,47 +29,47 @@ PHP_METHOD(ExecutionOptions, __construct)
   self = PHP_CASSANDRA_GET_EXECUTION_OPTIONS(getThis());
 
   if (PHP5TO7_ZEND_HASH_FIND(Z_ARRVAL_P(options), "consistency", sizeof("consistency"), consistency)) {
-    if (php_cassandra_get_consistency(consistency, &self->consistency TSRMLS_CC) == FAILURE) {
+    if (php_cassandra_get_consistency(PHP5TO7_ZVAL_MAYBE_DEREF(consistency), &self->consistency TSRMLS_CC) == FAILURE) {
       return;
     }
   }
 
   if (PHP5TO7_ZEND_HASH_FIND(Z_ARRVAL_P(options), "serial_consistency", sizeof("serial_consistency"), serial_consistency)) {
-    if (php_cassandra_get_serial_consistency(serial_consistency, &self->serial_consistency TSRMLS_CC) == FAILURE) {
+    if (php_cassandra_get_serial_consistency(PHP5TO7_ZVAL_MAYBE_DEREF(serial_consistency), &self->serial_consistency TSRMLS_CC) == FAILURE) {
       return;
     }
   }
 
   if (PHP5TO7_ZEND_HASH_FIND(Z_ARRVAL_P(options), "page_size", sizeof("page_size"), page_size)) {
-    if (Z_TYPE_P(page_size) != IS_LONG || Z_LVAL_P(page_size) <= 0) {
-      INVALID_ARGUMENT(page_size, "greater than zero");
+    if (Z_TYPE_P(PHP5TO7_ZVAL_MAYBE_DEREF(page_size)) != IS_LONG || Z_LVAL_P(PHP5TO7_ZVAL_MAYBE_DEREF(page_size)) <= 0) {
+      INVALID_ARGUMENT(PHP5TO7_ZVAL_MAYBE_DEREF(page_size), "greater than zero");
     }
-    self->page_size = Z_LVAL_P(page_size);
+    self->page_size = Z_LVAL_P(PHP5TO7_ZVAL_MAYBE_DEREF(page_size));
   }
 
   if (PHP5TO7_ZEND_HASH_FIND(Z_ARRVAL_P(options), "timeout", sizeof("timeout"), timeout)) {
-    if (!(Z_TYPE_P(timeout) == IS_LONG   && Z_LVAL_P(timeout) > 0) &&
-        !(Z_TYPE_P(timeout) == IS_DOUBLE && Z_DVAL_P(timeout) > 0) &&
-        !(Z_TYPE_P(timeout) == IS_NULL)) {
-      INVALID_ARGUMENT(timeout, "a number of seconds greater than zero or null");
+    if (!(Z_TYPE_P(PHP5TO7_ZVAL_MAYBE_DEREF(timeout)) == IS_LONG   && Z_LVAL_P(PHP5TO7_ZVAL_MAYBE_DEREF(timeout)) > 0) &&
+        !(Z_TYPE_P(PHP5TO7_ZVAL_MAYBE_DEREF(timeout)) == IS_DOUBLE && Z_DVAL_P(PHP5TO7_ZVAL_MAYBE_DEREF(timeout)) > 0) &&
+        !(Z_TYPE_P(PHP5TO7_ZVAL_MAYBE_DEREF(timeout)) == IS_NULL)) {
+      INVALID_ARGUMENT(PHP5TO7_ZVAL_MAYBE_DEREF(timeout), "a number of seconds greater than zero or null");
     }
 
-    PHP5TO7_ZVAL_COPY(PHP5TO7_ZVAL_MAYBE_P(self->timeout), timeout);
+    PHP5TO7_ZVAL_COPY(PHP5TO7_ZVAL_MAYBE_P(self->timeout), PHP5TO7_ZVAL_MAYBE_DEREF(timeout));
   }
 
   if (PHP5TO7_ZEND_HASH_FIND(Z_ARRVAL_P(options), "arguments", sizeof("arguments"), arguments)) {
-    if (Z_TYPE_P(arguments) != IS_ARRAY) {
-      INVALID_ARGUMENT(arguments, "an array");
+    if (Z_TYPE_P(PHP5TO7_ZVAL_MAYBE_DEREF(arguments)) != IS_ARRAY) {
+      INVALID_ARGUMENT(PHP5TO7_ZVAL_MAYBE_DEREF(arguments), "an array");
       return;
     }
-    PHP5TO7_ZVAL_COPY(PHP5TO7_ZVAL_MAYBE_P(self->arguments), arguments);
+    PHP5TO7_ZVAL_COPY(PHP5TO7_ZVAL_MAYBE_P(self->arguments), PHP5TO7_ZVAL_MAYBE_DEREF(arguments));
   }
 }
 
 PHP_METHOD(ExecutionOptions, __get)
 {
   char *name;
-  int   name_len;
+  php5to7_size name_len;
 
   cassandra_execution_options *self = NULL;
 
@@ -143,12 +143,13 @@ php_cassandra_execution_options_compare(zval *obj1, zval *obj2 TSRMLS_DC)
 static void
 php_cassandra_execution_options_free(php5to7_zend_object_free *object TSRMLS_DC)
 {
-  cassandra_execution_options *self = (cassandra_execution_options *) object;
+  cassandra_execution_options *self =
+      PHP5TO7_ZEND_OBJECT_GET(execution_options, object);
 
   PHP5TO7_ZVAL_MAYBE_DESTROY(self->arguments);
 
   zend_object_std_dtor(&self->zval TSRMLS_CC);
-  PHP5TO7_ZEND_OBJECT_MAYBE_EFREE(self);
+  PHP5TO7_MAYBE_EFREE(self);
 }
 
 static php5to7_zend_object

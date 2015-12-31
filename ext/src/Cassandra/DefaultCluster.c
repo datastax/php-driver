@@ -9,9 +9,9 @@ PHP_METHOD(DefaultCluster, connect)
 {
   CassFuture *future = NULL;
   char *hash_key;
-  int   hash_key_len = 0;
+  php5to7_size hash_key_len = 0;
   char *keyspace = NULL;
-  int   keyspace_len;
+  php5to7_size keyspace_len;
   zval *timeout = NULL;
   cassandra_psession *psession;
   cassandra_cluster *cluster = NULL;
@@ -42,7 +42,7 @@ PHP_METHOD(DefaultCluster, connect)
                             cluster->hash_key, SAFE_STR(keyspace));
 
     if (PHP5TO7_ZEND_HASH_FIND(&EG(persistent_list), hash_key, hash_key_len + 1, le) &&
-        Z_TYPE_P(le) == php_le_cassandra_session()) { /* TODO(mpenick): is Z_TYPE_P() correct here or should it be Z_RES_P(le)->type? */
+        Z_RES_P(le)->type == php_le_cassandra_session()) {
       psession = (cassandra_psession *) Z_RES_P(le)->ptr;
       session->session = psession->session;
       future = psession->future;
@@ -50,6 +50,8 @@ PHP_METHOD(DefaultCluster, connect)
   }
 
   if (future == NULL) {
+    php5to7_zend_resource_le resource;
+
     session->session = cass_session_new();
 
     if (keyspace) {
@@ -59,17 +61,20 @@ PHP_METHOD(DefaultCluster, connect)
     }
 
     if (session->persist) {
-      php5to7_zend_resource_le pe;
-      /* TODO(mpenick): Set pe's type to RESOURCE */
       psession = (cassandra_psession *) pecalloc(1, sizeof(cassandra_psession), 1);
       psession->session = session->session;
       psession->future  = future;
 
-      Z_RES(pe)->type = php_le_cassandra_session();
-      Z_RES(pe)->ptr  = psession;
-
-      PHP5TO7_ZEND_HASH_UPDATE(&EG(persistent_list), hash_key, hash_key_len + 1, &pe, sizeof(php5to7_zend_resource_le));
+#if PHP_MAJOR_VERSION >= 7
+      ZVAL_NEW_PERSISTENT_RES(&resource, 0, psession, php_le_cassandra_session());
+      PHP5TO7_ZEND_HASH_UPDATE(&EG(persistent_list), hash_key, hash_key_len + 1, &resource, sizeof(php5to7_zend_resource_le));
       CASSANDRA_G(persistent_sessions)++;
+#else
+      resource.type = php_le_cassandra_session();
+      resource.ptr = psession;
+      PHP5TO7_ZEND_HASH_UPDATE(&EG(persistent_list), hash_key, hash_key_len + 1, resource, sizeof(php5to7_zend_resource_le));
+      CASSANDRA_G(persistent_sessions)++;
+#endif
     }
   }
 
@@ -104,9 +109,9 @@ PHP_METHOD(DefaultCluster, connect)
 PHP_METHOD(DefaultCluster, connectAsync)
 {
   char *hash_key;
-  int   hash_key_len = 0;
+  php5to7_size hash_key_len = 0;
   char *keyspace = NULL;
-  int   keyspace_len;
+  php5to7_size keyspace_len;
   cassandra_cluster *cluster = NULL;
   cassandra_future_session *future = NULL;
 
@@ -149,18 +154,23 @@ PHP_METHOD(DefaultCluster, connectAsync)
   }
 
   if (cluster->persist) {
-    php5to7_zend_resource_le le;
-    /* TODO(mpenick): resource type */
+    php5to7_zend_resource_le resource;
     cassandra_psession *psession =
       (cassandra_psession *) pecalloc(1, sizeof(cassandra_psession), 1);
     psession->session = future->session;
     psession->future  = future->future;
 
-    Z_RES(le)->type = php_le_cassandra_session();
-    Z_RES(le)->ptr  = psession;
-
-    PHP5TO7_ZEND_HASH_UPDATE(&EG(persistent_list), hash_key, hash_key_len + 1, &le, sizeof(php5to7_zend_resource_le));
+#if PHP_MAJOR_VERSION >= 7
+    ZVAL_NEW_PERSISTENT_RES(&resource, 0, psession, php_le_cassandra_session());
+    PHP5TO7_ZEND_HASH_UPDATE(&EG(persistent_list), hash_key, hash_key_len + 1, &resource, sizeof(php5to7_zend_resource_le));
     CASSANDRA_G(persistent_sessions)++;
+#else
+      resource.type = php_le_cassandra_session();
+      resource.ptr = psession;
+      PHP5TO7_ZEND_HASH_UPDATE(&EG(persistent_list), hash_key, hash_key_len + 1, resource, sizeof(php5to7_zend_resource_le));
+      CASSANDRA_G(persistent_sessions)++;
+#endif
+
   }
 }
 
@@ -201,7 +211,7 @@ php_cassandra_default_cluster_compare(zval *obj1, zval *obj2 TSRMLS_DC)
 static void
 php_cassandra_default_cluster_free(php5to7_zend_object_free *object TSRMLS_DC)
 {
-  cassandra_cluster *self = (cassandra_cluster *) object;
+  cassandra_cluster *self = PHP5TO7_ZEND_OBJECT_GET(cluster, object);
 
   if (self->persist) {
     efree(self->hash_key);
@@ -210,7 +220,7 @@ php_cassandra_default_cluster_free(php5to7_zend_object_free *object TSRMLS_DC)
   }
 
   zend_object_std_dtor(&self->zval TSRMLS_CC);
-  PHP5TO7_ZEND_OBJECT_MAYBE_EFREE(self);
+  PHP5TO7_MAYBE_EFREE(self);
 }
 
 static php5to7_zend_object

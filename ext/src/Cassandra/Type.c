@@ -10,7 +10,7 @@ zend_class_entry *cassandra_type_ce = NULL;
     return; \
   } \
   ztype = php_cassandra_type_scalar(value TSRMLS_CC); \
-  RETURN_ZVAL(PHP5TO7_ZVAL_MAYBE_P(ztype), 1, 0); \
+  RETURN_ZVAL(PHP5TO7_ZVAL_MAYBE_P(ztype), 1, 1); \
 }
 
 PHP_CASSANDRA_SCALAR_TYPES_MAP(XX_SCALAR_METHOD)

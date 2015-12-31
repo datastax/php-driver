@@ -78,7 +78,7 @@ PHP_METHOD(Timestamp, microtime)
   sec    = (long) (timestamp->timestamp / 1000);
   usec   = (double) ((timestamp->timestamp - (sec * 1000)) / 1000.00);
   spprintf(&ret, 0, "%.8F %ld", usec, sec);
-  PHP5TO7_RETURN_STRING(ret);
+  PHP5TO7_RETVAL_STRING(ret);
   efree(ret);
 }
 /* }}} */
@@ -128,7 +128,7 @@ PHP_METHOD(Timestamp, __toString)
   timestamp = PHP_CASSANDRA_GET_TIMESTAMP(getThis());
 
   spprintf(&ret, 0, "%lld", (long long int) timestamp->timestamp);
-  PHP5TO7_RETURN_STRING(ret);
+  PHP5TO7_RETVAL_STRING(ret);
   efree(ret);
 }
 /* }}} */
@@ -164,22 +164,22 @@ php_cassandra_timestamp_gc(zval *object, php5to7_zval_gc table, int *n TSRMLS_DC
 static HashTable *
 php_cassandra_timestamp_properties(zval *object TSRMLS_DC)
 {
-  cassandra_timestamp *timestamp    = PHP_CASSANDRA_GET_TIMESTAMP(object);
-  HashTable           *props        = zend_std_get_properties(object TSRMLS_CC);
-  zval                *seconds      = NULL;
-  zval                *microseconds = NULL;
+  cassandra_timestamp *self = PHP_CASSANDRA_GET_TIMESTAMP(object);
+  HashTable           *props = zend_std_get_properties(object TSRMLS_CC);
+  php5to7_zval         seconds;
+  php5to7_zval         microseconds;
 
-  long sec  = (long) (timestamp->timestamp / 1000);
-  long usec = (long) ((timestamp->timestamp - (sec * 1000)) * 1000);
+  long sec  = (long) (self->timestamp / 1000);
+  long usec = (long) ((self->timestamp - (sec * 1000)) * 1000);
 
   PHP5TO7_ZVAL_MAYBE_MAKE(seconds);
-  ZVAL_LONG(seconds, sec);
+  ZVAL_LONG(PHP5TO7_ZVAL_MAYBE_P(seconds), sec);
 
   PHP5TO7_ZVAL_MAYBE_MAKE(microseconds);
-  ZVAL_LONG(microseconds, usec);
+  ZVAL_LONG(PHP5TO7_ZVAL_MAYBE_P(microseconds), usec);
 
-  PHP5TO7_ZEND_HASH_UPDATE(props, "seconds", sizeof("seconds"), seconds, sizeof(zval));
-  PHP5TO7_ZEND_HASH_UPDATE(props, "microseconds", sizeof("microseconds"), microseconds, sizeof(zval));
+  PHP5TO7_ZEND_HASH_UPDATE(props, "seconds", sizeof("seconds"), PHP5TO7_ZVAL_MAYBE_P(seconds), sizeof(zval));
+  PHP5TO7_ZEND_HASH_UPDATE(props, "microseconds", sizeof("microseconds"), PHP5TO7_ZVAL_MAYBE_P(microseconds), sizeof(zval));
 
   return props;
 }
@@ -206,10 +206,10 @@ php_cassandra_timestamp_compare(zval *obj1, zval *obj2 TSRMLS_DC)
 static void
 php_cassandra_timestamp_free(php5to7_zend_object_free *object TSRMLS_DC)
 {
-  cassandra_timestamp *self = (cassandra_timestamp *) object;
+  cassandra_timestamp *self = PHP5TO7_ZEND_OBJECT_GET(timestamp, object);
 
   zend_object_std_dtor(&self->zval TSRMLS_CC);
-  PHP5TO7_ZEND_OBJECT_MAYBE_EFREE(self);
+  PHP5TO7_MAYBE_EFREE(self);
 }
 
 static php5to7_zend_object

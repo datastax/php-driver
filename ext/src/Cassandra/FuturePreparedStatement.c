@@ -69,7 +69,7 @@ static void
 php_cassandra_future_prepared_statement_free(php5to7_zend_object_free *object TSRMLS_DC)
 {
   cassandra_future_prepared_statement *self =
-      (cassandra_future_prepared_statement *) object;
+      PHP5TO7_ZEND_OBJECT_GET(future_prepared_statement, object);
 
   if (self->future) {
     cass_future_free(self->future);
@@ -79,7 +79,7 @@ php_cassandra_future_prepared_statement_free(php5to7_zend_object_free *object TS
   PHP5TO7_ZVAL_MAYBE_DESTROY(self->prepared_statement);
 
   zend_object_std_dtor(&self->zval TSRMLS_CC);
-  PHP5TO7_ZEND_OBJECT_MAYBE_EFREE(self);
+  PHP5TO7_MAYBE_EFREE(self);
 }
 
 static php5to7_zend_object

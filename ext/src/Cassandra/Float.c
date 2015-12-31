@@ -206,10 +206,30 @@ PHP_METHOD(Float, div)
 /* {{{ Cassandra\Float::mod() */
 PHP_METHOD(Float, mod)
 {
-  /* TODO: We could use fmod() here, but maybe we should add a remainder function
-   * for floating point types.
-   */
-  zend_throw_exception_ex(cassandra_runtime_exception_ce, 0 TSRMLS_CC, "Not implemented");
+  zval *num;
+  cassandra_numeric *result = NULL;
+
+  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z", &num) == FAILURE) {
+    return;
+  }
+
+  if (Z_TYPE_P(num) == IS_OBJECT &&
+      instanceof_function(Z_OBJCE_P(num), cassandra_float_ce TSRMLS_CC)) {
+    cassandra_numeric *self = PHP_CASSANDRA_GET_NUMERIC(getThis());
+    cassandra_numeric *flt = PHP_CASSANDRA_GET_NUMERIC(num);
+
+    object_init_ex(return_value, cassandra_float_ce);
+    result = PHP_CASSANDRA_GET_NUMERIC(return_value);
+
+    if (flt->float_value == 0) {
+      zend_throw_exception_ex(cassandra_divide_by_zero_exception_ce, 0 TSRMLS_CC, "Cannot divide by zero");
+      return;
+    }
+
+    result->float_value = fmod(self->float_value, flt->float_value);
+  } else {
+    INVALID_ARGUMENT(num, "an instance of Cassandra\\Float");
+  }
 }
 
 /* {{{ Cassandra\Float::abs() */
@@ -336,13 +356,13 @@ static HashTable*
 php_cassandra_float_properties(zval *object TSRMLS_DC)
 {
   cassandra_numeric *self = PHP_CASSANDRA_GET_NUMERIC(object);
-  HashTable         *props  = zend_std_get_properties(object TSRMLS_CC);
-  zval              *value = NULL;
+  HashTable         *props = zend_std_get_properties(object TSRMLS_CC);
+  php5to7_zval       value;
 
   PHP5TO7_ZVAL_MAYBE_MAKE(value);
-  to_string(value, self TSRMLS_CC);
+  to_string(PHP5TO7_ZVAL_MAYBE_P(value), self TSRMLS_CC);
 
-  PHP5TO7_ZEND_HASH_UPDATE(props, "value", sizeof("value"), value, sizeof(zval));
+  PHP5TO7_ZEND_HASH_UPDATE(props, "value", sizeof("value"), PHP5TO7_ZVAL_MAYBE_P(value), sizeof(zval));
 
   return props;
 }
@@ -386,10 +406,10 @@ php_cassandra_float_cast(zval *object, zval *retval, int type TSRMLS_DC)
 static void
 php_cassandra_float_free(php5to7_zend_object_free *object TSRMLS_DC)
 {
-  cassandra_numeric *self = (cassandra_numeric*) object;
+  cassandra_numeric *self = PHP5TO7_ZEND_OBJECT_GET(numeric, object);
 
   zend_object_std_dtor(&self->zval TSRMLS_CC);
-  PHP5TO7_ZEND_OBJECT_MAYBE_EFREE(self);
+  PHP5TO7_MAYBE_EFREE(self);
 }
 
 static php5to7_zend_object
@@ -403,7 +423,7 @@ php_cassandra_float_new(zend_class_entry *ce TSRMLS_DC)
   PHP5TO7_ZEND_OBJECT_INIT_EX(numeric, float, self, ce);
 }
 
-void cassandra_define_float(TSRMLS_D)
+void cassandra_define_Float(TSRMLS_D)
 {
   zend_class_entry ce;
 

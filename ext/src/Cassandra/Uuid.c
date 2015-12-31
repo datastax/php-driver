@@ -7,7 +7,7 @@ void
 php_cassandra_uuid_init(INTERNAL_FUNCTION_PARAMETERS)
 {
   char *value;
-  int value_len;
+  php5to7_size value_len;
   cassandra_uuid *self;
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "|s", &value, &value_len) == FAILURE) {
@@ -47,7 +47,7 @@ PHP_METHOD(Uuid, __toString)
 
   cass_uuid_string(uuid->uuid, string);
 
-  PHP5TO7_RETURN_STRING(string);
+  PHP5TO7_RETVAL_STRING(string);
 }
 /* }}} */
 
@@ -59,7 +59,7 @@ PHP_METHOD(Uuid, uuid)
 
   cass_uuid_string(uuid->uuid, string);
 
-  PHP5TO7_RETURN_STRING(string);
+  PHP5TO7_RETVAL_STRING(string);
 }
 /* }}} */
 
@@ -102,21 +102,21 @@ php_cassandra_uuid_properties(zval *object TSRMLS_DC)
 {
   char string[CASS_UUID_STRING_LENGTH];
 
-  cassandra_uuid *uuid  = PHP_CASSANDRA_GET_UUID(object);
+  cassandra_uuid *self = PHP_CASSANDRA_GET_UUID(object);
   HashTable      *props = zend_std_get_properties(object TSRMLS_CC);
-  zval           *uuid_str = NULL;
-  zval           *version  = NULL;
+  php5to7_zval    uuid;
+  php5to7_zval    version;
 
-  cass_uuid_string(uuid->uuid, string);
+  cass_uuid_string(self->uuid, string);
 
-  PHP5TO7_ZVAL_MAYBE_MAKE(uuid_str);
-  PHP5TO7_ZVAL_STRING(uuid_str, string);
+  PHP5TO7_ZVAL_MAYBE_MAKE(uuid);
+  PHP5TO7_ZVAL_STRING(PHP5TO7_ZVAL_MAYBE_P(uuid), string);
 
   PHP5TO7_ZVAL_MAYBE_MAKE(version);
-  ZVAL_LONG(version, (long) cass_uuid_version(uuid->uuid));
+  ZVAL_LONG(PHP5TO7_ZVAL_MAYBE_P(version), (long) cass_uuid_version(self->uuid));
 
-  PHP5TO7_ZEND_HASH_UPDATE(props, "uuid", sizeof("uuid"), uuid_str, sizeof(zval));
-  PHP5TO7_ZEND_HASH_UPDATE(props, "version", sizeof("version"), version, sizeof(zval));
+  PHP5TO7_ZEND_HASH_UPDATE(props, "uuid", sizeof("uuid"), PHP5TO7_ZVAL_MAYBE_P(uuid), sizeof(zval));
+  PHP5TO7_ZEND_HASH_UPDATE(props, "version", sizeof("version"), PHP5TO7_ZVAL_MAYBE_P(version), sizeof(zval));
 
   return props;
 }
@@ -150,10 +150,10 @@ php_cassandra_uuid_compare(zval *obj1, zval *obj2 TSRMLS_DC)
 static void
 php_cassandra_uuid_free(php5to7_zend_object_free *object TSRMLS_DC)
 {
-  cassandra_uuid *self = (cassandra_uuid *) object;
+  cassandra_uuid *self = PHP5TO7_ZEND_OBJECT_GET(uuid, object);
 
   zend_object_std_dtor(&self->zval TSRMLS_CC);
-  PHP5TO7_ZEND_OBJECT_MAYBE_EFREE(self);
+  PHP5TO7_MAYBE_EFREE(self);
 }
 
 static php5to7_zend_object

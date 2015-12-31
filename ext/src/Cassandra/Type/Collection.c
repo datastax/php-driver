@@ -16,7 +16,7 @@ PHP_METHOD(TypeCollection, name)
     return;
   }
 
-  PHP5TO7_RETURN_STRING("list");
+  PHP5TO7_RETVAL_STRING("list");
 }
 
 PHP_METHOD(TypeCollection, type)
@@ -51,7 +51,7 @@ PHP_METHOD(TypeCollection, __toString)
   smart_str_appendl(&string, ">", 1);
   smart_str_0(&string);
 
-  PHP5TO7_RETURN_STRING(PHP5TO7_SMART_STR_VAL(string));
+  PHP5TO7_RETVAL_STRING(PHP5TO7_SMART_STR_VAL(string));
   smart_str_free(&string);
 }
 
@@ -59,7 +59,7 @@ PHP_METHOD(TypeCollection, create)
 {
   cassandra_type_collection *self;
   cassandra_collection *collection;
-  php5to7_zval_args args;
+  php5to7_zval_args args = NULL;
   int argc = 0, i;
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "*",
@@ -76,17 +76,17 @@ PHP_METHOD(TypeCollection, create)
   if (argc > 0) {
     for (i = 0; i < argc; i++) {
       if (!php_cassandra_validate_object(PHP5TO7_ZVAL_ARG(args[i]), collection->type TSRMLS_CC)) {
-        efree(args);
+        PHP5TO7_MAYBE_EFREE(args);
         return;
       }
 
       if (!php_cassandra_collection_add(collection, PHP5TO7_ZVAL_ARG(args[i]) TSRMLS_CC)) {
-        efree(args);
+        PHP5TO7_MAYBE_EFREE(args);
         return;
       }
     }
 
-    efree(args);
+    PHP5TO7_MAYBE_EFREE(args);
   }
 }
 
@@ -110,10 +110,11 @@ static zend_object_handlers cassandra_type_collection_handlers;
 static void
 php_cassandra_type_collection_free(php5to7_zend_object_free *object TSRMLS_DC)
 {
-  cassandra_type_collection *self = (cassandra_type_collection *) object;
+  cassandra_type_collection *self =
+      PHP5TO7_ZEND_OBJECT_GET(type_collection, object);
 
   zend_object_std_dtor(&self->zval TSRMLS_CC);
-  PHP5TO7_ZEND_OBJECT_MAYBE_EFREE(self);
+  PHP5TO7_MAYBE_EFREE(self);
 }
 
 static php5to7_zend_object

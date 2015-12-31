@@ -8,7 +8,14 @@ php_cassandra_future_wait_timed(CassFuture *future, zval *timeout TSRMLS_DC)
 
   if (cass_future_ready(future)) return SUCCESS;
 
+#if PHP_MAJOR_VERSION >= 7
+  if (timeout == NULL ||
+      Z_TYPE_P(timeout) == IS_NULL ||
+      Z_TYPE_P(timeout) == IS_UNDEF) {
+#else
   if (timeout == NULL || Z_TYPE_P(timeout) == IS_NULL) {
+#endif
+
     cass_future_wait(future);
   } else {
     if ((Z_TYPE_P(timeout) == IS_LONG && Z_LVAL_P(timeout) > 0)) {

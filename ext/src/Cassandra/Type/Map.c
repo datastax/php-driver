@@ -15,7 +15,7 @@ PHP_METHOD(TypeMap, name)
     return;
   }
 
-  PHP5TO7_RETURN_STRING("map");
+  PHP5TO7_RETVAL_STRING("map");
 }
 
 PHP_METHOD(TypeMap, keyType)
@@ -69,7 +69,7 @@ PHP_METHOD(TypeMap, __toString)
   smart_str_appendl(&string, ">", 1);
   smart_str_0(&string);
 
-  PHP5TO7_RETURN_STRING(PHP5TO7_SMART_STR_VAL(string));
+  PHP5TO7_RETVAL_STRING(PHP5TO7_SMART_STR_VAL(string));
   smart_str_free(&string);
 }
 
@@ -77,7 +77,7 @@ PHP_METHOD(TypeMap, create)
 {
   cassandra_type_map *self;
   cassandra_map *map;
-  php5to7_zval_args args;
+  php5to7_zval_args args = NULL;
   int argc = 0, i;
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "*",
@@ -86,7 +86,7 @@ PHP_METHOD(TypeMap, create)
   }
 
   if (argc % 2 == 1) {
-    efree(args);
+    PHP5TO7_MAYBE_EFREE(args);
     zend_throw_exception_ex(cassandra_invalid_argument_exception_ce, 0 TSRMLS_CC,
                             "Not enough values, maps can only be created " \
                             "from an even number of values, where each odd " \
@@ -107,11 +107,11 @@ PHP_METHOD(TypeMap, create)
       if (!php_cassandra_map_set(map,
                                  PHP5TO7_ZVAL_ARG(args[i]),
                                  PHP5TO7_ZVAL_ARG(args[i + 1]) TSRMLS_CC)) {
-        efree(args);
+        PHP5TO7_MAYBE_EFREE(args);
         return;
       }
     }
-    efree(args);
+    PHP5TO7_MAYBE_EFREE(args);
   }
 }
 
@@ -136,10 +136,10 @@ static zend_object_handlers cassandra_type_map_handlers;
 static void
 php_cassandra_type_map_free(php5to7_zend_object_free *object TSRMLS_DC)
 {
-  cassandra_type_map *self = (cassandra_type_map *) object;
+  cassandra_type_map *self = PHP5TO7_ZEND_OBJECT_GET(type_map, object);
 
   zend_object_std_dtor(&self->zval TSRMLS_CC);
-  PHP5TO7_ZEND_OBJECT_MAYBE_EFREE(self);
+  PHP5TO7_MAYBE_EFREE(self);
 }
 
 static php5to7_zend_object

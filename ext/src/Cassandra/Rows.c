@@ -330,10 +330,8 @@ PHP_METHOD(Rows, nextPageAsync)
 
 PHP_METHOD(Rows, first)
 {
-  // TODO(mpenick):
-#if 0
-  HashPointer ptr;
-  zval **entry;
+  HashPosition pos;
+  php5to7_zval *entry;
   cassandra_rows* self = NULL;
 
   if (zend_parse_parameters_none() == FAILURE) {
@@ -342,14 +340,10 @@ PHP_METHOD(Rows, first)
 
   self = PHP_CASSANDRA_GET_ROWS(getThis());
 
-  zend_hash_get_pointer(Z_ARRVAL_P(self->rows), &ptr);
-  zend_hash_internal_pointer_reset(Z_ARRVAL_P(self->rows));
-
-  if (zend_hash_get_current_data(Z_ARRVAL_P(self->rows), (void **) &entry) == SUCCESS)
-    RETVAL_ZVAL(*entry, 1, 0);
-
-  zend_hash_set_pointer(Z_ARRVAL_P(self->rows), &ptr);
-#endif
+  zend_hash_internal_pointer_reset_ex(PHP5TO7_Z_ARRVAL_MAYBE_P(self->rows), &pos);
+  if (PHP5TO7_ZEND_HASH_GET_CURRENT_DATA(PHP5TO7_Z_ARRVAL_MAYBE_P(self->rows), entry)) {
+    RETVAL_ZVAL(PHP5TO7_ZVAL_MAYBE_DEREF(entry), 1, 0);
+  }
 }
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_none, 0, ZEND_RETURN_VALUE, 0)
@@ -409,7 +403,7 @@ php_cassandra_rows_compare(zval *obj1, zval *obj2 TSRMLS_DC)
 static void
 php_cassandra_rows_free(php5to7_zend_object_free *object TSRMLS_DC)
 {
-  cassandra_rows *self = (cassandra_rows *) object;
+  cassandra_rows *self = PHP5TO7_ZEND_OBJECT_GET(rows, object);
 
   php_cassandra_rows_clear(self);
 
@@ -419,7 +413,7 @@ php_cassandra_rows_free(php5to7_zend_object_free *object TSRMLS_DC)
   PHP5TO7_ZVAL_MAYBE_DESTROY(self->future_next_page);
 
   zend_object_std_dtor(&self->zval TSRMLS_CC);
-  PHP5TO7_ZEND_OBJECT_MAYBE_EFREE(self);
+  PHP5TO7_MAYBE_EFREE(self);
 }
 
 static php5to7_zend_object

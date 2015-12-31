@@ -2,19 +2,21 @@
 #define PHP_CASSANDRA_TYPES_H
 
 #if PHP_MAJOR_VERSION >= 7
-#define PHP_CASSANDRA_OBJECT_TYPE(type_name, fields) \
-  typedef struct {                                   \
-    fields                                           \
-    zend_object zval;                                \
-  } cassandra_##type_name;                           \
+#define PHP_CASSANDRA_BEGIN_OBJECT_TYPE(type_name) \
+  typedef struct cassandra_##type_name##_ {
+
+#define PHP_CASSANDRA_END_OBJECT_TYPE(type_name) \
+    zend_object zval;                            \
+  } cassandra_##type_name;                       \
   static inline cassandra_##type_name* php_cassandra_##type_name##_object_fetch(zend_object* obj) { \
-    return (cassandra_##type_name *)((char *)obj - XtOffsetOf(cassandra_##type_name, zval));       \
+    return (cassandra_##type_name *)((char *)obj - XtOffsetOf(cassandra_##type_name, zval));        \
   }
 #else
-#define PHP_CASSANDRA_OBJECT_TYPE(type_name, fields) \
-  typedef struct {                                   \
-    zend_object zval;                                \
-    fields                                           \
+#define PHP_CASSANDRA_BEGIN_OBJECT_TYPE(type_name) \
+  typedef struct cassandra_##type_name##_ {        \
+    zend_object zval;
+
+#define PHP_CASSANDRA_END_OBJECT_TYPE(type_name) \
   } cassandra_##type_name;
 #endif
 
@@ -82,7 +84,6 @@
   #define PHP_CASSANDRA_GET_TYPE_CUSTOM(obj) (cassandra_type_custom *)zend_object_store_get_object((obj) TSRMLS_CC)
 #endif
 
-
 typedef enum {
   CASSANDRA_BIGINT,
   CASSANDRA_DECIMAL,
@@ -90,7 +91,7 @@ typedef enum {
   CASSANDRA_VARINT
 } cassandra_numeric_type;
 
-PHP_CASSANDRA_OBJECT_TYPE(numeric,
+PHP_CASSANDRA_BEGIN_OBJECT_TYPE(numeric)
   cassandra_numeric_type type;
   union {
     cass_int64_t bigint_value;
@@ -101,45 +102,45 @@ PHP_CASSANDRA_OBJECT_TYPE(numeric,
       long decimal_scale;
     };
   };
-)
+PHP_CASSANDRA_END_OBJECT_TYPE(numeric)
 
-PHP_CASSANDRA_OBJECT_TYPE(timestamp,
+PHP_CASSANDRA_BEGIN_OBJECT_TYPE(timestamp)
     cass_int64_t timestamp;
-)
+PHP_CASSANDRA_END_OBJECT_TYPE(timestamp)
 
-PHP_CASSANDRA_OBJECT_TYPE(blob,
+PHP_CASSANDRA_BEGIN_OBJECT_TYPE(blob)
   cass_byte_t* data;
   size_t size;
-)
+PHP_CASSANDRA_END_OBJECT_TYPE(blob)
 
-PHP_CASSANDRA_OBJECT_TYPE(uuid,
+PHP_CASSANDRA_BEGIN_OBJECT_TYPE(uuid)
   CassUuid uuid;
-)
+PHP_CASSANDRA_END_OBJECT_TYPE(uuid)
 
-PHP_CASSANDRA_OBJECT_TYPE(inet,
+PHP_CASSANDRA_BEGIN_OBJECT_TYPE(inet)
   CassInet inet;
-)
+PHP_CASSANDRA_END_OBJECT_TYPE(inet)
 
-PHP_CASSANDRA_OBJECT_TYPE(collection,
+PHP_CASSANDRA_BEGIN_OBJECT_TYPE(collection)
   cass_byte_t* data;
   CassValueType type;
   HashTable values;
-)
+PHP_CASSANDRA_END_OBJECT_TYPE(collection)
 
-PHP_CASSANDRA_OBJECT_TYPE(map,
+PHP_CASSANDRA_BEGIN_OBJECT_TYPE(map)
   CassValueType key_type;
   HashTable keys;
   CassValueType value_type;
   HashTable values;
-)
+PHP_CASSANDRA_END_OBJECT_TYPE(map)
 
-PHP_CASSANDRA_OBJECT_TYPE(set,
+PHP_CASSANDRA_BEGIN_OBJECT_TYPE(set)
   CassValueType type;
   HashTable values;
   int pos;
-)
+PHP_CASSANDRA_END_OBJECT_TYPE(set)
 
-PHP_CASSANDRA_OBJECT_TYPE(cluster,
+PHP_CASSANDRA_BEGIN_OBJECT_TYPE(cluster)
   cass_byte_t* data;
   CassCluster* cluster;
   long default_consistency;
@@ -148,7 +149,7 @@ PHP_CASSANDRA_OBJECT_TYPE(cluster,
   cass_bool_t persist;
   char* hash_key;
   int hash_key_len;
-)
+PHP_CASSANDRA_END_OBJECT_TYPE(cluster)
 
 typedef enum {
   CASSANDRA_SIMPLE_STATEMENT,
@@ -156,7 +157,7 @@ typedef enum {
   CASSANDRA_BATCH_STATEMENT
 } cassandra_statement_type;
 
-PHP_CASSANDRA_OBJECT_TYPE(statement,
+PHP_CASSANDRA_BEGIN_OBJECT_TYPE(statement)
   cassandra_statement_type type;
   union {
     char* cql;
@@ -166,20 +167,20 @@ PHP_CASSANDRA_OBJECT_TYPE(statement,
       HashTable statements;
     };
   };
-)
+PHP_CASSANDRA_END_OBJECT_TYPE(statement)
 
 typedef struct {
   php5to7_zval statement;
   php5to7_zval arguments;
 } cassandra_batch_statement_entry;
 
-PHP_CASSANDRA_OBJECT_TYPE(execution_options,
+PHP_CASSANDRA_BEGIN_OBJECT_TYPE(execution_options)
   long consistency;
   long serial_consistency;
   int page_size;
   php5to7_zval timeout;
   php5to7_zval arguments;
-)
+PHP_CASSANDRA_END_OBJECT_TYPE(execution_options)
 
 typedef enum {
   LOAD_BALANCING_ROUND_ROBIN = 0,
@@ -194,23 +195,23 @@ typedef struct {
   void*                   data;
 } cassandra_ref;
 
-PHP_CASSANDRA_OBJECT_TYPE(rows,
+PHP_CASSANDRA_BEGIN_OBJECT_TYPE(rows)
   cassandra_ref* statement;
   php5to7_zval session;
   php5to7_zval rows;
   const CassResult* result;
   php5to7_zval next_page;
   php5to7_zval future_next_page;
-)
+PHP_CASSANDRA_END_OBJECT_TYPE(rows)
 
-PHP_CASSANDRA_OBJECT_TYPE(future_rows,
+PHP_CASSANDRA_BEGIN_OBJECT_TYPE(future_rows)
   cassandra_ref* statement;
   php5to7_zval session;
   php5to7_zval rows;
   CassFuture* future;
-)
+PHP_CASSANDRA_END_OBJECT_TYPE(future_rows)
 
-PHP_CASSANDRA_OBJECT_TYPE(cluster_builder,
+PHP_CASSANDRA_BEGIN_OBJECT_TYPE(cluster_builder)
   char* contact_points;
   int port;
   cassandra_load_balancing load_balancing_policy;
@@ -236,22 +237,22 @@ PHP_CASSANDRA_OBJECT_TYPE(cluster_builder,
   cass_bool_t enable_tcp_nodelay;
   cass_bool_t enable_tcp_keepalive;
   unsigned int tcp_keepalive_delay;
-)
+PHP_CASSANDRA_END_OBJECT_TYPE(cluster_builder)
 
-PHP_CASSANDRA_OBJECT_TYPE(future_prepared_statement,
+PHP_CASSANDRA_BEGIN_OBJECT_TYPE(future_prepared_statement)
   CassFuture* future;
   php5to7_zval prepared_statement;
-)
+PHP_CASSANDRA_END_OBJECT_TYPE(future_prepared_statement)
 
-PHP_CASSANDRA_OBJECT_TYPE(future_value,
+PHP_CASSANDRA_BEGIN_OBJECT_TYPE(future_value)
   php5to7_zval value;
-)
+PHP_CASSANDRA_END_OBJECT_TYPE(future_value)
 
-PHP_CASSANDRA_OBJECT_TYPE(future_close,
+PHP_CASSANDRA_BEGIN_OBJECT_TYPE(future_close)
   CassFuture* future;
-)
+PHP_CASSANDRA_END_OBJECT_TYPE(future_close)
 
-PHP_CASSANDRA_OBJECT_TYPE(future_session,
+PHP_CASSANDRA_BEGIN_OBJECT_TYPE(future_session)
   CassFuture* future;
   CassSession* session;
   php5to7_zval default_session;
@@ -260,37 +261,37 @@ PHP_CASSANDRA_OBJECT_TYPE(future_session,
   int hash_key_len;
   char* exception_message;
   CassError exception_code;
-)
+PHP_CASSANDRA_END_OBJECT_TYPE(future_session)
 
 typedef struct {
   CassFuture* future;
   CassSession* session;
 } cassandra_psession;
 
-PHP_CASSANDRA_OBJECT_TYPE(session,
+PHP_CASSANDRA_BEGIN_OBJECT_TYPE(session)
   CassSession* session;
   long default_consistency;
   int default_page_size;
   php5to7_zval default_timeout;
   cass_bool_t persist;
-)
+PHP_CASSANDRA_END_OBJECT_TYPE(session)
 
-PHP_CASSANDRA_OBJECT_TYPE(ssl,
+PHP_CASSANDRA_BEGIN_OBJECT_TYPE(ssl)
   CassSsl* ssl;
-)
+PHP_CASSANDRA_END_OBJECT_TYPE(ssl)
 
-PHP_CASSANDRA_OBJECT_TYPE(ssl_builder,
+PHP_CASSANDRA_BEGIN_OBJECT_TYPE(ssl_builder)
   int flags;
   char** trusted_certs;
   int trusted_certs_cnt;
   char* client_cert;
   char* private_key;
   char* passphrase;
-)
+PHP_CASSANDRA_END_OBJECT_TYPE(ssl_builder)
 
-PHP_CASSANDRA_OBJECT_TYPE(schema,
+PHP_CASSANDRA_BEGIN_OBJECT_TYPE(schema)
   cassandra_ref* schema;
-)
+PHP_CASSANDRA_END_OBJECT_TYPE(schema)
 
 #if CURRENT_CPP_DRIVER_VERSION >= CPP_DRIVER_VERSION(2, 2, 0)
 typedef const CassKeyspaceMeta cassandra_keyspace_meta;
@@ -298,20 +299,21 @@ typedef const CassKeyspaceMeta cassandra_keyspace_meta;
 typedef const CassSchemaMeta cassandra_keyspace_meta;
 #endif
 
-PHP_CASSANDRA_OBJECT_TYPE(keyspace,
+PHP_CASSANDRA_BEGIN_OBJECT_TYPE(keyspace)
   cassandra_ref* schema;
   cassandra_keyspace_meta* meta;
-)
+PHP_CASSANDRA_END_OBJECT_TYPE(keyspace)
+
 #if CURRENT_CPP_DRIVER_VERSION >= CPP_DRIVER_VERSION(2, 2, 0)
 typedef const CassTableMeta cassandra_table_meta;
 #else
 typedef const CassSchemaMeta cassandra_table_meta;
 #endif
 
-PHP_CASSANDRA_OBJECT_TYPE(table,
+PHP_CASSANDRA_BEGIN_OBJECT_TYPE(table)
   cassandra_ref* schema;
   cassandra_table_meta* meta;
-)
+PHP_CASSANDRA_END_OBJECT_TYPE(table)
 
 #if CURRENT_CPP_DRIVER_VERSION >= CPP_DRIVER_VERSION(2, 2, 0)
 typedef const CassColumnMeta cassandra_column_meta;
@@ -319,35 +321,35 @@ typedef const CassColumnMeta cassandra_column_meta;
 typedef const CassSchemaMeta cassandra_column_meta;
 #endif
 
-PHP_CASSANDRA_OBJECT_TYPE(column,
+PHP_CASSANDRA_BEGIN_OBJECT_TYPE(column)
   php5to7_zval name;
   php5to7_zval type;
   int reversed;
   int frozen;
   cassandra_ref* schema;
   cassandra_column_meta* meta;
-)
+PHP_CASSANDRA_END_OBJECT_TYPE(column)
 
-PHP_CASSANDRA_OBJECT_TYPE(type_scalar,
+PHP_CASSANDRA_BEGIN_OBJECT_TYPE(type_scalar)
   CassValueType type;
-)
+PHP_CASSANDRA_END_OBJECT_TYPE(type_scalar)
 
-PHP_CASSANDRA_OBJECT_TYPE(type_collection,
+PHP_CASSANDRA_BEGIN_OBJECT_TYPE(type_collection)
   CassValueType type;
-)
+PHP_CASSANDRA_END_OBJECT_TYPE(type_collection)
 
-PHP_CASSANDRA_OBJECT_TYPE(type_map,
+PHP_CASSANDRA_BEGIN_OBJECT_TYPE(type_map)
   CassValueType key_type;
   CassValueType value_type;
-)
+PHP_CASSANDRA_END_OBJECT_TYPE(type_map)
 
-PHP_CASSANDRA_OBJECT_TYPE(type_set,
+PHP_CASSANDRA_BEGIN_OBJECT_TYPE(type_set)
   CassValueType type;
-)
+PHP_CASSANDRA_END_OBJECT_TYPE(type_set)
 
-PHP_CASSANDRA_OBJECT_TYPE(type_custom,
+PHP_CASSANDRA_BEGIN_OBJECT_TYPE(type_custom)
   char* name;
-)
+PHP_CASSANDRA_END_OBJECT_TYPE(type_custom)
 
 extern PHP_CASSANDRA_API zend_class_entry* cassandra_numeric_ce;
 extern PHP_CASSANDRA_API zend_class_entry* cassandra_bigint_ce;

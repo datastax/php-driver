@@ -108,7 +108,7 @@ PHP_METHOD(Varint, value)
   int string_len;
   php_cassandra_format_integer(self->varint_value, &string, &string_len);
 
-  PHP5TO7_RETURN_STRINGL(string, string_len);
+  PHP5TO7_RETVAL_STRINGL(string, string_len);
   efree(string);
 }
 /* }}} */
@@ -352,19 +352,19 @@ php_cassandra_varint_gc(zval *object, php5to7_zval_gc table, int *n TSRMLS_DC)
 static HashTable *
 php_cassandra_varint_properties(zval *object TSRMLS_DC)
 {
-  cassandra_numeric *self  = PHP_CASSANDRA_GET_NUMERIC(object);
+  cassandra_numeric *self = PHP_CASSANDRA_GET_NUMERIC(object);
   HashTable         *props = zend_std_get_properties(object TSRMLS_CC);
-  zval              *value = NULL;
+  php5to7_zval       value;
 
   char *string;
   int string_len;
   php_cassandra_format_integer(self->varint_value, &string, &string_len);
 
   PHP5TO7_ZVAL_MAYBE_MAKE(value);
-  PHP5TO7_ZVAL_STRINGL(value, string, string_len);
+  PHP5TO7_ZVAL_STRINGL(PHP5TO7_ZVAL_MAYBE_P(value), string, string_len);
   efree(string);
 
-  PHP5TO7_ZEND_HASH_UPDATE(props, "value", sizeof("value"), value, sizeof(zval));
+  PHP5TO7_ZEND_HASH_UPDATE(props, "value", sizeof("value"), PHP5TO7_ZVAL_MAYBE_P(value), sizeof(zval));
 
   return props;
 }
@@ -406,12 +406,12 @@ php_cassandra_varint_cast(zval *object, zval *retval, int type TSRMLS_DC)
 static void
 php_cassandra_varint_free(php5to7_zend_object_free *object TSRMLS_DC)
 {
-  cassandra_numeric *self = (cassandra_numeric *) object;
+  cassandra_numeric *self = PHP5TO7_ZEND_OBJECT_GET(numeric, object);
 
   mpz_clear(self->varint_value);
 
   zend_object_std_dtor(&self->zval TSRMLS_CC);
-  PHP5TO7_ZEND_OBJECT_MAYBE_EFREE(self);
+  PHP5TO7_MAYBE_EFREE(self);
 }
 
 static php5to7_zend_object

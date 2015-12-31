@@ -82,6 +82,11 @@ typedef zend_resource* php5to7_zend_resource;
 typedef zend_object *php5to7_zend_object;
 typedef zend_object php5to7_zend_object_free;
 typedef zval **php5to7_zval_gc;
+typedef zval *php5to7_dtor;
+typedef size_t php5to7_size;
+
+#define PHP5TO7_ZEND_OBJECT_GET(type_name, object) \
+  php_cassandra_##type_name##_object_fetch(object);
 
 #define PHP5TO7_SMART_STR_INIT { NULL, 0 }
 #define PHP5TO7_SMART_STR_VAL(ss) (ss).s->val
@@ -105,7 +110,16 @@ typedef zval **php5to7_zval_gc;
   return &self->zval;                                                                \
 } while(0)
 
-#define PHP5TO7_ZEND_OBJECT_MAYBE_EFREE(self) ((void)0)
+#define PHP5TO7_MAYBE_EFREE(p) ((void)0)
+
+#define PHP5TO7_ADD_ASSOC_ZVAL_EX(zv, key, len, val) \
+  add_assoc_zval_ex((zv), (key), (size_t)(len - 1), val)
+
+#define PHP5TO7_ZEND_HASH_FOREACH_VAL(ht, _val) \
+  ZEND_HASH_FOREACH_VAL(ht, _val)
+#define PHP5TO7_ZEND_HASH_FOREACH_NUM_KEY_VAL(ht, _h, _val) \
+  ZEND_HASH_FOREACH_NUM_KEY_VAL(ht, _h, _val)
+#define PHP5TO7_ZEND_HASH_FOREACH_END(ht) ZEND_HASH_FOREACH_END()
 
 #define PHP5TO7_ZEND_HASH_GET_CURRENT_DATA(ht, res) \
   ((res = zend_hash_get_current_data((ht))) != NULL)
@@ -114,7 +128,7 @@ typedef zval **php5to7_zval_gc;
   zend_hash_get_current_key((ht), (str_index), (num_index))
 
 #define PHP5TO7_ZEND_HASH_EXISTS(ht, key, len) \
-  zend_hash_str_exists((ht), (key), (len))
+  zend_hash_str_exists((ht), (key), (size_t)(len - 1))
 
 #define PHP5TO7_ZEND_HASH_FIND(ht, key, len, res) \
   ((res = zend_hash_str_find((ht), (key), (size_t)(len - 1))) != NULL)
@@ -122,11 +136,14 @@ typedef zval **php5to7_zval_gc;
 #define PHP5TO7_ZEND_HASH_INDEX_FIND(ht, index, res) \
   ((res = zend_hash_index_find((ht), (php5to7_ulong) (index))) != NULL)
 
+#define PHP5TO7_ZEND_HASH_INDEX_INSERT(ht, val, val_size) \
+  (zend_hash_next_index_insert((ht), (val)) != NULL)
+
 #define PHP5TO7_ZEND_HASH_UPDATE(ht, key, len, val, val_size) \
   ((zend_hash_str_update((ht), (key), (size_t)(len - 1), (val))) != NULL)
 
 #define PHP5TO7_ZEND_HASH_ADD(ht, key, len, val, val_size) \
-  (zend_hash_str_add((ht), (key), (len), (val)) != NULL)
+  (zend_hash_str_add((ht), (key), (size_t)(len - 1), (val)) != NULL)
 
 #define PHP5TO7_ZEND_HASH_DEL(ht, key, len) \
   ((zend_hash_str_del((ht), (key), (size_t)(len - 1))) == SUCCESS)
@@ -145,7 +162,7 @@ typedef zval **php5to7_zval_gc;
 #define PHP5TO7_ZVAL_UNDEF(zv) ZVAL_UNDEF(&(zv));
 #define PHP5TO7_ZVAL_MAYBE_MAKE(zv) ((void)0)
 #define PHP5TO7_ZVAL_MAYBE_DESTROY(zv) do { \
-  if (Z_ISUNDEF(zv)) {                      \
+  if (!Z_ISUNDEF(zv)) {                     \
     zval_ptr_dtor(&(zv));                   \
     ZVAL_UNDEF(&(zv));                      \
   }                                         \
@@ -153,8 +170,8 @@ typedef zval **php5to7_zval_gc;
 
 #define PHP5TO7_ZVAL_STRING(zv, s) ZVAL_STRING(zv, s)
 #define PHP5TO7_ZVAL_STRINGL(zv, s, len) ZVAL_STRINGL(zv, s, len)
-#define PHP5TO7_RETURN_STRING(s) RETURN_STRING(s)
-#define PHP5TO7_RETURN_STRINGL(s, len) RETURN_STRINGL(s, len)
+#define PHP5TO7_RETVAL_STRING(s) RETVAL_STRING(s)
+#define PHP5TO7_RETVAL_STRINGL(s, len) RETVAL_STRINGL(s, len)
 
 #define PHP5TO7_ZVAL_ARG(zv) &(zv)
 #define PHP5TO7_ZVAL_MAYBE_DEREF(zv) (zv)
@@ -178,6 +195,15 @@ typedef zend_rsrc_list_entry *php5to7_zend_resource;
 typedef zend_object_value php5to7_zend_object;
 typedef void php5to7_zend_object_free;
 typedef zval ***php5to7_zval_gc;
+typedef void **php5to7_dtor;
+typedef int php5to7_size;
+
+#define PHP5TO7_ZEND_OBJECT_GET(type_name, object) \
+  (cassandra_##type_name *) object
+
+#define Z_RES_P(zv) (zv)
+#define Z_RES(zv) (&(zv))
+#define Z_TRY_ADDREF_P(zv) Z_ADDREF_P(zv)
 
 #define PHP5TO7_SMART_STR_INIT { NULL, 0, 0 }
 #define PHP5TO7_SMART_STR_VAL(ss) (ss).c
@@ -204,8 +230,31 @@ typedef zval ***php5to7_zval_gc;
   return retval;                                                                                    \
 } while(0)
 
-#define PHP5TO7_ZEND_OBJECT_MAYBE_EFREE(self) efree((void *)self)
+#define PHP5TO7_MAYBE_EFREE(p) efree(p)
 
+#define PHP5TO7_ADD_ASSOC_ZVAL_EX(zv, key, len, val) \
+  add_assoc_zval_ex((zv), (key), (uint)(len), val)
+
+#define PHP5TO7_ZEND_HASH_FOREACH_VAL(ht, _val) do { \
+  HashPosition _pos; \
+  zend_hash_internal_pointer_reset_ex((ht), &_pos); \
+  while (zend_hash_get_current_data_ex((ht), (void **)&(_val), &_pos) == SUCCESS) { \
+
+#define PHP5TO7_ZEND_HASH_FOREACH_KEY_VAL(ht, _h, _key, _key_len, _val) \
+  PHP5TO7_ZEND_HASH_FOREACH_VAL(ht, _val) \
+    (_key) = NULL; \
+    zend_hash_get_current_key_ex((ht), &(_key), &(_key_len), &(_h), 0, &_pos);
+
+#define PHP5TO7_ZEND_HASH_FOREACH_NUM_KEY_VAL(ht, _h, _val) \
+  PHP5TO7_ZEND_HASH_FOREACH_VAL(ht, _val) \
+    char *_str_index; \
+    uint _str_length; \
+    zend_hash_get_current_key_ex((ht), &_str_index, &_str_length, &(_h), 0, &_pos);
+
+#define PHP5TO7_ZEND_HASH_FOREACH_END(ht) \
+        zend_hash_move_forward_ex((ht), &_pos); \
+    } \
+  } while(0)
 
 #define PHP5TO7_ZEND_HASH_GET_CURRENT_DATA(ht, res) \
   (zend_hash_get_current_data((ht), (void **) &(res)) == SUCCESS)
@@ -222,11 +271,14 @@ typedef zval ***php5to7_zval_gc;
 #define PHP5TO7_ZEND_HASH_INDEX_FIND(ht, index, res) \
   (zend_hash_index_find((ht), (php5to7_ulong) (index), (void **) &res) == SUCCESS)
 
+#define PHP5TO7_ZEND_HASH_INDEX_INSERT(ht, val, val_size) \
+  (zend_hash_next_index_insert((ht), (void*) &(val), (uint) (val_size), NULL) == SUCCESS)
+
 #define PHP5TO7_ZEND_HASH_UPDATE(ht, key, len, val, val_size) \
-  (zend_hash_update((ht), (key), (uint)(len), (void *)(val), (uint)(val_size), NULL) == SUCCESS)
+  (zend_hash_update((ht), (key), (uint)(len), (void *) &(val), (uint)(val_size), NULL) == SUCCESS)
 
 #define PHP5TO7_ZEND_HASH_ADD(ht, key, len, val, val_size) \
-  (zend_hash_add((ht), (key), (len), (void *)(val), (uint)(val_size), NULL) == SUCCESS)
+  (zend_hash_add((ht), (key), (len), (void *) &(val), (uint)(val_size), NULL) == SUCCESS)
 
 #define PHP5TO7_ZEND_HASH_DEL(ht, key, len) \
   ((zend_hash_del((ht), (key), (uint)(len))) == SUCCESS)
@@ -236,7 +288,7 @@ typedef zval ***php5to7_zval_gc;
 
 #define PHP5TO7_ZVAL_COPY(zv1, zv2) do { \
   zv1 = zv2;                             \
-  Z_ADDREF_P(zv2);                       \
+  if(zv1) Z_TRY_ADDREF_P(zv1);           \
 } while(0)
 
 #define PHP5TO7_ZVAL_IS_UNDEF(zv) ((zv) == NULL)
@@ -253,13 +305,10 @@ typedef zval ***php5to7_zval_gc;
   }                                         \
 } while(0)
 
-#define Z_RES_P(zv) (zv)
-#define Z_RES(zv) (&(zv))
-
 #define PHP5TO7_ZVAL_STRING(zv, s) ZVAL_STRING(zv, s, 1)
 #define PHP5TO7_ZVAL_STRINGL(zv, s, len) ZVAL_STRINGL(zv, s, len, 1)
-#define PHP5TO7_RETURN_STRING(s) RETURN_STRING(s, 1)
-#define PHP5TO7_RETURN_STRINGL(s, len) RETURN_STRINGL(s, len, 1)
+#define PHP5TO7_RETVAL_STRING(s) RETVAL_STRING(s, 1)
+#define PHP5TO7_RETVAL_STRINGL(s, len) RETVAL_STRINGL(s, len, 1)
 
 #define PHP5TO7_ZVAL_ARG(zv) *(zv)
 #define PHP5TO7_ZVAL_MAYBE_DEREF(zv) *(zv)

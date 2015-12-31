@@ -47,7 +47,7 @@ PHP_METHOD(Timeuuid, __toString)
 
   cass_uuid_string(self->uuid, string);
 
-  PHP5TO7_RETURN_STRING(string);
+  PHP5TO7_RETVAL_STRING(string);
 }
 /* }}} */
 
@@ -59,7 +59,7 @@ PHP_METHOD(Timeuuid, uuid)
 
   cass_uuid_string(self->uuid, string);
 
-  PHP5TO7_RETURN_STRING(string);
+  PHP5TO7_RETVAL_STRING(string);
 }
 /* }}} */
 
@@ -144,21 +144,21 @@ php_cassandra_timeuuid_properties(zval *object TSRMLS_DC)
 {
   char string[CASS_UUID_STRING_LENGTH];
 
-  cassandra_uuid *self      = PHP_CASSANDRA_GET_UUID(object);
-  HashTable      *props     = zend_std_get_properties(object TSRMLS_CC);
-  zval           *uuid_str  = NULL;
-  zval           *version   = NULL;
+  cassandra_uuid *self = PHP_CASSANDRA_GET_UUID(object);
+  HashTable      *props = zend_std_get_properties(object TSRMLS_CC);
+  php5to7_zval    uuid;
+  php5to7_zval    version;
 
   cass_uuid_string(self->uuid, string);
 
-  PHP5TO7_ZVAL_MAYBE_MAKE(uuid_str);
-  PHP5TO7_ZVAL_STRING(uuid_str, string);
+  PHP5TO7_ZVAL_MAYBE_MAKE(uuid);
+  PHP5TO7_ZVAL_STRING(PHP5TO7_ZVAL_MAYBE_P(uuid), string);
 
   PHP5TO7_ZVAL_MAYBE_MAKE(version);
-  ZVAL_LONG(version, (long) cass_uuid_version(self->uuid));
+  ZVAL_LONG(PHP5TO7_ZVAL_MAYBE_P(version), (long) cass_uuid_version(self->uuid));
 
-  PHP5TO7_ZEND_HASH_UPDATE(props, "uuid", sizeof("uuid"), uuid_str, sizeof(zval));
-  PHP5TO7_ZEND_HASH_UPDATE(props, "version", sizeof("version"), version, sizeof(zval));
+  PHP5TO7_ZEND_HASH_UPDATE(props, "uuid", sizeof("uuid"), PHP5TO7_ZVAL_MAYBE_P(uuid), sizeof(zval));
+  PHP5TO7_ZEND_HASH_UPDATE(props, "version", sizeof("version"), PHP5TO7_ZVAL_MAYBE_P(version), sizeof(zval));
 
   return props;
 }
@@ -192,10 +192,10 @@ php_cassandra_timeuuid_compare(zval *obj1, zval *obj2 TSRMLS_DC)
 static void
 php_cassandra_timeuuid_free(php5to7_zend_object_free *object TSRMLS_DC)
 {
-  cassandra_uuid *self = (cassandra_uuid *) object;
+  cassandra_uuid *self = PHP5TO7_ZEND_OBJECT_GET(uuid, object);
 
   zend_object_std_dtor(&self->zval TSRMLS_CC);
-  PHP5TO7_ZEND_OBJECT_MAYBE_EFREE(self);
+  PHP5TO7_MAYBE_EFREE(self);
 }
 
 static php5to7_zend_object

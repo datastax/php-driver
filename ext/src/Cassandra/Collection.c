@@ -5,21 +5,17 @@
 zend_class_entry *cassandra_collection_ce = NULL;
 
 int
-php_cassandra_collection_add(cassandra_collection* collection, zval* object TSRMLS_DC)
+php_cassandra_collection_add(cassandra_collection *collection, zval *object TSRMLS_DC)
 {
-  // TODO(mpenick)
-#if 0
-  if (zend_hash_next_index_insert(&collection->values, (void*) &object, sizeof(zval*), NULL) == SUCCESS) {
-    Z_ADDREF_P(object);
+  if (PHP5TO7_ZEND_HASH_INDEX_INSERT(&collection->values, object, sizeof(zval *))) {
+    Z_TRY_ADDREF_P(object);
     return 1;
   }
-#endif
-
   return 0;
 }
 
 static int
-php_cassandra_collection_del(cassandra_collection* collection, ulong index)
+php_cassandra_collection_del(cassandra_collection *collection, ulong index)
 {
   if (zend_hash_index_del(&collection->values, index) == SUCCESS)
     return 1;
@@ -28,84 +24,51 @@ php_cassandra_collection_del(cassandra_collection* collection, ulong index)
 }
 
 static int
-php_cassandra_collection_get(cassandra_collection* collection, ulong index, zval** zvalue)
+php_cassandra_collection_get(cassandra_collection *collection, ulong index, php5to7_zval *zvalue)
 {
-  // TODO(mpenick)
-#if 0
-  zval** value;
-
-  if (zend_hash_index_find(&collection->values, index, (void**) &value) == SUCCESS) {
+  php5to7_zval *value;
+  if (PHP5TO7_ZEND_HASH_INDEX_FIND(&collection->values, index, value)) {
     *zvalue = *value;
     return 1;
   }
-#endif
-
   return 0;
 }
 
 static int
-php_cassandra_collection_find(cassandra_collection* collection, zval* object, long* index TSRMLS_DC)
+php_cassandra_collection_find(cassandra_collection *collection, zval *object, long *index TSRMLS_DC)
 {
-  // TODO(mpenick)
-#if 0
-  HashPointer ptr;
-  zval**      current;
-  zval        compare;
-  ulong       idx;
-
-  if (!php_cassandra_validate_object(object, collection->type TSRMLS_CC))
-    return 0;
-
-  zend_hash_get_pointer(&collection->values, &ptr);
-  zend_hash_internal_pointer_reset(&collection->values);
-
-  while (zend_hash_get_current_data(&collection->values, (void**) &current) == SUCCESS) {
-    is_equal_function(&compare, object, *current TSRMLS_CC);
-    if (Z_LVAL(compare) && zend_hash_get_current_key(&collection->values, NULL, &idx, 0) == HASH_KEY_IS_LONG) {
-      *index = (long) idx;
+  php5to7_ulong num_key;
+  php5to7_zval *current;
+  PHP5TO7_ZEND_HASH_FOREACH_NUM_KEY_VAL(&collection->values, num_key, current) {
+    zval compare;
+    is_equal_function(&compare, object, PHP5TO7_ZVAL_MAYBE_DEREF(current) TSRMLS_CC);
+    if (PHP5TO7_ZVAL_IS_TRUE_P(&compare)) {
+      *index = num_key;
       return 1;
     }
-
-    zend_hash_move_forward(&collection->values);
-  }
-
-
-  zend_hash_set_pointer(&collection->values, &ptr);
-#endif
+  } PHP5TO7_ZEND_HASH_FOREACH_END(&collection->values);
 
   return 0;
 }
 
 static void
-php_cassandra_collection_populate(cassandra_collection* collection, zval* array)
+php_cassandra_collection_populate(cassandra_collection *collection, zval *array)
 {
-  // TODO(mpenick)
-#if 0
-  HashPointer ptr;
-  zval** current;
-
-  zend_hash_get_pointer(&collection->values, &ptr);
-  zend_hash_internal_pointer_reset(&collection->values);
-
-  while (zend_hash_get_current_data(&collection->values, (void**) &current) == SUCCESS) {
-    if (add_next_index_zval(array, *current) == SUCCESS)
-      Z_ADDREF_PP(current);
+  php5to7_zval *current;
+  PHP5TO7_ZEND_HASH_FOREACH_VAL(&collection->values, current) {
+    if (add_next_index_zval(array, PHP5TO7_ZVAL_MAYBE_DEREF(current)) == SUCCESS)
+      Z_TRY_ADDREF_P(PHP5TO7_ZVAL_MAYBE_DEREF(current));
     else
       break;
-
-    zend_hash_move_forward(&collection->values);
-  }
-
-  zend_hash_set_pointer(&collection->values, &ptr);
-#endif
+  } PHP5TO7_ZEND_HASH_FOREACH_END(&collection->values);
 }
 
 /* {{{ Cassandra\Collection::__construct(string) */
 PHP_METHOD(Collection, __construct)
 {
   char *type;
-  int type_len;
-  cassandra_collection* collection;
+  php5to7_size type_len;
+  cassandra_collection *collection;
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &type, &type_len) == FAILURE) {
     return;
@@ -120,16 +83,16 @@ PHP_METHOD(Collection, __construct)
 /* {{{ Cassandra\Collection::type() */
 PHP_METHOD(Collection, type)
 {
-  cassandra_collection* collection = PHP_CASSANDRA_GET_COLLECTION(getThis());
+  cassandra_collection *collection = PHP_CASSANDRA_GET_COLLECTION(getThis());
 
-  PHP5TO7_RETURN_STRING(php_cassandra_type_name(collection->type));
+  PHP5TO7_RETVAL_STRING(php_cassandra_type_name(collection->type));
 }
 /* }}} */
 
 /* {{{ Cassandra\Collection::values() */
 PHP_METHOD(Collection, values)
 {
-  cassandra_collection* collection = NULL;
+  cassandra_collection *collection = NULL;
   array_init(return_value);
   collection = PHP_CASSANDRA_GET_COLLECTION(getThis());
   php_cassandra_collection_populate(collection, return_value);
@@ -139,9 +102,9 @@ PHP_METHOD(Collection, values)
 /* {{{ Cassandra\Collection::add(mixed) */
 PHP_METHOD(Collection, add)
 {
-  zval*** args;
-  cassandra_collection* collection = NULL;
-  int argc, i;
+  cassandra_collection *collection = NULL;
+  php5to7_zval_args args = NULL;
+  int argc = 0, i;
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "+", &args, &argc) == FAILURE)
     return;
@@ -149,24 +112,24 @@ PHP_METHOD(Collection, add)
   collection = PHP_CASSANDRA_GET_COLLECTION(getThis());
 
   for (i = 0; i < argc; i++) {
-    if (Z_TYPE_P(*args[i]) == IS_NULL) {
-      efree(args);
+    if (Z_TYPE_P(PHP5TO7_ZVAL_ARG(args[i])) == IS_NULL) {
+      PHP5TO7_MAYBE_EFREE(args);
       zend_throw_exception_ex(cassandra_invalid_argument_exception_ce, 0 TSRMLS_CC,
                               "Invalid value: null is not supported inside collections");
       RETURN_FALSE;
     }
 
-    if (!php_cassandra_validate_object(*args[i], collection->type TSRMLS_CC)) {
-      efree(args);
+    if (!php_cassandra_validate_object(PHP5TO7_ZVAL_ARG(args[i]), collection->type TSRMLS_CC)) {
+      PHP5TO7_MAYBE_EFREE(args);
       RETURN_FALSE;
     }
   }
 
   for (i = 0; i < argc; i++) {
-    php_cassandra_collection_add(collection, *args[i] TSRMLS_CC);
+    php_cassandra_collection_add(collection, PHP5TO7_ZVAL_ARG(args[i]) TSRMLS_CC);
   }
 
-  efree(args);
+  PHP5TO7_MAYBE_EFREE(args);
   RETVAL_LONG(zend_hash_num_elements(&collection->values));
 }
 /* }}} */
@@ -175,8 +138,8 @@ PHP_METHOD(Collection, add)
 PHP_METHOD(Collection, get)
 {
   long key;
-  cassandra_collection* collection = NULL;
-  zval* value;
+  cassandra_collection *collection = NULL;
+  php5to7_zval value;
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &key) == FAILURE)
     return;
@@ -184,15 +147,15 @@ PHP_METHOD(Collection, get)
   collection = PHP_CASSANDRA_GET_COLLECTION(getThis());
 
   if (php_cassandra_collection_get(collection, (ulong) key, &value))
-    RETURN_ZVAL(value, 1, 0);
+    RETURN_ZVAL(PHP5TO7_ZVAL_MAYBE_P(value), 1, 0);
 }
 /* }}} */
 
 /* {{{ Cassandra\Collection::find(mixed) */
 PHP_METHOD(Collection, find)
 {
-  zval* object;
-  cassandra_collection* collection = NULL;
+  zval *object;
+  cassandra_collection *collection = NULL;
   long index;
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z", &object) == FAILURE)
@@ -208,7 +171,7 @@ PHP_METHOD(Collection, find)
 /* {{{ Cassandra\Collection::count() */
 PHP_METHOD(Collection, count)
 {
-  cassandra_collection* collection = PHP_CASSANDRA_GET_COLLECTION(getThis());
+  cassandra_collection *collection = PHP_CASSANDRA_GET_COLLECTION(getThis());
   RETURN_LONG(zend_hash_num_elements(&collection->values));
 }
 /* }}} */
@@ -216,35 +179,30 @@ PHP_METHOD(Collection, count)
 /* {{{ Cassandra\Collection::current() */
 PHP_METHOD(Collection, current)
 {
-  // TODO(mpenick)
-#if 0
-  zval** current;
-  cassandra_collection* collection = PHP_CASSANDRA_GET_COLLECTION(getThis());
+  php5to7_zval *current;
+  cassandra_collection *collection = PHP_CASSANDRA_GET_COLLECTION(getThis());
 
-  if (zend_hash_get_current_data(&collection->values, (void**) &current) == SUCCESS)
-    RETURN_ZVAL(*current, 1, 0);
-#endif
+  if (PHP5TO7_ZEND_HASH_GET_CURRENT_DATA(&collection->values, current)) {
+    RETURN_ZVAL(PHP5TO7_ZVAL_MAYBE_DEREF(current), 1, 0);
+  }
 }
 /* }}} */
 
 /* {{{ Cassandra\Collection::key() */
 PHP_METHOD(Collection, key)
 {
-  // TODO(mpenick)
-#if 0
-  ulong index;
-  cassandra_collection* collection = PHP_CASSANDRA_GET_COLLECTION(getThis());
-
-  if (zend_hash_get_current_key(&collection->values, NULL, &index, 0) == HASH_KEY_IS_LONG)
-    RETURN_LONG(index);
-#endif
+  php5to7_ulong num_key;
+  cassandra_collection *collection = PHP_CASSANDRA_GET_COLLECTION(getThis());
+  if (PHP5TO7_ZEND_HASH_GET_CURRENT_KEY(&collection->values, NULL, &num_key) == HASH_KEY_IS_LONG) {
+    RETURN_LONG(num_key);
+  }
 }
 /* }}} */
 
 /* {{{ Cassandra\Collection::next() */
 PHP_METHOD(Collection, next)
 {
-  cassandra_collection* collection = PHP_CASSANDRA_GET_COLLECTION(getThis());
+  cassandra_collection *collection = PHP_CASSANDRA_GET_COLLECTION(getThis());
   zend_hash_move_forward(&collection->values);
 }
 /* }}} */
@@ -252,7 +210,7 @@ PHP_METHOD(Collection, next)
 /* {{{ Cassandra\Collection::valid() */
 PHP_METHOD(Collection, valid)
 {
-  cassandra_collection* collection = PHP_CASSANDRA_GET_COLLECTION(getThis());
+  cassandra_collection *collection = PHP_CASSANDRA_GET_COLLECTION(getThis());
   RETURN_BOOL(zend_hash_has_more_elements(&collection->values) == SUCCESS);
 }
 /* }}} */
@@ -260,7 +218,7 @@ PHP_METHOD(Collection, valid)
 /* {{{ Cassandra\Collection::rewind() */
 PHP_METHOD(Collection, rewind)
 {
-  cassandra_collection* collection = PHP_CASSANDRA_GET_COLLECTION(getThis());
+  cassandra_collection *collection = PHP_CASSANDRA_GET_COLLECTION(getThis());
   zend_hash_internal_pointer_reset(&collection->values);
 }
 /* }}} */
@@ -269,7 +227,7 @@ PHP_METHOD(Collection, rewind)
 PHP_METHOD(Collection, remove)
 {
   long index;
-  cassandra_collection* collection = NULL;
+  cassandra_collection *collection = NULL;
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &index) == FAILURE) {
     return;
@@ -321,7 +279,7 @@ static zend_function_entry cassandra_collection_methods[] = {
 
 static zend_object_handlers cassandra_collection_handlers;
 
-static HashTable*
+static HashTable *
 php_cassandra_collection_gc(zval *object, php5to7_zval_gc table, int *n TSRMLS_DC)
 {
   *table = NULL;
@@ -329,20 +287,20 @@ php_cassandra_collection_gc(zval *object, php5to7_zval_gc table, int *n TSRMLS_D
   return zend_std_get_properties(object TSRMLS_CC);
 }
 
-static HashTable*
+static HashTable *
 php_cassandra_collection_properties(zval *object TSRMLS_DC)
 {
-  cassandra_collection  *collection = PHP_CASSANDRA_GET_COLLECTION(object);
-  HashTable             *props      = zend_std_get_properties(object TSRMLS_CC);
-  zval                  *values     = NULL;
+  cassandra_collection  *self = PHP_CASSANDRA_GET_COLLECTION(object);
+  HashTable             *props = zend_std_get_properties(object TSRMLS_CC);
+  php5to7_zval           values;
 
 
   PHP5TO7_ZVAL_MAYBE_MAKE(values);
-  array_init(values);
+  array_init(PHP5TO7_ZVAL_MAYBE_P(values));
 
-  php_cassandra_collection_populate(collection, values);
+  php_cassandra_collection_populate(self, PHP5TO7_ZVAL_MAYBE_P(values));
 
-  PHP5TO7_ZEND_HASH_UPDATE(props, "values", sizeof("values"), values, sizeof(zval));
+  PHP5TO7_ZEND_HASH_UPDATE(props, "values", sizeof("values"), PHP5TO7_ZVAL_MAYBE_P(values), sizeof(zval));
 
   return props;
 }
@@ -352,8 +310,8 @@ int zend_compare_symbol_tables_i(HashTable *ht1, HashTable *ht2 TSRMLS_DC);
 static int
 php_cassandra_collection_compare(zval *obj1, zval *obj2 TSRMLS_DC)
 {
-  cassandra_collection* collection1 = NULL;
-  cassandra_collection* collection2 = NULL;
+  cassandra_collection *collection1 = NULL;
+  cassandra_collection *collection2 = NULL;
 
   if (Z_OBJCE_P(obj1) != Z_OBJCE_P(obj2))
     return 1; /* different classes */
@@ -370,16 +328,17 @@ php_cassandra_collection_compare(zval *obj1, zval *obj2 TSRMLS_DC)
 static void
 php_cassandra_collection_free(php5to7_zend_object_free *object TSRMLS_DC)
 {
-  cassandra_collection *self = (cassandra_collection *) object;
+  cassandra_collection *self =
+      PHP5TO7_ZEND_OBJECT_GET(collection, object);
 
   zend_hash_destroy(&self->values);
 
   zend_object_std_dtor(&self->zval TSRMLS_CC);
-  PHP5TO7_ZEND_OBJECT_MAYBE_EFREE(self);
+  PHP5TO7_MAYBE_EFREE(self);
 }
 
 static php5to7_zend_object
-php_cassandra_collection_new(zend_class_entry* ce TSRMLS_DC)
+php_cassandra_collection_new(zend_class_entry *ce TSRMLS_DC)
 {
   cassandra_collection *self =
       PHP5TO7_ZEND_OBJECT_ECALLOC(collection, ce);

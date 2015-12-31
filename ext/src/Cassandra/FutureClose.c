@@ -51,13 +51,14 @@ php_cassandra_future_close_compare(zval *obj1, zval *obj2 TSRMLS_DC)
 static void
 php_cassandra_future_close_free(php5to7_zend_object_free *object TSRMLS_DC)
 {
-  cassandra_future_close *self = (cassandra_future_close *) object;
+  cassandra_future_close *self =
+      PHP5TO7_ZEND_OBJECT_GET(future_close, object);
 
   if (self->future)
     cass_future_free(self->future);
 
   zend_object_std_dtor(&self->zval TSRMLS_CC);
-  PHP5TO7_ZEND_OBJECT_MAYBE_EFREE(self);
+  PHP5TO7_MAYBE_EFREE(self);
 }
 
 static php5to7_zend_object

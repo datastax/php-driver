@@ -62,10 +62,10 @@ PHP_METHOD(DefaultKeyspace, hasDurableWrites)
 
 PHP_METHOD(DefaultKeyspace, table)
 {
-  char                 *name;
-  int                   name_len;
-  cassandra_keyspace   *self;
-  cassandra_table      *table;
+  char *name;
+  php5to7_size name_len;
+  cassandra_keyspace *self;
+  cassandra_table *table;
   cassandra_table_meta *meta;
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &name, &name_len) == FAILURE) {
@@ -135,7 +135,9 @@ PHP_METHOD(DefaultKeyspace, tables)
     table = PHP_CASSANDRA_GET_TABLE(ztable);
     table->schema = php_cassandra_add_ref(self->schema);
     table->meta   = meta;
-    add_assoc_zval_ex(return_value, table_name, table_name_len + 1, ztable);
+    PHP5TO7_ADD_ASSOC_ZVAL_EX(return_value,
+                              table_name, table_name_len + 1,
+                              ztable);
   }
 
   cass_iterator_free(iterator);
@@ -180,7 +182,7 @@ php_cassandra_default_keyspace_compare(zval *obj1, zval *obj2 TSRMLS_DC)
 static void
 php_cassandra_default_keyspace_free(php5to7_zend_object_free *object TSRMLS_DC)
 {
-  cassandra_keyspace *self = (cassandra_keyspace *) object;
+  cassandra_keyspace *self = PHP5TO7_ZEND_OBJECT_GET(keyspace, object);
 
   if (self->schema) {
     php_cassandra_del_ref(&self->schema);
@@ -189,7 +191,7 @@ php_cassandra_default_keyspace_free(php5to7_zend_object_free *object TSRMLS_DC)
   self->meta = NULL;
 
   zend_object_std_dtor(&self->zval TSRMLS_CC);
-  PHP5TO7_ZEND_OBJECT_MAYBE_EFREE(self);
+  PHP5TO7_MAYBE_EFREE(self);
 }
 
 static php5to7_zend_object

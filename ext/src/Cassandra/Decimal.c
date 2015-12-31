@@ -264,7 +264,7 @@ PHP_METHOD(Decimal, value)
   int string_len;
   php_cassandra_format_integer(self->decimal_value, &string, &string_len);
 
-  PHP5TO7_RETURN_STRINGL(string, string_len);
+  PHP5TO7_RETVAL_STRINGL(string, string_len);
   efree(string);
 }
 /* }}} */
@@ -492,23 +492,23 @@ static HashTable*
 php_cassandra_decimal_properties(zval *object TSRMLS_DC)
 {
   cassandra_numeric *self = PHP_CASSANDRA_GET_NUMERIC(object);
-  HashTable         *props  = zend_std_get_properties(object TSRMLS_CC);
-  zval              *value = NULL;
-  zval              *scale = NULL;
+  HashTable         *props = zend_std_get_properties(object TSRMLS_CC);
+  php5to7_zval      value;
+  php5to7_zval      scale;
 
   char* string;
   int string_len;
   php_cassandra_format_integer(self->decimal_value, &string, &string_len);
 
-  PHP5TO7_ZVAL_MAYBE_MAKE(value);
-  PHP5TO7_ZVAL_STRINGL(value, string, string_len);
+  PHP5TO7_ZVAL_MAYBE_MAKE(PHP5TO7_ZVAL_MAYBE_P(value));
+  PHP5TO7_ZVAL_STRINGL(PHP5TO7_ZVAL_MAYBE_P(value), string, string_len);
   efree(string);
 
   PHP5TO7_ZVAL_MAYBE_MAKE(scale);
-  ZVAL_LONG(scale, self->decimal_scale);
+  ZVAL_LONG(PHP5TO7_ZVAL_MAYBE_P(scale), self->decimal_scale);
 
-  PHP5TO7_ZEND_HASH_UPDATE(props, "value", sizeof("value"), value, sizeof(zval));
-  PHP5TO7_ZEND_HASH_UPDATE(props, "scale", sizeof("scale"), scale, sizeof(zval));
+  PHP5TO7_ZEND_HASH_UPDATE(props, "value", sizeof("value"), PHP5TO7_ZVAL_MAYBE_P(value), sizeof(zval));
+  PHP5TO7_ZEND_HASH_UPDATE(props, "scale", sizeof("scale"), PHP5TO7_ZVAL_MAYBE_P(scale), sizeof(zval));
 
   return props;
 }
@@ -556,12 +556,12 @@ php_cassandra_decimal_cast(zval *object, zval *retval, int type TSRMLS_DC)
 static void
 php_cassandra_decimal_free(php5to7_zend_object_free *object TSRMLS_DC)
 {
-  cassandra_numeric *self = (cassandra_numeric *) object;
+  cassandra_numeric *self = PHP5TO7_ZEND_OBJECT_GET(numeric, object);
 
   mpz_clear(self->decimal_value);
 
   zend_object_std_dtor(&self->zval TSRMLS_CC);
-  PHP5TO7_ZEND_OBJECT_MAYBE_EFREE(self);
+  PHP5TO7_MAYBE_EFREE(self);
 }
 
 static php5to7_zend_object

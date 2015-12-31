@@ -26,7 +26,7 @@ PHP_METHOD(TypeScalar, name)
 
   self = PHP_CASSANDRA_GET_TYPE_SCALAR(getThis());
   name = php_cassandra_scalar_type_name(self->type TSRMLS_CC);
-  PHP5TO7_RETURN_STRING(name);
+  PHP5TO7_RETVAL_STRING(name);
 }
 
 PHP_METHOD(TypeScalar, __toString)
@@ -40,7 +40,7 @@ PHP_METHOD(TypeScalar, __toString)
 
   self = PHP_CASSANDRA_GET_TYPE_SCALAR(getThis());
   name = php_cassandra_scalar_type_name(self->type TSRMLS_CC);
-  PHP5TO7_RETURN_STRING(name);
+  PHP5TO7_RETVAL_STRING(name);
 }
 
 PHP_METHOD(TypeScalar, create)
@@ -67,10 +67,10 @@ static zend_object_handlers cassandra_type_scalar_handlers;
 static void
 php_cassandra_type_scalar_free(php5to7_zend_object_free *object TSRMLS_DC)
 {
-  cassandra_type_scalar *self = (cassandra_type_scalar *) object;
+  cassandra_type_scalar *self = PHP5TO7_ZEND_OBJECT_GET(type_scalar, object);
 
   zend_object_std_dtor(&self->zval TSRMLS_CC);
-  PHP5TO7_ZEND_OBJECT_MAYBE_EFREE(self);
+  PHP5TO7_MAYBE_EFREE(self);
 }
 
 static php5to7_zend_object

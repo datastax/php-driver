@@ -21,7 +21,7 @@ PHP_METHOD(TypeCustom, name)
 
   custom = PHP_CASSANDRA_GET_TYPE_CUSTOM(getThis());
 
-  PHP5TO7_RETURN_STRING(custom->name);
+  PHP5TO7_RETVAL_STRING(custom->name);
 }
 
 PHP_METHOD(TypeCustom, __toString)
@@ -34,7 +34,7 @@ PHP_METHOD(TypeCustom, __toString)
 
   custom = PHP_CASSANDRA_GET_TYPE_CUSTOM(getThis());
 
-  PHP5TO7_RETURN_STRING(custom->name);
+  PHP5TO7_RETVAL_STRING(custom->name);
 }
 
 PHP_METHOD(TypeCustom, create)
@@ -64,7 +64,7 @@ static zend_object_handlers cassandra_type_custom_handlers;
 static void
 php_cassandra_type_custom_free(php5to7_zend_object_free *object TSRMLS_DC)
 {
-  cassandra_type_custom *self = (cassandra_type_custom *) object;
+  cassandra_type_custom *self = PHP5TO7_ZEND_OBJECT_GET(type_custom, object);
 
   if (self->name) {
     efree(self->name);
@@ -72,7 +72,7 @@ php_cassandra_type_custom_free(php5to7_zend_object_free *object TSRMLS_DC)
   }
 
   zend_object_std_dtor(&self->zval TSRMLS_CC);
-  PHP5TO7_ZEND_OBJECT_MAYBE_EFREE(self);
+  PHP5TO7_MAYBE_EFREE(self);
 }
 
 static php5to7_zend_object

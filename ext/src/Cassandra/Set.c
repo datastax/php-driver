@@ -20,8 +20,8 @@ php_cassandra_set_add(cassandra_set *set, zval *object TSRMLS_DC)
   if (!php_cassandra_hash_object(object, set->type, &key, &key_len TSRMLS_CC))
     return 0;
 
-  if (PHP5TO7_ZEND_HASH_ADD(&set->values, key, key_len, (void*) &object, sizeof(zval*))) {
-    Z_ADDREF_P(object);
+  if (PHP5TO7_ZEND_HASH_ADD(&set->values, key, key_len + 1, object, sizeof(zval*))) {
+    Z_TRY_ADDREF_P(object);
     result = 1;
   }
 
@@ -39,7 +39,7 @@ php_cassandra_set_del(cassandra_set *set, zval *object TSRMLS_DC)
   if (!php_cassandra_hash_object(object, set->type, &key, &key_len TSRMLS_CC))
     return 0;
 
-  if (PHP5TO7_ZEND_HASH_DEL(&set->values, key, key_len))
+  if (PHP5TO7_ZEND_HASH_DEL(&set->values, key, key_len + 1))
     result = 1;
 
   efree(key);
@@ -56,7 +56,7 @@ php_cassandra_set_has(cassandra_set *set, zval *object TSRMLS_DC)
   if (!php_cassandra_hash_object(object, set->type, &key, &key_len TSRMLS_CC))
     return 0;
 
-  result = PHP5TO7_ZEND_HASH_EXISTS(&set->values, key, key_len);
+  result = PHP5TO7_ZEND_HASH_EXISTS(&set->values, key, key_len + 1);
 
   efree(key);
   return result;
@@ -65,32 +65,20 @@ php_cassandra_set_has(cassandra_set *set, zval *object TSRMLS_DC)
 static void
 php_cassandra_set_populate(cassandra_set *set, zval *array)
 {
-  // TODO(mpenick)
-#if 0
-  HashPointer ptr;
-  zval** current;
-
-  zend_hash_get_pointer(&set->values, &ptr);
-  zend_hash_internal_pointer_reset(&set->values);
-
-  while (zend_hash_get_current_data(&set->values, (void**) &current) == SUCCESS) {
-    if (add_next_index_zval(array, *current) == SUCCESS)
-      Z_ADDREF_PP(current);
+  php5to7_zval *current;
+  PHP5TO7_ZEND_HASH_FOREACH_VAL(&set->values, current) {
+    if (add_next_index_zval(array, PHP5TO7_ZVAL_MAYBE_DEREF(current)) == SUCCESS)
+      Z_TRY_ADDREF_P(PHP5TO7_ZVAL_MAYBE_DEREF(current));
     else
       break;
-
-    zend_hash_move_forward(&set->values);
-  }
-
-  zend_hash_set_pointer(&set->values, &ptr);
-#endif
+  } PHP5TO7_ZEND_HASH_FOREACH_END(&set->values);
 }
 
 /* {{{ Cassandra\Set::__construct(string) */
 PHP_METHOD(Set, __construct)
 {
   char *type;
-  int type_len;
+  php5to7_size type_len;
   cassandra_set *set;
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &type, &type_len) == FAILURE) {
@@ -108,7 +96,7 @@ PHP_METHOD(Set, type)
 {
   cassandra_set *set = PHP_CASSANDRA_GET_SET(getThis());
 
-  PHP5TO7_RETURN_STRING(php_cassandra_type_name(set->type));
+  PHP5TO7_RETVAL_STRING(php_cassandra_type_name(set->type));
 }
 /* }}} */
 
@@ -270,17 +258,17 @@ php_cassandra_set_gc(zval *object, php5to7_zval_gc table, int *n TSRMLS_DC)
 static HashTable*
 php_cassandra_set_properties(zval *object TSRMLS_DC)
 {
-  cassandra_set *set    = PHP_CASSANDRA_GET_SET(object);
-  HashTable     *props  = zend_std_get_properties(object TSRMLS_CC);
-  zval          *values = NULL;
+  cassandra_set *self = PHP_CASSANDRA_GET_SET(object);
+  HashTable     *props = zend_std_get_properties(object TSRMLS_CC);
+  php5to7_zval   values;
 
 
   PHP5TO7_ZVAL_MAYBE_MAKE(values);
-  array_init(values);
+  array_init(PHP5TO7_ZVAL_MAYBE_P(values));
 
-  php_cassandra_set_populate(set, values);
+  php_cassandra_set_populate(self , PHP5TO7_ZVAL_MAYBE_P(values));
 
-  PHP5TO7_ZEND_HASH_UPDATE(props, "values", sizeof("values"), values, sizeof(zval));
+  PHP5TO7_ZEND_HASH_UPDATE(props, "values", sizeof("values"), PHP5TO7_ZVAL_MAYBE_P(values), sizeof(zval));
 
   return props;
 }
@@ -308,12 +296,12 @@ php_cassandra_set_compare(zval *obj1, zval *obj2 TSRMLS_DC)
 static void
 php_cassandra_set_free(php5to7_zend_object_free *object TSRMLS_DC)
 {
-  cassandra_set *self = (cassandra_set *) object;
+  cassandra_set *self = PHP5TO7_ZEND_OBJECT_GET(set, object);
 
   zend_hash_destroy(&self->values);
 
   zend_object_std_dtor(&self->zval TSRMLS_CC);
-  PHP5TO7_ZEND_OBJECT_MAYBE_EFREE(self);
+  PHP5TO7_MAYBE_EFREE(self);
 }
 
 static php5to7_zend_object

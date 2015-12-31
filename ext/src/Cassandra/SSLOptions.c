@@ -28,12 +28,12 @@ php_cassandra_ssl_compare(zval *obj1, zval *obj2 TSRMLS_DC)
 static void
 php_cassandra_ssl_free(php5to7_zend_object_free *object TSRMLS_DC)
 {
-  cassandra_ssl *self = (cassandra_ssl *) object;
+  cassandra_ssl *self = PHP5TO7_ZEND_OBJECT_GET(ssl, object);
 
   cass_ssl_free(self->ssl);
 
   zend_object_std_dtor(&self->zval TSRMLS_CC);
-  PHP5TO7_ZEND_OBJECT_MAYBE_EFREE(self);
+  PHP5TO7_MAYBE_EFREE(self);
 }
 
 static php5to7_zend_object

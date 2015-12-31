@@ -50,12 +50,13 @@ php_cassandra_future_value_compare(zval *obj1, zval *obj2 TSRMLS_DC)
 static void
 php_cassandra_future_value_free(php5to7_zend_object_free *object TSRMLS_DC)
 {
-  cassandra_future_value *self = (cassandra_future_value *) object;
+  cassandra_future_value *self =
+      PHP5TO7_ZEND_OBJECT_GET(future_value, object);
 
   PHP5TO7_ZVAL_MAYBE_DESTROY(self->value);
 
   zend_object_std_dtor(&self->zval TSRMLS_CC);
-  PHP5TO7_ZEND_OBJECT_MAYBE_EFREE(self);
+  PHP5TO7_MAYBE_EFREE(self);
 }
 
 static php5to7_zend_object
