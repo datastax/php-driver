@@ -6,76 +6,76 @@
 #  define INT64_MIN (-INT_MAX-1)
 #endif
 
-zend_class_entry* cassandra_bigint_ce = NULL;
+zend_class_entry *cassandra_bigint_ce = NULL;
 
 static int
-to_double(zval* result, cassandra_bigint* bigint TSRMLS_DC)
+to_double(zval *result, cassandra_numeric *bigint TSRMLS_DC)
 {
-  ZVAL_DOUBLE(result, (double) bigint->value);
+  ZVAL_DOUBLE(result, (double) bigint->bigint_value);
   return SUCCESS;
 }
 
 static int
-to_long(zval* result, cassandra_bigint* bigint TSRMLS_DC)
+to_long(zval *result, cassandra_numeric *bigint TSRMLS_DC)
 {
-  if (bigint->value < (cass_int64_t) LONG_MIN) {
+  if (bigint->bigint_value < (cass_int64_t) LONG_MIN) {
     zend_throw_exception_ex(cassandra_range_exception_ce, 0 TSRMLS_CC, "Value is too small");
     return FAILURE;
   }
 
-  if (bigint->value > (cass_int64_t) LONG_MAX) {
+  if (bigint->bigint_value > (cass_int64_t) LONG_MAX) {
     zend_throw_exception_ex(cassandra_range_exception_ce, 0 TSRMLS_CC, "Value is too big");
     return FAILURE;
   }
 
-  ZVAL_LONG(result, (long) bigint->value);
+  ZVAL_LONG(result, (long) bigint->bigint_value);
   return SUCCESS;
 }
 
 static int
-to_string(zval* result, cassandra_bigint* bigint TSRMLS_DC)
+to_string(zval *result, cassandra_numeric *bigint TSRMLS_DC)
 {
-  char* string;
+  char *string;
 #ifdef WIN32
-  spprintf(&string, 0, "%I64d", (long long int) bigint->value);
+  spprintf(&string, 0, "%I64d", (long long int) bigint->bigint_value);
 #else
-  spprintf(&string, 0, "%lld", (long long int) bigint->value);
+  spprintf(&string, 0, "%lld", (long long int) bigint->bigint_value);
 #endif
-  ZVAL_STRING(result, string, 0);
+  PHP5TO7_ZVAL_STRING(result, string);
+  efree(string);
   return SUCCESS;
 }
 
 void
 php_cassandra_bigint_init(INTERNAL_FUNCTION_PARAMETERS)
 {
-  cassandra_bigint* self;
-  zval* value;
+  cassandra_numeric *self;
+  zval *value;
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z", &value) == FAILURE) {
     return;
   }
 
   if (getThis() && instanceof_function(Z_OBJCE_P(getThis()), cassandra_bigint_ce TSRMLS_CC)) {
-    self = (cassandra_bigint*) zend_object_store_get_object(getThis() TSRMLS_CC);
+    self = PHP_CASSANDRA_GET_NUMERIC(getThis());
   } else {
     object_init_ex(return_value, cassandra_bigint_ce);
-    self = (cassandra_bigint*) zend_object_store_get_object(return_value TSRMLS_CC);
+    self = PHP_CASSANDRA_GET_NUMERIC(return_value);
   }
 
   if (Z_TYPE_P(value) == IS_LONG) {
-    self->value = (cass_int64_t) Z_LVAL_P(value);
+    self->bigint_value = (cass_int64_t) Z_LVAL_P(value);
   } else if (Z_TYPE_P(value) == IS_DOUBLE) {
-    self->value = (cass_int64_t) Z_DVAL_P(value);
+    self->bigint_value = (cass_int64_t) Z_DVAL_P(value);
   } else if (Z_TYPE_P(value) == IS_STRING) {
     if (!php_cassandra_parse_bigint(Z_STRVAL_P(value), Z_STRLEN_P(value),
-                                    &self->value TSRMLS_CC)) {
+                                    &self->bigint_value TSRMLS_CC)) {
       return;
     }
   } else if (Z_TYPE_P(value) == IS_OBJECT &&
              instanceof_function(Z_OBJCE_P(value), cassandra_bigint_ce TSRMLS_CC)) {
-    cassandra_bigint* bigint = (cassandra_bigint*)
-                                 zend_object_store_get_object(value TSRMLS_CC);
-    self->value = bigint->value;
+    cassandra_numeric *bigint = PHP_CASSANDRA_GET_NUMERIC(value);
+    self->bigint_value = bigint->bigint_value;
   } else {
     INVALID_ARGUMENT(value, "a long, a double, a numeric string or a " \
                             "Cassandra\\Bigint");
@@ -92,8 +92,7 @@ PHP_METHOD(Bigint, __construct)
 /* {{{ Cassandra\Bigint::__toString() */
 PHP_METHOD(Bigint, __toString)
 {
-  cassandra_bigint* self =
-      (cassandra_bigint*) zend_object_store_get_object(getThis() TSRMLS_CC);
+  cassandra_numeric *self = PHP_CASSANDRA_GET_NUMERIC(getThis());
 
   to_string(return_value, self TSRMLS_CC);
 }
@@ -102,25 +101,19 @@ PHP_METHOD(Bigint, __toString)
 /* {{{ Cassandra\Bigint::value() */
 PHP_METHOD(Bigint, value)
 {
-  char* string;
-  cassandra_bigint* self =
-      (cassandra_bigint*) zend_object_store_get_object(getThis() TSRMLS_CC);
-#ifdef WIN32
-  spprintf(&string, 0, "%I64d", (long long int) self->value);
-#else
-  spprintf(&string, 0, "%lld", (long long int) self->value);
-#endif
-  RETURN_STRING(string, 0);
+  cassandra_numeric *self = PHP_CASSANDRA_GET_NUMERIC(getThis());
+
+  to_string(return_value, self TSRMLS_CC);
 }
 /* }}} */
 
 /* {{{ Cassandra\Bigint::add() */
 PHP_METHOD(Bigint, add)
 {
-  zval* num;
-  cassandra_bigint* self;
-  cassandra_bigint* bigint;
-  cassandra_bigint* result;
+  zval *num;
+  cassandra_numeric *self;
+  cassandra_numeric *bigint;
+  cassandra_numeric *result;
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z", &num) == FAILURE) {
     return;
@@ -128,13 +121,13 @@ PHP_METHOD(Bigint, add)
 
   if (Z_TYPE_P(num) == IS_OBJECT &&
       instanceof_function(Z_OBJCE_P(num), cassandra_bigint_ce TSRMLS_CC)) {
-    self = (cassandra_bigint*) zend_object_store_get_object(getThis() TSRMLS_CC);
-    bigint = (cassandra_bigint*) zend_object_store_get_object(num TSRMLS_CC);
+    self = PHP_CASSANDRA_GET_NUMERIC(getThis());
+    bigint = PHP_CASSANDRA_GET_NUMERIC(num);
 
     object_init_ex(return_value, cassandra_bigint_ce);
-    result = (cassandra_bigint*) zend_object_store_get_object(return_value TSRMLS_CC);
+    result = PHP_CASSANDRA_GET_NUMERIC(return_value);
 
-    result->value = self->value + bigint->value;
+    result->bigint_value = self->bigint_value + bigint->bigint_value;
   } else {
     INVALID_ARGUMENT(num, "a Cassandra\\Bigint");
   }
@@ -144,8 +137,8 @@ PHP_METHOD(Bigint, add)
 /* {{{ Cassandra\Bigint::sub() */
 PHP_METHOD(Bigint, sub)
 {
-  zval* num;
-  cassandra_bigint* result = NULL;
+  zval *num;
+  cassandra_numeric *result = NULL;
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z", &num) == FAILURE) {
     return;
@@ -153,15 +146,13 @@ PHP_METHOD(Bigint, sub)
 
   if (Z_TYPE_P(num) == IS_OBJECT &&
       instanceof_function(Z_OBJCE_P(num), cassandra_bigint_ce TSRMLS_CC)) {
-    cassandra_bigint* self =
-        (cassandra_bigint*) zend_object_store_get_object(getThis() TSRMLS_CC);
-    cassandra_bigint* bigint =
-        (cassandra_bigint*) zend_object_store_get_object(num TSRMLS_CC);
+    cassandra_numeric *self = PHP_CASSANDRA_GET_NUMERIC(getThis());
+    cassandra_numeric *bigint = PHP_CASSANDRA_GET_NUMERIC(num);
 
     object_init_ex(return_value, cassandra_bigint_ce);
-    result = (cassandra_bigint*) zend_object_store_get_object(return_value TSRMLS_CC);
+    result = PHP_CASSANDRA_GET_NUMERIC(return_value);
 
-    result->value = self->value - bigint->value;
+    result->bigint_value = self->bigint_value - bigint->bigint_value;
   } else {
     INVALID_ARGUMENT(num, "a Cassandra\\Bigint");
   }
@@ -171,8 +162,8 @@ PHP_METHOD(Bigint, sub)
 /* {{{ Cassandra\Bigint::mul() */
 PHP_METHOD(Bigint, mul)
 {
-  zval* num;
-  cassandra_bigint* result = NULL;
+  zval *num;
+  cassandra_numeric *result = NULL;
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z", &num) == FAILURE) {
     return;
@@ -180,15 +171,13 @@ PHP_METHOD(Bigint, mul)
 
   if (Z_TYPE_P(num) == IS_OBJECT &&
       instanceof_function(Z_OBJCE_P(num), cassandra_bigint_ce TSRMLS_CC)) {
-    cassandra_bigint* self =
-        (cassandra_bigint*) zend_object_store_get_object(getThis() TSRMLS_CC);
-    cassandra_bigint* bigint =
-        (cassandra_bigint*) zend_object_store_get_object(num TSRMLS_CC);
+    cassandra_numeric *self = PHP_CASSANDRA_GET_NUMERIC(getThis());
+    cassandra_numeric *bigint = PHP_CASSANDRA_GET_NUMERIC(num);
 
     object_init_ex(return_value, cassandra_bigint_ce);
-    result = (cassandra_bigint*) zend_object_store_get_object(return_value TSRMLS_CC);
+    result = PHP_CASSANDRA_GET_NUMERIC(return_value);
 
-    result->value = self->value * bigint->value;
+    result->bigint_value = self->bigint_value * bigint->bigint_value;
   } else {
     INVALID_ARGUMENT(num, "a Cassandra\\Bigint");
   }
@@ -198,8 +187,8 @@ PHP_METHOD(Bigint, mul)
 /* {{{ Cassandra\Bigint::div() */
 PHP_METHOD(Bigint, div)
 {
-  zval* num;
-  cassandra_bigint* result = NULL;
+  zval *num;
+  cassandra_numeric *result = NULL;
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z", &num) == FAILURE) {
     return;
@@ -207,20 +196,18 @@ PHP_METHOD(Bigint, div)
 
   if (Z_TYPE_P(num) == IS_OBJECT &&
       instanceof_function(Z_OBJCE_P(num), cassandra_bigint_ce TSRMLS_CC)) {
-    cassandra_bigint* self =
-        (cassandra_bigint*) zend_object_store_get_object(getThis() TSRMLS_CC);
-    cassandra_bigint* bigint =
-        (cassandra_bigint*) zend_object_store_get_object(num TSRMLS_CC);
+    cassandra_numeric *self = PHP_CASSANDRA_GET_NUMERIC(getThis());
+    cassandra_numeric *bigint = PHP_CASSANDRA_GET_NUMERIC(num);
 
     object_init_ex(return_value, cassandra_bigint_ce);
-    result = (cassandra_bigint*) zend_object_store_get_object(return_value TSRMLS_CC);
+    result = PHP_CASSANDRA_GET_NUMERIC(return_value);
 
-    if (bigint->value == 0) {
+    if (bigint->bigint_value == 0) {
       zend_throw_exception_ex(cassandra_divide_by_zero_exception_ce, 0 TSRMLS_CC, "Cannot divide by zero");
       return;
     }
 
-    result->value = self->value / bigint->value;
+    result->bigint_value = self->bigint_value / bigint->bigint_value;
   } else {
     INVALID_ARGUMENT(num, "a Cassandra\\Bigint");
   }
@@ -230,8 +217,8 @@ PHP_METHOD(Bigint, div)
 /* {{{ Cassandra\Bigint::mod() */
 PHP_METHOD(Bigint, mod)
 {
-  zval* num;
-  cassandra_bigint* result = NULL;
+  zval *num;
+  cassandra_numeric *result = NULL;
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z", &num) == FAILURE) {
     return;
@@ -239,20 +226,18 @@ PHP_METHOD(Bigint, mod)
 
   if (Z_TYPE_P(num) == IS_OBJECT &&
       instanceof_function(Z_OBJCE_P(num), cassandra_bigint_ce TSRMLS_CC)) {
-    cassandra_bigint* self =
-        (cassandra_bigint*) zend_object_store_get_object(getThis() TSRMLS_CC);
-    cassandra_bigint* bigint =
-        (cassandra_bigint*) zend_object_store_get_object(num TSRMLS_CC);
+    cassandra_numeric *self = PHP_CASSANDRA_GET_NUMERIC(getThis());
+    cassandra_numeric *bigint = PHP_CASSANDRA_GET_NUMERIC(num);
 
     object_init_ex(return_value, cassandra_bigint_ce);
-    result = (cassandra_bigint*) zend_object_store_get_object(return_value TSRMLS_CC);
+    result = PHP_CASSANDRA_GET_NUMERIC(return_value);
 
-    if (bigint->value == 0) {
+    if (bigint->bigint_value == 0) {
       zend_throw_exception_ex(cassandra_divide_by_zero_exception_ce, 0 TSRMLS_CC, "Cannot modulo by zero");
       return;
     }
 
-    result->value = self->value % bigint->value;
+    result->bigint_value = self->bigint_value % bigint->bigint_value;
   } else {
     INVALID_ARGUMENT(num, "a Cassandra\\Bigint");
   }
@@ -262,60 +247,53 @@ PHP_METHOD(Bigint, mod)
 /* {{{ Cassandra\Bigint::abs() */
 PHP_METHOD(Bigint, abs)
 {
-  cassandra_bigint* result = NULL;
+  cassandra_numeric *result = NULL;
+  cassandra_numeric *self = PHP_CASSANDRA_GET_NUMERIC(getThis());
 
-  cassandra_bigint* self =
-      (cassandra_bigint*) zend_object_store_get_object(getThis() TSRMLS_CC);
-
-  if (self->value == INT64_MIN) {
+  if (self->bigint_value == INT64_MIN) {
     zend_throw_exception_ex(cassandra_range_exception_ce, 0 TSRMLS_CC, "Value doesn't exist");
     return;
   }
 
   object_init_ex(return_value, cassandra_bigint_ce);
-  result = (cassandra_bigint*) zend_object_store_get_object(return_value TSRMLS_CC);
-  result->value = self->value < 0 ? -self->value : self->value;
+  result = PHP_CASSANDRA_GET_NUMERIC(return_value);
+  result->bigint_value = self->bigint_value < 0 ? -self->bigint_value : self->bigint_value;
 }
 /* }}} */
 
 /* {{{ Cassandra\Bigint::neg() */
 PHP_METHOD(Bigint, neg)
 {
-  cassandra_bigint* result = NULL;
-
-  cassandra_bigint* self =
-      (cassandra_bigint*) zend_object_store_get_object(getThis() TSRMLS_CC);
+  cassandra_numeric *result = NULL;
+  cassandra_numeric *self = PHP_CASSANDRA_GET_NUMERIC(getThis());
 
   object_init_ex(return_value, cassandra_bigint_ce);
-  result = (cassandra_bigint*) zend_object_store_get_object(return_value TSRMLS_CC);
-  result->value = -self->value;
+  result = PHP_CASSANDRA_GET_NUMERIC(return_value);
+  result->bigint_value = -self->bigint_value;
 }
 /* }}} */
 
 /* {{{ Cassandra\Bigint::sqrt() */
 PHP_METHOD(Bigint, sqrt)
 {
-  cassandra_bigint* result = NULL;
+  cassandra_numeric *result = NULL;
+  cassandra_numeric *self = PHP_CASSANDRA_GET_NUMERIC(getThis());
 
-  cassandra_bigint* self =
-      (cassandra_bigint*) zend_object_store_get_object(getThis() TSRMLS_CC);
-
-  if (self->value < 0) {
+  if (self->bigint_value < 0) {
     zend_throw_exception_ex(cassandra_range_exception_ce, 0 TSRMLS_CC,
                             "Cannot take a square root of a negative number");
   }
 
   object_init_ex(return_value, cassandra_bigint_ce);
-  result = (cassandra_bigint*) zend_object_store_get_object(return_value TSRMLS_CC);
-  result->value = (cass_int64_t) sqrt((long double) self->value);
+  result = PHP_CASSANDRA_GET_NUMERIC(return_value);
+  result->bigint_value = (cass_int64_t) sqrt((long double) self->bigint_value);
 }
 /* }}} */
 
 /* {{{ Cassandra\Bigint::toInt() */
 PHP_METHOD(Bigint, toInt)
 {
-  cassandra_bigint* self =
-      (cassandra_bigint*) zend_object_store_get_object(getThis() TSRMLS_CC);
+  cassandra_numeric *self = PHP_CASSANDRA_GET_NUMERIC(getThis());
 
   to_long(return_value, self TSRMLS_CC);
 }
@@ -324,8 +302,7 @@ PHP_METHOD(Bigint, toInt)
 /* {{{ Cassandra\Bigint::toDouble() */
 PHP_METHOD(Bigint, toDouble)
 {
-  cassandra_bigint* self =
-      (cassandra_bigint*) zend_object_store_get_object(getThis() TSRMLS_CC);
+  cassandra_numeric *self = PHP_CASSANDRA_GET_NUMERIC(getThis());
 
   to_double(return_value, self TSRMLS_CC);
 }
@@ -334,20 +311,20 @@ PHP_METHOD(Bigint, toDouble)
 /* {{{ Cassandra\Bigint::min() */
 PHP_METHOD(Bigint, min)
 {
-  cassandra_bigint* bigint = NULL;
+  cassandra_numeric *bigint = NULL;
   object_init_ex(return_value, cassandra_bigint_ce);
-  bigint = (cassandra_bigint*) zend_object_store_get_object(return_value TSRMLS_CC);
-  bigint->value = INT64_MIN;
+  bigint = PHP_CASSANDRA_GET_NUMERIC(return_value);
+  bigint->bigint_value = INT64_MIN;
 }
 /* }}} */
 
 /* {{{ Cassandra\Bigint::max() */
 PHP_METHOD(Bigint, max)
 {
-  cassandra_bigint* bigint = NULL;
+  cassandra_numeric *bigint = NULL;
   object_init_ex(return_value, cassandra_bigint_ce);
-  bigint = (cassandra_bigint*) zend_object_store_get_object(return_value TSRMLS_CC);
-  bigint->value = INT64_MAX;
+  bigint = PHP_CASSANDRA_GET_NUMERIC(return_value);
+  bigint->bigint_value = INT64_MAX;
 }
 /* }}} */
 
@@ -384,7 +361,7 @@ static zend_function_entry cassandra_bigint_methods[] = {
 static zend_object_handlers cassandra_bigint_handlers;
 
 static HashTable*
-php_cassandra_bigint_gc(zval *object, zval ***table, int *n TSRMLS_DC)
+php_cassandra_bigint_gc(zval *object, php5to7_zval_gc table, int *n TSRMLS_DC)
 {
   *table = NULL;
   *n = 0;
@@ -394,24 +371,14 @@ php_cassandra_bigint_gc(zval *object, zval ***table, int *n TSRMLS_DC)
 static HashTable*
 php_cassandra_bigint_properties(zval *object TSRMLS_DC)
 {
-  cassandra_bigint* self =
-      (cassandra_bigint*) zend_object_store_get_object(object TSRMLS_CC);
-  HashTable*        props  = zend_std_get_properties(object TSRMLS_CC);
+  cassandra_numeric *self = PHP_CASSANDRA_GET_NUMERIC(object);
+  HashTable         *props = zend_std_get_properties(object TSRMLS_CC);
+  php5to7_zval       value;
 
-  zval* value;
-  char* string;
-  int string_len;
+  PHP5TO7_ZVAL_MAYBE_MAKE(value);
+  to_string(PHP5TO7_ZVAL_MAYBE_P(value), self TSRMLS_CC);
 
-#ifdef WIN32
-  string_len = spprintf(&string, 0, "%I64d", (long long int) self->value);
-#else
-  string_len = spprintf(&string, 0, "%lld", (long long int) self->value);
-#endif
-
-  MAKE_STD_ZVAL(value);
-  ZVAL_STRINGL(value, string, string_len, 0);
-
-  zend_hash_update(props, "value", sizeof("value"), &value, sizeof(zval), NULL);
+  PHP5TO7_ZEND_HASH_UPDATE(props, "value", sizeof("value"), PHP5TO7_ZVAL_MAYBE_P(value), sizeof(zval));
 
   return props;
 }
@@ -419,28 +386,27 @@ php_cassandra_bigint_properties(zval *object TSRMLS_DC)
 static int
 php_cassandra_bigint_compare(zval *obj1, zval *obj2 TSRMLS_DC)
 {
-  cassandra_bigint* bigint1 = NULL;
-  cassandra_bigint* bigint2 = NULL;
+  cassandra_numeric *bigint1 = NULL;
+  cassandra_numeric *bigint2 = NULL;
 
   if (Z_OBJCE_P(obj1) != Z_OBJCE_P(obj2))
     return 1; /* different classes */
 
-  bigint1 = (cassandra_bigint*) zend_object_store_get_object(obj1 TSRMLS_CC);
-  bigint2 = (cassandra_bigint*) zend_object_store_get_object(obj2 TSRMLS_CC);
+  bigint1 = PHP_CASSANDRA_GET_NUMERIC(obj1);
+  bigint2 = PHP_CASSANDRA_GET_NUMERIC(obj2);
 
-  if (bigint1->value == bigint2->value)
+  if (bigint1->bigint_value == bigint2->bigint_value)
     return 0;
-  else if (bigint1->value < bigint2->value)
+  else if (bigint1->bigint_value < bigint2->bigint_value)
     return -1;
   else
     return 1;
 }
 
 static int
-php_cassandra_bigint_cast(zval* object, zval* retval, int type TSRMLS_DC)
+php_cassandra_bigint_cast(zval *object, zval *retval, int type TSRMLS_DC)
 {
-  cassandra_bigint* self =
-      (cassandra_bigint*) zend_object_store_get_object(object TSRMLS_CC);
+  cassandra_numeric *self = PHP_CASSANDRA_GET_NUMERIC(object);
 
   switch (type) {
   case IS_LONG:
@@ -457,33 +423,23 @@ php_cassandra_bigint_cast(zval* object, zval* retval, int type TSRMLS_DC)
 }
 
 static void
-php_cassandra_bigint_free(void *object TSRMLS_DC)
+php_cassandra_bigint_free(php5to7_zend_object_free *object TSRMLS_DC)
 {
-  cassandra_bigint* self = (cassandra_bigint*) object;
+  cassandra_numeric *self = PHP5TO7_ZEND_OBJECT_GET(numeric, object);
 
   zend_object_std_dtor(&self->zval TSRMLS_CC);
-
-  efree(self);
+  PHP5TO7_MAYBE_EFREE(self);
 }
 
-static zend_object_value
-php_cassandra_bigint_new(zend_class_entry* class_type TSRMLS_DC)
+static php5to7_zend_object
+php_cassandra_bigint_new(zend_class_entry *ce TSRMLS_DC)
 {
-  zend_object_value retval;
-  cassandra_bigint *self;
-
-  self = (cassandra_bigint*) emalloc(sizeof(cassandra_bigint));
-  memset(self, 0, sizeof(cassandra_bigint));
+  cassandra_numeric *self =
+      PHP5TO7_ZEND_OBJECT_ECALLOC(numeric, ce);
 
   self->type = CASSANDRA_BIGINT;
 
-  zend_object_std_init(&self->zval, class_type TSRMLS_CC);
-  object_properties_init(&self->zval, class_type);
-
-  retval.handle   = zend_objects_store_put(self, (zend_objects_store_dtor_t) zend_objects_destroy_object, php_cassandra_bigint_free, NULL TSRMLS_CC);
-  retval.handlers = &cassandra_bigint_handlers;
-
-  return retval;
+  PHP5TO7_ZEND_OBJECT_INIT_EX(numeric, bigint, self, ce);
 }
 
 void cassandra_define_Bigint(TSRMLS_D)
@@ -493,7 +449,7 @@ void cassandra_define_Bigint(TSRMLS_D)
   INIT_CLASS_ENTRY(ce, "Cassandra\\Bigint", cassandra_bigint_methods);
   cassandra_bigint_ce = zend_register_internal_class(&ce TSRMLS_CC);
   zend_class_implements(cassandra_bigint_ce TSRMLS_CC, 1, cassandra_numeric_ce);
-  cassandra_bigint_ce->ce_flags     |= ZEND_ACC_FINAL_CLASS;
+  cassandra_bigint_ce->ce_flags     |= PHP5TO7_ZEND_ACC_FINAL;
   cassandra_bigint_ce->create_object = php_cassandra_bigint_new;
 
   memcpy(&cassandra_bigint_handlers, zend_get_std_object_handlers(), sizeof(zend_object_handlers));

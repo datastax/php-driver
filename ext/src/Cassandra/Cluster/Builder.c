@@ -1,6 +1,11 @@
 #include "php_cassandra.h"
 #include "util/consistency.h"
+
+#if PHP_MAJOR_VERSION >= 7
+#include <zend_smart_str.h>
+#else
 #include <ext/standard/php_smart_str.h>
+#endif
 
 zend_class_entry *cassandra_cluster_builder_ce = NULL;
 
@@ -8,27 +13,25 @@ ZEND_EXTERN_MODULE_GLOBALS(cassandra)
 
 PHP_METHOD(ClusterBuilder, build)
 {
-  char* hash_key;
+  char *hash_key;
   int   hash_key_len = 0;
-  cassandra_cluster* cluster = NULL;
+  cassandra_cluster *cluster = NULL;
+  php5to7_zend_resource_le resource;
 
-  cassandra_cluster_builder* builder =
-    (cassandra_cluster_builder*) zend_object_store_get_object(getThis() TSRMLS_CC);
+  cassandra_cluster_builder *builder = PHP_CASSANDRA_GET_CLUSTER_BUILDER(getThis());
 
   object_init_ex(return_value, cassandra_default_cluster_ce);
-  cluster = (cassandra_cluster*) zend_object_store_get_object(return_value TSRMLS_CC);
+  cluster = PHP_CASSANDRA_GET_CLUSTER(return_value);
 
   cluster->persist             = builder->persist;
   cluster->default_consistency = builder->default_consistency;
   cluster->default_page_size   = builder->default_page_size;
-  cluster->default_timeout     = builder->default_timeout;
 
-  if (cluster->default_timeout) {
-    Z_ADDREF_P(cluster->default_timeout);
-  }
+  PHP5TO7_ZVAL_COPY(PHP5TO7_ZVAL_MAYBE_P(cluster->default_timeout),
+                    PHP5TO7_ZVAL_MAYBE_P(builder->default_timeout));
 
   if (builder->persist) {
-    zend_rsrc_list_entry *le;
+    php5to7_zend_resource_le *le;
 
     hash_key_len = spprintf(&hash_key, 0,
       "cassandra:%s:%d:%d:%s:%d:%d:%d:%s:%s:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d",
@@ -46,9 +49,9 @@ PHP_METHOD(ClusterBuilder, build)
     cluster->hash_key     = hash_key;
     cluster->hash_key_len = hash_key_len;
 
-    if (zend_hash_find(&EG(persistent_list), hash_key, hash_key_len + 1, (void **)&le) == SUCCESS) {
+    if (PHP5TO7_ZEND_HASH_FIND(&EG(persistent_list), hash_key, hash_key_len + 1, le)) {
       if (Z_TYPE_P(le) == php_le_cassandra_cluster()) {
-        cluster->cluster = (CassCluster*) le->ptr;
+        cluster->cluster = (CassCluster*) Z_RES_P(le)->ptr;
         return;
       }
     }
@@ -74,8 +77,8 @@ PHP_METHOD(ClusterBuilder, build)
   cass_cluster_set_connect_timeout(cluster->cluster, builder->connect_timeout);
   cass_cluster_set_request_timeout(cluster->cluster, builder->request_timeout);
 
-  if (builder->ssl_options) {
-    cassandra_ssl* options = (cassandra_ssl*) zend_object_store_get_object(builder->ssl_options TSRMLS_CC);
+  if (!PHP5TO7_ZVAL_IS_UNDEF(builder->ssl_options)) {
+    cassandra_ssl *options = PHP_CASSANDRA_GET_SSL(PHP5TO7_ZVAL_MAYBE_P(builder->ssl_options));
     cass_cluster_set_ssl(cluster->cluster, options->ssl);
   }
 
@@ -92,26 +95,34 @@ PHP_METHOD(ClusterBuilder, build)
   cass_cluster_set_tcp_keepalive(cluster->cluster, builder->enable_tcp_keepalive, builder->tcp_keepalive_delay);
 
   if (builder->persist) {
-    zend_rsrc_list_entry le;
-    le.type = php_le_cassandra_cluster();
-    le.ptr  = cluster->cluster;
+#if PHP_MAJOR_VERSION >= 7
+    ZVAL_NEW_PERSISTENT_RES(&resource, 0, cluster->cluster, php_le_cassandra_cluster());
 
-    if (zend_hash_update(&EG(persistent_list), hash_key, hash_key_len + 1, &le, sizeof(zend_rsrc_list_entry), NULL) == SUCCESS) {
+    if (PHP5TO7_ZEND_HASH_UPDATE(&EG(persistent_list), hash_key, hash_key_len + 1, &resource, sizeof(php5to7_zend_resource_le))) {
       CASSANDRA_G(persistent_clusters)++;
     }
+#else
+    resource.type = php_le_cassandra_cluster();
+    resource.ptr = cluster->cluster;
+
+    if (PHP5TO7_ZEND_HASH_UPDATE(&EG(persistent_list), hash_key, hash_key_len + 1, resource, sizeof(php5to7_zend_resource_le))) {
+      CASSANDRA_G(persistent_clusters)++;
+    }
+#endif
+
   }
 }
 
 PHP_METHOD(ClusterBuilder, withDefaultConsistency)
 {
-  zval* consistency;
-  cassandra_cluster_builder* builder = NULL;
+  zval *consistency = NULL;
+  cassandra_cluster_builder *builder = NULL;
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z", &consistency) == FAILURE) {
     return;
   }
 
-  builder = (cassandra_cluster_builder*) zend_object_store_get_object(getThis() TSRMLS_CC);
+  builder = PHP_CASSANDRA_GET_CLUSTER_BUILDER(getThis());
 
   if (php_cassandra_get_consistency(consistency, &builder->default_consistency TSRMLS_CC) == FAILURE) {
     return;
@@ -122,18 +133,19 @@ PHP_METHOD(ClusterBuilder, withDefaultConsistency)
 
 PHP_METHOD(ClusterBuilder, withDefaultPageSize)
 {
-  zval* pageSize;
-  cassandra_cluster_builder* builder = NULL;
+  zval *pageSize = NULL;
+  cassandra_cluster_builder *builder = NULL;
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z", &pageSize) == FAILURE) {
     return;
   }
 
-  builder = (cassandra_cluster_builder*) zend_object_store_get_object(getThis() TSRMLS_CC);
+  builder = PHP_CASSANDRA_GET_CLUSTER_BUILDER(getThis());
 
   if (Z_TYPE_P(pageSize) == IS_NULL) {
     builder->default_page_size = -1;
-  } else if (Z_TYPE_P(pageSize) == IS_LONG && Z_LVAL_P(pageSize) > 0) {
+  } else if (Z_TYPE_P(pageSize) == IS_LONG &&
+             Z_LVAL_P(pageSize) > 0) {
     builder->default_page_size = Z_LVAL_P(pageSize);
   } else {
     INVALID_ARGUMENT(pageSize, "a positive integer or null");
@@ -144,25 +156,22 @@ PHP_METHOD(ClusterBuilder, withDefaultPageSize)
 
 PHP_METHOD(ClusterBuilder, withDefaultTimeout)
 {
-  zval* timeout;
-  cassandra_cluster_builder* builder = NULL;
+  zval *timeout = NULL;
+  cassandra_cluster_builder *builder = NULL;
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z", &timeout) == FAILURE) {
     return;
   }
 
-  builder = (cassandra_cluster_builder*) zend_object_store_get_object(getThis() TSRMLS_CC);
+  builder = PHP_CASSANDRA_GET_CLUSTER_BUILDER(getThis());
 
   if (Z_TYPE_P(timeout) == IS_NULL) {
-    if (builder->default_timeout)
-      zval_ptr_dtor(&builder->default_timeout);
-    builder->default_timeout = NULL;
+    PHP5TO7_ZVAL_MAYBE_DESTROY(builder->default_timeout);
+    PHP5TO7_ZVAL_UNDEF(builder->default_timeout);
   } else if ((Z_TYPE_P(timeout) == IS_LONG && Z_LVAL_P(timeout) > 0) ||
-             (Z_TYPE_P(timeout) == IS_DOUBLE && Z_DVAL_P(timeout) > 0)) {
-    if (builder->default_timeout)
-      zval_ptr_dtor(&builder->default_timeout);
-    Z_ADDREF_P(timeout);
-    builder->default_timeout = timeout;
+             (Z_TYPE_P(timeout) == IS_DOUBLE && Z_LVAL_P(timeout) > 0)) {
+    PHP5TO7_ZVAL_MAYBE_DESTROY(builder->default_timeout);
+    PHP5TO7_ZVAL_COPY(PHP5TO7_ZVAL_MAYBE_P(builder->default_timeout), timeout);
   } else {
     INVALID_ARGUMENT(timeout, "a number of seconds greater than zero or null");
   }
@@ -172,23 +181,23 @@ PHP_METHOD(ClusterBuilder, withDefaultTimeout)
 
 PHP_METHOD(ClusterBuilder, withContactPoints)
 {
-  zval***   args;
-  zval*     host;
-  int       argc, i;
-  smart_str contactPoints = {NULL, 0, 0};
-  cassandra_cluster_builder* builder = NULL;
+  zval *host = NULL;
+  php5to7_zval_args args = NULL;
+  int argc = 0, i;
+  smart_str contactPoints = PHP5TO7_SMART_STR_INIT;
+  cassandra_cluster_builder *builder = NULL;
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "+", &args, &argc) == FAILURE) {
     return;
   }
 
   for (i = 0; i < argc; i++) {
-    host = *args[i];
+    host = PHP5TO7_ZVAL_ARG(args[i]);
 
     if (Z_TYPE_P(host) != IS_STRING) {
       smart_str_free(&contactPoints);
       throw_invalid_argument(host, "host", "a string ip address or hostname" TSRMLS_CC);
-      efree(args);
+      PHP5TO7_MAYBE_EFREE(args);
       return;
     }
 
@@ -199,29 +208,36 @@ PHP_METHOD(ClusterBuilder, withContactPoints)
     smart_str_appendl(&contactPoints, Z_STRVAL_P(host), Z_STRLEN_P(host));
   }
 
-  efree(args);
+  PHP5TO7_MAYBE_EFREE(args);
   smart_str_0(&contactPoints);
 
-  builder = (cassandra_cluster_builder*) zend_object_store_get_object(getThis() TSRMLS_CC);
+  builder = PHP_CASSANDRA_GET_CLUSTER_BUILDER(getThis());
 
   efree(builder->contact_points);
+#if PHP_MAJOR_VERSION >= 7
+  builder->contact_points = estrndup(contactPoints.s->val, contactPoints.s->len);
+  smart_str_free(&contactPoints);
+#else
   builder->contact_points = contactPoints.c;
+#endif
 
   RETURN_ZVAL(getThis(), 1, 0);
 }
 
 PHP_METHOD(ClusterBuilder, withPort)
 {
-  zval* port;
-  cassandra_cluster_builder* builder = NULL;
+  zval *port = NULL;
+  cassandra_cluster_builder *builder = NULL;
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z", &port) == FAILURE) {
     return;
   }
 
-  builder = (cassandra_cluster_builder*) zend_object_store_get_object(getThis() TSRMLS_CC);
+  builder = PHP_CASSANDRA_GET_CLUSTER_BUILDER(getThis());
 
-  if (Z_TYPE_P(port) == IS_LONG && Z_LVAL_P(port) > 0 && Z_LVAL_P(port) < 65536) {
+  if (Z_TYPE_P(port) == IS_LONG &&
+      Z_LVAL_P(port) > 0 &&
+      Z_LVAL_P(port) < 65536) {
     builder->port = Z_LVAL_P(port);
   } else {
     INVALID_ARGUMENT(port, "an integer between 1 and 65535");
@@ -232,13 +248,13 @@ PHP_METHOD(ClusterBuilder, withPort)
 
 PHP_METHOD(ClusterBuilder, withRoundRobinLoadBalancingPolicy)
 {
-  cassandra_cluster_builder* builder = NULL;
+  cassandra_cluster_builder *builder = NULL;
 
   if (zend_parse_parameters_none() == FAILURE) {
     return;
   }
 
-  builder = (cassandra_cluster_builder*) zend_object_store_get_object(getThis() TSRMLS_CC);
+  builder = PHP_CASSANDRA_GET_CLUSTER_BUILDER(getThis());
 
   if (builder->local_dc) {
     efree(builder->local_dc);
@@ -252,21 +268,22 @@ PHP_METHOD(ClusterBuilder, withRoundRobinLoadBalancingPolicy)
 
 PHP_METHOD(ClusterBuilder, withDatacenterAwareRoundRobinLoadBalancingPolicy)
 {
-  char*        local_dc;
-  int          local_dc_len;
-  zval*        hostPerRemoteDatacenter;
-  zend_bool    allow_remote_dcs_for_local_cl;
-  cassandra_cluster_builder* builder = NULL;
+  char *local_dc;
+  php5to7_size local_dc_len;
+  zval *hostPerRemoteDatacenter = NULL;
+  zend_bool allow_remote_dcs_for_local_cl;
+  cassandra_cluster_builder *builder = NULL;
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "szb", &local_dc, &local_dc_len, &hostPerRemoteDatacenter, &allow_remote_dcs_for_local_cl) == FAILURE) {
     return;
   }
 
-  if (Z_TYPE_P(hostPerRemoteDatacenter) != IS_LONG || Z_LVAL_P(hostPerRemoteDatacenter) < 0) {
+  if (Z_TYPE_P(hostPerRemoteDatacenter) != IS_LONG ||
+      Z_LVAL_P(hostPerRemoteDatacenter) < 0) {
     INVALID_ARGUMENT(hostPerRemoteDatacenter, "a positive integer");
   }
 
-  builder = (cassandra_cluster_builder*) zend_object_store_get_object(getThis() TSRMLS_CC);
+  builder = PHP_CASSANDRA_GET_CLUSTER_BUILDER(getThis());
 
   if (builder->local_dc) {
     efree(builder->local_dc);
@@ -284,13 +301,13 @@ PHP_METHOD(ClusterBuilder, withDatacenterAwareRoundRobinLoadBalancingPolicy)
 PHP_METHOD(ClusterBuilder, withTokenAwareRouting)
 {
   zend_bool enabled = 1;
-  cassandra_cluster_builder* builder = NULL;
+  cassandra_cluster_builder *builder = NULL;
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "|b", &enabled) == FAILURE) {
     return;
   }
 
-  builder = (cassandra_cluster_builder*) zend_object_store_get_object(getThis() TSRMLS_CC);
+  builder = PHP_CASSANDRA_GET_CLUSTER_BUILDER(getThis());
 
   builder->use_token_aware_routing = enabled;
 
@@ -299,9 +316,9 @@ PHP_METHOD(ClusterBuilder, withTokenAwareRouting)
 
 PHP_METHOD(ClusterBuilder, withCredentials)
 {
-  zval* username;
-  zval* password;
-  cassandra_cluster_builder* builder = NULL;
+  zval *username = NULL;
+  zval *password = NULL;
+  cassandra_cluster_builder *builder = NULL;
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "zz", &username, &password) == FAILURE) {
     return;
@@ -315,7 +332,7 @@ PHP_METHOD(ClusterBuilder, withCredentials)
     INVALID_ARGUMENT(password, "a string");
   }
 
-  builder = (cassandra_cluster_builder*) zend_object_store_get_object(getThis() TSRMLS_CC);
+  builder = PHP_CASSANDRA_GET_CLUSTER_BUILDER(getThis());
 
   if (builder->username) {
     efree(builder->username);
@@ -330,18 +347,20 @@ PHP_METHOD(ClusterBuilder, withCredentials)
 
 PHP_METHOD(ClusterBuilder, withConnectTimeout)
 {
-  zval* timeout;
-  cassandra_cluster_builder* builder = NULL;
+  zval *timeout = NULL;
+  cassandra_cluster_builder *builder = NULL;
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z", &timeout) == FAILURE) {
     return;
   }
 
-  builder = (cassandra_cluster_builder*) zend_object_store_get_object(getThis() TSRMLS_CC);
+  builder = PHP_CASSANDRA_GET_CLUSTER_BUILDER(getThis());
 
-  if (Z_TYPE_P(timeout) == IS_LONG && Z_LVAL_P(timeout) > 0) {
+  if (Z_TYPE_P(timeout) == IS_LONG &&
+      Z_LVAL_P(timeout) > 0) {
     builder->connect_timeout = Z_LVAL_P(timeout) * 1000;
-  } else if (Z_TYPE_P(timeout) == IS_DOUBLE && Z_DVAL_P(timeout) > 0) {
+  } else if (Z_TYPE_P(timeout) == IS_DOUBLE &&
+             Z_DVAL_P(timeout) > 0) {
     builder->connect_timeout = ceil(Z_DVAL_P(timeout) * 1000);
   } else {
     INVALID_ARGUMENT(timeout, "a positive number");
@@ -353,13 +372,13 @@ PHP_METHOD(ClusterBuilder, withConnectTimeout)
 PHP_METHOD(ClusterBuilder, withRequestTimeout)
 {
   double timeout;
-  cassandra_cluster_builder* builder = NULL;
+  cassandra_cluster_builder *builder = NULL;
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "d", &timeout) == FAILURE) {
     return;
   }
 
-  builder = (cassandra_cluster_builder*) zend_object_store_get_object(getThis() TSRMLS_CC);
+  builder = PHP_CASSANDRA_GET_CLUSTER_BUILDER(getThis());
 
   builder->request_timeout = ceil(timeout * 1000);
 
@@ -368,20 +387,19 @@ PHP_METHOD(ClusterBuilder, withRequestTimeout)
 
 PHP_METHOD(ClusterBuilder, withSSL)
 {
-  zval *ssl_options;
-  cassandra_cluster_builder* builder = NULL;
+  zval *ssl_options = NULL;
+  cassandra_cluster_builder *builder = NULL;
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "O", &ssl_options, cassandra_ssl_ce) == FAILURE) {
     return;
   }
 
-  builder = (cassandra_cluster_builder*) zend_object_store_get_object(getThis() TSRMLS_CC);
+  builder = PHP_CASSANDRA_GET_CLUSTER_BUILDER(getThis());
 
-  if (builder->ssl_options)
+  if (!PHP5TO7_ZVAL_IS_UNDEF(builder->ssl_options))
     zval_ptr_dtor(&builder->ssl_options);
 
-  Z_ADDREF_P(ssl_options);
-  builder->ssl_options = ssl_options;
+  PHP5TO7_ZVAL_COPY(PHP5TO7_ZVAL_MAYBE_P(builder->ssl_options), ssl_options);
 
   RETURN_ZVAL(getThis(), 1, 0);
 }
@@ -389,13 +407,13 @@ PHP_METHOD(ClusterBuilder, withSSL)
 PHP_METHOD(ClusterBuilder, withPersistentSessions)
 {
   zend_bool enabled = 1;
-  cassandra_cluster_builder* builder = NULL;
+  cassandra_cluster_builder *builder = NULL;
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "|b", &enabled) == FAILURE) {
     return;
   }
 
-  builder = (cassandra_cluster_builder*) zend_object_store_get_object(getThis() TSRMLS_CC);
+  builder = PHP_CASSANDRA_GET_CLUSTER_BUILDER(getThis());
 
   builder->persist = enabled;
 
@@ -404,16 +422,18 @@ PHP_METHOD(ClusterBuilder, withPersistentSessions)
 
 PHP_METHOD(ClusterBuilder, withProtocolVersion)
 {
-  zval* version;
-  cassandra_cluster_builder* builder = NULL;
+  zval *version = NULL;
+  cassandra_cluster_builder *builder = NULL;
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z", &version) == FAILURE) {
     return;
   }
 
-  builder = (cassandra_cluster_builder*) zend_object_store_get_object(getThis() TSRMLS_CC);
+  builder = PHP_CASSANDRA_GET_CLUSTER_BUILDER(getThis());
 
-  if (Z_TYPE_P(version) == IS_LONG && Z_LVAL_P(version) < 3 && Z_LVAL_P(version) > 0) {
+  if (Z_TYPE_P(version) == IS_LONG &&
+      Z_LVAL_P(version) < 3 &&
+      Z_LVAL_P(version) > 0) {
     builder->protocol_version = Z_LVAL_P(version);
   } else {
     INVALID_ARGUMENT(version, "either 1 or 2");
@@ -424,16 +444,18 @@ PHP_METHOD(ClusterBuilder, withProtocolVersion)
 
 PHP_METHOD(ClusterBuilder, withIOThreads)
 {
-  zval* count;
-  cassandra_cluster_builder* builder = NULL;
+  zval *count = NULL;
+  cassandra_cluster_builder *builder = NULL;
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z", &count) == FAILURE) {
     return;
   }
 
-  builder = (cassandra_cluster_builder*) zend_object_store_get_object(getThis() TSRMLS_CC);
+  builder = PHP_CASSANDRA_GET_CLUSTER_BUILDER(getThis());
 
-  if (Z_TYPE_P(count) == IS_LONG && Z_LVAL_P(count) < 129 && Z_LVAL_P(count) > 0) {
+  if (Z_TYPE_P(count) == IS_LONG &&
+      Z_LVAL_P(count) < 129 &&
+      Z_LVAL_P(count) > 0) {
     builder->io_threads = Z_LVAL_P(count);
   } else {
     INVALID_ARGUMENT(count, "a number between 1 and 128");
@@ -444,17 +466,19 @@ PHP_METHOD(ClusterBuilder, withIOThreads)
 
 PHP_METHOD(ClusterBuilder, withConnectionsPerHost)
 {
-  zval* core;
-  zval* max = NULL;
-  cassandra_cluster_builder* builder = NULL;
+  zval *core = NULL;
+  zval *max = NULL;
+  cassandra_cluster_builder *builder = NULL;
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z|z", &core, &max) == FAILURE) {
     return;
   }
 
-  builder = (cassandra_cluster_builder*) zend_object_store_get_object(getThis() TSRMLS_CC);
+  builder = PHP_CASSANDRA_GET_CLUSTER_BUILDER(getThis());
 
-  if (Z_TYPE_P(core) == IS_LONG && Z_LVAL_P(core) < 129 && Z_LVAL_P(core) > 0) {
+  if (Z_TYPE_P(core) == IS_LONG &&
+      Z_LVAL_P(core) < 129 &&
+      Z_LVAL_P(core) > 0) {
     builder->core_connections_per_host = Z_LVAL_P(core);
   } else {
     INVALID_ARGUMENT(core, "a number between 1 and 128");
@@ -479,18 +503,20 @@ PHP_METHOD(ClusterBuilder, withConnectionsPerHost)
 
 PHP_METHOD(ClusterBuilder, withReconnectInterval)
 {
-  zval* interval;
-  cassandra_cluster_builder* builder = NULL;
+  zval *interval = NULL;
+  cassandra_cluster_builder *builder = NULL;
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z", &interval) == FAILURE) {
     return;
   }
 
-  builder = (cassandra_cluster_builder*) zend_object_store_get_object(getThis() TSRMLS_CC);
+  builder = PHP_CASSANDRA_GET_CLUSTER_BUILDER(getThis());
 
-  if (Z_TYPE_P(interval) == IS_LONG && Z_LVAL_P(interval) > 0) {
+  if (Z_TYPE_P(interval) == IS_LONG &&
+      Z_LVAL_P(interval) > 0) {
     builder->reconnect_interval = Z_LVAL_P(interval) * 1000;
-  } else if (Z_TYPE_P(interval) == IS_DOUBLE && Z_DVAL_P(interval) > 0) {
+  } else if (Z_TYPE_P(interval) == IS_DOUBLE &&
+             Z_DVAL_P(interval) > 0) {
     builder->reconnect_interval = ceil(Z_DVAL_P(interval) * 1000);
   } else {
     INVALID_ARGUMENT(interval, "a positive number");
@@ -502,13 +528,13 @@ PHP_METHOD(ClusterBuilder, withReconnectInterval)
 PHP_METHOD(ClusterBuilder, withLatencyAwareRouting)
 {
   zend_bool enabled = 1;
-  cassandra_cluster_builder* builder = NULL;
+  cassandra_cluster_builder *builder = NULL;
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "|b", &enabled) == FAILURE) {
     return;
   }
 
-  builder = (cassandra_cluster_builder*) zend_object_store_get_object(getThis() TSRMLS_CC);
+  builder = PHP_CASSANDRA_GET_CLUSTER_BUILDER(getThis());
 
   builder->enable_latency_aware_routing = enabled;
 
@@ -518,13 +544,13 @@ PHP_METHOD(ClusterBuilder, withLatencyAwareRouting)
 PHP_METHOD(ClusterBuilder, withTCPNodelay)
 {
   zend_bool enabled = 1;
-  cassandra_cluster_builder* builder = NULL;
+  cassandra_cluster_builder *builder = NULL;
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "|b", &enabled) == FAILURE) {
     return;
   }
 
-  builder = (cassandra_cluster_builder*) zend_object_store_get_object(getThis() TSRMLS_CC);
+  builder = PHP_CASSANDRA_GET_CLUSTER_BUILDER(getThis());
 
   builder->enable_tcp_nodelay = enabled;
 
@@ -533,22 +559,24 @@ PHP_METHOD(ClusterBuilder, withTCPNodelay)
 
 PHP_METHOD(ClusterBuilder, withTCPKeepalive)
 {
-  zval* delay;
-  cassandra_cluster_builder* builder = NULL;
+  zval *delay = NULL;
+  cassandra_cluster_builder *builder = NULL;
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z", &delay) == FAILURE) {
     return;
   }
 
-  builder = (cassandra_cluster_builder*) zend_object_store_get_object(getThis() TSRMLS_CC);
+  builder = PHP_CASSANDRA_GET_CLUSTER_BUILDER(getThis());
 
   if (Z_TYPE_P(delay) == IS_NULL) {
     builder->enable_tcp_keepalive = 0;
     builder->tcp_keepalive_delay  = 0;
-  } else if (Z_TYPE_P(delay) == IS_LONG && Z_LVAL_P(delay) > 0) {
+  } else if (Z_TYPE_P(delay) == IS_LONG &&
+             Z_LVAL_P(delay) > 0) {
     builder->enable_tcp_keepalive = 1;
     builder->tcp_keepalive_delay  = Z_LVAL_P(delay) * 1000;
-  } else if (Z_TYPE_P(delay) == IS_DOUBLE && Z_DVAL_P(delay) > 0) {
+  } else if (Z_TYPE_P(delay) == IS_DOUBLE &&
+             Z_DVAL_P(delay) > 0) {
     builder->enable_tcp_keepalive = 1;
     builder->tcp_keepalive_delay  = ceil(Z_DVAL_P(delay) * 1000);
   } else {
@@ -661,7 +689,7 @@ static zend_function_entry cassandra_cluster_builder_methods[] = {
 static zend_object_handlers cassandra_cluster_builder_handlers;
 
 static HashTable*
-php_cassandra_cluster_builder_gc(zval *object, zval ***table, int *n TSRMLS_DC)
+php_cassandra_cluster_builder_gc(zval *object, php5to7_zval_gc table, int *n TSRMLS_DC)
 {
   *table = NULL;
   *n = 0;
@@ -671,172 +699,165 @@ php_cassandra_cluster_builder_gc(zval *object, zval ***table, int *n TSRMLS_DC)
 static HashTable*
 php_cassandra_cluster_builder_properties(zval *object TSRMLS_DC)
 {
-  cassandra_cluster_builder* builder = (cassandra_cluster_builder*) zend_object_store_get_object(object TSRMLS_CC);
-  HashTable*        props  = zend_std_get_properties(object TSRMLS_CC);
+  cassandra_cluster_builder *self = PHP_CASSANDRA_GET_CLUSTER_BUILDER(object);
+  HashTable *props = zend_std_get_properties(object TSRMLS_CC);
 
-  zval* contactPoints;
-  zval* loadBalancingPolicy;
-  zval* localDatacenter;
-  zval* hostPerRemoteDatacenter;
-  zval* useRemoteDatacenterForLocalConsistencies;
-  zval* useTokenAwareRouting;
-  zval* username;
-  zval* password;
-  zval* connectTimeout;
-  zval* requestTimeout;
-  zval* sslOptions;
-  zval* defaultConsistency;
-  zval* defaultPageSize;
-  zval* defaultTimeout;
-  zval* usePersistentSessions;
-  zval* protocolVersion;
-  zval* ioThreads;
-  zval* coreConnectionPerHost;
-  zval* maxConnectionsPerHost;
-  zval* reconnectInterval;
-  zval* latencyAwareRouting;
-  zval* tcpNodelay;
-  zval* tcpKeepalive;
+  php5to7_zval contactPoints;
+  php5to7_zval loadBalancingPolicy;
+  php5to7_zval localDatacenter;
+  php5to7_zval hostPerRemoteDatacenter;
+  php5to7_zval useRemoteDatacenterForLocalConsistencies;
+  php5to7_zval useTokenAwareRouting;
+  php5to7_zval username;
+  php5to7_zval password;
+  php5to7_zval connectTimeout;
+  php5to7_zval requestTimeout;
+  php5to7_zval sslOptions;
+  php5to7_zval defaultConsistency;
+  php5to7_zval defaultPageSize;
+  php5to7_zval defaultTimeout;
+  php5to7_zval usePersistentSessions;
+  php5to7_zval protocolVersion;
+  php5to7_zval ioThreads;
+  php5to7_zval coreConnectionPerHost;
+  php5to7_zval maxConnectionsPerHost;
+  php5to7_zval reconnectInterval;
+  php5to7_zval latencyAwareRouting;
+  php5to7_zval tcpNodelay;
+  php5to7_zval tcpKeepalive;
 
-  MAKE_STD_ZVAL(contactPoints);
-  ZVAL_STRING(contactPoints, builder->contact_points, 1);
+  PHP5TO7_ZVAL_MAYBE_MAKE(contactPoints);
+  PHP5TO7_ZVAL_STRING(PHP5TO7_ZVAL_MAYBE_P(contactPoints), self->contact_points);
 
-  MAKE_STD_ZVAL(loadBalancingPolicy);
-  ZVAL_DOUBLE(loadBalancingPolicy, builder->load_balancing_policy);
+  PHP5TO7_ZVAL_MAYBE_MAKE(loadBalancingPolicy);
+  ZVAL_DOUBLE(PHP5TO7_ZVAL_MAYBE_P(loadBalancingPolicy), self->load_balancing_policy);
 
-  MAKE_STD_ZVAL(localDatacenter);
-  MAKE_STD_ZVAL(hostPerRemoteDatacenter);
-  MAKE_STD_ZVAL(useRemoteDatacenterForLocalConsistencies);
-  if (builder->load_balancing_policy == LOAD_BALANCING_DC_AWARE_ROUND_ROBIN) {
-    ZVAL_STRING(localDatacenter, builder->local_dc, 1);
-    ZVAL_LONG(hostPerRemoteDatacenter, builder->used_hosts_per_remote_dc);
-    ZVAL_BOOL(useRemoteDatacenterForLocalConsistencies, builder->allow_remote_dcs_for_local_cl);
+  PHP5TO7_ZVAL_MAYBE_MAKE(localDatacenter);
+  PHP5TO7_ZVAL_MAYBE_MAKE(hostPerRemoteDatacenter);
+  PHP5TO7_ZVAL_MAYBE_MAKE(useRemoteDatacenterForLocalConsistencies);
+  if (self->load_balancing_policy == LOAD_BALANCING_DC_AWARE_ROUND_ROBIN) {
+    PHP5TO7_ZVAL_STRING(PHP5TO7_ZVAL_MAYBE_P(localDatacenter), self->local_dc);
+    ZVAL_LONG(PHP5TO7_ZVAL_MAYBE_P(hostPerRemoteDatacenter), self->used_hosts_per_remote_dc);
+    ZVAL_BOOL(PHP5TO7_ZVAL_MAYBE_P(useRemoteDatacenterForLocalConsistencies), self->allow_remote_dcs_for_local_cl);
   } else {
-    ZVAL_NULL(localDatacenter);
-    ZVAL_NULL(hostPerRemoteDatacenter);
-    ZVAL_NULL(useRemoteDatacenterForLocalConsistencies);
+    ZVAL_NULL(PHP5TO7_ZVAL_MAYBE_P(localDatacenter));
+    ZVAL_NULL(PHP5TO7_ZVAL_MAYBE_P(hostPerRemoteDatacenter));
+    ZVAL_NULL(PHP5TO7_ZVAL_MAYBE_P(useRemoteDatacenterForLocalConsistencies));
   }
 
-  MAKE_STD_ZVAL(useTokenAwareRouting);
-  ZVAL_BOOL(useTokenAwareRouting, builder->use_token_aware_routing);
+  PHP5TO7_ZVAL_MAYBE_MAKE(useTokenAwareRouting);
+  ZVAL_BOOL(PHP5TO7_ZVAL_MAYBE_P(useTokenAwareRouting), self->use_token_aware_routing);
 
-  MAKE_STD_ZVAL(username);
-  MAKE_STD_ZVAL(password);
-  if (builder->username) {
-    ZVAL_STRING(username, builder->username, 1);
-    ZVAL_STRING(password, builder->password, 1);
+  PHP5TO7_ZVAL_MAYBE_MAKE(username);
+  PHP5TO7_ZVAL_MAYBE_MAKE(password);
+  if (self->username) {
+    PHP5TO7_ZVAL_STRING(PHP5TO7_ZVAL_MAYBE_P(username), self->username);
+    PHP5TO7_ZVAL_STRING(PHP5TO7_ZVAL_MAYBE_P(password), self->password);
   } else {
-    ZVAL_NULL(username);
-    ZVAL_NULL(password);
+    ZVAL_NULL(PHP5TO7_ZVAL_MAYBE_P(username));
+    ZVAL_NULL(PHP5TO7_ZVAL_MAYBE_P(password));
   }
 
-  MAKE_STD_ZVAL(connectTimeout);
-  ZVAL_DOUBLE(connectTimeout, (double) builder->connect_timeout / 1000);
-  MAKE_STD_ZVAL(requestTimeout);
-  ZVAL_DOUBLE(requestTimeout, (double) builder->request_timeout / 1000);
+  PHP5TO7_ZVAL_MAYBE_MAKE(connectTimeout);
+  ZVAL_DOUBLE(PHP5TO7_ZVAL_MAYBE_P(connectTimeout), (double) self->connect_timeout / 1000);
+  PHP5TO7_ZVAL_MAYBE_MAKE(requestTimeout);
+  ZVAL_DOUBLE(PHP5TO7_ZVAL_MAYBE_P(requestTimeout), (double) self->request_timeout / 1000);
 
-  MAKE_STD_ZVAL(sslOptions);
-  if (builder->ssl_options) {
-    ZVAL_ZVAL(sslOptions, builder->ssl_options, 1, 0);
+  PHP5TO7_ZVAL_MAYBE_MAKE(sslOptions);
+  if (!PHP5TO7_ZVAL_IS_UNDEF(self->ssl_options)) {
+    PHP5TO7_ZVAL_COPY(PHP5TO7_ZVAL_MAYBE_P(sslOptions), PHP5TO7_ZVAL_MAYBE_P(self->ssl_options));
   } else {
-    ZVAL_NULL(sslOptions);
+    ZVAL_NULL(PHP5TO7_ZVAL_MAYBE_P(sslOptions));
   }
 
-  MAKE_STD_ZVAL(defaultConsistency);
-  ZVAL_LONG(defaultConsistency, builder->default_consistency);
-  MAKE_STD_ZVAL(defaultPageSize);
-  ZVAL_LONG(defaultPageSize, builder->default_page_size);
-  MAKE_STD_ZVAL(defaultTimeout);
-  if (builder->default_timeout) {
-    ZVAL_LONG(defaultTimeout, Z_LVAL_P(builder->default_timeout));
+  PHP5TO7_ZVAL_MAYBE_MAKE(defaultConsistency);
+  ZVAL_LONG(PHP5TO7_ZVAL_MAYBE_P(defaultConsistency), self->default_consistency);
+  PHP5TO7_ZVAL_MAYBE_MAKE(defaultPageSize);
+  ZVAL_LONG(PHP5TO7_ZVAL_MAYBE_P(defaultPageSize), self->default_page_size);
+  PHP5TO7_ZVAL_MAYBE_MAKE(defaultTimeout);
+  if (!PHP5TO7_ZVAL_IS_UNDEF(self->default_timeout)) {
+    ZVAL_LONG(PHP5TO7_ZVAL_MAYBE_P(defaultTimeout), PHP5TO7_Z_LVAL_MAYBE_P(self->default_timeout));
   } else {
-    ZVAL_NULL(defaultTimeout);
+    ZVAL_NULL(PHP5TO7_ZVAL_MAYBE_P(defaultTimeout));
   }
 
-  MAKE_STD_ZVAL(usePersistentSessions);
-  ZVAL_BOOL(usePersistentSessions, builder->persist);
+  PHP5TO7_ZVAL_MAYBE_MAKE(usePersistentSessions);
+  ZVAL_BOOL(PHP5TO7_ZVAL_MAYBE_P(usePersistentSessions), self->persist);
 
-  MAKE_STD_ZVAL(protocolVersion);
-  ZVAL_LONG(protocolVersion, builder->protocol_version);
+  PHP5TO7_ZVAL_MAYBE_MAKE(protocolVersion);
+  ZVAL_LONG(PHP5TO7_ZVAL_MAYBE_P(protocolVersion), self->protocol_version);
 
-  MAKE_STD_ZVAL(ioThreads);
-  ZVAL_LONG(ioThreads, builder->io_threads);
+  PHP5TO7_ZVAL_MAYBE_MAKE(ioThreads);
+  ZVAL_LONG(PHP5TO7_ZVAL_MAYBE_P(ioThreads), self->io_threads);
 
-  MAKE_STD_ZVAL(coreConnectionPerHost);
-  ZVAL_LONG(coreConnectionPerHost, builder->core_connections_per_host);
+  PHP5TO7_ZVAL_MAYBE_MAKE(coreConnectionPerHost);
+  ZVAL_LONG(PHP5TO7_ZVAL_MAYBE_P(coreConnectionPerHost), self->core_connections_per_host);
 
-  MAKE_STD_ZVAL(maxConnectionsPerHost);
-  ZVAL_LONG(maxConnectionsPerHost, builder->max_connections_per_host);
+  PHP5TO7_ZVAL_MAYBE_MAKE(maxConnectionsPerHost);
+  ZVAL_LONG(PHP5TO7_ZVAL_MAYBE_P(maxConnectionsPerHost), self->max_connections_per_host);
 
-  MAKE_STD_ZVAL(reconnectInterval);
-  ZVAL_DOUBLE(reconnectInterval, (double) builder->reconnect_interval / 1000);
+  PHP5TO7_ZVAL_MAYBE_MAKE(reconnectInterval);
+  ZVAL_DOUBLE(PHP5TO7_ZVAL_MAYBE_P(reconnectInterval), (double) self->reconnect_interval / 1000);
 
-  MAKE_STD_ZVAL(latencyAwareRouting);
-  ZVAL_BOOL(latencyAwareRouting, builder->enable_latency_aware_routing);
+  PHP5TO7_ZVAL_MAYBE_MAKE(latencyAwareRouting);
+  ZVAL_BOOL(PHP5TO7_ZVAL_MAYBE_P(latencyAwareRouting), self->enable_latency_aware_routing);
 
-  MAKE_STD_ZVAL(tcpNodelay);
-  ZVAL_BOOL(tcpNodelay, builder->enable_tcp_nodelay);
+  PHP5TO7_ZVAL_MAYBE_MAKE(tcpNodelay);
+  ZVAL_BOOL(PHP5TO7_ZVAL_MAYBE_P(tcpNodelay), self->enable_tcp_nodelay);
 
-  MAKE_STD_ZVAL(tcpKeepalive);
-  if (builder->enable_tcp_keepalive) {
-    ZVAL_DOUBLE(tcpKeepalive, (double) builder->tcp_keepalive_delay / 1000);
+  PHP5TO7_ZVAL_MAYBE_MAKE(tcpKeepalive);
+  if (self->enable_tcp_keepalive) {
+    ZVAL_DOUBLE(PHP5TO7_ZVAL_MAYBE_P(tcpKeepalive), (double) self->tcp_keepalive_delay / 1000);
   } else {
-    ZVAL_NULL(tcpKeepalive);
+    ZVAL_NULL(PHP5TO7_ZVAL_MAYBE_P(tcpKeepalive));
   }
 
-  zend_hash_update(props, "contactPoints", sizeof("contactPoints"),
-                   &contactPoints, sizeof(zval), NULL);
-  zend_hash_update(props, "loadBalancingPolicy", sizeof("loadBalancingPolicy"),
-                   &loadBalancingPolicy, sizeof(zval), NULL);
-  zend_hash_update(props, "localDatacenter", sizeof("localDatacenter"),
-                   &localDatacenter, sizeof(zval), NULL);
-  zend_hash_update(props, "hostPerRemoteDatacenter",
-                   sizeof("hostPerRemoteDatacenter"), &hostPerRemoteDatacenter,
-                   sizeof(zval), NULL);
-  zend_hash_update(props, "useRemoteDatacenterForLocalConsistencies",
-                   sizeof("useRemoteDatacenterForLocalConsistencies"),
-                   &useRemoteDatacenterForLocalConsistencies, sizeof(zval),
-                   NULL);
-  zend_hash_update(props, "useTokenAwareRouting",
-                   sizeof("useTokenAwareRouting"), &useTokenAwareRouting,
-                   sizeof(zval), NULL);
-  zend_hash_update(props, "username", sizeof("username"), &username,
-                   sizeof(zval), NULL);
-  zend_hash_update(props, "password", sizeof("password"), &password,
-                   sizeof(zval), NULL);
-  zend_hash_update(props, "connectTimeout", sizeof("connectTimeout"),
-                   &connectTimeout, sizeof(zval), NULL);
-  zend_hash_update(props, "requestTimeout", sizeof("requestTimeout"),
-                   &requestTimeout, sizeof(zval), NULL);
-  zend_hash_update(props, "sslOptions", sizeof("sslOptions"),
-                   &sslOptions, sizeof(zval), NULL);
-  zend_hash_update(props, "defaultConsistency", sizeof("defaultConsistency"),
-                   &defaultConsistency, sizeof(zval), NULL);
-  zend_hash_update(props, "defaultPageSize", sizeof("defaultPageSize"),
-                   &defaultPageSize, sizeof(zval), NULL);
-  zend_hash_update(props, "defaultTimeout", sizeof("defaultTimeout"),
-                   &defaultTimeout, sizeof(zval), NULL);
-  zend_hash_update(props, "usePersistentSessions",
-                   sizeof("usePersistentSessions"), &usePersistentSessions,
-                   sizeof(zval), NULL);
-  zend_hash_update(props, "protocolVersion", sizeof("protocolVersion"),
-                   &protocolVersion, sizeof(zval), NULL);
-  zend_hash_update(props, "ioThreads", sizeof("ioThreads"), &ioThreads,
-                   sizeof(zval), NULL);
-  zend_hash_update(props, "coreConnectionPerHost",
-                   sizeof("coreConnectionPerHost"), &coreConnectionPerHost,
-                   sizeof(zval), NULL);
-  zend_hash_update(props, "maxConnectionsPerHost",
-                   sizeof("maxConnectionsPerHost"), &maxConnectionsPerHost,
-                   sizeof(zval), NULL);
-  zend_hash_update(props, "reconnectInterval", sizeof("reconnectInterval"),
-                   &reconnectInterval, sizeof(zval), NULL);
-  zend_hash_update(props, "latencyAwareRouting", sizeof("latencyAwareRouting"),
-                   &latencyAwareRouting, sizeof(zval), NULL);
-  zend_hash_update(props, "tcpNodelay", sizeof("tcpNodelay"), &tcpNodelay,
-                   sizeof(zval), NULL);
-  zend_hash_update(props, "tcpKeepalive", sizeof("tcpKeepalive"),
-                   &tcpKeepalive, sizeof(zval), NULL);
+  PHP5TO7_ZEND_HASH_UPDATE(props, "contactPoints", sizeof("contactPoints"),
+                           PHP5TO7_ZVAL_MAYBE_P(contactPoints), sizeof(zval));
+  PHP5TO7_ZEND_HASH_UPDATE(props, "loadBalancingPolicy", sizeof("loadBalancingPolicy"),
+                           PHP5TO7_ZVAL_MAYBE_P(loadBalancingPolicy), sizeof(zval));
+  PHP5TO7_ZEND_HASH_UPDATE(props, "localDatacenter", sizeof("localDatacenter"),
+                           PHP5TO7_ZVAL_MAYBE_P(localDatacenter), sizeof(zval));
+  PHP5TO7_ZEND_HASH_UPDATE(props, "hostPerRemoteDatacenter", sizeof("hostPerRemoteDatacenter"),
+                           PHP5TO7_ZVAL_MAYBE_P(hostPerRemoteDatacenter), sizeof(zval));
+  PHP5TO7_ZEND_HASH_UPDATE(props, "useRemoteDatacenterForLocalConsistencies", sizeof("useRemoteDatacenterForLocalConsistencies"),
+                           PHP5TO7_ZVAL_MAYBE_P(useRemoteDatacenterForLocalConsistencies), sizeof(zval));
+  PHP5TO7_ZEND_HASH_UPDATE(props, "useTokenAwareRouting", sizeof("useTokenAwareRouting"),
+                           PHP5TO7_ZVAL_MAYBE_P(useTokenAwareRouting), sizeof(zval));
+  PHP5TO7_ZEND_HASH_UPDATE(props, "username", sizeof("username"),
+                           PHP5TO7_ZVAL_MAYBE_P(username), sizeof(zval));
+  PHP5TO7_ZEND_HASH_UPDATE(props, "password", sizeof("password"),
+                           PHP5TO7_ZVAL_MAYBE_P(password), sizeof(zval));
+  PHP5TO7_ZEND_HASH_UPDATE(props, "connectTimeout", sizeof("connectTimeout"),
+                           PHP5TO7_ZVAL_MAYBE_P(connectTimeout), sizeof(zval));
+  PHP5TO7_ZEND_HASH_UPDATE(props, "requestTimeout", sizeof("requestTimeout"),
+                           PHP5TO7_ZVAL_MAYBE_P(requestTimeout), sizeof(zval));
+  PHP5TO7_ZEND_HASH_UPDATE(props, "sslOptions", sizeof("sslOptions"),
+                           PHP5TO7_ZVAL_MAYBE_P(sslOptions), sizeof(zval));
+  PHP5TO7_ZEND_HASH_UPDATE(props, "defaultConsistency", sizeof("defaultConsistency"),
+                           PHP5TO7_ZVAL_MAYBE_P(defaultConsistency), sizeof(zval));
+  PHP5TO7_ZEND_HASH_UPDATE(props, "defaultPageSize", sizeof("defaultPageSize"),
+                           PHP5TO7_ZVAL_MAYBE_P(defaultPageSize), sizeof(zval));
+  PHP5TO7_ZEND_HASH_UPDATE(props, "defaultTimeout", sizeof("defaultTimeout"),
+                           PHP5TO7_ZVAL_MAYBE_P(defaultTimeout), sizeof(zval));
+  PHP5TO7_ZEND_HASH_UPDATE(props, "usePersistentSessions", sizeof("usePersistentSessions"),
+                           PHP5TO7_ZVAL_MAYBE_P(usePersistentSessions), sizeof(zval));
+  PHP5TO7_ZEND_HASH_UPDATE(props, "protocolVersion", sizeof("protocolVersion"),
+                           PHP5TO7_ZVAL_MAYBE_P(protocolVersion), sizeof(zval));
+  PHP5TO7_ZEND_HASH_UPDATE(props, "ioThreads", sizeof("ioThreads"),
+                           PHP5TO7_ZVAL_MAYBE_P(ioThreads), sizeof(zval));
+  PHP5TO7_ZEND_HASH_UPDATE(props, "coreConnectionPerHost", sizeof("coreConnectionPerHost"),
+                           PHP5TO7_ZVAL_MAYBE_P(coreConnectionPerHost), sizeof(zval));
+  PHP5TO7_ZEND_HASH_UPDATE(props, "maxConnectionsPerHost", sizeof("maxConnectionsPerHost"),
+                           PHP5TO7_ZVAL_MAYBE_P(maxConnectionsPerHost), sizeof(zval));
+  PHP5TO7_ZEND_HASH_UPDATE(props, "reconnectInterval", sizeof("reconnectInterval"),
+                           PHP5TO7_ZVAL_MAYBE_P(reconnectInterval), sizeof(zval));
+  PHP5TO7_ZEND_HASH_UPDATE(props, "latencyAwareRouting", sizeof("latencyAwareRouting"),
+                           PHP5TO7_ZVAL_MAYBE_P(latencyAwareRouting), sizeof(zval));
+  PHP5TO7_ZEND_HASH_UPDATE(props, "tcpNodelay", sizeof("tcpNodelay"),
+                           PHP5TO7_ZVAL_MAYBE_P(tcpNodelay), sizeof(zval));
+  PHP5TO7_ZEND_HASH_UPDATE(props, "tcpKeepalive", sizeof("tcpKeepalive"),
+                           PHP5TO7_ZVAL_MAYBE_P(tcpKeepalive), sizeof(zval));
 
   return props;
 }
@@ -851,85 +872,70 @@ php_cassandra_cluster_builder_compare(zval *obj1, zval *obj2 TSRMLS_DC)
 }
 
 static void
-php_cassandra_cluster_builder_free(void *object TSRMLS_DC)
+php_cassandra_cluster_builder_free(php5to7_zend_object_free *object TSRMLS_DC)
 {
-  cassandra_cluster_builder* builder = (cassandra_cluster_builder*) object;
+  cassandra_cluster_builder *self =
+      PHP5TO7_ZEND_OBJECT_GET(cluster_builder, object);
 
-  zend_object_std_dtor(&builder->zval TSRMLS_CC);
-  efree(builder->contact_points);
-  builder->contact_points = NULL;
+  efree(self->contact_points);
+  self->contact_points = NULL;
 
-  if (builder->local_dc) {
-    efree(builder->local_dc);
-    builder->local_dc = NULL;
+  if (self->local_dc) {
+    efree(self->local_dc);
+    self->local_dc = NULL;
   }
 
-  if (builder->username) {
-    efree(builder->username);
-    builder->username = NULL;
+  if (self->username) {
+    efree(self->username);
+    self->username = NULL;
   }
 
-  if (builder->password) {
-    efree(builder->password);
-    builder->password = NULL;
+  if (self->password) {
+    efree(self->password);
+    self->password = NULL;
   }
 
-  if (builder->ssl_options) {
-    zval_ptr_dtor(&builder->ssl_options);
-    builder->ssl_options = NULL;
-  }
+  PHP5TO7_ZVAL_MAYBE_DESTROY(self->ssl_options);
+  PHP5TO7_ZVAL_MAYBE_DESTROY(self->default_timeout);
 
-  if (builder->default_timeout) {
-    zval_ptr_dtor(&builder->default_timeout);
-    builder->default_timeout = NULL;
-  }
-
-  efree(builder);
+  zend_object_std_dtor(&self->zval TSRMLS_CC);
+  PHP5TO7_MAYBE_EFREE(self);
 }
 
-static zend_object_value
-php_cassandra_cluster_builder_new(zend_class_entry* class_type TSRMLS_DC)
+static php5to7_zend_object
+php_cassandra_cluster_builder_new(zend_class_entry *ce TSRMLS_DC)
 {
-  zend_object_value retval;
-  cassandra_cluster_builder *builder;
+  cassandra_cluster_builder *self =
+      PHP5TO7_ZEND_OBJECT_ECALLOC(cluster_builder, ce);
 
-  builder = (cassandra_cluster_builder*) ecalloc(1, sizeof(cassandra_cluster_builder));
+  self->contact_points = estrdup("127.0.0.1");
+  self->port = 9042;
+  self->load_balancing_policy = LOAD_BALANCING_ROUND_ROBIN;
+  self->local_dc = NULL;
+  self->used_hosts_per_remote_dc = 0;
+  self->allow_remote_dcs_for_local_cl = 0;
+  self->use_token_aware_routing = 1;
+  self->username = NULL;
+  self->password = NULL;
+  self->connect_timeout = 5000;
+  self->request_timeout = 12000;
+  self->default_consistency = CASS_CONSISTENCY_ONE;
+  self->default_page_size = 5000;
+  self->persist = 1;
+  self->protocol_version = 2;
+  self->io_threads = 1;
+  self->core_connections_per_host = 1;
+  self->max_connections_per_host = 2;
+  self->reconnect_interval = 2000;
+  self->enable_latency_aware_routing = 1;
+  self->enable_tcp_nodelay = 1;
+  self->enable_tcp_keepalive = 0;
+  self->tcp_keepalive_delay = 0;
 
-  zend_object_std_init(&builder->zval, class_type TSRMLS_CC);
-  object_properties_init(&builder->zval, class_type);
+  PHP5TO7_ZVAL_UNDEF(self->ssl_options);
+  PHP5TO7_ZVAL_UNDEF(self->default_timeout);
 
-  builder->contact_points = estrdup("127.0.0.1");
-  builder->port = 9042;
-  builder->load_balancing_policy = LOAD_BALANCING_ROUND_ROBIN;
-  builder->local_dc = NULL;
-  builder->used_hosts_per_remote_dc = 0;
-  builder->allow_remote_dcs_for_local_cl = 0;
-  builder->use_token_aware_routing = 1;
-  builder->username = NULL;
-  builder->password = NULL;
-  builder->connect_timeout = 5000;
-  builder->request_timeout = 12000;
-  builder->ssl_options = NULL;
-  builder->default_consistency = CASS_CONSISTENCY_ONE;
-  builder->default_page_size = 5000;
-  builder->default_timeout = NULL;
-  builder->persist = 1;
-  builder->protocol_version = 2;
-  builder->io_threads = 1;
-  builder->core_connections_per_host = 1;
-  builder->max_connections_per_host = 2;
-  builder->reconnect_interval = 2000;
-  builder->enable_latency_aware_routing = 1;
-  builder->enable_tcp_nodelay = 1;
-  builder->enable_tcp_keepalive = 0;
-  builder->tcp_keepalive_delay = 0;
-
-  retval.handle   = zend_objects_store_put(builder,
-                      (zend_objects_store_dtor_t) zend_objects_destroy_object,
-                      php_cassandra_cluster_builder_free, NULL TSRMLS_CC);
-  retval.handlers = &cassandra_cluster_builder_handlers;
-
-  return retval;
+  PHP5TO7_ZEND_OBJECT_INIT(cluster_builder, self, ce);
 }
 
 void cassandra_define_ClusterBuilder(TSRMLS_D)
@@ -938,7 +944,7 @@ void cassandra_define_ClusterBuilder(TSRMLS_D)
 
   INIT_CLASS_ENTRY(ce, "Cassandra\\Cluster\\Builder", cassandra_cluster_builder_methods);
   cassandra_cluster_builder_ce = zend_register_internal_class(&ce TSRMLS_CC);
-  cassandra_cluster_builder_ce->ce_flags     |= ZEND_ACC_FINAL_CLASS;
+  cassandra_cluster_builder_ce->ce_flags     |= PHP5TO7_ZEND_ACC_FINAL;
   cassandra_cluster_builder_ce->create_object = php_cassandra_cluster_builder_new;
 
   memcpy(&cassandra_cluster_builder_handlers, zend_get_std_object_handlers(), sizeof(zend_object_handlers));

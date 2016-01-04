@@ -5,12 +5,12 @@ zend_class_entry *cassandra_type_ce = NULL;
 
 #define XX_SCALAR_METHOD(name, value) PHP_METHOD(Type, name) \
 { \
-  zval* ztype; \
+  php5to7_zval ztype; \
   if (zend_parse_parameters_none() == FAILURE) { \
     return; \
   } \
   ztype = php_cassandra_type_scalar(value TSRMLS_CC); \
-  RETURN_ZVAL(ztype, 1, 0); \
+  RETURN_ZVAL(PHP5TO7_ZVAL_MAYBE_P(ztype), 1, 1); \
 }
 
 PHP_CASSANDRA_SCALAR_TYPES_MAP(XX_SCALAR_METHOD)
@@ -18,9 +18,9 @@ PHP_CASSANDRA_SCALAR_TYPES_MAP(XX_SCALAR_METHOD)
 
 PHP_METHOD(Type, collection)
 {
-  zval *ztype;
+  php5to7_zval ztype;
   zval *type;
-  cassandra_type_scalar* scalar;
+  cassandra_type_scalar *scalar;
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "O",
                             &type, cassandra_type_ce) == FAILURE) {
@@ -48,16 +48,16 @@ PHP_METHOD(Type, collection)
     return;
   }
 
-  scalar = (cassandra_type_scalar*) zend_object_store_get_object(type TSRMLS_CC);
+  scalar = PHP_CASSANDRA_GET_TYPE_SCALAR(type);
   ztype  = php_cassandra_type_collection(scalar->type TSRMLS_CC);
-  RETURN_ZVAL(ztype, 0, 1);
+  RETURN_ZVAL(PHP5TO7_ZVAL_MAYBE_P(ztype), 0, 1);
 }
 
 PHP_METHOD(Type, set)
 {
-  zval* ztype;
+  php5to7_zval ztype;
   zval *type;
-  cassandra_type_scalar* scalar;
+  cassandra_type_scalar *scalar;
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "O",
                             &type, cassandra_type_ce) == FAILURE) {
@@ -85,18 +85,18 @@ PHP_METHOD(Type, set)
     return;
   }
 
-  scalar = (cassandra_type_scalar*) zend_object_store_get_object(type TSRMLS_CC);
+  scalar = PHP_CASSANDRA_GET_TYPE_SCALAR(type);
   ztype  = php_cassandra_type_set(scalar->type TSRMLS_CC);
-  RETURN_ZVAL(ztype, 0, 1);
+  RETURN_ZVAL(PHP5TO7_ZVAL_MAYBE_P(ztype), 0, 1);
 }
 
 PHP_METHOD(Type, map)
 {
-  zval* ztype;
+  php5to7_zval ztype;
   zval *key_type;
-  cassandra_type_scalar* key_scalar;
+  cassandra_type_scalar *key_scalar;
   zval *value_type;
-  cassandra_type_scalar* value_scalar;
+  cassandra_type_scalar *value_scalar;
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "OO",
                             &key_type, cassandra_type_ce,
@@ -148,10 +148,10 @@ PHP_METHOD(Type, map)
     return;
   }
 
-  key_scalar   = (cassandra_type_scalar*) zend_object_store_get_object(key_type TSRMLS_CC);
-  value_scalar = (cassandra_type_scalar*) zend_object_store_get_object(value_type TSRMLS_CC);
+  key_scalar   = PHP_CASSANDRA_GET_TYPE_SCALAR(key_type);
+  value_scalar = PHP_CASSANDRA_GET_TYPE_SCALAR(value_type);
   ztype        = php_cassandra_type_map(key_scalar->type, value_scalar->type TSRMLS_CC);
-  RETURN_ZVAL(ztype, 0, 1);
+  RETURN_ZVAL(PHP5TO7_ZVAL_MAYBE_P(ztype), 0, 1);
 }
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_none, 0, ZEND_RETURN_VALUE, 0)

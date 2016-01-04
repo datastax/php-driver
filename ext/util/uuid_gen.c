@@ -5,19 +5,19 @@
 ZEND_EXTERN_MODULE_GLOBALS(cassandra)
 
 void
-php_cassandra_uuid_generate_random(CassUuid* out TSRMLS_DC)
+php_cassandra_uuid_generate_random(CassUuid *out TSRMLS_DC)
 {
   cass_uuid_gen_random(CASSANDRA_G(uuid_gen), out);
 }
 
 void
-php_cassandra_uuid_generate_time(CassUuid* out TSRMLS_DC)
+php_cassandra_uuid_generate_time(CassUuid *out TSRMLS_DC)
 {
   cass_uuid_gen_time(CASSANDRA_G(uuid_gen), out);
 }
 
 void
-php_cassandra_uuid_generate_from_time(long timestamp, CassUuid* out TSRMLS_DC)
+php_cassandra_uuid_generate_from_time(long timestamp, CassUuid *out TSRMLS_DC)
 {
   cass_uuid_gen_from_time(CASSANDRA_G(uuid_gen), (cass_uint64_t) timestamp, out);
 }

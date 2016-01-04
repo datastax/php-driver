@@ -3,7 +3,7 @@
 #include "util/bytes.h"
 
 void
-php_cassandra_bytes_to_hex(const char* bin, int len, char** out, int* out_len)
+php_cassandra_bytes_to_hex(const char *bin, int len, char **out, int *out_len)
 {
   char hex_str[] = "0123456789abcdef";
   int  i;
