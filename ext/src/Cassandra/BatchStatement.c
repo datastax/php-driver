@@ -82,7 +82,7 @@ PHP_METHOD(BatchStatement, add)
   zend_hash_next_index_insert(&self->statements, &entry);
 #else
   zend_hash_next_index_insert(&self->statements,
-                              batch_statement_entry, sizeof(cassandra_batch_statement_entry*),
+                              &batch_statement_entry, sizeof(cassandra_batch_statement_entry*),
                               NULL);
 #endif
 }

@@ -396,7 +396,7 @@ PHP_METHOD(ClusterBuilder, withSSL)
 
   builder = PHP_CASSANDRA_GET_CLUSTER_BUILDER(getThis());
 
-  if (PHP5TO7_ZVAL_IS_UNDEF(builder->ssl_options))
+  if (!PHP5TO7_ZVAL_IS_UNDEF(builder->ssl_options))
     zval_ptr_dtor(&builder->ssl_options);
 
   PHP5TO7_ZVAL_COPY(PHP5TO7_ZVAL_MAYBE_P(builder->ssl_options), ssl_options);

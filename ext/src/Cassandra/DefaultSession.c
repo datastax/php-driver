@@ -125,55 +125,54 @@ bind_argument_by_index(CassStatement *statement, size_t index, zval *value TSRML
 }
 
 static int
-bind_argument_by_name(CassStatement *statement,
-                      const char *name, size_t name_length,
+bind_argument_by_name(CassStatement *statement, const char *name,
                       zval *value TSRMLS_DC)
 {
   if (Z_TYPE_P(value) == IS_NULL) {
-    CHECK_RESULT(cass_statement_bind_null_by_name_n(statement, name, name_length));
+    CHECK_RESULT(cass_statement_bind_null_by_name(statement, name));
   }
 
   if (Z_TYPE_P(value) == IS_STRING)
-    CHECK_RESULT(cass_statement_bind_string_by_name_n(statement, name, name_length, Z_STRVAL_P(value), Z_STRLEN_P(value)));
+    CHECK_RESULT(cass_statement_bind_string_by_name(statement, name, Z_STRVAL_P(value)));
 
   if (Z_TYPE_P(value) == IS_DOUBLE)
-    CHECK_RESULT(cass_statement_bind_double_by_name_n(statement, name, name_length, Z_DVAL_P(value)));
+    CHECK_RESULT(cass_statement_bind_double_by_name(statement, name, Z_DVAL_P(value)));
 
   if (Z_TYPE_P(value) == IS_LONG)
-    CHECK_RESULT(cass_statement_bind_int32_by_name_n(statement, name, name_length, Z_LVAL_P(value)));
+    CHECK_RESULT(cass_statement_bind_int32_by_name(statement, name, Z_LVAL_P(value)));
 
   if (PHP5TO7_ZVAL_IS_TRUE_P(value))
-    CHECK_RESULT(cass_statement_bind_bool_by_name_n(statement, name, name_length, cass_true));
+    CHECK_RESULT(cass_statement_bind_bool_by_name(statement, name, cass_true));
 
   if (PHP5TO7_ZVAL_IS_FALSE_P(value))
-    CHECK_RESULT(cass_statement_bind_bool_by_name_n(statement, name, name_length, cass_false));
+    CHECK_RESULT(cass_statement_bind_bool_by_name(statement, name, cass_false));
 
   if (Z_TYPE_P(value) == IS_OBJECT) {
     if (instanceof_function(Z_OBJCE_P(value), cassandra_float_ce TSRMLS_CC)) {
       cassandra_numeric *float_number = PHP_CASSANDRA_GET_NUMERIC(value);
-      CHECK_RESULT(cass_statement_bind_float_by_name_n(statement, name, name_length, float_number->float_value));
+      CHECK_RESULT(cass_statement_bind_float_by_name(statement, name, float_number->float_value));
     }
 
     if (instanceof_function(Z_OBJCE_P(value), cassandra_bigint_ce TSRMLS_CC)) {
       cassandra_numeric *bigint = PHP_CASSANDRA_GET_NUMERIC(value);
-      CHECK_RESULT(cass_statement_bind_int64_by_name_n(statement, name, name_length, bigint->bigint_value));
+      CHECK_RESULT(cass_statement_bind_int64_by_name(statement, name, bigint->bigint_value));
     }
 
     if (instanceof_function(Z_OBJCE_P(value), cassandra_timestamp_ce TSRMLS_CC)) {
       cassandra_timestamp *timestamp = PHP_CASSANDRA_GET_TIMESTAMP(value);
-      CHECK_RESULT(cass_statement_bind_int64_by_name_n(statement, name, name_length, timestamp->timestamp));
+      CHECK_RESULT(cass_statement_bind_int64_by_name(statement, name, timestamp->timestamp));
     }
 
     if (instanceof_function(Z_OBJCE_P(value), cassandra_blob_ce TSRMLS_CC)) {
       cassandra_blob *blob = PHP_CASSANDRA_GET_BLOB(value);
-      CHECK_RESULT(cass_statement_bind_bytes_by_name_n(statement, name, name_length, blob->data, blob->size));
+      CHECK_RESULT(cass_statement_bind_bytes_by_name(statement, name, blob->data, blob->size));
     }
 
     if (instanceof_function(Z_OBJCE_P(value), cassandra_varint_ce TSRMLS_CC)) {
       cassandra_numeric *varint = PHP_CASSANDRA_GET_NUMERIC(value);
       size_t size;
       cass_byte_t *data = (cass_byte_t *) export_twos_complement(varint->varint_value, &size);
-      CassError rc = cass_statement_bind_bytes_by_name_n(statement, name, name_length, data, size);
+      CassError rc = cass_statement_bind_bytes_by_name(statement, name, data, size);
       free(data);
       CHECK_RESULT(rc);
     }
@@ -182,19 +181,19 @@ bind_argument_by_name(CassStatement *statement,
       cassandra_numeric *decimal = PHP_CASSANDRA_GET_NUMERIC(value);
       size_t size;
       cass_byte_t *data = (cass_byte_t *) export_twos_complement(decimal->decimal_value, &size);
-      CassError rc = cass_statement_bind_decimal_by_name_n(statement, name, name_length, data, size, decimal->decimal_scale);
+      CassError rc = cass_statement_bind_decimal_by_name(statement, name, data, size, decimal->decimal_scale);
       free(data);
       CHECK_RESULT(rc);
     }
 
     if (instanceof_function(Z_OBJCE_P(value), cassandra_uuid_interface_ce TSRMLS_CC)) {
       cassandra_uuid *uuid = PHP_CASSANDRA_GET_UUID(value);
-      CHECK_RESULT(cass_statement_bind_uuid_by_name_n(statement, name, name_length, uuid->uuid));
+      CHECK_RESULT(cass_statement_bind_uuid_by_name(statement, name, uuid->uuid));
     }
 
     if (instanceof_function(Z_OBJCE_P(value), cassandra_inet_ce TSRMLS_CC)) {
       cassandra_inet *inet = PHP_CASSANDRA_GET_INET(value);
-      CHECK_RESULT(cass_statement_bind_inet_by_name_n(statement, name, name_length, inet->inet));
+      CHECK_RESULT(cass_statement_bind_inet_by_name(statement, name, inet->inet));
     }
 
     if (instanceof_function(Z_OBJCE_P(value), cassandra_set_ce TSRMLS_CC)) {
@@ -204,7 +203,7 @@ bind_argument_by_name(CassStatement *statement,
       if (!php_cassandra_collection_from_set(set, &collection TSRMLS_CC))
         return FAILURE;
 
-      rc = cass_statement_bind_collection_by_name_n(statement, name, name_length, collection);
+      rc = cass_statement_bind_collection_by_name(statement, name, collection);
       cass_collection_free(collection);
       CHECK_RESULT(rc);
     }
@@ -216,7 +215,7 @@ bind_argument_by_name(CassStatement *statement,
       if (!php_cassandra_collection_from_map(map, &collection TSRMLS_CC))
         return FAILURE;
 
-      rc = cass_statement_bind_collection_by_name_n(statement, name, name_length, collection);
+      rc = cass_statement_bind_collection_by_name(statement, name, collection);
       cass_collection_free(collection);
       CHECK_RESULT(rc);
     }
@@ -228,7 +227,7 @@ bind_argument_by_name(CassStatement *statement,
       if (!php_cassandra_collection_from_collection(coll, &collection TSRMLS_CC))
         return FAILURE;
 
-      rc = cass_statement_bind_collection_by_name_n(statement, name, name_length, collection);
+      rc = cass_statement_bind_collection_by_name(statement, name, collection);
       cass_collection_free(collection);
       CHECK_RESULT(rc);
     }
@@ -249,16 +248,14 @@ bind_arguments(CassStatement *statement, HashTable *arguments TSRMLS_DC)
   zend_string *key;
   ZEND_HASH_FOREACH_KEY_VAL(arguments, num_key, key, current) {
     if (key) {
-      rc = bind_argument_by_name(statement,
-                                 key->val, key->len,
+      rc = bind_argument_by_name(statement, key->val,
                                  PHP5TO7_ZVAL_MAYBE_DEREF(current) TSRMLS_CC);
 #else
+  char *str_key;
+  uint str_len;
   PHP5TO7_ZEND_HASH_FOREACH_KEY_VAL(arguments, num_key, str_key, str_len, current) {
-    char *str_key;
-    uint str_len;
     if (str_key) {
-      rc = bind_argument_by_name(statement,
-                                 str_key, str_len,
+      rc = bind_argument_by_name(statement, str_key,
                                  PHP5TO7_ZVAL_MAYBE_DEREF(current) TSRMLS_CC);
 #endif
     } else {
