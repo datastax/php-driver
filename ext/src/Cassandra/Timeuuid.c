@@ -1,4 +1,5 @@
 #include "php_cassandra.h"
+#include "util/hash.h"
 #include "util/types.h"
 #include "util/uuid_gen.h"
 #include <ext/date/php_date.h>
@@ -55,8 +56,7 @@ PHP_METHOD(Timeuuid, __toString)
 /* {{{ Cassandra\Timeuuid::type() */
 PHP_METHOD(Timeuuid, type)
 {
-  cassandra_uuid* self = (cassandra_uuid*) zend_object_store_get_object(getThis() TSRMLS_CC);
-  RETURN_ZVAL(self->type, 1, 0);
+  RETURN_ZVAL(php_cassandra_type_scalar(CASS_VALUE_TYPE_TIMEUUID TSRMLS_CC), 1, 0);
 }
 /* }}} */
 
@@ -136,7 +136,7 @@ static zend_function_entry cassandra_timeuuid_methods[] = {
   PHP_FE_END
 };
 
-static zend_object_handlers cassandra_timeuuid_handlers;
+static php_cassandra_value_handlers cassandra_timeuuid_handlers;
 
 static HashTable*
 php_cassandra_timeuuid_gc(zval *object, zval ***table, int *n TSRMLS_DC)
@@ -182,18 +182,21 @@ php_cassandra_timeuuid_compare(zval *obj1, zval *obj2 TSRMLS_DC)
   uuid1 = (cassandra_uuid*) zend_object_store_get_object(obj1 TSRMLS_CC);
   uuid2 = (cassandra_uuid*) zend_object_store_get_object(obj2 TSRMLS_CC);
 
-  if (uuid1->uuid.time_and_version == uuid2->uuid.time_and_version) {
-    if (uuid1->uuid.clock_seq_and_node == uuid2->uuid.clock_seq_and_node)
-      return 0;
-    else if (uuid1->uuid.clock_seq_and_node < uuid2->uuid.clock_seq_and_node)
-      return -1;
-    else
-      return 1;
-  } else if (uuid1->uuid.time_and_version < uuid2->uuid.time_and_version) {
-    return -1;
-  } else {
-    return 1;
-  }
+  if (uuid1->uuid.time_and_version != uuid2->uuid.time_and_version)
+    return uuid1->uuid.time_and_version < uuid2->uuid.time_and_version ? -1 : 1;
+  if (uuid1->uuid.clock_seq_and_node != uuid2->uuid.clock_seq_and_node)
+    return uuid1->uuid.clock_seq_and_node < uuid2->uuid.clock_seq_and_node ? -1 : 1;
+
+  return 0;
+}
+
+static unsigned
+php_cassandra_timeuuid_hash_value(zval *obj TSRMLS_DC)
+{
+  cassandra_uuid *self =
+      (cassandra_uuid *) zend_object_store_get_object(obj TSRMLS_CC);
+  return php_cassandra_combine_hash(php_cassandra_bigint_hash(self->uuid.time_and_version),
+                                    php_cassandra_bigint_hash(self->uuid.clock_seq_and_node));
 }
 
 static void
@@ -201,7 +204,6 @@ php_cassandra_timeuuid_free(void *object TSRMLS_DC)
 {
   cassandra_uuid* self = (cassandra_uuid*) object;
 
-  zval_ptr_dtor(&self->type);
   zend_object_std_dtor(&self->zval TSRMLS_CC);
 
   efree(self);
@@ -216,13 +218,11 @@ php_cassandra_timeuuid_new(zend_class_entry* class_type TSRMLS_DC)
   self = (cassandra_uuid*) emalloc(sizeof(cassandra_uuid));
   memset(self, 0, sizeof(cassandra_uuid));
 
-  self->type = php_cassandra_type_scalar(CASS_VALUE_TYPE_TIMEUUID TSRMLS_CC);
-
   zend_object_std_init(&self->zval, class_type TSRMLS_CC);
   object_properties_init(&self->zval, class_type);
 
   retval.handle   = zend_objects_store_put(self, (zend_objects_store_dtor_t) zend_objects_destroy_object, php_cassandra_timeuuid_free, NULL TSRMLS_CC);
-  retval.handlers = &cassandra_timeuuid_handlers;
+  retval.handlers = (zend_object_handlers *) &cassandra_timeuuid_handlers;
 
   return retval;
 }
@@ -236,11 +236,13 @@ cassandra_define_Timeuuid(TSRMLS_D)
   cassandra_timeuuid_ce = zend_register_internal_class(&ce TSRMLS_CC);
   zend_class_implements(cassandra_timeuuid_ce TSRMLS_CC, 1, cassandra_uuid_interface_ce);
   memcpy(&cassandra_timeuuid_handlers, zend_get_std_object_handlers(), sizeof(zend_object_handlers));
-  cassandra_timeuuid_handlers.get_properties  = php_cassandra_timeuuid_properties;
+  cassandra_timeuuid_handlers.std.get_properties  = php_cassandra_timeuuid_properties;
 #if PHP_VERSION_ID >= 50400
-  cassandra_timeuuid_handlers.get_gc          = php_cassandra_timeuuid_gc;
+  cassandra_timeuuid_handlers.std.get_gc          = php_cassandra_timeuuid_gc;
 #endif
-  cassandra_timeuuid_handlers.compare_objects = php_cassandra_timeuuid_compare;
+  cassandra_timeuuid_handlers.std.compare_objects = php_cassandra_timeuuid_compare;
   cassandra_timeuuid_ce->ce_flags |= ZEND_ACC_FINAL_CLASS;
   cassandra_timeuuid_ce->create_object = php_cassandra_timeuuid_new;
+
+  cassandra_timeuuid_handlers.hash_value = php_cassandra_timeuuid_hash_value;
 }

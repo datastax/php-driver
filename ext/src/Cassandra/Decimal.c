@@ -1,4 +1,5 @@
 #include "php_cassandra.h"
+#include "util/hash.h"
 #include "util/math.h"
 #include "util/types.h"
 #include <gmp.h>
@@ -259,8 +260,7 @@ PHP_METHOD(Decimal, __toString)
 /* {{{ Cassandra\Decimal::type() */
 PHP_METHOD(Decimal, type)
 {
-  cassandra_decimal* self = (cassandra_decimal*) zend_object_store_get_object(getThis() TSRMLS_CC);
-  RETURN_ZVAL(self->type, 1, 0);
+  RETURN_ZVAL(php_cassandra_type_scalar(CASS_VALUE_TYPE_DECIMAL TSRMLS_CC), 1, 0);
 }
 /* }}} */
 
@@ -501,7 +501,7 @@ static zend_function_entry cassandra_decimal_methods[] = {
   PHP_FE_END
 };
 
-static zend_object_handlers cassandra_decimal_handlers;
+static php_cassandra_value_handlers cassandra_decimal_handlers;
 
 static HashTable*
 php_cassandra_decimal_gc(zval *object, zval ***table, int *n TSRMLS_DC)
@@ -556,6 +556,14 @@ php_cassandra_decimal_compare(zval *obj1, zval *obj2 TSRMLS_DC)
   }
 }
 
+static unsigned
+php_cassandra_decimal_hash_value(zval *obj TSRMLS_DC)
+{
+  cassandra_decimal *self =
+      (cassandra_decimal *) zend_object_store_get_object(obj TSRMLS_CC);
+  return php_cassandra_mpz_hash((unsigned)self->scale, self->value);
+}
+
 static int
 php_cassandra_decimal_cast(zval* object, zval* retval, int type TSRMLS_DC)
 {
@@ -583,7 +591,6 @@ php_cassandra_decimal_free(void *object TSRMLS_DC)
 
   mpz_clear(self->value);
 
-  zval_ptr_dtor(&self->type);
   zend_object_std_dtor(&self->zval TSRMLS_CC);
 
   efree(self);
@@ -598,7 +605,6 @@ php_cassandra_decimal_new(zend_class_entry* class_type TSRMLS_DC)
   self = (cassandra_decimal*) emalloc(sizeof(cassandra_decimal));
   memset(self, 0, sizeof(cassandra_decimal));
 
-  self->type = php_cassandra_type_scalar(CASS_VALUE_TYPE_DECIMAL TSRMLS_CC);
   self->scale = 0;
 
   mpz_init(self->value);
@@ -606,7 +612,7 @@ php_cassandra_decimal_new(zend_class_entry* class_type TSRMLS_DC)
   object_properties_init(&self->zval, class_type);
 
   retval.handle   = zend_objects_store_put(self, (zend_objects_store_dtor_t) zend_objects_destroy_object, php_cassandra_decimal_free, NULL TSRMLS_CC);
-  retval.handlers = &cassandra_decimal_handlers;
+  retval.handlers = (zend_object_handlers *) &cassandra_decimal_handlers;
 
   return retval;
 }
@@ -622,10 +628,12 @@ void cassandra_define_Decimal(TSRMLS_D)
   cassandra_decimal_ce->create_object = php_cassandra_decimal_new;
 
   memcpy(&cassandra_decimal_handlers, zend_get_std_object_handlers(), sizeof(zend_object_handlers));
-  cassandra_decimal_handlers.get_properties  = php_cassandra_decimal_properties;
+  cassandra_decimal_handlers.std.get_properties  = php_cassandra_decimal_properties;
 #if PHP_VERSION_ID >= 50400
-  cassandra_decimal_handlers.get_gc          = php_cassandra_decimal_gc;
+  cassandra_decimal_handlers.std.get_gc          = php_cassandra_decimal_gc;
 #endif
-  cassandra_decimal_handlers.compare_objects = php_cassandra_decimal_compare;
-  cassandra_decimal_handlers.cast_object     = php_cassandra_decimal_cast;
+  cassandra_decimal_handlers.std.compare_objects = php_cassandra_decimal_compare;
+  cassandra_decimal_handlers.std.cast_object     = php_cassandra_decimal_cast;
+
+  cassandra_decimal_handlers.hash_value = php_cassandra_decimal_hash_value;
 }

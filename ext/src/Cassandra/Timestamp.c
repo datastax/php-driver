@@ -1,4 +1,5 @@
 #include "php_cassandra.h"
+#include "util/hash.h"
 #include "util/types.h"
 #include <ext/date/php_date.h>
 
@@ -51,8 +52,7 @@ PHP_METHOD(Timestamp, __construct)
 /* {{{ Cassandra\Timestamp::type() */
 PHP_METHOD(Timestamp, type)
 {
-  cassandra_timestamp* self = (cassandra_timestamp*) zend_object_store_get_object(getThis() TSRMLS_CC);
-  RETURN_ZVAL(self->type, 1, 0);
+  RETURN_ZVAL(php_cassandra_type_scalar(CASS_VALUE_TYPE_TIMESTAMP TSRMLS_CC), 1, 0);
 }
 /* }}} */
 
@@ -156,7 +156,7 @@ static zend_function_entry cassandra_timestamp_methods[] = {
   PHP_FE_END
 };
 
-static zend_object_handlers cassandra_timestamp_handlers;
+static php_cassandra_value_handlers cassandra_timestamp_handlers;
 
 static HashTable*
 php_cassandra_timestamp_gc(zval *object, zval ***table, int *n TSRMLS_DC)
@@ -200,12 +200,15 @@ php_cassandra_timestamp_compare(zval *obj1, zval *obj2 TSRMLS_DC)
   timestamp1 = (cassandra_timestamp*) zend_object_store_get_object(obj1 TSRMLS_CC);
   timestamp2 = (cassandra_timestamp*) zend_object_store_get_object(obj2 TSRMLS_CC);
 
-  if (timestamp1->timestamp == timestamp2->timestamp)
-    return 0;
-  else if (timestamp1->timestamp < timestamp2->timestamp)
-    return -1;
-  else
-    return 1;
+  return PHP_CASSANDRA_COMPARE(timestamp1->timestamp, timestamp2->timestamp);
+}
+
+static unsigned
+php_cassandra_timestamp_hash_value(zval *obj TSRMLS_DC)
+{
+  cassandra_timestamp *self =
+      (cassandra_timestamp *) zend_object_store_get_object(obj TSRMLS_CC);
+  return php_cassandra_bigint_hash(self->timestamp);
 }
 
 static void
@@ -213,7 +216,6 @@ php_cassandra_timestamp_free(void *object TSRMLS_DC)
 {
   cassandra_timestamp* self = (cassandra_timestamp*) object;
 
-  zval_ptr_dtor(&self->type);
   zend_object_std_dtor(&self->zval TSRMLS_CC);
 
   efree(self);
@@ -228,13 +230,11 @@ php_cassandra_timestamp_new(zend_class_entry* class_type TSRMLS_DC)
   self = (cassandra_timestamp*) emalloc(sizeof(cassandra_timestamp));
   memset(self, 0, sizeof(cassandra_timestamp));
 
-  self->type = php_cassandra_type_scalar(CASS_VALUE_TYPE_TIMESTAMP TSRMLS_CC);
-
   zend_object_std_init(&self->zval, class_type TSRMLS_CC);
   object_properties_init(&self->zval, class_type);
 
   retval.handle   = zend_objects_store_put(self, (zend_objects_store_dtor_t) zend_objects_destroy_object, php_cassandra_timestamp_free, NULL TSRMLS_CC);
-  retval.handlers = &cassandra_timestamp_handlers;
+  retval.handlers = (zend_object_handlers *) &cassandra_timestamp_handlers;
 
   return retval;
 }
@@ -247,11 +247,13 @@ void cassandra_define_Timestamp(TSRMLS_D)
   cassandra_timestamp_ce = zend_register_internal_class(&ce TSRMLS_CC);
   zend_class_implements(cassandra_timestamp_ce TSRMLS_CC, 1, cassandra_value_ce);
   memcpy(&cassandra_timestamp_handlers, zend_get_std_object_handlers(), sizeof(zend_object_handlers));
-  cassandra_timestamp_handlers.get_properties  = php_cassandra_timestamp_properties;
+  cassandra_timestamp_handlers.std.get_properties  = php_cassandra_timestamp_properties;
 #if PHP_VERSION_ID >= 50400
-  cassandra_timestamp_handlers.get_gc          = php_cassandra_timestamp_gc;
+  cassandra_timestamp_handlers.std.get_gc          = php_cassandra_timestamp_gc;
 #endif
-  cassandra_timestamp_handlers.compare_objects = php_cassandra_timestamp_compare;
+  cassandra_timestamp_handlers.std.compare_objects = php_cassandra_timestamp_compare;
   cassandra_timestamp_ce->ce_flags |= ZEND_ACC_FINAL_CLASS;
   cassandra_timestamp_ce->create_object = php_cassandra_timestamp_new;
+
+  cassandra_timestamp_handlers.hash_value = php_cassandra_timestamp_hash_value;
 }

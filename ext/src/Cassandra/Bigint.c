@@ -1,4 +1,5 @@
 #include "php_cassandra.h"
+#include "util/hash.h"
 #include "util/math.h"
 #include "util/types.h"
 
@@ -102,8 +103,7 @@ PHP_METHOD(Bigint, __toString)
 /* {{{ Cassandra\Bigint::type() */
 PHP_METHOD(Bigint, type)
 {
-  cassandra_bigint* self = (cassandra_bigint*) zend_object_store_get_object(getThis() TSRMLS_CC);
-  RETURN_ZVAL(self->type, 1, 0);
+  RETURN_ZVAL(php_cassandra_type_scalar(CASS_VALUE_TYPE_BIGINT TSRMLS_CC), 1, 0);
 }
 /* }}} */
 
@@ -384,7 +384,7 @@ static zend_function_entry cassandra_bigint_methods[] = {
   PHP_FE_END
 };
 
-static zend_object_handlers cassandra_bigint_handlers;
+static php_cassandra_value_handlers cassandra_bigint_handlers;
 
 static HashTable*
 php_cassandra_bigint_gc(zval *object, zval ***table, int *n TSRMLS_DC)
@@ -431,12 +431,15 @@ php_cassandra_bigint_compare(zval *obj1, zval *obj2 TSRMLS_DC)
   bigint1 = (cassandra_bigint*) zend_object_store_get_object(obj1 TSRMLS_CC);
   bigint2 = (cassandra_bigint*) zend_object_store_get_object(obj2 TSRMLS_CC);
 
-  if (bigint1->value == bigint2->value)
-    return 0;
-  else if (bigint1->value < bigint2->value)
-    return -1;
-  else
-    return 1;
+  return PHP_CASSANDRA_COMPARE(bigint1->value, bigint2->value);
+}
+
+static unsigned
+php_cassandra_bigint_hash_value(zval *obj TSRMLS_DC)
+{
+  cassandra_bigint *self =
+      (cassandra_bigint *) zend_object_store_get_object(obj TSRMLS_CC);
+  return (unsigned)(self->value ^ (self->value >> 32));
 }
 
 static int
@@ -464,7 +467,6 @@ php_cassandra_bigint_free(void *object TSRMLS_DC)
 {
   cassandra_bigint* self = (cassandra_bigint*) object;
 
-  zval_ptr_dtor(&self->type);
   zend_object_std_dtor(&self->zval TSRMLS_CC);
 
   efree(self);
@@ -479,13 +481,11 @@ php_cassandra_bigint_new(zend_class_entry* class_type TSRMLS_DC)
   self = (cassandra_bigint*) emalloc(sizeof(cassandra_bigint));
   memset(self, 0, sizeof(cassandra_bigint));
 
-  self->type = php_cassandra_type_scalar(CASS_VALUE_TYPE_BIGINT TSRMLS_CC);
-
   zend_object_std_init(&self->zval, class_type TSRMLS_CC);
   object_properties_init(&self->zval, class_type);
 
   retval.handle   = zend_objects_store_put(self, (zend_objects_store_dtor_t) zend_objects_destroy_object, php_cassandra_bigint_free, NULL TSRMLS_CC);
-  retval.handlers = &cassandra_bigint_handlers;
+  retval.handlers = (zend_object_handlers *) &cassandra_bigint_handlers;
 
   return retval;
 }
@@ -501,10 +501,12 @@ void cassandra_define_Bigint(TSRMLS_D)
   cassandra_bigint_ce->create_object = php_cassandra_bigint_new;
 
   memcpy(&cassandra_bigint_handlers, zend_get_std_object_handlers(), sizeof(zend_object_handlers));
-  cassandra_bigint_handlers.get_properties  = php_cassandra_bigint_properties;
+  cassandra_bigint_handlers.std.get_properties  = php_cassandra_bigint_properties;
 #if PHP_VERSION_ID >= 50400
-  cassandra_bigint_handlers.get_gc          = php_cassandra_bigint_gc;
+  cassandra_bigint_handlers.std.get_gc          = php_cassandra_bigint_gc;
 #endif
-  cassandra_bigint_handlers.compare_objects = php_cassandra_bigint_compare;
-  cassandra_bigint_handlers.cast_object     = php_cassandra_bigint_cast;
+  cassandra_bigint_handlers.std.compare_objects = php_cassandra_bigint_compare;
+  cassandra_bigint_handlers.std.cast_object     = php_cassandra_bigint_cast;
+
+  cassandra_bigint_handlers.hash_value = php_cassandra_bigint_hash_value;
 }

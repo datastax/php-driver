@@ -1,4 +1,5 @@
 #include "php_cassandra.h"
+#include "util/hash.h"
 #include "util/types.h"
 #include "util/uuid_gen.h"
 
@@ -55,8 +56,7 @@ PHP_METHOD(Uuid, __toString)
 /* {{{ Cassandra\Uuid::type() */
 PHP_METHOD(Uuid, type)
 {
-  cassandra_uuid* self = (cassandra_uuid*) zend_object_store_get_object(getThis() TSRMLS_CC);
-  RETURN_ZVAL(self->type, 1, 0);
+  RETURN_ZVAL(php_cassandra_type_scalar(CASS_VALUE_TYPE_UUID TSRMLS_CC), 1, 0);
 }
 /* }}} */
 
@@ -97,7 +97,7 @@ static zend_function_entry cassandra_uuid_methods[] = {
   PHP_FE_END
 };
 
-static zend_object_handlers cassandra_uuid_handlers;
+static php_cassandra_value_handlers cassandra_uuid_handlers;
 
 static HashTable*
 php_cassandra_uuid_gc(zval *object, zval ***table, int *n TSRMLS_DC)
@@ -143,18 +143,22 @@ php_cassandra_uuid_compare(zval *obj1, zval *obj2 TSRMLS_DC)
   uuid1 = (cassandra_uuid*) zend_object_store_get_object(obj1 TSRMLS_CC);
   uuid2 = (cassandra_uuid*) zend_object_store_get_object(obj2 TSRMLS_CC);
 
-  if (uuid1->uuid.time_and_version == uuid2->uuid.time_and_version) {
-    if (uuid1->uuid.clock_seq_and_node == uuid2->uuid.clock_seq_and_node)
-      return 0;
-    else if (uuid1->uuid.clock_seq_and_node < uuid2->uuid.clock_seq_and_node)
-      return -1;
-    else
-      return 1;
-  } else if (uuid1->uuid.time_and_version < uuid2->uuid.time_and_version) {
-    return -1;
-  } else {
-    return 1;
-  }
+  if (uuid1->uuid.time_and_version != uuid2->uuid.time_and_version)
+    return uuid1->uuid.time_and_version < uuid2->uuid.time_and_version ? -1 : 1;
+  if (uuid1->uuid.clock_seq_and_node != uuid2->uuid.clock_seq_and_node)
+    return uuid1->uuid.clock_seq_and_node < uuid2->uuid.clock_seq_and_node ? -1 : 1;
+
+  return 0;
+}
+
+static unsigned
+php_cassandra_uuid_hash_value(zval *obj TSRMLS_DC)
+{
+  cassandra_uuid *self =
+      (cassandra_uuid *) zend_object_store_get_object(obj TSRMLS_CC);
+  return php_cassandra_combine_hash(php_cassandra_bigint_hash(self->uuid.time_and_version),
+                                    php_cassandra_bigint_hash(self->uuid.clock_seq_and_node));
+
 }
 
 static void
@@ -162,7 +166,6 @@ php_cassandra_uuid_free(void *object TSRMLS_DC)
 {
   cassandra_uuid* self = (cassandra_uuid*) object;
 
-  zval_ptr_dtor(&self->type);
   zend_object_std_dtor(&self->zval TSRMLS_CC);
 
   efree(self);
@@ -177,13 +180,11 @@ php_cassandra_uuid_new(zend_class_entry* class_type TSRMLS_DC)
   self = (cassandra_uuid*) emalloc(sizeof(cassandra_uuid));
   memset(self, 0, sizeof(cassandra_uuid));
 
-  self->type = php_cassandra_type_scalar(CASS_VALUE_TYPE_UUID TSRMLS_CC);
-
   zend_object_std_init(&self->zval, class_type TSRMLS_CC);
   object_properties_init(&self->zval, class_type);
 
   retval.handle   = zend_objects_store_put(self, (zend_objects_store_dtor_t) zend_objects_destroy_object, php_cassandra_uuid_free, NULL TSRMLS_CC);
-  retval.handlers = &cassandra_uuid_handlers;
+  retval.handlers = (zend_object_handlers *) &cassandra_uuid_handlers;
 
   return retval;
 }
@@ -197,11 +198,13 @@ cassandra_define_Uuid(TSRMLS_D)
   cassandra_uuid_ce = zend_register_internal_class(&ce TSRMLS_CC);
   zend_class_implements(cassandra_uuid_ce TSRMLS_CC, 1, cassandra_uuid_interface_ce);
   memcpy(&cassandra_uuid_handlers, zend_get_std_object_handlers(), sizeof(zend_object_handlers));
-  cassandra_uuid_handlers.get_properties  = php_cassandra_uuid_properties;
+  cassandra_uuid_handlers.std.get_properties  = php_cassandra_uuid_properties;
 #if PHP_VERSION_ID >= 50400
-  cassandra_uuid_handlers.get_gc          = php_cassandra_uuid_gc;
+  cassandra_uuid_handlers.std.get_gc          = php_cassandra_uuid_gc;
 #endif
-  cassandra_uuid_handlers.compare_objects = php_cassandra_uuid_compare;
+  cassandra_uuid_handlers.std.compare_objects = php_cassandra_uuid_compare;
   cassandra_uuid_ce->ce_flags |= ZEND_ACC_FINAL_CLASS;
   cassandra_uuid_ce->create_object = php_cassandra_uuid_new;
+
+  cassandra_uuid_handlers.hash_value = php_cassandra_uuid_hash_value;
 }

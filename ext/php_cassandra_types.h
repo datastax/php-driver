@@ -1,9 +1,8 @@
 #ifndef PHP_CASSANDRA_TYPES_H
 #define PHP_CASSANDRA_TYPES_H
 
-#define VALUE_FIELDS  \
-  zend_object zval;   \
-  zval* type;
+#define VALUE_FIELDS \
+  zend_object zval;
 
 typedef struct {
   VALUE_FIELDS
@@ -53,6 +52,7 @@ typedef struct {
 
 typedef struct {
   VALUE_FIELDS
+  zval *type;
   HashTable values;
   unsigned hashv;
   int dirty;
@@ -62,6 +62,7 @@ typedef struct cassandra_map_entry_ cassandra_map_entry;
 
 typedef struct {
   VALUE_FIELDS
+  zval *type;
   cassandra_map_entry* entries;
   unsigned hashv;
   int dirty;
@@ -73,7 +74,7 @@ typedef struct cassandra_set_entry_ cassandra_set_entry;
 
 typedef struct {
   VALUE_FIELDS
-  CassValueType value_type;
+  zval *type;
   cassandra_set_entry* entries;
   unsigned hashv;
   int dirty;
@@ -338,6 +339,13 @@ typedef struct {
 } cassandra_type_custom;
 
 #undef TYPE_FIELDS
+
+typedef unsigned (*php_cassandra_value_hash_t)(zval *obj TSRMLS_DC);
+
+typedef struct {
+  zend_object_handlers std;
+  php_cassandra_value_hash_t hash_value;
+} php_cassandra_value_handlers;
 
 extern PHP_CASSANDRA_API zend_class_entry* cassandra_value_ce;
 extern PHP_CASSANDRA_API zend_class_entry* cassandra_numeric_ce;

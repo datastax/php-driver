@@ -97,6 +97,7 @@ if test "$PHP_CASSANDRA" != "no"; then
     util/collections.c \
     util/consistency.c \
     util/future.c \
+    util/hash.c \
     util/inet.c \
     util/math.c \
     util/ref.c \

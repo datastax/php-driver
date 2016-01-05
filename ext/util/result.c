@@ -80,7 +80,6 @@ php_cassandra_value(const CassValue* value, CassValueType type, zval** out TSRML
       zval_ptr_dtor(&return_value);
       return FAILURE;
     )
-    bigint_number->type = php_cassandra_type_scalar(type TSRMLS_CC);
     break;
   case CASS_VALUE_TYPE_TIMESTAMP:
     object_init_ex(return_value, cassandra_timestamp_ce);
@@ -89,7 +88,6 @@ php_cassandra_value(const CassValue* value, CassValueType type, zval** out TSRML
       zval_ptr_dtor(&return_value);
       return FAILURE;
     )
-    timestamp->type = php_cassandra_type_scalar(type TSRMLS_CC);
     break;
   case CASS_VALUE_TYPE_BLOB:
     object_init_ex(return_value, cassandra_blob_ce);
@@ -98,7 +96,6 @@ php_cassandra_value(const CassValue* value, CassValueType type, zval** out TSRML
       zval_ptr_dtor(&return_value);
       return FAILURE;
     )
-    blob->type = php_cassandra_type_scalar(type TSRMLS_CC);
     blob->data = emalloc(v_bytes_len * sizeof(cass_byte_t));
     blob->size = v_bytes_len;
     memcpy(blob->data, v_bytes, v_bytes_len);
@@ -110,7 +107,6 @@ php_cassandra_value(const CassValue* value, CassValueType type, zval** out TSRML
       zval_ptr_dtor(&return_value);
       return FAILURE;
     );
-    varint_number->type = php_cassandra_type_scalar(type TSRMLS_CC);
     import_twos_complement((cass_byte_t*) v_bytes, v_bytes_len, &varint_number->value);
     break;
   case CASS_VALUE_TYPE_UUID:
@@ -120,7 +116,6 @@ php_cassandra_value(const CassValue* value, CassValueType type, zval** out TSRML
       zval_ptr_dtor(&return_value);
       return FAILURE;
     )
-    uuid->type = php_cassandra_type_scalar(type TSRMLS_CC);
     break;
   case CASS_VALUE_TYPE_TIMEUUID:
     object_init_ex(return_value, cassandra_timeuuid_ce);
@@ -129,7 +124,6 @@ php_cassandra_value(const CassValue* value, CassValueType type, zval** out TSRML
       zval_ptr_dtor(&return_value);
       return FAILURE;
     )
-    uuid->type = php_cassandra_type_scalar(type TSRMLS_CC);
     break;
   case CASS_VALUE_TYPE_BOOLEAN:
     ASSERT_SUCCESS_BLOCK(cass_value_get_bool(value, &v_boolean),
@@ -149,7 +143,6 @@ php_cassandra_value(const CassValue* value, CassValueType type, zval** out TSRML
       zval_ptr_dtor(&return_value);
       return FAILURE;
     )
-    inet->type = php_cassandra_type_scalar(type TSRMLS_CC);
     break;
   case CASS_VALUE_TYPE_DECIMAL:
     object_init_ex(return_value, cassandra_decimal_ce);
@@ -158,7 +151,6 @@ php_cassandra_value(const CassValue* value, CassValueType type, zval** out TSRML
       zval_ptr_dtor(&return_value);
       return FAILURE;
     );
-    decimal_number->type = php_cassandra_type_scalar(type TSRMLS_CC);
     import_twos_complement((cass_byte_t*) v_decimal, v_decimal_len, &decimal_number->value);
     decimal_number->scale = v_decimal_scale;
     break;
@@ -176,7 +168,6 @@ php_cassandra_value(const CassValue* value, CassValueType type, zval** out TSRML
       zval_ptr_dtor(&return_value);
       return FAILURE;
     )
-    float_number->type = php_cassandra_type_scalar(type TSRMLS_CC);
     break;
   case CASS_VALUE_TYPE_LIST:
     object_init_ex(return_value, cassandra_collection_ce);

@@ -70,8 +70,7 @@ PHP_METHOD(Float, __toString)
 /* {{{ Cassandra\Float::type() */
 PHP_METHOD(Float, type)
 {
-  cassandra_float* self = (cassandra_float*) zend_object_store_get_object(getThis() TSRMLS_CC);
-  RETURN_ZVAL(self->type, 1, 0);
+  RETURN_ZVAL(php_cassandra_type_scalar(CASS_VALUE_TYPE_FLOAT TSRMLS_CC), 1, 0);
 }
 /* }}} */
 
@@ -351,7 +350,7 @@ static zend_function_entry cassandra_float_methods[] = {
   PHP_FE_END
 };
 
-static zend_object_handlers cassandra_float_handlers;
+static php_cassandra_value_handlers cassandra_float_handlers;
 
 static HashTable*
 php_cassandra_float_gc(zval *object, zval ***table, int *n TSRMLS_DC)
@@ -381,11 +380,20 @@ php_cassandra_float_properties(zval *object TSRMLS_DC)
   return props;
 }
 
+static inline cass_int32_t
+float_to_bits(cass_float_t value) {
+  cass_int32_t bits;
+  if (zend_isnan(value)) return 0x7fc00000; /* A canonical NaN value */
+  memcpy(&bits, &value, sizeof(cass_int32_t));
+  return bits;
+}
+
 static int
 php_cassandra_float_compare(zval *obj1, zval *obj2 TSRMLS_DC)
 {
   cassandra_float* flt1 = NULL;
   cassandra_float* flt2 = NULL;
+  cass_int32_t bits1, bits2;
 
   if (Z_OBJCE_P(obj1) != Z_OBJCE_P(obj2))
     return 1; /* different classes */
@@ -393,12 +401,22 @@ php_cassandra_float_compare(zval *obj1, zval *obj2 TSRMLS_DC)
   flt1 = (cassandra_float*) zend_object_store_get_object(obj1 TSRMLS_CC);
   flt2 = (cassandra_float*) zend_object_store_get_object(obj2 TSRMLS_CC);
 
-  if (flt1->value == flt2->value)
-    return 0;
-  else if (flt1->value < flt2->value)
-    return -1;
-  else
-    return 1;
+  if (flt1->value < flt2->value) return -1;
+  if (flt1->value > flt2->value) return  1;
+
+  bits1 = float_to_bits(flt1->value);
+  bits2 = float_to_bits(flt2->value);
+
+  /* Handle NaNs and negative and positive 0.0 */
+  return bits1 < bits2 ? -1 : bits1 > bits2;
+}
+
+static unsigned
+php_cassandra_float_hash_value(zval *obj TSRMLS_DC)
+{
+  cassandra_float *self =
+      (cassandra_float*) zend_object_store_get_object(obj TSRMLS_CC);
+  return float_to_bits(self->value);
 }
 
 static int
@@ -428,7 +446,6 @@ php_cassandra_float_free(void *object TSRMLS_DC)
 {
   cassandra_float* self = (cassandra_float*) object;
 
-  zval_ptr_dtor(&self->type);
   zend_object_std_dtor(&self->zval TSRMLS_CC);
 
   efree(self);
@@ -443,13 +460,11 @@ php_cassandra_float_new(zend_class_entry* class_type TSRMLS_DC)
   self = (cassandra_float*) emalloc(sizeof(cassandra_float));
   memset(self, 0, sizeof(cassandra_float));
 
-  self->type = php_cassandra_type_scalar(CASS_VALUE_TYPE_FLOAT TSRMLS_CC);
-
   zend_object_std_init(&self->zval, class_type TSRMLS_CC);
   object_properties_init(&self->zval, class_type);
 
   retval.handle   = zend_objects_store_put(self, (zend_objects_store_dtor_t) zend_objects_destroy_object, php_cassandra_float_free, NULL TSRMLS_CC);
-  retval.handlers = &cassandra_float_handlers;
+  retval.handlers = (zend_object_handlers *) &cassandra_float_handlers;
 
   return retval;
 }
@@ -465,10 +480,12 @@ void cassandra_define_Float(TSRMLS_D)
   cassandra_float_ce->create_object = php_cassandra_float_new;
 
   memcpy(&cassandra_float_handlers, zend_get_std_object_handlers(), sizeof(zend_object_handlers));
-  cassandra_float_handlers.get_properties  = php_cassandra_float_properties;
+  cassandra_float_handlers.std.get_properties  = php_cassandra_float_properties;
 #if PHP_VERSION_ID >= 50400
-  cassandra_float_handlers.get_gc          = php_cassandra_float_gc;
+  cassandra_float_handlers.std.get_gc          = php_cassandra_float_gc;
 #endif
-  cassandra_float_handlers.compare_objects = php_cassandra_float_compare;
-  cassandra_float_handlers.cast_object     = php_cassandra_float_cast;
+  cassandra_float_handlers.std.compare_objects = php_cassandra_float_compare;
+  cassandra_float_handlers.std.cast_object     = php_cassandra_float_cast;
+
+  cassandra_float_handlers.hash_value = php_cassandra_float_hash_value;
 }

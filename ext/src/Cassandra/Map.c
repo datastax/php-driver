@@ -438,7 +438,7 @@ static zend_function_entry cassandra_map_methods[] = {
   PHP_FE_END
 };
 
-static zend_object_handlers cassandra_map_handlers;
+static php_cassandra_value_handlers cassandra_map_handlers;
 
 static HashTable*
 php_cassandra_map_gc(zval *object, zval ***table, int *n TSRMLS_DC)
@@ -472,10 +472,58 @@ php_cassandra_map_properties(zval *object TSRMLS_DC)
 static int
 php_cassandra_map_compare(zval *obj1, zval *obj2 TSRMLS_DC)
 {
+  cassandra_map_entry *iter1;
+  cassandra_map_entry *iter2;
+  cassandra_map *map1;
+  cassandra_map *map2;
+
   if (Z_OBJCE_P(obj1) != Z_OBJCE_P(obj2))
     return 1; /* different classes */
 
-  return php_cassandra_value_compare(obj1, obj2 TSRMLS_CC);
+  map1 = (cassandra_map *) zend_object_store_get_object(obj1 TSRMLS_CC);
+  map2 = (cassandra_map *) zend_object_store_get_object(obj2 TSRMLS_CC);
+
+  if (HASH_COUNT(map1->entries) != HASH_COUNT(map1->entries)) {
+   return HASH_COUNT(map1->entries) < HASH_COUNT(map1->entries) ? -1 : 1;
+  }
+
+  iter1 = map1->entries;
+  iter2 = map2->entries;
+  while (iter1 && iter2) {
+    int r;
+
+    r = php_cassandra_value_compare(iter1->key, iter2->key TSRMLS_CC);
+    if (r != 0) return r;
+
+    r = php_cassandra_value_compare(iter1->value, iter2->value TSRMLS_CC);
+    if (r != 0) return r;
+
+    iter1 = (cassandra_map_entry*)iter1->hh.next;
+    iter2 = (cassandra_map_entry*)iter2->hh.next;
+  }
+
+  return 0;
+}
+
+static unsigned
+php_cassandra_map_hash_value(zval *obj TSRMLS_DC)
+{
+  cassandra_map *self =
+      (cassandra_map *) zend_object_store_get_object(obj TSRMLS_CC);
+  cassandra_map_entry* curr, * temp;
+  unsigned hashv = 0;
+
+  if (!self->dirty) return self->hashv;
+
+  HASH_ITER(hh, self->entries, curr, temp) {
+    hashv = php_cassandra_combine_hash(hashv, php_cassandra_value_hash(curr->key TSRMLS_CC));
+    hashv = php_cassandra_combine_hash(hashv, php_cassandra_value_hash(curr->value TSRMLS_CC));
+  }
+
+  self->hashv = hashv;
+  self->dirty = 0;
+
+  return hashv;
 }
 
 static void
@@ -516,7 +564,7 @@ php_cassandra_map_new(zend_class_entry* class_type TSRMLS_DC)
   retval.handle   = zend_objects_store_put(map,
                       (zend_objects_store_dtor_t) zend_objects_destroy_object,
                       php_cassandra_map_free, NULL TSRMLS_CC);
-  retval.handlers = &cassandra_map_handlers;
+  retval.handlers = (zend_object_handlers *) &cassandra_map_handlers;
 
   return retval;
 }
@@ -529,12 +577,14 @@ void cassandra_define_Map(TSRMLS_D)
   cassandra_map_ce = zend_register_internal_class(&ce TSRMLS_CC);
   zend_class_implements(cassandra_map_ce TSRMLS_CC, 1, cassandra_value_ce);
   memcpy(&cassandra_map_handlers, zend_get_std_object_handlers(), sizeof(zend_object_handlers));
-  cassandra_map_handlers.get_properties  = php_cassandra_map_properties;
+  cassandra_map_handlers.std.get_properties  = php_cassandra_map_properties;
 #if PHP_VERSION_ID >= 50400
-  cassandra_map_handlers.get_gc          = php_cassandra_map_gc;
+  cassandra_map_handlers.std.get_gc          = php_cassandra_map_gc;
 #endif
-  cassandra_map_handlers.compare_objects = php_cassandra_map_compare;
+  cassandra_map_handlers.std.compare_objects = php_cassandra_map_compare;
   cassandra_map_ce->ce_flags |= ZEND_ACC_FINAL_CLASS;
   cassandra_map_ce->create_object = php_cassandra_map_new;
   zend_class_implements(cassandra_map_ce TSRMLS_CC, 3, spl_ce_Countable, zend_ce_iterator, zend_ce_arrayaccess);
+
+  cassandra_map_handlers.hash_value = php_cassandra_map_hash_value;
 }

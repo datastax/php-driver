@@ -290,7 +290,7 @@ static zend_function_entry cassandra_set_methods[] = {
   PHP_FE_END
 };
 
-static zend_object_handlers cassandra_set_handlers;
+static php_cassandra_value_handlers cassandra_set_handlers;
 
 static HashTable*
 php_cassandra_set_gc(zval *object, zval ***table, int *n TSRMLS_DC)
@@ -323,10 +323,51 @@ int zend_compare_symbol_tables_i(HashTable *ht1, HashTable *ht2 TSRMLS_DC);
 static int
 php_cassandra_set_compare(zval *obj1, zval *obj2 TSRMLS_DC)
 {
+  cassandra_set_entry* iter1;
+  cassandra_set_entry* iter2;
+  cassandra_set *set1;
+  cassandra_set *set2;
+
   if (Z_OBJCE_P(obj1) != Z_OBJCE_P(obj2))
     return 1; /* different classes */
 
-  return php_cassandra_value_compare(obj1, obj2 TSRMLS_CC);
+  set1 = (cassandra_set *) zend_object_store_get_object(obj1 TSRMLS_CC);
+  set2 = (cassandra_set *) zend_object_store_get_object(obj2 TSRMLS_CC);
+
+  if (HASH_COUNT(set1->entries) != HASH_COUNT(set1->entries)) {
+   return HASH_COUNT(set1->entries) < HASH_COUNT(set1->entries) ? -1 : 1;
+  }
+
+  iter1 = set1->entries;
+  iter2 = set2->entries;
+  while (iter1 && iter2) {
+    int r = php_cassandra_value_compare(iter1->value, iter2->value TSRMLS_CC);
+    if (r != 0) return r;
+    iter1 = (cassandra_set_entry*)iter1->hh.next;
+    iter2 = (cassandra_set_entry*)iter2->hh.next;
+  }
+
+  return 0;
+}
+
+static unsigned
+php_cassandra_set_hash_value(zval *obj TSRMLS_DC)
+{
+  unsigned hashv = 0;
+  cassandra_set_entry *curr,  *temp;
+  cassandra_set *self =
+      (cassandra_set *) zend_object_store_get_object(obj TSRMLS_CC);
+
+  if (!self->dirty) return self->hashv;
+
+  HASH_ITER(hh, self->entries, curr, temp) {
+    hashv = php_cassandra_combine_hash(hashv, php_cassandra_value_hash(curr->value TSRMLS_CC));
+  }
+
+  self->hashv = hashv;
+  self->dirty = 0;
+
+  return hashv;
 }
 
 static void
@@ -367,7 +408,7 @@ php_cassandra_set_new(zend_class_entry* class_type TSRMLS_DC)
   retval.handle   = zend_objects_store_put(set,
                       (zend_objects_store_dtor_t) zend_objects_destroy_object,
                       php_cassandra_set_free, NULL TSRMLS_CC);
-  retval.handlers = &cassandra_set_handlers;
+  retval.handlers = (zend_object_handlers *) &cassandra_set_handlers;
 
   return retval;
 }
@@ -380,12 +421,14 @@ void cassandra_define_Set(TSRMLS_D)
   cassandra_set_ce = zend_register_internal_class(&ce TSRMLS_CC);
   zend_class_implements(cassandra_set_ce TSRMLS_CC, 1, cassandra_value_ce);
   memcpy(&cassandra_set_handlers, zend_get_std_object_handlers(), sizeof(zend_object_handlers));
-  cassandra_set_handlers.get_properties  = php_cassandra_set_properties;
+  cassandra_set_handlers.std.get_properties  = php_cassandra_set_properties;
 #if PHP_VERSION_ID >= 50400
-  cassandra_set_handlers.get_gc          = php_cassandra_set_gc;
+  cassandra_set_handlers.std.get_gc          = php_cassandra_set_gc;
 #endif
-  cassandra_set_handlers.compare_objects = php_cassandra_set_compare;
+  cassandra_set_handlers.std.compare_objects = php_cassandra_set_compare;
   cassandra_set_ce->ce_flags |= ZEND_ACC_FINAL_CLASS;
   cassandra_set_ce->create_object = php_cassandra_set_new;
   zend_class_implements(cassandra_set_ce TSRMLS_CC, 2, spl_ce_Countable, zend_ce_iterator);
+
+  cassandra_set_handlers.hash_value = php_cassandra_set_hash_value;
 }
