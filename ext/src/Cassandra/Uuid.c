@@ -56,7 +56,7 @@ PHP_METHOD(Uuid, __toString)
 /* {{{ Cassandra\Uuid::type() */
 PHP_METHOD(Uuid, type)
 {
-  RETURN_ZVAL(php_cassandra_type_scalar(CASS_VALUE_TYPE_UUID TSRMLS_CC), 1, 0);
+  RETURN_ZVAL(php_cassandra_type_scalar(CASS_VALUE_TYPE_UUID TSRMLS_CC), 1, 1);
 }
 /* }}} */
 

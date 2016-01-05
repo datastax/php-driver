@@ -52,7 +52,7 @@ PHP_METHOD(Timestamp, __construct)
 /* {{{ Cassandra\Timestamp::type() */
 PHP_METHOD(Timestamp, type)
 {
-  RETURN_ZVAL(php_cassandra_type_scalar(CASS_VALUE_TYPE_TIMESTAMP TSRMLS_CC), 1, 0);
+  RETURN_ZVAL(php_cassandra_type_scalar(CASS_VALUE_TYPE_TIMESTAMP TSRMLS_CC), 1, 1);
 }
 /* }}} */
 

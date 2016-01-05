@@ -103,7 +103,7 @@ PHP_METHOD(Bigint, __toString)
 /* {{{ Cassandra\Bigint::type() */
 PHP_METHOD(Bigint, type)
 {
-  RETURN_ZVAL(php_cassandra_type_scalar(CASS_VALUE_TYPE_BIGINT TSRMLS_CC), 1, 0);
+  RETURN_ZVAL(php_cassandra_type_scalar(CASS_VALUE_TYPE_BIGINT TSRMLS_CC), 1, 1);
 }
 /* }}} */
 

@@ -260,7 +260,7 @@ PHP_METHOD(Decimal, __toString)
 /* {{{ Cassandra\Decimal::type() */
 PHP_METHOD(Decimal, type)
 {
-  RETURN_ZVAL(php_cassandra_type_scalar(CASS_VALUE_TYPE_DECIMAL TSRMLS_CC), 1, 0);
+  RETURN_ZVAL(php_cassandra_type_scalar(CASS_VALUE_TYPE_DECIMAL TSRMLS_CC), 1, 1);
 }
 /* }}} */
 

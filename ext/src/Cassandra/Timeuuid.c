@@ -56,7 +56,7 @@ PHP_METHOD(Timeuuid, __toString)
 /* {{{ Cassandra\Timeuuid::type() */
 PHP_METHOD(Timeuuid, type)
 {
-  RETURN_ZVAL(php_cassandra_type_scalar(CASS_VALUE_TYPE_TIMEUUID TSRMLS_CC), 1, 0);
+  RETURN_ZVAL(php_cassandra_type_scalar(CASS_VALUE_TYPE_TIMEUUID TSRMLS_CC), 1, 1);
 }
 /* }}} */
 

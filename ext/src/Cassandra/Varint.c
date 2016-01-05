@@ -104,7 +104,7 @@ PHP_METHOD(Varint, __toString)
 /* {{{ Cassandra\Varint::type() */
 PHP_METHOD(Varint, type)
 {
-  RETURN_ZVAL(php_cassandra_type_scalar(CASS_VALUE_TYPE_VARINT TSRMLS_CC), 1, 0);
+  RETURN_ZVAL(php_cassandra_type_scalar(CASS_VALUE_TYPE_VARINT TSRMLS_CC), 1, 1);
 }
 /* }}} */
 

@@ -48,7 +48,7 @@ PHP_METHOD(Inet, __toString)
 /* {{{ Cassandra\Inet::type() */
 PHP_METHOD(Inet, type)
 {
-  RETURN_ZVAL(php_cassandra_type_scalar(CASS_VALUE_TYPE_INET TSRMLS_CC), 1, 0);
+  RETURN_ZVAL(php_cassandra_type_scalar(CASS_VALUE_TYPE_INET TSRMLS_CC), 1, 1);
 }
 /* }}} */
 

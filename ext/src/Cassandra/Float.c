@@ -70,7 +70,7 @@ PHP_METHOD(Float, __toString)
 /* {{{ Cassandra\Float::type() */
 PHP_METHOD(Float, type)
 {
-  RETURN_ZVAL(php_cassandra_type_scalar(CASS_VALUE_TYPE_FLOAT TSRMLS_CC), 1, 0);
+  RETURN_ZVAL(php_cassandra_type_scalar(CASS_VALUE_TYPE_FLOAT TSRMLS_CC), 1, 1);
 }
 /* }}} */
 

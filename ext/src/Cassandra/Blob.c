@@ -49,7 +49,7 @@ PHP_METHOD(Blob, __toString)
 /* {{{ Cassandra\Blob::type() */
 PHP_METHOD(Blob, type)
 {
-  RETURN_ZVAL(php_cassandra_type_scalar(CASS_VALUE_TYPE_BLOB TSRMLS_CC), 1, 0);
+  RETURN_ZVAL(php_cassandra_type_scalar(CASS_VALUE_TYPE_BLOB TSRMLS_CC), 1, 1);
 }
 /* }}} */
 
