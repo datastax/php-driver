@@ -1,6 +1,6 @@
 #include "php_cassandra.h"
 
-zend_class_entry* cassandra_ce = NULL;
+zend_class_entry *cassandra_ce = NULL;
 
 PHP_METHOD(Cassandra, cluster)
 {

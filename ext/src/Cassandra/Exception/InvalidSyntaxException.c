@@ -11,5 +11,5 @@ void cassandra_define_InvalidSyntaxException(TSRMLS_D)
   zend_class_entry ce;
 
   INIT_CLASS_ENTRY(ce, "Cassandra\\Exception\\InvalidSyntaxException", InvalidSyntaxException_methods);
-  cassandra_invalid_syntax_exception_ce = zend_register_internal_class_ex(&ce, cassandra_validation_exception_ce, NULL TSRMLS_CC);
+  cassandra_invalid_syntax_exception_ce = php5to7_zend_register_internal_class_ex(&ce, cassandra_validation_exception_ce);
 }

@@ -1,6 +1,6 @@
 #include "php_cassandra.h"
 
-zend_class_entry* cassandra_numeric_ce = NULL;
+zend_class_entry *cassandra_numeric_ce = NULL;
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_none, 0, ZEND_RETURN_VALUE, 0)
 ZEND_END_ARG_INFO()

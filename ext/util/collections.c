@@ -18,12 +18,12 @@
 #define CHECK_ERROR(rc) ASSERT_SUCCESS_BLOCK(rc, result = 0;)
 
 int
-php_cassandra_validate_object(zval* object, zval* ztype TSRMLS_DC)
+php_cassandra_validate_object(zval *object, zval *ztype TSRMLS_DC)
 {
   if (Z_TYPE_P(object) == IS_NULL)
     return 1;
 
-  cassandra_type* type = (cassandra_type*) zend_object_store_get_object(ztype TSRMLS_CC);
+  cassandra_type *type = PHP_CASSANDRA_GET_TYPE(ztype);
 
   switch (type->type) {
   case CASS_VALUE_TYPE_VARCHAR:
@@ -47,7 +47,7 @@ php_cassandra_validate_object(zval* object, zval* ztype TSRMLS_DC)
 
     return 1;
   case CASS_VALUE_TYPE_BOOLEAN:
-    if (Z_TYPE_P(object) != IS_BOOL) {
+    if (!PHP5TO7_ZVAL_IS_BOOL_P(object)) {
       EXPECTING_VALUE("a boolean");
     }
 
@@ -111,8 +111,8 @@ php_cassandra_validate_object(zval* object, zval* ztype TSRMLS_DC)
     if (!INSTANCE_OF(cassandra_map_ce)) {
       EXPECTING_VALUE("an instance of Cassandra\\Map");
     } else {
-      cassandra_map* map = (cassandra_map*) zend_object_store_get_object(object TSRMLS_CC);
-      cassandra_type* map_type = (cassandra_type*) zend_object_store_get_object(map->type TSRMLS_CC);
+      cassandra_map *map = PHP_CASSANDRA_GET_MAP(object);
+      cassandra_type *map_type = PHP_CASSANDRA_GET_TYPE(PHP5TO7_ZVAL_MAYBE_P(map->type));
       if (php_cassandra_type_compare(map_type, type TSRMLS_CC) != 0) {
         return 0;
       }
@@ -123,8 +123,8 @@ php_cassandra_validate_object(zval* object, zval* ztype TSRMLS_DC)
     if (!INSTANCE_OF(cassandra_set_ce)) {
       EXPECTING_VALUE("an instance of Cassandra\\Set");
     } else {
-      cassandra_set* set = (cassandra_set*) zend_object_store_get_object(object TSRMLS_CC);
-      cassandra_type* set_type = (cassandra_type*) zend_object_store_get_object(set->type TSRMLS_CC);
+      cassandra_set *set = PHP_CASSANDRA_GET_SET(object);
+      cassandra_type *set_type = PHP_CASSANDRA_GET_TYPE(PHP5TO7_ZVAL_MAYBE_P(set->type));
       if (php_cassandra_type_compare(set_type, type TSRMLS_CC) != 0) {
         return 0;
       }
@@ -135,8 +135,8 @@ php_cassandra_validate_object(zval* object, zval* ztype TSRMLS_DC)
     if (!INSTANCE_OF(cassandra_collection_ce)) {
       EXPECTING_VALUE("an instance of Cassandra\\Collection");
     } else {
-      cassandra_collection* collection = (cassandra_collection*) zend_object_store_get_object(object TSRMLS_CC);
-      cassandra_type* collection_type = (cassandra_type*) zend_object_store_get_object(collection->type TSRMLS_CC);
+      cassandra_collection *collection = PHP_CASSANDRA_GET_COLLECTION(object);
+      cassandra_type *collection_type = PHP_CASSANDRA_GET_TYPE(PHP5TO7_ZVAL_MAYBE_P(collection->type));
       if (php_cassandra_type_compare(collection_type, type TSRMLS_CC) != 0) {
         return 0;
       }
@@ -151,7 +151,7 @@ php_cassandra_validate_object(zval* object, zval* ztype TSRMLS_DC)
 }
 
 int
-php_cassandra_value_type(char* type, CassValueType* value_type TSRMLS_DC)
+php_cassandra_value_type(char *type, CassValueType *value_type TSRMLS_DC)
 {
   if (strcmp("ascii", type) == 0) {
     *value_type = CASS_VALUE_TYPE_ASCII;
@@ -195,25 +195,22 @@ php_cassandra_value_type(char* type, CassValueType* value_type TSRMLS_DC)
 }
 
 static int
-php_cassandra_collection_append(CassCollection* collection, zval* value, CassValueType type TSRMLS_DC)
+php_cassandra_collection_append(CassCollection *collection, zval *value, CassValueType type TSRMLS_DC)
 {
   int result = 1;
-  cassandra_float*      float_number;
-  cassandra_bigint*     bigint;
-  cassandra_blob*       blob;
-  cassandra_timestamp*  timestamp;
-  cassandra_uuid*       uuid;
-  cassandra_varint*     varint;
-  cassandra_decimal*    decimal;
-  cassandra_inet*       inet;
+  cassandra_blob       *blob;
+  cassandra_numeric    *numeric;
+  cassandra_timestamp  *timestamp;
+  cassandra_uuid       *uuid;
+  cassandra_inet       *inet;
   size_t                size;
-  cass_byte_t*          data;
+  cass_byte_t          *data;
 
 #if CURRENT_CPP_DRIVER_VERSION >= CPP_DRIVER_VERSION(2, 1, 0)
-  cassandra_collection* coll;
-  cassandra_map*        map;
-  cassandra_set*        set;
-  CassCollection*       sub_collection;
+  cassandra_collection *coll;
+  cassandra_map        *map;
+  cassandra_set        *set;
+  CassCollection       *sub_collection;
 #endif
 
   switch (type) {
@@ -224,66 +221,70 @@ php_cassandra_collection_append(CassCollection* collection, zval* value, CassVal
     break;
   case CASS_VALUE_TYPE_BIGINT:
   case CASS_VALUE_TYPE_COUNTER:
-    bigint = (cassandra_bigint*) zend_object_store_get_object(value TSRMLS_CC);
-    CHECK_ERROR(cass_collection_append_int64(collection, bigint->value));
+    numeric = PHP_CASSANDRA_GET_NUMERIC(value);
+    CHECK_ERROR(cass_collection_append_int64(collection, numeric->bigint_value));
     break;
   case CASS_VALUE_TYPE_BLOB:
-    blob = (cassandra_blob*) zend_object_store_get_object(value TSRMLS_CC);
+    blob = PHP_CASSANDRA_GET_BLOB(value);
     CHECK_ERROR(cass_collection_append_bytes(collection, blob->data, blob->size));
     break;
   case CASS_VALUE_TYPE_BOOLEAN:
+#if PHP_MAJOR_VERSION >= 7
+    CHECK_ERROR(cass_collection_append_bool(collection, Z_TYPE_P(value) == IS_TRUE ? cass_true : cass_false));
+#else
     CHECK_ERROR(cass_collection_append_bool(collection, Z_BVAL_P(value)));
+#endif
     break;
   case CASS_VALUE_TYPE_DOUBLE:
     CHECK_ERROR(cass_collection_append_double(collection, Z_DVAL_P(value)));
     break;
   case CASS_VALUE_TYPE_FLOAT:
-    float_number = (cassandra_float*) zend_object_store_get_object(value TSRMLS_CC);
-    CHECK_ERROR(cass_collection_append_float(collection, float_number->value));
+    numeric = PHP_CASSANDRA_GET_NUMERIC(value);
+    CHECK_ERROR(cass_collection_append_float(collection, numeric->float_value));
     break;
   case CASS_VALUE_TYPE_INT:
     CHECK_ERROR(cass_collection_append_int32(collection, Z_LVAL_P(value)));
     break;
   case CASS_VALUE_TYPE_TIMESTAMP:
-    timestamp = (cassandra_timestamp*) zend_object_store_get_object(value TSRMLS_CC);
+    timestamp = PHP_CASSANDRA_GET_TIMESTAMP(value);
     CHECK_ERROR(cass_collection_append_int64(collection, timestamp->timestamp));
     break;
   case CASS_VALUE_TYPE_UUID:
   case CASS_VALUE_TYPE_TIMEUUID:
-    uuid = (cassandra_uuid*) zend_object_store_get_object(value TSRMLS_CC);
+    uuid = PHP_CASSANDRA_GET_UUID(value);
     CHECK_ERROR(cass_collection_append_uuid(collection, uuid->uuid));
     break;
   case CASS_VALUE_TYPE_VARINT:
-    varint = (cassandra_varint*) zend_object_store_get_object(value TSRMLS_CC);
-    data = (cass_byte_t*) export_twos_complement(varint->value, &size);
+    numeric = PHP_CASSANDRA_GET_NUMERIC(value);
+    data = (cass_byte_t *) export_twos_complement(numeric->varint_value, &size);
     CHECK_ERROR(cass_collection_append_bytes(collection, data, size));
     free(data);
     break;
   case CASS_VALUE_TYPE_DECIMAL:
-    decimal = (cassandra_decimal*) zend_object_store_get_object(value TSRMLS_CC);
-    data = (cass_byte_t*) export_twos_complement(decimal->value, &size);
-    CHECK_ERROR(cass_collection_append_decimal(collection, data, size, decimal->scale));
+    numeric = PHP_CASSANDRA_GET_NUMERIC(value);
+    data = (cass_byte_t *) export_twos_complement(numeric->decimal_value, &size);
+    CHECK_ERROR(cass_collection_append_decimal(collection, data, size, numeric->decimal_scale));
     free(data);
     break;
   case CASS_VALUE_TYPE_INET:
-    inet = (cassandra_inet*) zend_object_store_get_object(value TSRMLS_CC);
+    inet = PHP_CASSANDRA_GET_INET(value);
     CHECK_ERROR(cass_collection_append_inet(collection, inet->inet));
     break;
 #if CURRENT_CPP_DRIVER_VERSION >= CPP_DRIVER_VERSION(2, 1, 0)
   case CASS_VALUE_TYPE_LIST:
-    coll = (cassandra_collection*) zend_object_store_get_object(value TSRMLS_CC);
+    coll = PHP_CASSANDRA_GET_COLLECTION(value);
     if (!php_cassandra_collection_from_collection(coll, &sub_collection TSRMLS_CC))
       return 0;
     CHECK_ERROR(cass_collection_append_collection(collection, sub_collection));
     break;
   case CASS_VALUE_TYPE_MAP:
-    map = (cassandra_map*) zend_object_store_get_object(value TSRMLS_CC);
+    map = PHP_CASSANDRA_GET_MAP(value);
     if (!php_cassandra_collection_from_map(map, &sub_collection TSRMLS_CC))
       return 0;
     CHECK_ERROR(cass_collection_append_collection(collection, sub_collection));
     break;
   case CASS_VALUE_TYPE_SET:
-    set = (cassandra_set*) zend_object_store_get_object(value TSRMLS_CC);
+    set = PHP_CASSANDRA_GET_SET(value);
     if (!php_cassandra_collection_from_set(set, &sub_collection TSRMLS_CC))
       return 0;
     CHECK_ERROR(cass_collection_append_collection(collection, sub_collection));
@@ -298,21 +299,23 @@ php_cassandra_collection_append(CassCollection* collection, zval* value, CassVal
 }
 
 int
-php_cassandra_collection_from_set(cassandra_set* set, CassCollection** collection_ptr TSRMLS_DC)
+php_cassandra_collection_from_set(cassandra_set *set, CassCollection **collection_ptr TSRMLS_DC)
 {
   int result = 1;
-  CassCollection* collection = NULL;
-  cassandra_type_set* type;
-  cassandra_type* value_type;
-  cassandra_set_entry* curr, * temp;
+  CassCollection *collection = NULL;
+  cassandra_type *type;
+  cassandra_type *value_type;
+  cassandra_set_entry *curr, *temp;
 
   collection = cass_collection_new(CASS_COLLECTION_TYPE_SET, HASH_COUNT(set->entries));
 
-  type = (cassandra_type_set*) zend_object_store_get_object(set->type TSRMLS_CC);
-  value_type = (cassandra_type*) zend_object_store_get_object(type->value_type TSRMLS_CC);
+  type = PHP_CASSANDRA_GET_TYPE(PHP5TO7_ZVAL_MAYBE_P(set->type));
+  value_type = PHP_CASSANDRA_GET_TYPE(PHP5TO7_ZVAL_MAYBE_P(type->value_type));
 
   HASH_ITER(hh, set->entries, curr, temp) {
-    if (!php_cassandra_collection_append(collection, curr->value, value_type->type TSRMLS_CC)) {
+    if (!php_cassandra_collection_append(collection,
+                                         PHP5TO7_ZVAL_MAYBE_P(curr->value),
+                                         value_type->type TSRMLS_CC)) {
       result = 0;
       break;
     }
@@ -327,32 +330,24 @@ php_cassandra_collection_from_set(cassandra_set* set, CassCollection** collectio
 }
 
 int
-php_cassandra_collection_from_collection(cassandra_collection* coll, CassCollection** collection_ptr TSRMLS_DC)
+php_cassandra_collection_from_collection(cassandra_collection *coll, CassCollection **collection_ptr TSRMLS_DC)
 {
   int result = 1;
-  HashPointer ptr;
-  zval** current;
-  CassCollection* collection = NULL;
-  cassandra_type_collection* type;
-  cassandra_type* value_type;
+  php5to7_zval *current;
+  cassandra_type *type;
+  cassandra_type *value_type;
+  CassCollection *collection =
+      cass_collection_new(CASS_COLLECTION_TYPE_LIST, zend_hash_num_elements(&coll->values));
 
-  zend_hash_get_pointer(&coll->values, &ptr);
-  zend_hash_internal_pointer_reset(&coll->values);
+  type = PHP_CASSANDRA_GET_TYPE(PHP5TO7_ZVAL_MAYBE_P(coll->type));
+  value_type = PHP_CASSANDRA_GET_TYPE(PHP5TO7_ZVAL_MAYBE_P(type->value_type));
 
-  collection = cass_collection_new(CASS_COLLECTION_TYPE_LIST, zend_hash_num_elements(&coll->values));
-
-  type = (cassandra_type_collection*) zend_object_store_get_object(coll->type TSRMLS_CC);
-  value_type = (cassandra_type*) zend_object_store_get_object(type->value_type TSRMLS_CC);
-
-  while (zend_hash_get_current_data(&coll->values, (void**) &current) == SUCCESS) {
-    if (!php_cassandra_collection_append(collection, *current, value_type->type TSRMLS_CC)) {
+  PHP5TO7_ZEND_HASH_FOREACH_VAL(&coll->values, current) {
+    if (!php_cassandra_collection_append(collection, PHP5TO7_ZVAL_MAYBE_DEREF(current), value_type->type TSRMLS_CC)) {
       result = 0;
       break;
     }
-    zend_hash_move_forward(&coll->values);
-  }
-
-  zend_hash_set_pointer(&coll->values, &ptr);
+  } PHP5TO7_ZEND_HASH_FOREACH_END(&coll->values);
 
   if (result)
     *collection_ptr = collection;
@@ -363,27 +358,31 @@ php_cassandra_collection_from_collection(cassandra_collection* coll, CassCollect
 }
 
 int
-php_cassandra_collection_from_map(cassandra_map* map, CassCollection** collection_ptr TSRMLS_DC)
+php_cassandra_collection_from_map(cassandra_map *map, CassCollection **collection_ptr TSRMLS_DC)
 {
   int result = 1;
-  CassCollection* collection = NULL;
-  cassandra_type_map* type;
-  cassandra_type* key_type;
-  cassandra_type* value_type;
-  cassandra_map_entry* curr, * temp;
+  CassCollection *collection = NULL;
+  cassandra_type *type;
+  cassandra_type *key_type;
+  cassandra_type *value_type;
+  cassandra_map_entry *curr, *temp;
 
   collection = cass_collection_new(CASS_COLLECTION_TYPE_MAP, HASH_COUNT(map->entries));
 
-  type = (cassandra_type_map*) zend_object_store_get_object(map->type TSRMLS_CC);
-  key_type = (cassandra_type*) zend_object_store_get_object(type->key_type TSRMLS_CC);
-  value_type = (cassandra_type*) zend_object_store_get_object(type->value_type TSRMLS_CC);
+  type = PHP_CASSANDRA_GET_TYPE(PHP5TO7_ZVAL_MAYBE_P(map->type));
+  value_type = PHP_CASSANDRA_GET_TYPE(PHP5TO7_ZVAL_MAYBE_P(type->value_type));
+  key_type = PHP_CASSANDRA_GET_TYPE(PHP5TO7_ZVAL_MAYBE_P(type->key_type));
 
   HASH_ITER(hh, map->entries, curr, temp) {
-    if (!php_cassandra_collection_append(collection, curr->key, key_type->type TSRMLS_CC)) {
+    if (!php_cassandra_collection_append(collection,
+                                         PHP5TO7_ZVAL_MAYBE_P(curr->key),
+                                         key_type->type TSRMLS_CC)) {
       result = 0;
       break;
     }
-    if (!php_cassandra_collection_append(collection, curr->value, value_type->type TSRMLS_CC)) {
+    if (!php_cassandra_collection_append(collection,
+                                         PHP5TO7_ZVAL_MAYBE_P(curr->value),
+                                         value_type->type TSRMLS_CC)) {
       result = 0;
       break;
     }

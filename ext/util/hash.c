@@ -26,17 +26,25 @@ php_cassandra_value_hash(zval* zvalue TSRMLS_DC) {
 #error "Unexpected sizeof(long)"
 #endif
 
-  case IS_DOUBLE:
-    return double_hash(Z_DVAL_P(zvalue));
+  case IS_DOUBLE: return double_hash(Z_DVAL_P(zvalue));
 
-  case IS_BOOL:
-    return Z_BVAL_P(zvalue);
+#if PHP_MAJOR_VERSION >= 7
+  case IS_TRUE: return 1;
+  case IS_FALSE: return 1;
+#else
+  case IS_BOOL: return Z_BVAL_P(zvalue);
+#endif
 
   case IS_STRING:
     return zend_inline_hash_func(Z_STRVAL_P(zvalue), Z_STRLEN_P(zvalue));
 
+#if PHP_MAJOR_VERSION >= 7
+  case IS_OBJECT:
+    return ((php_cassandra_value_handlers *)Z_OBJ_P(zvalue)->handlers)->hash_value(zvalue TSRMLS_CC);
+#else
   case IS_OBJECT:
     return ((php_cassandra_value_handlers *)Z_OBJVAL_P(zvalue).handlers)->hash_value(zvalue TSRMLS_CC);
+#endif
 
   default:
     break;
@@ -71,14 +79,27 @@ php_cassandra_value_compare(zval* zvalue1, zval* zvalue2 TSRMLS_DC) {
   case IS_DOUBLE:
     return double_compare(Z_DVAL_P(zvalue1), Z_DVAL_P(zvalue2));
 
+#if PHP_MAJOR_VERSION >= 7
+  case IS_TRUE:
+    return Z_TYPE_P(zvalue2) == IS_TRUE ? 0 : 1;
+
+  case IS_FALSE:
+    return Z_TYPE_P(zvalue2) == IS_FALSE ? 0 : -1;
+#else
   case IS_BOOL:
-    return PHP_CASSANDRA_COMPARE(Z_DVAL_P(zvalue1), Z_DVAL_P(zvalue2));
+    return PHP_CASSANDRA_COMPARE(Z_BVAL_P(zvalue1), Z_BVAL_P(zvalue2));
+#endif
 
   case IS_STRING:
     return zend_binary_zval_strcmp(zvalue1, zvalue2);
 
+#if PHP_MAJOR_VERSION >= 7
+  case IS_OBJECT:
+    return Z_OBJ_P(zvalue1)->handlers->compare_objects(zvalue1, zvalue2 TSRMLS_CC);
+#else
   case IS_OBJECT:
     return Z_OBJVAL_P(zvalue1).handlers->compare_objects(zvalue1, zvalue2 TSRMLS_CC);
+#endif
 
   default:
     break;

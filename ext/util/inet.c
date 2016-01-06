@@ -49,7 +49,7 @@ ip_address_describe_token(enum token_type type)
 }
 
 static enum token_type
-ip_address_tokenize(char* address, char* token, int* token_len, char** next_token)
+ip_address_tokenize(char *address, char *token, int *token_len, char **next_token)
 {
   enum token_type type;
 
@@ -100,12 +100,12 @@ ip_address_tokenize(char* address, char* token, int* token_len, char** next_toke
 }
 
 int
-php_cassandra_parse_ip_address(char* in, CassInet* inet TSRMLS_DC)
+php_cassandra_parse_ip_address(char *in, CassInet *inet TSRMLS_DC)
 {
   char              token[TOKEN_MAX_LEN + 1];
   int               token_len                    = -1;
   int               prev_token_len               = 0;
-  char*             in_ptr                       = in;
+  char             *in_ptr                       = in;
   enum token_type   type;
   enum parser_state state                        = STATE_START;
   int               pos                          = -1;
@@ -396,7 +396,7 @@ php_cassandra_parse_ip_address(char* in, CassInet* inet TSRMLS_DC)
 }
 
 void
-php_cassandra_format_address(CassInet inet, char** out)
+php_cassandra_format_address(CassInet inet, char **out)
 {
   if (inet.address_length > 4)
     spprintf(out, 0, "%x:%x:%x:%x:%x:%x:%x:%x",

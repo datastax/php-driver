@@ -5,24 +5,29 @@
 #define uthash_free(ptr,sz) efree(ptr)
 
 #define HASH_FUNCTION(key,keylen,num_bkts,hashv,bkt)                \
-  hashv = php_cassandra_value_hash(*((zval**)key) TSRMLS_CC); \
+  hashv = php_cassandra_value_hash((zval*)key TSRMLS_CC); \
   bkt = (hashv) & (num_bkts - 1U)
-
 #define HASH_KEYCOMPARE(a, b, len) \
-  php_cassandra_value_compare(*((zval**)a), *((zval**)b) TSRMLS_CC)
+  php_cassandra_value_compare((zval*)a, (zval*)b TSRMLS_CC)
 
 #undef HASH_ADD /* Previously defined in Zend/zend_hash.h */
 
 #include "util/uthash.h"
 
+#define HASH_FIND_ZVAL(head, zvptr, out) \
+    HASH_FIND(hh, head, zvptr, 0, out)
+
+#define HASH_ADD_ZVAL(head, fieldname, add) \
+   HASH_ADD_KEYPTR(hh, head, PHP5TO7_ZVAL_MAYBE_P(((add)->fieldname)), 0, add)
+
 struct cassandra_map_entry_ {
-  zval* key;
-  zval* value;
+  php5to7_zval key;
+  php5to7_zval value;
   UT_hash_handle hh;
 };
 
 struct cassandra_set_entry_ {
-  zval* value;
+  php5to7_zval value;
   UT_hash_handle hh;
 };
 

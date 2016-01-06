@@ -1,16 +1,16 @@
 #include "php_cassandra.h"
 #include "util/types.h"
 
-zend_class_entry* cassandra_type_ce = NULL;
+zend_class_entry *cassandra_type_ce = NULL;
 
 #define XX_SCALAR_METHOD(name, value) PHP_METHOD(Type, name) \
 { \
-  zval* ztype; \
+  php5to7_zval ztype; \
   if (zend_parse_parameters_none() == FAILURE) { \
     return; \
   } \
   ztype = php_cassandra_type_scalar(value TSRMLS_CC); \
-  RETURN_ZVAL(ztype, 1, 1); \
+  RETURN_ZVAL(PHP5TO7_ZVAL_MAYBE_P(ztype), 1, 1); \
 }
 
 PHP_CASSANDRA_SCALAR_TYPES_MAP(XX_SCALAR_METHOD)
@@ -18,8 +18,8 @@ PHP_CASSANDRA_SCALAR_TYPES_MAP(XX_SCALAR_METHOD)
 
 PHP_METHOD(Type, collection)
 {
-  zval* ztype;
-  zval* value_type;
+  php5to7_zval ztype;
+  zval *value_type;
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "O",
                             &value_type, cassandra_type_ce) == FAILURE) {
@@ -30,15 +30,15 @@ PHP_METHOD(Type, collection)
     return;
   }
 
-  ztype = php_cassandra_type_collection(value_type TSRMLS_CC);
+  ztype  = php_cassandra_type_collection(value_type TSRMLS_CC);
   Z_ADDREF_P(value_type);
-  RETURN_ZVAL(ztype, 0, 1);
+  RETURN_ZVAL(PHP5TO7_ZVAL_MAYBE_P(ztype), 0, 1);
 }
 
 PHP_METHOD(Type, set)
 {
-  zval* ztype;
-  zval* value_type;
+  php5to7_zval ztype;
+  zval *value_type;
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "O",
                             &value_type, cassandra_type_ce) == FAILURE) {
@@ -51,14 +51,14 @@ PHP_METHOD(Type, set)
 
   ztype = php_cassandra_type_set(value_type TSRMLS_CC);
   Z_ADDREF_P(value_type);
-  RETURN_ZVAL(ztype, 0, 1);
+  RETURN_ZVAL(PHP5TO7_ZVAL_MAYBE_P(ztype), 0, 1);
 }
 
 PHP_METHOD(Type, map)
 {
-  zval* ztype;
-  zval* key_type;
-  zval* value_type;
+  php5to7_zval ztype;
+  zval *key_type;
+  zval *value_type;
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "OO",
                             &key_type, cassandra_type_ce,
@@ -77,7 +77,7 @@ PHP_METHOD(Type, map)
   ztype = php_cassandra_type_map(key_type, value_type TSRMLS_CC);
   Z_ADDREF_P(key_type);
   Z_ADDREF_P(value_type);
-  RETURN_ZVAL(ztype, 0, 1);
+  RETURN_ZVAL(PHP5TO7_ZVAL_MAYBE_P(ztype), 0, 1);
 }
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_none, 0, ZEND_RETURN_VALUE, 0)
