@@ -20,10 +20,12 @@
 int
 php_cassandra_validate_object(zval *object, zval *ztype TSRMLS_DC)
 {
+  cassandra_type *type;
+
   if (Z_TYPE_P(object) == IS_NULL)
     return 1;
 
-  cassandra_type *type = PHP_CASSANDRA_GET_TYPE(ztype);
+  type = PHP_CASSANDRA_GET_TYPE(ztype);
 
   switch (type->type) {
   case CASS_VALUE_TYPE_VARCHAR:

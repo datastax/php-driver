@@ -207,9 +207,6 @@ php_cassandra_create_column(cassandra_ref *schema,
 {
   php5to7_zval result;
   cassandra_column *column;
-
-  PHP5TO7_ZVAL_UNDEF(result);
-
 #if CURRENT_CPP_DRIVER_VERSION < CPP_DRIVER_VERSION(2, 2, 0)
   const CassSchemaMetaField *field;
 #endif
@@ -217,6 +214,9 @@ php_cassandra_create_column(cassandra_ref *schema,
 
   const char *validator;
   size_t      validator_length;
+
+  PHP5TO7_ZVAL_UNDEF(result);
+
 
 #if CURRENT_CPP_DRIVER_VERSION >= CPP_DRIVER_VERSION(2, 2, 0)
   value = cass_column_meta_field_by_name(meta, "validator");

@@ -112,13 +112,12 @@ Apache Cassandra.
 ### Building the Driver
 
 The [batch script](vc_build.bat) detects installed versions of Visual Studio to
-simplify the build process on Windows. If you have more than one version of
-Visual Studio installed you will be prompted to which version to use when
-compiling the driver.
+simplify the build process on Windows and select the correct version of Visual
+Studio for the PHP version the driver is being built for.
 
 First you will need to open a "Command Prompt" to execute the batch script.
 Running the batch script without any arguments will build the driver for PHP
-v5.6 with Zend thread safety (ZTS) and for the current system architecture
+v7.0 with Zend thread safety (ZTS) and for the current system architecture
 (e.g. x64).
 
 To perform advanced build configuration, execute the batch script with the
@@ -131,9 +130,9 @@ Usage: VC_BUILD.BAT [OPTION...]
     --RELEASE                         Enable release build (default)
     --DISABLE-CLEAN                   Disable clean build
     --DISABLE-THREAD-SAFETY           Disable thread safety
-    --ENABLE-PACKAGES [version]       Enable package generation (5.5 and 5.6) (*)
+    --ENABLE-PACKAGES [version]       Enable package generation (5.5, 5.6, 7.0) (*)
     --ENABLE-TEST-CONFIGURATION       Enable test configuration build
-    --PHP-VERSION [version]           PHP version 5.3, 5.4, 5.5, or 5.6 (**)
+    --PHP-VERSION [version]           PHP version 5.5, 5.6, 7.0 (**)
     --X86                             Target 32-bit build (***)
     --X64                             Target 64-bit build (***)
 
@@ -143,7 +142,7 @@ Usage: VC_BUILD.BAT [OPTION...]
     --HELP                            Display this message
 
 *   Minimum supported officially released PHP binary installations
-**  Defaults to PHP v5.6 if --PHP-VERSION is not used
+**  Defaults to PHP v7.0 if --PHP-VERSION is not used
 *** Default target architecture is determined based on system architecture
 ```
 
