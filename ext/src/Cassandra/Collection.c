@@ -101,15 +101,6 @@ PHP_METHOD(Collection, type)
   RETURN_ZVAL(PHP5TO7_ZVAL_MAYBE_P(self->type), 1, 0);
 }
 
-/* {{{ Cassandra\Collection::valueType() */
-PHP_METHOD(Collection, valueType)
-{
-  cassandra_collection *self = PHP_CASSANDRA_GET_COLLECTION(getThis());
-  cassandra_type *type = PHP_CASSANDRA_GET_TYPE(PHP5TO7_ZVAL_MAYBE_P(self->type));
-  RETURN_ZVAL(PHP5TO7_ZVAL_MAYBE_P(type->value_type), 1, 0);
-}
-/* }}} */
-
 /* {{{ Cassandra\Collection::values() */
 PHP_METHOD(Collection, values)
 {
@@ -285,7 +276,6 @@ ZEND_END_ARG_INFO()
 static zend_function_entry cassandra_collection_methods[] = {
   PHP_ME(Collection, __construct, arginfo__construct, ZEND_ACC_CTOR|ZEND_ACC_PUBLIC)
   PHP_ME(Collection, type, arginfo_none, ZEND_ACC_PUBLIC)
-  PHP_ME(Collection, valueType, arginfo_none, ZEND_ACC_PUBLIC)
   PHP_ME(Collection, values, arginfo_none, ZEND_ACC_PUBLIC)
   PHP_ME(Collection, add, arginfo_value, ZEND_ACC_PUBLIC)
   PHP_ME(Collection, get, arginfo_index, ZEND_ACC_PUBLIC)

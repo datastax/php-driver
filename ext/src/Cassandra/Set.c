@@ -130,15 +130,6 @@ PHP_METHOD(Set, type)
 }
 /* }}} */
 
-/* {{{ Cassandra\Set::valueType() */
-PHP_METHOD(Set, valueType)
-{
-  cassandra_set *self = self = PHP_CASSANDRA_GET_SET(getThis());
-  cassandra_type *type = PHP_CASSANDRA_GET_TYPE(PHP5TO7_ZVAL_MAYBE_P(self->type));
-  RETURN_ZVAL(PHP5TO7_ZVAL_MAYBE_P(type->value_type), 1, 0);
-}
-/* }}} */
-
 /* {{{ Cassandra\Set::values() */
 PHP_METHOD(Set, values)
 {
@@ -270,7 +261,6 @@ ZEND_END_ARG_INFO()
 static zend_function_entry cassandra_set_methods[] = {
   PHP_ME(Set, __construct, arginfo__construct, ZEND_ACC_CTOR|ZEND_ACC_PUBLIC)
   PHP_ME(Set, type, arginfo_none, ZEND_ACC_PUBLIC)
-  PHP_ME(Set, valueType, arginfo_none, ZEND_ACC_PUBLIC)
   PHP_ME(Set, values, arginfo_none, ZEND_ACC_PUBLIC)
   PHP_ME(Set, add, arginfo_one, ZEND_ACC_PUBLIC)
   PHP_ME(Set, has, arginfo_one, ZEND_ACC_PUBLIC)

@@ -30,7 +30,7 @@ class CollectionTest extends \PHPUnit_Framework_TestCase
     public function testReturnsItsType($type)
     {
         $list = new Collection($type);
-        $this->assertEquals($type, $list->valueType());
+        $this->assertEquals($type, $list->type()->valueType());
     }
 
     public function cassandraTypes()

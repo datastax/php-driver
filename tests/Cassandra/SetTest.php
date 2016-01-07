@@ -110,7 +110,7 @@ class SetTest extends \PHPUnit_Framework_TestCase
     public function testReturnsItsType($type)
     {
         $set = new Set($type);
-        $this->assertEquals($type, $set->valueType());
+        $this->assertEquals($type, $set->type()->valueType());
     }
 
     public function cassandraTypes()

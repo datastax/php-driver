@@ -186,7 +186,7 @@ PHP_METHOD(Map, __construct)
              instanceof_function(Z_OBJCE_P(value_type), cassandra_type_ce TSRMLS_CC)) {
     Z_ADDREF_P(value_type);
   } else {
-    zval_ptr_dtor(key_type);
+    zval_ptr_dtor(&key_type);
     INVALID_ARGUMENT(value_type, "a string or an instance of Cassandra\\Type");
   }
 
@@ -199,24 +199,6 @@ PHP_METHOD(Map, type)
 {
   cassandra_map *self = PHP_CASSANDRA_GET_MAP(getThis());
   RETURN_ZVAL(PHP5TO7_ZVAL_MAYBE_P(self->type), 1, 0);
-}
-/* }}} */
-
-/* {{{ Cassandra\Map::keyType() */
-PHP_METHOD(Map, keyType)
-{
-  cassandra_map *self = PHP_CASSANDRA_GET_MAP(getThis());
-  cassandra_type *type = PHP_CASSANDRA_GET_TYPE(PHP5TO7_ZVAL_MAYBE_P(self->type));
-  RETURN_ZVAL(PHP5TO7_ZVAL_MAYBE_P(type->key_type), 1, 0);
-}
-/* }}} */
-
-/* {{{ Cassandra\Map::valueType() */
-PHP_METHOD(Map, valueType)
-{
-  cassandra_map *self = PHP_CASSANDRA_GET_MAP(getThis());
-  cassandra_type *type = PHP_CASSANDRA_GET_TYPE(PHP5TO7_ZVAL_MAYBE_P(self->type));
-  RETURN_ZVAL(PHP5TO7_ZVAL_MAYBE_P(type->value_type), 1, 0);
 }
 /* }}} */
 
@@ -417,9 +399,7 @@ ZEND_END_ARG_INFO()
 static zend_function_entry cassandra_map_methods[] = {
   PHP_ME(Map, __construct, arginfo__construct, ZEND_ACC_CTOR|ZEND_ACC_PUBLIC)
   PHP_ME(Map, type, arginfo_none, ZEND_ACC_PUBLIC)
-  PHP_ME(Map, keyType, arginfo_none, ZEND_ACC_PUBLIC)
   PHP_ME(Map, keys, arginfo_none, ZEND_ACC_PUBLIC)
-  PHP_ME(Map, valueType, arginfo_none, ZEND_ACC_PUBLIC)
   PHP_ME(Map, values, arginfo_none, ZEND_ACC_PUBLIC)
   PHP_ME(Map, set, arginfo_two, ZEND_ACC_PUBLIC)
   PHP_ME(Map, get, arginfo_one, ZEND_ACC_PUBLIC)
