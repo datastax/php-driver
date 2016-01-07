@@ -115,7 +115,7 @@ php_cassandra_mpz_hash(unsigned seed, mpz_t n) {
   unsigned hashv = seed;
 #if GMP_LIMB_BITS == 32
     for (i = 0; i < size; ++i) {
-      hashv = combine_hash(hashv, mpz_getlimbn(m, i));
+      hashv = php_cassandra_combine_hash(hashv, mpz_getlimbn(n, i));
     }
 #elif GMP_LIMB_BITS == 64
     for (i = 0; i < size; ++i) {
