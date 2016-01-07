@@ -146,7 +146,7 @@ php_cassandra_map_populate_values(const cassandra_map *map, zval *array)
   }
 }
 
-/* {{{ Cassandra\Map::__construct(string, string) */
+/* {{{ Cassandra\Map::__construct(type, type) */
 PHP_METHOD(Map, __construct)
 {
   cassandra_map *self;
@@ -186,7 +186,7 @@ PHP_METHOD(Map, __construct)
              instanceof_function(Z_OBJCE_P(value_type), cassandra_type_ce TSRMLS_CC)) {
     Z_ADDREF_P(value_type);
   } else {
-    zval_ptr_dtor(&key_type);
+    zval_ptr_dtor(PHP5TO7_ZVAL_MAYBE_ADDR_OF(key_type));
     INVALID_ARGUMENT(value_type, "a string or an instance of Cassandra\\Type");
   }
 

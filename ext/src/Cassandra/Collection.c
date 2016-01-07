@@ -68,7 +68,7 @@ php_cassandra_collection_populate(cassandra_collection *collection, zval *array)
   } PHP5TO7_ZEND_HASH_FOREACH_END(&collection->values);
 }
 
-/* {{{ Cassandra\Collection::__construct(string) */
+/* {{{ Cassandra\Collection::__construct(type) */
 PHP_METHOD(Collection, __construct)
 {
   cassandra_collection *self;

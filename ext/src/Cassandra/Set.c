@@ -96,7 +96,7 @@ php_cassandra_set_populate(cassandra_set *set, zval *array)
   }
 }
 
-/* {{{ Cassandra\Set::__construct(string) */
+/* {{{ Cassandra\Set::__construct(type) */
 PHP_METHOD(Set, __construct)
 {
   cassandra_set *self;
