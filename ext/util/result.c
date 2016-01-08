@@ -173,7 +173,7 @@ php_cassandra_value(const CassValue* value, CassValueType type, php5to7_zval *ou
     collection->type = php_cassandra_type_from_data_type(data_type TSRMLS_CC);
 #else
     primary_type = cass_value_primary_sub_type(value);
-    collection->type = php_cassandra_type_collection_from_value_type(primary_type);
+    collection->type = php_cassandra_type_collection_from_value_type(primary_type TSRMLS_CC);
 #endif
 
     iterator = cass_iterator_from_collection(value);
@@ -204,7 +204,7 @@ php_cassandra_value(const CassValue* value, CassValueType type, php5to7_zval *ou
 #else
     primary_type = cass_value_primary_sub_type(value);
     secondary_type = cass_value_secondary_sub_type(value);
-    map->type = php_cassandra_type_map_from_value_types(primary_type, secondary_type);
+    map->type = php_cassandra_type_map_from_value_types(primary_type, secondary_type TSRMLS_CC);
 #endif
 
     iterator = cass_iterator_from_map(value);
@@ -237,7 +237,7 @@ php_cassandra_value(const CassValue* value, CassValueType type, php5to7_zval *ou
 #else
     primary_type = cass_value_primary_sub_type(value);
     secondary_type = cass_value_secondary_sub_type(value);
-    set->type = php_cassandra_type_set_from_value_type(primary_type);
+    set->type = php_cassandra_type_set_from_value_type(primary_type TSRMLS_CC);
 #endif
 
     iterator = cass_iterator_from_collection(value);
