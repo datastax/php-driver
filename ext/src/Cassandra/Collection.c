@@ -9,7 +9,7 @@ zend_class_entry *cassandra_collection_ce = NULL;
 int
 php_cassandra_collection_add(cassandra_collection *collection, zval *object TSRMLS_DC)
 {
-  if (PHP5TO7_ZEND_HASH_INDEX_INSERT(&collection->values, object, sizeof(zval *))) {
+  if (PHP5TO7_ZEND_HASH_NEXT_INDEX_INSERT(&collection->values, object, sizeof(zval *))) {
     Z_TRY_ADDREF_P(object);
     collection->dirty = 1;
     return 1;
@@ -345,13 +345,8 @@ php_cassandra_collection_compare(zval *obj1, zval *obj2 TSRMLS_DC)
   zend_hash_internal_pointer_reset_ex(&collection1->values, &pos1);
   zend_hash_internal_pointer_reset_ex(&collection2->values, &pos2);
 
-#if PHP_MAJOR_VERSION >= 7
-  while ((current1 = zend_hash_get_current_data_ex(&collection1->values, &pos1)) != NULL &&
-         (current2 = zend_hash_get_current_data_ex(&collection1->values, &pos2)) != NULL) {
-#else
-  while (zend_hash_get_current_data(&collection1->values, (void**) &current1) == SUCCESS &&
-         zend_hash_get_current_data(&collection2->values, (void**) &current2) == SUCCESS) {
-#endif
+  while (PHP5TO7_ZEND_HASH_GET_CURRENT_DATA_EX(&collection1->values, current1, &pos1) &&
+         PHP5TO7_ZEND_HASH_GET_CURRENT_DATA_EX(&collection1->values, current2, &pos2)) {
     int r = php_cassandra_value_compare(PHP5TO7_ZVAL_MAYBE_DEREF(current1),
                                         PHP5TO7_ZVAL_MAYBE_DEREF(current2) TSRMLS_CC);
     if (r != 0) return r;

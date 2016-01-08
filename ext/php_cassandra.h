@@ -126,6 +126,9 @@ typedef size_t php5to7_size;
 #define PHP5TO7_ZEND_HASH_GET_CURRENT_DATA(ht, res) \
   ((res = zend_hash_get_current_data((ht))) != NULL)
 
+#define PHP5TO7_ZEND_HASH_GET_CURRENT_DATA_EX(ht, res, pos) \
+  ((res = zend_hash_get_current_data_ex((ht), (pos))) != NULL)
+
 #define PHP5TO7_ZEND_HASH_GET_CURRENT_KEY(ht, str_index, num_index) \
   zend_hash_get_current_key((ht), (str_index), (num_index))
 
@@ -138,11 +141,14 @@ typedef size_t php5to7_size;
 #define PHP5TO7_ZEND_HASH_INDEX_FIND(ht, index, res) \
   ((res = zend_hash_index_find((ht), (php5to7_ulong) (index))) != NULL)
 
-#define PHP5TO7_ZEND_HASH_INDEX_INSERT(ht, val, val_size) \
+#define PHP5TO7_ZEND_HASH_NEXT_INDEX_INSERT(ht, val, val_size) \
   (zend_hash_next_index_insert((ht), (val)) != NULL)
 
 #define PHP5TO7_ZEND_HASH_UPDATE(ht, key, len, val, val_size) \
   ((zend_hash_str_update((ht), (key), (size_t)(len - 1), (val))) != NULL)
+
+#define PHP5TO7_ZEND_HASH_INDEX_UPDATE(ht, index, val, val_size) \
+  ((zend_hash_index_update((ht), (index), (val))) != NULL)
 
 #define PHP5TO7_ZEND_HASH_ADD(ht, key, len, val, val_size) \
   (zend_hash_str_add((ht), (key), (size_t)(len - 1), (val)) != NULL)
@@ -261,6 +267,9 @@ typedef int php5to7_size;
 #define PHP5TO7_ZEND_HASH_GET_CURRENT_DATA(ht, res) \
   (zend_hash_get_current_data((ht), (void **) &(res)) == SUCCESS)
 
+#define PHP5TO7_ZEND_HASH_GET_CURRENT_DATA_EX(ht, res, pos) \
+  (zend_hash_get_current_data_ex((ht), (void **) &(res), (pos)) == SUCCESS)
+
 #define PHP5TO7_ZEND_HASH_GET_CURRENT_KEY(ht, str_index, num_index) \
   zend_hash_get_current_key((ht), (str_index), (num_index), 0)
 
@@ -273,11 +282,14 @@ typedef int php5to7_size;
 #define PHP5TO7_ZEND_HASH_INDEX_FIND(ht, index, res) \
   (zend_hash_index_find((ht), (php5to7_ulong) (index), (void **) &res) == SUCCESS)
 
-#define PHP5TO7_ZEND_HASH_INDEX_INSERT(ht, val, val_size) \
+#define PHP5TO7_ZEND_HASH_NEXT_INDEX_INSERT(ht, val, val_size) \
   (zend_hash_next_index_insert((ht), (void*) &(val), (uint) (val_size), NULL) == SUCCESS)
 
 #define PHP5TO7_ZEND_HASH_UPDATE(ht, key, len, val, val_size) \
   (zend_hash_update((ht), (key), (uint)(len), (void *) &(val), (uint)(val_size), NULL) == SUCCESS)
+
+#define PHP5TO7_ZEND_HASH_INDEX_UPDATE(ht, index, val, val_size) \
+  ((zend_hash_index_update((ht), (index), (val), (uint)(val_size))) == SUCCESS)
 
 #define PHP5TO7_ZEND_HASH_ADD(ht, key, len, val, val_size) \
   (zend_hash_add((ht), (key), (len), (void *) &(val), (uint)(val_size), NULL) == SUCCESS)
