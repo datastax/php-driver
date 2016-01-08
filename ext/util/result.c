@@ -323,7 +323,7 @@ php_cassandra_get_schema_field(const CassSchemaMeta *metadata, const char *field
 
   if (field == NULL) {
     PHP5TO7_ZVAL_MAYBE_MAKE(*out);
-    ZVAL_NULL(*out);
+    ZVAL_NULL(PHP5TO7_ZVAL_MAYBE_DEREF(out));
     return SUCCESS;
   }
 
@@ -331,7 +331,7 @@ php_cassandra_get_schema_field(const CassSchemaMeta *metadata, const char *field
 
   if (value == NULL) {
     PHP5TO7_ZVAL_MAYBE_MAKE(*out);
-    ZVAL_NULL(*out);
+    ZVAL_NULL(PHP5TO7_ZVAL_MAYBE_DEREF(out));
     return SUCCESS;
   }
 
