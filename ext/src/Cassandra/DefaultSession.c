@@ -120,6 +120,18 @@ bind_argument_by_index(CassStatement *statement, size_t index, zval *value TSRML
       CHECK_RESULT(rc);
     }
 
+    if (instanceof_function(Z_OBJCE_P(value), cassandra_tuple_ce TSRMLS_CC)) {
+      CassError rc;
+      CassTuple *tup;
+      cassandra_tuple *tuple = PHP_CASSANDRA_GET_TUPLE(value);
+      if (!php_cassandra_tuple_from_tuple(tuple, &tup TSRMLS_CC))
+        return FAILURE;
+
+      rc = cass_statement_bind_tuple(statement, index, tup);
+      cass_tuple_free(tup);
+      CHECK_RESULT(rc);
+    }
+
     if (instanceof_function(Z_OBJCE_P(value), cassandra_udt_ce TSRMLS_CC)) {
       CassError rc;
       CassUserType *ut;
@@ -241,6 +253,18 @@ bind_argument_by_name(CassStatement *statement, const char *name,
 
       rc = cass_statement_bind_collection_by_name(statement, name, collection);
       cass_collection_free(collection);
+      CHECK_RESULT(rc);
+    }
+
+    if (instanceof_function(Z_OBJCE_P(value), cassandra_tuple_ce TSRMLS_CC)) {
+      CassError rc;
+      CassTuple *tup;
+      cassandra_tuple *tuple = PHP_CASSANDRA_GET_TUPLE(value);
+      if (!php_cassandra_tuple_from_tuple(tuple, &tup TSRMLS_CC))
+        return FAILURE;
+
+      rc = cass_statement_bind_tuple_by_name(statement, name, tup);
+      cass_tuple_free(tup);
       CHECK_RESULT(rc);
     }
 

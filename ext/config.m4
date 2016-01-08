@@ -71,6 +71,7 @@ if test "$PHP_CASSANDRA" != "no"; then
     src/Cassandra/Type/Map.c \
     src/Cassandra/Type/Scalar.c \
     src/Cassandra/Type/Set.c \
+    src/Cassandra/Type/Tuple.c \
     src/Cassandra/Type/Udt.c \
     src/Cassandra/Type/Custom.c \
   ";
@@ -90,6 +91,7 @@ if test "$PHP_CASSANDRA" != "no"; then
     src/Cassandra/Set.c \
     src/Cassandra/Map.c \
     src/Cassandra/Collection.c \
+    src/Cassandra/Tuple.c \
     src/Cassandra/Udt.c \
     src/Cassandra/Value.c \
   ";

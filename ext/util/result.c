@@ -6,6 +6,7 @@
 #include "src/Cassandra/Collection.h"
 #include "src/Cassandra/Map.h"
 #include "src/Cassandra/Set.h"
+#include "src/Cassandra/Tuple.h"
 #include "src/Cassandra/Udt.h"
 
 static int
@@ -30,6 +31,8 @@ php_cassandra_value(const CassValue* value, const CassDataType* data_type, php5t
   cassandra_collection *collection = NULL;
   cassandra_map *map = NULL;
   cassandra_set *set = NULL;
+  cassandra_tuple *tuple = NULL;
+  ulong index;
   cassandra_udt *udt = NULL;
   ulong index;
 
@@ -230,6 +233,33 @@ php_cassandra_value(const CassValue* value, const CassDataType* data_type, php5t
 
       php_cassandra_set_add(set, PHP5TO7_ZVAL_MAYBE_P(v) TSRMLS_CC);
       zval_ptr_dtor(&v);
+    }
+
+    cass_iterator_free(iterator);
+    break;
+  case CASS_VALUE_TYPE_TUPLE:
+    object_init_ex(PHP5TO7_ZVAL_MAYBE_DEREF(out), cassandra_tuple_ce);
+    tuple = PHP_CASSANDRA_GET_TUPLE(PHP5TO7_ZVAL_MAYBE_DEREF(out));
+
+    tuple->type = php_cassandra_type_tuple(TSRMLS_C);
+
+    iterator = cass_iterator_from_tuple(value);
+
+    index = 0;
+    while (cass_iterator_next(iterator)) {
+      php5to7_zval v;
+
+      primary_type = cass_data_type_sub_data_type(data_type, index);
+
+      if (php_cassandra_value(cass_iterator_get_value(iterator), primary_type, &v TSRMLS_CC) == FAILURE) {
+        cass_iterator_free(iterator);
+        zval_ptr_dtor(out);
+        return FAILURE;
+      }
+
+      php_cassandra_tuple_set(tuple, index, PHP5TO7_ZVAL_MAYBE_P(v) TSRMLS_CC);
+      zval_ptr_dtor(&v);
+      index++;
     }
 
     cass_iterator_free(iterator);

@@ -36,6 +36,41 @@ PHP_METHOD(Type, collection)
   RETURN_ZVAL(PHP5TO7_ZVAL_MAYBE_P(ztype), 0, 1);
 }
 
+PHP_METHOD(Type, tuple)
+{
+  php5to7_zval ztype;
+  cassandra_type *type;
+  php5to7_zval_args args = NULL;
+  int argc = 0, i;
+
+  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "+",
+                            &args, &argc) == FAILURE) {
+    return;
+  }
+
+  for (i = 0; i < argc; ++i) {
+    zval *sub_type = PHP5TO7_ZVAL_ARG(args[i]);
+    if (!php_cassandra_type_validate(sub_type, "types" TSRMLS_CC)) {
+      return;
+    }
+  }
+
+  ztype = php_cassandra_type_tuple(TSRMLS_C);
+  type = PHP_CASSANDRA_GET_TYPE(PHP5TO7_ZVAL_MAYBE_P(ztype));
+
+  for (i = 0; i < argc; ++i) {
+    zval *sub_type = PHP5TO7_ZVAL_ARG(args[i]);
+    if (PHP5TO7_ZEND_HASH_NEXT_INDEX_INSERT(&type->types,
+                                            sub_type, sizeof(zval *))) {
+      Z_ADDREF_P(sub_type);
+    } else {
+      break;
+    }
+  }
+
+  RETURN_ZVAL(PHP5TO7_ZVAL_MAYBE_P(ztype), 0, 1);
+}
+
 PHP_METHOD(Type, udt)
 {
   php5to7_zval ztype;
@@ -169,6 +204,7 @@ static zend_function_entry cassandra_type_methods[] = {
   PHP_ME(Type, collection, arginfo_type,  ZEND_ACC_PUBLIC|ZEND_ACC_STATIC|ZEND_ACC_FINAL)
   PHP_ME(Type, set,        arginfo_type,  ZEND_ACC_PUBLIC|ZEND_ACC_STATIC|ZEND_ACC_FINAL)
   PHP_ME(Type, map,        arginfo_map,   ZEND_ACC_PUBLIC|ZEND_ACC_STATIC|ZEND_ACC_FINAL)
+  PHP_ME(Type, tuple,      arginfo_types, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC|ZEND_ACC_FINAL)
   PHP_ME(Type, udt,        arginfo_types, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC|ZEND_ACC_FINAL)
   PHP_FE_END
 };
