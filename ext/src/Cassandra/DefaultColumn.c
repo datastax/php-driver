@@ -50,22 +50,13 @@ PHP_METHOD(DefaultColumn, isStatic)
   const char       *str;
   size_t            str_len;
 
-#if CURRENT_CPP_DRIVER_VERSION < CPP_DRIVER_VERSION(2, 2, 0)
-  const CassSchemaMetaField *field;
-#endif
-
   if (zend_parse_parameters_none() == FAILURE) {
     return;
   }
 
   self  = PHP_CASSANDRA_GET_COLUMN(getThis());
 
-#if CURRENT_CPP_DRIVER_VERSION >= CPP_DRIVER_VERSION(2, 2, 0)
   value = cass_column_meta_field_by_name(self->meta, "type");
-#else
-  field = cass_schema_meta_get_field(self->meta, "type");
-  value = cass_schema_meta_field_value(field);
-#endif
 
   ASSERT_SUCCESS_BLOCK(cass_value_get_string(value, &str, &str_len),
     RETURN_FALSE;

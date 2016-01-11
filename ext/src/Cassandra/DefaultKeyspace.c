@@ -73,11 +73,7 @@ PHP_METHOD(DefaultKeyspace, table)
   }
 
   self = PHP_CASSANDRA_GET_KEYSPACE(getThis());
-#if CURRENT_CPP_DRIVER_VERSION >= CPP_DRIVER_VERSION(2, 2, 0)
   meta = cass_keyspace_meta_table_by_name(self->meta, name);
-#else
-  meta = cass_schema_meta_get_entry(self->meta, name);
-#endif
 
   if (meta == NULL) {
     return;
@@ -97,11 +93,7 @@ PHP_METHOD(DefaultKeyspace, tables)
     return;
 
   self     = PHP_CASSANDRA_GET_KEYSPACE(getThis());
-#if CURRENT_CPP_DRIVER_VERSION >= CPP_DRIVER_VERSION(2, 2, 0)
   iterator = cass_iterator_tables_from_keyspace_meta(self->meta);
-#else
-  iterator = cass_iterator_from_schema_meta(self->meta);
-#endif
 
   array_init(return_value);
   while (cass_iterator_next(iterator)) {
@@ -112,18 +104,8 @@ PHP_METHOD(DefaultKeyspace, tables)
     zval                 *ztable = NULL;
     cassandra_table      *table;
 
-#if CURRENT_CPP_DRIVER_VERSION < CPP_DRIVER_VERSION(2, 2, 0)
-    const CassSchemaMetaField *field;
-#endif
-
-#if CURRENT_CPP_DRIVER_VERSION >= CPP_DRIVER_VERSION(2, 2, 0)
     meta = cass_iterator_get_table_meta(iterator);
     value = cass_table_meta_field_by_name(meta, "columnfamily_name");
-#else
-    meta  = cass_iterator_get_schema_meta(iterator);
-    field = cass_schema_meta_get_field(meta, "columnfamily_name");
-    value = cass_schema_meta_field_value(field);
-#endif
 
     ASSERT_SUCCESS_BLOCK(cass_value_get_string(value, &table_name, &table_name_len),
       zval_ptr_dtor(PHP5TO7_ZVAL_MAYBE_ADDR_OF(return_value));

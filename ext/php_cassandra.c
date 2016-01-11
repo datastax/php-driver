@@ -14,6 +14,10 @@
 #define PHP_CASSANDRA_DEFAULT_LOG       "cassandra.log"
 #define PHP_CASSANDRA_DEFAULT_LOG_LEVEL "ERROR"
 
+#if CURRENT_CPP_DRIVER_VERSION < CPP_DRIVER_VERSION(2, 2, 2)
+#error C/C++ driver version 2.2.2 or greater required
+#endif
+
 static uv_once_t log_once = UV_ONCE_INIT;
 static char *log_location = NULL;
 static uv_rwlock_t log_lock;

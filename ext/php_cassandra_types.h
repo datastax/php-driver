@@ -296,33 +296,21 @@ PHP_CASSANDRA_BEGIN_OBJECT_TYPE(schema)
   cassandra_ref *schema;
 PHP_CASSANDRA_END_OBJECT_TYPE(schema)
 
-#if CURRENT_CPP_DRIVER_VERSION >= CPP_DRIVER_VERSION(2, 2, 0)
 typedef const CassKeyspaceMeta cassandra_keyspace_meta;
-#else
-typedef const CassSchemaMeta cassandra_keyspace_meta;
-#endif
 
 PHP_CASSANDRA_BEGIN_OBJECT_TYPE(keyspace)
   cassandra_ref *schema;
   cassandra_keyspace_meta *meta;
 PHP_CASSANDRA_END_OBJECT_TYPE(keyspace)
 
-#if CURRENT_CPP_DRIVER_VERSION >= CPP_DRIVER_VERSION(2, 2, 0)
 typedef const CassTableMeta cassandra_table_meta;
-#else
-typedef const CassSchemaMeta cassandra_table_meta;
-#endif
 
 PHP_CASSANDRA_BEGIN_OBJECT_TYPE(table)
   cassandra_ref *schema;
   cassandra_table_meta *meta;
 PHP_CASSANDRA_END_OBJECT_TYPE(table)
 
-#if CURRENT_CPP_DRIVER_VERSION >= CPP_DRIVER_VERSION(2, 2, 0)
 typedef const CassColumnMeta cassandra_column_meta;
-#else
-typedef const CassSchemaMeta cassandra_column_meta;
-#endif
 
 PHP_CASSANDRA_BEGIN_OBJECT_TYPE(column)
   php5to7_zval name;

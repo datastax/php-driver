@@ -17,7 +17,6 @@
 
 ZEND_EXTERN_MODULE_GLOBALS(cassandra)
 
-#if CURRENT_CPP_DRIVER_VERSION >= CPP_DRIVER_VERSION(2, 1, 0)
 php5to7_zval
 php_cassandra_type_from_data_type(const CassDataType *data_type TSRMLS_DC) {
   php5to7_zval ztype;
@@ -62,7 +61,6 @@ php_cassandra_type_from_data_type(const CassDataType *data_type TSRMLS_DC) {
 
   return ztype;
 }
-#endif
 
 int php_cassandra_type_validate(zval *object, const char *object_name TSRMLS_DC)
 {

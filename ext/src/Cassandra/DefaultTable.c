@@ -207,10 +207,7 @@ php_cassandra_create_column(cassandra_ref *schema,
 {
   php5to7_zval result;
   cassandra_column *column;
-#if CURRENT_CPP_DRIVER_VERSION < CPP_DRIVER_VERSION(2, 2, 0)
-  const CassSchemaMetaField *field;
-#endif
-  const CassValue           *value;
+  const CassValue *value;
 
   const char *validator;
   size_t      validator_length;
@@ -218,12 +215,7 @@ php_cassandra_create_column(cassandra_ref *schema,
   PHP5TO7_ZVAL_UNDEF(result);
 
 
-#if CURRENT_CPP_DRIVER_VERSION >= CPP_DRIVER_VERSION(2, 2, 0)
   value = cass_column_meta_field_by_name(meta, "validator");
-#else
-  field = cass_schema_meta_get_field(meta, "validator");
-  value = cass_schema_meta_field_value(field);
-#endif
 
   ASSERT_SUCCESS_VALUE(cass_value_get_string(value, &validator,
                                              &validator_length), result);
@@ -266,12 +258,8 @@ PHP_METHOD(DefaultTable, column)
     return;
   }
 
-  self     = PHP_CASSANDRA_GET_TABLE(getThis());
-#if CURRENT_CPP_DRIVER_VERSION >= CPP_DRIVER_VERSION(2, 2, 0)
+  self = PHP_CASSANDRA_GET_TABLE(getThis());
   meta = cass_table_meta_column_by_name(self->meta, name);
-#else
-  meta = cass_schema_meta_get_entry(self->meta, name);
-#endif
 
   if (meta == NULL) {
     return;
@@ -295,11 +283,7 @@ PHP_METHOD(DefaultTable, columns)
     return;
 
   self     = PHP_CASSANDRA_GET_TABLE(getThis());
-#if CURRENT_CPP_DRIVER_VERSION >= CPP_DRIVER_VERSION(2, 2, 0)
   iterator = cass_iterator_columns_from_table_meta(self->meta);
-#else
-  iterator = cass_iterator_from_schema_meta(self->meta);
-#endif
 
   array_init(return_value);
   while (cass_iterator_next(iterator)) {
@@ -307,11 +291,7 @@ PHP_METHOD(DefaultTable, columns)
     php5to7_zval zcolumn;
     cassandra_column *column;
 
-#if CURRENT_CPP_DRIVER_VERSION >= CPP_DRIVER_VERSION(2, 2, 0)
     meta    = cass_iterator_get_column_meta(iterator);
-#else
-    meta    = cass_iterator_get_schema_meta(iterator);
-#endif
     zcolumn = php_cassandra_create_column(self->schema, meta TSRMLS_CC);
 
     if (PHP5TO7_ZVAL_IS_UNDEF(zcolumn)) {

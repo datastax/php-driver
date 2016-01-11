@@ -207,13 +207,10 @@ php_cassandra_collection_append(CassCollection *collection, zval *value, CassVal
   cassandra_inet       *inet;
   size_t                size;
   cass_byte_t          *data;
-
-#if CURRENT_CPP_DRIVER_VERSION >= CPP_DRIVER_VERSION(2, 1, 0)
   cassandra_collection *coll;
   cassandra_map        *map;
   cassandra_set        *set;
   CassCollection       *sub_collection;
-#endif
 
   switch (type) {
   case CASS_VALUE_TYPE_TEXT:
@@ -272,7 +269,6 @@ php_cassandra_collection_append(CassCollection *collection, zval *value, CassVal
     inet = PHP_CASSANDRA_GET_INET(value);
     CHECK_ERROR(cass_collection_append_inet(collection, inet->inet));
     break;
-#if CURRENT_CPP_DRIVER_VERSION >= CPP_DRIVER_VERSION(2, 1, 0)
   case CASS_VALUE_TYPE_LIST:
     coll = PHP_CASSANDRA_GET_COLLECTION(value);
     if (!php_cassandra_collection_from_collection(coll, &sub_collection TSRMLS_CC))
@@ -291,7 +287,6 @@ php_cassandra_collection_append(CassCollection *collection, zval *value, CassVal
       return 0;
     CHECK_ERROR(cass_collection_append_collection(collection, sub_collection));
     break;
-#endif
   default:
     zend_throw_exception_ex(cassandra_runtime_exception_ce, 0 TSRMLS_CC, "Unsupported collection type");
     return 0;

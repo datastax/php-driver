@@ -16,11 +16,7 @@ PHP_METHOD(DefaultSchema, keyspace)
   }
 
   self = PHP_CASSANDRA_GET_SCHEMA(getThis());
-#if CURRENT_CPP_DRIVER_VERSION >= CPP_DRIVER_VERSION(2, 2, 0)
   meta = cass_schema_meta_keyspace_by_name_n((CassSchemaMeta *) self->schema->data, name, name_len);
-#else
-  meta = cass_schema_get_keyspace_n((CassSchema *) self->schema->data, name, name_len);
-#endif
 
   if (meta == NULL) {
     RETURN_NULL();
@@ -41,11 +37,7 @@ PHP_METHOD(DefaultSchema, keyspaces)
     return;
 
   self     = PHP_CASSANDRA_GET_SCHEMA(getThis());
-#if CURRENT_CPP_DRIVER_VERSION >= CPP_DRIVER_VERSION(2, 2, 0)
   iterator = cass_iterator_keyspaces_from_schema_meta((CassSchemaMeta *) self->schema->data);
-#else
-  iterator = cass_iterator_from_schema((CassSchema *) self->schema->data);
-#endif
 
   array_init(return_value);
   while (cass_iterator_next(iterator)) {
@@ -56,18 +48,8 @@ PHP_METHOD(DefaultSchema, keyspaces)
     php5to7_zval             zkeyspace;
     cassandra_keyspace      *keyspace;
 
-#if CURRENT_CPP_DRIVER_VERSION < CPP_DRIVER_VERSION(2, 2, 0)
-    const CassSchemaMetaField *field;
-#endif
-
-#if CURRENT_CPP_DRIVER_VERSION >= CPP_DRIVER_VERSION(2, 2, 0)
     meta = cass_iterator_get_keyspace_meta(iterator);
     value = cass_keyspace_meta_field_by_name(meta, "keyspace_name");
-#else
-    meta  = cass_iterator_get_schema_meta(iterator);
-    field = cass_schema_meta_get_field(meta, "keyspace_name");
-    value = cass_schema_meta_field_value(field);
-#endif
 
     ASSERT_SUCCESS_BLOCK(cass_value_get_string(value, &keyspace_name, &keyspace_name_len),
       zval_ptr_dtor(PHP5TO7_ZVAL_MAYBE_ADDR_OF(return_value));

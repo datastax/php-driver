@@ -8,11 +8,7 @@
 #include "src/Cassandra/Set.h"
 
 static int
-#if CURRENT_CPP_DRIVER_VERSION >= CPP_DRIVER_VERSION(2, 1, 0)
 php_cassandra_value(const CassValue* value, const CassDataType* data_type, php5to7_zval *out TSRMLS_DC)
-#else
-php_cassandra_value(const CassValue* value, CassValueType type, php5to7_zval *out TSRMLS_DC)
-#endif
 {
   const char *v_string;
   size_t v_string_len;
@@ -34,14 +30,9 @@ php_cassandra_value(const CassValue* value, CassValueType type, php5to7_zval *ou
   cassandra_map *map = NULL;
   cassandra_set *set = NULL;
 
-#if CURRENT_CPP_DRIVER_VERSION >= CPP_DRIVER_VERSION(2, 1, 0)
   CassValueType type = cass_data_type_type(data_type);
   const CassDataType* primary_type;
   const CassDataType* secondary_type;
-#else
-  CassValueType primary_type;
-  CassValueType secondary_type;
-#endif
 
   PHP5TO7_ZVAL_MAYBE_MAKE(*out);
 
@@ -168,13 +159,8 @@ php_cassandra_value(const CassValue* value, CassValueType type, php5to7_zval *ou
     object_init_ex(PHP5TO7_ZVAL_MAYBE_DEREF(out), cassandra_collection_ce);
     collection = PHP_CASSANDRA_GET_COLLECTION(PHP5TO7_ZVAL_MAYBE_DEREF(out));
 
-#if CURRENT_CPP_DRIVER_VERSION >= CPP_DRIVER_VERSION(2, 1, 0)
     primary_type = cass_data_type_sub_data_type(data_type, 0);
     collection->type = php_cassandra_type_from_data_type(data_type TSRMLS_CC);
-#else
-    primary_type = cass_value_primary_sub_type(value);
-    collection->type = php_cassandra_type_collection_from_value_type(primary_type TSRMLS_CC);
-#endif
 
     iterator = cass_iterator_from_collection(value);
 
@@ -197,15 +183,9 @@ php_cassandra_value(const CassValue* value, CassValueType type, php5to7_zval *ou
     object_init_ex(PHP5TO7_ZVAL_MAYBE_DEREF(out), cassandra_map_ce);
     map = PHP_CASSANDRA_GET_MAP(PHP5TO7_ZVAL_MAYBE_DEREF(out));
 
-#if CURRENT_CPP_DRIVER_VERSION >= CPP_DRIVER_VERSION(2, 1, 0)
     primary_type = cass_data_type_sub_data_type(data_type, 0);
     secondary_type = cass_data_type_sub_data_type(data_type, 1);
     map->type = php_cassandra_type_from_data_type(data_type TSRMLS_CC);
-#else
-    primary_type = cass_value_primary_sub_type(value);
-    secondary_type = cass_value_secondary_sub_type(value);
-    map->type = php_cassandra_type_map_from_value_types(primary_type, secondary_type TSRMLS_CC);
-#endif
 
     iterator = cass_iterator_from_map(value);
 
@@ -231,14 +211,8 @@ php_cassandra_value(const CassValue* value, CassValueType type, php5to7_zval *ou
     object_init_ex(PHP5TO7_ZVAL_MAYBE_DEREF(out), cassandra_set_ce);
     set = PHP_CASSANDRA_GET_SET(PHP5TO7_ZVAL_MAYBE_DEREF(out));
 
-#if CURRENT_CPP_DRIVER_VERSION >= CPP_DRIVER_VERSION(2, 1, 0)
     primary_type = cass_data_type_sub_data_type(data_type, 0);
     set->type = php_cassandra_type_from_data_type(data_type TSRMLS_CC);
-#else
-    primary_type = cass_value_primary_sub_type(value);
-    secondary_type = cass_value_secondary_sub_type(value);
-    set->type = php_cassandra_type_set_from_value_type(primary_type TSRMLS_CC);
-#endif
 
     iterator = cass_iterator_from_collection(value);
 
@@ -264,7 +238,6 @@ php_cassandra_value(const CassValue* value, CassValueType type, php5to7_zval *ou
   return SUCCESS;
 }
 
-#if CURRENT_CPP_DRIVER_VERSION >= CPP_DRIVER_VERSION(2, 2, 0)
 int
 php_cassandra_get_keyspace_field(const CassKeyspaceMeta *metadata, const char *field_name, php5to7_zval *out TSRMLS_DC)
 {
@@ -312,36 +285,6 @@ php_cassandra_get_column_field(const CassColumnMeta *metadata, const char *field
 
   return php_cassandra_value(value, cass_value_data_type(value), out TSRMLS_CC);
 }
-#else
-int
-php_cassandra_get_schema_field(const CassSchemaMeta *metadata, const char *field_name, php5to7_zval *out TSRMLS_DC)
-{
-  const CassSchemaMetaField *field;
-  const CassValue *value;
-
-  field = cass_schema_meta_get_field(metadata, field_name);
-
-  if (field == NULL) {
-    PHP5TO7_ZVAL_MAYBE_MAKE(*out);
-    ZVAL_NULL(PHP5TO7_ZVAL_MAYBE_DEREF(out));
-    return SUCCESS;
-  }
-
-  value = cass_schema_meta_field_value(field);
-
-  if (value == NULL) {
-    PHP5TO7_ZVAL_MAYBE_MAKE(*out);
-    ZVAL_NULL(PHP5TO7_ZVAL_MAYBE_DEREF(out));
-    return SUCCESS;
-  }
-
-#if CURRENT_CPP_DRIVER_VERSION >= CPP_DRIVER_VERSION(2, 1, 0)
-  return php_cassandra_value(value, cass_value_data_type(value), out TSRMLS_CC);
-#else
-  return php_cassandra_value(value, cass_value_type(value), out TSRMLS_CC);
-#endif
-}
-#endif
 
 int
 php_cassandra_get_result(const CassResult *result, php5to7_zval *out TSRMLS_DC)
@@ -351,11 +294,7 @@ php_cassandra_get_result(const CassResult *result, php5to7_zval *out TSRMLS_DC)
   const CassRow   *cass_row;
   const char      *column_name;
   size_t           column_name_len;
-#if CURRENT_CPP_DRIVER_VERSION >= CPP_DRIVER_VERSION(2, 1, 0)
   const CassDataType* column_type;
-#else
-  CassValueType    column_type;
-#endif
   const CassValue *column_value;
   CassIterator    *iterator = NULL;
   size_t           columns = -1;
@@ -383,12 +322,7 @@ php_cassandra_get_result(const CassResult *result, php5to7_zval *out TSRMLS_DC)
         column_names[i] = estrndup(column_name, column_name_len);
       }
 
-#if CURRENT_CPP_DRIVER_VERSION >= CPP_DRIVER_VERSION(2, 1, 0)
       column_type  = cass_result_column_data_type(result, i);
-#else
-      column_type  = cass_result_column_type(result, i);
-#endif
-
       column_value = cass_row_get_column(cass_row, i);
 
       if (php_cassandra_value(column_value, column_type, &value TSRMLS_CC) == FAILURE) {
