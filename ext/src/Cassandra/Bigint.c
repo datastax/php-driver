@@ -466,7 +466,7 @@ void cassandra_define_Bigint(TSRMLS_D)
 
   INIT_CLASS_ENTRY(ce, "Cassandra\\Bigint", cassandra_bigint_methods);
   cassandra_bigint_ce = zend_register_internal_class(&ce TSRMLS_CC);
-  zend_class_implements(cassandra_bigint_ce TSRMLS_CC, 1, cassandra_numeric_ce);
+  zend_class_implements(cassandra_bigint_ce TSRMLS_CC, 2, cassandra_value_ce, cassandra_numeric_ce);
   cassandra_bigint_ce->ce_flags     |= PHP5TO7_ZEND_ACC_FINAL;
   cassandra_bigint_ce->create_object = php_cassandra_bigint_new;
 

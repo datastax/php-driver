@@ -460,7 +460,7 @@ void cassandra_define_Float(TSRMLS_D)
 
   INIT_CLASS_ENTRY(ce, "Cassandra\\Float", cassandra_float_methods);
   cassandra_float_ce = zend_register_internal_class(&ce TSRMLS_CC);
-  zend_class_implements(cassandra_float_ce TSRMLS_CC, 1, cassandra_numeric_ce);
+  zend_class_implements(cassandra_float_ce TSRMLS_CC, 2, cassandra_value_ce, cassandra_numeric_ce);
   cassandra_float_ce->ce_flags     |= PHP5TO7_ZEND_ACC_FINAL;
   cassandra_float_ce->create_object = php_cassandra_float_new;
 

@@ -21,7 +21,7 @@ namespace Cassandra;
 /**
  * A PHP representation of the CQL `varint` datatype
  */
-final class Varint implements Numeric
+final class Varint implements Value, Numeric
 {
     /**
      * Creates a new variable length integer.

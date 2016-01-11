@@ -21,7 +21,7 @@ namespace Cassandra;
 /**
  * A PHP representation of the CQL `bigint` datatype
  */
-final class Bigint implements Numeric
+final class Bigint implements Value, Numeric
 {
     /**
      * Minimum possible Bigint value

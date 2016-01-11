@@ -38,13 +38,6 @@ final class Collection implements Value, \Countable, \Iterator
     public function type() {}
 
     /**
-     * The type of the values in this collection.
-     *
-     * @return Type
-     */
-    public function valueType() {}
-
-    /**
      * Array of values in this collection.
      *
      * @return array values

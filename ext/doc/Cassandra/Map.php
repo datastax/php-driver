@@ -39,25 +39,11 @@ final class Map implements Value, \Countable, \Iterator, \ArrayAccess
     public function type() {}
 
     /**
-     * Returns key type of this map.
-     *
-     * @return Type
-     */
-    public function keyType() {}
-
-    /**
      * Returns all keys in the map as an array.
      *
      * @return array keys
      */
     public function keys() {}
-
-    /**
-     * Returns value type of this map.
-     *
-     * @return Type
-     */
-    public function valueType() {}
 
     /**
      * Returns all values in the map as an array.

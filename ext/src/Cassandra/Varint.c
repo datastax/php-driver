@@ -449,7 +449,7 @@ void cassandra_define_Varint(TSRMLS_D)
 
   INIT_CLASS_ENTRY(ce, "Cassandra\\Varint", cassandra_varint_methods);
   cassandra_varint_ce = zend_register_internal_class(&ce TSRMLS_CC);
-  zend_class_implements(cassandra_varint_ce TSRMLS_CC, 1, cassandra_numeric_ce);
+  zend_class_implements(cassandra_varint_ce TSRMLS_CC, 2, cassandra_value_ce, cassandra_numeric_ce);
   cassandra_varint_ce->ce_flags     |= PHP5TO7_ZEND_ACC_FINAL;
   cassandra_varint_ce->create_object = php_cassandra_varint_new;
 

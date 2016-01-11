@@ -38,13 +38,6 @@ final class Set implements Value, \Countable, \Iterator
     public function type() {}
 
     /**
-     * The type of values in this set.
-     *
-     * @return Type
-     */
-    public function valueType() {}
-
-    /**
      * Array of values in this set.
      *
      * @return array values

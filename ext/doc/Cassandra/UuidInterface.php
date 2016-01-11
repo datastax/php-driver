@@ -21,7 +21,7 @@ namespace Cassandra;
 /**
  * A PHP representation of the CQL `timeuuid` datatype
  */
-interface UuidInterface implements Value
+interface UuidInterface
 {
     /**
      * Returns this uuid as string.
