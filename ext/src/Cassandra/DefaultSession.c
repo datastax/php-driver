@@ -119,6 +119,18 @@ bind_argument_by_index(CassStatement *statement, size_t index, zval *value TSRML
       cass_collection_free(collection);
       CHECK_RESULT(rc);
     }
+
+    if (instanceof_function(Z_OBJCE_P(value), cassandra_udt_ce TSRMLS_CC)) {
+      CassError rc;
+      CassUserType *ut;
+      cassandra_udt *udt = PHP_CASSANDRA_GET_UDT(value);
+      if (!php_cassandra_user_type_from_udt(udt, &ut TSRMLS_CC))
+        return FAILURE;
+
+      rc = cass_statement_bind_user_type(statement, index, ut);
+      cass_user_type_free(ut);
+      CHECK_RESULT(rc);
+    }
   }
 
   return FAILURE;
@@ -229,6 +241,18 @@ bind_argument_by_name(CassStatement *statement, const char *name,
 
       rc = cass_statement_bind_collection_by_name(statement, name, collection);
       cass_collection_free(collection);
+      CHECK_RESULT(rc);
+    }
+
+    if (instanceof_function(Z_OBJCE_P(value), cassandra_udt_ce TSRMLS_CC)) {
+      CassError rc;
+      CassUserType *ut;
+      cassandra_udt *udt = PHP_CASSANDRA_GET_UDT(value);
+      if (!php_cassandra_user_type_from_udt(udt, &ut TSRMLS_CC))
+        return FAILURE;
+
+      rc = cass_statement_bind_user_type_by_name(statement, name, ut);
+      cass_user_type_free(ut);
       CHECK_RESULT(rc);
     }
   }

@@ -200,3 +200,49 @@ Feature: Datatypes
         ),
       ))
       """
+
+  @udt
+  Scenario: Using Cassandra UDT type
+    Given the following schema:
+      """cql
+      CREATE KEYSPACE simplex WITH replication = {
+        'class': 'SimpleStrategy',
+        'replication_factor': 1
+      };
+      USE simplex;
+      CREATE TYPE address (street text, city text, state text, zip int);
+      CREATE TABLE addresses (
+        id int PRIMARY KEY,
+        address frozen<address>
+      );
+      INSERT INTO addresses (id, address)
+      VALUES (
+      0, {street: '1234 Some St.', city: 'Metropolis', state: 'AZ', zip: 12345 }
+      );
+      """
+    And the following example:
+      """php
+      <?php
+      $cluster   = Cassandra::cluster()
+                     ->withContactPoints('127.0.0.1')
+                     ->build();
+      $session   = $cluster->connect("simplex");
+      $statement = new Cassandra\SimpleStatement("SELECT * FROM addresses");
+      $result    = $session->execute($statement);
+      $row       = $result->first();
+
+      echo "Address: " . var_export($row['address'], true) . "\n";
+      """
+    When it is executed
+    Then its output should contain:
+      """
+      Address: Cassandra\Udt::__set_state(array(
+         'values' =>
+        array (
+          'street' => '1234 Some St.',
+          'city' => 'Metropolis',
+          'state' => 'AZ',
+          'zip' => 12345,
+        ),
+      ))
+      """

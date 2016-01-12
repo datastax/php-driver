@@ -60,11 +60,11 @@ class CollectionTest extends \PHPUnit_Framework_TestCase
      */
     public function testScalarKeys($keyType, $keyValue, $keyValueCopy)
     {
-        $map = Type::collection($keyType)->create();
-        $map->add($keyValue);
-        $this->assertEquals(1, count($map));
-        $this->assertEquals($map->find($keyValue), 0);
-        $this->assertEquals($map->find($keyValueCopy), 0);
+        $list = Type::collection($keyType)->create();
+        $list->add($keyValue);
+        $this->assertEquals(1, count($list));
+        $this->assertEquals($list->find($keyValue), 0);
+        $this->assertEquals($list->find($keyValueCopy), 0);
     }
 
     public function scalarTypes()
@@ -94,23 +94,23 @@ class CollectionTest extends \PHPUnit_Framework_TestCase
      */
     public function testCompositeKeys($keyType)
     {
-        $map = Type::collection($keyType)->create();
+        $list = Type::collection($keyType)->create();
 
-        $map->add($keyType->create("a", "1", "b", "2"));
-        $this->assertEquals($map->find($keyType->create("a", "1", "b", "2")), 0);
-        $this->assertEquals(1, count($map));
+        $list->add($keyType->create("a", "1", "b", "2"));
+        $this->assertEquals($list->find($keyType->create("a", "1", "b", "2")), 0);
+        $this->assertEquals(1, count($list));
 
-        $map->add($keyType->create("c", "3", "d", "4", "e", "5"));
-        $this->assertEquals($map->find($keyType->create("c", "3", "d", "4", "e", "5")), 1);
-        $this->assertEquals(2, count($map));
+        $list->add($keyType->create("c", "3", "d", "4", "e", "5"));
+        $this->assertEquals($list->find($keyType->create("c", "3", "d", "4", "e", "5")), 1);
+        $this->assertEquals(2, count($list));
 
-        $map->remove(0);
-        $this->assertNull($map->find($keyType->create("a", "1", "b", "2")));
-        $this->assertEquals(1, count($map));
+        $list->remove(0);
+        $this->assertNull($list->find($keyType->create("a", "1", "b", "2")));
+        $this->assertEquals(1, count($list));
 
-        $map->remove(1);
-        $this->assertNull($map->find($keyType->create("c", "3", "d", "4", "e", "5")));
-        $this->assertEquals(0, count($map));
+        $list->remove(1);
+        $this->assertNull($list->find($keyType->create("c", "3", "d", "4", "e", "5")));
+        $this->assertEquals(0, count($list));
     }
 
     public function compositeTypes()
@@ -118,8 +118,8 @@ class CollectionTest extends \PHPUnit_Framework_TestCase
         return array(
             array(
                 Type::map(Type::varchar(), Type::varchar()),
-                #Type::set(Type::varchar()),
-                #Type::collection(Type::varchar())
+                Type::set(Type::varchar()),
+                Type::collection(Type::varchar())
             )
         );
     }

@@ -69,6 +69,8 @@ php_cassandra_type_scalar_free(php5to7_zend_object_free *object TSRMLS_DC)
 {
   cassandra_type *self = PHP5TO7_ZEND_OBJECT_GET(type, object);
 
+  if (self->data_type) cass_data_type_free(self->data_type);
+
   zend_object_std_dtor(&self->zval TSRMLS_CC);
   PHP5TO7_MAYBE_EFREE(self);
 }
@@ -79,6 +81,7 @@ php_cassandra_type_scalar_new(zend_class_entry *ce TSRMLS_DC)
   cassandra_type *self = PHP5TO7_ZEND_OBJECT_ECALLOC(type, ce);
 
   self->type = CASS_VALUE_TYPE_UNKNOWN;
+  self->data_type = NULL;
 
   PHP5TO7_ZEND_OBJECT_INIT_EX(type, type_scalar, self, ce);
 }
