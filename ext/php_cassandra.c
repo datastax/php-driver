@@ -118,7 +118,7 @@ php_cassandra_log(const CassLogMessage *message, void *data)
     if (fd != 1) {
       time_t log_time;
       struct tm log_tm;
-      char log_time_str[32];
+      char log_time_str[64];
       size_t needed = 0;
       char *tmp     = NULL;
 
