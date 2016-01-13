@@ -2,13 +2,60 @@
 
 ARG_ENABLE("cassandra", "Enable DataStax PHP Cassandra extension", "no");
 
+// Establish the minimum Cassandra C/C++ driver version
+var minimum_major = 2;
+var minimum_minor = 2;
+var minimum_patch = 2;
+var minimum_version = minimum_major + "." + minimum_minor + "." + minimum_patch;
+
+function compare_minimum_version(major, minor, patch) {
+  // Validate major version
+  if (major < minimum_major) return -1;
+  if (major > minimum_major) return 1;
+
+  // Validate minor version
+  if (minor < minimum_minor) return -1;
+  if (minor > minimum_minor) return 1;
+
+  // Validate patch version
+  if (patch < minimum_patch) return -1;
+  if (patch > minimum_patch) return 1;
+
+  return 0;
+}
+
+function check_cassandra_cpp_driver_version(header_filename) {
+  // Parse the Cassandra C/C++ driver version from the header
+  var major = 0;
+  var minor = 0;
+  var patch = 0;
+  var contents = file_get_contents(header_filename);
+  if (contents.match(new RegExp(".*CASS_VERSION_MAJOR.*(\\d+)"))) {
+    major = RegExp.$1;
+  }
+  if (contents.match(new RegExp(".*CASS_VERSION_MINOR.*(\\d+)"))) {
+    minor = RegExp.$1;
+  }
+  if (contents.match(new RegExp(".*CASS_VERSION_PATCH.*(\\d+)"))) {
+    patch = RegExp.$1;
+  }
+  var version = major + "." + minor + "." + patch;
+
+  // Ensure the Cassandra C/C++ driver version is valid
+  if (compare_minimum_version(major, minor, patch) < 0) {
+    ERROR("Invalid Cassandra C/C++ Driver Version (v" + version + "): v" + minimum_version + "+ is required");
+  }
+  MESSAGE("\tUsing Cassandra C/C++ driver v" + version);
+}
+
 if (PHP_CASSANDRA != "no") {
   // Allow for DataStax C/C++ and libuv default locations to be overridden
   ARG_WITH("cassandra-cpp-driver", "Where to find DataStax C/C++ driver", "yes");
   ARG_WITH("libuv", "Where to find libuv libraries", "yes");
 
   if (CHECK_LIB("cassandra_static.lib", "cassandra", PHP_CASSANDRA_CPP_DRIVER) &&
-      CHECK_HEADER_ADD_INCLUDE("cassandra.h", "CFLAGS_CASSANDRA", PHP_CASSANDRA_CPP_DRIVER + "/include")) {
+      (PHP_CASSANDRA_CPP_DRIVER_INCLUDE = CHECK_HEADER_ADD_INCLUDE("cassandra.h", "CFLAGS_CASSANDRA", PHP_CASSANDRA_CPP_DRIVER + "/include"))) {
+    check_cassandra_cpp_driver_version(PHP_CASSANDRA_CPP_DRIVER_INCLUDE + "/cassandra.h");
     if (CHECK_LIB("libuv.lib", "cassandra", PHP_LIBUV) &&
         CHECK_LIB("iphlpapi.lib", "cassandra") &&
         CHECK_LIB("psapi.lib", "cassandra") &&
@@ -30,7 +77,7 @@ if (PHP_CASSANDRA != "no") {
       }
 
       if (CHECK_LIB("mpir_a.lib", "cassandra") &&
-        CHECK_HEADER_ADD_INCLUDE("gmp.h", "CFLAGS_CASSANDRA", PHP_GMP +  ";" + PHP_PHP_BUILD + "\\include\\mpir")) {
+        CHECK_HEADER_ADD_INCLUDE("gmp.h", "CFLAGS_CASSANDRA", PHP_GMP +  ";" + PHP_PHP_BUILD + "/include/mpir")) {
         if (ADD_EXTENSION_DEP("cassandra", "spl")) {
           EXTENSION("cassandra", "php_cassandra.c");
 
@@ -74,7 +121,9 @@ if (PHP_CASSANDRA != "no") {
               "Table.c " +
               "Timestamp.c " +
               "Timeuuid.c " +
+              "Tuple.c " +
               "Type.c " +
+              "Udt.c " +
               "Uuid.c " +
               "UuidInterface.c " +
               "Value.c " +
@@ -113,7 +162,9 @@ if (PHP_CASSANDRA != "no") {
               "Custom.c " +
               "Map.c " +
               "Scalar.c " +
-              "Set.c", "cassandra");
+              "Set.c " +
+              "Tuple.c " +
+              "Udt.c", "cassandra");
 
           ADD_SOURCES(configure_module_dirname + "/util",
               "bytes.c " +
@@ -145,6 +196,13 @@ if (PHP_CASSANDRA != "no") {
           if (PHP_VERSION == "5" && PHP_MINOR_VERSION <= 4) {
             ADD_FLAG("CFLAGS_CASSANDRA",
                 "/DDISABLE_MSVC_STDINT");
+          }
+
+          // Determine if library deconfliction should occur (DEBUG)
+          if (PHP_DEBUG == "yes" && VCVERS == "1700") {
+            ADD_FLAG("LDFLAGS",
+                "/NODEFAULTLIB:LIBCMT.LIB " +
+                "/NODEFAULTLIB:LIBCMTD.LIB"); // This is needed for vc_build.bat
           }
 
           // Ensure gdi32.lib is linked for all dependency extensions

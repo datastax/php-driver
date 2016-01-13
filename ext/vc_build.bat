@@ -1049,11 +1049,17 @@ REM @param log-filename Absolute path and filename for log output
   SET AVAILABLE_VISUAL_STUDIO_VERSIONS=
 
   REM Build the cpp-driver
-  ECHO | SET /P=Building and installing cpp-driver ... 
   PUSHD "!CPP_DRIVER_SOURCE_DIRECTORY!" > NUL
   SET "CPP_DRIVER_BUILD_COMMAND_LINE=--TARGET-COMPILER !CPP_DRIVER_TARGET_COMPILER! --INSTALL-DIR !CPP_DRIVER_INSTALLATION_DIRECTORY! --STATIC --ENABLE-ZLIB"
   IF "!CPP_DRIVER_BUILD_TYPE!" == "!BUILD_TYPE_DEBUG!" (
-    SET "CPP_DRIVER_BUILD_COMMAND_LINE=!CPP_DRIVER_BUILD_COMMAND_LINE! --DEBUG"
+    REM If VS 2012 work around std::numerics::max/min issues when compiling
+    IF !CPP_DRIVER_TARGET_COMPILER! EQU 110 (
+      REM TODO: C/C++ driver build support required to generate release (w/ info)
+      ECHO Disabling debug build for C/C++ driver dependency
+      SET "CPP_DRIVER_BUILD_COMMAND_LINE=!CPP_DRIVER_BUILD_COMMAND_LINE! --RELEASE"
+    ) ELSE (
+      SET "CPP_DRIVER_BUILD_COMMAND_LINE=!CPP_DRIVER_BUILD_COMMAND_LINE! --DEBUG"
+    )
   ) ELSE (
     SET "CPP_DRIVER_BUILD_COMMAND_LINE=!CPP_DRIVER_BUILD_COMMAND_LINE! --RELEASE"
   )
@@ -1065,6 +1071,7 @@ REM @param log-filename Absolute path and filename for log output
   IF !CPP_DRIVER_USE_BOOST_ATOMIC! EQU !TRUE! (
     SET "CPP_DRIVER_BUILD_COMMAND_LINE=!CPP_DRIVER_BUILD_COMMAND_LINE! --USE-BOOST-ATOMIC"
   )
+  ECHO | SET /P=Building and installing cpp-driver ... 
   ECHO vc_build.bat !CPP_DRIVER_BUILD_COMMAND_LINE! >> "!CPP_DRIVER_LOG_FILENAME!" 2>&1
   CALL vc_build.bat !CPP_DRIVER_BUILD_COMMAND_LINE! >> "!CPP_DRIVER_LOG_FILENAME!" 2>&1
   IF NOT !ERRORLEVEL! EQU 0 (
