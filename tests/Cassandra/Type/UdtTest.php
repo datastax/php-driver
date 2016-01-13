@@ -82,9 +82,11 @@ class UdtTest extends \PHPUnit_Framework_TestCase
      *                           Cassandra\Type::varint(), Cassandra\Type::boolean(),
      *                           Cassandra\Type::decimal(), Cassandra\Type::double(),
      *                           Cassandra\Type::float(), Cassandra\Type::inet(),
-     *                           Cassandra\Type::timestamp(), Cassandra\Type::uuid()
-     *                           or Cassandra\Type::timeuuid(), an instance of
-     *                           Cassandra\Type\UnsupportedType given
+     *                           Cassandra\Type::timestamp(), Cassandra\Type::uuid(),
+     *                           Cassandra\Type::timeuuid(), Cassandra\Type::map(),
+     *                           Cassandra\Type::set(), Cassandra\Type::collection(),
+     *                           Cassandra\Type::tuple() or Cassandra\Type::udt(),
+     *                           an instance of Cassandra\Type\UnsupportedType given
      */
     public function testPreventsDefiningUdtsWithUnsupportedTypes()
     {

@@ -32,7 +32,6 @@ php_cassandra_value(const CassValue* value, const CassDataType* data_type, php5t
   cassandra_map *map = NULL;
   cassandra_set *set = NULL;
   cassandra_tuple *tuple = NULL;
-  ulong index;
   cassandra_udt *udt = NULL;
   ulong index;
 
@@ -241,7 +240,7 @@ php_cassandra_value(const CassValue* value, const CassDataType* data_type, php5t
     object_init_ex(PHP5TO7_ZVAL_MAYBE_DEREF(out), cassandra_tuple_ce);
     tuple = PHP_CASSANDRA_GET_TUPLE(PHP5TO7_ZVAL_MAYBE_DEREF(out));
 
-    tuple->type = php_cassandra_type_tuple(TSRMLS_C);
+    tuple->type = php_cassandra_type_from_data_type(data_type TSRMLS_CC);
 
     iterator = cass_iterator_from_tuple(value);
 
@@ -257,7 +256,7 @@ php_cassandra_value(const CassValue* value, const CassDataType* data_type, php5t
         return FAILURE;
       }
 
-      php_cassandra_tuple_set(tuple, index, PHP5TO7_ZVAL_MAYBE_P(v) TSRMLS_CC);
+      php_cassandra_tuple_add(tuple, PHP5TO7_ZVAL_MAYBE_P(v) TSRMLS_CC);
       zval_ptr_dtor(&v);
       index++;
     }
@@ -268,7 +267,7 @@ php_cassandra_value(const CassValue* value, const CassDataType* data_type, php5t
     object_init_ex(PHP5TO7_ZVAL_MAYBE_DEREF(out), cassandra_udt_ce);
     udt = PHP_CASSANDRA_GET_UDT(PHP5TO7_ZVAL_MAYBE_DEREF(out));
 
-    udt->type = php_cassandra_type_udt(TSRMLS_C);
+    udt->type = php_cassandra_type_from_data_type(data_type TSRMLS_CC);
 
     iterator = cass_iterator_fields_from_user_type(value);
 

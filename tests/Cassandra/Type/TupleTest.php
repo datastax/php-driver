@@ -7,41 +7,41 @@ use Cassandra\Type;
 /**
  * @requires extension cassandra
  */
-class CollectionTest extends \PHPUnit_Framework_TestCase
+class TupleTest extends \PHPUnit_Framework_TestCase
 {
-    public function testDefinesCollectionType()
+    public function testDefinesTupleType()
     {
-        $type = Type::collection(Type::varchar());
-        $this->assertEquals("list", $type->name());
-        $this->assertEquals("list<varchar>", (string) $type);
-        $this->assertEquals(Type::varchar(), $type->valueType());
+        //$type = Type::tuple(Type::varchar(), Type::int());
+        //$this->assertEquals('tuple', $type->name());
+        //$this->assertEquals('tuple<varchar, int>', (string) $type);
+        //$types = $type->types();
+        //$this->assertEquals(Type::varchar(), $types[0]);
+        //$this->assertEquals(Type::int(), $types[1]);
     }
 
-    public function testCreatesCollectionFromValues()
+    public function testCreatesTupleFromValues()
     {
-        $list = Type::collection(Type::varchar())
-                    ->create("a", "b", "c", "d", "e");
-        $this->assertEquals(array("a", "b", "c", "d", "e"), $list->values());
-        $this->assertEquals("a", $list->get(0));
-        $this->assertEquals("b", $list->get(1));
-        $this->assertEquals("c", $list->get(2));
-        $this->assertEquals("d", $list->get(3));
-        $this->assertEquals("e", $list->get(4));
+        //$tuple = Type::tuple(Type::varchar(), Type::int())
+        //            ->create('xyz', 123);
+        //$this->assertEquals(array('xyz', 123), $tuple->values());
+        //$this->assertEquals('xyz', $tuple->get(0));
+        //$this->assertEquals(123, $tuple->get(1));
     }
 
-    public function testCreatesEmptyCollection()
+    public function testCreatesNullTuple()
     {
-        $list = Type::collection(Type::varchar())->create();
-        $this->assertEquals(0, count($list));
+        $tuple = Type::tuple(Type::varchar())->create();
+        //$this->assertEquals(1, count($tuple));
+        $this->assertEquals($tuple->get(0), null);
     }
 
     /**
      * @expectedException        InvalidArgumentException
      * @expectedExceptionMessage argument must be a string, '1' given
      */
-    public function testPreventsCreatingCollectionWithUnsupportedTypes()
+    public function testPreventsCreatingTupleWithInvalidType()
     {
-        Type::collection(Type::varchar())->create(1);
+        Type::tuple(Type::varchar())->create(1);
     }
 
     /**
@@ -59,8 +59,8 @@ class CollectionTest extends \PHPUnit_Framework_TestCase
      *                           Cassandra\Type::tuple() or Cassandra\Type::udt(),
      *                           an instance of Cassandra\Type\UnsupportedType given
      */
-    public function testPreventsDefiningCollectionsWithUnsupportedTypes()
+    public function testPreventsDefiningTuplesWithUnsupportedTypes()
     {
-        Type::collection(new UnsupportedType());
+        Type::tuple(new UnsupportedType());
     }
 }

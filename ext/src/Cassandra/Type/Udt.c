@@ -97,7 +97,7 @@ PHP_METHOD(TypeUdt, create)
       return;
     }
 
-    if ((argc / 2) != zend_hash_num_elements(&self->types)) {
+    if ((argc / 2) != (int)zend_hash_num_elements(&self->types)) {
       zend_throw_exception_ex(cassandra_invalid_argument_exception_ce,
                               0 TSRMLS_CC,
                               "Invalid number of elements given. Expected %d arguments.",

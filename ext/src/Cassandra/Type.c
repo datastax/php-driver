@@ -1,4 +1,5 @@
 #include "php_cassandra.h"
+#include "src/Cassandra/Type/Tuple.h"
 #include "src/Cassandra/Type/Udt.h"
 #include "util/types.h"
 
@@ -50,7 +51,8 @@ PHP_METHOD(Type, tuple)
 
   for (i = 0; i < argc; ++i) {
     zval *sub_type = PHP5TO7_ZVAL_ARG(args[i]);
-    if (!php_cassandra_type_validate(sub_type, "types" TSRMLS_CC)) {
+    if (!php_cassandra_type_validate(sub_type, "type" TSRMLS_CC)) {
+      PHP5TO7_MAYBE_EFREE(args);
       return;
     }
   }
@@ -60,14 +62,14 @@ PHP_METHOD(Type, tuple)
 
   for (i = 0; i < argc; ++i) {
     zval *sub_type = PHP5TO7_ZVAL_ARG(args[i]);
-    if (PHP5TO7_ZEND_HASH_NEXT_INDEX_INSERT(&type->types,
-                                            sub_type, sizeof(zval *))) {
+    if (php_cassandra_type_tuple_add(type, sub_type TSRMLS_CC)) {
       Z_ADDREF_P(sub_type);
     } else {
       break;
     }
   }
 
+  PHP5TO7_MAYBE_EFREE(args);
   RETURN_ZVAL(PHP5TO7_ZVAL_MAYBE_P(ztype), 0, 1);
 }
 

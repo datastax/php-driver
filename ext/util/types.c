@@ -14,6 +14,7 @@
 #include "src/Cassandra/Timeuuid.h"
 #include "src/Cassandra/Uuid.h"
 #include "src/Cassandra/Varint.h"
+#include "src/Cassandra/Type/Tuple.h"
 #include "src/Cassandra/Type/Udt.h"
 
 ZEND_EXTERN_MODULE_GLOBALS(cassandra)
@@ -27,74 +28,6 @@ struct node_s {
   struct node_s *next_sibling;
   struct node_s *prev_sibling;
 };
-
-static php5to7_zval
-php_cassandra_create_type(struct node_s *node TSRMLS_DC);
-
-static php5to7_zval
-php_cassandra_tuple_from_data_type(const CassDataType *data_type TSRMLS_DC) {
-  php5to7_zval ztype;
-  cassandra_type *type;
-  size_t i, count;
-
-  count = cass_data_sub_type_count(data_type);
-  ztype = php_cassandra_type_tuple(TSRMLS_C);
-  type = PHP_CASSANDRA_GET_TYPE(PHP5TO7_ZVAL_MAYBE_P(ztype));
-  for (i = 0; i < count; ++i) {
-    php5to7_zval sub_type =
-        php_cassandra_type_from_data_type(
-          cass_data_type_sub_data_type(data_type, i) TSRMLS_CC);
-    PHP5TO7_ZEND_HASH_NEXT_INDEX_INSERT(&type->types,
-                                        PHP5TO7_ZVAL_MAYBE_P(sub_type), sizeof(zval *));
-  }
-
-  return ztype;
-}
-
-static php5to7_zval
-php_cassandra_tuple_from_node(struct node_s *node TSRMLS_DC) {
-  php5to7_zval ztype;
-  cassandra_type *type;
-  struct node_s *current;
-
-  ztype = php_cassandra_type_tuple(TSRMLS_C);
-  type = PHP_CASSANDRA_GET_TYPE(PHP5TO7_ZVAL_MAYBE_P(ztype));
-
-  for (current = node->first_child;
-       current != NULL;
-       current = current->next_sibling) {
-    php5to7_zval sub_type = php_cassandra_create_type(current TSRMLS_CC);
-    PHP5TO7_ZEND_HASH_NEXT_INDEX_INSERT(&type->types,
-                                        PHP5TO7_ZVAL_MAYBE_P(sub_type), sizeof(zval *));
-  }
-
-  return ztype;
-}
-
-static php5to7_zval
-php_cassandra_udt_from_data_type(const CassDataType *data_type TSRMLS_DC)
-{
-  php5to7_zval ztype;
-  cassandra_type *type;
-  size_t i, count;
-
-  count = cass_data_sub_type_count(data_type);
-  ztype = php_cassandra_type_udt(TSRMLS_C);
-  type = PHP_CASSANDRA_GET_TYPE(PHP5TO7_ZVAL_MAYBE_P(ztype));
-  for (i = 0; i < count; ++i) {
-    const char *name;
-    size_t name_length;
-    php5to7_zval sub_type =
-        php_cassandra_type_from_data_type(
-          cass_data_type_sub_data_type(data_type, i) TSRMLS_CC);
-    cass_data_type_sub_type_name(data_type, i, &name, &name_length);
-    php_cassandra_type_udt_add(type,
-                               name, name_length,
-                               PHP5TO7_ZVAL_MAYBE_P(sub_type) TSRMLS_CC);
-  }
-
-  return ztype;
-}
 
 static int
 hex_value(int c)
@@ -130,6 +63,76 @@ php_cassandra_from_hex(const char* hex, size_t hex_length)
   }
   result[size] = '\0';
   return result;
+}
+
+static php5to7_zval
+php_cassandra_create_type(struct node_s *node TSRMLS_DC);
+
+static php5to7_zval
+php_cassandra_tuple_from_data_type(const CassDataType *data_type TSRMLS_DC) {
+  php5to7_zval ztype;
+  cassandra_type *type;
+  size_t i, count;
+
+  count = cass_data_sub_type_count(data_type);
+  ztype = php_cassandra_type_tuple(TSRMLS_C);
+  type = PHP_CASSANDRA_GET_TYPE(PHP5TO7_ZVAL_MAYBE_P(ztype));
+  for (i = 0; i < count; ++i) {
+    php5to7_zval sub_type =
+        php_cassandra_type_from_data_type(
+          cass_data_type_sub_data_type(data_type, i) TSRMLS_CC);
+    php_cassandra_type_tuple_add(type,
+                                 PHP5TO7_ZVAL_MAYBE_P(sub_type)
+                                 TSRMLS_CC);
+  }
+
+  return ztype;
+}
+
+static php5to7_zval
+php_cassandra_tuple_from_node(struct node_s *node TSRMLS_DC) {
+  php5to7_zval ztype;
+  cassandra_type *type;
+  struct node_s *current;
+
+  ztype = php_cassandra_type_tuple(TSRMLS_C);
+  type = PHP_CASSANDRA_GET_TYPE(PHP5TO7_ZVAL_MAYBE_P(ztype));
+
+  for (current = node->first_child;
+       current != NULL;
+       current = current->next_sibling) {
+    php5to7_zval sub_type = php_cassandra_create_type(current TSRMLS_CC);
+    php_cassandra_type_tuple_add(type,
+                                 PHP5TO7_ZVAL_MAYBE_P(sub_type)
+                                 TSRMLS_CC);
+  }
+
+  return ztype;
+}
+
+static php5to7_zval
+php_cassandra_udt_from_data_type(const CassDataType *data_type TSRMLS_DC)
+{
+  php5to7_zval ztype;
+  cassandra_type *type;
+  size_t i, count;
+
+  count = cass_data_sub_type_count(data_type);
+  ztype = php_cassandra_type_udt(TSRMLS_C);
+  type = PHP_CASSANDRA_GET_TYPE(PHP5TO7_ZVAL_MAYBE_P(ztype));
+  for (i = 0; i < count; ++i) {
+    const char *name;
+    size_t name_length;
+    php5to7_zval sub_type =
+        php_cassandra_type_from_data_type(
+          cass_data_type_sub_data_type(data_type, i) TSRMLS_CC);
+    cass_data_type_sub_type_name(data_type, i, &name, &name_length);
+    php_cassandra_type_udt_add(type,
+                               name, name_length,
+                               PHP5TO7_ZVAL_MAYBE_P(sub_type) TSRMLS_CC);
+  }
+
+  return ztype;
 }
 
 static php5to7_zval
@@ -250,13 +253,13 @@ int php_cassandra_type_validate(zval *object, const char *object_name TSRMLS_DC)
                            "Cassandra\\Type::float(), " \
                            "Cassandra\\Type::inet(), " \
                            "Cassandra\\Type::timestamp(), " \
-                           "Cassandra\\Type::uuid() or " \
-                           "Cassandra\\Type::timeuuid()" \
-                           "Cassandra\\Type::map()" \
-                           "Cassandra\\Type::set()" \
-                           "Cassandra\\Type::collection()" \
-						   "Cassandra\\Type::tuple()" \
-                           "Cassandra\\Type::udt()" \
+                           "Cassandra\\Type::uuid(), " \
+                           "Cassandra\\Type::timeuuid(), " \
+                           "Cassandra\\Type::map(), " \
+                           "Cassandra\\Type::set(), " \
+                           "Cassandra\\Type::collection(), " \
+                           "Cassandra\\Type::tuple() or " \
+                           "Cassandra\\Type::udt()"
                            TSRMLS_CC);
     return 0;
   }
@@ -316,7 +319,6 @@ tuple_compare(cassandra_type *type1, cassandra_type *type2 TSRMLS_DC) {
 }
 
 static inline int
-is_string_type(CassValueType type) {
 udt_compare(cassandra_type *type1, cassandra_type *type2 TSRMLS_DC)
 {
   HashPosition pos1;

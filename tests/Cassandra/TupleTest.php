@@ -89,7 +89,7 @@ class TupleTest extends \PHPUnit_Framework_TestCase
     public function testValidatesTypesOfElements()
     {
         $tuple = new Tuple(array(\Cassandra::TYPE_VARINT));
-        $tuple->set(0,new Decimal('123'));
+        $tuple->set(0, new Decimal('123'));
     }
 
     public function testSetAllElements()

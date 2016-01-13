@@ -344,7 +344,7 @@ php_cassandra_collection_compare(zval *obj1, zval *obj2 TSRMLS_DC)
   zend_hash_internal_pointer_reset_ex(&collection2->values, &pos2);
 
   while (PHP5TO7_ZEND_HASH_GET_CURRENT_DATA_EX(&collection1->values, current1, &pos1) &&
-         PHP5TO7_ZEND_HASH_GET_CURRENT_DATA_EX(&collection1->values, current2, &pos2)) {
+         PHP5TO7_ZEND_HASH_GET_CURRENT_DATA_EX(&collection2->values, current2, &pos2)) {
     int r = php_cassandra_value_compare(PHP5TO7_ZVAL_MAYBE_DEREF(current1),
                                         PHP5TO7_ZVAL_MAYBE_DEREF(current2) TSRMLS_CC);
     if (r != 0) return r;

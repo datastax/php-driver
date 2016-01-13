@@ -2,6 +2,7 @@
 #include "util/collections.h"
 #include "util/hash.h"
 #include "util/types.h"
+#include "src/Cassandra/Type/Tuple.h"
 #include "src/Cassandra/Tuple.h"
 
 zend_class_entry *cassandra_tuple_ce = NULL;
@@ -47,13 +48,14 @@ PHP_METHOD(Tuple, __construct)
   cassandra_type *type;
   HashTable *types;
   php5to7_zval *current;
-  zval null;
+  php5to7_zval null;
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "h", &types) == FAILURE) {
     return;
   }
 
-  ZVAL_NULL(&null);
+  PHP5TO7_ZVAL_MAYBE_MAKE(null);
+  ZVAL_NULL(PHP5TO7_ZVAL_MAYBE_P(null));
 
   self = PHP_CASSANDRA_GET_TUPLE(getThis());
   self->type = php_cassandra_type_tuple(TSRMLS_C);
@@ -69,17 +71,17 @@ PHP_METHOD(Tuple, __construct)
         return;
       }
       scalar_type = php_cassandra_type_scalar(value_type TSRMLS_CC);
-      if (!PHP5TO7_ZEND_HASH_NEXT_INDEX_INSERT(&type->types,
-                                               PHP5TO7_ZVAL_MAYBE_P(scalar_type), sizeof(zval *))) {
+      if (!php_cassandra_type_tuple_add(type,
+                                        PHP5TO7_ZVAL_MAYBE_P(scalar_type) TSRMLS_CC)) {
         return;
       }
     } else if (Z_TYPE_P(sub_type) == IS_OBJECT &&
                instanceof_function(Z_OBJCE_P(sub_type), cassandra_type_ce TSRMLS_CC)) {
-      if (!php_cassandra_type_validate(sub_type, "sub_type" TSRMLS_CC)) {
+      if (!php_cassandra_type_validate(sub_type, "type" TSRMLS_CC)) {
         return;
       }
-      if (PHP5TO7_ZEND_HASH_NEXT_INDEX_INSERT(&type->types,
-                                              sub_type, sizeof(zval *))) {
+      if (php_cassandra_type_tuple_add(type,
+                                        sub_type TSRMLS_CC)) {
         Z_ADDREF_P(sub_type);
       } else {
         return;
@@ -88,7 +90,7 @@ PHP_METHOD(Tuple, __construct)
       INVALID_ARGUMENT(sub_type, "a string or an instance of Cassandra\\Type");
     }
 
-    php_cassandra_tuple_add(self, &null TSRMLS_CC);
+    php_cassandra_tuple_add(self, PHP5TO7_ZVAL_MAYBE_P(null) TSRMLS_CC);
 
   } PHP5TO7_ZEND_HASH_FOREACH_END(types);
 }
@@ -118,15 +120,15 @@ PHP_METHOD(Tuple, set)
   long index;
   cassandra_type *type;
   php5to7_zval *sub_type;
-  zval *object;
+  zval *value;
 
-  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "lz", &index, &object) == FAILURE)
+  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "lz", &index, &value) == FAILURE)
     return;
 
   self = PHP_CASSANDRA_GET_TUPLE(getThis());
   type = PHP_CASSANDRA_GET_TYPE(PHP5TO7_ZVAL_MAYBE_P(self->type));
 
-  if (index < 0 || index >= zend_hash_num_elements(&type->types)) {
+  if (index < 0 || index >= zend_hash_num_elements(&self->values)) {
     zend_throw_exception_ex(cassandra_invalid_argument_exception_ce, 0 TSRMLS_CC,
                             "Index out of bounds");
     return;
@@ -134,12 +136,12 @@ PHP_METHOD(Tuple, set)
 
   PHP5TO7_ZEND_HASH_INDEX_FIND(&type->types, index, sub_type);
 
-  if (!php_cassandra_validate_object(object,
+  if (!php_cassandra_validate_object(value,
                                      PHP5TO7_ZVAL_MAYBE_DEREF(sub_type) TSRMLS_CC)) {
     return;
   }
 
-  php_cassandra_tuple_set(self, index, object TSRMLS_CC);
+  php_cassandra_tuple_set(self, index, value TSRMLS_CC);
 }
 /* }}} */
 
@@ -305,13 +307,8 @@ php_cassandra_tuple_compare(zval *obj1, zval *obj2 TSRMLS_DC)
   zend_hash_internal_pointer_reset_ex(&tuple1->values, &pos1);
   zend_hash_internal_pointer_reset_ex(&tuple2->values, &pos2);
 
-#if PHP_MAJOR_VERSION >= 7
-  while ((current1 = zend_hash_get_current_data_ex(&tuple1->values, &pos1)) != NULL &&
-         (current2 = zend_hash_get_current_data_ex(&tuple1->values, &pos2)) != NULL) {
-#else
-  while (zend_hash_get_current_data(&tuple1->values, (void**) &current1) == SUCCESS &&
-         zend_hash_get_current_data(&tuple2->values, (void**) &current2) == SUCCESS) {
-#endif
+  while (PHP5TO7_ZEND_HASH_GET_CURRENT_DATA_EX(&tuple1->values, current1, &pos1) &&
+         PHP5TO7_ZEND_HASH_GET_CURRENT_DATA_EX(&tuple2->values, current2, &pos2)) {
     int r = php_cassandra_value_compare(PHP5TO7_ZVAL_MAYBE_DEREF(current1),
                                         PHP5TO7_ZVAL_MAYBE_DEREF(current2) TSRMLS_CC);
     if (r != 0) return r;

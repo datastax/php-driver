@@ -350,8 +350,10 @@ php_cassandra_tuple_set(CassTuple *tuple, php5to7_ulong index, zval *value, Cass
   cassandra_map        *map;
   cassandra_set        *set;
   cassandra_tuple      *tup;
+  cassandra_udt        *udt;
   CassCollection       *sub_collection;
   CassTuple            *sub_tuple;
+  CassUserType         *sub_ut;
 
   switch (type) {
   case CASS_VALUE_TYPE_TEXT:
@@ -434,6 +436,12 @@ php_cassandra_tuple_set(CassTuple *tuple, php5to7_ulong index, zval *value, Cass
       return 0;
     CHECK_ERROR(cass_tuple_set_tuple(tuple, index, sub_tuple));
     break;
+  case CASS_VALUE_TYPE_UDT:
+    udt = PHP_CASSANDRA_GET_UDT(value);
+    if (!php_cassandra_user_type_from_udt(udt, &sub_ut TSRMLS_CC))
+      return 0;
+    CHECK_ERROR(cass_tuple_set_user_type(tuple, index, sub_ut));
+    break;
   default:
     zend_throw_exception_ex(cassandra_runtime_exception_ce, 0 TSRMLS_CC, "Unsupported collection type");
     return 0;
@@ -458,8 +466,10 @@ php_cassandra_user_type_set(CassUserType *ut,
   cassandra_collection *coll;
   cassandra_map        *map;
   cassandra_set        *set;
+  cassandra_tuple      *tuple;
   cassandra_udt        *udt;
   CassCollection       *sub_collection;
+  CassTuple            *sub_tup;
   CassUserType         *sub_ut;
 
   switch (type) {
@@ -536,6 +546,12 @@ php_cassandra_user_type_set(CassUserType *ut,
     if (!php_cassandra_collection_from_set(set, &sub_collection TSRMLS_CC))
       return 0;
     CHECK_ERROR(cass_user_type_set_collection_by_name(ut, name, sub_collection));
+    break;
+  case CASS_VALUE_TYPE_TUPLE:
+    tuple = PHP_CASSANDRA_GET_TUPLE(value);
+    if (!php_cassandra_tuple_from_tuple(tuple, &sub_tup TSRMLS_CC))
+      return 0;
+    CHECK_ERROR(cass_user_type_set_tuple_by_name(ut, name, sub_tup));
     break;
   case CASS_VALUE_TYPE_UDT:
     udt = PHP_CASSANDRA_GET_UDT(value);

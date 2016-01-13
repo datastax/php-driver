@@ -330,7 +330,7 @@ php5to7_string_compare(php5to7_string s1, php5to7_string s2)
   (zend_hash_update((ht), (key), (uint)(len), (void *) &(val), (uint)(val_size), NULL) == SUCCESS)
 
 #define PHP5TO7_ZEND_HASH_INDEX_UPDATE(ht, index, val, val_size) \
-  ((zend_hash_index_update((ht), (index), (val), (uint)(val_size), NULL)) == SUCCESS)
+  ((zend_hash_index_update((ht), (index), (void *) &(val), (uint)(val_size), NULL)) == SUCCESS)
 
 #define PHP5TO7_ZEND_HASH_ADD(ht, key, len, val, val_size) \
   (zend_hash_add((ht), (key), (len), (void *) &(val), (uint)(val_size), NULL) == SUCCESS)
