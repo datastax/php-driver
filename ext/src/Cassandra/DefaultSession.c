@@ -340,7 +340,8 @@ create_batch(cassandra_statement *batch, CassConsistency consistency TSRMLS_DC)
 static CassStatement *
 create_single(cassandra_statement *statement, HashTable *arguments,
               CassConsistency consistency, long serial_consistency,
-              int page_size TSRMLS_DC)
+              int page_size, const char* paging_state_token,
+              size_t paging_state_token_size TSRMLS_DC)
 {
   CassError rc = CASS_OK;
   CassStatement *stmt = create_statement(statement, arguments TSRMLS_CC);
@@ -354,6 +355,12 @@ create_single(cassandra_statement *statement, HashTable *arguments,
 
   if (rc == CASS_OK && page_size >= 0)
     rc = cass_statement_set_paging_size(stmt, page_size);
+
+  if (rc == CASS_OK && paging_state_token) {
+    rc = cass_statement_set_paging_state_token(stmt,
+                                               paging_state_token,
+                                               paging_state_token_size);
+  }
 
   if (rc != CASS_OK) {
     cass_statement_free(stmt);
@@ -380,6 +387,8 @@ PHP_METHOD(DefaultSession, execute)
   HashTable *arguments = NULL;
   CassConsistency consistency = CASS_CONSISTENCY_ONE;
   int page_size = -1;
+  char *paging_state_token = NULL;
+  size_t paging_state_token_size = 0;
   zval *timeout = NULL;
   long serial_consistency = -1;
   cassandra_execution_options *opts = NULL;
@@ -415,6 +424,11 @@ PHP_METHOD(DefaultSession, execute)
     if (opts->page_size >= 0)
       page_size = opts->page_size;
 
+    if (opts->paging_state_token) {
+      paging_state_token = opts->paging_state_token;
+      paging_state_token_size = opts->paging_state_token_size;
+    }
+
     if (!PHP5TO7_ZVAL_IS_UNDEF(opts->timeout))
       timeout = PHP5TO7_ZVAL_MAYBE_P(opts->timeout);
 
@@ -426,7 +440,9 @@ PHP_METHOD(DefaultSession, execute)
     case CASSANDRA_SIMPLE_STATEMENT:
     case CASSANDRA_PREPARED_STATEMENT:
       single = create_single(stmt, arguments, consistency,
-                             serial_consistency, page_size TSRMLS_CC);
+                             serial_consistency, page_size,
+                             paging_state_token,
+                             paging_state_token_size TSRMLS_CC);
 
       if (!single)
         return;
@@ -500,6 +516,8 @@ PHP_METHOD(DefaultSession, executeAsync)
   HashTable *arguments = NULL;
   CassConsistency consistency = CASS_CONSISTENCY_ONE;
   int page_size = -1;
+  char *paging_state_token = NULL;
+  size_t paging_state_token_size = 0;
   long serial_consistency = -1;
   cassandra_execution_options *opts = NULL;
   cassandra_future_rows *future_rows = NULL;
@@ -533,6 +551,11 @@ PHP_METHOD(DefaultSession, executeAsync)
     if (opts->page_size >= 0)
       page_size = opts->page_size;
 
+    if (opts->paging_state_token) {
+      paging_state_token = opts->paging_state_token;
+      paging_state_token_size = opts->paging_state_token_size;
+    }
+
     if (opts->serial_consistency >= 0)
       serial_consistency = opts->serial_consistency;
   }
@@ -544,8 +567,9 @@ PHP_METHOD(DefaultSession, executeAsync)
     case CASSANDRA_SIMPLE_STATEMENT:
     case CASSANDRA_PREPARED_STATEMENT:
       single = create_single(stmt, arguments, consistency,
-                             serial_consistency, page_size TSRMLS_CC);
-
+                             serial_consistency, page_size,
+                             paging_state_token,
+                             paging_state_token_size TSRMLS_CC);
       if (!single)
         return;
 

@@ -140,6 +140,13 @@ final class Rows implements \Iterator, \Countable, \ArrayAccess
     public function nextPageAsync() {}
 
     /**
+     * Returns the raw paging state token.
+     *
+     * @return string
+     */
+    public function pagingStateToken {}
+
+    /**
      * Get the first row.
      *
      * @return array|null returns first row if any

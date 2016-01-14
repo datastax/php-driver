@@ -328,6 +328,26 @@ PHP_METHOD(Rows, nextPageAsync)
   RETURN_ZVAL(PHP5TO7_ZVAL_MAYBE_P(self->future_next_page), 1, 0);
 }
 
+PHP_METHOD(Rows, pagingStateToken)
+{
+  const char *paging_state;
+  size_t paging_state_size;
+  cassandra_rows* self = NULL;
+
+  if (zend_parse_parameters_none() == FAILURE) {
+    return;
+  }
+
+  self = PHP_CASSANDRA_GET_ROWS(getThis());
+
+  if (self->result == NULL) return;
+
+  ASSERT_SUCCESS(cass_result_paging_state_token(self->result,
+                                                &paging_state,
+                                                &paging_state_size));
+  PHP5TO7_RETURN_STRINGL(paging_state, paging_state_size);
+}
+
 PHP_METHOD(Rows, first)
 {
   HashPosition pos;
@@ -363,21 +383,22 @@ ZEND_BEGIN_ARG_INFO_EX(arginfo_timeout, 0, ZEND_RETURN_VALUE, 1)
 ZEND_END_ARG_INFO()
 
 static zend_function_entry cassandra_rows_methods[] = {
-  PHP_ME(Rows, __construct,   arginfo_none,    ZEND_ACC_PUBLIC | ZEND_ACC_CTOR)
-  PHP_ME(Rows, count,         arginfo_none,    ZEND_ACC_PUBLIC)
-  PHP_ME(Rows, rewind,        arginfo_none,    ZEND_ACC_PUBLIC)
-  PHP_ME(Rows, current,       arginfo_none,    ZEND_ACC_PUBLIC)
-  PHP_ME(Rows, key,           arginfo_none,    ZEND_ACC_PUBLIC)
-  PHP_ME(Rows, next,          arginfo_none,    ZEND_ACC_PUBLIC)
-  PHP_ME(Rows, valid,         arginfo_none,    ZEND_ACC_PUBLIC)
-  PHP_ME(Rows, offsetExists,  arginfo_offset,  ZEND_ACC_PUBLIC)
-  PHP_ME(Rows, offsetGet,     arginfo_offset,  ZEND_ACC_PUBLIC)
-  PHP_ME(Rows, offsetSet,     arginfo_set,     ZEND_ACC_PUBLIC)
-  PHP_ME(Rows, offsetUnset,   arginfo_offset,  ZEND_ACC_PUBLIC)
-  PHP_ME(Rows, isLastPage,    arginfo_none,    ZEND_ACC_PUBLIC)
-  PHP_ME(Rows, nextPage,      arginfo_timeout, ZEND_ACC_PUBLIC)
-  PHP_ME(Rows, nextPageAsync, arginfo_none,    ZEND_ACC_PUBLIC)
-  PHP_ME(Rows, first,         arginfo_none,    ZEND_ACC_PUBLIC)
+  PHP_ME(Rows, __construct,      arginfo_none,    ZEND_ACC_PUBLIC | ZEND_ACC_CTOR)
+  PHP_ME(Rows, count,            arginfo_none,    ZEND_ACC_PUBLIC)
+  PHP_ME(Rows, rewind,           arginfo_none,    ZEND_ACC_PUBLIC)
+  PHP_ME(Rows, current,          arginfo_none,    ZEND_ACC_PUBLIC)
+  PHP_ME(Rows, key,              arginfo_none,    ZEND_ACC_PUBLIC)
+  PHP_ME(Rows, next,             arginfo_none,    ZEND_ACC_PUBLIC)
+  PHP_ME(Rows, valid,            arginfo_none,    ZEND_ACC_PUBLIC)
+  PHP_ME(Rows, offsetExists,     arginfo_offset,  ZEND_ACC_PUBLIC)
+  PHP_ME(Rows, offsetGet,        arginfo_offset,  ZEND_ACC_PUBLIC)
+  PHP_ME(Rows, offsetSet,        arginfo_set,     ZEND_ACC_PUBLIC)
+  PHP_ME(Rows, offsetUnset,      arginfo_offset,  ZEND_ACC_PUBLIC)
+  PHP_ME(Rows, isLastPage,       arginfo_none,    ZEND_ACC_PUBLIC)
+  PHP_ME(Rows, nextPage,         arginfo_timeout, ZEND_ACC_PUBLIC)
+  PHP_ME(Rows, nextPageAsync,    arginfo_none,    ZEND_ACC_PUBLIC)
+  PHP_ME(Rows, pagingStateToken, arginfo_none,    ZEND_ACC_PUBLIC)
+  PHP_ME(Rows, first,            arginfo_none,    ZEND_ACC_PUBLIC)
   PHP_FE_END
 };
 

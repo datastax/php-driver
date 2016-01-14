@@ -180,6 +180,7 @@ typedef size_t php5to7_size;
 #define PHP5TO7_ZVAL_STRINGL(zv, s, len) ZVAL_STRINGL(zv, s, len)
 #define PHP5TO7_RETVAL_STRING(s) RETVAL_STRING(s)
 #define PHP5TO7_RETVAL_STRINGL(s, len) RETVAL_STRINGL(s, len)
+#define PHP5TO7_RETURN_STRINGL(s, len) RETURN_STRINGL(s, len)
 
 #define PHP5TO7_ZVAL_ARG(zv) &(zv)
 #define PHP5TO7_ZVAL_MAYBE_DEREF(zv) (zv)
@@ -323,6 +324,7 @@ typedef int php5to7_size;
 #define PHP5TO7_ZVAL_STRINGL(zv, s, len) ZVAL_STRINGL(zv, s, len, 1)
 #define PHP5TO7_RETVAL_STRING(s) RETVAL_STRING(s, 1)
 #define PHP5TO7_RETVAL_STRINGL(s, len) RETVAL_STRINGL(s, len, 1)
+#define PHP5TO7_RETURN_STRINGL(s, len) RETURN_STRINGL(s, len, 1)
 
 #define PHP5TO7_ZVAL_ARG(zv) *(zv)
 #define PHP5TO7_ZVAL_MAYBE_DEREF(zv) *(zv)

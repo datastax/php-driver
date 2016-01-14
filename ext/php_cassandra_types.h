@@ -181,6 +181,8 @@ PHP_CASSANDRA_BEGIN_OBJECT_TYPE(execution_options)
   long consistency;
   long serial_consistency;
   int page_size;
+  char *paging_state_token;
+  size_t paging_state_token_size;
   php5to7_zval timeout;
   php5to7_zval arguments;
 PHP_CASSANDRA_END_OBJECT_TYPE(execution_options)
