@@ -230,7 +230,7 @@ php_cassandra_default_cluster_new(zend_class_entry *ce TSRMLS_DC)
       PHP5TO7_ZEND_OBJECT_ECALLOC(cluster, ce);
 
   self->cluster             = NULL;
-  self->default_consistency = CASS_CONSISTENCY_ONE;
+  self->default_consistency = PHP_CASSANDRA_DEFAULT_CONSISTENCY;
   self->default_page_size   = 5000;
   self->persist             = 0;
   self->hash_key            = NULL;

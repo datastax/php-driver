@@ -378,7 +378,7 @@ PHP_METHOD(DefaultSession, execute)
   cassandra_session *self = NULL;
   cassandra_statement *stmt = NULL;
   HashTable *arguments = NULL;
-  CassConsistency consistency = CASS_CONSISTENCY_ONE;
+  CassConsistency consistency = PHP_CASSANDRA_DEFAULT_CONSISTENCY;
   int page_size = -1;
   zval *timeout = NULL;
   long serial_consistency = -1;
@@ -498,7 +498,7 @@ PHP_METHOD(DefaultSession, executeAsync)
   cassandra_session *self = NULL;
   cassandra_statement *stmt = NULL;
   HashTable *arguments = NULL;
-  CassConsistency consistency = CASS_CONSISTENCY_ONE;
+  CassConsistency consistency = PHP_CASSANDRA_DEFAULT_CONSISTENCY;
   int page_size = -1;
   long serial_consistency = -1;
   cassandra_execution_options *opts = NULL;
@@ -761,7 +761,7 @@ php_cassandra_default_session_new(zend_class_entry *ce TSRMLS_DC)
 
   self->session             = NULL;
   self->persist             = 0;
-  self->default_consistency = CASS_CONSISTENCY_ONE;
+  self->default_consistency = PHP_CASSANDRA_DEFAULT_CONSISTENCY;
   self->default_page_size   = 5000;
   PHP5TO7_ZVAL_UNDEF(self->default_timeout);
 
