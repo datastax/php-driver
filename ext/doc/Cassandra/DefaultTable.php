@@ -75,7 +75,7 @@ final class DefaultTable implements Table
     /**
      * {@inheritDoc}
      *
-     * @return int Memtable flush period in miliseconds
+     * @return int Memtable flush period in milliseconds
      */
     public function memtableFlushPeriodMs() {}
 
