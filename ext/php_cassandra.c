@@ -103,7 +103,7 @@ php_cassandra_log(const CassLogMessage *message, void *data)
   log[log_length] = '\0';
 
   if (log_length > 0) {
-    int fd = -1;
+    FILE *fd = NULL;
 #ifndef _WIN32
     if (!strcmp(log, "syslog")) {
       php_syslog(LOG_NOTICE, "cassandra | [%s] %s (%s:%d)",
@@ -113,9 +113,8 @@ php_cassandra_log(const CassLogMessage *message, void *data)
     }
 #endif
 
-    fd = open(log, O_CREAT | O_APPEND | O_WRONLY, 0644);
-
-    if (fd != 1) {
+    fd = fopen(log, "a");
+    if (fd) {
       time_t log_time;
       struct tm log_tm;
       char log_time_str[64];
@@ -139,9 +138,9 @@ php_cassandra_log(const CassLogMessage *message, void *data)
               message->file, message->line,
               PHP_EOL);
 
-      write(fd, tmp, needed);
+      fwrite(tmp, 1, needed, fd);
       free(tmp);
-      close(fd);
+      fclose(fd);
       return;
     }
   }
