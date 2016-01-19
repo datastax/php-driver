@@ -72,6 +72,9 @@ if test "$PHP_CASSANDRA" != "no"; then
     src/Cassandra/Type/Scalar.c \
     src/Cassandra/Type/Set.c \
     src/Cassandra/Type/Custom.c \
+    src/Cassandra/TimestampGenerator.c \
+    src/Cassandra/TimestampGenerator/Monotonic.c \
+    src/Cassandra/TimestampGenerator/ServerSide.c \
   ";
 
   CASSANDRA_TYPES="\

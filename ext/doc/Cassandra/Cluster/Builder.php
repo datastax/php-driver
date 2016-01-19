@@ -234,4 +234,14 @@ final class Builder
      * @return Builder self
      */
     public function withTCPKeepalive($delay) {}
+
+    /**
+     * Sets the timestamp generator.
+     *
+     * @param Cassandra\TimestampGenerator $generator A timestamp generator that will be used
+     *                                                to generate timestamps for statements.
+     *
+     * @return Builder self
+     */
+    public function withTimestampGenerator($generator) {}
 }
