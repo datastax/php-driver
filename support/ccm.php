@@ -5,7 +5,9 @@ use Cassandra\SimpleStatement;
 
 class CCM
 {
-    private $name;
+    const DEFAULT_CLUSTER_PREFIX = "php-driver";
+    const DEFAULT_CASSANDRA_VERSION = "2.1.12";
+    private $clusterPrefix;
     private $version;
     private $process;
     private $cluster;
@@ -15,10 +17,10 @@ class CCM
     private $dataCenterOneNodes;
     private $dataCenterTwoNodes;
 
-    public function __construct($name, $version)
+    public function __construct($version = CCM::DEFAULT_CASSANDRA_VERSION, $clusterPrefix = CCM::DEFAULT_CLUSTER_PREFIX)
     {
-        $this->name               = $name;
         $this->version            = $version;
+        $this->clusterPrefix      = $clusterPrefix;
         $this->process            = new Process(null);
         $this->cluster            = null;
         $this->session            = null;
@@ -126,7 +128,7 @@ class CCM
         $this->dataCenterTwoNodes = $dataCenterTwoNodes;
 
         $clusters = $this->getClusters();
-        $clusterName = $this->name.'_'.$dataCenterOneNodes.'-'.$dataCenterTwoNodes;
+        $clusterName = $this->clusterPrefix.'_'.$this->version.'_'.$dataCenterOneNodes.'-'.$dataCenterTwoNodes;
         if ($clusters['active'] != $clusterName) {
             // Ensure any active cluster is stopped
             if (!empty($clusters['active'])) {
@@ -268,10 +270,14 @@ class CCM
       return $this->run('remove', $cluster);
     }
 
-    public function removeAllClusters()
+    public function removeAllClusters($is_all = false)
     {
         $clusters = $this->getClusters();
         foreach ($clusters['list'] as $cluster) {
+            // Determine if the cluster should be deleted
+            if (!$is_all && substr(strtolower($cluster), 0, strlen(CCM::DEFAULT_CLUSTER_PREFIX)) != CCM::DEFAULT_CLUSTER_PREFIX) {
+                continue;
+            }
             $this->removeCluster($cluster);
         }
     }
