@@ -240,6 +240,7 @@ PHP_CASSANDRA_BEGIN_OBJECT_TYPE(cluster_builder)
   cass_bool_t enable_tcp_nodelay;
   cass_bool_t enable_tcp_keepalive;
   unsigned int tcp_keepalive_delay;
+  cass_bool_t enable_schema;
 PHP_CASSANDRA_END_OBJECT_TYPE(cluster_builder)
 
 PHP_CASSANDRA_BEGIN_OBJECT_TYPE(future_prepared_statement)
