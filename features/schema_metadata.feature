@@ -251,3 +251,78 @@ Feature: Schema Metadata
       varchar_value: varchar
       varint_value: varint
       """
+
+    @cassandra-version-2.1
+    Scenario: Getting metadata for user types
+    Given the following schema:
+      """php
+      CREATE KEYSPACE simplex WITH replication = {
+        'class': 'SimpleStrategy',
+        'replication_factor': 1
+      };
+      USE simplex;
+      CREATE TYPE type1 (a int, b text);
+      CREATE TYPE type2 (a map<text, int>, b bigint);
+      CREATE TYPE type3 (a map<text, frozen<set<varint>>>, b list<uuid>);
+      """
+    And the following example:
+      """php
+      <?php
+      $cluster   = Cassandra::cluster()
+                         ->withContactPoints('127.0.0.1')
+                         ->build();
+      $session   = $cluster->connect("simplex");
+      $schema    = $session->schema();
+      $keyspace  = $schema->keyspace("simplex");
+
+      foreach ($keyspace->userTypes() as $name => $type) {
+        print $type->keyspace() . "." . $name . " " . $type . "\n";
+      }
+      """
+    When it is executed
+    Then its output should contain these lines in any order:
+      """
+      simplex.type1 udt<a:int, b:text>
+      simplex.type2 udt<a:map<text, int>, b:bigint>
+      simplex.type3 udt<a:map<text, set<int>>, b:list<uuid>>
+      """
+
+    @cassandra-version-2.1
+    Scenario: Getting metadata for user type by name
+    Given the following schema:
+      """php
+      CREATE KEYSPACE simplex WITH replication = {
+        'class': 'SimpleStrategy',
+        'replication_factor': 1
+      };
+      USE simplex;
+      CREATE TYPE type1 (a int, b text);
+      CREATE TYPE type2 (a map<text, int>, b bigint);
+      CREATE TYPE type3 (a map<text, frozen<set<varint>>>, b list<uuid>);
+      """
+    And the following example:
+      """php
+      <?php
+      $cluster   = Cassandra::cluster()
+                         ->withContactPoints('127.0.0.1')
+                         ->build();
+      $session   = $cluster->connect("simplex");
+      $schema    = $session->schema();
+      $keyspace  = $schema->keyspace("simplex");
+
+      $type      = $keyspace->userType("type1");
+      print $type->keyspace() . "." . $type->name() . " " . $type . "\n";
+
+      $type      = $keyspace->userType("type2");
+      print $type->keyspace() . "." . $type->name() . " " . $type . "\n";
+
+      $type      = $keyspace->userType("type3");
+      print $type->keyspace() . "." . $type->name() . " " . $type . "\n";
+      """
+    When it is executed
+    Then its output should contain these lines in any order:
+      """
+      simplex.type1 udt<a:int, b:text>
+      simplex.type2 udt<a:map<text, int>, b:bigint>
+      simplex.type3 udt<a:map<text, set<int>>, b:list<uuid>>
+      """

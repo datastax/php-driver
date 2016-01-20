@@ -23,10 +23,16 @@ use Cassandra\Type;
 final class Udt implements Type
 {
     /**
-     * Returns "udt"
-     * @return string "udt"
+     * Returns type name for the user type
+     * @return string
      */
     public function name() {}
+
+    /**
+     * Returns keyspace for the user type
+     * @return string
+     */
+    public function keyspace() {}
 
     /**
      * Returns type representation in CQL, e.g. `udt<name1:varchar, name2:int>`

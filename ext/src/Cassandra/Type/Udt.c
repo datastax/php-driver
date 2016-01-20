@@ -28,11 +28,34 @@ int php_cassandra_type_udt_add(cassandra_type *type,
 
 PHP_METHOD(TypeUdt, name)
 {
+  cassandra_type *self;
+
   if (zend_parse_parameters_none() == FAILURE) {
     return;
   }
 
-  PHP5TO7_RETVAL_STRING("udt");
+  self = PHP_CASSANDRA_GET_TYPE(getThis());
+
+  if (!self->type_name)
+    RETURN_NULL();
+
+  PHP5TO7_RETVAL_STRING(self->type_name);
+}
+
+PHP_METHOD(TypeUdt, keyspace)
+{
+  cassandra_type *self;
+
+  if (zend_parse_parameters_none() == FAILURE) {
+    return;
+  }
+
+  self = PHP_CASSANDRA_GET_TYPE(getThis());
+
+  if (!self->keyspace)
+    RETURN_NULL();
+
+  PHP5TO7_RETVAL_STRING(self->keyspace);
 }
 
 PHP_METHOD(TypeUdt, types)
@@ -151,6 +174,7 @@ ZEND_END_ARG_INFO()
 
 static zend_function_entry cassandra_type_udt_methods[] = {
   PHP_ME(TypeUdt, name,       arginfo_none,  ZEND_ACC_PUBLIC)
+  PHP_ME(TypeUdt, keyspace,   arginfo_none,  ZEND_ACC_PUBLIC)
   PHP_ME(TypeUdt, __toString, arginfo_none,  ZEND_ACC_PUBLIC)
   PHP_ME(TypeUdt, types,      arginfo_none,  ZEND_ACC_PUBLIC)
   PHP_ME(TypeUdt, create,     arginfo_value, ZEND_ACC_PUBLIC)
