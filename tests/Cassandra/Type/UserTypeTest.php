@@ -7,29 +7,28 @@ use Cassandra\Type;
 /**
  * @requires extension cassandra
  */
-class UdtTest extends \PHPUnit_Framework_TestCase
+class UserTypeTest extends \PHPUnit_Framework_TestCase
 {
-    public function testDefinesUdtType()
+    public function testDefinesUserTypeType()
     {
-        $type = Type::udt('a', Type::varchar());
-        $this->assertEquals('udt', $type->name());
-        $this->assertEquals('udt<a:varchar>', (string) $type);
+        $type = Type::userType('a', Type::varchar());
+        $this->assertEquals('userType<a:varchar>', (string) $type);
         $types = $type->types();
         $this->assertEquals(Type::varchar(), $types['a']);
     }
 
-    public function testCreatesUdtFromValues()
+    public function testCreatesUserTypeFromValues()
     {
-        $udt = Type::udt('a', Type::varchar(), 'b', Type::int())
+        $udt = Type::userType('a', Type::varchar(), 'b', Type::int())
                     ->create('a', 'xyz', 'b', 123);
         $this->assertEquals(array('a' => 'xyz', 'b' => 123), $udt->values());
         $this->assertEquals('xyz', $udt->get('a'));
         $this->assertEquals(123, $udt->get('b'));
     }
 
-    public function testCreatesEmptyUdt()
+    public function testCreatesEmptyUserType()
     {
-        $udt = Type::udt('a', Type::varchar())->create();
+        $udt = Type::userType('a', Type::varchar())->create();
         $this->assertEquals(0, count($udt));
     }
 
@@ -43,9 +42,9 @@ class UdtTest extends \PHPUnit_Framework_TestCase
      *                           e.g udt(name, type, name, type, name, type)'
      *                           contains 'argument must be a string, '1' given
      */
-    public function testPreventsCreatingUdtTypeWithInvalidName()
+    public function testPreventsCreatingUserTypeTypeWithInvalidName()
     {
-        Type::udt(Type::varchar());
+        Type::userType(Type::varchar());
     }
 
     /**
@@ -58,9 +57,9 @@ class UdtTest extends \PHPUnit_Framework_TestCase
      *                           e.g udt(name, value, name, value, name, value)'
      *                           contains 'argument must be a string, '1' given'.
      */
-    public function testPreventsCreatingUdtWithInvalidName()
+    public function testPreventsCreatingUserTypeWithInvalidName()
     {
-        Type::udt('a', Type::varchar())->create(1);
+        Type::userType('a', Type::varchar())->create(1);
     }
 
 
@@ -68,9 +67,9 @@ class UdtTest extends \PHPUnit_Framework_TestCase
      * @expectedException        InvalidArgumentException
      * @expectedExceptionMessage argument must be a string, '1' given
      */
-    public function testPreventsCreatingUdtWithUnsupportedTypes()
+    public function testPreventsCreatingUserTypeWithUnsupportedTypes()
     {
-        Type::udt('a', Type::varchar())->create('a', 1);
+        Type::userType('a', Type::varchar())->create('a', 1);
     }
 
     /**
@@ -86,8 +85,8 @@ class UdtTest extends \PHPUnit_Framework_TestCase
      *                           or Cassandra\Type::timeuuid(), an instance of
      *                           Cassandra\Type\UnsupportedType given
      */
-    public function testPreventsDefiningUdtsWithUnsupportedTypes()
+    public function testPreventsDefiningUserTypesWithUnsupportedTypes()
     {
-        Type::udt('a', new UnsupportedType());
+        Type::userType('a', new UnsupportedType());
     }
 }

@@ -236,7 +236,7 @@ Feature: Datatypes
     When it is executed
     Then its output should contain:
       """
-      Address: Cassandra\Udt::__set_state(array(
+      Address: Cassandra\UserTypeValue::__set_state(array(
          'values' =>
         array (
           'street' => '1234 Some St.',

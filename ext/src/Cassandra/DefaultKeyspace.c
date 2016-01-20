@@ -130,11 +130,8 @@ PHP_METHOD(DefaultKeyspace, userType)
 {
   char *name;
   php5to7_size name_len;
-  const char *type_name, *keyspace;
-  size_t  type_name_len, keyspace_len;
   cassandra_keyspace *self;
   php5to7_zval ztype;
-  cassandra_type* type;
   const CassDataType *user_type;
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &name, &name_len) == FAILURE) {
@@ -149,13 +146,6 @@ PHP_METHOD(DefaultKeyspace, userType)
   }
 
   ztype = php_cassandra_type_from_data_type(user_type TSRMLS_CC);
-
-  type = PHP_CASSANDRA_GET_TYPE(ztype);
-  cass_data_type_type_name(user_type, &type_name, &type_name_len);
-  type->type_name = estrndup(type_name, type_name_len);
-  cass_data_type_keyspace(user_type, &keyspace, &keyspace_len);
-  type->keyspace = estrndup(keyspace, keyspace_len);
-
   RETURN_ZVAL(PHP5TO7_ZVAL_MAYBE_P(ztype), 0, 1);
 }
 
@@ -172,21 +162,15 @@ PHP_METHOD(DefaultKeyspace, userTypes)
 
   array_init(return_value);
   while (cass_iterator_next(iterator)) {
-    const char *type_name, *keyspace;
-    size_t  type_name_len, keyspace_len;
     const CassDataType *user_type;
     php5to7_zval ztype;
-    cassandra_type* type;
+    const char *type_name;
+    size_t type_name_len;
 
     user_type = cass_iterator_get_user_type(iterator);
     ztype = php_cassandra_type_from_data_type(user_type TSRMLS_CC);
 
-    type = PHP_CASSANDRA_GET_TYPE(ztype);
     cass_data_type_type_name(user_type, &type_name, &type_name_len);
-    type->type_name = estrndup(type_name, type_name_len);
-    cass_data_type_keyspace(user_type, &keyspace, &keyspace_len);
-    type->keyspace = estrndup(keyspace, keyspace_len);
-
     PHP5TO7_ADD_ASSOC_ZVAL_EX(return_value,
                               type_name, type_name_len + 1,
                               ztype);

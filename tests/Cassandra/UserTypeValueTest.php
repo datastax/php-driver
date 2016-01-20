@@ -5,7 +5,7 @@ namespace Cassandra;
 /**
  * @requires extension cassandra
  */
-class UdtTest extends \PHPUnit_Framework_TestCase
+class UserTypeValueTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @expectedException         InvalidArgumentException
@@ -13,7 +13,7 @@ class UdtTest extends \PHPUnit_Framework_TestCase
      */
     public function testSupportsOnlyCassandraTypes()
     {
-        new Udt(array('name1' => 'invalid type'));
+        new UserTypeValue(array('name1' => 'invalid type'));
     }
 
     /**
@@ -21,7 +21,7 @@ class UdtTest extends \PHPUnit_Framework_TestCase
      */
     public function testSupportsAllCassandraTypes($type)
     {
-        new Udt(array('name1' => $type));
+        new UserTypeValue(array('name1' => $type));
     }
 
     /**
@@ -29,7 +29,7 @@ class UdtTest extends \PHPUnit_Framework_TestCase
      */
     public function testReturnsItsType($type)
     {
-        $udt = new Udt(array('name1' => $type));
+        $udt = new UserTypeValue(array('name1' => $type));
         $types = $udt->type()->types();
         $this->assertEquals($type, $types['name1']);
     }
@@ -61,7 +61,7 @@ class UdtTest extends \PHPUnit_Framework_TestCase
      */
     public function testScalarValues($type, $value, $valueCopy)
     {
-        $udt = new Udt(array('name1' => $type));
+        $udt = new UserTypeValue(array('name1' => $type));
         $udt->set('name1', $value);
         $this->assertEquals(1, count($udt));
         $this->assertEquals($udt->get('name1'), $valueCopy);
@@ -92,7 +92,7 @@ class UdtTest extends \PHPUnit_Framework_TestCase
     public function testSetAndGetFields()
     {
         $fields = array('a' => Type::int(), 'b' => Type::text(), 'c' => Type::bigint());
-        $udt = new Udt($fields);
+        $udt = new UserTypeValue($fields);
         $udt->set('a', 1);
         $udt->set('b', 'xyz');
         $udt->set('c', new Bigint('123'));
@@ -101,7 +101,7 @@ class UdtTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($udt->get('b'), 'xyz');
         $this->assertEquals($udt->get('c'), new Bigint('123'));
 
-        $other = new Udt($fields);
+        $other = new UserTypeValue($fields);
         $other->set('a', 1);
         $other->set('b', 'xyz');
         $other->set('c', new Bigint('123'));
@@ -113,14 +113,14 @@ class UdtTest extends \PHPUnit_Framework_TestCase
     {
         $fields = array('a' => Type::int(), 'b' => Type::text(), 'c' => Type::bigint());
 
-        $udt = new Udt($fields);
+        $udt = new UserTypeValue($fields);
         $udt->set('a', 1);
         $udt->set('b', 'xyz');
         $udt->set('c', new Bigint('123'));
 
         $this->assertEquals(count($udt), 3);
 
-        $other = new Udt($fields);
+        $other = new UserTypeValue($fields);
         $other->set('a', 1);
         $other->set('b', 'xyz');
         $other->set('c', new Bigint('123'));
@@ -134,7 +134,7 @@ class UdtTest extends \PHPUnit_Framework_TestCase
      */
     public function testSetInvalidName()
     {
-        $udt = new Udt(array('name1' => Type::int()));
+        $udt = new UserTypeValue(array('name1' => Type::int()));
         $udt->set('invalid', 42);
     }
 
@@ -144,7 +144,7 @@ class UdtTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetInvalidName()
     {
-        $udt = new Udt(array('name1' => Type::int()));
+        $udt = new UserTypeValue(array('name1' => Type::int()));
         $udt->set('name1', 42);
         $udt->get('invalid');
     }
@@ -155,7 +155,7 @@ class UdtTest extends \PHPUnit_Framework_TestCase
      */
     public function testInvalidType()
     {
-        $udt = new Udt(array('name1' => Type::int()));
+        $udt = new UserTypeValue(array('name1' => Type::int()));
         $udt->set('name1', 'text');
     }
 }

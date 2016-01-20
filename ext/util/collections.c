@@ -146,12 +146,12 @@ php_cassandra_validate_object(zval *object, zval *ztype TSRMLS_DC)
 
     return 1;
  case CASS_VALUE_TYPE_UDT:
-    if (!INSTANCE_OF(cassandra_udt_ce)) {
-      EXPECTING_VALUE("an instance of Cassandra\\Udt");
+    if (!INSTANCE_OF(cassandra_user_type_value_ce)) {
+      EXPECTING_VALUE("an instance of Cassandra\\UserTypeValue");
     } else {
-      cassandra_udt *udt = PHP_CASSANDRA_GET_UDT(object);
-      cassandra_type *udt_type = PHP_CASSANDRA_GET_TYPE(PHP5TO7_ZVAL_MAYBE_P(udt->type));
-      if (php_cassandra_type_compare(udt_type, type TSRMLS_CC) != 0) {
+      cassandra_user_type_value *user_type_value = PHP_CASSANDRA_GET_USER_TYPE_VALUE(object);
+      cassandra_type *user_type = PHP_CASSANDRA_GET_TYPE(PHP5TO7_ZVAL_MAYBE_P(user_type_value->type));
+      if (php_cassandra_type_compare(user_type, type TSRMLS_CC) != 0) {
         return 0;
       }
     }
@@ -222,7 +222,7 @@ php_cassandra_collection_append(CassCollection *collection, zval *value, CassVal
   cassandra_collection *coll;
   cassandra_map        *map;
   cassandra_set        *set;
-  cassandra_udt        *udt;
+  cassandra_user_type_value *user_type_value;
   CassCollection       *sub_collection;
   CassUserType         *sub_ut;
 
@@ -302,8 +302,8 @@ php_cassandra_collection_append(CassCollection *collection, zval *value, CassVal
     CHECK_ERROR(cass_collection_append_collection(collection, sub_collection));
     break;
   case CASS_VALUE_TYPE_UDT:
-    udt = PHP_CASSANDRA_GET_UDT(value);
-    if (!php_cassandra_user_type_from_udt(udt, &sub_ut TSRMLS_CC))
+    user_type_value = PHP_CASSANDRA_GET_USER_TYPE_VALUE(value);
+    if (!php_cassandra_user_type_from_user_type_value(user_type_value, &sub_ut TSRMLS_CC))
       return 0;
     CHECK_ERROR(cass_collection_append_user_type(collection, sub_ut));
     break;
@@ -331,7 +331,7 @@ php_cassandra_user_type_set(CassUserType *ut,
   cassandra_collection *coll;
   cassandra_map        *map;
   cassandra_set        *set;
-  cassandra_udt        *udt;
+  cassandra_user_type_value *user_type_value;
   CassCollection       *sub_collection;
   CassUserType         *sub_ut;
 
@@ -411,8 +411,8 @@ php_cassandra_user_type_set(CassUserType *ut,
     CHECK_ERROR(cass_user_type_set_collection_by_name(ut, name, sub_collection));
     break;
   case CASS_VALUE_TYPE_UDT:
-    udt = PHP_CASSANDRA_GET_UDT(value);
-    if (!php_cassandra_user_type_from_udt(udt, &sub_ut TSRMLS_CC))
+    user_type_value = PHP_CASSANDRA_GET_USER_TYPE_VALUE(value);
+    if (!php_cassandra_user_type_from_user_type_value(user_type_value, &sub_ut TSRMLS_CC))
       return 0;
     CHECK_ERROR(cass_user_type_set_user_type_by_name(ut, name, sub_ut));
     break;
@@ -523,7 +523,8 @@ php_cassandra_collection_from_map(cassandra_map *map, CassCollection **collectio
 }
 
 int
-php_cassandra_user_type_from_udt(cassandra_udt *udt, CassUserType **output TSRMLS_DC)
+php_cassandra_user_type_from_user_type_value(cassandra_user_type_value *user_type_value,
+                                             CassUserType **output TSRMLS_DC)
 {
   int result = 1;
   char *name;
@@ -531,10 +532,10 @@ php_cassandra_user_type_from_udt(cassandra_udt *udt, CassUserType **output TSRML
   cassandra_type *type;
   CassUserType *ut;
 
-  type = PHP_CASSANDRA_GET_TYPE(PHP5TO7_ZVAL_MAYBE_P(udt->type));
+  type = PHP_CASSANDRA_GET_TYPE(PHP5TO7_ZVAL_MAYBE_P(user_type_value->type));
   ut = cass_user_type_new_from_data_type(type->data_type);
 
-  PHP5TO7_ZEND_HASH_FOREACH_STR_KEY_VAL(&udt->values, name, current) {
+  PHP5TO7_ZEND_HASH_FOREACH_STR_KEY_VAL(&user_type_value->values, name, current) {
     php5to7_zval *zsub_type;
     cassandra_type *sub_type;
     if (!PHP5TO7_ZEND_HASH_FIND(&type->types, name, strlen(name) + 1, zsub_type) ||
@@ -551,7 +552,7 @@ php_cassandra_user_type_from_udt(cassandra_udt *udt, CassUserType **output TSRML
       result = 0;
       break;
     }
-  } PHP5TO7_ZEND_HASH_FOREACH_END(&udt->values);
+  } PHP5TO7_ZEND_HASH_FOREACH_END(&user_type_value->values);
 
   if (result)
     *output = ut;

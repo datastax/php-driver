@@ -276,15 +276,15 @@ Feature: Schema Metadata
       $keyspace  = $schema->keyspace("simplex");
 
       foreach ($keyspace->userTypes() as $name => $type) {
-        print $type->keyspace() . "." . $name . " " . $type . "\n";
+        print "$type\n";
       }
       """
     When it is executed
-    Then its output should contain these lines in any order:
+    Then its output should contain:
       """
-      simplex.type1 udt<a:int, b:text>
-      simplex.type2 udt<a:map<text, int>, b:bigint>
-      simplex.type3 udt<a:map<text, set<int>>, b:list<uuid>>
+      simplex.type1<a:int, b:text>
+      simplex.type2<a:map<text, int>, b:bigint>
+      simplex.type3<a:map<text, set<int>>, b:list<uuid>>
       """
 
     @cassandra-version-2.1
@@ -311,18 +311,18 @@ Feature: Schema Metadata
       $keyspace  = $schema->keyspace("simplex");
 
       $type      = $keyspace->userType("type1");
-      print $type->keyspace() . "." . $type->name() . " " . $type . "\n";
+      print "$type\n";
 
       $type      = $keyspace->userType("type2");
-      print $type->keyspace() . "." . $type->name() . " " . $type . "\n";
+      print "$type\n";
 
       $type      = $keyspace->userType("type3");
-      print $type->keyspace() . "." . $type->name() . " " . $type . "\n";
+      print "$type\n";
       """
     When it is executed
-    Then its output should contain these lines in any order:
+    Then its output should contain:
       """
-      simplex.type1 udt<a:int, b:text>
-      simplex.type2 udt<a:map<text, int>, b:bigint>
-      simplex.type3 udt<a:map<text, set<int>>, b:list<uuid>>
+      simplex.type1<a:int, b:text>
+      simplex.type2<a:map<text, int>, b:bigint>
+      simplex.type3<a:map<text, set<int>>, b:list<uuid>>
       """
