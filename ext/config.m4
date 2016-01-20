@@ -126,6 +126,7 @@ if test "$PHP_CASSANDRA" != "no"; then
   PHP_ADD_BUILD_DIR($ext_builddir/src/Cassandra/Exception)
   PHP_ADD_BUILD_DIR($ext_builddir/src/Cassandra/SSLOptions)
   PHP_ADD_BUILD_DIR($ext_builddir/src/Cassandra/Type)
+  PHP_ADD_BUILD_DIR($ext_builddir/src/Cassandra/TimestampGenerator)
   PHP_ADD_BUILD_DIR($ext_builddir/util)
   PHP_SUBST(CASSANDRA_SHARED_LIBADD)
   PHP_SUBST(CASSANDRA_CFLAGS)
