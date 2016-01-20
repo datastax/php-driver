@@ -101,6 +101,7 @@ php_cassandra_type_set_free(php5to7_zend_object_free *object TSRMLS_DC)
 {
   cassandra_type *self = PHP5TO7_ZEND_OBJECT_GET(type, object);
 
+  if (self->data_type) cass_data_type_free(self->data_type);
   PHP5TO7_ZVAL_MAYBE_DESTROY(self->value_type);
 
   zend_object_std_dtor(&self->zval TSRMLS_CC);
@@ -114,6 +115,7 @@ php_cassandra_type_set_new(zend_class_entry *ce TSRMLS_DC)
       PHP5TO7_ZEND_OBJECT_ECALLOC(type, ce);
 
   self->type = CASS_VALUE_TYPE_SET;
+  self->data_type = cass_data_type_new(self->type);
   PHP5TO7_ZVAL_UNDEF(self->value_type);
 
   PHP5TO7_ZEND_OBJECT_INIT_EX(type, type_set, self, ce);

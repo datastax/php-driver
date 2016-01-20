@@ -1,6 +1,7 @@
 #include "php_cassandra.h"
 #include "util/result.h"
 #include "util/ref.h"
+#include "util/types.h"
 
 zend_class_entry *cassandra_default_keyspace_ce = NULL;
 
@@ -125,6 +126,59 @@ PHP_METHOD(DefaultKeyspace, tables)
   cass_iterator_free(iterator);
 }
 
+PHP_METHOD(DefaultKeyspace, userType)
+{
+  char *name;
+  php5to7_size name_len;
+  cassandra_keyspace *self;
+  php5to7_zval ztype;
+  const CassDataType *user_type;
+
+  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &name, &name_len) == FAILURE) {
+    return;
+  }
+
+  self = PHP_CASSANDRA_GET_KEYSPACE(getThis());
+  user_type = cass_keyspace_meta_user_type_by_name_n(self->meta, name, name_len);
+
+  if (user_type == NULL) {
+    return;
+  }
+
+  ztype = php_cassandra_type_from_data_type(user_type TSRMLS_CC);
+  RETURN_ZVAL(PHP5TO7_ZVAL_MAYBE_P(ztype), 0, 1);
+}
+
+PHP_METHOD(DefaultKeyspace, userTypes)
+{
+  cassandra_keyspace *self;
+  CassIterator       *iterator;
+
+  if (zend_parse_parameters_none() == FAILURE)
+    return;
+
+  self     = PHP_CASSANDRA_GET_KEYSPACE(getThis());
+  iterator = cass_iterator_user_types_from_keyspace_meta(self->meta);
+
+  array_init(return_value);
+  while (cass_iterator_next(iterator)) {
+    const CassDataType *user_type;
+    php5to7_zval ztype;
+    const char *type_name;
+    size_t type_name_len;
+
+    user_type = cass_iterator_get_user_type(iterator);
+    ztype = php_cassandra_type_from_data_type(user_type TSRMLS_CC);
+
+    cass_data_type_type_name(user_type, &type_name, &type_name_len);
+    PHP5TO7_ADD_ASSOC_ZVAL_EX(return_value,
+                              type_name, type_name_len + 1,
+                              ztype);
+  }
+
+  cass_iterator_free(iterator);
+}
+
 ZEND_BEGIN_ARG_INFO_EX(arginfo_name, 0, ZEND_RETURN_VALUE, 1)
   ZEND_ARG_INFO(0, name)
 ZEND_END_ARG_INFO()
@@ -139,6 +193,8 @@ static zend_function_entry cassandra_default_keyspace_methods[] = {
   PHP_ME(DefaultKeyspace, hasDurableWrites, arginfo_none, ZEND_ACC_PUBLIC)
   PHP_ME(DefaultKeyspace, table, arginfo_name, ZEND_ACC_PUBLIC)
   PHP_ME(DefaultKeyspace, tables, arginfo_none, ZEND_ACC_PUBLIC)
+  PHP_ME(DefaultKeyspace, userType, arginfo_name, ZEND_ACC_PUBLIC)
+  PHP_ME(DefaultKeyspace, userTypes, arginfo_none, ZEND_ACC_PUBLIC)
   PHP_FE_END
 };
 
