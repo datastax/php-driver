@@ -300,7 +300,9 @@ create_statement(cassandra_statement *statement, HashTable *arguments TSRMLS_DC)
 }
 
 static CassBatch *
-create_batch(cassandra_statement *batch, CassConsistency consistency TSRMLS_DC)
+create_batch(cassandra_statement *batch,
+             CassConsistency consistency,
+             CassRetryPolicy *retry_policy TSRMLS_DC)
 {
   CassBatch *cass_batch = cass_batch_new(batch->batch_type);
   CassError rc = CASS_OK;
@@ -328,7 +330,12 @@ create_batch(cassandra_statement *batch, CassConsistency consistency TSRMLS_DC)
   } PHP5TO7_ZEND_HASH_FOREACH_END(&batch->statements);
 
   rc = cass_batch_set_consistency(cass_batch, consistency);
+  ASSERT_SUCCESS_BLOCK(rc,
+    cass_batch_free(cass_batch);
+    return NULL;
+  )
 
+  rc = cass_batch_set_retry_policy(cass_batch, retry_policy);
   ASSERT_SUCCESS_BLOCK(rc,
     cass_batch_free(cass_batch);
     return NULL;
@@ -340,7 +347,7 @@ create_batch(cassandra_statement *batch, CassConsistency consistency TSRMLS_DC)
 static CassStatement *
 create_single(cassandra_statement *statement, HashTable *arguments,
               CassConsistency consistency, long serial_consistency,
-              int page_size TSRMLS_DC)
+              int page_size, CassRetryPolicy *retry_policy TSRMLS_DC)
 {
   CassError rc = CASS_OK;
   CassStatement *stmt = create_statement(statement, arguments TSRMLS_CC);
@@ -354,6 +361,9 @@ create_single(cassandra_statement *statement, HashTable *arguments,
 
   if (rc == CASS_OK && page_size >= 0)
     rc = cass_statement_set_paging_size(stmt, page_size);
+
+  if (rc == CASS_OK && retry_policy)
+    rc = cass_statement_set_retry_policy(stmt, retry_policy);
 
   if (rc != CASS_OK) {
     cass_statement_free(stmt);
@@ -382,6 +392,7 @@ PHP_METHOD(DefaultSession, execute)
   int page_size = -1;
   zval *timeout = NULL;
   long serial_consistency = -1;
+  CassRetryPolicy *retry_policy = NULL;
   cassandra_execution_options *opts = NULL;
   CassFuture *future = NULL;
   CassStatement *single = NULL;
@@ -420,13 +431,17 @@ PHP_METHOD(DefaultSession, execute)
 
     if (opts->serial_consistency >= 0)
       serial_consistency = opts->serial_consistency;
+
+    if (!PHP5TO7_ZVAL_IS_UNDEF(opts->retry_policy))
+      retry_policy = (PHP_CASSANDRA_GET_RETRY_POLICY(opts->retry_policy))->policy;
   }
 
   switch (stmt->type) {
     case CASSANDRA_SIMPLE_STATEMENT:
     case CASSANDRA_PREPARED_STATEMENT:
       single = create_single(stmt, arguments, consistency,
-                             serial_consistency, page_size TSRMLS_CC);
+                             serial_consistency, page_size,
+                             retry_policy TSRMLS_CC);
 
       if (!single)
         return;
@@ -434,7 +449,7 @@ PHP_METHOD(DefaultSession, execute)
       future = cass_session_execute(self->session, single);
       break;
     case CASSANDRA_BATCH_STATEMENT:
-      batch = create_batch(stmt, consistency TSRMLS_CC);
+      batch = create_batch(stmt, consistency, retry_policy TSRMLS_CC);
 
       if (!batch)
         return;
@@ -501,6 +516,7 @@ PHP_METHOD(DefaultSession, executeAsync)
   CassConsistency consistency = CASS_CONSISTENCY_ONE;
   int page_size = -1;
   long serial_consistency = -1;
+  CassRetryPolicy *retry_policy = NULL;
   cassandra_execution_options *opts = NULL;
   cassandra_future_rows *future_rows = NULL;
   CassStatement *single = NULL;
@@ -535,6 +551,9 @@ PHP_METHOD(DefaultSession, executeAsync)
 
     if (opts->serial_consistency >= 0)
       serial_consistency = opts->serial_consistency;
+
+    if (!PHP5TO7_ZVAL_IS_UNDEF(opts->retry_policy))
+      retry_policy = (PHP_CASSANDRA_GET_RETRY_POLICY(opts->retry_policy))->policy;
   }
 
   object_init_ex(return_value, cassandra_future_rows_ce);
@@ -544,7 +563,8 @@ PHP_METHOD(DefaultSession, executeAsync)
     case CASSANDRA_SIMPLE_STATEMENT:
     case CASSANDRA_PREPARED_STATEMENT:
       single = create_single(stmt, arguments, consistency,
-                             serial_consistency, page_size TSRMLS_CC);
+                             serial_consistency, page_size,
+                             retry_policy TSRMLS_CC);
 
       if (!single)
         return;
@@ -554,7 +574,7 @@ PHP_METHOD(DefaultSession, executeAsync)
       future_rows->future    = cass_session_execute(self->session, single);
       break;
     case CASSANDRA_BATCH_STATEMENT:
-      batch = create_batch(stmt, consistency TSRMLS_CC);
+      batch = create_batch(stmt, consistency, retry_policy TSRMLS_CC);
 
       if (!batch)
         return;

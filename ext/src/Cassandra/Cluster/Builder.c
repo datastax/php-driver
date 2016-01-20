@@ -109,7 +109,12 @@ PHP_METHOD(ClusterBuilder, build)
       CASSANDRA_G(persistent_clusters)++;
     }
 #endif
+  }
 
+  if (!PHP5TO7_ZVAL_IS_UNDEF(builder->retry_policy)) {
+    cassandra_retry_policy *retry_policy =
+        PHP_CASSANDRA_GET_RETRY_POLICY(PHP5TO7_ZVAL_MAYBE_P(builder->retry_policy));
+    cass_cluster_set_retry_policy(cluster->cluster, retry_policy->policy);
   }
 }
 
@@ -586,6 +591,27 @@ PHP_METHOD(ClusterBuilder, withTCPKeepalive)
   RETURN_ZVAL(getThis(), 1, 0);
 }
 
+PHP_METHOD(ClusterBuilder, withRetryPolicy)
+{
+  zval *retry_policy = NULL;
+  cassandra_cluster_builder *builder = NULL;
+
+  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "O",
+                            &retry_policy, cassandra_retry_policy_ce) == FAILURE) {
+    return;
+  }
+
+  builder = PHP_CASSANDRA_GET_CLUSTER_BUILDER(getThis());
+
+  if (!PHP5TO7_ZVAL_IS_UNDEF(builder->retry_policy))
+    zval_ptr_dtor(&builder->retry_policy);
+
+  PHP5TO7_ZVAL_COPY(PHP5TO7_ZVAL_MAYBE_P(builder->retry_policy), retry_policy);
+
+  RETURN_ZVAL(getThis(), 1, 0);
+}
+
+
 ZEND_BEGIN_ARG_INFO_EX(arginfo_none, 0, ZEND_RETURN_VALUE, 0)
 ZEND_END_ARG_INFO()
 
@@ -649,6 +675,10 @@ ZEND_BEGIN_ARG_INFO_EX(arginfo_delay, 0, ZEND_RETURN_VALUE, 1)
   ZEND_ARG_INFO(0, delay)
 ZEND_END_ARG_INFO()
 
+ZEND_BEGIN_ARG_INFO_EX(arginfo_retry_policy, 0, ZEND_RETURN_VALUE, 1)
+  ZEND_ARG_OBJ_INFO(0, policy, Cassandra\\RetryPolicy, 0)
+ZEND_END_ARG_INFO()
+
 static zend_function_entry cassandra_cluster_builder_methods[] = {
   PHP_ME(ClusterBuilder, build, arginfo_none, ZEND_ACC_PUBLIC)
   PHP_ME(ClusterBuilder, withDefaultConsistency, arginfo_consistency,
@@ -683,6 +713,7 @@ static zend_function_entry cassandra_cluster_builder_methods[] = {
         ZEND_ACC_PUBLIC)
   PHP_ME(ClusterBuilder, withTCPKeepalive, arginfo_delay,
         ZEND_ACC_PUBLIC)
+  PHP_ME(ClusterBuilder, withRetryPolicy, arginfo_retry_policy, ZEND_ACC_PUBLIC)
   PHP_FE_END
 };
 
@@ -725,6 +756,7 @@ php_cassandra_cluster_builder_properties(zval *object TSRMLS_DC)
   php5to7_zval latencyAwareRouting;
   php5to7_zval tcpNodelay;
   php5to7_zval tcpKeepalive;
+  php5to7_zval retryPolicy;
 
   PHP5TO7_ZVAL_MAYBE_MAKE(contactPoints);
   PHP5TO7_ZVAL_STRING(PHP5TO7_ZVAL_MAYBE_P(contactPoints), self->contact_points);
@@ -812,6 +844,13 @@ php_cassandra_cluster_builder_properties(zval *object TSRMLS_DC)
     ZVAL_NULL(PHP5TO7_ZVAL_MAYBE_P(tcpKeepalive));
   }
 
+  PHP5TO7_ZVAL_MAYBE_MAKE(retryPolicy);
+  if (!PHP5TO7_ZVAL_IS_UNDEF(self->retry_policy)) {
+    PHP5TO7_ZVAL_COPY(PHP5TO7_ZVAL_MAYBE_P(retryPolicy), PHP5TO7_ZVAL_MAYBE_P(self->retry_policy));
+  } else {
+    ZVAL_NULL(PHP5TO7_ZVAL_MAYBE_P(retryPolicy));
+  }
+
   PHP5TO7_ZEND_HASH_UPDATE(props, "contactPoints", sizeof("contactPoints"),
                            PHP5TO7_ZVAL_MAYBE_P(contactPoints), sizeof(zval));
   PHP5TO7_ZEND_HASH_UPDATE(props, "loadBalancingPolicy", sizeof("loadBalancingPolicy"),
@@ -858,6 +897,8 @@ php_cassandra_cluster_builder_properties(zval *object TSRMLS_DC)
                            PHP5TO7_ZVAL_MAYBE_P(tcpNodelay), sizeof(zval));
   PHP5TO7_ZEND_HASH_UPDATE(props, "tcpKeepalive", sizeof("tcpKeepalive"),
                            PHP5TO7_ZVAL_MAYBE_P(tcpKeepalive), sizeof(zval));
+  PHP5TO7_ZEND_HASH_UPDATE(props, "retryPolicy", sizeof("retryPolicy"),
+                           PHP5TO7_ZVAL_MAYBE_P(retryPolicy), sizeof(zval));
 
   return props;
 }
@@ -897,6 +938,7 @@ php_cassandra_cluster_builder_free(php5to7_zend_object_free *object TSRMLS_DC)
 
   PHP5TO7_ZVAL_MAYBE_DESTROY(self->ssl_options);
   PHP5TO7_ZVAL_MAYBE_DESTROY(self->default_timeout);
+  PHP5TO7_ZVAL_MAYBE_DESTROY(self->retry_policy);
 
   zend_object_std_dtor(&self->zval TSRMLS_CC);
   PHP5TO7_MAYBE_EFREE(self);
@@ -934,6 +976,7 @@ php_cassandra_cluster_builder_new(zend_class_entry *ce TSRMLS_DC)
 
   PHP5TO7_ZVAL_UNDEF(self->ssl_options);
   PHP5TO7_ZVAL_UNDEF(self->default_timeout);
+  PHP5TO7_ZVAL_UNDEF(self->retry_policy);
 
   PHP5TO7_ZEND_OBJECT_INIT(cluster_builder, self, ce);
 }

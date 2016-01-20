@@ -72,6 +72,11 @@ if test "$PHP_CASSANDRA" != "no"; then
     src/Cassandra/Type/Scalar.c \
     src/Cassandra/Type/Set.c \
     src/Cassandra/Type/Custom.c \
+    src/Cassandra/RetryPolicy.c \
+    src/Cassandra/RetryPolicy/DefaultPolicy.c \
+    src/Cassandra/RetryPolicy/DowngradingConsistency.c \
+    src/Cassandra/RetryPolicy/Fallthrough.c \
+    src/Cassandra/RetryPolicy/Logging.c \
   ";
 
   CASSANDRA_TYPES="\

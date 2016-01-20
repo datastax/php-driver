@@ -15,6 +15,7 @@ PHP_METHOD(ExecutionOptions, __construct)
   php5to7_zval *page_size = NULL;
   php5to7_zval *timeout = NULL;
   php5to7_zval *arguments = NULL;
+  php5to7_zval *retry_policy = NULL;
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z", &options) == FAILURE) {
     return;
@@ -66,6 +67,18 @@ PHP_METHOD(ExecutionOptions, __construct)
     }
     PHP5TO7_ZVAL_COPY(PHP5TO7_ZVAL_MAYBE_P(self->arguments), PHP5TO7_ZVAL_MAYBE_DEREF(arguments));
   }
+
+  if (PHP5TO7_ZEND_HASH_FIND(Z_ARRVAL_P(options), "retry_policy", sizeof("retry_policy"), retry_policy)) {
+    if (Z_TYPE_P(PHP5TO7_ZVAL_MAYBE_DEREF(retry_policy)) != IS_OBJECT &&
+        !instanceof_function(Z_OBJCE_P(PHP5TO7_ZVAL_MAYBE_DEREF(retry_policy)),
+                                       cassandra_retry_policy_ce TSRMLS_CC)) {
+      throw_invalid_argument(PHP5TO7_ZVAL_MAYBE_DEREF(retry_policy),
+                             "retry_policy",
+                             "an instance of Cassandra\\RetryPolicy" TSRMLS_CC);
+      return;
+    }
+    PHP5TO7_ZVAL_COPY(PHP5TO7_ZVAL_MAYBE_P(self->retry_policy), PHP5TO7_ZVAL_MAYBE_DEREF(retry_policy));
+  }
 }
 
 PHP_METHOD(ExecutionOptions, __get)
@@ -106,6 +119,11 @@ PHP_METHOD(ExecutionOptions, __get)
       RETURN_NULL();
     }
     RETURN_ZVAL(PHP5TO7_ZVAL_MAYBE_P(self->arguments), 1, 0);
+  } else if (name_len == 11 && strncmp("retryPolicy", name, name_len) == 0) {
+    if (PHP5TO7_ZVAL_IS_UNDEF(self->retry_policy)) {
+      RETURN_NULL();
+    }
+    RETURN_ZVAL(PHP5TO7_ZVAL_MAYBE_P(self->retry_policy), 1, 0);
   }
 }
 
@@ -149,6 +167,8 @@ php_cassandra_execution_options_free(php5to7_zend_object_free *object TSRMLS_DC)
       PHP5TO7_ZEND_OBJECT_GET(execution_options, object);
 
   PHP5TO7_ZVAL_MAYBE_DESTROY(self->arguments);
+  PHP5TO7_ZVAL_MAYBE_DESTROY(self->timeout);
+  PHP5TO7_ZVAL_MAYBE_DESTROY(self->retry_policy);
 
   zend_object_std_dtor(&self->zval TSRMLS_CC);
   PHP5TO7_MAYBE_EFREE(self);
@@ -165,6 +185,7 @@ php_cassandra_execution_options_new(zend_class_entry *ce TSRMLS_DC)
   self->page_size = -1;
   PHP5TO7_ZVAL_UNDEF(self->arguments);
   PHP5TO7_ZVAL_UNDEF(self->timeout);
+  PHP5TO7_ZVAL_UNDEF(self->retry_policy);
 
   PHP5TO7_ZEND_OBJECT_INIT(execution_options, self, ce);
 

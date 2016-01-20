@@ -75,6 +75,7 @@ if (PHP_CASSANDRA != "no") {
               "Timestamp.c " +
               "Timeuuid.c " +
               "Type.c " +
+              "RetryPolicy.c " +
               "Uuid.c " +
               "UuidInterface.c " +
               "Value.c " +
@@ -114,6 +115,11 @@ if (PHP_CASSANDRA != "no") {
               "Map.c " +
               "Scalar.c " +
               "Set.c", "cassandra");
+          ADD_SOURCES(configure_module_dirname + "/src/Cassandra/RetryPolicy",
+              "DefaultPolicy.c " +
+              "DowngradeConsistency.c " +
+              "Fallthrough.c " +
+              "Logging.c ", "cassandra");
 
           ADD_SOURCES(configure_module_dirname + "/util",
               "bytes.c " +
