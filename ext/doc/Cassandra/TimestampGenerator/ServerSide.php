@@ -24,6 +24,6 @@ use Cassandra\TimestampGenerator;
  * A timestamp generator that allows Cassandra to assign timestamps
  * server-side.
  */
-class ServerSide implements TimestampGenerator
+final class ServerSide implements TimestampGenerator
 {
 }

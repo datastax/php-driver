@@ -29,6 +29,6 @@ use Cassandra\TimestampGenerator;
  * exceeded then a warning is logged and timestamps stop incrementing until
  * the next clock tick.
  */
-class Monotonic implements TimestampGenerator
+final class Monotonic implements TimestampGenerator
 {
 }
