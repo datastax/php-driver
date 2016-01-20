@@ -32,5 +32,8 @@
   },
   "scripts": {
     "test": "phpunit && behat"
+  },
+  "autoload-dev": {
+    "psr-0": { "Cassandra\\": ["tests/"] }
   }
 }

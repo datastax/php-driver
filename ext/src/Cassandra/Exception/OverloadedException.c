@@ -11,5 +11,5 @@ void cassandra_define_OverloadedException(TSRMLS_D)
   zend_class_entry ce;
 
   INIT_CLASS_ENTRY(ce, "Cassandra\\Exception\\OverloadedException", OverloadedException_methods);
-  cassandra_overloaded_exception_ce = zend_register_internal_class_ex(&ce, cassandra_server_exception_ce, NULL TSRMLS_CC);
+  cassandra_overloaded_exception_ce = php5to7_zend_register_internal_class_ex(&ce, cassandra_server_exception_ce);
 }

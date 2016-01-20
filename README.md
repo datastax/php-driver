@@ -57,8 +57,8 @@ Cassandra's native protocol. The current version works with:
 
 * Apache Cassandra versions 1.2, 2.0 and partially 2.1
 * DataStax Enterprise 3.1, 3.2, 4.0 and 4.5
-* PHP 5.3.4+
-* Compilers: GCC 4.1.2+, Clang 3.4+, and MSVC 2010/2012/2013
+* PHP 5.5+
+* Compilers: GCC 4.1.2+, Clang 3.4+, and MSVC 2010/2012/2013/2015
 
 __NOTE__: Apache Cassandra 2.1 support is limited to the Cassandra 2.0 API (native protocol v2), e.g. no user-defined types.
 

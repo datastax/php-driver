@@ -19,35 +19,29 @@
 namespace Cassandra;
 
 /**
- * A PHP representation of the CQL `inet` datatype
+ * Common interface implemented by all Cassandra value types.
+ *
+ * @see Bigint
+ * @see Blob
+ * @see Collection
+ * @see Float
+ * @see Inet
+ * @see Map
+ * @see Set
+ * @see Timestamp
+ * @see Timeuuid
+ * @see Uuid
+ * @see Varint
+ *
+ * @see Numeric
+ * @see UuidInterface
  */
-final class Inet implements Value
+interface Value
 {
     /**
-     * Creates a new IPv4 or IPv6 inet address.
-     *
-     * @param string $address any IPv4 or IPv6 address
-     */
-    public function __construct($address) {}
-
-    /**
-     * The type of this inet.
+     * The type of represented by the value.
      *
      * @return Type
      */
-    public function type() {}
-
-    /**
-     * Returns the normalized string representation of the address.
-     *
-     * @return string address
-     */
-    public function address() {}
-
-    /**
-     * Returns the normalized string representation of the address.
-     *
-     * @return string address
-     */
-    public function __toString() {}
+    function type();
 }

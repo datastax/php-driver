@@ -11,5 +11,5 @@ void cassandra_define_ExecutionException(TSRMLS_D)
   zend_class_entry ce;
 
   INIT_CLASS_ENTRY(ce, "Cassandra\\Exception\\ExecutionException", ExecutionException_methods);
-  cassandra_execution_exception_ce = zend_register_internal_class_ex(&ce, cassandra_runtime_exception_ce, NULL TSRMLS_CC);
+  cassandra_execution_exception_ce = php5to7_zend_register_internal_class_ex(&ce, cassandra_runtime_exception_ce);
 }

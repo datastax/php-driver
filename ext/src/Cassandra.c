@@ -1,6 +1,6 @@
 #include "php_cassandra.h"
 
-zend_class_entry* cassandra_ce = NULL;
+zend_class_entry *cassandra_ce = NULL;
 
 PHP_METHOD(Cassandra, cluster)
 {
@@ -24,6 +24,7 @@ static zend_function_entry Cassandra_methods[] = {
 void cassandra_define_Cassandra(TSRMLS_D)
 {
   zend_class_entry ce;
+  char buf[64];
 
   INIT_CLASS_ENTRY(ce, "Cassandra", Cassandra_methods);
   cassandra_ce = zend_register_internal_class(&ce TSRMLS_CC);
@@ -74,4 +75,9 @@ void cassandra_define_Cassandra(TSRMLS_D)
   zend_declare_class_constant_string(cassandra_ce, ZEND_STRL("TYPE_INET"),      "inet" TSRMLS_CC);
 
   zend_declare_class_constant_string(cassandra_ce, ZEND_STRL("VERSION"), PHP_CASSANDRA_VERSION_FULL TSRMLS_CC);
+
+  snprintf(buf, sizeof(buf), "%d.%d.%d%s",
+           CASS_VERSION_MAJOR, CASS_VERSION_MINOR, CASS_VERSION_PATCH,
+           strlen(CASS_VERSION_SUFFIX) > 0 ? "-" CASS_VERSION_SUFFIX : "");
+  zend_declare_class_constant_string(cassandra_ce, ZEND_STRL("CPP_DRIVER_VERSION"), buf TSRMLS_CC);
 }

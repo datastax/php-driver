@@ -130,15 +130,11 @@ class FloatTest extends \PHPUnit_Framework_TestCase
         $float1->div($float2);
     }
 
-    /**
-     * @expectedException        RuntimeException
-     * @expectedExceptionMessage Not implemented
-     */
     public function testMod()
     {
         $float1 = new Float("1");
         $float2 = new Float("2");
-        $float1->mod($float2);
+        $this->assertEquals(1, (float)$float1->mod($float2), "", self::EPSILON);
     }
 
     public function testAbs()

@@ -17,30 +17,30 @@ PHP_METHOD(TypeScalar, __construct)
 
 PHP_METHOD(TypeScalar, name)
 {
-  cassandra_type_scalar* self;
-  const char* name;
+  cassandra_type *self;
+  const char *name;
 
   if (zend_parse_parameters_none() == FAILURE) {
     return;
   }
 
-  self = (cassandra_type_scalar*) zend_object_store_get_object(getThis() TSRMLS_CC);
+  self = PHP_CASSANDRA_GET_TYPE(getThis());
   name = php_cassandra_scalar_type_name(self->type TSRMLS_CC);
-  RETURN_STRING(name, 1);
+  PHP5TO7_RETVAL_STRING(name);
 }
 
 PHP_METHOD(TypeScalar, __toString)
 {
-  cassandra_type_scalar* self;
-  const char* name;
+  cassandra_type *self;
+  const char *name;
 
   if (zend_parse_parameters_none() == FAILURE) {
     return;
   }
 
-  self = (cassandra_type_scalar*) zend_object_store_get_object(getThis() TSRMLS_CC);
+  self = PHP_CASSANDRA_GET_TYPE(getThis());
   name = php_cassandra_scalar_type_name(self->type TSRMLS_CC);
-  RETURN_STRING(name, 1);
+  PHP5TO7_RETVAL_STRING(name);
 }
 
 PHP_METHOD(TypeScalar, create)
@@ -65,34 +65,22 @@ static zend_function_entry cassandra_type_scalar_methods[] = {
 static zend_object_handlers cassandra_type_scalar_handlers;
 
 static void
-php_cassandra_type_scalar_free(void *object TSRMLS_DC)
+php_cassandra_type_scalar_free(php5to7_zend_object_free *object TSRMLS_DC)
 {
-  cassandra_type_scalar* scalar = (cassandra_type_scalar*) object;
+  cassandra_type *self = PHP5TO7_ZEND_OBJECT_GET(type, object);
 
-  zend_object_std_dtor(&scalar->zval TSRMLS_CC);
-
-  efree(scalar);
+  zend_object_std_dtor(&self->zval TSRMLS_CC);
+  PHP5TO7_MAYBE_EFREE(self);
 }
 
-static zend_object_value
-php_cassandra_type_scalar_new(zend_class_entry* class_type TSRMLS_DC)
+static php5to7_zend_object
+php_cassandra_type_scalar_new(zend_class_entry *ce TSRMLS_DC)
 {
-  zend_object_value retval;
-  cassandra_type_scalar* scalar;
+  cassandra_type *self = PHP5TO7_ZEND_OBJECT_ECALLOC(type, ce);
 
-  scalar = (cassandra_type_scalar*) ecalloc(1, sizeof(cassandra_type_scalar));
+  self->type = CASS_VALUE_TYPE_UNKNOWN;
 
-  zend_object_std_init(&scalar->zval, class_type TSRMLS_CC);
-  object_properties_init(&scalar->zval, class_type);
-
-  scalar->type = CASS_VALUE_TYPE_UNKNOWN;
-
-  retval.handle   = zend_objects_store_put(scalar,
-                      (zend_objects_store_dtor_t) zend_objects_destroy_object,
-                      php_cassandra_type_scalar_free, NULL TSRMLS_CC);
-  retval.handlers = &cassandra_type_scalar_handlers;
-
-  return retval;
+  PHP5TO7_ZEND_OBJECT_INIT_EX(type, type_scalar, self, ce);
 }
 
 void cassandra_define_TypeScalar(TSRMLS_D)
@@ -102,7 +90,7 @@ void cassandra_define_TypeScalar(TSRMLS_D)
   INIT_CLASS_ENTRY(ce, "Cassandra\\Type\\Scalar", cassandra_type_scalar_methods);
   cassandra_type_scalar_ce = zend_register_internal_class(&ce TSRMLS_CC);
   zend_class_implements(cassandra_type_scalar_ce TSRMLS_CC, 1, cassandra_type_ce);
-  cassandra_type_scalar_ce->ce_flags     |= ZEND_ACC_FINAL_CLASS;
+  cassandra_type_scalar_ce->ce_flags     |= PHP5TO7_ZEND_ACC_FINAL;
   cassandra_type_scalar_ce->create_object = php_cassandra_type_scalar_new;
 
   memcpy(&cassandra_type_scalar_handlers, zend_get_std_object_handlers(), sizeof(zend_object_handlers));

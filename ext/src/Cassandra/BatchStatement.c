@@ -2,31 +2,32 @@
 
 zend_class_entry *cassandra_batch_statement_ce = NULL;
 
-void cassandra_batch_statement_entry_dtor(void** dest)
+void cassandra_batch_statement_entry_dtor(php5to7_dtor dest)
 {
-  cassandra_batch_statement_entry* entry = *((cassandra_batch_statement_entry**)dest);
+#if PHP_MAJOR_VERSION >= 7
+  cassandra_batch_statement_entry *batch_statement_entry = Z_PTR_P(dest);
+#else
+  cassandra_batch_statement_entry *batch_statement_entry = *((cassandra_batch_statement_entry **) dest);
+#endif
 
-  zval_ptr_dtor(&entry->statement);
-  if (entry->arguments) {
-    zval_ptr_dtor(&entry->arguments);
-    entry->arguments = NULL;
-  }
+  zval_ptr_dtor(&batch_statement_entry->statement);
+  PHP5TO7_ZVAL_MAYBE_DESTROY(batch_statement_entry->arguments);
 
-  efree(entry);
+  efree(batch_statement_entry);
 }
 
 ZEND_EXTERN_MODULE_GLOBALS(cassandra)
 
 PHP_METHOD(BatchStatement, __construct)
 {
-  zval* type = NULL;
-  cassandra_batch_statement* self = NULL;
+  zval *type = NULL;
+  cassandra_statement *self = NULL;
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "|z", &type) == FAILURE) {
     return;
   }
 
-  self = (cassandra_batch_statement*) zend_object_store_get_object(getThis() TSRMLS_CC);
+  self = PHP_CASSANDRA_GET_STATEMENT(getThis());
 
   if (type) {
     if (Z_TYPE_P(type) != IS_LONG) {
@@ -47,10 +48,14 @@ PHP_METHOD(BatchStatement, __construct)
 
 PHP_METHOD(BatchStatement, add)
 {
-  zval* statement = NULL;
-  zval* arguments = NULL;
-  cassandra_batch_statement_entry* entry = NULL;
-  cassandra_batch_statement* self = NULL;
+  zval *statement = NULL;
+  zval *arguments = NULL;
+  cassandra_batch_statement_entry *batch_statement_entry = NULL;
+  cassandra_statement *self = NULL;
+
+#if PHP_MAJOR_VERSION >= 7
+  zval entry;
+#endif
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z|z", &statement, &arguments) == FAILURE) {
     return;
@@ -61,18 +66,25 @@ PHP_METHOD(BatchStatement, add)
     INVALID_ARGUMENT(statement, "an instance of Cassandra\\SimpleStatement or Cassandra\\PreparedStatement");
   }
 
-  entry = (cassandra_batch_statement_entry*) ecalloc(1, sizeof(cassandra_batch_statement_entry));
-  entry->statement = statement;
-  Z_ADDREF_P(entry->statement);
+  self = PHP_CASSANDRA_GET_STATEMENT(getThis());
+
+  batch_statement_entry = (cassandra_batch_statement_entry *) ecalloc(1, sizeof(cassandra_batch_statement_entry));
+
+  PHP5TO7_ZVAL_COPY(PHP5TO7_ZVAL_MAYBE_P(batch_statement_entry->statement), statement);
 
   if (arguments) {
-    entry->arguments = arguments;
-    Z_ADDREF_P(entry->arguments);
+    PHP5TO7_ZVAL_COPY(PHP5TO7_ZVAL_MAYBE_P(batch_statement_entry->arguments), arguments);
   }
 
-  self = (cassandra_batch_statement*) zend_object_store_get_object(getThis() TSRMLS_CC);
 
-  zend_hash_next_index_insert(&self->statements, &entry, sizeof(cassandra_batch_statement_entry*), NULL);
+#if PHP_MAJOR_VERSION >= 7
+  ZVAL_PTR(&entry, batch_statement_entry);
+  zend_hash_next_index_insert(&self->statements, &entry);
+#else
+  zend_hash_next_index_insert(&self->statements,
+                              &batch_statement_entry, sizeof(cassandra_batch_statement_entry *),
+                              NULL);
+#endif
 }
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo__construct, 0, ZEND_RETURN_VALUE, 0)
@@ -92,10 +104,10 @@ static zend_function_entry cassandra_batch_statement_methods[] = {
 
 static zend_object_handlers cassandra_batch_statement_handlers;
 
-static HashTable*
+static HashTable *
 php_cassandra_batch_statement_properties(zval *object TSRMLS_DC)
 {
-  HashTable* props = zend_std_get_properties(object TSRMLS_CC);
+  HashTable *props = zend_std_get_properties(object TSRMLS_CC);
 
   return props;
 }
@@ -110,38 +122,27 @@ php_cassandra_batch_statement_compare(zval *obj1, zval *obj2 TSRMLS_DC)
 }
 
 static void
-php_cassandra_batch_statement_free(void *object TSRMLS_DC)
+php_cassandra_batch_statement_free(php5to7_zend_object_free *object TSRMLS_DC)
 {
-  cassandra_batch_statement* self = (cassandra_batch_statement*) object;
+  cassandra_statement *self = PHP5TO7_ZEND_OBJECT_GET(statement, object);
 
   zend_hash_destroy(&self->statements);
 
   zend_object_std_dtor(&self->zval TSRMLS_CC);
-  efree(self);
+  PHP5TO7_MAYBE_EFREE(self);
 }
 
-static zend_object_value
-php_cassandra_batch_statement_new(zend_class_entry* class_type TSRMLS_DC)
+static php5to7_zend_object
+php_cassandra_batch_statement_new(zend_class_entry *ce TSRMLS_DC)
 {
-  zend_object_value retval;
-  cassandra_batch_statement* self;
-
-  self = (cassandra_batch_statement*) ecalloc(1, sizeof(cassandra_batch_statement));
-
-  zend_object_std_init(&self->zval, class_type TSRMLS_CC);
-  object_properties_init(&self->zval, class_type);
+  cassandra_statement *self =
+      PHP5TO7_ZEND_OBJECT_ECALLOC(statement, ce);
 
   self->type       = CASSANDRA_BATCH_STATEMENT;
   self->batch_type = CASS_BATCH_TYPE_LOGGED;
-
   zend_hash_init(&self->statements, 0, NULL, (dtor_func_t) cassandra_batch_statement_entry_dtor, 0);
 
-  retval.handle   = zend_objects_store_put(self,
-                      (zend_objects_store_dtor_t) zend_objects_destroy_object,
-                      php_cassandra_batch_statement_free, NULL TSRMLS_CC);
-  retval.handlers = &cassandra_batch_statement_handlers;
-
-  return retval;
+  PHP5TO7_ZEND_OBJECT_INIT_EX(statement, batch_statement, self, ce);
 }
 
 void cassandra_define_BatchStatement(TSRMLS_D)
@@ -151,7 +152,7 @@ void cassandra_define_BatchStatement(TSRMLS_D)
   INIT_CLASS_ENTRY(ce, "Cassandra\\BatchStatement", cassandra_batch_statement_methods);
   cassandra_batch_statement_ce = zend_register_internal_class(&ce TSRMLS_CC);
   zend_class_implements(cassandra_batch_statement_ce TSRMLS_CC, 1, cassandra_statement_ce);
-  cassandra_batch_statement_ce->ce_flags     |= ZEND_ACC_FINAL_CLASS;
+  cassandra_batch_statement_ce->ce_flags     |= PHP5TO7_ZEND_ACC_FINAL;
   cassandra_batch_statement_ce->create_object = php_cassandra_batch_statement_new;
 
   memcpy(&cassandra_batch_statement_handlers, zend_get_std_object_handlers(), sizeof(zend_object_handlers));

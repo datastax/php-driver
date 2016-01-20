@@ -77,6 +77,7 @@ if (PHP_CASSANDRA != "no") {
               "Type.c " +
               "Uuid.c " +
               "UuidInterface.c " +
+              "Value.c " +
               "Varint.c", "cassandra");
           ADD_SOURCES(configure_module_dirname + "/src/Cassandra/Cluster",
               "Builder.c", "cassandra");
@@ -119,6 +120,7 @@ if (PHP_CASSANDRA != "no") {
               "collections.c " +
               "consistency.c " +
               "future.c " +
+              "hash.c " +
               "inet.c " +
               "math.c " +
               "ref.c " +

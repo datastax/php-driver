@@ -14,7 +14,7 @@ class CollectionTest extends \PHPUnit_Framework_TestCase
         $type = Type::collection(Type::varchar());
         $this->assertEquals("list", $type->name());
         $this->assertEquals("list<varchar>", (string) $type);
-        $this->assertEquals(Type::varchar(), $type->type());
+        $this->assertEquals(Type::varchar(), $type->valueType());
     }
 
     public function testCreatesCollectionFromValues()

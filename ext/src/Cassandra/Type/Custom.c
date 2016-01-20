@@ -13,28 +13,28 @@ PHP_METHOD(TypeCustom, __construct)
 
 PHP_METHOD(TypeCustom, name)
 {
-  cassandra_type_custom* custom;
+  cassandra_type *custom;
 
   if (zend_parse_parameters_none() == FAILURE) {
     return;
   }
 
-  custom = (cassandra_type_custom*) zend_object_store_get_object(getThis() TSRMLS_CC);
+  custom = PHP_CASSANDRA_GET_TYPE(getThis());
 
-  RETURN_STRING(custom->name, 1);
+  PHP5TO7_RETVAL_STRING(custom->name);
 }
 
 PHP_METHOD(TypeCustom, __toString)
 {
-  cassandra_type_custom* custom;
+  cassandra_type *custom;
 
   if (zend_parse_parameters_none() == FAILURE) {
     return;
   }
 
-  custom = (cassandra_type_custom*) zend_object_store_get_object(getThis() TSRMLS_CC);
+  custom = PHP_CASSANDRA_GET_TYPE(getThis());
 
-  RETURN_STRING(custom->name, 1);
+  PHP5TO7_RETVAL_STRING(custom->name);
 }
 
 PHP_METHOD(TypeCustom, create)
@@ -62,38 +62,28 @@ static zend_function_entry cassandra_type_custom_methods[] = {
 static zend_object_handlers cassandra_type_custom_handlers;
 
 static void
-php_cassandra_type_custom_free(void *object TSRMLS_DC)
+php_cassandra_type_custom_free(php5to7_zend_object_free *object TSRMLS_DC)
 {
-  cassandra_type_custom* custom = (cassandra_type_custom*) object;
+  cassandra_type *self = PHP5TO7_ZEND_OBJECT_GET(type, object);
 
-  zend_object_std_dtor(&custom->zval TSRMLS_CC);
-  if (custom->name) {
-    efree(custom->name);
-    custom->name = NULL;
+  if (self->name) {
+    efree(self->name);
+    self->name = NULL;
   }
 
-  efree(custom);
+  zend_object_std_dtor(&self->zval TSRMLS_CC);
+  PHP5TO7_MAYBE_EFREE(self);
 }
 
-static zend_object_value
-php_cassandra_type_custom_new(zend_class_entry* class_type TSRMLS_DC)
+static php5to7_zend_object
+php_cassandra_type_custom_new(zend_class_entry *ce TSRMLS_DC)
 {
-  zend_object_value retval;
-  cassandra_type_custom* custom;
+  cassandra_type *self = PHP5TO7_ZEND_OBJECT_ECALLOC(type, ce);
 
-  custom = (cassandra_type_custom*) ecalloc(1, sizeof(cassandra_type_custom));
+  self->type = CASS_VALUE_TYPE_CUSTOM;
+  self->name = NULL;
 
-  zend_object_std_init(&custom->zval, class_type TSRMLS_CC);
-  object_properties_init(&custom->zval, class_type);
-
-  custom->name = NULL;
-
-  retval.handle   = zend_objects_store_put(custom,
-                      (zend_objects_store_dtor_t) zend_objects_destroy_object,
-                      php_cassandra_type_custom_free, NULL TSRMLS_CC);
-  retval.handlers = &cassandra_type_custom_handlers;
-
-  return retval;
+  PHP5TO7_ZEND_OBJECT_INIT_EX(type, type_custom, self, ce);
 }
 
 void cassandra_define_TypeCustom(TSRMLS_D)
@@ -103,7 +93,7 @@ void cassandra_define_TypeCustom(TSRMLS_D)
   INIT_CLASS_ENTRY(ce, "Cassandra\\Type\\Custom", cassandra_type_custom_methods);
   cassandra_type_custom_ce = zend_register_internal_class(&ce TSRMLS_CC);
   zend_class_implements(cassandra_type_custom_ce TSRMLS_CC, 1, cassandra_type_ce);
-  cassandra_type_custom_ce->ce_flags     |= ZEND_ACC_FINAL_CLASS;
+  cassandra_type_custom_ce->ce_flags     |= PHP5TO7_ZEND_ACC_FINAL;
   cassandra_type_custom_ce->create_object = php_cassandra_type_custom_new;
 
   memcpy(&cassandra_type_custom_handlers, zend_get_std_object_handlers(), sizeof(zend_object_handlers));
