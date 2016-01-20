@@ -16,7 +16,9 @@
  * limitations under the License.
  */
 
-namespace Cassandra;
+namespace Cassandra\TimestampGenerator;
+
+use Cassandra\TimestampGenerator;
 
 /**
  * A timestamp generator that generates monotonically increasing timestamps
