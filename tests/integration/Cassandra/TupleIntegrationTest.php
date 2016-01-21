@@ -23,7 +23,7 @@ namespace Cassandra;
  *
  * @cassandra-version-2.1
  */
-class TupleTest extends \PHPUnit_Framework_TestCase {
+class TupleIntegrationTest extends \PHPUnit_Framework_TestCase {
     /**
      * Integration test instance (helper class)
      *
@@ -88,7 +88,7 @@ class TupleTest extends \PHPUnit_Framework_TestCase {
             \Cassandra::TYPE_TIMEUUID => new Timeuuid(),
             \Cassandra::TYPE_UUID => new Uuid("03398c99-c635-4fad-b30a-3b2c49f785c2"),
             \Cassandra::TYPE_VARCHAR => "varchar",
-            \Cassandra::TYPE_VARINT => new Varint("9223372036854775808")
+//            \Cassandra::TYPE_VARINT => new Varint("9223372036854775808")
         );
     }
 

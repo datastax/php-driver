@@ -27,10 +27,6 @@ class Integration {
     const CASSANDRA_VERSION = "2.2.4"; // This is needed for Windows testing right now
 
     /**
-     * Prefix for the keyspace(s) created during the integration tests.
-     */
-    const KEYSPACE_PREFIX = "php_driver_integration_test";
-    /**
      * Generic/Simple keyspace format
      */
     const SIMPLE_KEYSPACE_FORMAT = "CREATE KEYSPACE %s WITH replication = { 'class': %s };";
@@ -89,8 +85,7 @@ class Integration {
                                 $isClientAuthentication = false,
                                 $isSSL = false) {
         // Generate the keyspace name for the test
-        $className = $this->getShortName($className);
-        $this->keyspaceName = Integration::KEYSPACE_PREFIX . "__" . $className;
+        $this->keyspaceName = $this->getShortName($className);
         if (!empty($testName)) {
             $this->keyspaceName = $this->keyspaceName . "_" . $testName;
         }
