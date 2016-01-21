@@ -35,8 +35,8 @@
   },
   "autoload-dev": {
     "psr-0": {
-      "Cassandra\\": ["tests/unit"],
-      "": ["support"]
+      "Cassandra\\": ["tests/unit/", "tests/integration/"],
+      "": ["support/"]
     }
   }
 }
