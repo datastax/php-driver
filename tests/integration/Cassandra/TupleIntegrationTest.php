@@ -230,6 +230,22 @@ class TupleIntegrationTest extends \PHPUnit_Framework_TestCase {
     }
 
     /**
+     * Make assertions on each element in the nested tuple.
+     *
+     * @param $tuple Tuple to validate
+     * @param $value Value to assert against each element of the tuple
+     */
+    private function assertNestedTupleElements($tuple, $value) {
+        foreach ($tuple as $element) {
+            if ($element instanceof Tuple) {
+                $this->assertNestedTupleElements($element, $value);;
+            } else {
+                $this->assertEquals($element, $value);
+            }
+        }
+    }
+
+    /**
      * Make assertions on each element in the tuple.
      *
      * @param $key Key to use to select tuple value
@@ -256,8 +272,14 @@ class TupleIntegrationTest extends \PHPUnit_Framework_TestCase {
         // Handle TEXT alias (VARCHAR)
         $this->assertEquals($tuple->type(),
             $this->generateTupleCQL(($datatype == \Cassandra::TYPE_TEXT ? \Cassandra::TYPE_VARCHAR : $datatype), $size, $isNested, false));
-        foreach ($tuple as $element) {
-            $this->assertEquals($element, $value);
+
+        // Assert the elements in the tuple
+        if ($isNested) {
+            $this->assertNestedTupleElements($tuple, $value);
+        } else {
+            foreach ($tuple as $element) {
+                $this->assertEquals($element, $value);
+            }
         }
     }
 
@@ -294,7 +316,7 @@ class TupleIntegrationTest extends \PHPUnit_Framework_TestCase {
         foreach ($this->generateScalarValues() as $datatype => $value) {
             foreach ($depths as $depth) {
                 $key = $this->insertTuple($datatype, $value, $depth, true);
-                //$this->assertTuple($key, $datatype, $value, $depth, true);
+                $this->assertTuple($key, $datatype, $value, $depth, true);
             }
         }
     }
