@@ -20,16 +20,24 @@ namespace Cassandra\Type;
 
 use Cassandra\Type;
 
-final class Udt implements Type
+final class UserType implements Type
 {
     /**
-     * Returns "udt"
-     * @return string "udt"
+     * Returns type name for the user type
+     * @return string
      */
     public function name() {}
 
     /**
-     * Returns type representation in CQL, e.g. `udt<name1:varchar, name2:int>`
+     * Returns keyspace for the user type
+     * @return string
+     */
+    public function keyspace() {}
+
+    /**
+     * Returns type representation in CQL, e.g. 1keyspace.type_name1 or
+     * `userType<name1:varchar, name2:int>`.
+     *
      * @return string Type representation in CQL
      */
     public function __toString() {}
@@ -41,15 +49,15 @@ final class Udt implements Type
     public function types() {}
 
     /**
-     * Creates a new Cassandra\Udt from the given name/value pairs.
+     * Creates a new Cassandra\UserTypeValue from the given name/value pairs.
      *
      * @throws Exception\InvalidArgumentException when values given are of a
      *                                            different types than what the
-     *                                            udt expects.
+     *                                            user type expects.
      *
-     * @param  mixed $value,...      One or more name/value pairs to be added to the udt.
-     *                               When no values given, creates an empty udt.
-     * @return Cassandra\Udt  A udt with given name/value pairs.
+     * @param  mixed $value,...      One or more name/value pairs to be added to the user type.
+     *                               When no values given, creates an empty user type.
+     * @return Cassandra\UserTypeValue  A user type value with given name/value pairs.
      */
     public function create($value = null) {}
 }

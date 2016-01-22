@@ -16,6 +16,8 @@ static zend_function_entry cassandra_keyspace_methods[] = {
   PHP_ABSTRACT_ME(Keyspace, hasDurableWrites, arginfo_none)
   PHP_ABSTRACT_ME(Keyspace, table, arginfo_name)
   PHP_ABSTRACT_ME(Keyspace, tables, arginfo_none)
+  PHP_ABSTRACT_ME(Keyspace, userType, arginfo_name)
+  PHP_ABSTRACT_ME(Keyspace, userTypes, arginfo_none)
   PHP_FE_END
 };
 

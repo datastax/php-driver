@@ -132,11 +132,11 @@ bind_argument_by_index(CassStatement *statement, size_t index, zval *value TSRML
       CHECK_RESULT(rc);
     }
 
-    if (instanceof_function(Z_OBJCE_P(value), cassandra_udt_ce TSRMLS_CC)) {
+    if (instanceof_function(Z_OBJCE_P(value), cassandra_user_type_value_ce TSRMLS_CC)) {
       CassError rc;
       CassUserType *ut;
-      cassandra_udt *udt = PHP_CASSANDRA_GET_UDT(value);
-      if (!php_cassandra_user_type_from_udt(udt, &ut TSRMLS_CC))
+      cassandra_user_type_value *user_type_value = PHP_CASSANDRA_GET_USER_TYPE_VALUE(value);
+      if (!php_cassandra_user_type_from_user_type_value(user_type_value, &ut TSRMLS_CC))
         return FAILURE;
 
       rc = cass_statement_bind_user_type(statement, index, ut);
@@ -268,11 +268,11 @@ bind_argument_by_name(CassStatement *statement, const char *name,
       CHECK_RESULT(rc);
     }
 
-    if (instanceof_function(Z_OBJCE_P(value), cassandra_udt_ce TSRMLS_CC)) {
+    if (instanceof_function(Z_OBJCE_P(value), cassandra_user_type_value_ce TSRMLS_CC)) {
       CassError rc;
       CassUserType *ut;
-      cassandra_udt *udt = PHP_CASSANDRA_GET_UDT(value);
-      if (!php_cassandra_user_type_from_udt(udt, &ut TSRMLS_CC))
+      cassandra_user_type_value *user_type_value = PHP_CASSANDRA_GET_USER_TYPE_VALUE(value);
+      if (!php_cassandra_user_type_from_user_type_value(user_type_value, &ut TSRMLS_CC))
         return FAILURE;
 
       rc = cass_statement_bind_user_type_by_name(statement, name, ut);

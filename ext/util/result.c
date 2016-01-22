@@ -7,7 +7,7 @@
 #include "src/Cassandra/Map.h"
 #include "src/Cassandra/Set.h"
 #include "src/Cassandra/Tuple.h"
-#include "src/Cassandra/Udt.h"
+#include "src/Cassandra/UserTypeValue.h"
 
 static int
 php_cassandra_value(const CassValue* value, const CassDataType* data_type, php5to7_zval *out TSRMLS_DC)
@@ -32,7 +32,7 @@ php_cassandra_value(const CassValue* value, const CassDataType* data_type, php5t
   cassandra_map *map = NULL;
   cassandra_set *set = NULL;
   cassandra_tuple *tuple = NULL;
-  cassandra_udt *udt = NULL;
+  cassandra_user_type_value *user_type_value = NULL;
   ulong index;
 
   CassValueType type = cass_data_type_type(data_type);
@@ -264,10 +264,10 @@ php_cassandra_value(const CassValue* value, const CassDataType* data_type, php5t
     cass_iterator_free(iterator);
     break;
   case CASS_VALUE_TYPE_UDT:
-    object_init_ex(PHP5TO7_ZVAL_MAYBE_DEREF(out), cassandra_udt_ce);
-    udt = PHP_CASSANDRA_GET_UDT(PHP5TO7_ZVAL_MAYBE_DEREF(out));
+    object_init_ex(PHP5TO7_ZVAL_MAYBE_DEREF(out), cassandra_user_type_value_ce);
+    user_type_value = PHP_CASSANDRA_GET_USER_TYPE_VALUE(PHP5TO7_ZVAL_MAYBE_DEREF(out));
 
-    udt->type = php_cassandra_type_from_data_type(data_type TSRMLS_CC);
+    user_type_value->type = php_cassandra_type_from_data_type(data_type TSRMLS_CC);
 
     iterator = cass_iterator_fields_from_user_type(value);
 
@@ -285,7 +285,9 @@ php_cassandra_value(const CassValue* value, const CassDataType* data_type, php5t
       }
 
       cass_iterator_get_user_type_field_name(iterator, &name, &name_length);
-      php_cassandra_udt_set(udt, name, name_length, PHP5TO7_ZVAL_MAYBE_P(v) TSRMLS_CC);
+      php_cassandra_user_type_value_set(user_type_value,
+                                        name, name_length,
+                                        PHP5TO7_ZVAL_MAYBE_P(v) TSRMLS_CC);
       zval_ptr_dtor(&v);
       index++;
     }

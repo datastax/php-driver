@@ -123,7 +123,7 @@ if (PHP_CASSANDRA != "no") {
               "Timeuuid.c " +
               "Tuple.c " +
               "Type.c " +
-              "Udt.c " +
+              "UserTypeValue.c " +
               "Uuid.c " +
               "UuidInterface.c " +
               "Value.c " +
@@ -164,7 +164,7 @@ if (PHP_CASSANDRA != "no") {
               "Scalar.c " +
               "Set.c " +
               "Tuple.c " +
-              "Udt.c", "cassandra");
+              "UserType.c", "cassandra");
 
           ADD_SOURCES(configure_module_dirname + "/util",
               "bytes.c " +

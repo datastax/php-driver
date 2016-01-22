@@ -19,33 +19,33 @@
 namespace Cassandra;
 
 /**
- * A PHP representation of the CQL `udt` datatype
+ * A PHP representation of the CQL UDT datatype
  */
-final class Udt implements Value, \Countable, \Iterator
+final class UserTypeValue implements Value, \Countable, \Iterator
 {
     /**
-     * Creates a new udt with the given name/type pairs.
+     * Creates a new user type value with the given name/type pairs.
      *
      * @param array $type Array of types
      */
     public function __construct($types) {}
 
     /**
-     * The type of this udt.
+     * The type of this user type value.
      *
      * @return Type
      */
     public function type() {}
 
     /**
-     * Array of values in this udt.
+     * Array of values in this user type value.
      *
      * @return array values
      */
     public function values() {}
 
     /**
-     * Sets the value at name in this udt.
+     * Sets the value at name in this user type value.
      *
      * @param sting $name  String of the field name
      * @param mixed $value Value or null
@@ -64,7 +64,7 @@ final class Udt implements Value, \Countable, \Iterator
     public function get($name) {}
 
     /**
-     * Total number of elements in this udt
+     * Total number of elements in this user type value.
      *
      * @return int count
      */

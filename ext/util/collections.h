@@ -10,6 +10,6 @@ int php_cassandra_collection_from_map(cassandra_map* map, CassCollection** colle
 
 int php_cassandra_tuple_from_tuple(cassandra_tuple *tuple, CassTuple **output TSRMLS_DC);
 
-int php_cassandra_user_type_from_udt(cassandra_udt *udt, CassUserType **output TSRMLS_DC);
+int php_cassandra_user_type_from_user_type_value(cassandra_user_type_value *user_type_value, CassUserType **output TSRMLS_DC);
 
 #endif /* PHP_CASSANDRA_UTIL_COLLECTIONS_H */
