@@ -47,7 +47,7 @@ php5to7_zval php_cassandra_type_map_from_value_types(CassValueType key_type,
 
 php5to7_zval php_cassandra_type_tuple(TSRMLS_D);
 
-php5to7_zval php_cassandra_type_udt(TSRMLS_D);
+php5to7_zval php_cassandra_type_user_type(TSRMLS_D);
 
 php5to7_zval php_cassandra_type_custom(char *name TSRMLS_DC);
 

@@ -340,7 +340,7 @@ PHP_MINIT_FUNCTION(cassandra)
   cassandra_define_Map(TSRMLS_C);
   cassandra_define_Collection(TSRMLS_C);
   cassandra_define_Tuple(TSRMLS_C);
-  cassandra_define_Udt(TSRMLS_C);
+  cassandra_define_UserTypeValue(TSRMLS_C);
 
   cassandra_define_Cassandra(TSRMLS_C);
   cassandra_define_Cluster(TSRMLS_C);
@@ -378,7 +378,7 @@ PHP_MINIT_FUNCTION(cassandra)
   cassandra_define_TypeSet(TSRMLS_C);
   cassandra_define_TypeMap(TSRMLS_C);
   cassandra_define_TypeTuple(TSRMLS_C);
-  cassandra_define_TypeUdt(TSRMLS_C);
+  cassandra_define_TypeUserType(TSRMLS_C);
   cassandra_define_TypeCustom(TSRMLS_C);
 
   return SUCCESS;
