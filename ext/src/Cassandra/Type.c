@@ -1,6 +1,6 @@
 #include "php_cassandra.h"
 #include "src/Cassandra/Type/Tuple.h"
-#include "src/Cassandra/Type/Udt.h"
+#include "src/Cassandra/Type/UserType.h"
 #include "util/types.h"
 
 zend_class_entry *cassandra_type_ce = NULL;
@@ -73,7 +73,7 @@ PHP_METHOD(Type, tuple)
   RETURN_ZVAL(PHP5TO7_ZVAL_MAYBE_P(ztype), 0, 1);
 }
 
-PHP_METHOD(Type, udt)
+PHP_METHOD(Type, userType)
 {
   php5to7_zval ztype;
   cassandra_type *type;
@@ -87,10 +87,10 @@ PHP_METHOD(Type, udt)
 
   if (argc % 2 == 1) {
     zend_throw_exception_ex(cassandra_invalid_argument_exception_ce, 0 TSRMLS_CC,
-                            "Not enough name/type pairs, udts can only be created " \
+                            "Not enough name/type pairs, user types can only be created " \
                             "from an even number of name/type pairs, where each odd " \
                             "argument is a name and each even argument is a type, " \
-                            "e.g udt(name, type, name, type, name, type)");
+                            "e.g userType(name, type, name, type, name, type)");
     PHP5TO7_MAYBE_EFREE(args);
     return;
   }
@@ -110,15 +110,15 @@ PHP_METHOD(Type, udt)
     }
   }
 
-  ztype = php_cassandra_type_udt(TSRMLS_C);
+  ztype = php_cassandra_type_user_type(TSRMLS_C);
   type = PHP_CASSANDRA_GET_TYPE(PHP5TO7_ZVAL_MAYBE_P(ztype));
 
   for (i = 0; i < argc; i += 2) {
     zval *name = PHP5TO7_ZVAL_ARG(args[i]);
     zval *sub_type = PHP5TO7_ZVAL_ARG(args[i + 1]);
-    if (php_cassandra_type_udt_add(type,
-                                   Z_STRVAL_P(name), Z_STRLEN_P(name),
-                                   sub_type TSRMLS_CC)) {
+    if (php_cassandra_type_user_type_add(type,
+                                         Z_STRVAL_P(name), Z_STRLEN_P(name),
+                                         sub_type TSRMLS_CC)) {
       Z_ADDREF_P(sub_type);
     } else {
       break;
@@ -207,7 +207,7 @@ static zend_function_entry cassandra_type_methods[] = {
   PHP_ME(Type, set,        arginfo_type,  ZEND_ACC_PUBLIC|ZEND_ACC_STATIC|ZEND_ACC_FINAL)
   PHP_ME(Type, map,        arginfo_map,   ZEND_ACC_PUBLIC|ZEND_ACC_STATIC|ZEND_ACC_FINAL)
   PHP_ME(Type, tuple,      arginfo_types, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC|ZEND_ACC_FINAL)
-  PHP_ME(Type, udt,        arginfo_types, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC|ZEND_ACC_FINAL)
+  PHP_ME(Type, userType,   arginfo_types, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC|ZEND_ACC_FINAL)
   PHP_FE_END
 };
 
