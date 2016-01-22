@@ -355,6 +355,11 @@ php_cassandra_tuple_set(CassTuple *tuple, php5to7_ulong index, zval *value, Cass
   CassTuple            *sub_tuple;
   CassUserType         *sub_ut;
 
+  if (Z_TYPE_P(value) == IS_NULL) {
+    CHECK_ERROR(cass_tuple_set_null(tuple, index));
+    return result;
+  }
+
   switch (type) {
   case CASS_VALUE_TYPE_TEXT:
   case CASS_VALUE_TYPE_ASCII:
@@ -471,6 +476,11 @@ php_cassandra_user_type_set(CassUserType *ut,
   CassCollection       *sub_collection;
   CassTuple            *sub_tup;
   CassUserType         *sub_ut;
+
+  if (Z_TYPE_P(value) == IS_NULL) {
+    CHECK_ERROR(cass_user_type_set_null_by_name(ut, name));
+    return result;
+  }
 
   switch (type) {
   case CASS_VALUE_TYPE_TEXT:
