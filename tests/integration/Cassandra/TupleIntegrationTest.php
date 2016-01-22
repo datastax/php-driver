@@ -19,32 +19,32 @@ namespace Cassandra;
  */
 
 /**
- * Tuple integration tests
+ * Tuple integration tests.
  *
  * @cassandra-version-2.1
  */
 class TupleIntegrationTest extends \PHPUnit_Framework_TestCase {
     /**
-     * Integration test instance (helper class)
+     * Integration test instance (helper class).
      *
      * @var Integration
      */
     private $integration;
     /**
-     * Connected database session
+     * Connected database session.
      *
      * @var \Cassandra\Session
      */
     private $session;
     /**
-     * Table name prefix being used for the test
+     * Table name prefix being used for the test.
      *
      * @var string
      */
     private $tableNamePrefix;
 
     /**
-     * Setup the database for the tuple tests
+     * Setup the database for the tuple tests.
      *
      * @before
      */
@@ -58,7 +58,7 @@ class TupleIntegrationTest extends \PHPUnit_Framework_TestCase {
     }
 
     /**
-     * Teardown the database for the tuple tests
+     * Teardown the database for the tuple tests.
      *
      * @after
      */
@@ -70,27 +70,55 @@ class TupleIntegrationTest extends \PHPUnit_Framework_TestCase {
      * Generate an array of valid Cassandra datatypes with values that can be
      * used for testing.
      *
-     * @return array Valid scalar Cassandra datatypes with test values.
+     * @param $isNullTest bool True if scalar values are null; false otherwise
+     * @return array Valid scalar Cassandra datatypes with test values
      */
-    private function generateScalarValues() {
-        return array(
-            \Cassandra::TYPE_ASCII => "cassandra",
-            \Cassandra::TYPE_BIGINT => new Bigint("9223372036854775807"),
-            \Cassandra::TYPE_BLOB => new Blob("blob"),
-            \Cassandra::TYPE_BOOLEAN => true,
-            \Cassandra::TYPE_DECIMAL => new Decimal("3.14159265359"),
-            \Cassandra::TYPE_DOUBLE => 3.14159,
-            \Cassandra::TYPE_FLOAT => new Float(3.14159),
-            \Cassandra::TYPE_INET => new Inet("127.0.0.1"),
-            \Cassandra::TYPE_INT => 123,
-            \Cassandra::TYPE_TEXT => "text",
-            \Cassandra::TYPE_TIMESTAMP => new Timestamp(123),
-            \Cassandra::TYPE_TIMEUUID => new Timeuuid(),
-            \Cassandra::TYPE_UUID => new Uuid("03398c99-c635-4fad-b30a-3b2c49f785c2"),
-            \Cassandra::TYPE_VARCHAR => "varchar",
+    private function generateScalarValues($isNullTest = false) {
+        return [
+            \Cassandra::TYPE_ASCII => ($isNullTest ? null : "cassandra"),
+            \Cassandra::TYPE_BIGINT => ($isNullTest ? null : new Bigint("9223372036854775807")),
+            \Cassandra::TYPE_BLOB => ($isNullTest ? null : new Blob("blob")),
+            \Cassandra::TYPE_BOOLEAN => ($isNullTest ? null : true),
+            \Cassandra::TYPE_DECIMAL => ($isNullTest ? null : new Decimal("3.14159265359")),
+            \Cassandra::TYPE_DOUBLE => ($isNullTest ? null : 3.14159),
+            \Cassandra::TYPE_FLOAT => ($isNullTest ? null : new Float(3.14159)),
+            \Cassandra::TYPE_INET => ($isNullTest ? null : new Inet("127.0.0.1")),
+            \Cassandra::TYPE_INT => ($isNullTest ? null : 123),
+            \Cassandra::TYPE_TEXT => ($isNullTest ? null : "text"),
+            \Cassandra::TYPE_TIMESTAMP => ($isNullTest ? null : new Timestamp(123)),
+            \Cassandra::TYPE_TIMEUUID => ($isNullTest ? null : new Timeuuid()),
+            \Cassandra::TYPE_UUID => ($isNullTest ? null : new Uuid("03398c99-c635-4fad-b30a-3b2c49f785c2")),
+            \Cassandra::TYPE_VARCHAR => ($isNullTest ? null : "varchar"),
 //TODO: Re-enable/Uncomment after PHP-70 has been merged
-//            \Cassandra::TYPE_VARINT => new Varint("9223372036854775808")
-        );
+//            \Cassandra::TYPE_VARINT => ($isNullTest ? null : new Varint("9223372036854775808"))
+        ];
+    }
+
+    /**
+     * Generate an array of valid Cassandra composite datatypes with scalar
+     * values that can be used for testing.
+     *
+     * @param $size Number of elements in the collection
+     * @return array Valid composite Cassandra datatypes from scalar test
+     *               values
+     */
+    private function generateCompositeValues($size) {
+        // Create the composite types from the scalar values
+        $compositeValues = array();
+        foreach ($this->generateScalarValues() as $datatype => $value) {
+            $map = new Map(\Cassandra::TYPE_INT, $datatype);
+            $set = new Set($datatype);
+            foreach (range(1, $size) as $i) {
+                $map->set($i, $value);
+                $this->assertTrue($set->add($value));
+            }
+
+            // Add the composite types to the array of values
+            array_push($compositeValues, array($datatype => array($map, $set)));
+        }
+
+        // Return the composite values made from valid scalar values
+        return $compositeValues;
     }
 
     /**
@@ -102,7 +130,7 @@ class TupleIntegrationTest extends \PHPUnit_Framework_TestCase {
      */
     private function generateTupleElements($datatype, $size) {
         $datatypes = "";
-        foreach(range(1, $size) as $i) {
+        foreach (range(1, $size) as $i) {
             if ($i > 1) {
                 $datatypes .= ", ";
             }
@@ -147,34 +175,50 @@ class TupleIntegrationTest extends \PHPUnit_Framework_TestCase {
      * @return \Cassandra\Tuple Value assigned tuple
      */
     private function generateTuple($datatype, $value, $size) {
+        // Create the tuple type
         $types = array();
-        foreach(range(1, $size) as $i) {
-            array_push($types, $datatype);
+        foreach (range(1, $size) as $i) {
+            if ($value instanceof Map || $value instanceof Set) {
+                array_push($types, $value->type());
+            } else {
+                array_push($types, $datatype);
+            }
         }
         $tuple = new Tuple($types);
-        foreach(range(1, $size) as $i) {
+
+        // Assign the values to the elements of the tuple
+        foreach (range(1, $size) as $i) {
             $tuple->set($i - 1, $value);
         }
         return $tuple;
     }
 
-    private function generateNestedTuple($datatype, $value, $size) {
+    /**
+     * Generate a nested tuple.
+     *
+     * @param $datatype Cassandra datatype for each element in the nested tuple
+     * @param $value Value for each element in the nested tuple
+     * @param $depth Depth of nested tuple with decaying number of elements
+     * @return \Cassandra\Tuple Value assigned nested tuple
+     */
+    private function generateNestedTuple($datatype, $value, $depth) {
         // Create the initial tuple (smallest; deepest tuple)
+        $datatype = $this->getCQLTypes($datatype, $value)["datatype"];
         $tuple = new Tuple(array($datatype));
         $tuple->set(0, $value);
 
         // Create the nested tuple object
-        foreach(range(2, $size) as $i) {
+        foreach (range(2, $depth) as $i) {
             // Generate the types for the tuple
             $type = array();
-            foreach(range(1, $i) as $j) {
+            foreach (range(1, $i) as $j) {
                 array_push($type, $datatype);
             }
             array_push($type, $tuple->type());
 
             // Assign the values in the nested tuple
             $nestedTuple = new Tuple($type);
-            foreach(range(1, $i) as $j) {
+            foreach (range(1, $i) as $j) {
                 $nestedTuple->set($j - 1, $value);
             }
             $nestedTuple->set($i, $tuple);
@@ -183,6 +227,33 @@ class TupleIntegrationTest extends \PHPUnit_Framework_TestCase {
 
         // Return the completed nested tuple
         return $tuple;
+    }
+
+    /**
+     * Get/Update the CQL datatype based on the value being a composite or
+     * scalar datatype. This function will also create a suffix that should be
+     * used for tables when creating and reading/writing data in order to keep
+     * tables run in a test distinct from each other.
+     *
+     * @param $datatype Current datatype for the value
+     * @param $value \Cassandra\Value Value to check for composite types
+     * @return array datatype - Datatype for use in CQL queries
+     *               table_suffix - Suffix to keep tables distinct
+     */
+    private function getCQLTypes($datatype, $value) {
+        // Determine if the datatype should be updated to reflect the composite
+        $cqlDatatype = $datatype;
+        $cqlTableSuffix = $datatype;
+        if ($value instanceof Map || $value instanceof Set) {
+            $cqlDatatype = $value->type();
+            $cqlTableSuffix = $cqlTableSuffix . "_" . substr($cqlDatatype, 0, 3);
+        }
+
+        // Return the CQL types
+        return array(
+            "datatype" => $cqlDatatype,
+            "table_suffix" => $cqlTableSuffix
+        );
     }
 
     /**
@@ -197,11 +268,16 @@ class TupleIntegrationTest extends \PHPUnit_Framework_TestCase {
      *                       (DEFAULT: false)
      */
     private function insertTuple($datatype, $value, $size, $isNested = false) {
+        // Get the CQL datatype (handles composite types)
+        $cqlTypes = $this->getCQLTypes($datatype, $value);
+        $cqlDatatype = $cqlTypes["datatype"];
+        $cqlTableType = $cqlTypes["table_suffix"];
+
         // Generate and create the table
         $query = "CREATE TABLE " .
-            $this->tableNamePrefix . "_" . $datatype . "_" . $size .
+            $this->tableNamePrefix . "_" . $cqlTableType . "_" . $size .
             " (key timeuuid PRIMARY KEY, value " .
-            $this->generateTupleCQL($datatype, $size, $isNested) . ")";
+            $this->generateTupleCQL($cqlDatatype, $size, $isNested) . ")";
         $this->session->execute(new SimpleStatement($query));
 
         // Prepare the value for insert into the table
@@ -220,7 +296,7 @@ class TupleIntegrationTest extends \PHPUnit_Framework_TestCase {
         );
 
         // Insert the value into the table
-        $query = "INSERT INTO " . $this->tableNamePrefix . "_" . $datatype . "_" . $size . " (key, value) VALUES (?, ?)";
+        $query = "INSERT INTO " . $this->tableNamePrefix . "_" . $cqlTableType . "_" . $size . " (key, value) VALUES (?, ?)";
         $statement = new SimpleStatement($query);
         $options = new ExecutionOptions(array("arguments" => $values));
         $this->session->execute($statement, $options);
@@ -232,7 +308,7 @@ class TupleIntegrationTest extends \PHPUnit_Framework_TestCase {
     /**
      * Make assertions on each element in the nested tuple.
      *
-     * @param $tuple Tuple to validate
+     * @param $tuple \Cassandra\Tuple Tuple object to validate
      * @param $value Value to assert against each element of the tuple
      */
     private function assertNestedTupleElements($tuple, $value) {
@@ -257,8 +333,16 @@ class TupleIntegrationTest extends \PHPUnit_Framework_TestCase {
      *                       (DEFAULT: false)
      */
     private function assertTuple($key, $datatype, $value, $size, $isNested = false) {
+        // Get the CQL datatype (handles composite types)
+        $cqlTypes = $this->getCQLTypes($datatype, $value);
+        $cqlDatatype = $cqlTypes["datatype"];
+        $cqlTableType = $cqlTypes["table_suffix"];
+
+        //Handle TEXT alias (VARCHAR)
+        $cqlDatatype = str_replace(\Cassandra::TYPE_TEXT, \Cassandra::TYPE_VARCHAR, $cqlDatatype);
+
         // Select the tuple
-        $query = "SELECT value FROM " . $this->tableNamePrefix . "_" . $datatype . "_" . $size . " WHERE key=?";
+        $query = "SELECT value FROM " . $this->tableNamePrefix . "_" . $cqlTableType . "_" . $size . " WHERE key=?";
         $statement = new SimpleStatement($query);
         $options = new ExecutionOptions(array("arguments" => array($key)));
         $rows = $this->session->execute($statement, $options);
@@ -269,9 +353,7 @@ class TupleIntegrationTest extends \PHPUnit_Framework_TestCase {
         $this->assertNotNull($row);
         $this->assertArrayHasKey("value", $row);
         $tuple = $row["value"];
-        // Handle TEXT alias (VARCHAR)
-        $this->assertEquals($tuple->type(),
-            $this->generateTupleCQL(($datatype == \Cassandra::TYPE_TEXT ? \Cassandra::TYPE_VARCHAR : $datatype), $size, $isNested, false));
+        $this->assertEquals($tuple->type(), $this->generateTupleCQL($cqlDatatype, $size, $isNested, false));
 
         // Assert the elements in the tuple
         if ($isNested) {
@@ -322,6 +404,61 @@ class TupleIntegrationTest extends \PHPUnit_Framework_TestCase {
     }
 
     /**
+     * Tuples using composite/collection datatypes.
+     *
+     * This test will ensure that the PHP driver supports the tuples collection
+     * with all the PHP driver supported composite/collection datatypes.
+     *
+     * NOTE: This test does not utilize tuples composite since they are used in
+     *       the nestedScalarDatatypes test; anything here would be redundant.
+     *
+     * @test
+     * @ticket PHP-58
+     */
+    public function compositeDatatypes() {
+        // Keep the sizes relatively small for speed of test and memory usage
+        $sizes = array(1, 2, 3, 5);
+        foreach ($sizes as $size) {
+            foreach ($this->generateCompositeValues($size) as $composites) {
+                foreach ($composites as $datatype => $values) {
+                    foreach ($values as $value) {
+                        $key = $this->insertTuple($datatype, $value, $size);
+                        $this->assertTuple($key, $datatype, $value, $size);
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Nested tuples using composite/collection datatypes.
+     *
+     * This test will ensure that the PHP driver supports the tuples collection
+     * with all the PHP driver supported composite/collection datatypes in a
+     * nested tuple.
+     *
+     * NOTE: This test does not utilize tuples composite since they are used in
+     *       the nestedScalarDatatypes test; anything here would be redundant.
+     *
+     * @test
+     * @ticket PHP-58
+     */
+    public function compositeNestedDatatypes() {
+        // Keep the sizes relatively small for speed of test and memory usage
+        $depths = array(3, 5);
+        foreach ($depths as $depth) {
+            foreach ($this->generateCompositeValues($depth) as $composites) {
+                foreach ($composites as $datatype => $values) {
+                    foreach ($values as $value) {
+                        $key = $this->insertTuple($datatype, $value, $depth, true);
+                        $this->assertTuple($key, $datatype, $value, $depth, true);
+                    }
+                }
+            }
+        }
+    }
+
+    /**
      * Invalid datatypes for Tuples
      *
      * This test will ensure that an exception will occur when an invalid
@@ -337,4 +474,34 @@ class TupleIntegrationTest extends \PHPUnit_Framework_TestCase {
             $this->insertTuple($datatype, $value, 1);
         }
     }
+
+//    /**
+//     * NULL values in datatypes for Tuples.
+//     *
+//     * This test will ensure that data can be inserted into the table when NULL
+//     * values are present in the tuple. Both scalar and nested scalar datatypes
+//     * will be tested.
+//     *
+//     * @test
+//     * @ticket PHP-58
+//     */
+//    public function nullValueScalarDatatypes() {
+//        // Non-nested
+//        $sizes = array(1, 2, 3, 5);
+//        foreach ($this->generateScalarValues(true) as $datatype => $value) {
+//            foreach ($sizes as $size) {
+//                $key = $this->insertTuple($datatype, $value, $size);
+//                $this->assertTuple($key, $datatype, $value, $size);
+//            }
+//        }
+//
+//        // Nested
+//        $depths = array(4, 5);
+//        foreach ($this->generateScalarValues(true) as $datatype => $value) {
+//            foreach ($depths as $depth) {
+//                $key = $this->insertTuple($datatype, $value, $depth, true);
+//                $this->assertTuple($key, $datatype, $value, $depth, true);
+//            }
+//        }
+//    }
 }
