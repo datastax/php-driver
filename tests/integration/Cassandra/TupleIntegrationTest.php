@@ -17,6 +17,7 @@ namespace Cassandra;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+use Cassandra\Type\UserType;
 
 /**
  * Tuple integration tests.
@@ -348,19 +349,20 @@ class TupleIntegrationTest extends \PHPUnit_Framework_TestCase {
         $rows = $this->session->execute($statement, $options);
 
         // Ensure the tuple collection is valid
-        $this->assertEquals($rows->count(), 1);
+        $this->assertCount(1, $rows);
         $row = $rows->first();
         $this->assertNotNull($row);
         $this->assertArrayHasKey("value", $row);
         $tuple = $row["value"];
-        $this->assertEquals($tuple->type(), $this->generateTupleCQL($cqlDatatype, $size, $isNested, false));
+        $this->assertInstanceOf('Cassandra\Tuple', $tuple);
+        $this->assertEquals($this->generateTupleCQL($cqlDatatype, $size, $isNested, false), $tuple->type());
 
         // Assert the elements in the tuple
         if ($isNested) {
             $this->assertNestedTupleElements($tuple, $value);
         } else {
             foreach ($tuple as $element) {
-                $this->assertEquals($element, $value);
+                $this->assertEquals($value, $element);
             }
         }
     }
@@ -459,6 +461,64 @@ class TupleIntegrationTest extends \PHPUnit_Framework_TestCase {
     }
 
     /**
+     * Tuple using a nested user type.
+     *
+     * This test will ensure that the PHP driver supports the tuples collection
+     * with user types.
+     *
+     * @test
+     * @ticket PHP-57
+     */
+    public function usertype() {
+        // Create the user types
+        $this->session->execute(new SimpleStatement(UserTypeIntegrationTest::PHONE_USER_TYPE_CQL));
+        $this->session->execute(new SimpleStatement(UserTypeIntegrationTest::ADDRESS_USER_TYPE_CQL));
+
+        // Create the table
+        $query = "CREATE TABLE " . $this->tableNamePrefix .
+            " (key timeuuid PRIMARY KEY, value " .
+            "frozen<tuple<address>>)";
+        $this->session->execute(new SimpleStatement($query));
+
+        // Generate a valid address user type and assign it to a tuple
+        $address = UserTypeIntegrationTest::generateAddressValue();
+        $tuple = new Tuple(array($address->type()));
+        $tuple->set(0, $address);
+
+
+        // Assign the values for the statement
+        $key = new Timeuuid();
+        $values = array(
+            $key,
+            $tuple
+        );
+
+        // Insert the value into the table
+        $query = "INSERT INTO " . $this->tableNamePrefix . " (key, value) VALUES (?, ?)";
+        $statement = new SimpleStatement($query);
+        $options = new ExecutionOptions(array("arguments" => $values));
+        $this->session->execute($statement, $options);
+
+        // Select the tuple
+        $query = "SELECT value FROM " . $this->tableNamePrefix . " WHERE key=?";
+        $statement = new SimpleStatement($query);
+        $options = new ExecutionOptions(array("arguments" => array($key)));
+        $rows = $this->session->execute($statement, $options);
+
+        // Ensure the tuple collection is valid
+        $this->assertCount(1, $rows);
+        $row = $rows->first();
+        $this->assertNotNull($row);
+        $this->assertArrayHasKey("value", $row);
+        $tuple = $row["value"];
+        $this->assertInstanceOf('Cassandra\Tuple', $tuple);
+        $this->assertCount(1, $tuple);
+
+        // Verify the value can be read from the table
+        UserTypeIntegrationTest::assertAddressValue($tuple->get(0));
+    }
+
+    /**
      * Invalid datatypes for Tuples
      *
      * This test will ensure that an exception will occur when an invalid
@@ -475,33 +535,33 @@ class TupleIntegrationTest extends \PHPUnit_Framework_TestCase {
         }
     }
 
-//    /**
-//     * NULL values in datatypes for Tuples.
-//     *
-//     * This test will ensure that data can be inserted into the table when NULL
-//     * values are present in the tuple. Both scalar and nested scalar datatypes
-//     * will be tested.
-//     *
-//     * @test
-//     * @ticket PHP-58
-//     */
-//    public function nullValueScalarDatatypes() {
-//        // Non-nested
-//        $sizes = array(1, 2, 3, 5);
-//        foreach ($this->generateScalarValues(true) as $datatype => $value) {
-//            foreach ($sizes as $size) {
-//                $key = $this->insertTuple($datatype, $value, $size);
-//                $this->assertTuple($key, $datatype, $value, $size);
-//            }
-//        }
-//
-//        // Nested
-//        $depths = array(4, 5);
-//        foreach ($this->generateScalarValues(true) as $datatype => $value) {
-//            foreach ($depths as $depth) {
-//                $key = $this->insertTuple($datatype, $value, $depth, true);
-//                $this->assertTuple($key, $datatype, $value, $depth, true);
-//            }
-//        }
-//    }
+    /**
+     * NULL values in datatypes for Tuples.
+     *
+     * This test will ensure that data can be inserted into the table when NULL
+     * values are present in the tuple. Both scalar and nested scalar datatypes
+     * will be tested.
+     *
+     * @test
+     * @ticket PHP-58
+     */
+    public function nullValueScalarDatatypes() {
+        // Non-nested
+        $sizes = array(1, 2, 3, 5);
+        foreach ($this->generateScalarValues(true) as $datatype => $value) {
+            foreach ($sizes as $size) {
+                $key = $this->insertTuple($datatype, $value, $size);
+                $this->assertTuple($key, $datatype, $value, $size);
+            }
+        }
+
+        // Nested
+        $depths = array(4, 6);
+        foreach ($this->generateScalarValues(true) as $datatype => $value) {
+            foreach ($depths as $depth) {
+                $key = $this->insertTuple($datatype, $value, $depth, true);
+                $this->assertTuple($key, $datatype, $value, $depth, true);
+            }
+        }
+    }
 }
