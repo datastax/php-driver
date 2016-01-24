@@ -25,6 +25,7 @@ class Integration {
     //TODO: Remove these constant and make them configurable
     const IP_ADDRESS = "127.0.0.1";
     const CASSANDRA_VERSION = "2.2.4"; // This is needed for Windows testing right now
+    const IS_CCM_SILENT = true;
 
     /**
      * Generic/Simple keyspace format
@@ -94,7 +95,7 @@ class Integration {
 
         // Create the Cassandra cluster for the test
         //TODO: Need to add the ability to switch the Cassandra version (command line)
-        $this->ccm = new \CCM(self::CASSANDRA_VERSION);
+        $this->ccm = new \CCM(self::CASSANDRA_VERSION, self::IS_CCM_SILENT);
         $this->ccm->setup($numberDC1Nodes, $numberDC2Nodes);
         if ($isClientAuthentication) {
             $this->ccm->setupClientVerification();

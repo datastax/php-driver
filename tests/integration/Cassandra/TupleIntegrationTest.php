@@ -485,7 +485,6 @@ class TupleIntegrationTest extends \PHPUnit_Framework_TestCase {
         $tuple = new Tuple(array($address->type()));
         $tuple->set(0, $address);
 
-
         // Assign the values for the statement
         $key = new Timeuuid();
         $values = array(

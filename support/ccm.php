@@ -9,6 +9,7 @@ class CCM
     const DEFAULT_CASSANDRA_VERSION = "2.1.12";
     const PROCESS_IDLE_TIMEOUT_IN_SECONDS = 480;
     private $clusterPrefix;
+    private $isSilent;
     private $version;
     private $process;
     private $cluster;
@@ -18,9 +19,10 @@ class CCM
     private $dataCenterOneNodes;
     private $dataCenterTwoNodes;
 
-    public function __construct($version = self::DEFAULT_CASSANDRA_VERSION, $clusterPrefix = self::DEFAULT_CLUSTER_PREFIX)
+    public function __construct($version = self::DEFAULT_CASSANDRA_VERSION, $isSilent = false, $clusterPrefix = self::DEFAULT_CLUSTER_PREFIX)
     {
         $this->version            = $version;
+        $this->isSilent           = $isSilent;
         $this->clusterPrefix      = $clusterPrefix;
         $this->process            = new Process(null);
         $this->cluster            = null;
@@ -45,7 +47,9 @@ class CCM
                 continue;
             }
 
-            echo "DROP KEYSPACE " . $keyspace . "\n";
+            if (!$this->isSilent) {
+                echo "DROP KEYSPACE " . $keyspace . "\n";
+            }
             $this->session->execute(new SimpleStatement("DROP KEYSPACE $keyspace"));
         }
 
@@ -56,7 +60,9 @@ class CCM
                 continue;
             }
 
-            echo $cql . "\n";
+            if (!$this->isSilent) {
+                echo $cql . "\n";
+            }
             $this->session->execute(new SimpleStatement($cql));
         }
     }
@@ -261,9 +267,13 @@ class CCM
         }
         $this->process->setCommandLine($command);
 
-        echo 'ccm > ' . $command . "\n";
+        if (!$this->isSilent) {
+            echo 'ccm > ' . $command . "\n";
+        }
         $this->process->mustRun(function ($type, $buffer) {
-            echo 'ccm > ' . $buffer;
+            if (!$this->isSilent) {
+                echo 'ccm > ' . $buffer;
+            }
         });
 
         return $this->process->getOutput();
@@ -279,7 +289,7 @@ class CCM
         $clusters = $this->getClusters();
         foreach ($clusters['list'] as $cluster) {
             // Determine if the cluster should be deleted
-            if (!$is_all && substr(strtolower($cluster), 0, strlen(CCM::DEFAULT_CLUSTER_PREFIX)) != CCM::DEFAULT_CLUSTER_PREFIX) {
+            if (!$is_all && substr(strtolower($cluster), 0, strlen($this->clusterPrefix)) != $this->clusterPrefix) {
                 continue;
             }
             $this->removeCluster($cluster);

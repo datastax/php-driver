@@ -27,7 +27,7 @@ class TestSuiteListener extends \PHPUnit_Framework_BaseTestListener {
      * This will only be run on startup and shutdown.
      */
     private static function remove_test_clusters() {
-        $ccm = new \CCM();
+        $ccm = new \CCM(CCM::DEFAULT_CASSANDRA_VERSION, true);
         $ccm->removeAllClusters();
     }
 
