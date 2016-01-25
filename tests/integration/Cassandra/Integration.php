@@ -28,9 +28,17 @@ class Integration {
     const IS_CCM_SILENT = true;
 
     /**
+     * Maximum length for the keyspace (server limit)
+     */
+    const KEYSPACE_MAXIMUM_LENGTH = 48;
+    /**
      * Generic/Simple keyspace format
      */
     const SIMPLE_KEYSPACE_FORMAT = "CREATE KEYSPACE %s WITH replication = { 'class': %s };";
+    /**
+     * CQL query to retrieve the server (Cassandra/DSE) version
+     */
+    const SELECT_SERVER_VERSION = "SELECT release_version FROM system.local";
 
     /**
      * Static instance for connect and disconnect methods to utilize.
@@ -51,17 +59,23 @@ class Integration {
      */
     private $ccm;
     /**
-     * Cluster instance
+     * Cluster instance.
      *
      * @var \Cassandra\Cluster
      */
     private $cluster;
     /**
-     * Connected database session
+     * Connected database session.
      *
      * @var \Cassandra\Session
      */
     private $session;
+    /**
+     * Version of Cassandra/DSE the session is connected to.
+     *
+     * @var string
+     */
+    private $serverVersion;
 
     /**
      * Create the integration helper instance.
@@ -92,6 +106,15 @@ class Integration {
         }
         // Make all strings lowercase for case insensitive O/S (e.g. Windows)
         $this->keyspaceName = strtolower($this->keyspaceName);
+
+        //Ensure the keyspace does not contain more to many characters
+        if (strlen($this->keyspaceName) > self::KEYSPACE_MAXIMUM_LENGTH) {
+            // Update the keyspace name with a unique ID
+            $uniqueID = uniqid();
+            $this->keyspaceName = substr($this->keyspaceName,
+                0, self::KEYSPACE_MAXIMUM_LENGTH - strlen($uniqueID)) .
+                $uniqueID;
+        }
 
         // Create the Cassandra cluster for the test
         //TODO: Need to add the ability to switch the Cassandra version (command line)
@@ -129,6 +152,12 @@ class Integration {
             // Update the session to use the new keyspace by default
             $statement = new SimpleStatement("USE " . $this->keyspaceName);
             $this->session->execute($statement);
+
+            // Get the server version the session is connected to
+            $statement = new SimpleStatement(self::SELECT_SERVER_VERSION);
+            $rows = $this->session->execute($statement);
+            $this->serverVersion = $rows->first()["release_version"];
+
         } catch (Exception $e) {
             printf("Error Creating CCM Cluster: %s" . PHP_EOL . "%s" . PHP_EOL,
                 $e->getMessage(), $e->getTraceAsString());

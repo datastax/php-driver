@@ -24,54 +24,12 @@ use Cassandra\Type\UserType;
  *
  * @cassandra-version-2.1
  */
-class TupleIntegrationTest extends \PHPUnit_Framework_TestCase {
-    /**
-     * Integration test instance (helper class).
-     *
-     * @var Integration
-     */
-    private $integration;
-    /**
-     * Connected database session.
-     *
-     * @var \Cassandra\Session
-     */
-    private $session;
-    /**
-     * Table name prefix being used for the test.
-     *
-     * @var string
-     */
-    private $tableNamePrefix;
-
-    /**
-     * Setup the database for the tuple tests.
-     *
-     * @before
-     */
-    public function setupTest() {
-        // Initialize the database and establish a connection
-        $this->integration = new Integration(get_class(), $this->getName());
-        $this->session = $this->integration->session;
-
-        // Assign the table name for the test
-        $this->tableNamePrefix = strtolower($this->getName());
-    }
-
-    /**
-     * Teardown the database for the tuple tests.
-     *
-     * @after
-     */
-    public function teardownTest() {
-        unset($this->integration);
-    }
-
+class TupleIntegrationTest extends BasicIntegrationTest {
     /**
      * Generate an array of valid Cassandra datatypes with values that can be
      * used for testing.
      *
-     * @param $isNullTest bool True if scalar values are null; false otherwise
+     * @param bool $isNullTest True if scalar values are null; false otherwise
      * @return array Valid scalar Cassandra datatypes with test values
      */
     private function generateScalarValues($isNullTest = false) {
@@ -99,7 +57,7 @@ class TupleIntegrationTest extends \PHPUnit_Framework_TestCase {
      * Generate an array of valid Cassandra composite datatypes with scalar
      * values that can be used for testing.
      *
-     * @param $size Number of elements in the collection
+     * @param int $size Number of elements in the collection
      * @return array Valid composite Cassandra datatypes from scalar test
      *               values
      */
@@ -125,8 +83,8 @@ class TupleIntegrationTest extends \PHPUnit_Framework_TestCase {
     /**
      * Generate the elements for a tuple.
      *
-     * @param $datatype Cassandra datatype to use for elements
-     * @param $size Number of elements to generate
+     * @param mixed $datatype Cassandra datatype to use for elements
+     * @param int $size Number of elements to generate
      * @return string Elements for tuple
      */
     private function generateTupleElements($datatype, $size) {
@@ -143,9 +101,9 @@ class TupleIntegrationTest extends \PHPUnit_Framework_TestCase {
     /**
      * Generate the CQL for a tuple.
      *
-     * @param $datatype Cassandra datatype to use for elements
-     * @param $size Number of elements to generate
-     * @param $isNested bool True if tuple is nested; false otherwise
+     * @param mixed $datatype Cassandra datatype to use for elements
+     * @param int $size Number of elements to generate
+     * @param bool $isNested True if tuple is nested; false otherwise
      * @param bool $isFrozen True if frozen; false otherwise (DEFAULT: false)
      * @return string CQL for tuple
      */
@@ -170,9 +128,9 @@ class TupleIntegrationTest extends \PHPUnit_Framework_TestCase {
     /**
      * Generate a tuple
      *
-     * @param $datatype Cassandra datatype for each element in the tuple
-     * @param $value Value for each element in the tuple
-     * @param $size Number of elements in the tuple
+     * @param mixed $datatype Cassandra datatype for each element in the tuple
+     * @param \Cassandra\Value $value Value for each element in the tuple
+     * @param int $size Number of elements in the tuple
      * @return \Cassandra\Tuple Value assigned tuple
      */
     private function generateTuple($datatype, $value, $size) {
@@ -197,9 +155,11 @@ class TupleIntegrationTest extends \PHPUnit_Framework_TestCase {
     /**
      * Generate a nested tuple.
      *
-     * @param $datatype Cassandra datatype for each element in the nested tuple
-     * @param $value Value for each element in the nested tuple
-     * @param $depth Depth of nested tuple with decaying number of elements
+     * @param mixed $datatype Cassandra datatype for each element in the
+     *                        nested tuple
+     * @param \Cassandra\Value $value Value for each element in the nested
+     *                         tuple
+     * @param int $depth Depth of nested tuple with decaying number of elements
      * @return \Cassandra\Tuple Value assigned nested tuple
      */
     private function generateNestedTuple($datatype, $value, $depth) {
@@ -236,10 +196,10 @@ class TupleIntegrationTest extends \PHPUnit_Framework_TestCase {
      * used for tables when creating and reading/writing data in order to keep
      * tables run in a test distinct from each other.
      *
-     * @param $datatype Current datatype for the value
-     * @param $value \Cassandra\Value Value to check for composite types
-     * @return array datatype - Datatype for use in CQL queries
-     *               table_suffix - Suffix to keep tables distinct
+     * @param mixed $datatype Current datatype for the value
+     * @param \Cassandra\Value $value Value to check for composite types
+     * @return array ['datatype'] mixed Datatype for use in CQL queries
+     *               ['table_suffix'] string Suffix to keep tables distinct
      */
     private function getCQLTypes($datatype, $value) {
         // Determine if the datatype should be updated to reflect the composite
@@ -261,12 +221,12 @@ class TupleIntegrationTest extends \PHPUnit_Framework_TestCase {
      * Create a table and insert a tuple based on the value and datatype into
      * Cassandra.
      *
-     * @param $datatype Cassandra datatype for each element in the tuple
-     * @param $value Value for each element in the tuple
-     * @param $size Number of elements to generate
-     * @return Timeuuid Key used during insert
-     * @param $isNested bool True if tuple is nested; false otherwise
+     * @param mixed $datatype Cassandra datatype for each element in the tuple
+     * @param \Cassandra\Value $value Value for each element in the tuple
+     * @param int $size Number of elements to generate
+     * @param bool $isNested True if tuple is nested; false otherwise
      *                       (DEFAULT: false)
+     * @return \Cassandra\Timeuuid Key used during insert
      */
     private function insertTuple($datatype, $value, $size, $isNested = false) {
         // Get the CQL datatype (handles composite types)
@@ -309,8 +269,9 @@ class TupleIntegrationTest extends \PHPUnit_Framework_TestCase {
     /**
      * Make assertions on each element in the nested tuple.
      *
-     * @param $tuple \Cassandra\Tuple Tuple object to validate
-     * @param $value Value to assert against each element of the tuple
+     * @param \Cassandra\Tuple $tuple Tuple object to validate
+     * @param \Cassandra\Value $value Value to assert against each element of
+     *                         the tuple
      */
     private function assertNestedTupleElements($tuple, $value) {
         foreach ($tuple as $element) {
@@ -325,12 +286,13 @@ class TupleIntegrationTest extends \PHPUnit_Framework_TestCase {
     /**
      * Make assertions on each element in the tuple.
      *
-     * @param $key Key to use to select tuple value
-     * @param $datatype Cassandra datatype to assert against each element in
-     *                  the tuple
-     * @param $value Value to assert against each element in the tuple
-     * @param $size Number of elements in the tuple
-     * @param $isNested bool True if tuple is nested; false otherwise
+     * @param \Cassandra\Timeuuid $key Key to use to select tuple value
+     * @param mixed $datatype Cassandra datatype to assert against each element
+     *                        in the tuple
+     * @param \Cassandra\Value $value Value to assert against each element in
+     *                                the tuple
+     * @param int $size Number of elements in the tuple
+     * @param bool $isNested True if tuple is nested; false otherwise
      *                       (DEFAULT: false)
      */
     private function assertTuple($key, $datatype, $value, $size, $isNested = false) {
@@ -468,8 +430,9 @@ class TupleIntegrationTest extends \PHPUnit_Framework_TestCase {
      *
      * @test
      * @ticket PHP-57
+     * @ticket PHP-58
      */
-    public function usertype() {
+    public function userType() {
         // Create the user types
         $this->session->execute(new SimpleStatement(UserTypeIntegrationTest::PHONE_USER_TYPE_CQL));
         $this->session->execute(new SimpleStatement(UserTypeIntegrationTest::ADDRESS_USER_TYPE_CQL));
@@ -518,7 +481,7 @@ class TupleIntegrationTest extends \PHPUnit_Framework_TestCase {
     }
 
     /**
-     * Invalid datatypes for Tuples
+     * Invalid datatypes for tuples.
      *
      * This test will ensure that an exception will occur when an invalid
      * datatype is used inside a tuple; issues from the server.
@@ -535,7 +498,7 @@ class TupleIntegrationTest extends \PHPUnit_Framework_TestCase {
     }
 
     /**
-     * NULL values in datatypes for Tuples.
+     * NULL values in datatypes for tuples.
      *
      * This test will ensure that data can be inserted into the table when NULL
      * values are present in the tuple. Both scalar and nested scalar datatypes
