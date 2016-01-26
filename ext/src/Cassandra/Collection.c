@@ -72,24 +72,27 @@ php_cassandra_collection_populate(cassandra_collection *collection, zval *array)
 PHP_METHOD(Collection, __construct)
 {
   cassandra_collection *self;
-  zval *value_type;
+  zval *type;
 
-  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z", &value_type) == FAILURE)
+  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z", &type) == FAILURE)
     return;
 
   self = PHP_CASSANDRA_GET_COLLECTION(getThis());
 
-  if (Z_TYPE_P(value_type) == IS_STRING) {
-    CassValueType type;
-    if (!php_cassandra_value_type(Z_STRVAL_P(value_type), &type TSRMLS_CC))
+  if (Z_TYPE_P(type) == IS_STRING) {
+    CassValueType value_type;
+    if (!php_cassandra_value_type(Z_STRVAL_P(type), &value_type TSRMLS_CC))
       return;
-    self->type = php_cassandra_type_set_from_value_type(type TSRMLS_CC);
-  } else if (Z_TYPE_P(value_type) == IS_OBJECT &&
-             instanceof_function(Z_OBJCE_P(value_type), cassandra_type_ce TSRMLS_CC)) {
-    self->type = php_cassandra_type_collection(value_type TSRMLS_CC);
-    Z_ADDREF_P(value_type);
+    self->type = php_cassandra_type_set_from_value_type(value_type TSRMLS_CC);
+  } else if (Z_TYPE_P(type) == IS_OBJECT &&
+             instanceof_function(Z_OBJCE_P(type), cassandra_type_ce TSRMLS_CC)) {
+    if (!php_cassandra_type_validate(type, "type" TSRMLS_CC)) {
+      return;
+    }
+    self->type = php_cassandra_type_collection(type TSRMLS_CC);
+    Z_ADDREF_P(type);
   } else {
-    INVALID_ARGUMENT(value_type, "a string or an instance of Cassandra\\Type");
+    INVALID_ARGUMENT(type, "a string or an instance of Cassandra\\Type");
   }
 }
 /* }}} */

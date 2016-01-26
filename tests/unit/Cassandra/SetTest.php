@@ -7,6 +7,44 @@ namespace Cassandra;
  */
 class SetTest extends \PHPUnit_Framework_TestCase
 {
+    /**
+     * @expectedException         InvalidArgumentException
+     * @expectedExceptionMessage  type must be a string or an instance of Cassandra\Type, an instance of stdClass given
+     */
+    public function testInvalidType()
+    {
+        new Set(new \stdClass());
+    }
+
+    /**
+     * @expectedException         InvalidArgumentException
+     * @expectedExceptionMessage  Unsupported type 'custom type'
+     */
+    public function testUnsupportedStringType()
+    {
+        new Set('custom type');
+    }
+
+    /**
+     * @expectedException        InvalidArgumentException
+     * @expectedExceptionMessage type must be Cassandra\Type::varchar(),
+     *                           Cassandra\Type::text(), Cassandra\Type::blob(),
+     *                           Cassandra\Type::ascii(), Cassandra\Type::bigint(),
+     *                           Cassandra\Type::counter(), Cassandra\Type::int(),
+     *                           Cassandra\Type::varint(), Cassandra\Type::boolean(),
+     *                           Cassandra\Type::decimal(), Cassandra\Type::double(),
+     *                           Cassandra\Type::float(), Cassandra\Type::inet(),
+     *                           Cassandra\Type::timestamp(), Cassandra\Type::uuid(),
+     *                           Cassandra\Type::timeuuid(), Cassandra\Type::map(),
+     *                           Cassandra\Type::set(), Cassandra\Type::collection(),
+     *                           Cassandra\Type::tuple() or Cassandra\Type::udt(),
+     *                           an instance of Cassandra\Type\UnsupportedType given
+     */
+    public function testUnsupportedType()
+    {
+        new Set(new Type\UnsupportedType());
+    }
+
     public function testContainsUniqueValues()
     {
         $set = new Set(\Cassandra::TYPE_VARINT);
@@ -20,14 +58,14 @@ class SetTest extends \PHPUnit_Framework_TestCase
     /**
      * @dataProvider scalarTypes
      */
-    public function testScalarKeys($keyType, $keyValue, $keyValueCopy)
+    public function testScalarKeys($type, $value, $valueCopy)
     {
-        $map = Type::set($keyType)->create();
-        $map->add($keyValue);
+        $map = Type::set($type)->create();
+        $map->add($value);
         $this->assertEquals(1, count($map));
-        $this->assertTrue($map->has($keyValue));
-        $this->assertTrue($map->has($keyValueCopy));
-        $map->remove($keyValue);
+        $this->assertTrue($map->has($value));
+        $this->assertTrue($map->has($valueCopy));
+        $map->remove($value);
         $this->assertEquals(0, count($map));
     }
 
@@ -56,34 +94,33 @@ class SetTest extends \PHPUnit_Framework_TestCase
     /**
      * @dataProvider compositeTypes
      */
-    public function testCompositeKeys($keyType)
+    public function testCompositeKeys($type)
     {
-        $map = Type::set($keyType)->create();
+        $map = Type::set($type)->create();
 
-        $map->add($keyType->create("a", "1", "b", "2"));
-        $this->assertTrue($map->has($keyType->create("a", "1", "b", "2")));
+        $map->add($type->create("a", "1", "b", "2"));
+        $this->assertTrue($map->has($type->create("a", "1", "b", "2")));
         $this->assertEquals(1, count($map));
 
-        $map->add($keyType->create("c", "3", "d", "4", "e", "5"));
-        $this->assertTrue($map->has($keyType->create("c", "3", "d", "4", "e", "5")));
+        $map->add($type->create("c", "3", "d", "4", "e", "5"));
+        $this->assertTrue($map->has($type->create("c", "3", "d", "4", "e", "5")));
         $this->assertEquals(2, count($map));
 
-        $map->remove($keyType->create("a", "1", "b", "2"));
-        $this->assertFalse($map->has($keyType->create("a", "1", "b", "2")));
+        $map->remove($type->create("a", "1", "b", "2"));
+        $this->assertFalse($map->has($type->create("a", "1", "b", "2")));
         $this->assertEquals(1, count($map));
 
-        $map->remove($keyType->create("c", "3", "d", "4", "e", "5"));
-        $this->assertFalse($map->has($keyType->create("c", "3", "d", "4", "e", "5")));
+        $map->remove($type->create("c", "3", "d", "4", "e", "5"));
+        $this->assertFalse($map->has($type->create("c", "3", "d", "4", "e", "5")));
         $this->assertEquals(0, count($map));
     }
 
     public function compositeTypes()
     {
         return array(
-            array(
-                Type::map(Type::varchar(), Type::varchar()),
-                Type::set(Type::varchar()),
-                Type::collection(Type::varchar()))
+            array(Type::map(Type::varchar(), Type::varchar())),
+            array(Type::set(Type::varchar())),
+            array(Type::collection(Type::varchar()))
         );
     }
 
@@ -143,6 +180,16 @@ class SetTest extends \PHPUnit_Framework_TestCase
     {
         $set = new Set(\Cassandra::TYPE_VARINT);
         $set->add(new Decimal('123'));
+    }
+
+    /**
+     * @expectedException         InvalidArgumentException
+     * @expectedExceptionMessage  Invalid value: null is not supported inside sets
+     */
+    public function testSupportsNullValues()
+    {
+        $set = new Set(\Cassandra::TYPE_VARINT);
+        $set->add(null);
     }
 
     /**
@@ -211,5 +258,20 @@ class SetTest extends \PHPUnit_Framework_TestCase
         return array(
             array(array(1, 2, 3, 4, 5, 6, 7, 8, 9))
         );
+    }
+
+    public function testSupportsRetrievingValues()
+    {
+        $values = array(new Varint('1'), new Varint('2'), new Varint('3'),
+                        new Varint('4'), new Varint('5'), new Varint('6'),
+                        new Varint('7'), new Varint('8'));
+        $set = new Set(\Cassandra::TYPE_VARINT);
+
+        for ($i = 0; $i < count($values); $i++) {
+            $set->add($values[$i]);
+        }
+
+        $this->assertEquals($values, $set->values());
+
     }
 }

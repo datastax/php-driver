@@ -26,6 +26,28 @@ int php_cassandra_type_user_type_add(cassandra_type *type,
   return 1;
 }
 
+PHP_METHOD(UserType, withName)
+{
+  char *name;
+  php5to7_size name_len;
+
+  cassandra_type *self;
+
+  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &name, &name_len) == FAILURE) {
+    return;
+  }
+
+  self = PHP_CASSANDRA_GET_TYPE(getThis());
+
+  if (self->type_name) {
+    efree(self->type_name);
+  }
+
+  self->type_name = estrndup(name, name_len);
+
+  RETURN_ZVAL(getThis(), 1, 0);
+}
+
 PHP_METHOD(UserType, name)
 {
   cassandra_type *self;
@@ -40,6 +62,28 @@ PHP_METHOD(UserType, name)
     RETURN_NULL();
 
   PHP5TO7_RETVAL_STRING(self->type_name);
+}
+
+PHP_METHOD(UserType, withKeyspace)
+{
+  char *keyspace;
+  php5to7_size keyspace_len;
+
+  cassandra_type *self;
+
+  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &keyspace, &keyspace_len) == FAILURE) {
+    return;
+  }
+
+  self = PHP_CASSANDRA_GET_TYPE(getThis());
+
+  if (self->keyspace) {
+    efree(self->keyspace);
+  }
+
+  self->keyspace = estrndup(keyspace, keyspace_len);
+
+  RETURN_ZVAL(getThis(), 1, 0);
 }
 
 PHP_METHOD(UserType, keyspace)
@@ -172,12 +216,22 @@ ZEND_BEGIN_ARG_INFO_EX(arginfo_value, 0, ZEND_RETURN_VALUE, 0)
   ZEND_ARG_INFO(0, value)
 ZEND_END_ARG_INFO()
 
+ZEND_BEGIN_ARG_INFO_EX(arginfo_name, 0, ZEND_RETURN_VALUE, 1)
+  ZEND_ARG_INFO(0, name)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_INFO_EX(arginfo_keyspace, 0, ZEND_RETURN_VALUE, 1)
+  ZEND_ARG_INFO(0, keyspace)
+ZEND_END_ARG_INFO()
+
 static zend_function_entry cassandra_type_user_type_methods[] = {
-  PHP_ME(UserType, name,       arginfo_none,  ZEND_ACC_PUBLIC)
-  PHP_ME(UserType, keyspace,   arginfo_none,  ZEND_ACC_PUBLIC)
-  PHP_ME(UserType, __toString, arginfo_none,  ZEND_ACC_PUBLIC)
-  PHP_ME(UserType, types,      arginfo_none,  ZEND_ACC_PUBLIC)
-  PHP_ME(UserType, create,     arginfo_value, ZEND_ACC_PUBLIC)
+  PHP_ME(UserType, withName,     arginfo_name,     ZEND_ACC_PUBLIC)
+  PHP_ME(UserType, name,         arginfo_none,     ZEND_ACC_PUBLIC)
+  PHP_ME(UserType, withKeyspace, arginfo_keyspace, ZEND_ACC_PUBLIC)
+  PHP_ME(UserType, keyspace,     arginfo_none,     ZEND_ACC_PUBLIC)
+  PHP_ME(UserType, __toString,   arginfo_none,     ZEND_ACC_PUBLIC)
+  PHP_ME(UserType, types,        arginfo_none,     ZEND_ACC_PUBLIC)
+  PHP_ME(UserType, create,       arginfo_value,    ZEND_ACC_PUBLIC)
   PHP_FE_END
 };
 
