@@ -2,46 +2,15 @@
 
 namespace Cassandra;
 
-class CollectionsTestCase extends \PHPUnit_Framework_TestCase
-{
-    /**
-     * Integration test instance (helper class).
-     *
-     * @var Integration
-     */
-    protected $integration;
-
-    /**
-     * Connected database session.
-     *
-     * @var \Cassandra\Session
-     */
-    protected $session;
-
-    /**
-     * Table name prefix being used for the test.
-     *
-     * @var string
-     */
-    protected $tableNamePrefix;
-
+class CollectionsIntegrationTest extends BasicIntegrationTest {
     public function setUp() {
-        // Initialize the database and establish a connection
-        $this->integration = new Integration(get_class(), $this->getName(false));
-        $this->session = $this->integration->session;
+        parent::setUp();
 
         foreach ($this->compositeCassandraTypes() as $cassandraType) {
             if ($cassandraType[0] instanceof Type\UserType) {
                 $this->createUserType($cassandraType[0]);
             }
         }
-
-        // Assign the table name for the test
-        $this->tableNamePrefix = strtolower($this->getName(false));
-    }
-
-    public function teardown() {
-        unset($this->integration);
     }
 
     public function scalarCassandraTypes() {

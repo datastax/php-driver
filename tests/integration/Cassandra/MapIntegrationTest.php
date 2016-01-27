@@ -2,7 +2,7 @@
 
 namespace Cassandra;
 
-class CollectionIntegrationTest extends CollectionsTestCase
+class MapIntegrationTest extends CollectionsIntegrationTest
 {
     /**
      * Map with scalar types

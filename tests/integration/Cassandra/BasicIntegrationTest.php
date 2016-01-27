@@ -54,14 +54,14 @@ abstract class BasicIntegrationTest extends \PHPUnit_Framework_TestCase {
      *
      * @before
      */
-    protected function setupTest() {
+    protected function setUp() {
         // Initialize the database and establish a connection
-        $this->integration = new Integration(get_class(), $this->getName());
+        $this->integration = new Integration(get_class(), $this->getName(false));
         $this->session = $this->integration->session;
         $this->serverVersion = $this->integration->serverVersion;
 
         // Assign the table name for the test
-        $this->tableNamePrefix = strtolower($this->getName());
+        $this->tableNamePrefix = strtolower($this->getName(false));
     }
 
     /**
@@ -69,7 +69,7 @@ abstract class BasicIntegrationTest extends \PHPUnit_Framework_TestCase {
      *
      * @after
      */
-    protected function teardownTest() {
+    protected function teardown() {
         unset($this->integration);
     }
 }
