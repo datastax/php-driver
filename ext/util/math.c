@@ -600,7 +600,16 @@ export_twos_complement(mpz_t number, size_t *size)
     bytes = (cass_byte_t*) mpz_export(NULL, size, 1, sizeof(cass_byte_t), 1, 0, temp);
     mpz_clear(temp);
   } else {
-    bytes = (cass_byte_t*) mpz_export(NULL, size, 1, sizeof(cass_byte_t), 1, 0, number);
+    /* mpz_export() always returns a unsigned number and can have
+     * values where the most significate bit is set. A 0 byte prevents
+     * these from being interpreted as a negative value in two's complement
+     */
+
+    /* round to the nearest byte and add space for a leading 0 byte */
+    *size = (mpz_sizeinbase(number, 2) + 7) / 8 + 1;
+    bytes = malloc(*size);
+    bytes[0] = 0;
+    mpz_export(bytes + 1, NULL, 1, sizeof(cass_byte_t), 1, 0, number);
   }
 
   return bytes;
