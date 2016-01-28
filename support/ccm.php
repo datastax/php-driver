@@ -7,7 +7,7 @@ class CCM
 {
     const DEFAULT_CLUSTER_PREFIX = "php-driver";
     const DEFAULT_CASSANDRA_VERSION = "2.1.12";
-    const PROCESS_IDLE_TIMEOUT_IN_SECONDS = 480;
+    const PROCESS_TIMEOUT_IN_SECONDS = 480;
     private $clusterPrefix;
     private $isSilent;
     private $version;
@@ -33,7 +33,7 @@ class CCM
         $this->dataCenterTwoNodes = 0;
 
         // Increase the timeout to handle TravisCI timeouts
-        $this->process->setIdleTimeout(self::PROCESS_IDLE_TIMEOUT_IN_SECONDS);
+        $this->process->setTimeout(self::PROCESS_TIMEOUT_IN_SECONDS);
     }
 
     public function setupSchema($schema)
