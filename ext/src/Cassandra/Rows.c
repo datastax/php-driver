@@ -81,7 +81,8 @@ PHP_METHOD(Rows, key)
 
   self = PHP_CASSANDRA_GET_ROWS(getThis());
 
-  if (PHP5TO7_ZEND_HASH_GET_CURRENT_KEY(PHP5TO7_Z_ARRVAL_MAYBE_P(self->rows), &str_index, &num_index) == HASH_KEY_IS_LONG)
+  if (PHP5TO7_ZEND_HASH_GET_CURRENT_KEY(PHP5TO7_Z_ARRVAL_MAYBE_P(self->rows),
+                                        &str_index, &num_index) == HASH_KEY_IS_LONG)
     RETURN_LONG(num_index);
 }
 

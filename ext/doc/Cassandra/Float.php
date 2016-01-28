@@ -31,7 +31,7 @@ final class Float implements Value, Numeric
     public static function min() {}
 
     /**
-     * Maximim possible Float value
+     * Maximum possible Float value
      *
      * @return Float maximum value
      */

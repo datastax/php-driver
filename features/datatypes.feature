@@ -200,3 +200,121 @@ Feature: Datatypes
         ),
       ))
       """
+
+  @tuple
+  Scenario: Using Cassandra tuple type
+    Given the following schema:
+      """cql
+      CREATE KEYSPACE simplex WITH replication = {
+        'class': 'SimpleStrategy',
+        'replication_factor': 1
+      };
+      USE simplex;
+      CREATE TABLE inventory  (
+        name text PRIMARY KEY,
+        description frozen<tuple<text, int, float>>
+      );
+      INSERT INTO inventory (name, description) VALUES ('grapes', ('green',  100, 0.2));
+      INSERT INTO inventory (name, description) VALUES ('apple', ('red',  99, 0.21));
+      INSERT INTO inventory (name, description) VALUES ('plates', ('white', 1000, 0.0001));
+      """
+    And the following example:
+      """php
+      <?php
+      $cluster   = Cassandra::cluster()
+                     ->withContactPoints('127.0.0.1')
+                     ->build();
+      $session   = $cluster->connect("simplex");
+      $statement = new Cassandra\SimpleStatement("SELECT * FROM inventory");
+      $result    = $session->execute($statement);
+
+      foreach ($result as $row) {
+        echo "Name: " . $row['name'] . "\n";
+        echo "Description: " . var_export($row['description'], true) . "\n";
+      }
+      """
+    When it is executed
+    Then its output should contain:
+      """
+      Cassandra\Tuple::__set_state(array(
+         'values' =>
+        array (
+          0 => 'white',
+          1 => 1000,
+          2 =>
+          Cassandra\Float::__set_state(array(
+             'value' => '0.00009999999747',
+          )),
+        ),
+      ))
+      Name: grapes
+      Description: Cassandra\Tuple::__set_state(array(
+         'values' =>
+        array (
+          0 => 'green',
+          1 => 100,
+          2 =>
+          Cassandra\Float::__set_state(array(
+             'value' => '0.20000000298023',
+          )),
+        ),
+      ))
+      Name: apple
+      Description: Cassandra\Tuple::__set_state(array(
+         'values' =>
+        array (
+          0 => 'red',
+          1 => 99,
+          2 =>
+          Cassandra\Float::__set_state(array(
+             'value' => '0.20999999344349',
+          )),
+        ),
+      ))
+      """
+
+  @udt
+  Scenario: Using Cassandra UDT type
+    Given the following schema:
+      """cql
+      CREATE KEYSPACE simplex WITH replication = {
+        'class': 'SimpleStrategy',
+        'replication_factor': 1
+      };
+      USE simplex;
+      CREATE TYPE address (street text, city text, state text, zip int);
+      CREATE TABLE addresses (
+        id int PRIMARY KEY,
+        address frozen<address>
+      );
+      INSERT INTO addresses (id, address)
+      VALUES (
+      0, {street: '1234 Some St.', city: 'Metropolis', state: 'AZ', zip: 12345 }
+      );
+      """
+    And the following example:
+      """php
+      <?php
+      $cluster   = Cassandra::cluster()
+                     ->withContactPoints('127.0.0.1')
+                     ->build();
+      $session   = $cluster->connect("simplex");
+      $statement = new Cassandra\SimpleStatement("SELECT * FROM addresses");
+      $result    = $session->execute($statement);
+      $row       = $result->first();
+
+      echo "Address: " . var_export($row['address'], true) . "\n";
+      """
+    When it is executed
+    Then its output should contain:
+      """
+      Address: Cassandra\UserTypeValue::__set_state(array(
+         'values' =>
+        array (
+          'street' => '1234 Some St.',
+          'city' => 'Metropolis',
+          'state' => 'AZ',
+          'zip' => 12345,
+        ),
+      ))
+      """

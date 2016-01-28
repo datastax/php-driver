@@ -85,6 +85,15 @@ typedef zval **php5to7_zval_gc;
 typedef zval *php5to7_dtor;
 typedef size_t php5to7_size;
 
+static inline int
+php5to7_string_compare(php5to7_string s1, php5to7_string s2)
+{
+  if (s1->len != s2->len) {
+    return s1->len < s2->len ? -1 : 1;
+  }
+  return memcmp(s1->val, s2->val, s1->len);
+}
+
 #define PHP5TO7_ZEND_OBJECT_GET(type_name, object) \
   php_cassandra_##type_name##_object_fetch(object);
 
@@ -119,8 +128,17 @@ typedef size_t php5to7_size;
 
 #define PHP5TO7_ZEND_HASH_FOREACH_VAL(ht, _val) \
   ZEND_HASH_FOREACH_VAL(ht, _val)
+
 #define PHP5TO7_ZEND_HASH_FOREACH_NUM_KEY_VAL(ht, _h, _val) \
   ZEND_HASH_FOREACH_NUM_KEY_VAL(ht, _h, _val)
+
+#define PHP5TO7_ZEND_HASH_FOREACH_STR_KEY_VAL(ht, _key, _val) \
+  ZEND_HASH_FOREACH(ht, 0);                                   \
+  if (_p->key) {                                              \
+    _key = _p->key->val;                                      \
+  }                                                           \
+  _val = _z;
+
 #define PHP5TO7_ZEND_HASH_FOREACH_END(ht) ZEND_HASH_FOREACH_END()
 
 #define PHP5TO7_ZEND_HASH_GET_CURRENT_DATA(ht, res) \
@@ -129,8 +147,14 @@ typedef size_t php5to7_size;
 #define PHP5TO7_ZEND_HASH_GET_CURRENT_DATA_EX(ht, res, pos) \
   ((res = zend_hash_get_current_data_ex((ht), (pos))) != NULL)
 
+#define PHP5TO7_ZEND_HASH_GET_CURRENT_DATA_EX(ht, res, pos) \
+  ((res = zend_hash_get_current_data_ex((ht), (pos))) != NULL)
+
 #define PHP5TO7_ZEND_HASH_GET_CURRENT_KEY(ht, str_index, num_index) \
   zend_hash_get_current_key((ht), (str_index), (num_index))
+
+#define PHP5TO7_ZEND_HASH_GET_CURRENT_KEY_EX(ht, str_index, num_index, pos) \
+  (zend_hash_get_current_key_ex((ht), (str_index), (num_index), pos) == SUCCESS)
 
 #define PHP5TO7_ZEND_HASH_EXISTS(ht, key, len) \
   zend_hash_str_exists((ht), (key), (size_t)(len - 1))
@@ -155,6 +179,9 @@ typedef size_t php5to7_size;
 
 #define PHP5TO7_ZEND_HASH_DEL(ht, key, len) \
   ((zend_hash_str_del((ht), (key), (size_t)(len - 1))) == SUCCESS)
+
+#define PHP5TO7_ZEND_HASH_ZVAL_COPY(dst, src) \
+  zend_hash_copy((dst), (src), (copy_ctor_func_t) zval_add_ref);
 
 #define PHP5TO7_ZEND_STRING_VAL(str) (str)->val
 #define PHP5TO7_ZEND_STRING_LEN(str) (str)->len
@@ -206,6 +233,12 @@ typedef zval ***php5to7_zval_gc;
 typedef void **php5to7_dtor;
 typedef int php5to7_size;
 
+static inline int
+php5to7_string_compare(php5to7_string s1, php5to7_string s2)
+{
+  return strcmp(s1, s2);
+}
+
 #define PHP5TO7_ZEND_OBJECT_GET(type_name, object) \
   (cassandra_##type_name *) object
 
@@ -255,9 +288,14 @@ typedef int php5to7_size;
 
 #define PHP5TO7_ZEND_HASH_FOREACH_NUM_KEY_VAL(ht, _h, _val) \
   PHP5TO7_ZEND_HASH_FOREACH_VAL(ht, _val) \
-    char *_str_index; \
-    uint _str_length; \
-    zend_hash_get_current_key_ex((ht), &_str_index, &_str_length, &(_h), 0, &_pos);
+    char *_key; \
+    uint _len; \
+    zend_hash_get_current_key_ex((ht), &_key, &_len, &(_h), 0, &_pos);
+
+#define PHP5TO7_ZEND_HASH_FOREACH_STR_KEY_VAL(ht, _key, _val)      \
+  PHP5TO7_ZEND_HASH_FOREACH_VAL(ht, _val)                                \
+    ulong _h;                                                            \
+    zend_hash_get_current_key_ex((ht), &(_key), NULL, &_h, 0, &_pos);
 
 #define PHP5TO7_ZEND_HASH_FOREACH_END(ht) \
         zend_hash_move_forward_ex((ht), &_pos); \
@@ -272,6 +310,9 @@ typedef int php5to7_size;
 
 #define PHP5TO7_ZEND_HASH_GET_CURRENT_KEY(ht, str_index, num_index) \
   zend_hash_get_current_key((ht), (str_index), (num_index), 0)
+
+#define PHP5TO7_ZEND_HASH_GET_CURRENT_KEY_EX(ht, str_index, num_index, pos) \
+  zend_hash_get_current_key_ex((ht), (str_index), NULL, (num_index), 0, pos)
 
 #define PHP5TO7_ZEND_HASH_EXISTS(ht, key, len) \
   zend_hash_exists((ht), (key), (len))
@@ -289,7 +330,7 @@ typedef int php5to7_size;
   (zend_hash_update((ht), (key), (uint)(len), (void *) &(val), (uint)(val_size), NULL) == SUCCESS)
 
 #define PHP5TO7_ZEND_HASH_INDEX_UPDATE(ht, index, val, val_size) \
-  ((zend_hash_index_update((ht), (index), (val), (uint)(val_size))) == SUCCESS)
+  ((zend_hash_index_update((ht), (index), (void *) &(val), (uint)(val_size), NULL)) == SUCCESS)
 
 #define PHP5TO7_ZEND_HASH_ADD(ht, key, len, val, val_size) \
   (zend_hash_add((ht), (key), (len), (void *) &(val), (uint)(val_size), NULL) == SUCCESS)
@@ -297,6 +338,12 @@ typedef int php5to7_size;
 #define PHP5TO7_ZEND_HASH_DEL(ht, key, len) \
   ((zend_hash_del((ht), (key), (uint)(len))) == SUCCESS)
 
+#define PHP5TO7_ZEND_HASH_ZVAL_COPY(dst, src) do { \
+  zval *_tmp;                                      \
+  zend_hash_copy((dst), (src),                     \
+                 (copy_ctor_func_t) zval_add_ref,  \
+                 (void *) &_tmp, sizeof(zval *));  \
+} while (0)
 
 #define php5to7_zend_register_internal_class_ex(ce, parent_ce) zend_register_internal_class_ex((ce), (parent_ce), NULL TSRMLS_CC);
 

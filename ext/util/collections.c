@@ -145,6 +145,30 @@ php_cassandra_validate_object(zval *object, zval *ztype TSRMLS_DC)
     }
 
     return 1;
+ case CASS_VALUE_TYPE_TUPLE:
+    if (!INSTANCE_OF(cassandra_tuple_ce)) {
+      EXPECTING_VALUE("an instance of Cassandra\\Tuple");
+    } else {
+      cassandra_tuple *tuple = PHP_CASSANDRA_GET_TUPLE(object);
+      cassandra_type *tuple_type = PHP_CASSANDRA_GET_TYPE(PHP5TO7_ZVAL_MAYBE_P(tuple->type));
+      if (php_cassandra_type_compare(tuple_type, type TSRMLS_CC) != 0) {
+        return 0;
+      }
+    }
+
+    return 1;
+ case CASS_VALUE_TYPE_UDT:
+    if (!INSTANCE_OF(cassandra_user_type_value_ce)) {
+      EXPECTING_VALUE("an instance of Cassandra\\UserTypeValue");
+    } else {
+      cassandra_user_type_value *user_type_value = PHP_CASSANDRA_GET_USER_TYPE_VALUE(object);
+      cassandra_type *user_type = PHP_CASSANDRA_GET_TYPE(PHP5TO7_ZVAL_MAYBE_P(user_type_value->type));
+      if (php_cassandra_type_compare(user_type, type TSRMLS_CC) != 0) {
+        return 0;
+      }
+    }
+
+    return 1;
   default:
     EXPECTING_VALUE("a simple Cassandra value");
 
@@ -210,7 +234,11 @@ php_cassandra_collection_append(CassCollection *collection, zval *value, CassVal
   cassandra_collection *coll;
   cassandra_map        *map;
   cassandra_set        *set;
+  cassandra_tuple      *tup;
+  cassandra_user_type_value *user_type_value;
   CassCollection       *sub_collection;
+  CassTuple            *sub_tuple;
+  CassUserType         *sub_ut;
 
   switch (type) {
   case CASS_VALUE_TYPE_TEXT:
@@ -286,6 +314,260 @@ php_cassandra_collection_append(CassCollection *collection, zval *value, CassVal
     if (!php_cassandra_collection_from_set(set, &sub_collection TSRMLS_CC))
       return 0;
     CHECK_ERROR(cass_collection_append_collection(collection, sub_collection));
+    break;
+  case CASS_VALUE_TYPE_TUPLE:
+    tup = PHP_CASSANDRA_GET_TUPLE(value);
+    if (!php_cassandra_tuple_from_tuple(tup, &sub_tuple TSRMLS_CC))
+      return 0;
+    CHECK_ERROR(cass_collection_append_tuple(collection, sub_tuple));
+    break;
+  case CASS_VALUE_TYPE_UDT:
+    user_type_value = PHP_CASSANDRA_GET_USER_TYPE_VALUE(value);
+    if (!php_cassandra_user_type_from_user_type_value(user_type_value, &sub_ut TSRMLS_CC))
+      return 0;
+    CHECK_ERROR(cass_collection_append_user_type(collection, sub_ut));
+    break;
+  default:
+    zend_throw_exception_ex(cassandra_runtime_exception_ce, 0 TSRMLS_CC, "Unsupported collection type");
+    return 0;
+  }
+
+  return result;
+}
+
+static int
+php_cassandra_tuple_set(CassTuple *tuple, php5to7_ulong index, zval *value, CassValueType type TSRMLS_DC)
+{
+  int result = 1;
+  cassandra_blob       *blob;
+  cassandra_numeric    *numeric;
+  cassandra_timestamp  *timestamp;
+  cassandra_uuid       *uuid;
+  cassandra_inet       *inet;
+  size_t                size;
+  cass_byte_t          *data;
+  cassandra_collection *coll;
+  cassandra_map        *map;
+  cassandra_set        *set;
+  cassandra_tuple      *tup;
+  cassandra_user_type_value *user_type_value;
+  CassCollection       *sub_collection;
+  CassTuple            *sub_tuple;
+  CassUserType         *sub_ut;
+
+  if (Z_TYPE_P(value) == IS_NULL) {
+    CHECK_ERROR(cass_tuple_set_null(tuple, index));
+    return result;
+  }
+
+  switch (type) {
+  case CASS_VALUE_TYPE_TEXT:
+  case CASS_VALUE_TYPE_ASCII:
+  case CASS_VALUE_TYPE_VARCHAR:
+    CHECK_ERROR(cass_tuple_set_string_n(tuple, index, Z_STRVAL_P(value), Z_STRLEN_P(value)));
+    break;
+  case CASS_VALUE_TYPE_BIGINT:
+  case CASS_VALUE_TYPE_COUNTER:
+    numeric = PHP_CASSANDRA_GET_NUMERIC(value);
+    CHECK_ERROR(cass_tuple_set_int64(tuple, index, numeric->bigint_value));
+    break;
+  case CASS_VALUE_TYPE_BLOB:
+    blob = PHP_CASSANDRA_GET_BLOB(value);
+    CHECK_ERROR(cass_tuple_set_bytes(tuple, index, blob->data, blob->size));
+    break;
+  case CASS_VALUE_TYPE_BOOLEAN:
+#if PHP_MAJOR_VERSION >= 7
+    CHECK_ERROR(cass_tuple_set_bool(tuple, index, Z_TYPE_P(value) == IS_TRUE ? cass_true : cass_false));
+#else
+    CHECK_ERROR(cass_tuple_set_bool(tuple, index, Z_BVAL_P(value)));
+#endif
+    break;
+  case CASS_VALUE_TYPE_DOUBLE:
+    CHECK_ERROR(cass_tuple_set_double(tuple, index, Z_DVAL_P(value)));
+    break;
+  case CASS_VALUE_TYPE_FLOAT:
+    numeric = PHP_CASSANDRA_GET_NUMERIC(value);
+    CHECK_ERROR(cass_tuple_set_float(tuple, index, numeric->float_value));
+    break;
+  case CASS_VALUE_TYPE_INT:
+    CHECK_ERROR(cass_tuple_set_int32(tuple, index, Z_LVAL_P(value)));
+    break;
+  case CASS_VALUE_TYPE_TIMESTAMP:
+    timestamp = PHP_CASSANDRA_GET_TIMESTAMP(value);
+    CHECK_ERROR(cass_tuple_set_int64(tuple, index, timestamp->timestamp));
+    break;
+  case CASS_VALUE_TYPE_UUID:
+  case CASS_VALUE_TYPE_TIMEUUID:
+    uuid = PHP_CASSANDRA_GET_UUID(value);
+    CHECK_ERROR(cass_tuple_set_uuid(tuple, index, uuid->uuid));
+    break;
+  case CASS_VALUE_TYPE_VARINT:
+    numeric = PHP_CASSANDRA_GET_NUMERIC(value);
+    data = (cass_byte_t *) export_twos_complement(numeric->varint_value, &size);
+    CHECK_ERROR(cass_tuple_set_bytes(tuple, index, data, size));
+    free(data);
+    break;
+  case CASS_VALUE_TYPE_DECIMAL:
+    numeric = PHP_CASSANDRA_GET_NUMERIC(value);
+    data = (cass_byte_t *) export_twos_complement(numeric->decimal_value, &size);
+    CHECK_ERROR(cass_tuple_set_decimal(tuple, index, data, size, numeric->decimal_scale));
+    free(data);
+    break;
+  case CASS_VALUE_TYPE_INET:
+    inet = PHP_CASSANDRA_GET_INET(value);
+    CHECK_ERROR(cass_tuple_set_inet(tuple, index, inet->inet));
+    break;
+  case CASS_VALUE_TYPE_LIST:
+    coll = PHP_CASSANDRA_GET_COLLECTION(value);
+    if (!php_cassandra_collection_from_collection(coll, &sub_collection TSRMLS_CC))
+      return 0;
+    CHECK_ERROR(cass_tuple_set_collection(tuple, index, sub_collection));
+    break;
+  case CASS_VALUE_TYPE_MAP:
+    map = PHP_CASSANDRA_GET_MAP(value);
+    if (!php_cassandra_collection_from_map(map, &sub_collection TSRMLS_CC))
+      return 0;
+    CHECK_ERROR(cass_tuple_set_collection(tuple, index, sub_collection));
+    break;
+  case CASS_VALUE_TYPE_SET:
+    set = PHP_CASSANDRA_GET_SET(value);
+    if (!php_cassandra_collection_from_set(set, &sub_collection TSRMLS_CC))
+      return 0;
+    CHECK_ERROR(cass_tuple_set_collection(tuple, index, sub_collection));
+    break;
+  case CASS_VALUE_TYPE_TUPLE:
+    tup = PHP_CASSANDRA_GET_TUPLE(value);
+    if (!php_cassandra_tuple_from_tuple(tup, &sub_tuple TSRMLS_CC))
+      return 0;
+    CHECK_ERROR(cass_tuple_set_tuple(tuple, index, sub_tuple));
+    break;
+  case CASS_VALUE_TYPE_UDT:
+    user_type_value = PHP_CASSANDRA_GET_USER_TYPE_VALUE(value);
+    if (!php_cassandra_user_type_from_user_type_value(user_type_value, &sub_ut TSRMLS_CC))
+      return 0;
+    CHECK_ERROR(cass_tuple_set_user_type(tuple, index, sub_ut));
+    break;
+  default:
+    zend_throw_exception_ex(cassandra_runtime_exception_ce, 0 TSRMLS_CC, "Unsupported collection type");
+    return 0;
+  }
+
+  return result;
+}
+
+static int
+php_cassandra_user_type_set(CassUserType *ut,
+                            const char* name, zval *value,
+                            CassValueType type TSRMLS_DC)
+{
+  int result = 1;
+  cassandra_blob       *blob;
+  cassandra_numeric    *numeric;
+  cassandra_timestamp  *timestamp;
+  cassandra_uuid       *uuid;
+  cassandra_inet       *inet;
+  size_t                size;
+  cass_byte_t          *data;
+  cassandra_collection *coll;
+  cassandra_map        *map;
+  cassandra_set        *set;
+  cassandra_tuple      *tuple;
+  cassandra_user_type_value *user_type_value;
+  CassCollection       *sub_collection;
+  CassTuple            *sub_tup;
+  CassUserType         *sub_ut;
+
+  if (Z_TYPE_P(value) == IS_NULL) {
+    CHECK_ERROR(cass_user_type_set_null_by_name(ut, name));
+    return result;
+  }
+
+  switch (type) {
+  case CASS_VALUE_TYPE_TEXT:
+  case CASS_VALUE_TYPE_ASCII:
+  case CASS_VALUE_TYPE_VARCHAR:
+    CHECK_ERROR(cass_user_type_set_string_by_name(ut, name, Z_STRVAL_P(value)));
+    break;
+  case CASS_VALUE_TYPE_BIGINT:
+  case CASS_VALUE_TYPE_COUNTER:
+    numeric = PHP_CASSANDRA_GET_NUMERIC(value);
+    CHECK_ERROR(cass_user_type_set_int64_by_name(ut, name, numeric->bigint_value));
+    break;
+  case CASS_VALUE_TYPE_BLOB:
+    blob = PHP_CASSANDRA_GET_BLOB(value);
+    CHECK_ERROR(cass_user_type_set_bytes_by_name(ut, name, blob->data, blob->size));
+    break;
+  case CASS_VALUE_TYPE_BOOLEAN:
+#if PHP_MAJOR_VERSION >= 7
+    CHECK_ERROR(cass_user_type_set_bool_by_name(ut, name, Z_TYPE_P(value) == IS_TRUE ? cass_true : cass_false));
+#else
+    CHECK_ERROR(cass_user_type_set_bool_by_name(ut, name, Z_BVAL_P(value)));
+#endif
+    break;
+  case CASS_VALUE_TYPE_DOUBLE:
+    CHECK_ERROR(cass_user_type_set_double_by_name(ut, name, Z_DVAL_P(value)));
+    break;
+  case CASS_VALUE_TYPE_FLOAT:
+    numeric = PHP_CASSANDRA_GET_NUMERIC(value);
+    CHECK_ERROR(cass_user_type_set_float_by_name(ut, name, numeric->float_value));
+    break;
+  case CASS_VALUE_TYPE_INT:
+    CHECK_ERROR(cass_user_type_set_int32_by_name(ut, name, Z_LVAL_P(value)));
+    break;
+  case CASS_VALUE_TYPE_TIMESTAMP:
+    timestamp = PHP_CASSANDRA_GET_TIMESTAMP(value);
+    CHECK_ERROR(cass_user_type_set_int64_by_name(ut, name, timestamp->timestamp));
+    break;
+  case CASS_VALUE_TYPE_UUID:
+  case CASS_VALUE_TYPE_TIMEUUID:
+    uuid = PHP_CASSANDRA_GET_UUID(value);
+    CHECK_ERROR(cass_user_type_set_uuid_by_name(ut, name, uuid->uuid));
+    break;
+  case CASS_VALUE_TYPE_VARINT:
+    numeric = PHP_CASSANDRA_GET_NUMERIC(value);
+    data = (cass_byte_t *) export_twos_complement(numeric->varint_value, &size);
+    CHECK_ERROR(cass_user_type_set_bytes_by_name(ut, name, data, size));
+    free(data);
+    break;
+  case CASS_VALUE_TYPE_DECIMAL:
+    numeric = PHP_CASSANDRA_GET_NUMERIC(value);
+    data = (cass_byte_t *) export_twos_complement(numeric->decimal_value, &size);
+    CHECK_ERROR(cass_user_type_set_decimal_by_name(ut, name, data, size, numeric->decimal_scale));
+    free(data);
+    break;
+  case CASS_VALUE_TYPE_INET:
+    inet = PHP_CASSANDRA_GET_INET(value);
+    CHECK_ERROR(cass_user_type_set_inet_by_name(ut, name, inet->inet));
+    break;
+  case CASS_VALUE_TYPE_LIST:
+    coll = PHP_CASSANDRA_GET_COLLECTION(value);
+    if (!php_cassandra_collection_from_collection(coll, &sub_collection TSRMLS_CC))
+      return 0;
+    CHECK_ERROR(cass_user_type_set_collection_by_name(ut, name, sub_collection));
+    break;
+  case CASS_VALUE_TYPE_MAP:
+    map = PHP_CASSANDRA_GET_MAP(value);
+    if (!php_cassandra_collection_from_map(map, &sub_collection TSRMLS_CC))
+      return 0;
+    CHECK_ERROR(cass_user_type_set_collection_by_name(ut, name, sub_collection));
+    break;
+  case CASS_VALUE_TYPE_SET:
+    set = PHP_CASSANDRA_GET_SET(value);
+    if (!php_cassandra_collection_from_set(set, &sub_collection TSRMLS_CC))
+      return 0;
+    CHECK_ERROR(cass_user_type_set_collection_by_name(ut, name, sub_collection));
+    break;
+  case CASS_VALUE_TYPE_TUPLE:
+    tuple = PHP_CASSANDRA_GET_TUPLE(value);
+    if (!php_cassandra_tuple_from_tuple(tuple, &sub_tup TSRMLS_CC))
+      return 0;
+    CHECK_ERROR(cass_user_type_set_tuple_by_name(ut, name, sub_tup));
+    break;
+  case CASS_VALUE_TYPE_UDT:
+    user_type_value = PHP_CASSANDRA_GET_USER_TYPE_VALUE(value);
+    if (!php_cassandra_user_type_from_user_type_value(user_type_value, &sub_ut TSRMLS_CC))
+      return 0;
+    CHECK_ERROR(cass_user_type_set_user_type_by_name(ut, name, sub_ut));
     break;
   default:
     zend_throw_exception_ex(cassandra_runtime_exception_ce, 0 TSRMLS_CC, "Unsupported collection type");
@@ -392,3 +674,82 @@ php_cassandra_collection_from_map(cassandra_map *map, CassCollection **collectio
 
   return result;
 }
+
+int
+php_cassandra_tuple_from_tuple(cassandra_tuple *tuple, CassTuple **output TSRMLS_DC)
+{
+  int result = 1;
+  php5to7_ulong num_key;
+  php5to7_zval *current;
+  cassandra_type *type;
+  CassTuple *tup =
+      cass_tuple_new(zend_hash_num_elements(&tuple->values));
+
+  type = PHP_CASSANDRA_GET_TYPE(PHP5TO7_ZVAL_MAYBE_P(tuple->type));
+
+  PHP5TO7_ZEND_HASH_FOREACH_NUM_KEY_VAL(&tuple->values, num_key, current) {
+    php5to7_zval *zsub_type;
+    cassandra_type *sub_type;
+    PHP5TO7_ZEND_HASH_INDEX_FIND(&type->types, num_key, zsub_type);
+    if (!php_cassandra_validate_object(PHP5TO7_ZVAL_MAYBE_DEREF(current),
+                                       PHP5TO7_ZVAL_MAYBE_DEREF(zsub_type) TSRMLS_CC)) {
+      result = 0;
+      break;
+    }
+    sub_type = PHP_CASSANDRA_GET_TYPE(PHP5TO7_ZVAL_MAYBE_DEREF(zsub_type));
+    if (!php_cassandra_tuple_set(tup, num_key,
+                                 PHP5TO7_ZVAL_MAYBE_DEREF(current), sub_type->type TSRMLS_CC)) {
+      result = 0;
+      break;
+    }
+  } PHP5TO7_ZEND_HASH_FOREACH_END(&tuple->values);
+
+  if (result)
+    *output = tup;
+  else
+    cass_tuple_free(tup);
+
+  return result;
+}
+
+
+int
+php_cassandra_user_type_from_user_type_value(cassandra_user_type_value *user_type_value,
+                                             CassUserType **output TSRMLS_DC)
+{
+  int result = 1;
+  char *name;
+  php5to7_zval *current;
+  cassandra_type *type;
+  CassUserType *ut;
+
+  type = PHP_CASSANDRA_GET_TYPE(PHP5TO7_ZVAL_MAYBE_P(user_type_value->type));
+  ut = cass_user_type_new_from_data_type(type->data_type);
+
+  PHP5TO7_ZEND_HASH_FOREACH_STR_KEY_VAL(&user_type_value->values, name, current) {
+    php5to7_zval *zsub_type;
+    cassandra_type *sub_type;
+    if (!PHP5TO7_ZEND_HASH_FIND(&type->types, name, strlen(name) + 1, zsub_type) ||
+        !php_cassandra_validate_object(PHP5TO7_ZVAL_MAYBE_DEREF(current),
+                                       PHP5TO7_ZVAL_MAYBE_DEREF(zsub_type) TSRMLS_CC)) {
+      result = 0;
+      break;
+    }
+    sub_type = PHP_CASSANDRA_GET_TYPE(PHP5TO7_ZVAL_MAYBE_DEREF(zsub_type));
+    if (!php_cassandra_user_type_set(ut,
+                                     name,
+                                     PHP5TO7_ZVAL_MAYBE_DEREF(current),
+                                     sub_type->type TSRMLS_CC)) {
+      result = 0;
+      break;
+    }
+  } PHP5TO7_ZEND_HASH_FOREACH_END(&user_type_value->values);
+
+  if (result)
+    *output = ut;
+  else
+    cass_user_type_free(ut);
+
+  return result;
+}
+
