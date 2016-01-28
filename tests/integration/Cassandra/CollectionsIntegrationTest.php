@@ -2,8 +2,14 @@
 
 namespace Cassandra;
 
-class CollectionsIntegrationTest extends BasicIntegrationTest {
-    public function setUp() {
+/**
+ * A base class for collections integration tests
+ */
+abstract class CollectionsIntegrationTest extends BasicIntegrationTest {
+    /**
+     * Create user types after initializing cluster and session
+     */
+    protected function setUp() {
         parent::setUp();
 
         foreach ($this->compositeCassandraTypes() as $cassandraType) {
@@ -11,8 +17,17 @@ class CollectionsIntegrationTest extends BasicIntegrationTest {
                 $this->createUserType($cassandraType[0]);
             }
         }
+
+        foreach ($this->nestedCassandraTypes() as $cassandraType) {
+            if ($cassandraType[0] instanceof Type\UserType) {
+                $this->createUserType($cassandraType[0]);
+            }
+        }
     }
 
+    /**
+     * Scalar Cassandra types to be used by data providers
+     */
     public function scalarCassandraTypes() {
         return array(
             array(Type::ascii(), array("a", "b", "c")),
@@ -34,6 +49,10 @@ class CollectionsIntegrationTest extends BasicIntegrationTest {
         );
     }
 
+    /**
+     * Composite Cassandra types (list, map, set, tuple, and UDT) to be used by
+     * data providers
+     */
     public function compositeCassandraTypes() {
         $collectionType = Type::collection(Type::varchar());
         $setType = Type::set(Type::varchar());
@@ -61,15 +80,87 @@ class CollectionsIntegrationTest extends BasicIntegrationTest {
         );
     }
 
+    /**
+     * Nested composite Cassandra types (list, map, set, tuple, and UDT) to be
+     * used by data providers
+     */
+    public function nestedCassandraTypes() {
+        $compositeCassandraTypes = $this->compositeCassandraTypes();
+
+        foreach ($compositeCassandraTypes as $nestedType) {
+            $type = Type::collection($nestedType[0]);
+            $nestedCassandraTypes[] = array($type, array($type->create($nestedType[1][0])));
+        }
+
+        foreach ($compositeCassandraTypes as $nestedType) {
+            $type = Type::set($nestedType[0]);
+            $nestedCassandraTypes[] = array($type, array($type->create($nestedType[1][0])));
+        }
+
+        foreach ($compositeCassandraTypes as $nestedType) {
+            $type = Type::map($nestedType[0], $nestedType[0]);
+            $nestedCassandraTypes[] = array($type, array($type->create($nestedType[1][0], $nestedType[1][1])));
+        }
+
+        foreach ($compositeCassandraTypes as $nestedType) {
+            $type = Type::tuple($nestedType[0], $nestedType[0]);
+            $nestedCassandraTypes[] = array($type, array($type->create($nestedType[1][0], $nestedType[1][1])));
+        }
+
+        foreach ($compositeCassandraTypes as $nestedType) {
+            $type = Type::userType("a", $nestedType[0], "b", $nestedType[0]);
+            $type = $type->withName(self::userTypeString($type));
+            $nestedCassandraTypes[] = array($type, array($type->create("a", $nestedType[1][0], "b", $nestedType[1][1])));
+        }
+
+        return $nestedCassandraTypes;
+    }
+
+    /**
+     * Create a table using $type for the value's type and insert $value using
+     * positional parameters.
+     *
+     * @param $type Cassandra\Type
+     * @param $value mixed
+     */
+    public function createTableInsertAndVerifyValueByIndex($type, $value) {
+        $key = "key";
+        $options = new ExecutionOptions(array('arguments' => array($key, $value)));
+        $this->createTableInsertAndVerifyValue($type, $options, $key, $value);
+    }
+
+    /**
+     * Create a table using $type for the value's type and insert $value using
+     * named parameters.
+     *
+     * @param $type Cassandra\Type
+     * @param $value mixed
+     */
+    public function createTableInsertAndVerifyValueByName($type, $value) {
+        $key = "key";
+        $options = new ExecutionOptions(array('arguments' => array("key" => $key, "value" => $value)));
+        $this->createTableInsertAndVerifyValue($type, $options, $key, $value);
+    }
+
+    /**
+     * Create a user type in the current keyspace
+     *
+     * @param $userType Cassandra\Type\UserType
+     */
     public function createUserType($userType) {
         $query  = "CREATE TYPE IF NOT EXISTS %s (%s)";
         $fieldsString = implode(", ", array_map(function ($name, $type) {
-            return "$name $type";
+            return "$name " . self::typeString($type);
         }, array_keys($userType->types()), $userType->types()));
         $query = sprintf($query, $this->userTypeString($userType), $fieldsString);
         $this->session->execute(new SimpleStatement($query));
     }
 
+    /**
+     * Create a table this a string key and a value use the $type parameter
+     *
+     * @param $type Cassandra\Type
+     */
     public function createTable($type) {
         $query = "CREATE TABLE IF NOT EXISTS %s (key text PRIMARY KEY, value %s)";
 
@@ -83,25 +174,43 @@ class CollectionsIntegrationTest extends BasicIntegrationTest {
         return $tableName;
     }
 
-    public function createTableInsertAndVerifyValueByIndex($type, $value) {
-        $key = "key";
-        $options = new ExecutionOptions(array('arguments' => array($key, $value)));
-        $this->createTableInsertAndVerifyValue($type, $key, $value, $options);
-    }
-
-    public function createTableInsertAndVerifyValueByName($type, $value) {
-        $key = "key";
-        $options = new ExecutionOptions(array('arguments' => array("key" => $key, "value" => $value)));
-        $this->createTableInsertAndVerifyValue($type, $key, $value, $options);
-    }
-
-    protected function createTableInsertAndVerifyValue($type, $key, $value, $options) {
+    /**
+     * Create a new table with specified type and insert and verify value
+     *
+     * @param $type Cassandra\Type
+     * @param $options Cassandra\ExecutionOptions
+     * @param $key string
+     * @param $value mixed
+     */
+    protected function createTableInsertAndVerifyValue($type, $options, $key, $value) {
         $tableName = $this->createTable($type);
 
+        $this->insertValue($tableName, $options);
+
+        $this->verifyValue($tableName, $type, $key, $value);
+    }
+
+    /**
+     * Insert a value into table
+     *
+     * @param $tableName string
+     * @param $options Cassandra\ExecutionOptions
+     */
+    protected function insertValue($tableName, $options) {
         $insertQuery = "INSERT INTO $tableName (key, value) VALUES (?, ?)";
 
         $this->session->execute(new SimpleStatement($insertQuery), $options);
+    }
 
+    /**
+     * Verify value
+     *
+     * @param $tableName string
+     * @param $type Cassandra\Type
+     * @param $key string
+     * @param $value mixed
+     */
+    protected function verifyValue($tableName, $type, $key, $value) {
         $selectQuery = "SELECT * FROM $tableName WHERE key = ?";
 
         $options = new ExecutionOptions(array('arguments' => array($key)));
@@ -114,18 +223,34 @@ class CollectionsIntegrationTest extends BasicIntegrationTest {
 
         $this->assertEquals($row['value'], $value);
         $this->assertTrue($row['value'] == $value);
-        $this->assertEquals(count($row['value']), count($value));
+        if ($row['value']) {
+            $this->assertEquals(count($row['value']), count($value));
+            $this->assertEquals($row['value']->type(), $type);
+        }
     }
 
+    /**
+     * Generate a type string suitable for creating a new table or user type
+     * using CQL
+     *
+     * @param $type Cassandra\Type
+     */
     public static function typeString($type) {
         if ($type instanceof Type\Tuple || $type instanceof Type\Collection ||
-            $type instanceof Type\Map || $type instanceof Type\Set) {
+            $type instanceof Type\Map || $type instanceof Type\Set ||
+            $type instanceof Type\UserType) {
             return sprintf("frozen<%s>", $type);
         } else {
             return (string)$type;
         }
     }
 
+    /**
+     * Generate a user type name string suitable for creating a new table or
+     * user type using CQL
+     *
+     * @param $userType Cassandra\Type
+     */
     public static function userTypeString($userType) {
         return sprintf("%s", implode("_", array_map(function ($name, $type) {
             return $name . str_replace(array("frozen", "<", " ", ",", ">"), "", $type);

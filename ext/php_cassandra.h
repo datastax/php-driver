@@ -295,6 +295,7 @@ php5to7_string_compare(php5to7_string s1, php5to7_string s2)
 #define PHP5TO7_ZEND_HASH_FOREACH_STR_KEY_VAL(ht, _key, _val)      \
   PHP5TO7_ZEND_HASH_FOREACH_VAL(ht, _val)                                \
     ulong _h;                                                            \
+    (_key) = NULL; \
     zend_hash_get_current_key_ex((ht), &(_key), NULL, &_h, 0, &_pos);
 
 #define PHP5TO7_ZEND_HASH_FOREACH_END(ht) \

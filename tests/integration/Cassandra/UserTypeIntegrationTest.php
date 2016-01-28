@@ -23,7 +23,7 @@ namespace Cassandra;
  *
  * @cassandra-version-2.1
  */
-class UserTypeIntegrationTest extends BasicIntegrationTest {
+class UserTypeIntegrationTest extends CollectionsIntegrationTest {
     /**
      * CQL for phone number user type
      */
@@ -49,23 +49,22 @@ class UserTypeIntegrationTest extends BasicIntegrationTest {
      */
     const ADDRESS_ZIP_CODE = 95054;
 
+
     /**
      * Setup the database for the user type tests.
-     *
-     * @before
      */
-    public function setupTest() {
+    public function setUp() {
         // Process parent setup steps
-        parent::setupTest();
+        parent::setUp();
 
         // Create the user types
         $this->session->execute(new SimpleStatement(self::PHONE_USER_TYPE_CQL));
         $this->session->execute(new SimpleStatement(self::ADDRESS_USER_TYPE_CQL));
 
         // Create the table
-        $query = "CREATE TABLE " . $this->tableNamePrefix .
-            " (key timeuuid PRIMARY KEY, value " .
-            "frozen<address>)";
+        $query = "CREATE TABLE {$this->tableNamePrefix}
+            (key timeuuid PRIMARY KEY, value
+            frozen<address>)";
         $this->session->execute(new SimpleStatement($query));
     }
 
@@ -178,7 +177,7 @@ class UserTypeIntegrationTest extends BasicIntegrationTest {
         );
 
         // Insert the value into the table
-        $query = "INSERT INTO " . $this->tableNamePrefix . " (key, value) VALUES (?, ?)";
+        $query = "INSERT INTO {$this->tableNamePrefix}  (key, value) VALUES (?, ?)";
         $statement = new SimpleStatement($query);
         $options = new ExecutionOptions(array("arguments" => $values));
         $this->session->execute($statement, $options);
@@ -195,7 +194,7 @@ class UserTypeIntegrationTest extends BasicIntegrationTest {
      */
     private function selectAddress($key) {
         // Select the user type
-        $query = "SELECT value FROM " . $this->tableNamePrefix . " WHERE key=?";
+        $query = "SELECT value FROM {$this->tableNamePrefix}  WHERE key=?";
         $statement = new SimpleStatement($query);
         $options = new ExecutionOptions(array("arguments" => array($key)));
         $rows = $this->session->execute($statement, $options);
@@ -213,6 +212,170 @@ class UserTypeIntegrationTest extends BasicIntegrationTest {
     }
 
     /**
+     * User types using scalar/simple datatypes
+     *
+     * This test will ensure that the PHP driver supports the user types collection
+     * with all PHP driver supported scalar/simple datatypes.
+     *
+     * @test
+     * @ticket PHP-58
+     * @dataProvider userTypeWithScalarTypes
+     */
+    public function testScalarTypes($type, $value) {
+        $this->createUserType($type);
+        $this->createTableInsertAndVerifyValueByIndex($type, $value);
+        $this->createTableInsertAndVerifyValueByName($type, $value);
+    }
+
+    /**
+     * Data provider for user types with scalar types
+     */
+    public function userTypeWithScalarTypes() {
+        $result = array_map(function ($cassandraType) {
+            $userType = Type::userType("a", $cassandraType[0]);
+            $userType = $userType->withName(self::userTypeString($userType));
+            $user = $userType->create();
+            $user->set("a", $cassandraType[1][0]);
+            return array($userType, $user);
+        }, $this->scalarCassandraTypes());
+        return $result;
+    }
+
+    /**
+     * User types with composite types
+     *
+     * This test ensures that user types work with other nested collections
+     * and other composite types such as UDTs and tuples.
+     *
+     * @test
+     * @ticket PHP-58
+     * @dataProvider userTypeWithCompositeTypes
+     */
+    public function testCompositeTypes($type, $value) {
+        $this->createUserType($type);
+        $this->createTableInsertAndVerifyValueByIndex($type, $value);
+        $this->createTableInsertAndVerifyValueByName($type, $value);
+    }
+
+    /**
+     * Data provider for user types with composite types
+     */
+    public function userTypeWithCompositeTypes() {
+        return array_map(function ($cassandraType) {
+            $userType = Type::userType("a", $cassandraType[0]);
+            $userType = $userType->withName(self::userTypeString($userType));
+            $user = $userType->create();
+            $user->set("a", $cassandraType[1][0]);
+            return array($userType, $user);
+        }, $this->compositeCassandraTypes());
+    }
+
+    /**
+     * User types with nested composite types
+     *
+     * This test ensures that user types work with other nested collections
+     * and other composite types such as UDTs and tuples.
+     *
+     * @test
+     * @ticket PHP-57
+     * @ticket PHP-58
+     * @dataProvider userTypeWithNestedTypes
+     */
+    public function testNestedTypes($type, $value) {
+        $this->createUserType($type);
+        $this->createTableInsertAndVerifyValueByIndex($type, $value);
+        $this->createTableInsertAndVerifyValueByName($type, $value);
+    }
+
+    /**
+     * Data provider for user types with nested composite types
+     */
+    public function userTypeWithNestedTypes() {
+        return array_map(function ($cassandraType) {
+            $userType = Type::userType("a", $cassandraType[0]);
+            $userType = $userType->withName(self::userTypeString($userType));
+            $user = $userType->create();
+            $user->set("a", $cassandraType[1][0]);
+            return array($userType, $user);
+        }, $this->nestedCassandraTypes());
+    }
+
+    /**
+     * User types with multiple components
+     *
+     * @test
+     * @ticket PHP-57
+     * @ticket PHP-58
+     * @dataProvider userTypeWithMultipleComponents
+     */
+    public function testMultipleComponents($type, $value) {
+        $this->createUserType($type);
+        $this->createTableInsertAndVerifyValueByIndex($type, $value);
+        $this->createTableInsertAndVerifyValueByName($type, $value);
+    }
+
+    /**
+     * Data provider for user types with multiple components
+     */
+    public function userTypeWithMultipleComponents() {
+        $cassandraTypes = array_merge($this->scalarCassandraTypes(), $this->compositeCassandraTypes());
+        $sizes = range(2, count($cassandraTypes));
+        return array_map(function ($size) use ($cassandraTypes) {
+            $types = array();
+            for ($i = 0; $i < $size; $i++) {
+                $types["field$i"] = $cassandraTypes[$i][0];
+            }
+            $user = new UserTypeValue($types);
+            $user->type()->withName(self::userTypeString($user->type()));
+            for ($i = 0; $i < $size; $i++) {
+                $user->set("field$i", $cassandraTypes[$i][1][0]);
+            }
+            return array($user->type(), $user);
+        }, $sizes);
+    }
+
+    /**
+     * Bind statment with an empty user type
+     *
+     * @test
+     * @ticket PHP-58
+     * @dataProvider userTypeWithMultipleEmptyComponents
+     */
+    public function testEmpty($type, $value) {
+        $this->createUserType($type);
+        $this->createTableInsertAndVerifyValueByIndex($type, $value);
+        $this->createTableInsertAndVerifyValueByName($type, $value);
+    }
+
+    public function userTypeWithMultipleEmptyComponents() {
+        $scalarCassandraTypes = $this->scalarCassandraTypes();
+        $sizes = range(2, count($scalarCassandraTypes));
+        return array_map(function ($size) use ($scalarCassandraTypes) {
+            $types = array();
+            for ($i = 0; $i < $size; $i++) {
+                $types["field$i"] = $scalarCassandraTypes[$i][0];
+            }
+            $user = new UserTypeValue($types);
+            $user->type()->withName(self::userTypeString($user->type()));
+            return array($user->type(), $user);
+        }, $sizes);
+    }
+
+    /**
+     * Bind statment with an null user type
+     *
+     * @test
+     * @ticket PHP-58
+     */
+    public function testNull() {
+        $userType = Type::userType("a", Type::int());
+        $userType = $userType->withName(self::userTypeString($userType));
+        $this->createUserType($userType);
+        $this->createTableInsertAndVerifyValueByIndex($userType, null);
+        $this->createTableInsertAndVerifyValueByName($userType, null);
+    }
+
+    /**
      * User type using a complete user type value.
      *
      * This test will ensure that the PHP driver supports the user types. This
@@ -222,7 +385,7 @@ class UserTypeIntegrationTest extends BasicIntegrationTest {
      * @test
      * @ticket PHP-57
      */
-    public function completeUserType() {
+    public function testCompleteUserType() {
         $key = $this->insertAddress($this->generateAddressValue());
         $this->assertAddressValue($this->selectAddress($key));
     }
@@ -236,7 +399,7 @@ class UserTypeIntegrationTest extends BasicIntegrationTest {
      * @test
      * @ticket PHP-57
      */
-    public function partialUserType() {
+    public function testPartialUserType() {
         // Alias missing from a single number
         $phone = $this->getPhoneUserType();
         $phone->set("number", "000-000-0000");
@@ -272,7 +435,7 @@ class UserTypeIntegrationTest extends BasicIntegrationTest {
      *                           supported, please use frozen<>
      * @cassandra-version-less-3
      */
-    public function frozenRequired() {
+    public function testFrozenRequired() {
         $statement = new SimpleStatement("CREATE TYPE frozen_required (id uuid, address address)");
         $this->session->execute($statement);
     }
@@ -288,7 +451,7 @@ class UserTypeIntegrationTest extends BasicIntegrationTest {
      * @expectedException \Cassandra\Exception\InvalidQueryException
      * @expectedExceptionMessageRegExp |Unknown type .*.user_type_unavailable|
      */
-    public function unavailableUserType() {
+    public function testUnavailableUserType() {
         $statement = new SimpleStatement("CREATE TABLE unavailable (id uuid PRIMARY KEY, unavailable frozen<user_type_unavailable>)");
         $this->session->execute($statement);
     }
@@ -303,7 +466,7 @@ class UserTypeIntegrationTest extends BasicIntegrationTest {
      * @ticket PHP-57
      * @expectedException \Cassandra\Exception\InvalidQueryException
      */
-    public function invalidAddressUserTypeAssignedValue() {
+    public function testInvalidAddressUserTypeAssignedValue() {
         $invalidValue = $this->getPhoneUserType();
         $invalidValue->set("alias", "Invalid Value");
         $invalidValue->set("number", "800-555-1212");
@@ -320,7 +483,7 @@ class UserTypeIntegrationTest extends BasicIntegrationTest {
      * @ticket PHP-57
      * @expectedException \Cassandra\Exception\InvalidQueryException
      */
-    public function invalidPhoneUserTypeAssignedValue() {
+    public function testInvalidPhoneUserTypeAssignedValue() {
         // Create a new table
         $this->session->execute(new SimpleStatement("CREATE TABLE invalidphone (key int PRIMARY KEY, value frozen<phone>)"));
         $invalidValue = $this->generateAddressValue();

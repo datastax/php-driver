@@ -51,8 +51,6 @@ abstract class BasicIntegrationTest extends \PHPUnit_Framework_TestCase {
 
     /**
      * Setup the database for the integration tests.
-     *
-     * @before
      */
     protected function setUp() {
         // Initialize the database and establish a connection

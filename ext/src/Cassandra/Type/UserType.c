@@ -206,6 +206,20 @@ PHP_METHOD(UserType, create)
     }
 
     PHP5TO7_MAYBE_EFREE(args);
+  } else {
+    char *name;
+    php5to7_zval *current;
+    php5to7_zval null;
+    PHP5TO7_ZVAL_MAYBE_MAKE(null);
+    ZVAL_NULL(PHP5TO7_ZVAL_MAYBE_P(null));
+
+    PHP5TO7_ZEND_HASH_FOREACH_STR_KEY_VAL(&self->types, name, current) {
+      if(!php_cassandra_user_type_value_set(user_type_value,
+                                            name, strlen(name),
+                                            PHP5TO7_ZVAL_MAYBE_P(null) TSRMLS_CC)) {
+        return;
+      }
+    } PHP5TO7_ZEND_HASH_FOREACH_END(&self->types);
   }
 }
 

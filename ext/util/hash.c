@@ -73,6 +73,9 @@ php_cassandra_value_compare(zval* zvalue1, zval* zvalue2 TSRMLS_DC) {
   }
 
   switch (Z_TYPE_P(zvalue1)) {
+  case IS_NULL:
+      return 0;
+
   case IS_LONG:
     return PHP_CASSANDRA_COMPARE(Z_LVAL_P(zvalue1), Z_LVAL_P(zvalue2));
 

@@ -29,11 +29,16 @@ PHP_METHOD(UserTypeValue, __construct)
   cassandra_type *type;
   HashTable *types;
   char *name;
+  int index = 0;
   php5to7_zval *current;
+  php5to7_zval null;
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "h", &types) == FAILURE) {
     return;
   }
+
+  PHP5TO7_ZVAL_MAYBE_MAKE(null);
+  ZVAL_NULL(PHP5TO7_ZVAL_MAYBE_P(null));
 
   self = PHP_CASSANDRA_GET_USER_TYPE_VALUE(getThis());
   self->type = php_cassandra_type_user_type(TSRMLS_C);
@@ -42,6 +47,13 @@ PHP_METHOD(UserTypeValue, __construct)
   PHP5TO7_ZEND_HASH_FOREACH_STR_KEY_VAL(types, name, current) {
     zval *sub_type = PHP5TO7_ZVAL_MAYBE_DEREF(current);
     php5to7_zval scalar_type;
+
+    if (!name) {
+      zend_throw_exception_ex(cassandra_invalid_argument_exception_ce, 0 TSRMLS_CC,
+                              "Argument %d is not a string", index + 1);
+      return;
+    }
+    index++;
 
     if (Z_TYPE_P(sub_type) == IS_STRING) {
       CassValueType value_type;
@@ -69,6 +81,10 @@ PHP_METHOD(UserTypeValue, __construct)
     } else {
       INVALID_ARGUMENT(sub_type, "a string or an instance of Cassandra\\Type");
     }
+
+    php_cassandra_user_type_value_set(self,
+                                      name, strlen(name),
+                                      PHP5TO7_ZVAL_MAYBE_P(null) TSRMLS_CC);
   } PHP5TO7_ZEND_HASH_FOREACH_END(types);
 }
 /* }}} */
