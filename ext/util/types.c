@@ -284,10 +284,14 @@ collection_compare(cassandra_type *type1, cassandra_type *type2 TSRMLS_DC)
 static inline int
 map_compare(cassandra_type *type1, cassandra_type *type2 TSRMLS_DC)
 {
-  return php_cassandra_type_compare(PHP_CASSANDRA_GET_TYPE(PHP5TO7_ZVAL_MAYBE_P(type1->key_type)),
-                                    PHP_CASSANDRA_GET_TYPE(PHP5TO7_ZVAL_MAYBE_P(type2->key_type)) TSRMLS_CC) &&
-      php_cassandra_type_compare(PHP_CASSANDRA_GET_TYPE(PHP5TO7_ZVAL_MAYBE_P(type1->value_type)),
-                                 PHP_CASSANDRA_GET_TYPE(PHP5TO7_ZVAL_MAYBE_P(type2->value_type)) TSRMLS_CC);
+  int result;
+  result = php_cassandra_type_compare(PHP_CASSANDRA_GET_TYPE(PHP5TO7_ZVAL_MAYBE_P(type1->key_type)),
+                                       PHP_CASSANDRA_GET_TYPE(PHP5TO7_ZVAL_MAYBE_P(type2->key_type)) TSRMLS_CC);
+  if (result != 0) return result;
+  result =  php_cassandra_type_compare(PHP_CASSANDRA_GET_TYPE(PHP5TO7_ZVAL_MAYBE_P(type1->value_type)),
+                                       PHP_CASSANDRA_GET_TYPE(PHP5TO7_ZVAL_MAYBE_P(type2->value_type)) TSRMLS_CC);
+  if (result != 0) return result;
+  return 0;
 }
 
 static inline int
@@ -317,8 +321,8 @@ tuple_compare(cassandra_type *type1, cassandra_type *type2 TSRMLS_DC) {
         PHP_CASSANDRA_GET_TYPE(PHP5TO7_ZVAL_MAYBE_DEREF(current1));
     cassandra_type *sub_type2 =
         PHP_CASSANDRA_GET_TYPE(PHP5TO7_ZVAL_MAYBE_DEREF(current2));
-    int r = php_cassandra_type_compare(sub_type1, sub_type2 TSRMLS_CC);
-    if (r != 0) return r;
+    int result = php_cassandra_type_compare(sub_type1, sub_type2 TSRMLS_CC);
+    if (result != 0) return result;
     zend_hash_move_forward_ex(&type1->types, &pos1);
     zend_hash_move_forward_ex(&type2->types, &pos2);
   }
@@ -347,15 +351,15 @@ user_type_compare(cassandra_type *type1, cassandra_type *type2 TSRMLS_DC)
          PHP5TO7_ZEND_HASH_GET_CURRENT_KEY_EX(&type2->types, &key2, NULL, &pos2) &&
          PHP5TO7_ZEND_HASH_GET_CURRENT_DATA_EX(&type1->types, current1, &pos1) &&
          PHP5TO7_ZEND_HASH_GET_CURRENT_DATA_EX(&type2->types, current2, &pos2)) {
-    int r;
+    int result;
     cassandra_type *sub_type1 =
         PHP_CASSANDRA_GET_TYPE(PHP5TO7_ZVAL_MAYBE_DEREF(current1));
     cassandra_type *sub_type2 =
         PHP_CASSANDRA_GET_TYPE(PHP5TO7_ZVAL_MAYBE_DEREF(current2));
-    r = php5to7_string_compare(key1, key2);
-    if (r != 0) return r;
-    r = php_cassandra_type_compare(sub_type1, sub_type2 TSRMLS_CC);
-    if (r != 0) return r;
+    result = php5to7_string_compare(key1, key2);
+    if (result != 0) return result;
+    result = php_cassandra_type_compare(sub_type1, sub_type2 TSRMLS_CC);
+    if (result != 0) return result;
     zend_hash_move_forward_ex(&type1->types, &pos1);
     zend_hash_move_forward_ex(&type2->types, &pos2);
   }

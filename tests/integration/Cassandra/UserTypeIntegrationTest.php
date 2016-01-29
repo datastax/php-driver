@@ -376,6 +376,32 @@ class UserTypeIntegrationTest extends CollectionsIntegrationTest {
     }
 
     /**
+     * Partial user type
+     *
+     * This test will ensure that partial user types return the correct value.
+     *
+     * @test
+     * @ticket PHP-58
+     */
+    public function testPartial() {
+        $userType = Type::userType("a", Type::int(), "b", Type::varchar(), "c", Type::bigint());
+        $userType = $userType->withName(self::userTypeString($userType));
+        $this->createUserType($userType);
+
+        $user = $userType->create();
+        $user->set("a", 99);
+        $this->createTableInsertAndVerifyValueByIndex($userType, $user);
+
+        $user = $userType->create();
+        $user->set("b", "abc");
+        $this->createTableInsertAndVerifyValueByIndex($userType, $user);
+
+        $user = $userType->create();
+        $user->set("c", new Bigint("999999999999"));
+        $this->createTableInsertAndVerifyValueByIndex($userType, $user);
+    }
+
+    /**
      * User type using a complete user type value.
      *
      * This test will ensure that the PHP driver supports the user types. This

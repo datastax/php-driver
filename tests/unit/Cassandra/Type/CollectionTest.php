@@ -63,4 +63,46 @@ class CollectionTest extends \PHPUnit_Framework_TestCase
     {
         Type::collection(new UnsupportedType());
     }
+
+    /**
+     * @dataProvider equalTypes
+     */
+    public function testCompareEquals($type1, $type2)
+    {
+        $this->assertEquals($type1, $type2);
+        $this->assertTrue($type1 == $type2);
+    }
+
+    public function equalTypes()
+    {
+        return array(
+            array(Type::collection(Type::int()),
+                  Type::collection(Type::int())),
+            array(Type::collection(Type::collection(Type::int())),
+                  Type::collection(Type::collection(Type::int()))),
+            array(Type::collection(Type::set(Type::int())),
+                  Type::collection(Type::set(Type::int()))),
+        );
+    }
+
+    /**
+     * @dataProvider notEqualTypes
+     */
+    public function testCompareNotEquals($type1, $type2)
+    {
+        $this->assertNotEquals($type1, $type2);
+        $this->assertFalse($type1 == $type2);
+    }
+
+    public function notEqualTypes()
+    {
+        return array(
+            array(Type::collection(Type::varchar()),
+                  Type::collection(Type::int())),
+            array(Type::collection(Type::collection(Type::varchar())),
+                  Type::collection(Type::collection(Type::int()))),
+            array(Type::collection(Type::collection(Type::int())),
+                  Type::collection(Type::set(Type::int()))),
+        );
+    }
 }

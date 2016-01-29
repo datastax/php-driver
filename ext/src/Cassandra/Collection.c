@@ -308,16 +308,20 @@ php_cassandra_collection_gc(zval *object, php5to7_zval_gc table, int *n TSRMLS_D
 static HashTable *
 php_cassandra_collection_properties(zval *object TSRMLS_DC)
 {
+  php5to7_zval values;
+
   cassandra_collection  *self = PHP_CASSANDRA_GET_COLLECTION(object);
   HashTable             *props = zend_std_get_properties(object TSRMLS_CC);
-  php5to7_zval           values;
 
+  if (PHP5TO7_ZEND_HASH_UPDATE(props,
+                               "type", sizeof("type"),
+                               PHP5TO7_ZVAL_MAYBE_P(self->type), sizeof(zval))) {
+    Z_ADDREF_P(PHP5TO7_ZVAL_MAYBE_P(self->type));
+  }
 
   PHP5TO7_ZVAL_MAYBE_MAKE(values);
   array_init(PHP5TO7_ZVAL_MAYBE_P(values));
-
   php_cassandra_collection_populate(self, PHP5TO7_ZVAL_MAYBE_P(values));
-
   PHP5TO7_ZEND_HASH_UPDATE(props, "values", sizeof("values"), PHP5TO7_ZVAL_MAYBE_P(values), sizeof(zval));
 
   return props;
@@ -332,12 +336,21 @@ php_cassandra_collection_compare(zval *obj1, zval *obj2 TSRMLS_DC)
   php5to7_zval *current2;
   cassandra_collection *collection1;
   cassandra_collection *collection2;
+  cassandra_type *type1;
+  cassandra_type *type2;
+  int result;
 
   if (Z_OBJCE_P(obj1) != Z_OBJCE_P(obj2))
     return 1; /* different classes */
 
   collection1 = PHP_CASSANDRA_GET_COLLECTION(obj1);
   collection2 = PHP_CASSANDRA_GET_COLLECTION(obj2);
+
+  type1 = PHP_CASSANDRA_GET_TYPE(collection1->type);
+  type2 = PHP_CASSANDRA_GET_TYPE(collection2->type);
+
+  result = php_cassandra_type_compare(type1, type2 TSRMLS_CC);
+  if (result != 0) return result;
 
   if (zend_hash_num_elements(&collection1->values) != zend_hash_num_elements(&collection2->values)) {
     return zend_hash_num_elements(&collection1->values) < zend_hash_num_elements(&collection2->values) ? -1 : 1;
@@ -348,9 +361,9 @@ php_cassandra_collection_compare(zval *obj1, zval *obj2 TSRMLS_DC)
 
   while (PHP5TO7_ZEND_HASH_GET_CURRENT_DATA_EX(&collection1->values, current1, &pos1) &&
          PHP5TO7_ZEND_HASH_GET_CURRENT_DATA_EX(&collection2->values, current2, &pos2)) {
-    int r = php_cassandra_value_compare(PHP5TO7_ZVAL_MAYBE_DEREF(current1),
-                                        PHP5TO7_ZVAL_MAYBE_DEREF(current2) TSRMLS_CC);
-    if (r != 0) return r;
+    result = php_cassandra_value_compare(PHP5TO7_ZVAL_MAYBE_DEREF(current1),
+                                         PHP5TO7_ZVAL_MAYBE_DEREF(current2) TSRMLS_CC);
+    if (result != 0) return result;
     zend_hash_move_forward_ex(&collection1->values, &pos1);
     zend_hash_move_forward_ex(&collection2->values, &pos2);
   }

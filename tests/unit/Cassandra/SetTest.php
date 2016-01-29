@@ -274,4 +274,54 @@ class SetTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($values, $set->values());
 
     }
+
+    /**
+     * @dataProvider equalTypes
+     */
+    public function testCompareEquals($value1, $value2)
+    {
+        $this->assertEquals($value1, $value2);
+        $this->assertTrue($value1 == $value2);
+    }
+
+    public function equalTypes()
+    {
+        $setType = Type::set(Type::int());
+        return array(
+            array(Type::set(Type::int())->create(),
+                  Type::set(Type::int())->create()),
+            array(Type::set(Type::int())->create(1, 2, 3),
+                  Type::set(Type::int())->create(1, 2, 3)),
+            array(Type::set(Type::varchar())->create('a', 'b', 'c'),
+                  Type::set(Type::varchar())->create('a', 'b', 'c')),
+            array(Type::set($setType)->create($setType->create(1, 2, 3)),
+                  Type::set($setType)->create($setType->create(1, 2, 3))),
+        );
+    }
+
+    /**
+     * @dataProvider notEqualTypes
+     */
+    public function testCompareNotEquals($value1, $value2)
+    {
+        $this->assertNotEquals($value1, $value2);
+        $this->assertFalse($value1 == $value2);
+    }
+
+    public function notEqualTypes()
+    {
+        $setType = Type::set(Type::int());
+        return array(
+            array(Type::set(Type::int())->create(),
+                  Type::set(Type::varchar())->create()),
+            array(Type::set(Type::int())->create(1, 2, 3),
+                  Type::set(Type::int())->create(4, 5, 6)),
+            array(Type::set(Type::int())->create(1, 2, 3),
+                  Type::set(Type::int())->create(1)),
+            array(Type::set(Type::varchar())->create('a', 'b', 'c'),
+                  Type::set(Type::varchar())->create('a', 'b', 'd')),
+            array(Type::set($setType)->create($setType->create(1, 2, 3)),
+                  Type::set($setType)->create($setType->create(4, 5, 6))),
+        );
+    }
 }

@@ -294,16 +294,21 @@ php_cassandra_set_gc(zval *object, php5to7_zval_gc table, int *n TSRMLS_DC)
 static HashTable *
 php_cassandra_set_properties(zval *object TSRMLS_DC)
 {
+  php5to7_zval values;
+
   cassandra_set *self = PHP_CASSANDRA_GET_SET(object);
   HashTable     *props = zend_std_get_properties(object TSRMLS_CC);
-  php5to7_zval   values;
 
+
+  if (PHP5TO7_ZEND_HASH_UPDATE(props,
+                               "type", sizeof("type"),
+                               PHP5TO7_ZVAL_MAYBE_P(self->type), sizeof(zval))) {
+    Z_ADDREF_P(PHP5TO7_ZVAL_MAYBE_P(self->type));
+  }
 
   PHP5TO7_ZVAL_MAYBE_MAKE(values);
   array_init(PHP5TO7_ZVAL_MAYBE_P(values));
-
   php_cassandra_set_populate(self , PHP5TO7_ZVAL_MAYBE_P(values) TSRMLS_CC);
-
   PHP5TO7_ZEND_HASH_UPDATE(props, "values", sizeof("values"), PHP5TO7_ZVAL_MAYBE_P(values), sizeof(zval));
 
   return props;
@@ -315,12 +320,21 @@ php_cassandra_set_compare(zval *obj1, zval *obj2 TSRMLS_DC)
   cassandra_set_entry *curr, *temp;
   cassandra_set *set1;
   cassandra_set *set2;
+  cassandra_type *type1;
+  cassandra_type *type2;
+  int result;
 
   if (Z_OBJCE_P(obj1) != Z_OBJCE_P(obj2))
     return 1; /* different classes */
 
   set1 = PHP_CASSANDRA_GET_SET(obj1);
   set2 = PHP_CASSANDRA_GET_SET(obj2);
+
+  type1 = PHP_CASSANDRA_GET_TYPE(set1->type);
+  type2 = PHP_CASSANDRA_GET_TYPE(set2->type);
+
+  result = php_cassandra_type_compare(type1, type2 TSRMLS_CC);
+  if (result != 0) return result;
 
   if (HASH_COUNT(set1->entries) != HASH_COUNT(set1->entries)) {
    return HASH_COUNT(set1->entries) < HASH_COUNT(set1->entries) ? -1 : 1;

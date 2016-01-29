@@ -158,4 +158,50 @@ class UserTypeValueTest extends \PHPUnit_Framework_TestCase
         $udt = new UserTypeValue(array('name1' => Type::int()));
         $udt->set('name1', 'text');
     }
+
+    /**
+     * @dataProvider equalTypes
+     */
+    public function testCompareEquals($value1, $value2)
+    {
+        $this->assertEquals($value1, $value2);
+        $this->assertTrue($value1 == $value2);
+    }
+
+    public function equalTypes()
+    {
+        $setType = Type::set(Type::int());
+        return array(
+            array(Type::userType('a', Type::int(), 'b', Type::varchar(), 'c', Type::bigint())->create(),
+                  Type::userType('a', Type::int(), 'b', Type::varchar(), 'c', Type::bigint())->create()),
+            array(Type::userType('a', Type::int(), 'b', Type::varchar(), 'c', Type::bigint())->create('a', 1, 'b', 'x', 'c', new Bigint(99)),
+                  Type::userType('a', Type::int(), 'b', Type::varchar(), 'c', Type::bigint())->create('a', 1, 'b', 'x', 'c', new Bigint(99))),
+            array(Type::userType('a', $setType, 'b', Type::varchar())->create('a', $setType->create(1, 2, 3), 'b', 'x'),
+                  Type::userType('a', $setType, 'b', Type::varchar())->create('a', $setType->create(1, 2, 3), 'b', 'x'))
+        );
+    }
+
+    /**
+     * @dataProvider notEqualTypes
+     */
+    public function testCompareNotEquals($value1, $value2)
+    {
+        $this->assertNotEquals($value1, $value2);
+        $this->assertFalse($value1 == $value2);
+    }
+
+    public function notEqualTypes()
+    {
+        $setType = Type::set(Type::int());
+        return array(
+            array(Type::userType('a', Type::int(), 'b', Type::varchar(), 'c', Type::varint())->create(),
+                  Type::userType('a', Type::int(), 'b', Type::varchar(), 'c', Type::bigint())->create()),
+            array(Type::userType('a', Type::int(), 'b', Type::varchar(), 'c', Type::bigint())->create(),
+                  Type::userType('x', Type::int(), 'y', Type::varchar(), 'z', Type::bigint())->create()),
+            array(Type::userType('a', Type::int(), 'b', Type::varchar(), 'c', Type::bigint())->create('a', 1, 'b', 'x', 'c', new Bigint(99)),
+                  Type::userType('a', Type::int(), 'b', Type::varchar(), 'c', Type::bigint())->create('a', 2, 'b', 'y', 'c', new Bigint(999))),
+            array(Type::userType('a', $setType, 'b', Type::varchar())->create('a', $setType->create(1, 2, 3), 'b', 'x'),
+                  Type::userType('a', $setType, 'b', Type::varchar())->create('a', $setType->create(4, 5, 6), 'b', 'x'))
+        );
+    }
 }

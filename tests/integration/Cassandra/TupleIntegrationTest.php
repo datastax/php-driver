@@ -182,6 +182,30 @@ class TupleIntegrationTest extends CollectionsIntegrationTest {
     }
 
     /**
+     * Partial tuple
+     *
+     * This test will ensure that partial tuples return the correct value.
+     *
+     * @test
+     * @ticket PHP-58
+     */
+    public function testPartial() {
+        $tupleType = Type::tuple(Type::int(), Type::varchar(), Type::bigint());
+
+        $tuple = $tupleType->create();
+        $tuple->set(0, 99);
+        $this->createTableInsertAndVerifyValueByIndex($tupleType, $tuple);
+
+        $tuple = $tupleType->create();
+        $tuple->set(1, "abc");
+        $this->createTableInsertAndVerifyValueByIndex($tupleType, $tuple);
+
+        $tuple = $tupleType->create();
+        $tuple->set(2, new Bigint("999999999999"));
+        $this->createTableInsertAndVerifyValueByIndex($tupleType, $tuple);
+    }
+
+    /**
      * Invalid datatypes for tuples.
      *
      * This test will ensure that an exception will occur when an invalid

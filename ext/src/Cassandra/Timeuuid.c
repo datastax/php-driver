@@ -154,21 +154,24 @@ static HashTable *
 php_cassandra_timeuuid_properties(zval *object TSRMLS_DC)
 {
   char string[CASS_UUID_STRING_LENGTH];
+  php5to7_zval type;
+  php5to7_zval uuid;
+  php5to7_zval version;
 
   cassandra_uuid *self = PHP_CASSANDRA_GET_UUID(object);
   HashTable      *props = zend_std_get_properties(object TSRMLS_CC);
-  php5to7_zval    uuid;
-  php5to7_zval    version;
+
+  type = php_cassandra_type_scalar(CASS_VALUE_TYPE_TIMEUUID TSRMLS_CC);
+  PHP5TO7_ZEND_HASH_UPDATE(props, "type", sizeof("type"), PHP5TO7_ZVAL_MAYBE_P(type), sizeof(zval));
 
   cass_uuid_string(self->uuid, string);
 
   PHP5TO7_ZVAL_MAYBE_MAKE(uuid);
   PHP5TO7_ZVAL_STRING(PHP5TO7_ZVAL_MAYBE_P(uuid), string);
+  PHP5TO7_ZEND_HASH_UPDATE(props, "uuid", sizeof("uuid"), PHP5TO7_ZVAL_MAYBE_P(uuid), sizeof(zval));
 
   PHP5TO7_ZVAL_MAYBE_MAKE(version);
   ZVAL_LONG(PHP5TO7_ZVAL_MAYBE_P(version), (long) cass_uuid_version(self->uuid));
-
-  PHP5TO7_ZEND_HASH_UPDATE(props, "uuid", sizeof("uuid"), PHP5TO7_ZVAL_MAYBE_P(uuid), sizeof(zval));
   PHP5TO7_ZEND_HASH_UPDATE(props, "version", sizeof("version"), PHP5TO7_ZVAL_MAYBE_P(version), sizeof(zval));
 
   return props;

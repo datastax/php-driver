@@ -253,4 +253,48 @@ class MapTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($values, $map->values());
 
     }
+
+    /**
+     * @dataProvider equalTypes
+     */
+    public function testCompareEquals($value1, $value2)
+    {
+        $this->assertEquals($value1, $value2);
+        $this->assertTrue($value1 == $value2);
+    }
+
+    public function equalTypes()
+    {
+        $setType = Type::set(Type::int());
+        return array(
+            array(Type::map(Type::int(), Type::varchar())->create(),
+                  Type::map(Type::int(), Type::varchar())->create()),
+            array(Type::map(Type::int(), Type::varchar())->create(1, 'a', 2, 'b', 3, 'c'),
+                  Type::map(Type::int(), Type::varchar())->create(1, 'a', 2, 'b', 3, 'c')),
+            array(Type::map($setType, Type::varchar())->create($setType->create(1, 2, 3), 'a', $setType->create(4, 5, 6), 'b'),
+                  Type::map($setType, Type::varchar())->create($setType->create(1, 2, 3), 'a', $setType->create(4, 5, 6), 'b'))
+        );
+    }
+
+    /**
+     * @dataProvider notEqualTypes
+     */
+    public function testCompareNotEquals($value1, $value2)
+    {
+        $this->assertNotEquals($value1, $value2);
+        $this->assertFalse($value1 == $value2);
+    }
+
+    public function notEqualTypes()
+    {
+        $setType = Type::set(Type::int());
+        return array(
+            array(Type::map(Type::int(), Type::int())->create(),
+                  Type::map(Type::int(), Type::varchar())->create()),
+            array(Type::map(Type::int(), Type::varchar())->create(1, 'a', 2, 'b', 3, 'c'),
+                  Type::map(Type::int(), Type::varchar())->create(1, 'a')),
+            array(Type::map($setType, Type::varchar())->create($setType->create(4, 5, 6), 'a', $setType->create(7, 8, 9), 'b'),
+                  Type::map($setType, Type::varchar())->create($setType->create(1, 2, 3), 'a', $setType->create(4, 5, 6), 'b'))
+        );
+    }
 }

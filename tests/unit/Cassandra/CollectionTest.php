@@ -245,4 +245,54 @@ class CollectionTest extends \PHPUnit_Framework_TestCase
             $index++;
         }
     }
+
+    /**
+     * @dataProvider equalTypes
+     */
+    public function testCompareEquals($value1, $value2)
+    {
+        $this->assertEquals($value1, $value2);
+        $this->assertTrue($value1 == $value2);
+    }
+
+    public function equalTypes()
+    {
+        $setType = Type::set(Type::int());
+        return array(
+            array(Type::collection(Type::int())->create(),
+                  Type::collection(Type::int())->create()),
+            array(Type::collection(Type::int())->create(1, 2, 3),
+                  Type::collection(Type::int())->create(1, 2, 3)),
+            array(Type::collection(Type::varchar())->create('a', 'b', 'c'),
+                  Type::collection(Type::varchar())->create('a', 'b', 'c')),
+            array(Type::collection($setType)->create($setType->create(1, 2, 3)),
+                  Type::collection($setType)->create($setType->create(1, 2, 3))),
+        );
+    }
+
+    /**
+     * @dataProvider notEqualTypes
+     */
+    public function testCompareNotEquals($value1, $value2)
+    {
+        $this->assertNotEquals($value1, $value2);
+        $this->assertFalse($value1 == $value2);
+    }
+
+    public function notEqualTypes()
+    {
+        $setType = Type::set(Type::int());
+        return array(
+            array(Type::collection(Type::int())->create(),
+                  Type::collection(Type::varchar())->create()),
+            array(Type::collection(Type::int())->create(1, 2, 3),
+                  Type::collection(Type::int())->create(4, 5, 6)),
+            array(Type::collection(Type::int())->create(1, 2, 3),
+                  Type::collection(Type::int())->create(1)),
+            array(Type::collection(Type::varchar())->create('a', 'b', 'c'),
+                  Type::collection(Type::varchar())->create('a', 'b', 'd')),
+            array(Type::collection($setType)->create($setType->create(1, 2, 3)),
+                  Type::collection($setType)->create($setType->create(4, 5, 6))),
+        );
+    }
 }
