@@ -347,8 +347,8 @@ user_type_compare(cassandra_type *type1, cassandra_type *type2 TSRMLS_DC)
   zend_hash_internal_pointer_reset_ex(&type1->types, &pos1);
   zend_hash_internal_pointer_reset_ex(&type2->types, &pos2);
 
-  while (PHP5TO7_ZEND_HASH_GET_CURRENT_KEY_EX(&type1->types, &key1, NULL, &pos1) &&
-         PHP5TO7_ZEND_HASH_GET_CURRENT_KEY_EX(&type2->types, &key2, NULL, &pos2) &&
+  while (PHP5TO7_ZEND_HASH_GET_CURRENT_KEY_EX(&type1->types, &key1, NULL, &pos1) == HASH_KEY_IS_STRING &&
+         PHP5TO7_ZEND_HASH_GET_CURRENT_KEY_EX(&type2->types, &key2, NULL, &pos2) == HASH_KEY_IS_STRING &&
          PHP5TO7_ZEND_HASH_GET_CURRENT_DATA_EX(&type1->types, current1, &pos1) &&
          PHP5TO7_ZEND_HASH_GET_CURRENT_DATA_EX(&type2->types, current2, &pos2)) {
     int result;
@@ -799,9 +799,12 @@ php5to7_zval
 php_cassandra_type_user_type(TSRMLS_D)
 {
   php5to7_zval ztype;
+  cassandra_type *user_type;
 
   PHP5TO7_ZVAL_MAYBE_MAKE(ztype);
   object_init_ex(PHP5TO7_ZVAL_MAYBE_P(ztype), cassandra_type_user_type_ce);
+  user_type = PHP_CASSANDRA_GET_TYPE(PHP5TO7_ZVAL_MAYBE_P(ztype));
+  user_type->data_type = cass_data_type_new(CASS_VALUE_TYPE_UDT);
 
   return ztype;
 }

@@ -81,9 +81,14 @@ php_cassandra_type_scalar_properties(zval *object TSRMLS_DC)
   cassandra_type *self  = PHP_CASSANDRA_GET_TYPE(object);
   HashTable      *props = zend_std_get_properties(object TSRMLS_CC);
 
+  /* Used for comparison and 'text' is just an alias for 'varchar' */
+  CassValueType type = self->type == CASS_VALUE_TYPE_TEXT
+                     ? CASS_VALUE_TYPE_VARCHAR
+                     : self->type;
+
   PHP5TO7_ZVAL_MAYBE_MAKE(name);
   PHP5TO7_ZVAL_STRING(PHP5TO7_ZVAL_MAYBE_P(name),
-                      php_cassandra_scalar_type_name(self->type TSRMLS_CC));
+                      php_cassandra_scalar_type_name(type TSRMLS_CC));
   PHP5TO7_ZEND_HASH_UPDATE(props,
                            "name", sizeof("name"),
                            PHP5TO7_ZVAL_MAYBE_P(name), sizeof(zval));

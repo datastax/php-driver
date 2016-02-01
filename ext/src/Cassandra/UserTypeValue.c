@@ -218,14 +218,18 @@ PHP_METHOD(UserTypeValue, count)
 /* {{{ Cassandra\UserTypeValue::current() */
 PHP_METHOD(UserTypeValue, current)
 {
-  char *name;
+  php5to7_string key;
   cassandra_user_type_value *self =
       PHP_CASSANDRA_GET_USER_TYPE_VALUE(getThis());
   cassandra_type *type =
       PHP_CASSANDRA_GET_TYPE(PHP5TO7_ZVAL_MAYBE_P(self->type));
-  if (PHP5TO7_ZEND_HASH_GET_CURRENT_KEY_EX(&type->types, &name, NULL, &self->pos)) {
+  if (PHP5TO7_ZEND_HASH_GET_CURRENT_KEY_EX(&type->types, &key, NULL, &self->pos) == HASH_KEY_IS_STRING) {
     php5to7_zval *value;
-    if (PHP5TO7_ZEND_HASH_FIND(&self->values, name, strlen(name) + 1, value)) {
+#if PHP_MAJOR_VERSION >= 7
+    if (PHP5TO7_ZEND_HASH_FIND(&self->values, key->val, key->len + 1, value)) {
+#else
+    if (PHP5TO7_ZEND_HASH_FIND(&self->values, key, strlen(key) + 1, value)) {
+#endif
       RETURN_ZVAL(PHP5TO7_ZVAL_MAYBE_DEREF(value), 1, 0);
     }
   }
@@ -341,7 +345,7 @@ php_cassandra_user_type_value_properties(zval *object TSRMLS_DC)
 
   PHP5TO7_ZVAL_MAYBE_MAKE(values);
   array_init(PHP5TO7_ZVAL_MAYBE_P(values));
-  php_cassandra_user_type_value_populate(self, values TSRMLS_CC);
+  php_cassandra_user_type_value_populate(self, PHP5TO7_ZVAL_MAYBE_P(values) TSRMLS_CC);
   PHP5TO7_ZEND_HASH_UPDATE(props, "values", sizeof("values"), PHP5TO7_ZVAL_MAYBE_P(values), sizeof(zval));
 
   return props;
@@ -366,8 +370,8 @@ php_cassandra_user_type_value_compare(zval *obj1, zval *obj2 TSRMLS_DC)
   user_type_value1 = PHP_CASSANDRA_GET_USER_TYPE_VALUE(obj1);
   user_type_value2 = PHP_CASSANDRA_GET_USER_TYPE_VALUE(obj2);
 
-  type1 = PHP_CASSANDRA_GET_TYPE(user_type_value1->type);
-  type2 = PHP_CASSANDRA_GET_TYPE(user_type_value2->type);
+  type1 = PHP_CASSANDRA_GET_TYPE(PHP5TO7_ZVAL_MAYBE_P(user_type_value1->type));
+  type2 = PHP_CASSANDRA_GET_TYPE(PHP5TO7_ZVAL_MAYBE_P(user_type_value2->type));
 
   result = php_cassandra_type_compare(type1, type2 TSRMLS_CC);
   if (result != 0) return result;
@@ -432,7 +436,7 @@ php_cassandra_user_type_value_new(zend_class_entry *ce TSRMLS_DC)
 
   zend_hash_init(&self->values, 0, NULL, ZVAL_PTR_DTOR, 0);
 #if PHP_MAJOR_VERSION >= 7
-  self->pos = HASH_INVALID_IDX;
+  self->pos = HT_INVALID_IDX;
 #else
   self->pos = NULL;
 #endif

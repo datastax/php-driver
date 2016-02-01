@@ -151,17 +151,10 @@ php_cassandra_type_tuple_gc(zval *object, php5to7_zval_gc table, int *n TSRMLS_D
 static HashTable *
 php_cassandra_type_tuple_properties(zval *object TSRMLS_DC)
 {
-  php5to7_zval name;
   php5to7_zval types;
 
   cassandra_type *self  = PHP_CASSANDRA_GET_TYPE(object);
   HashTable      *props = zend_std_get_properties(object TSRMLS_CC);
-
-  PHP5TO7_ZVAL_MAYBE_MAKE(name);
-  PHP5TO7_ZVAL_STRING(PHP5TO7_ZVAL_MAYBE_P(name), "tuple");
-  PHP5TO7_ZEND_HASH_UPDATE(props,
-                           "name", sizeof("name"),
-                           PHP5TO7_ZVAL_MAYBE_P(name), sizeof(zval));
 
   PHP5TO7_ZVAL_MAYBE_MAKE(types);
   array_init(PHP5TO7_ZVAL_MAYBE_P(types));

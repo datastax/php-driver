@@ -38,8 +38,8 @@ PHP_METHOD(TypeUserType, withName)
 {
   char *name;
   php5to7_size name_len;
-
   cassandra_type *self;
+  cassandra_type *user_type;
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &name, &name_len) == FAILURE) {
     return;
@@ -47,13 +47,17 @@ PHP_METHOD(TypeUserType, withName)
 
   self = PHP_CASSANDRA_GET_TYPE(getThis());
 
-  if (self->type_name) {
-    efree(self->type_name);
+  object_init_ex(return_value, cassandra_type_user_type_ce);
+  user_type = PHP_CASSANDRA_GET_TYPE(return_value);
+  user_type->data_type = cass_data_type_new_from_existing(self->data_type);
+
+  user_type->type_name = estrndup(name, name_len);
+
+  if (self->keyspace) {
+    user_type->keyspace = estrdup(self->keyspace);
   }
 
-  self->type_name = estrndup(name, name_len);
-
-  RETURN_ZVAL(getThis(), 1, 0);
+  PHP5TO7_ZEND_HASH_ZVAL_COPY(&user_type->types, &self->types);
 }
 
 PHP_METHOD(TypeUserType, name)
@@ -76,8 +80,8 @@ PHP_METHOD(TypeUserType, withKeyspace)
 {
   char *keyspace;
   php5to7_size keyspace_len;
-
   cassandra_type *self;
+  cassandra_type *user_type;
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &keyspace, &keyspace_len) == FAILURE) {
     return;
@@ -85,13 +89,17 @@ PHP_METHOD(TypeUserType, withKeyspace)
 
   self = PHP_CASSANDRA_GET_TYPE(getThis());
 
-  if (self->keyspace) {
-    efree(self->keyspace);
+  object_init_ex(return_value, cassandra_type_user_type_ce);
+  user_type = PHP_CASSANDRA_GET_TYPE(return_value);
+  user_type->data_type = cass_data_type_new_from_existing(self->data_type);
+
+  if (self->type_name) {
+    user_type->type_name = estrdup(self->type_name);
   }
 
-  self->keyspace = estrndup(keyspace, keyspace_len);
+  user_type->keyspace = estrndup(keyspace, keyspace_len);
 
-  RETURN_ZVAL(getThis(), 1, 0);
+  PHP5TO7_ZEND_HASH_ZVAL_COPY(&user_type->types, &self->types);
 }
 
 PHP_METHOD(TypeUserType, keyspace)
@@ -248,32 +256,10 @@ php_cassandra_type_user_type_gc(zval *object, php5to7_zval_gc table, int *n TSRM
 static HashTable *
 php_cassandra_type_user_type_properties(zval *object TSRMLS_DC)
 {
-  php5to7_zval name;
-  php5to7_zval keyspace;
   php5to7_zval types;
 
   cassandra_type *self  = PHP_CASSANDRA_GET_TYPE(object);
   HashTable      *props = zend_std_get_properties(object TSRMLS_CC);
-
-  PHP5TO7_ZVAL_MAYBE_MAKE(name);
-  if (self->type_name) {
-    PHP5TO7_ZVAL_STRING(PHP5TO7_ZVAL_MAYBE_P(name), self->type_name);
-  } else {
-    ZVAL_NULL(PHP5TO7_ZVAL_MAYBE_P(name));
-  }
-  PHP5TO7_ZEND_HASH_UPDATE(props,
-                           "name", sizeof("name"),
-                           PHP5TO7_ZVAL_MAYBE_P(name), sizeof(zval));
-
-  PHP5TO7_ZVAL_MAYBE_MAKE(keyspace);
-  if (self->keyspace) {
-    PHP5TO7_ZVAL_STRING(PHP5TO7_ZVAL_MAYBE_P(keyspace), self->keyspace);
-  } else {
-    ZVAL_NULL(PHP5TO7_ZVAL_MAYBE_P(keyspace));
-  }
-  PHP5TO7_ZEND_HASH_UPDATE(props,
-                           "keyspace", sizeof("keyspace"),
-                           PHP5TO7_ZVAL_MAYBE_P(keyspace), sizeof(zval));
 
   PHP5TO7_ZVAL_MAYBE_MAKE(types);
   array_init(PHP5TO7_ZVAL_MAYBE_P(types));
@@ -314,7 +300,7 @@ php_cassandra_type_user_type_new(zend_class_entry *ce TSRMLS_DC)
   cassandra_type *self = PHP5TO7_ZEND_OBJECT_ECALLOC(type, ce);
 
   self->type = CASS_VALUE_TYPE_UDT;
-  self->data_type = cass_data_type_new(self->type);
+  self->data_type = NULL;
   self->keyspace = self->type_name = NULL;
   zend_hash_init(&self->types, 0, NULL, ZVAL_PTR_DTOR, 0);
 

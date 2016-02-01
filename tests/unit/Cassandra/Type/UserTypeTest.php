@@ -102,6 +102,32 @@ class UserTypeTest extends \PHPUnit_Framework_TestCase
         Type::userType('a', new UnsupportedType());
     }
 
+    public function testWithNameOrWithKeyspace() {
+        $userType = Type::userType('a', Type::int(), 'b', Type::varchar());
+        $this->assertEquals($userType->name(), null);
+        $this->assertEquals($userType->keyspace(), null);
+
+        $userType1 = $userType->withName('abc');
+        $types = $userType1->types();
+        $this->assertEquals(count($types), 2);
+        $this->assertEquals($types['a'], Type::int());
+        $this->assertEquals($types['b'], Type::varchar());
+        $this->assertEquals($userType1->name(), 'abc');
+        $this->assertEquals($userType1->keyspace(), null);
+        $this->assertEquals($userType->name(), null);
+        $this->assertEquals($userType->keyspace(), null);
+
+        $userType2 = $userType1->withKeyspace('xyz');
+        $types = $userType2->types();
+        $this->assertEquals(count($types), 2);
+        $this->assertEquals($types['a'], Type::int());
+        $this->assertEquals($types['b'], Type::varchar());
+        $this->assertEquals($userType2->name(), 'abc');
+        $this->assertEquals($userType2->keyspace(), 'xyz');
+        $this->assertEquals($userType->name(), null);
+        $this->assertEquals($userType->keyspace(), null);
+    }
+
     /**
      * @dataProvider equalTypes
      */

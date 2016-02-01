@@ -326,11 +326,11 @@ class UserTypeIntegrationTest extends CollectionsIntegrationTest {
                 $types["field$i"] = $cassandraTypes[$i][0];
             }
             $user = new UserTypeValue($types);
-            $user->type()->withName(self::userTypeString($user->type()));
+            $userType = $user->type()->withName(self::userTypeString($user->type()));
             for ($i = 0; $i < $size; $i++) {
                 $user->set("field$i", $cassandraTypes[$i][1][0]);
             }
-            return array($user->type(), $user);
+            return array($userType, $user);
         }, $sizes);
     }
 
@@ -356,8 +356,8 @@ class UserTypeIntegrationTest extends CollectionsIntegrationTest {
                 $types["field$i"] = $scalarCassandraTypes[$i][0];
             }
             $user = new UserTypeValue($types);
-            $user->type()->withName(self::userTypeString($user->type()));
-            return array($user->type(), $user);
+            $userType = $user->type()->withName(self::userTypeString($user->type()));
+            return array($userType, $user);
         }, $sizes);
     }
 

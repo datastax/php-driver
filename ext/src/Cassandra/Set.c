@@ -94,8 +94,6 @@ php_cassandra_set_populate(cassandra_set *set, zval *array TSRMLS_DC)
     }
     Z_TRY_ADDREF_P(PHP5TO7_ZVAL_MAYBE_P(curr->value));
   }
-
-  zend_hash_sort(Z_ARRVAL_P(array), zend_qsort, php_cassandra_data_compare, 1 TSRMLS_CC);
 }
 
 /* {{{ Cassandra\Set::__construct(type) */
@@ -309,6 +307,7 @@ php_cassandra_set_properties(zval *object TSRMLS_DC)
   PHP5TO7_ZVAL_MAYBE_MAKE(values);
   array_init(PHP5TO7_ZVAL_MAYBE_P(values));
   php_cassandra_set_populate(self , PHP5TO7_ZVAL_MAYBE_P(values) TSRMLS_CC);
+  PHP5TO7_ZEND_HASH_SORT(Z_ARRVAL_P(PHP5TO7_ZVAL_MAYBE_P(values)), php_cassandra_data_compare, 1);
   PHP5TO7_ZEND_HASH_UPDATE(props, "values", sizeof("values"), PHP5TO7_ZVAL_MAYBE_P(values), sizeof(zval));
 
   return props;
@@ -330,8 +329,8 @@ php_cassandra_set_compare(zval *obj1, zval *obj2 TSRMLS_DC)
   set1 = PHP_CASSANDRA_GET_SET(obj1);
   set2 = PHP_CASSANDRA_GET_SET(obj2);
 
-  type1 = PHP_CASSANDRA_GET_TYPE(set1->type);
-  type2 = PHP_CASSANDRA_GET_TYPE(set2->type);
+  type1 = PHP_CASSANDRA_GET_TYPE(PHP5TO7_ZVAL_MAYBE_P(set1->type));
+  type2 = PHP_CASSANDRA_GET_TYPE(PHP5TO7_ZVAL_MAYBE_P(set2->type));
 
   result = php_cassandra_type_compare(type1, type2 TSRMLS_CC);
   if (result != 0) return result;

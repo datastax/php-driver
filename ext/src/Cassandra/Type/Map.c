@@ -140,16 +140,8 @@ php_cassandra_type_map_gc(zval *object, php5to7_zval_gc table, int *n TSRMLS_DC)
 static HashTable *
 php_cassandra_type_map_properties(zval *object TSRMLS_DC)
 {
-  php5to7_zval name;
-
   cassandra_type *self  = PHP_CASSANDRA_GET_TYPE(object);
   HashTable      *props = zend_std_get_properties(object TSRMLS_CC);
-
-  PHP5TO7_ZVAL_MAYBE_MAKE(name);
-  PHP5TO7_ZVAL_STRING(PHP5TO7_ZVAL_MAYBE_P(name), "map");
-  PHP5TO7_ZEND_HASH_UPDATE(props,
-                           "name", sizeof("name"),
-                           PHP5TO7_ZVAL_MAYBE_P(name), sizeof(zval));
 
   if (PHP5TO7_ZEND_HASH_UPDATE(props,
                                "keyType", sizeof("keyType"),

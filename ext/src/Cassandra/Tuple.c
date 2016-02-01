@@ -5,6 +5,8 @@
 #include "src/Cassandra/Type/Tuple.h"
 #include "src/Cassandra/Tuple.h"
 
+#include "zend_hash.h"
+
 zend_class_entry *cassandra_tuple_ce = NULL;
 
 int
@@ -191,7 +193,7 @@ PHP_METHOD(Tuple, current)
   cassandra_tuple *self = PHP_CASSANDRA_GET_TUPLE(getThis());
   cassandra_type *type = PHP_CASSANDRA_GET_TYPE(PHP5TO7_ZVAL_MAYBE_P(self->type));
 
-  if (PHP5TO7_ZEND_HASH_GET_CURRENT_KEY_EX(&type->types, NULL, &index, &self->pos)) {
+  if (PHP5TO7_ZEND_HASH_GET_CURRENT_KEY_EX(&type->types, NULL, &index, &self->pos) == HASH_KEY_IS_LONG) {
     php5to7_zval *value;
     if (PHP5TO7_ZEND_HASH_INDEX_FIND(&self->values, index, value)) {
       RETURN_ZVAL(PHP5TO7_ZVAL_MAYBE_DEREF(value), 1, 0);
@@ -206,7 +208,7 @@ PHP_METHOD(Tuple, key)
   php5to7_ulong index;
   cassandra_tuple *self = PHP_CASSANDRA_GET_TUPLE(getThis());
   cassandra_type *type = PHP_CASSANDRA_GET_TYPE(PHP5TO7_ZVAL_MAYBE_P(self->type));
-  if (PHP5TO7_ZEND_HASH_GET_CURRENT_KEY_EX(&type->types, NULL, &index, &self->pos)) {
+  if (PHP5TO7_ZEND_HASH_GET_CURRENT_KEY_EX(&type->types, NULL, &index, &self->pos) == HASH_KEY_IS_LONG) {
     RETURN_LONG(index);
   }
 }
@@ -322,8 +324,8 @@ php_cassandra_tuple_compare(zval *obj1, zval *obj2 TSRMLS_DC)
   tuple1 = PHP_CASSANDRA_GET_TUPLE(obj1);
   tuple2 = PHP_CASSANDRA_GET_TUPLE(obj2);
 
-  type1 = PHP_CASSANDRA_GET_TYPE(tuple1->type);
-  type2 = PHP_CASSANDRA_GET_TYPE(tuple2->type);
+  type1 = PHP_CASSANDRA_GET_TYPE(PHP5TO7_ZVAL_MAYBE_P(tuple1->type));
+  type2 = PHP_CASSANDRA_GET_TYPE(PHP5TO7_ZVAL_MAYBE_P(tuple2->type));
 
   result = php_cassandra_type_compare(type1, type2 TSRMLS_CC);
   if (result != 0) return result;
@@ -388,7 +390,7 @@ php_cassandra_tuple_new(zend_class_entry *ce TSRMLS_DC)
 
   zend_hash_init(&self->values, 0, NULL, ZVAL_PTR_DTOR, 0);
 #if PHP_MAJOR_VERSION >= 7
-  self->pos = HASH_INVALID_IDX;
+  self->pos = HT_INVALID_IDX;
 #else
   self->pos = NULL;
 #endif

@@ -346,8 +346,8 @@ php_cassandra_collection_compare(zval *obj1, zval *obj2 TSRMLS_DC)
   collection1 = PHP_CASSANDRA_GET_COLLECTION(obj1);
   collection2 = PHP_CASSANDRA_GET_COLLECTION(obj2);
 
-  type1 = PHP_CASSANDRA_GET_TYPE(collection1->type);
-  type2 = PHP_CASSANDRA_GET_TYPE(collection2->type);
+  type1 = PHP_CASSANDRA_GET_TYPE(PHP5TO7_ZVAL_MAYBE_P(collection1->type));
+  type2 = PHP_CASSANDRA_GET_TYPE(PHP5TO7_ZVAL_MAYBE_P(collection2->type));
 
   result = php_cassandra_type_compare(type1, type2 TSRMLS_CC);
   if (result != 0) return result;
