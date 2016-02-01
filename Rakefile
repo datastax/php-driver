@@ -142,7 +142,7 @@ end
   <required>
    <php>
     <min>5.3.4</min>
-    <max>5.99.99</max>
+    <max>7.0.99</max>
    </php>
    <pearinstaller>
     <min>1.4.8</min>
