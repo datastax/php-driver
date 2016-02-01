@@ -15,10 +15,10 @@ protocol and Cassandra Query Language v3.
     <active>yes</active>
   </lead>
   <date>2016-02-01</date>
-  <time>10:26:56</time>
+  <time>19:35:01</time>
   <version>
-    <release>1.1.0devel</release>
-    <api>1.1.0devel</api>
+    <release>1.1.0-dev</release>
+    <api>1.1.0-dev</api>
   </version>
   <stability>
     <release>devel</release>
@@ -26,7 +26,7 @@ protocol and Cassandra Query Language v3.
   </stability>
   <license uri="http://www.apache.org/licenses/LICENSE-2.0">Apache License 2.0</license>
   <notes>
-# 1.1.0-devel
+# Official release under development
   </notes>
   <contents>
     <dir name="/">

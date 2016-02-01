@@ -19,13 +19,15 @@ class Release
     pecl_number    = number unless number.nil?
     pecl_stability = stability if stability != 'stable'
     pecl_stability = pecl_stability.upcase if pecl_stability == 'rc'
+    pecl_stability = 'dev' if pecl_stability == 'devel'
 
     @version      = version
     @major        = major
     @minor        = minor
     @release      = release
     @stability    = stability
-    @pecl_version = "#{major}.#{minor}.#{release}#{pecl_stability}#{pecl_number}"
+    @pecl_version = "#{major}.#{minor}.#{release}"
+    @pecl_version = "#{major}.#{minor}.#{release}-#{pecl_stability}#{pecl_number}" if stability != 'stable'
     @dirname      = File.expand_path(File.dirname(__FILE__))
   end
 
@@ -92,6 +94,12 @@ class Release
       end
     end
 
+    if @stability == 'stable' && notes == ''
+      raise ::RuntimeError,
+            %[#{@dirname}/CHANGELOG.md Does not Contain Information for Release: ] +
+            %[Missing information for v#{@version}]
+    end
+    notes = '# Official release under development' if notes == ''
     notes.strip
   end
 
