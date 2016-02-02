@@ -9,6 +9,82 @@ use Cassandra\Type;
  */
 class MapTest extends \PHPUnit_Framework_TestCase
 {
+    /**
+     * @expectedException         InvalidArgumentException
+     * @expectedExceptionMessage  keyType must be a string or an instance of Cassandra\Type, an instance of stdClass given
+     */
+    public function testInvalidKeyType()
+    {
+        new Map(new \stdClass(), \Cassandra::TYPE_VARCHAR);
+    }
+
+    /**
+     * @expectedException         InvalidArgumentException
+     * @expectedExceptionMessage  Unsupported type 'custom type'
+     */
+    public function testUnsupportedStringKeyType()
+    {
+        new Map('custom type', \Cassandra::TYPE_VARCHAR);
+    }
+
+    /**
+     * @expectedException        InvalidArgumentException
+     * @expectedExceptionMessage keyType must be Cassandra\Type::varchar(),
+     *                           Cassandra\Type::text(), Cassandra\Type::blob(),
+     *                           Cassandra\Type::ascii(), Cassandra\Type::bigint(),
+     *                           Cassandra\Type::counter(), Cassandra\Type::int(),
+     *                           Cassandra\Type::varint(), Cassandra\Type::boolean(),
+     *                           Cassandra\Type::decimal(), Cassandra\Type::double(),
+     *                           Cassandra\Type::float(), Cassandra\Type::inet(),
+     *                           Cassandra\Type::timestamp(), Cassandra\Type::uuid(),
+     *                           Cassandra\Type::timeuuid(), Cassandra\Type::map(),
+     *                           Cassandra\Type::set(), Cassandra\Type::collection(),
+     *                           Cassandra\Type::tuple() or Cassandra\Type::udt(),
+     *                           an instance of Cassandra\Type\UnsupportedType given
+     */
+    public function testUnsupportedKeyType()
+    {
+        new Map(new Type\UnsupportedType(), Type::varchar());
+    }
+
+    /**
+     * @expectedException         InvalidArgumentException
+     * @expectedExceptionMessage  valueType must be a string or an instance of Cassandra\Type, an instance of stdClass given
+     */
+    public function testInvalidValueType()
+    {
+        new Map(\Cassandra::TYPE_VARCHAR, new \stdClass());
+    }
+
+    /**
+     * @expectedException         InvalidArgumentException
+     * @expectedExceptionMessage  Unsupported type 'custom type'
+     */
+    public function testUnsupportedStringValueType()
+    {
+        new Map(\Cassandra::TYPE_VARCHAR, 'custom type');
+    }
+
+    /**
+     * @expectedException        InvalidArgumentException
+     * @expectedExceptionMessage valueType must be Cassandra\Type::varchar(),
+     *                           Cassandra\Type::text(), Cassandra\Type::blob(),
+     *                           Cassandra\Type::ascii(), Cassandra\Type::bigint(),
+     *                           Cassandra\Type::counter(), Cassandra\Type::int(),
+     *                           Cassandra\Type::varint(), Cassandra\Type::boolean(),
+     *                           Cassandra\Type::decimal(), Cassandra\Type::double(),
+     *                           Cassandra\Type::float(), Cassandra\Type::inet(),
+     *                           Cassandra\Type::timestamp(), Cassandra\Type::uuid(),
+     *                           Cassandra\Type::timeuuid(), Cassandra\Type::map(),
+     *                           Cassandra\Type::set(), Cassandra\Type::collection(),
+     *                           Cassandra\Type::tuple() or Cassandra\Type::udt(),
+     *                           an instance of Cassandra\Type\UnsupportedType given
+     */
+    public function testUnsupportedValueType()
+    {
+        new Map(Type::varchar(), new Type\UnsupportedType());
+    }
+
     public function testSupportsKeyBasedAccess()
     {
         $map = Type::map(Type::varint(), Type::varchar())->create();
@@ -87,10 +163,9 @@ class MapTest extends \PHPUnit_Framework_TestCase
     public function compositeTypes()
     {
         return array(
-            array(
-                Type::map(Type::varchar(), Type::varchar()),
-                Type::set(Type::varchar()),
-                Type::collection(Type::varchar()))
+            array(Type::map(Type::varchar(), Type::varchar())),
+            array(Type::set(Type::varchar())),
+            array(Type::collection(Type::varchar()))
         );
     }
 
@@ -120,5 +195,106 @@ class MapTest extends \PHPUnit_Framework_TestCase
     {
         $map = new Map(\Cassandra::TYPE_VARCHAR, \Cassandra::TYPE_VARCHAR);
         $map->set("test", null);
+    }
+
+    /**
+     * @expectedException         InvalidArgumentException
+     * @expectedExceptionMessage  Invalid key: null is not supported inside maps
+     */
+    public function testSupportsNullKeys()
+    {
+        $map = new Map(\Cassandra::TYPE_VARCHAR, \Cassandra::TYPE_VARCHAR);
+        $map->set(null, "test");
+    }
+
+    public function testSupportsForeachIteration()
+    {
+        $keys = array(new Varint('1'), new Varint('2'), new Varint('3'),
+                      new Varint('4'), new Varint('5'), new Varint('6'),
+                      new Varint('7'), new Varint('8'));
+        $values = array('a', 'b', 'c',
+                        'd', 'e', 'f',
+                        'g', 'h');
+        $map = new Map(\Cassandra::TYPE_VARINT, \Cassandra::TYPE_VARCHAR);
+
+        for ($i = 0; $i < count($keys); $i++) {
+            $map->set($keys[$i], $values[$i]);
+        }
+
+        $index = 0;
+        foreach ($map as $value) {
+            $this->assertEquals($values[$index], $value);
+            $index++;
+        }
+
+        $index = 0;
+        foreach ($map as $key => $value) {
+            $this->assertEquals($keys[$index], $key);
+            $this->assertEquals($values[$index], $value);
+            $index++;
+        }
+    }
+
+    public function testSupportsRetrievingKeysAndValues()
+    {
+        $keys = array(new Varint('1'), new Varint('2'), new Varint('3'),
+                      new Varint('4'), new Varint('5'), new Varint('6'),
+                      new Varint('7'), new Varint('8'));
+        $values = array('a', 'b', 'c',
+                        'd', 'e', 'f',
+                        'g', 'h');
+        $map = new Map(\Cassandra::TYPE_VARINT, \Cassandra::TYPE_VARCHAR);
+
+        for ($i = 0; $i < count($keys); $i++) {
+            $map->set($keys[$i], $values[$i]);
+        }
+
+        $this->assertEquals($keys, $map->keys());
+        $this->assertEquals($values, $map->values());
+
+    }
+
+    /**
+     * @dataProvider equalTypes
+     */
+    public function testCompareEquals($value1, $value2)
+    {
+        $this->assertEquals($value1, $value2);
+        $this->assertTrue($value1 == $value2);
+    }
+
+    public function equalTypes()
+    {
+        $setType = Type::set(Type::int());
+        return array(
+            array(Type::map(Type::int(), Type::varchar())->create(),
+                  Type::map(Type::int(), Type::varchar())->create()),
+            array(Type::map(Type::int(), Type::varchar())->create(1, 'a', 2, 'b', 3, 'c'),
+                  Type::map(Type::int(), Type::varchar())->create(1, 'a', 2, 'b', 3, 'c')),
+            array(Type::map($setType, Type::varchar())->create($setType->create(1, 2, 3), 'a', $setType->create(4, 5, 6), 'b'),
+                  Type::map($setType, Type::varchar())->create($setType->create(1, 2, 3), 'a', $setType->create(4, 5, 6), 'b'))
+        );
+    }
+
+    /**
+     * @dataProvider notEqualTypes
+     */
+    public function testCompareNotEquals($value1, $value2)
+    {
+        $this->assertNotEquals($value1, $value2);
+        $this->assertFalse($value1 == $value2);
+    }
+
+    public function notEqualTypes()
+    {
+        $setType = Type::set(Type::int());
+        return array(
+            array(Type::map(Type::int(), Type::int())->create(),
+                  Type::map(Type::int(), Type::varchar())->create()),
+            array(Type::map(Type::int(), Type::varchar())->create(1, 'a', 2, 'b', 3, 'c'),
+                  Type::map(Type::int(), Type::varchar())->create(1, 'a')),
+            array(Type::map($setType, Type::varchar())->create($setType->create(4, 5, 6), 'a', $setType->create(7, 8, 9), 'b'),
+                  Type::map($setType, Type::varchar())->create($setType->create(1, 2, 3), 'a', $setType->create(4, 5, 6), 'b'))
+        );
     }
 }

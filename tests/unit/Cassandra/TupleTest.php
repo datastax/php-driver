@@ -134,4 +134,48 @@ class TupleTest extends \PHPUnit_Framework_TestCase
         $tuple->set(0, "invalid index");
         $tuple->get(1);
     }
+
+    /**
+     * @dataProvider equalTypes
+     */
+    public function testCompareEquals($value1, $value2)
+    {
+        $this->assertEquals($value1, $value2);
+        $this->assertTrue($value1 == $value2);
+    }
+
+    public function equalTypes()
+    {
+        $setType = Type::set(Type::int());
+        return array(
+            array(Type::tuple(Type::int(), Type::varchar(), Type::bigint())->create(),
+                  Type::tuple(Type::int(), Type::varchar(), Type::bigint())->create()),
+            array(Type::tuple(Type::int(), Type::varchar(), Type::bigint())->create(1, 'a', new Bigint(99)),
+                  Type::tuple(Type::int(), Type::varchar(), Type::bigint())->create(1, 'a', new Bigint(99))),
+            array(Type::tuple($setType, Type::varchar())->create($setType->create(1, 2, 3), 'a'),
+                  Type::tuple($setType, Type::varchar())->create($setType->create(1, 2, 3), 'a'))
+        );
+    }
+
+    /**
+     * @dataProvider notEqualTypes
+     */
+    public function testCompareNotEquals($value1, $value2)
+    {
+        $this->assertNotEquals($value1, $value2);
+        $this->assertFalse($value1 == $value2);
+    }
+
+    public function notEqualTypes()
+    {
+        $setType = Type::set(Type::int());
+        return array(
+            array(Type::tuple(Type::int(), Type::varchar(), Type::varint())->create(),
+                  Type::tuple(Type::int(), Type::varchar(), Type::bigint())->create()),
+            array(Type::tuple(Type::int(), Type::varchar(), Type::bigint())->create(1, 'a', new Bigint(99)),
+                  Type::tuple(Type::int(), Type::varchar(), Type::bigint())->create(2, 'b', new Bigint(99))),
+            array(Type::tuple($setType, Type::varchar())->create($setType->create(1, 2, 3), 'a'),
+                  Type::tuple($setType, Type::varchar())->create($setType->create(4, 5, 6), 'a'))
+        );
+    }
 }

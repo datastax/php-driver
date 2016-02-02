@@ -586,10 +586,15 @@ php_cassandra_collection_from_set(cassandra_set *set, CassCollection **collectio
   cassandra_type *value_type;
   cassandra_set_entry *curr, *temp;
 
-  collection = cass_collection_new(CASS_COLLECTION_TYPE_SET, HASH_COUNT(set->entries));
-
   type = PHP_CASSANDRA_GET_TYPE(PHP5TO7_ZVAL_MAYBE_P(set->type));
   value_type = PHP_CASSANDRA_GET_TYPE(PHP5TO7_ZVAL_MAYBE_P(type->value_type));
+#if CURRENT_CPP_DRIVER_VERSION > CPP_DRIVER_VERSION(2, 2, 2)
+  collection = cass_collection_new_from_data_type(type->data_type,
+                                                  HASH_COUNT(set->entries));
+#else
+  collection = cass_collection_new(CASS_COLLECTION_TYPE_SET,
+                                   HASH_COUNT(set->entries));
+#endif
 
   HASH_ITER(hh, set->entries, curr, temp) {
     if (!php_cassandra_collection_append(collection,
@@ -615,11 +620,18 @@ php_cassandra_collection_from_collection(cassandra_collection *coll, CassCollect
   php5to7_zval *current;
   cassandra_type *type;
   cassandra_type *value_type;
-  CassCollection *collection =
-      cass_collection_new(CASS_COLLECTION_TYPE_LIST, zend_hash_num_elements(&coll->values));
+  CassCollection *collection;
 
   type = PHP_CASSANDRA_GET_TYPE(PHP5TO7_ZVAL_MAYBE_P(coll->type));
   value_type = PHP_CASSANDRA_GET_TYPE(PHP5TO7_ZVAL_MAYBE_P(type->value_type));
+#if CURRENT_CPP_DRIVER_VERSION > CPP_DRIVER_VERSION(2, 2, 2)
+  collection = cass_collection_new_from_data_type(type->data_type,
+                                                  zend_hash_num_elements(&coll->values));
+#else
+  collection = cass_collection_new(CASS_COLLECTION_TYPE_LIST,
+                                   zend_hash_num_elements(&coll->values));
+#endif
+
 
   PHP5TO7_ZEND_HASH_FOREACH_VAL(&coll->values, current) {
     if (!php_cassandra_collection_append(collection, PHP5TO7_ZVAL_MAYBE_DEREF(current), value_type->type TSRMLS_CC)) {
@@ -640,17 +652,22 @@ int
 php_cassandra_collection_from_map(cassandra_map *map, CassCollection **collection_ptr TSRMLS_DC)
 {
   int result = 1;
-  CassCollection *collection = NULL;
+  CassCollection *collection;
   cassandra_type *type;
   cassandra_type *key_type;
   cassandra_type *value_type;
   cassandra_map_entry *curr, *temp;
 
-  collection = cass_collection_new(CASS_COLLECTION_TYPE_MAP, HASH_COUNT(map->entries));
-
   type = PHP_CASSANDRA_GET_TYPE(PHP5TO7_ZVAL_MAYBE_P(map->type));
   value_type = PHP_CASSANDRA_GET_TYPE(PHP5TO7_ZVAL_MAYBE_P(type->value_type));
   key_type = PHP_CASSANDRA_GET_TYPE(PHP5TO7_ZVAL_MAYBE_P(type->key_type));
+#if CURRENT_CPP_DRIVER_VERSION > CPP_DRIVER_VERSION(2, 2, 2)
+  collection = cass_collection_new_from_data_type(type->data_type,
+                                                  HASH_COUNT(map->entries));
+#else
+  collection = cass_collection_new(CASS_COLLECTION_TYPE_MAP,
+                                   HASH_COUNT(map->entries));
+#endif
 
   HASH_ITER(hh, map->entries, curr, temp) {
     if (!php_cassandra_collection_append(collection,
@@ -682,10 +699,10 @@ php_cassandra_tuple_from_tuple(cassandra_tuple *tuple, CassTuple **output TSRMLS
   php5to7_ulong num_key;
   php5to7_zval *current;
   cassandra_type *type;
-  CassTuple *tup =
-      cass_tuple_new(zend_hash_num_elements(&tuple->values));
+  CassTuple *tup;
 
   type = PHP_CASSANDRA_GET_TYPE(PHP5TO7_ZVAL_MAYBE_P(tuple->type));
+  tup = cass_tuple_new_from_data_type(type->data_type);
 
   PHP5TO7_ZEND_HASH_FOREACH_NUM_KEY_VAL(&tuple->values, num_key, current) {
     php5to7_zval *zsub_type;

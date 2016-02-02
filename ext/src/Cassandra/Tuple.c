@@ -5,18 +5,9 @@
 #include "src/Cassandra/Type/Tuple.h"
 #include "src/Cassandra/Tuple.h"
 
-zend_class_entry *cassandra_tuple_ce = NULL;
+#include "zend_hash.h"
 
-int
-php_cassandra_tuple_add(cassandra_tuple *tuple, zval *object TSRMLS_DC)
-{
-  if (PHP5TO7_ZEND_HASH_NEXT_INDEX_INSERT(&tuple->values, object, sizeof(zval *))) {
-    Z_TRY_ADDREF_P(object);
-    tuple->dirty = 1;
-    return 1;
-  }
-  return 0;
-}
+zend_class_entry *cassandra_tuple_ce = NULL;
 
 int
 php_cassandra_tuple_set(cassandra_tuple *tuple, ulong index, zval *object TSRMLS_DC)
@@ -30,15 +21,36 @@ php_cassandra_tuple_set(cassandra_tuple *tuple, ulong index, zval *object TSRMLS
 }
 
 static void
-php_cassandra_tuple_populate(cassandra_tuple *tuple, zval *array)
+php_cassandra_tuple_populate(cassandra_tuple *tuple, zval *array TSRMLS_DC)
 {
+  php5to7_ulong index;
+  cassandra_type *type;
   php5to7_zval *current;
-  PHP5TO7_ZEND_HASH_FOREACH_VAL(&tuple->values, current) {
-    if (add_next_index_zval(array, PHP5TO7_ZVAL_MAYBE_DEREF(current)) == SUCCESS)
-      Z_TRY_ADDREF_P(PHP5TO7_ZVAL_MAYBE_DEREF(current));
-    else
-      break;
-  } PHP5TO7_ZEND_HASH_FOREACH_END(&tuple->values);
+  php5to7_zval null;
+
+  PHP5TO7_ZVAL_MAYBE_MAKE(null);
+  ZVAL_NULL(PHP5TO7_ZVAL_MAYBE_P(null));
+
+  type = PHP_CASSANDRA_GET_TYPE(PHP5TO7_ZVAL_MAYBE_P(tuple->type));
+
+  PHP5TO7_ZEND_HASH_FOREACH_NUM_KEY_VAL(&type->types, index, current) {
+    php5to7_zval *value = NULL;
+    if (PHP5TO7_ZEND_HASH_INDEX_FIND(&tuple->values, index, value)) {
+      if (add_next_index_zval(array, PHP5TO7_ZVAL_MAYBE_DEREF(value)) == SUCCESS)
+        Z_TRY_ADDREF_P(PHP5TO7_ZVAL_MAYBE_DEREF(value));
+      else
+        break;
+    } else {
+      if (add_next_index_zval(array, PHP5TO7_ZVAL_MAYBE_P(null)) == SUCCESS)
+        Z_TRY_ADDREF_P(PHP5TO7_ZVAL_MAYBE_P(null));
+      else
+        break;
+    }
+  } PHP5TO7_ZEND_HASH_FOREACH_END(&type->types);
+
+#if PHP_MAJOR_VERSION < 7
+  zval_ptr_dtor(&null);
+#endif
 }
 
 /* {{{ Cassandra\Tuple::__construct(types) */
@@ -48,14 +60,10 @@ PHP_METHOD(Tuple, __construct)
   cassandra_type *type;
   HashTable *types;
   php5to7_zval *current;
-  php5to7_zval null;
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "h", &types) == FAILURE) {
     return;
   }
-
-  PHP5TO7_ZVAL_MAYBE_MAKE(null);
-  ZVAL_NULL(PHP5TO7_ZVAL_MAYBE_P(null));
 
   self = PHP_CASSANDRA_GET_TUPLE(getThis());
   self->type = php_cassandra_type_tuple(TSRMLS_C);
@@ -90,8 +98,6 @@ PHP_METHOD(Tuple, __construct)
       INVALID_ARGUMENT(sub_type, "a string or an instance of Cassandra\\Type");
     }
 
-    php_cassandra_tuple_add(self, PHP5TO7_ZVAL_MAYBE_P(null) TSRMLS_CC);
-
   } PHP5TO7_ZEND_HASH_FOREACH_END(types);
 }
 /* }}} */
@@ -106,10 +112,10 @@ PHP_METHOD(Tuple, type)
 /* {{{ Cassandra\Tuple::values() */
 PHP_METHOD(Tuple, values)
 {
-  cassandra_tuple *tuple = NULL;
+  cassandra_tuple *self = NULL;
   array_init(return_value);
-  tuple = PHP_CASSANDRA_GET_TUPLE(getThis());
-  php_cassandra_tuple_populate(tuple, return_value);
+  self = PHP_CASSANDRA_GET_TUPLE(getThis());
+  php_cassandra_tuple_populate(self, return_value TSRMLS_CC);
 }
 /* }}} */
 
@@ -128,7 +134,7 @@ PHP_METHOD(Tuple, set)
   self = PHP_CASSANDRA_GET_TUPLE(getThis());
   type = PHP_CASSANDRA_GET_TYPE(PHP5TO7_ZVAL_MAYBE_P(self->type));
 
-  if (index < 0 || index >= zend_hash_num_elements(&self->values)) {
+  if (index < 0 || index >= zend_hash_num_elements(&type->types)) {
     zend_throw_exception_ex(cassandra_invalid_argument_exception_ce, 0 TSRMLS_CC,
                             "Index out of bounds");
     return;
@@ -150,14 +156,16 @@ PHP_METHOD(Tuple, get)
 {
   cassandra_tuple *self = NULL;
   long index;
+  cassandra_type *type;
   php5to7_zval *value;
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &index) == FAILURE)
     return;
 
   self = PHP_CASSANDRA_GET_TUPLE(getThis());
+  type = PHP_CASSANDRA_GET_TYPE(PHP5TO7_ZVAL_MAYBE_P(self->type));
 
-  if (index < 0 || index >= zend_hash_num_elements(&self->values)) {
+  if (index < 0 || index >= zend_hash_num_elements(&type->types)) {
     zend_throw_exception_ex(cassandra_invalid_argument_exception_ce, 0 TSRMLS_CC,
                             "Index out of bounds");
     return;
@@ -172,19 +180,24 @@ PHP_METHOD(Tuple, get)
 /* {{{ Cassandra\Tuple::count() */
 PHP_METHOD(Tuple, count)
 {
-  cassandra_tuple *tuple = PHP_CASSANDRA_GET_TUPLE(getThis());
-  RETURN_LONG(zend_hash_num_elements(&tuple->values));
+  cassandra_tuple *self = PHP_CASSANDRA_GET_TUPLE(getThis());
+  cassandra_type *type = PHP_CASSANDRA_GET_TYPE(PHP5TO7_ZVAL_MAYBE_P(self->type));
+  RETURN_LONG(zend_hash_num_elements(&type->types));
 }
 /* }}} */
 
 /* {{{ Cassandra\Tuple::current() */
 PHP_METHOD(Tuple, current)
 {
-  php5to7_zval *current;
-  cassandra_tuple *tuple = PHP_CASSANDRA_GET_TUPLE(getThis());
+  php5to7_ulong index;
+  cassandra_tuple *self = PHP_CASSANDRA_GET_TUPLE(getThis());
+  cassandra_type *type = PHP_CASSANDRA_GET_TYPE(PHP5TO7_ZVAL_MAYBE_P(self->type));
 
-  if (PHP5TO7_ZEND_HASH_GET_CURRENT_DATA(&tuple->values, current)) {
-    RETURN_ZVAL(PHP5TO7_ZVAL_MAYBE_DEREF(current), 1, 0);
+  if (PHP5TO7_ZEND_HASH_GET_CURRENT_KEY_EX(&type->types, NULL, &index, &self->pos) == HASH_KEY_IS_LONG) {
+    php5to7_zval *value;
+    if (PHP5TO7_ZEND_HASH_INDEX_FIND(&self->values, index, value)) {
+      RETURN_ZVAL(PHP5TO7_ZVAL_MAYBE_DEREF(value), 1, 0);
+    }
   }
 }
 /* }}} */
@@ -192,10 +205,11 @@ PHP_METHOD(Tuple, current)
 /* {{{ Cassandra\Tuple::key() */
 PHP_METHOD(Tuple, key)
 {
-  php5to7_ulong num_key;
-  cassandra_tuple *tuple = PHP_CASSANDRA_GET_TUPLE(getThis());
-  if (PHP5TO7_ZEND_HASH_GET_CURRENT_KEY(&tuple->values, NULL, &num_key) == HASH_KEY_IS_LONG) {
-    RETURN_LONG(num_key);
+  php5to7_ulong index;
+  cassandra_tuple *self = PHP_CASSANDRA_GET_TUPLE(getThis());
+  cassandra_type *type = PHP_CASSANDRA_GET_TYPE(PHP5TO7_ZVAL_MAYBE_P(self->type));
+  if (PHP5TO7_ZEND_HASH_GET_CURRENT_KEY_EX(&type->types, NULL, &index, &self->pos) == HASH_KEY_IS_LONG) {
+    RETURN_LONG(index);
   }
 }
 /* }}} */
@@ -203,24 +217,27 @@ PHP_METHOD(Tuple, key)
 /* {{{ Cassandra\Tuple::next() */
 PHP_METHOD(Tuple, next)
 {
-  cassandra_tuple *tuple = PHP_CASSANDRA_GET_TUPLE(getThis());
-  zend_hash_move_forward(&tuple->values);
+  cassandra_tuple *self = PHP_CASSANDRA_GET_TUPLE(getThis());
+  cassandra_type *type = PHP_CASSANDRA_GET_TYPE(PHP5TO7_ZVAL_MAYBE_P(self->type));
+  zend_hash_move_forward_ex(&type->types, &self->pos);
 }
 /* }}} */
 
 /* {{{ Cassandra\Tuple::valid() */
 PHP_METHOD(Tuple, valid)
 {
-  cassandra_tuple *tuple = PHP_CASSANDRA_GET_TUPLE(getThis());
-  RETURN_BOOL(zend_hash_has_more_elements(&tuple->values) == SUCCESS);
+  cassandra_tuple *self = PHP_CASSANDRA_GET_TUPLE(getThis());
+  cassandra_type *type = PHP_CASSANDRA_GET_TYPE(PHP5TO7_ZVAL_MAYBE_P(self->type));
+  RETURN_BOOL(zend_hash_has_more_elements_ex(&type->types, &self->pos) == SUCCESS);
 }
 /* }}} */
 
 /* {{{ Cassandra\Tuple::rewind() */
 PHP_METHOD(Tuple, rewind)
 {
-  cassandra_tuple *tuple = PHP_CASSANDRA_GET_TUPLE(getThis());
-  zend_hash_internal_pointer_reset(&tuple->values);
+  cassandra_tuple *self = PHP_CASSANDRA_GET_TUPLE(getThis());
+  cassandra_type *type = PHP_CASSANDRA_GET_TYPE(PHP5TO7_ZVAL_MAYBE_P(self->type));
+  zend_hash_internal_pointer_reset_ex(&type->types, &self->pos);
 }
 /* }}} */
 
@@ -269,16 +286,20 @@ php_cassandra_tuple_gc(zval *object, php5to7_zval_gc table, int *n TSRMLS_DC)
 static HashTable *
 php_cassandra_tuple_properties(zval *object TSRMLS_DC)
 {
+  php5to7_zval values;
+
   cassandra_tuple  *self = PHP_CASSANDRA_GET_TUPLE(object);
   HashTable             *props = zend_std_get_properties(object TSRMLS_CC);
-  php5to7_zval           values;
 
+  if (PHP5TO7_ZEND_HASH_UPDATE(props,
+                               "type", sizeof("type"),
+                               PHP5TO7_ZVAL_MAYBE_P(self->type), sizeof(zval))) {
+    Z_ADDREF_P(PHP5TO7_ZVAL_MAYBE_P(self->type));
+  }
 
   PHP5TO7_ZVAL_MAYBE_MAKE(values);
   array_init(PHP5TO7_ZVAL_MAYBE_P(values));
-
-  php_cassandra_tuple_populate(self, PHP5TO7_ZVAL_MAYBE_P(values));
-
+  php_cassandra_tuple_populate(self, PHP5TO7_ZVAL_MAYBE_P(values) TSRMLS_CC);
   PHP5TO7_ZEND_HASH_UPDATE(props, "values", sizeof("values"), PHP5TO7_ZVAL_MAYBE_P(values), sizeof(zval));
 
   return props;
@@ -293,12 +314,21 @@ php_cassandra_tuple_compare(zval *obj1, zval *obj2 TSRMLS_DC)
   php5to7_zval *current2;
   cassandra_tuple *tuple1;
   cassandra_tuple *tuple2;
+  cassandra_type *type1;
+  cassandra_type *type2;
+  int result;
 
   if (Z_OBJCE_P(obj1) != Z_OBJCE_P(obj2))
     return 1; /* different classes */
 
   tuple1 = PHP_CASSANDRA_GET_TUPLE(obj1);
   tuple2 = PHP_CASSANDRA_GET_TUPLE(obj2);
+
+  type1 = PHP_CASSANDRA_GET_TYPE(PHP5TO7_ZVAL_MAYBE_P(tuple1->type));
+  type2 = PHP_CASSANDRA_GET_TYPE(PHP5TO7_ZVAL_MAYBE_P(tuple2->type));
+
+  result = php_cassandra_type_compare(type1, type2 TSRMLS_CC);
+  if (result != 0) return result;
 
   if (zend_hash_num_elements(&tuple1->values) != zend_hash_num_elements(&tuple2->values)) {
     return zend_hash_num_elements(&tuple1->values) < zend_hash_num_elements(&tuple2->values) ? -1 : 1;
@@ -309,9 +339,9 @@ php_cassandra_tuple_compare(zval *obj1, zval *obj2 TSRMLS_DC)
 
   while (PHP5TO7_ZEND_HASH_GET_CURRENT_DATA_EX(&tuple1->values, current1, &pos1) &&
          PHP5TO7_ZEND_HASH_GET_CURRENT_DATA_EX(&tuple2->values, current2, &pos2)) {
-    int r = php_cassandra_value_compare(PHP5TO7_ZVAL_MAYBE_DEREF(current1),
-                                        PHP5TO7_ZVAL_MAYBE_DEREF(current2) TSRMLS_CC);
-    if (r != 0) return r;
+    result = php_cassandra_value_compare(PHP5TO7_ZVAL_MAYBE_DEREF(current1),
+                                         PHP5TO7_ZVAL_MAYBE_DEREF(current2) TSRMLS_CC);
+    if (result != 0) return result;
     zend_hash_move_forward_ex(&tuple1->values, &pos1);
     zend_hash_move_forward_ex(&tuple2->values, &pos2);
   }
@@ -359,6 +389,11 @@ php_cassandra_tuple_new(zend_class_entry *ce TSRMLS_DC)
       PHP5TO7_ZEND_OBJECT_ECALLOC(tuple, ce);
 
   zend_hash_init(&self->values, 0, NULL, ZVAL_PTR_DTOR, 0);
+#if PHP_MAJOR_VERSION >= 7
+  self->pos = HT_INVALID_IDX;
+#else
+  self->pos = NULL;
+#endif
   self->dirty = 1;
   PHP5TO7_ZVAL_UNDEF(self->type);
 

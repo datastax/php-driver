@@ -140,4 +140,38 @@ class DecimalTest extends \PHPUnit_Framework_TestCase
         $decimal = new Decimal("4");
         $decimal->sqrt();
     }
+
+    /**
+     * @dataProvider equalTypes
+     */
+    public function testCompareEquals($value1, $value2)
+    {
+        $this->assertEquals($value1, $value2);
+        $this->assertTrue($value1 == $value2);
+    }
+
+    public function equalTypes()
+    {
+        return array(
+            array(new Decimal('3.14159'), new Decimal('3.14159')),
+            array(new Decimal(1.1), new Decimal(1.1)),
+        );
+    }
+
+    /**
+     * @dataProvider notEqualTypes
+     */
+    public function testCompareNotEquals($value1, $value2)
+    {
+        $this->assertNotEquals($value1, $value2);
+        $this->assertFalse($value1 == $value2);
+    }
+
+    public function notEqualTypes()
+    {
+        return array(
+            array(new Decimal('3.14159'), new Decimal('3.1415')),
+            array(new Decimal(1.1), new Decimal(2.2)),
+        );
+    }
 }

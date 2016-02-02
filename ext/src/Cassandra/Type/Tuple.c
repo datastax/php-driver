@@ -23,6 +23,14 @@ int php_cassandra_type_tuple_add(cassandra_type *type,
   return 1;
 }
 
+PHP_METHOD(TypeTuple, __construct)
+{
+  zend_throw_exception_ex(cassandra_logic_exception_ce, 0 TSRMLS_CC,
+    "Instantiation of a Cassandra\\Type\\Tuple type is not supported."
+  );
+  return;
+}
+
 PHP_METHOD(TypeTuple, name)
 {
   if (zend_parse_parameters_none() == FAILURE) {
@@ -104,22 +112,13 @@ PHP_METHOD(TypeTuple, create)
         return;
       }
 
-      if (!php_cassandra_tuple_add(tuple, PHP5TO7_ZVAL_ARG(args[i]) TSRMLS_CC)) {
+      if (!php_cassandra_tuple_set(tuple, i, PHP5TO7_ZVAL_ARG(args[i]) TSRMLS_CC)) {
         PHP5TO7_MAYBE_EFREE(args);
         return;
       }
     }
 
     PHP5TO7_MAYBE_EFREE(args);
-  } else {
-    php5to7_zval null;
-    PHP5TO7_ZVAL_MAYBE_MAKE(null);
-    ZVAL_NULL(PHP5TO7_ZVAL_MAYBE_P(null));
-    for (i = 0; i < num_types; ++i) {
-      if (!php_cassandra_tuple_add(tuple, PHP5TO7_ZVAL_MAYBE_P(null) TSRMLS_CC)) {
-        return;
-      }
-    }
   }
 }
 
@@ -131,14 +130,50 @@ ZEND_BEGIN_ARG_INFO_EX(arginfo_values, 0, ZEND_RETURN_VALUE, 0)
 ZEND_END_ARG_INFO()
 
 static zend_function_entry cassandra_type_tuple_methods[] = {
-  PHP_ME(TypeTuple, name,       arginfo_none,   ZEND_ACC_PUBLIC)
-  PHP_ME(TypeTuple, __toString, arginfo_none,   ZEND_ACC_PUBLIC)
-  PHP_ME(TypeTuple, types,      arginfo_none,   ZEND_ACC_PUBLIC)
-  PHP_ME(TypeTuple, create,     arginfo_values, ZEND_ACC_PUBLIC)
+  PHP_ME(TypeTuple, __construct, arginfo_none,   ZEND_ACC_PUBLIC)
+  PHP_ME(TypeTuple, name,        arginfo_none,   ZEND_ACC_PUBLIC)
+  PHP_ME(TypeTuple, __toString,  arginfo_none,   ZEND_ACC_PUBLIC)
+  PHP_ME(TypeTuple, types,       arginfo_none,   ZEND_ACC_PUBLIC)
+  PHP_ME(TypeTuple, create,      arginfo_values, ZEND_ACC_PUBLIC)
   PHP_FE_END
 };
 
 static zend_object_handlers cassandra_type_tuple_handlers;
+
+static HashTable *
+php_cassandra_type_tuple_gc(zval *object, php5to7_zval_gc table, int *n TSRMLS_DC)
+{
+  *table = NULL;
+  *n = 0;
+  return zend_std_get_properties(object TSRMLS_CC);
+}
+
+static HashTable *
+php_cassandra_type_tuple_properties(zval *object TSRMLS_DC)
+{
+  php5to7_zval types;
+
+  cassandra_type *self  = PHP_CASSANDRA_GET_TYPE(object);
+  HashTable      *props = zend_std_get_properties(object TSRMLS_CC);
+
+  PHP5TO7_ZVAL_MAYBE_MAKE(types);
+  array_init(PHP5TO7_ZVAL_MAYBE_P(types));
+  PHP5TO7_ZEND_HASH_ZVAL_COPY(PHP5TO7_Z_ARRVAL_MAYBE_P(types), &self->types);
+  PHP5TO7_ZEND_HASH_UPDATE(props,
+                           "types", sizeof("types"),
+                           PHP5TO7_ZVAL_MAYBE_P(types), sizeof(zval));
+
+  return props;
+}
+
+static int
+php_cassandra_type_tuple_compare(zval *obj1, zval *obj2 TSRMLS_DC)
+{
+  cassandra_type* type1 = PHP_CASSANDRA_GET_TYPE(obj1);
+  cassandra_type* type2 = PHP_CASSANDRA_GET_TYPE(obj2);
+
+  return php_cassandra_type_compare(type1, type2 TSRMLS_CC);
+}
 
 static void
 php_cassandra_type_tuple_free(php5to7_zend_object_free *object TSRMLS_DC)
@@ -171,8 +206,12 @@ void cassandra_define_TypeTuple(TSRMLS_D)
   INIT_CLASS_ENTRY(ce, "Cassandra\\Type\\Tuple", cassandra_type_tuple_methods);
   cassandra_type_tuple_ce = zend_register_internal_class(&ce TSRMLS_CC);
   zend_class_implements(cassandra_type_tuple_ce TSRMLS_CC, 1, cassandra_type_ce);
+  memcpy(&cassandra_type_tuple_handlers, zend_get_std_object_handlers(), sizeof(zend_object_handlers));
+  cassandra_type_tuple_handlers.get_properties  = php_cassandra_type_tuple_properties;
+#if PHP_VERSION_ID >= 50400
+  cassandra_type_tuple_handlers.get_gc          = php_cassandra_type_tuple_gc;
+#endif
+  cassandra_type_tuple_handlers.compare_objects = php_cassandra_type_tuple_compare;
   cassandra_type_tuple_ce->ce_flags     |= PHP5TO7_ZEND_ACC_FINAL;
   cassandra_type_tuple_ce->create_object = php_cassandra_type_tuple_new;
-
-  memcpy(&cassandra_type_tuple_handlers, zend_get_std_object_handlers(), sizeof(zend_object_handlers));
 }

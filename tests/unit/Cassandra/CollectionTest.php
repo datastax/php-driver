@@ -9,25 +9,46 @@ class CollectionTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @expectedException         InvalidArgumentException
+     * @expectedExceptionMessage  type must be a string or an instance of Cassandra\Type, an instance of stdClass given
+     */
+    public function testInvalidType()
+    {
+        new Collection(new \stdClass());
+    }
+
+    /**
+     * @expectedException         InvalidArgumentException
      * @expectedExceptionMessage  Unsupported type 'custom type'
      */
-    public function testSupportsOnlyCassandraTypes()
+    public function testUnsupportedStringType()
     {
         new Collection('custom type');
     }
 
     /**
-     * @dataProvider cassandraTypes
+     * @expectedException        InvalidArgumentException
+     * @expectedExceptionMessage type must be Cassandra\Type::varchar(),
+     *                           Cassandra\Type::text(), Cassandra\Type::blob(),
+     *                           Cassandra\Type::ascii(), Cassandra\Type::bigint(),
+     *                           Cassandra\Type::counter(), Cassandra\Type::int(),
+     *                           Cassandra\Type::varint(), Cassandra\Type::boolean(),
+     *                           Cassandra\Type::decimal(), Cassandra\Type::double(),
+     *                           Cassandra\Type::float(), Cassandra\Type::inet(),
+     *                           Cassandra\Type::timestamp(), Cassandra\Type::uuid(),
+     *                           Cassandra\Type::timeuuid(), Cassandra\Type::map(),
+     *                           Cassandra\Type::set(), Cassandra\Type::collection(),
+     *                           Cassandra\Type::tuple() or Cassandra\Type::udt(),
+     *                           an instance of Cassandra\Type\UnsupportedType given
      */
-    public function testSupportsAllCassandraTypes($type)
+    public function testUnsupportedType()
     {
-        new Collection($type);
+        new Collection(new Type\UnsupportedType());
     }
 
     /**
      * @dataProvider cassandraTypes
      */
-    public function testReturnsItsType($type)
+    public function testSupportsAllCassandraStringTypes($type)
     {
         $list = new Collection($type);
         $this->assertEquals($type, $list->type()->valueType());
@@ -58,69 +79,67 @@ class CollectionTest extends \PHPUnit_Framework_TestCase
     /**
      * @dataProvider scalarTypes
      */
-    public function testScalarKeys($keyType, $keyValue, $keyValueCopy)
+    public function testScalarKeys($type, $value)
     {
-        $list = Type::collection($keyType)->create();
-        $list->add($keyValue);
+        $list = Type::collection($type)->create();
+        $list->add($value);
         $this->assertEquals(1, count($list));
-        $this->assertEquals($list->find($keyValue), 0);
-        $this->assertEquals($list->find($keyValueCopy), 0);
+        $this->assertEquals($list->get(0), $value);
+        $this->assertEquals($list->find($value), 0);
     }
 
     public function scalarTypes()
     {
         return array(
-            array(Type::ascii(), "ascii", "ascii"),
-            array(Type::bigint(), new Bigint("9223372036854775807"), new Bigint("9223372036854775807")),
-            array(Type::blob(), new Blob("blob"), new Blob("blob")),
-            array(Type::boolean(), true, true),
-            array(Type::counter(), new Bigint(123), new Bigint(123)),
-            array(Type::decimal(), new Decimal("3.14159265359"), new Decimal("3.14159265359")),
-            array(Type::double(), 3.14159, 3.14159),
-            array(Type::float(), new Float(3.14159), new Float(3.14159)),
-            array(Type::inet(), new Inet("127.0.0.1"), new Inet("127.0.0.1")),
-            array(Type::int(), 123, 123),
-            array(Type::text(), "text", "text"),
-            array(Type::timestamp(), new Timestamp(123), new Timestamp(123)),
-            array(Type::timeuuid(), new Timeuuid(0), new Timeuuid(0)),
-            array(Type::uuid(), new Uuid("03398c99-c635-4fad-b30a-3b2c49f785c2"), new Uuid("03398c99-c635-4fad-b30a-3b2c49f785c2")),
-            array(Type::varchar(), "varchar", "varchar"),
-            array(Type::varint(), new Varint("9223372036854775808"), new Varint("9223372036854775808"))
+            array(Type::ascii(), "ascii"),
+            array(Type::bigint(), new Bigint("9223372036854775807")),
+            array(Type::blob(), new Blob("blob")),
+            array(Type::boolean(), true),
+            array(Type::counter(), new Bigint(123)),
+            array(Type::decimal(), new Decimal("3.14159265359")),
+            array(Type::double(), 3.14159),
+            array(Type::float(), new Float(3.14159)),
+            array(Type::inet(), new Inet("127.0.0.1")),
+            array(Type::int(), 123),
+            array(Type::text(), "text"),
+            array(Type::timestamp(), new Timestamp(123)),
+            array(Type::timeuuid(), new Timeuuid(0)),
+            array(Type::uuid(), new Uuid("03398c99-c635-4fad-b30a-3b2c49f785c2")),
+            array(Type::varchar(), "varchar"),
+            array(Type::varint(), new Varint("9223372036854775808"))
         );
     }
 
     /**
      * @dataProvider compositeTypes
      */
-    public function testCompositeKeys($keyType)
+    public function testCompositeKeys($type)
     {
-        $list = Type::collection($keyType)->create();
+        $list = Type::collection($type)->create();
 
-        $list->add($keyType->create("a", "1", "b", "2"));
-        $this->assertEquals($list->find($keyType->create("a", "1", "b", "2")), 0);
+        $list->add($type->create("a", "1", "b", "2"));
+        $this->assertEquals($list->find($type->create("a", "1", "b", "2")), 0);
         $this->assertEquals(1, count($list));
 
-        $list->add($keyType->create("c", "3", "d", "4", "e", "5"));
-        $this->assertEquals($list->find($keyType->create("c", "3", "d", "4", "e", "5")), 1);
+        $list->add($type->create("c", "3", "d", "4", "e", "5"));
+        $this->assertEquals($list->find($type->create("c", "3", "d", "4", "e", "5")), 1);
         $this->assertEquals(2, count($list));
 
         $list->remove(0);
-        $this->assertNull($list->find($keyType->create("a", "1", "b", "2")));
+        $this->assertNull($list->find($type->create("a", "1", "b", "2")));
         $this->assertEquals(1, count($list));
 
         $list->remove(1);
-        $this->assertNull($list->find($keyType->create("c", "3", "d", "4", "e", "5")));
+        $this->assertNull($list->find($type->create("c", "3", "d", "4", "e", "5")));
         $this->assertEquals(0, count($list));
     }
 
     public function compositeTypes()
     {
         return array(
-            array(
-                Type::map(Type::varchar(), Type::varchar()),
-                Type::set(Type::varchar()),
-                Type::collection(Type::varchar())
-            )
+            array(Type::map(Type::varchar(), Type::varchar())),
+            array(Type::set(Type::varchar())),
+            array(Type::collection(Type::varchar()))
         );
     }
 
@@ -132,6 +151,16 @@ class CollectionTest extends \PHPUnit_Framework_TestCase
     {
         $list = new Collection(\Cassandra::TYPE_VARINT);
         $list->add(new Decimal('123'));
+    }
+
+    /**
+     * @expectedException         InvalidArgumentException
+     * @expectedExceptionMessage  Invalid value: null is not supported inside collections
+     */
+    public function testSupportsNullValues()
+    {
+        $list = new Collection(\Cassandra::TYPE_VARINT);
+        $list->add(null);
     }
 
     public function testAddsAllElements()
@@ -190,5 +219,80 @@ class CollectionTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(new Varint('6'), $list->get(5));
         $this->assertEquals(new Varint('7'), $list->get(6));
         $this->assertEquals(new Varint('8'), $list->get(7));
+    }
+
+    public function testSupportsForeachIteration()
+    {
+        $values = array(new Varint('1'), new Varint('2'), new Varint('3'),
+                        new Varint('4'), new Varint('5'), new Varint('6'),
+                        new Varint('7'), new Varint('8'));
+        $list = new Collection(\Cassandra::TYPE_VARINT);
+
+        foreach ($values as $value) {
+            $list->add($value);
+        }
+
+        $index = 0;
+        foreach ($list as $value) {
+            $this->assertEquals($values[$index], $value);
+            $index++;
+        }
+
+        $index = 0;
+        foreach ($list as $key => $value) {
+            $this->assertEquals($key, $index);
+            $this->assertEquals($values[$key], $value);
+            $index++;
+        }
+    }
+
+    /**
+     * @dataProvider equalTypes
+     */
+    public function testCompareEquals($value1, $value2)
+    {
+        $this->assertEquals($value1, $value2);
+        $this->assertTrue($value1 == $value2);
+    }
+
+    public function equalTypes()
+    {
+        $setType = Type::set(Type::int());
+        return array(
+            array(Type::collection(Type::int())->create(),
+                  Type::collection(Type::int())->create()),
+            array(Type::collection(Type::int())->create(1, 2, 3),
+                  Type::collection(Type::int())->create(1, 2, 3)),
+            array(Type::collection(Type::varchar())->create('a', 'b', 'c'),
+                  Type::collection(Type::varchar())->create('a', 'b', 'c')),
+            array(Type::collection($setType)->create($setType->create(1, 2, 3)),
+                  Type::collection($setType)->create($setType->create(1, 2, 3))),
+        );
+    }
+
+    /**
+     * @dataProvider notEqualTypes
+     */
+    public function testCompareNotEquals($value1, $value2)
+    {
+        $this->assertNotEquals($value1, $value2);
+        $this->assertFalse($value1 == $value2);
+    }
+
+    public function notEqualTypes()
+    {
+        $setType = Type::set(Type::int());
+        return array(
+            array(Type::collection(Type::int())->create(),
+                  Type::collection(Type::varchar())->create()),
+            array(Type::collection(Type::int())->create(1, 2, 3),
+                  Type::collection(Type::int())->create(4, 5, 6)),
+            array(Type::collection(Type::int())->create(1, 2, 3),
+                  Type::collection(Type::int())->create(1)),
+            array(Type::collection(Type::varchar())->create('a', 'b', 'c'),
+                  Type::collection(Type::varchar())->create('a', 'b', 'd')),
+            array(Type::collection($setType)->create($setType->create(1, 2, 3)),
+                  Type::collection($setType)->create($setType->create(4, 5, 6))),
+        );
     }
 }

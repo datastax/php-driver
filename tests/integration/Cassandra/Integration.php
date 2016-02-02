@@ -35,6 +35,7 @@ class Integration {
      * Generic/Simple keyspace format
      */
     const SIMPLE_KEYSPACE_FORMAT = "CREATE KEYSPACE %s WITH replication = { 'class': %s };";
+
     /**
      * CQL query to retrieve the server (Cassandra/DSE) version
      */
