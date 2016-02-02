@@ -22,6 +22,42 @@ php_cassandra_user_type_value_set(cassandra_user_type_value *user_type_value,
   return 0;
 }
 
+static void
+php_cassandra_user_type_value_populate(cassandra_user_type_value *user_type_value, zval *array TSRMLS_DC)
+{
+  char *name;
+  cassandra_type *type;
+  php5to7_zval *current;
+  php5to7_zval null;
+
+  PHP5TO7_ZVAL_MAYBE_MAKE(null);
+  ZVAL_NULL(PHP5TO7_ZVAL_MAYBE_P(null));
+
+  type = PHP_CASSANDRA_GET_TYPE(PHP5TO7_ZVAL_MAYBE_P(user_type_value->type));
+
+  PHP5TO7_ZEND_HASH_FOREACH_STR_KEY_VAL(&type->types, name, current) {
+    php5to7_zval *value = NULL;
+    size_t name_len = strlen(name);
+    if (PHP5TO7_ZEND_HASH_FIND(&user_type_value->values, name, name_len + 1, value)) {
+      if (PHP5TO7_ADD_ASSOC_ZVAL_EX(array, name, name_len + 1, PHP5TO7_ZVAL_MAYBE_DEREF(value)) == SUCCESS) {
+        Z_TRY_ADDREF_P(PHP5TO7_ZVAL_MAYBE_DEREF(value));
+      } else {
+        break;
+      }
+    } else {
+      if (PHP5TO7_ADD_ASSOC_ZVAL_EX(array, name, name_len + 1, PHP5TO7_ZVAL_MAYBE_P(null)) == SUCCESS) {
+        Z_TRY_ADDREF_P(PHP5TO7_ZVAL_MAYBE_P(null));
+      } else {
+        break;
+      }
+    }
+  } PHP5TO7_ZEND_HASH_FOREACH_END(&type->types);
+
+#if PHP_MAJOR_VERSION < 7
+  zval_ptr_dtor(&null);
+#endif
+}
+
 /* {{{ Cassandra\UserTypeValue::__construct(types) */
 PHP_METHOD(UserTypeValue, __construct)
 {
@@ -29,6 +65,7 @@ PHP_METHOD(UserTypeValue, __construct)
   cassandra_type *type;
   HashTable *types;
   char *name;
+  int index = 0;
   php5to7_zval *current;
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "h", &types) == FAILURE) {
@@ -42,6 +79,13 @@ PHP_METHOD(UserTypeValue, __construct)
   PHP5TO7_ZEND_HASH_FOREACH_STR_KEY_VAL(types, name, current) {
     zval *sub_type = PHP5TO7_ZVAL_MAYBE_DEREF(current);
     php5to7_zval scalar_type;
+
+    if (!name) {
+      zend_throw_exception_ex(cassandra_invalid_argument_exception_ce, 0 TSRMLS_CC,
+                              "Argument %d is not a string", index + 1);
+      return;
+    }
+    index++;
 
     if (Z_TYPE_P(sub_type) == IS_STRING) {
       CassValueType value_type;
@@ -88,7 +132,7 @@ PHP_METHOD(UserTypeValue, values)
   self = PHP_CASSANDRA_GET_USER_TYPE_VALUE(getThis());
 
   array_init(return_value);
-  PHP5TO7_ZEND_HASH_ZVAL_COPY(Z_ARRVAL_P(return_value), &self->values);
+  php_cassandra_user_type_value_populate(self, return_value TSRMLS_CC);
 }
 /* }}} */
 
@@ -131,6 +175,8 @@ PHP_METHOD(UserTypeValue, set)
 PHP_METHOD(UserTypeValue, get)
 {
   cassandra_user_type_value *self = NULL;
+  cassandra_type *type;
+  php5to7_zval *sub_type;
   char *name;
   size_t name_length;
   php5to7_zval *value;
@@ -140,16 +186,21 @@ PHP_METHOD(UserTypeValue, get)
     return;
 
   self = PHP_CASSANDRA_GET_USER_TYPE_VALUE(getThis());
+  type = PHP_CASSANDRA_GET_TYPE(PHP5TO7_ZVAL_MAYBE_P(self->type));
 
-  if (!PHP5TO7_ZEND_HASH_FIND(&self->values,
+  if (!PHP5TO7_ZEND_HASH_FIND(&type->types,
                               name, name_length + 1,
-                              value)) {
+                              sub_type)) {
     zend_throw_exception_ex(cassandra_invalid_argument_exception_ce, 0 TSRMLS_CC,
                             "Invalid name '%s'", name);
     return;
   }
 
-  RETURN_ZVAL(PHP5TO7_ZVAL_MAYBE_DEREF(value), 1, 0);
+  if (PHP5TO7_ZEND_HASH_FIND(&self->values,
+                              name, name_length + 1,
+                              value)) {
+    RETURN_ZVAL(PHP5TO7_ZVAL_MAYBE_DEREF(value), 1, 0);
+  }
 }
 /* }}} */
 
@@ -158,19 +209,29 @@ PHP_METHOD(UserTypeValue, count)
 {
   cassandra_user_type_value *self =
       PHP_CASSANDRA_GET_USER_TYPE_VALUE(getThis());
-  RETURN_LONG(zend_hash_num_elements(&self->values));
+  cassandra_type *type =
+      PHP_CASSANDRA_GET_TYPE(PHP5TO7_ZVAL_MAYBE_P(self->type));
+  RETURN_LONG(zend_hash_num_elements(&type->types));
 }
 /* }}} */
 
 /* {{{ Cassandra\UserTypeValue::current() */
 PHP_METHOD(UserTypeValue, current)
 {
-  php5to7_zval *current;
+  php5to7_string key;
   cassandra_user_type_value *self =
       PHP_CASSANDRA_GET_USER_TYPE_VALUE(getThis());
-
-  if (PHP5TO7_ZEND_HASH_GET_CURRENT_DATA(&self->values, current)) {
-    RETURN_ZVAL(PHP5TO7_ZVAL_MAYBE_DEREF(current), 1, 0);
+  cassandra_type *type =
+      PHP_CASSANDRA_GET_TYPE(PHP5TO7_ZVAL_MAYBE_P(self->type));
+  if (PHP5TO7_ZEND_HASH_GET_CURRENT_KEY_EX(&type->types, &key, NULL, &self->pos) == HASH_KEY_IS_STRING) {
+    php5to7_zval *value;
+#if PHP_MAJOR_VERSION >= 7
+    if (PHP5TO7_ZEND_HASH_FIND(&self->values, key->val, key->len + 1, value)) {
+#else
+    if (PHP5TO7_ZEND_HASH_FIND(&self->values, key, strlen(key) + 1, value)) {
+#endif
+      RETURN_ZVAL(PHP5TO7_ZVAL_MAYBE_DEREF(value), 1, 0);
+    }
   }
 }
 /* }}} */
@@ -181,7 +242,9 @@ PHP_METHOD(UserTypeValue, key)
   php5to7_string key;
   cassandra_user_type_value *self =
       PHP_CASSANDRA_GET_USER_TYPE_VALUE(getThis());
-  if (PHP5TO7_ZEND_HASH_GET_CURRENT_KEY(&self->values, &key, NULL) == HASH_KEY_IS_STRING) {
+  cassandra_type *type =
+      PHP_CASSANDRA_GET_TYPE(PHP5TO7_ZVAL_MAYBE_P(self->type));
+  if (PHP5TO7_ZEND_HASH_GET_CURRENT_KEY_EX(&type->types, &key, NULL, &self->pos) == HASH_KEY_IS_STRING) {
 #if PHP_MAJOR_VERSION >= 7
     RETURN_STR(key);
 #else
@@ -196,7 +259,9 @@ PHP_METHOD(UserTypeValue, next)
 {
   cassandra_user_type_value *self =
       PHP_CASSANDRA_GET_USER_TYPE_VALUE(getThis());
-  zend_hash_move_forward(&self->values);
+  cassandra_type *type =
+      PHP_CASSANDRA_GET_TYPE(PHP5TO7_ZVAL_MAYBE_P(self->type));
+  zend_hash_move_forward_ex(&type->types, &self->pos);
 }
 /* }}} */
 
@@ -205,7 +270,9 @@ PHP_METHOD(UserTypeValue, valid)
 {
   cassandra_user_type_value *self =
       PHP_CASSANDRA_GET_USER_TYPE_VALUE(getThis());
-  RETURN_BOOL(zend_hash_has_more_elements(&self->values) == SUCCESS);
+  cassandra_type *type =
+      PHP_CASSANDRA_GET_TYPE(PHP5TO7_ZVAL_MAYBE_P(self->type));
+  RETURN_BOOL(zend_hash_has_more_elements_ex(&type->types, &self->pos) == SUCCESS);
 }
 /* }}} */
 
@@ -214,7 +281,9 @@ PHP_METHOD(UserTypeValue, rewind)
 {
   cassandra_user_type_value *self =
       PHP_CASSANDRA_GET_USER_TYPE_VALUE(getThis());
-  zend_hash_internal_pointer_reset(&self->values);
+  cassandra_type *type =
+      PHP_CASSANDRA_GET_TYPE(PHP5TO7_ZVAL_MAYBE_P(self->type));
+  zend_hash_internal_pointer_reset_ex(&type->types, &self->pos);
 }
 /* }}} */
 
@@ -263,14 +332,20 @@ php_cassandra_user_type_value_gc(zval *object, php5to7_zval_gc table, int *n TSR
 static HashTable *
 php_cassandra_user_type_value_properties(zval *object TSRMLS_DC)
 {
+  php5to7_zval values;
+
   cassandra_user_type_value *self = PHP_CASSANDRA_GET_USER_TYPE_VALUE(object);
   HashTable                 *props = zend_std_get_properties(object TSRMLS_CC);
-  php5to7_zval              values;
+
+  if (PHP5TO7_ZEND_HASH_UPDATE(props,
+                               "type", sizeof("type"),
+                               PHP5TO7_ZVAL_MAYBE_P(self->type), sizeof(zval))) {
+    Z_ADDREF_P(PHP5TO7_ZVAL_MAYBE_P(self->type));
+  }
 
   PHP5TO7_ZVAL_MAYBE_MAKE(values);
   array_init(PHP5TO7_ZVAL_MAYBE_P(values));
-  PHP5TO7_ZEND_HASH_ZVAL_COPY(PHP5TO7_Z_ARRVAL_MAYBE_P(values), &self->values);
-
+  php_cassandra_user_type_value_populate(self, PHP5TO7_ZVAL_MAYBE_P(values) TSRMLS_CC);
   PHP5TO7_ZEND_HASH_UPDATE(props, "values", sizeof("values"), PHP5TO7_ZVAL_MAYBE_P(values), sizeof(zval));
 
   return props;
@@ -285,12 +360,21 @@ php_cassandra_user_type_value_compare(zval *obj1, zval *obj2 TSRMLS_DC)
   php5to7_zval *current2;
   cassandra_user_type_value *user_type_value1;
   cassandra_user_type_value *user_type_value2;
+  cassandra_type *type1;
+  cassandra_type *type2;
+  int result;
 
   if (Z_OBJCE_P(obj1) != Z_OBJCE_P(obj2))
     return 1; /* different classes */
 
   user_type_value1 = PHP_CASSANDRA_GET_USER_TYPE_VALUE(obj1);
   user_type_value2 = PHP_CASSANDRA_GET_USER_TYPE_VALUE(obj2);
+
+  type1 = PHP_CASSANDRA_GET_TYPE(PHP5TO7_ZVAL_MAYBE_P(user_type_value1->type));
+  type2 = PHP_CASSANDRA_GET_TYPE(PHP5TO7_ZVAL_MAYBE_P(user_type_value2->type));
+
+  result = php_cassandra_type_compare(type1, type2 TSRMLS_CC);
+  if (result != 0) return result;
 
   if (zend_hash_num_elements(&user_type_value1->values) != zend_hash_num_elements(&user_type_value2->values)) {
     return zend_hash_num_elements(&user_type_value1->values) < zend_hash_num_elements(&user_type_value2->values) ? -1 : 1;
@@ -299,16 +383,11 @@ php_cassandra_user_type_value_compare(zval *obj1, zval *obj2 TSRMLS_DC)
   zend_hash_internal_pointer_reset_ex(&user_type_value1->values, &pos1);
   zend_hash_internal_pointer_reset_ex(&user_type_value2->values, &pos2);
 
-#if PHP_MAJOR_VERSION >= 7
-  while ((current1 = zend_hash_get_current_data_ex(&user_type_value1->values, &pos1)) != NULL &&
-         (current2 = zend_hash_get_current_data_ex(&user_type_value1->values, &pos2)) != NULL) {
-#else
-  while (zend_hash_get_current_data(&user_type_value1->values, (void**) &current1) == SUCCESS &&
-         zend_hash_get_current_data(&user_type_value2->values, (void**) &current2) == SUCCESS) {
-#endif
-    int r = php_cassandra_value_compare(PHP5TO7_ZVAL_MAYBE_DEREF(current1),
-                                        PHP5TO7_ZVAL_MAYBE_DEREF(current2) TSRMLS_CC);
-    if (r != 0) return r;
+  while (PHP5TO7_ZEND_HASH_GET_CURRENT_DATA_EX(&user_type_value1->values, current1, &pos1) &&
+         PHP5TO7_ZEND_HASH_GET_CURRENT_DATA_EX(&user_type_value2->values, current2, &pos2)) {
+    result = php_cassandra_value_compare(PHP5TO7_ZVAL_MAYBE_DEREF(current1),
+                                         PHP5TO7_ZVAL_MAYBE_DEREF(current2) TSRMLS_CC);
+    if (result != 0) return result;
     zend_hash_move_forward_ex(&user_type_value1->values, &pos1);
     zend_hash_move_forward_ex(&user_type_value2->values, &pos2);
   }
@@ -356,6 +435,11 @@ php_cassandra_user_type_value_new(zend_class_entry *ce TSRMLS_DC)
       PHP5TO7_ZEND_OBJECT_ECALLOC(user_type_value, ce);
 
   zend_hash_init(&self->values, 0, NULL, ZVAL_PTR_DTOR, 0);
+#if PHP_MAJOR_VERSION >= 7
+  self->pos = HT_INVALID_IDX;
+#else
+  self->pos = NULL;
+#endif
   self->dirty = 1;
   PHP5TO7_ZVAL_UNDEF(self->type);
 

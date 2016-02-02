@@ -79,4 +79,48 @@ class MapTest extends \PHPUnit_Framework_TestCase
     {
         Type::map(new UnsupportedType(), Type::varchar());
     }
+
+    /**
+     * @dataProvider equalTypes
+     */
+    public function testCompareEquals($type1, $type2)
+    {
+        $this->assertEquals($type1, $type2);
+        $this->assertTrue($type1 == $type2);
+    }
+
+    public function equalTypes()
+    {
+        return array(
+            array(Type::map(Type::int(), Type::varchar()),
+                  Type::map(Type::int(), Type::varchar())),
+            array(Type::map(Type::varchar(), Type::collection(Type::int())),
+                  Type::map(Type::varchar(), Type::collection(Type::int()))),
+            array(Type::map(Type::collection(Type::int()), Type::varchar()),
+                  Type::map(Type::collection(Type::int()), Type::varchar())),
+            array(Type::map(Type::map(Type::int(), Type::varchar()), Type::varchar()),
+                  Type::map(Type::map(Type::int(), Type::varchar()), Type::varchar())),
+        );
+    }
+
+    /**
+     * @dataProvider notEqualTypes
+     */
+    public function testCompareNotEquals($type1, $type2)
+    {
+        $this->assertNotEquals($type1, $type2);
+        $this->assertFalse($type1 == $type2);
+    }
+
+    public function notEqualTypes()
+    {
+        return array(
+            array(Type::map(Type::int(), Type::varchar()),
+                  Type::map(Type::varchar(), Type::int())),
+            array(Type::map(Type::collection(Type::varchar()), Type::int()),
+                  Type::map(Type::collection(Type::int()), Type::int())),
+            array(Type::map(Type::map(Type::int(), Type::varchar()), Type::varchar()),
+                  Type::map(Type::map(Type::varchar(), Type::int()), Type::varchar())),
+        );
+    }
 }

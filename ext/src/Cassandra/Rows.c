@@ -132,7 +132,7 @@ PHP_METHOD(Rows, offsetExists)
 PHP_METHOD(Rows, offsetGet)
 {
   zval *offset;
-  zval *value;
+  php5to7_zval *value;
   cassandra_rows *self = NULL;
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z", &offset) == FAILURE)
@@ -144,7 +144,7 @@ PHP_METHOD(Rows, offsetGet)
 
   self = PHP_CASSANDRA_GET_ROWS(getThis());
   if (PHP5TO7_ZEND_HASH_INDEX_FIND(PHP5TO7_Z_ARRVAL_MAYBE_P(self->rows), Z_LVAL_P(offset), value)) {
-    RETURN_ZVAL(value, 1, 0);
+    RETURN_ZVAL(PHP5TO7_ZVAL_MAYBE_DEREF(value), 1, 0);
   }
 }
 

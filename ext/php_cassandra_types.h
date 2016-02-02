@@ -150,6 +150,7 @@ PHP_CASSANDRA_END_OBJECT_TYPE(set)
 PHP_CASSANDRA_BEGIN_OBJECT_TYPE(tuple)
   php5to7_zval type;
   HashTable values;
+  HashPosition pos;
   unsigned hashv;
   int dirty;
 PHP_CASSANDRA_END_OBJECT_TYPE(tuple)
@@ -157,6 +158,7 @@ PHP_CASSANDRA_END_OBJECT_TYPE(tuple)
 PHP_CASSANDRA_BEGIN_OBJECT_TYPE(user_type_value)
   php5to7_zval type;
   HashTable values;
+  HashPosition pos;
   unsigned hashv;
   int dirty;
 PHP_CASSANDRA_END_OBJECT_TYPE(user_type_value)

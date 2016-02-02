@@ -10,6 +10,14 @@
 
 zend_class_entry *cassandra_type_collection_ce = NULL;
 
+PHP_METHOD(TypeCollection, __construct)
+{
+  zend_throw_exception_ex(cassandra_logic_exception_ce, 0 TSRMLS_CC,
+    "Instantiation of a Cassandra\\Type\\Collection type is not supported."
+  );
+  return;
+}
+
 PHP_METHOD(TypeCollection, name)
 {
   if (zend_parse_parameters_none() == FAILURE) {
@@ -94,14 +102,47 @@ ZEND_BEGIN_ARG_INFO_EX(arginfo_value, 0, ZEND_RETURN_VALUE, 0)
 ZEND_END_ARG_INFO()
 
 static zend_function_entry cassandra_type_collection_methods[] = {
-  PHP_ME(TypeCollection, name,       arginfo_none,  ZEND_ACC_PUBLIC)
-  PHP_ME(TypeCollection, valueType,  arginfo_none,  ZEND_ACC_PUBLIC)
-  PHP_ME(TypeCollection, __toString, arginfo_none,  ZEND_ACC_PUBLIC)
-  PHP_ME(TypeCollection, create,     arginfo_value, ZEND_ACC_PUBLIC)
+  PHP_ME(TypeCollection, __construct, arginfo_none,  ZEND_ACC_PUBLIC)
+  PHP_ME(TypeCollection, name,        arginfo_none,  ZEND_ACC_PUBLIC)
+  PHP_ME(TypeCollection, valueType,   arginfo_none,  ZEND_ACC_PUBLIC)
+  PHP_ME(TypeCollection, __toString,  arginfo_none,  ZEND_ACC_PUBLIC)
+  PHP_ME(TypeCollection, create,      arginfo_value, ZEND_ACC_PUBLIC)
   PHP_FE_END
 };
 
 static zend_object_handlers cassandra_type_collection_handlers;
+
+static HashTable *
+php_cassandra_type_collection_gc(zval *object, php5to7_zval_gc table, int *n TSRMLS_DC)
+{
+  *table = NULL;
+  *n = 0;
+  return zend_std_get_properties(object TSRMLS_CC);
+}
+
+static HashTable *
+php_cassandra_type_collection_properties(zval *object TSRMLS_DC)
+{
+  cassandra_type *self  = PHP_CASSANDRA_GET_TYPE(object);
+  HashTable      *props = zend_std_get_properties(object TSRMLS_CC);
+
+  if (PHP5TO7_ZEND_HASH_UPDATE(props,
+                               "valueType", sizeof("valueType"),
+                               PHP5TO7_ZVAL_MAYBE_P(self->value_type), sizeof(zval))) {
+    Z_ADDREF_P(PHP5TO7_ZVAL_MAYBE_P(self->value_type));
+  }
+
+  return props;
+}
+
+static int
+php_cassandra_type_collection_compare(zval *obj1, zval *obj2 TSRMLS_DC)
+{
+  cassandra_type* type1 = PHP_CASSANDRA_GET_TYPE(obj1);
+  cassandra_type* type2 = PHP_CASSANDRA_GET_TYPE(obj2);
+
+  return php_cassandra_type_compare(type1, type2 TSRMLS_CC);
+}
 
 static void
 php_cassandra_type_collection_free(php5to7_zend_object_free *object TSRMLS_DC)
@@ -134,8 +175,12 @@ void cassandra_define_TypeCollection(TSRMLS_D)
   INIT_CLASS_ENTRY(ce, "Cassandra\\Type\\Collection", cassandra_type_collection_methods);
   cassandra_type_collection_ce = zend_register_internal_class(&ce TSRMLS_CC);
   zend_class_implements(cassandra_type_collection_ce TSRMLS_CC, 1, cassandra_type_ce);
+  memcpy(&cassandra_type_collection_handlers, zend_get_std_object_handlers(), sizeof(zend_object_handlers));
+  cassandra_type_collection_handlers.get_properties  = php_cassandra_type_collection_properties;
+#if PHP_VERSION_ID >= 50400
+  cassandra_type_collection_handlers.get_gc          = php_cassandra_type_collection_gc;
+#endif
+  cassandra_type_collection_handlers.compare_objects = php_cassandra_type_collection_compare;
   cassandra_type_collection_ce->ce_flags     |= PHP5TO7_ZEND_ACC_FINAL;
   cassandra_type_collection_ce->create_object = php_cassandra_type_collection_new;
-
-  memcpy(&cassandra_type_collection_handlers, zend_get_std_object_handlers(), sizeof(zend_object_handlers));
 }

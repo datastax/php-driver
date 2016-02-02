@@ -58,4 +58,46 @@ class SetTest extends \PHPUnit_Framework_TestCase
     {
         Type::set(new UnsupportedType());
     }
+
+    /**
+     * @dataProvider equalTypes
+     */
+    public function testCompareEquals($type1, $type2)
+    {
+        $this->assertEquals($type1, $type2);
+        $this->assertTrue($type1 == $type2);
+    }
+
+    public function equalTypes()
+    {
+        return array(
+            array(Type::set(Type::int()),
+                  Type::set(Type::int())),
+            array(Type::set(Type::collection(Type::int())),
+                  Type::set(Type::collection(Type::int()))),
+            array(Type::set(Type::set(Type::int())),
+                  Type::set(Type::set(Type::int()))),
+        );
+    }
+
+    /**
+     * @dataProvider notEqualTypes
+     */
+    public function testCompareNotEquals($type1, $type2)
+    {
+        $this->assertNotEquals($type1, $type2);
+        $this->assertFalse($type1 == $type2);
+    }
+
+    public function notEqualTypes()
+    {
+        return array(
+            array(Type::set(Type::varchar()),
+                  Type::set(Type::int())),
+            array(Type::set(Type::collection(Type::varchar())),
+                  Type::set(Type::collection(Type::int()))),
+            array(Type::set(Type::collection(Type::int())),
+                  Type::set(Type::set(Type::int()))),
+        );
+    }
 }

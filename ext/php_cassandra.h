@@ -154,7 +154,7 @@ php5to7_string_compare(php5to7_string s1, php5to7_string s2)
   zend_hash_get_current_key((ht), (str_index), (num_index))
 
 #define PHP5TO7_ZEND_HASH_GET_CURRENT_KEY_EX(ht, str_index, num_index, pos) \
-  (zend_hash_get_current_key_ex((ht), (str_index), (num_index), pos) == SUCCESS)
+  zend_hash_get_current_key_ex((ht), (str_index), (num_index), pos)
 
 #define PHP5TO7_ZEND_HASH_EXISTS(ht, key, len) \
   zend_hash_str_exists((ht), (key), (size_t)(len - 1))
@@ -182,6 +182,9 @@ php5to7_string_compare(php5to7_string s1, php5to7_string s2)
 
 #define PHP5TO7_ZEND_HASH_ZVAL_COPY(dst, src) \
   zend_hash_copy((dst), (src), (copy_ctor_func_t) zval_add_ref);
+
+#define PHP5TO7_ZEND_HASH_SORT(ht, compare_func, renumber) \
+  zend_hash_sort(ht, compare_func, renumber TSRMLS_CC)
 
 #define PHP5TO7_ZEND_STRING_VAL(str) (str)->val
 #define PHP5TO7_ZEND_STRING_LEN(str) (str)->len
@@ -295,6 +298,7 @@ php5to7_string_compare(php5to7_string s1, php5to7_string s2)
 #define PHP5TO7_ZEND_HASH_FOREACH_STR_KEY_VAL(ht, _key, _val)      \
   PHP5TO7_ZEND_HASH_FOREACH_VAL(ht, _val)                                \
     ulong _h;                                                            \
+    (_key) = NULL; \
     zend_hash_get_current_key_ex((ht), &(_key), NULL, &_h, 0, &_pos);
 
 #define PHP5TO7_ZEND_HASH_FOREACH_END(ht) \
@@ -344,6 +348,9 @@ php5to7_string_compare(php5to7_string s1, php5to7_string s2)
                  (copy_ctor_func_t) zval_add_ref,  \
                  (void *) &_tmp, sizeof(zval *));  \
 } while (0)
+
+#define PHP5TO7_ZEND_HASH_SORT(ht, compare_func, renumber) \
+  zend_hash_sort(ht, zend_qsort, compare_func, renumber TSRMLS_CC);
 
 #define php5to7_zend_register_internal_class_ex(ce, parent_ce) zend_register_internal_class_ex((ce), (parent_ce), NULL TSRMLS_CC);
 
