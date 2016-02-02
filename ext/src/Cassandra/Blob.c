@@ -106,18 +106,21 @@ php_cassandra_blob_gc(zval *object, php5to7_zval_gc table, int *n TSRMLS_DC)
 static HashTable *
 php_cassandra_blob_properties(zval *object TSRMLS_DC)
 {
-  cassandra_blob *self = PHP_CASSANDRA_GET_BLOB(object);
-  HashTable      *props = zend_std_get_properties(object TSRMLS_CC);
-  php5to7_zval    bytes;
-
   char *hex;
   int hex_len;
-  php_cassandra_bytes_to_hex((const char *) self->data, self->size, &hex, &hex_len);
+  php5to7_zval type;
+  php5to7_zval bytes;
 
+  cassandra_blob *self = PHP_CASSANDRA_GET_BLOB(object);
+  HashTable      *props = zend_std_get_properties(object TSRMLS_CC);
+
+  type = php_cassandra_type_scalar(CASS_VALUE_TYPE_BLOB TSRMLS_CC);
+  PHP5TO7_ZEND_HASH_UPDATE(props, "type", sizeof("type"), PHP5TO7_ZVAL_MAYBE_P(type), sizeof(zval));
+
+  php_cassandra_bytes_to_hex((const char *) self->data, self->size, &hex, &hex_len);
   PHP5TO7_ZVAL_MAYBE_MAKE(bytes);
   PHP5TO7_ZVAL_STRINGL(PHP5TO7_ZVAL_MAYBE_P(bytes), hex, hex_len);
   efree(hex);
-
   PHP5TO7_ZEND_HASH_UPDATE(props, "bytes", sizeof("bytes"), PHP5TO7_ZVAL_MAYBE_P(bytes), sizeof(zval));
 
   return props;

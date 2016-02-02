@@ -154,4 +154,38 @@ class FloatTest extends \PHPUnit_Framework_TestCase
         $float1 = new Float("4.0");
         $this->assertEquals(2.0, (float)$float1->sqrt(), "", self::EPSILON);
     }
+
+    /**
+     * @dataProvider equalTypes
+     */
+    public function testCompareEquals($value1, $value2)
+    {
+        $this->assertEquals($value1, $value2);
+        $this->assertTrue($value1 == $value2);
+    }
+
+    public function equalTypes()
+    {
+        return array(
+            array(new Float('3.14159'), new Float('3.14159')),
+            array(new Float(1.1), new Float(1.1)),
+        );
+    }
+
+    /**
+     * @dataProvider notEqualTypes
+     */
+    public function testCompareNotEquals($value1, $value2)
+    {
+        $this->assertNotEquals($value1, $value2);
+        $this->assertFalse($value1 == $value2);
+    }
+
+    public function notEqualTypes()
+    {
+        return array(
+            array(new Float('3.14159'), new Float('3.1415')),
+            array(new Float(1.1), new Float(2.2)),
+        );
+    }
 }

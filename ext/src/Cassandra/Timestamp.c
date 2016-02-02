@@ -178,21 +178,25 @@ php_cassandra_timestamp_gc(zval *object, php5to7_zval_gc table, int *n TSRMLS_DC
 static HashTable *
 php_cassandra_timestamp_properties(zval *object TSRMLS_DC)
 {
+  php5to7_zval type;
+  php5to7_zval seconds;
+  php5to7_zval microseconds;
+
   cassandra_timestamp *self = PHP_CASSANDRA_GET_TIMESTAMP(object);
   HashTable           *props = zend_std_get_properties(object TSRMLS_CC);
-  php5to7_zval         seconds;
-  php5to7_zval         microseconds;
 
   long sec  = (long) (self->timestamp / 1000);
   long usec = (long) ((self->timestamp - (sec * 1000)) * 1000);
 
+  type = php_cassandra_type_scalar(CASS_VALUE_TYPE_TIMESTAMP TSRMLS_CC);
+  PHP5TO7_ZEND_HASH_UPDATE(props, "type", sizeof("type"), PHP5TO7_ZVAL_MAYBE_P(type), sizeof(zval));
+
   PHP5TO7_ZVAL_MAYBE_MAKE(seconds);
   ZVAL_LONG(PHP5TO7_ZVAL_MAYBE_P(seconds), sec);
+  PHP5TO7_ZEND_HASH_UPDATE(props, "seconds", sizeof("seconds"), PHP5TO7_ZVAL_MAYBE_P(seconds), sizeof(zval));
 
   PHP5TO7_ZVAL_MAYBE_MAKE(microseconds);
   ZVAL_LONG(PHP5TO7_ZVAL_MAYBE_P(microseconds), usec);
-
-  PHP5TO7_ZEND_HASH_UPDATE(props, "seconds", sizeof("seconds"), PHP5TO7_ZVAL_MAYBE_P(seconds), sizeof(zval));
   PHP5TO7_ZEND_HASH_UPDATE(props, "microseconds", sizeof("microseconds"), PHP5TO7_ZVAL_MAYBE_P(microseconds), sizeof(zval));
 
   return props;

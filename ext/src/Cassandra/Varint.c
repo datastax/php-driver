@@ -363,18 +363,22 @@ php_cassandra_varint_gc(zval *object, php5to7_zval_gc table, int *n TSRMLS_DC)
 static HashTable *
 php_cassandra_varint_properties(zval *object TSRMLS_DC)
 {
-  cassandra_numeric *self = PHP_CASSANDRA_GET_NUMERIC(object);
-  HashTable         *props = zend_std_get_properties(object TSRMLS_CC);
-  php5to7_zval       value;
-
   char *string;
   int string_len;
+  php5to7_zval type;
+  php5to7_zval value;
+
+  cassandra_numeric *self = PHP_CASSANDRA_GET_NUMERIC(object);
+  HashTable         *props = zend_std_get_properties(object TSRMLS_CC);
+
   php_cassandra_format_integer(self->varint_value, &string, &string_len);
+
+  type = php_cassandra_type_scalar(CASS_VALUE_TYPE_VARINT TSRMLS_CC);
+  PHP5TO7_ZEND_HASH_UPDATE(props, "type", sizeof("type"), PHP5TO7_ZVAL_MAYBE_P(type), sizeof(zval));
 
   PHP5TO7_ZVAL_MAYBE_MAKE(value);
   PHP5TO7_ZVAL_STRINGL(PHP5TO7_ZVAL_MAYBE_P(value), string, string_len);
   efree(string);
-
   PHP5TO7_ZEND_HASH_UPDATE(props, "value", sizeof("value"), PHP5TO7_ZVAL_MAYBE_P(value), sizeof(zval));
 
   return props;

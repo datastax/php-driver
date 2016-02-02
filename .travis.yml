@@ -90,6 +90,6 @@ script:
   # Execute .phpt tests
   - pushd ${PHP_DRIVER_BUILD_DIRECTORY} && make test && popd
   # Execute the unit tests
-  - ./bin/phpunit
+  - ./bin/phpunit --testsuite unit
   # Execute the Behat tests
   - ./bin/behat --tags="${BEHAT_SKIP_TAGS}" ${BEHAT_EXTRA_OPTIONS}

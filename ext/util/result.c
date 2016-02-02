@@ -6,6 +6,8 @@
 #include "src/Cassandra/Collection.h"
 #include "src/Cassandra/Map.h"
 #include "src/Cassandra/Set.h"
+#include "src/Cassandra/Tuple.h"
+#include "src/Cassandra/UserTypeValue.h"
 
 static int
 php_cassandra_value(const CassValue* value, const CassDataType* data_type, php5to7_zval *out TSRMLS_DC)
@@ -29,6 +31,9 @@ php_cassandra_value(const CassValue* value, const CassDataType* data_type, php5t
   cassandra_collection *collection = NULL;
   cassandra_map *map = NULL;
   cassandra_set *set = NULL;
+  cassandra_tuple *tuple = NULL;
+  cassandra_user_type_value *user_type_value = NULL;
+  ulong index;
 
   CassValueType type = cass_data_type_type(data_type);
   const CassDataType* primary_type;
@@ -231,8 +236,76 @@ php_cassandra_value(const CassValue* value, const CassDataType* data_type, php5t
 
     cass_iterator_free(iterator);
     break;
+  case CASS_VALUE_TYPE_TUPLE:
+    object_init_ex(PHP5TO7_ZVAL_MAYBE_DEREF(out), cassandra_tuple_ce);
+    tuple = PHP_CASSANDRA_GET_TUPLE(PHP5TO7_ZVAL_MAYBE_DEREF(out));
+
+    tuple->type = php_cassandra_type_from_data_type(data_type TSRMLS_CC);
+
+    iterator = cass_iterator_from_tuple(value);
+
+    index = 0;
+    while (cass_iterator_next(iterator)) {
+      const CassValue* value = cass_iterator_get_value(iterator);
+
+      if (!cass_value_is_null(value)) {
+        php5to7_zval v;
+
+        primary_type = cass_data_type_sub_data_type(data_type, index);
+        if (php_cassandra_value(value, primary_type, &v TSRMLS_CC) == FAILURE) {
+          cass_iterator_free(iterator);
+          zval_ptr_dtor(out);
+          return FAILURE;
+        }
+
+        php_cassandra_tuple_set(tuple, index, PHP5TO7_ZVAL_MAYBE_P(v) TSRMLS_CC);
+        zval_ptr_dtor(&v);
+      }
+
+      index++;
+    }
+
+    cass_iterator_free(iterator);
+    break;
+  case CASS_VALUE_TYPE_UDT:
+    object_init_ex(PHP5TO7_ZVAL_MAYBE_DEREF(out), cassandra_user_type_value_ce);
+    user_type_value = PHP_CASSANDRA_GET_USER_TYPE_VALUE(PHP5TO7_ZVAL_MAYBE_DEREF(out));
+
+    user_type_value->type = php_cassandra_type_from_data_type(data_type TSRMLS_CC);
+
+    iterator = cass_iterator_fields_from_user_type(value);
+
+    index = 0;
+    while (cass_iterator_next(iterator)) {
+      const CassValue* value = cass_iterator_get_user_type_field_value(iterator);
+
+      if (!cass_value_is_null(value)) {
+        const char *name;
+        size_t name_length;
+        php5to7_zval v;
+
+        primary_type = cass_data_type_sub_data_type(data_type, index);
+        if (php_cassandra_value(value, primary_type, &v TSRMLS_CC) == FAILURE) {
+          cass_iterator_free(iterator);
+          zval_ptr_dtor(out);
+          return FAILURE;
+        }
+
+        cass_iterator_get_user_type_field_name(iterator, &name, &name_length);
+        php_cassandra_user_type_value_set(user_type_value,
+                                          name, name_length,
+                                          PHP5TO7_ZVAL_MAYBE_P(v) TSRMLS_CC);
+        zval_ptr_dtor(&v);
+      }
+
+      index++;
+    }
+
+    cass_iterator_free(iterator);
+    break;
   default:
     ZVAL_NULL(PHP5TO7_ZVAL_MAYBE_DEREF(out));
+    break;
   }
 
   return SUCCESS;
