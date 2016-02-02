@@ -1,8 +1,13 @@
-/composer.phar
-/vendor/
-/bin/
+# Directories to ignore
+/.idea/
 /.vagrant/
-/venv/
-/tmp/*
+/bin/
 /docs/
+/vendor/
+/venv/
+
+
+# Files to ignore
 /cassandra.log
+/composer.phar
+/tmp/*
