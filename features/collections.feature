@@ -46,25 +46,55 @@ Feature: Collections
     Then its output should contain:
       """
       Logins: Cassandra\Collection::__set_state(array(
+         'type' =>
+        Cassandra\Type\Collection::__set_state(array(
+           'valueType' =>
+          Cassandra\Type\Scalar::__set_state(array(
+             'name' => 'timestamp',
+          )),
+        )),
          'values' =>
         array (
           0 =>
           Cassandra\Timestamp::__set_state(array(
+             'type' =>
+            Cassandra\Type\Scalar::__set_state(array(
+               'name' => 'timestamp',
+            )),
              'seconds' => 1410430148,
              'microseconds' => 0,
           )),
           1 =>
           Cassandra\Timestamp::__set_state(array(
+             'type' =>
+            Cassandra\Type\Scalar::__set_state(array(
+               'name' => 'timestamp',
+            )),
              'seconds' => 1410516540,
              'microseconds' => 0,
           )),
         ),
       ))
       Locations: Cassandra\Map::__set_state(array(
+         'type' =>
+        Cassandra\Type\Map::__set_state(array(
+           'keyType' =>
+          Cassandra\Type\Scalar::__set_state(array(
+             'name' => 'timestamp',
+          )),
+           'valueType' =>
+          Cassandra\Type\Scalar::__set_state(array(
+             'name' => 'double',
+          )),
+        )),
          'keys' =>
         array (
           0 =>
           Cassandra\Timestamp::__set_state(array(
+             'type' =>
+            Cassandra\Type\Scalar::__set_state(array(
+               'name' => 'timestamp',
+            )),
              'seconds' => 1410430148,
              'microseconds' => 0,
           )),
@@ -75,14 +105,29 @@ Feature: Collections
         ),
       ))
       Ip Addresses: Cassandra\Set::__set_state(array(
+         'type' =>
+        Cassandra\Type\Set::__set_state(array(
+           'valueType' =>
+          Cassandra\Type\Scalar::__set_state(array(
+             'name' => 'inet',
+          )),
+        )),
          'values' =>
         array (
           0 =>
           Cassandra\Inet::__set_state(array(
+             'type' =>
+            Cassandra\Type\Scalar::__set_state(array(
+               'name' => 'inet',
+            )),
              'address' => '192.168.1.15',
           )),
           1 =>
           Cassandra\Inet::__set_state(array(
+             'type' =>
+            Cassandra\Type\Scalar::__set_state(array(
+               'name' => 'inet',
+            )),
              'address' => '200.199.198.197',
           )),
         ),
@@ -113,15 +158,15 @@ Feature: Collections
       $statement = new Cassandra\SimpleStatement(
                       "INSERT INTO users (id, name, addresses) VALUES (?, ?, ?)");
 
-      $address_type = Cassandra\Type::map(Cassandra\Type::text(), Cassandra\Type::text());
-      $addresses_type = Cassandra\Type::map(Cassandra\Type::text(), $address_type);
+      $addressType = Cassandra\Type::map(Cassandra\Type::text(), Cassandra\Type::text());
+      $addressesType = Cassandra\Type::map(Cassandra\Type::text(), $addressType);
 
       $users = array(
           array(
               new Cassandra\Uuid('56357d2b-4586-433c-ad24-afa9918bc415'),
               'Charles Wallace',
-              $addresses_type->create(
-                  'home', $address_type->create(
+              $addressesType->create(
+                  'home', $addressType->create(
                       'city', 'Phoenix',
                       'street', '9042 Cassandra Lane',
                       'zip', '85023'))
@@ -129,12 +174,12 @@ Feature: Collections
           array(
               new Cassandra\Uuid('ce359590-8528-4682-a9f3-add53fc9aa09'),
               'Kevin Malone',
-              $addresses_type->create(
-                  'home', $address_type->create(
+              $addressesType->create(
+                  'home', $addressType->create(
                       'city', 'New York',
                       'street', '1000 Database Road',
                       'zip', '10025'),
-                  'work', $address_type->create(
+                  'work', $addressType->create(
                       'city', 'New York',
                       'street', '60  SSTable Drive',
                       'zip', '10024')
@@ -143,8 +188,8 @@ Feature: Collections
           array(
               new Cassandra\Uuid('7d64dca1-dd4d-4f3c-bec4-6a88fa082a13'),
               'Michael Scott',
-              $addresses_type->create(
-                  'work', $address_type->create(
+              $addressesType->create(
+                  'work', $addressType->create(
                       'city', 'Santa Clara',
                       'street', '20000 Log Ave',
                       'zip', '95054'))
@@ -168,9 +213,27 @@ Feature: Collections
     When it is executed
     Then its output should contain:
       """
-      ID: 56357d2b-4586-433c-ad24-afa9918bc415
+ID: 56357d2b-4586-433c-ad24-afa9918bc415
       Name: Charles Wallace
       Addresses: Cassandra\Map::__set_state(array(
+         'type' =>
+        Cassandra\Type\Map::__set_state(array(
+           'keyType' =>
+          Cassandra\Type\Scalar::__set_state(array(
+             'name' => 'varchar',
+          )),
+           'valueType' =>
+          Cassandra\Type\Map::__set_state(array(
+             'keyType' =>
+            Cassandra\Type\Scalar::__set_state(array(
+               'name' => 'varchar',
+            )),
+             'valueType' =>
+            Cassandra\Type\Scalar::__set_state(array(
+               'name' => 'varchar',
+            )),
+          )),
+        )),
          'keys' =>
         array (
           0 => 'home',
@@ -179,6 +242,17 @@ Feature: Collections
         array (
           0 =>
           Cassandra\Map::__set_state(array(
+             'type' =>
+            Cassandra\Type\Map::__set_state(array(
+               'keyType' =>
+              Cassandra\Type\Scalar::__set_state(array(
+                 'name' => 'varchar',
+              )),
+               'valueType' =>
+              Cassandra\Type\Scalar::__set_state(array(
+                 'name' => 'varchar',
+              )),
+            )),
              'keys' =>
             array (
               0 => 'city',
@@ -187,9 +261,9 @@ Feature: Collections
             ),
              'values' =>
             array (
-              0 => 'Phoenix',
+              0 => '85023',
               1 => '9042 Cassandra Lane',
-              2 => '85023',
+              2 => 'Phoenix',
             ),
           )),
         ),
@@ -197,6 +271,24 @@ Feature: Collections
       ID: ce359590-8528-4682-a9f3-add53fc9aa09
       Name: Kevin Malone
       Addresses: Cassandra\Map::__set_state(array(
+         'type' =>
+        Cassandra\Type\Map::__set_state(array(
+           'keyType' =>
+          Cassandra\Type\Scalar::__set_state(array(
+             'name' => 'varchar',
+          )),
+           'valueType' =>
+          Cassandra\Type\Map::__set_state(array(
+             'keyType' =>
+            Cassandra\Type\Scalar::__set_state(array(
+               'name' => 'varchar',
+            )),
+             'valueType' =>
+            Cassandra\Type\Scalar::__set_state(array(
+               'name' => 'varchar',
+            )),
+          )),
+        )),
          'keys' =>
         array (
           0 => 'home',
@@ -206,6 +298,17 @@ Feature: Collections
         array (
           0 =>
           Cassandra\Map::__set_state(array(
+             'type' =>
+            Cassandra\Type\Map::__set_state(array(
+               'keyType' =>
+              Cassandra\Type\Scalar::__set_state(array(
+                 'name' => 'varchar',
+              )),
+               'valueType' =>
+              Cassandra\Type\Scalar::__set_state(array(
+                 'name' => 'varchar',
+              )),
+            )),
              'keys' =>
             array (
               0 => 'city',
@@ -214,13 +317,24 @@ Feature: Collections
             ),
              'values' =>
             array (
-              0 => 'New York',
-              1 => '1000 Database Road',
-              2 => '10025',
+              0 => '1000 Database Road',
+              1 => '10025',
+              2 => 'New York',
             ),
           )),
           1 =>
           Cassandra\Map::__set_state(array(
+             'type' =>
+            Cassandra\Type\Map::__set_state(array(
+               'keyType' =>
+              Cassandra\Type\Scalar::__set_state(array(
+                 'name' => 'varchar',
+              )),
+               'valueType' =>
+              Cassandra\Type\Scalar::__set_state(array(
+                 'name' => 'varchar',
+              )),
+            )),
              'keys' =>
             array (
               0 => 'city',
@@ -229,9 +343,9 @@ Feature: Collections
             ),
              'values' =>
             array (
-              0 => 'New York',
+              0 => '10024',
               1 => '60  SSTable Drive',
-              2 => '10024',
+              2 => 'New York',
             ),
           )),
         ),
@@ -239,6 +353,24 @@ Feature: Collections
       ID: 7d64dca1-dd4d-4f3c-bec4-6a88fa082a13
       Name: Michael Scott
       Addresses: Cassandra\Map::__set_state(array(
+         'type' =>
+        Cassandra\Type\Map::__set_state(array(
+           'keyType' =>
+          Cassandra\Type\Scalar::__set_state(array(
+             'name' => 'varchar',
+          )),
+           'valueType' =>
+          Cassandra\Type\Map::__set_state(array(
+             'keyType' =>
+            Cassandra\Type\Scalar::__set_state(array(
+               'name' => 'varchar',
+            )),
+             'valueType' =>
+            Cassandra\Type\Scalar::__set_state(array(
+               'name' => 'varchar',
+            )),
+          )),
+        )),
          'keys' =>
         array (
           0 => 'work',
@@ -247,6 +379,17 @@ Feature: Collections
         array (
           0 =>
           Cassandra\Map::__set_state(array(
+             'type' =>
+            Cassandra\Type\Map::__set_state(array(
+               'keyType' =>
+              Cassandra\Type\Scalar::__set_state(array(
+                 'name' => 'varchar',
+              )),
+               'valueType' =>
+              Cassandra\Type\Scalar::__set_state(array(
+                 'name' => 'varchar',
+              )),
+            )),
              'keys' =>
             array (
               0 => 'city',
@@ -255,9 +398,9 @@ Feature: Collections
             ),
              'values' =>
             array (
-              0 => 'Santa Clara',
-              1 => '20000 Log Ave',
-              2 => '95054',
+              0 => '20000 Log Ave',
+              1 => '95054',
+              2 => 'Santa Clara',
             ),
           )),
         ),

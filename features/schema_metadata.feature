@@ -276,15 +276,83 @@ Feature: Schema Metadata
       $keyspace  = $schema->keyspace("simplex");
 
       foreach ($keyspace->userTypes() as $name => $type) {
-        print "$type\n";
+        print "Name: $type\n";
+        var_dump($type);
       }
       """
     When it is executed
     Then its output should contain:
       """
-      simplex.type1<a:int, b:text>
-      simplex.type2<a:map<text, int>, b:bigint>
-      simplex.type3<a:map<text, set<int>>, b:list<uuid>>
+      Name: simplex.type1
+      object(Cassandra\Type\UserType)#6 (1) {
+        ["types"]=>
+        array(2) {
+          ["a"]=>
+          object(Cassandra\Type\Scalar)#7 (1) {
+            ["name"]=>
+            string(3) "int"
+          }
+          ["b"]=>
+          object(Cassandra\Type\Scalar)#8 (1) {
+            ["name"]=>
+            string(7) "varchar"
+          }
+        }
+      }
+      Name: simplex.type2
+      object(Cassandra\Type\UserType)#9 (1) {
+        ["types"]=>
+        array(2) {
+          ["a"]=>
+          object(Cassandra\Type\Map)#10 (2) {
+            ["keyType"]=>
+            object(Cassandra\Type\Scalar)#8 (1) {
+              ["name"]=>
+              string(7) "varchar"
+            }
+            ["valueType"]=>
+            object(Cassandra\Type\Scalar)#7 (1) {
+              ["name"]=>
+              string(3) "int"
+            }
+          }
+          ["b"]=>
+          object(Cassandra\Type\Scalar)#11 (1) {
+            ["name"]=>
+            string(6) "bigint"
+          }
+        }
+      }
+      Name: simplex.type3
+      object(Cassandra\Type\UserType)#12 (1) {
+        ["types"]=>
+        array(2) {
+          ["a"]=>
+          object(Cassandra\Type\Map)#14 (2) {
+            ["keyType"]=>
+            object(Cassandra\Type\Scalar)#8 (1) {
+              ["name"]=>
+              string(7) "varchar"
+            }
+            ["valueType"]=>
+            object(Cassandra\Type\Set)#13 (1) {
+              ["valueType"]=>
+              object(Cassandra\Type\Scalar)#7 (1) {
+                ["name"]=>
+                string(3) "int"
+              }
+            }
+          }
+          ["b"]=>
+          object(Cassandra\Type\Collection)#16 (1) {
+            ["valueType"]=>
+            object(Cassandra\Type\Scalar)#15 (1) {
+              ["name"]=>
+              string(4) "uuid"
+            }
+          }
+        }
+      }
       """
 
     @cassandra-version-2.1
@@ -311,18 +379,88 @@ Feature: Schema Metadata
       $keyspace  = $schema->keyspace("simplex");
 
       $type      = $keyspace->userType("type1");
-      print "$type\n";
+      print "Name: $type\n";
+      var_dump($type);
 
       $type      = $keyspace->userType("type2");
-      print "$type\n";
+      print "Name: $type\n";
+      var_dump($type);
 
       $type      = $keyspace->userType("type3");
-      print "$type\n";
+      print "Name: $type\n";
+      var_dump($type);
       """
     When it is executed
     Then its output should contain:
       """
-      simplex.type1<a:int, b:text>
-      simplex.type2<a:map<text, int>, b:bigint>
-      simplex.type3<a:map<text, set<int>>, b:list<uuid>>
+      Name: simplex.type1
+      object(Cassandra\Type\UserType)#6 (1) {
+        ["types"]=>
+        array(2) {
+          ["a"]=>
+          object(Cassandra\Type\Scalar)#7 (1) {
+            ["name"]=>
+            string(3) "int"
+          }
+          ["b"]=>
+          object(Cassandra\Type\Scalar)#8 (1) {
+            ["name"]=>
+            string(7) "varchar"
+          }
+        }
+      }
+      Name: simplex.type2
+      object(Cassandra\Type\UserType)#9 (1) {
+        ["types"]=>
+        array(2) {
+          ["a"]=>
+          object(Cassandra\Type\Map)#10 (2) {
+            ["keyType"]=>
+            object(Cassandra\Type\Scalar)#8 (1) {
+              ["name"]=>
+              string(7) "varchar"
+            }
+            ["valueType"]=>
+            object(Cassandra\Type\Scalar)#7 (1) {
+              ["name"]=>
+              string(3) "int"
+            }
+          }
+          ["b"]=>
+          object(Cassandra\Type\Scalar)#11 (1) {
+            ["name"]=>
+            string(6) "bigint"
+          }
+        }
+      }
+      Name: simplex.type3
+      object(Cassandra\Type\UserType)#6 (1) {
+        ["types"]=>
+        array(2) {
+          ["a"]=>
+          object(Cassandra\Type\Map)#13 (2) {
+            ["keyType"]=>
+            object(Cassandra\Type\Scalar)#8 (1) {
+              ["name"]=>
+              string(7) "varchar"
+            }
+            ["valueType"]=>
+            object(Cassandra\Type\Set)#12 (1) {
+              ["valueType"]=>
+              object(Cassandra\Type\Scalar)#7 (1) {
+                ["name"]=>
+                string(3) "int"
+              }
+            }
+          }
+          ["b"]=>
+          object(Cassandra\Type\Collection)#15 (1) {
+            ["valueType"]=>
+            object(Cassandra\Type\Scalar)#14 (1) {
+              ["name"]=>
+              string(4) "uuid"
+            }
+          }
+        }
+      }
       """
