@@ -481,7 +481,7 @@ PHP_METHOD(DefaultSession, execute)
       serial_consistency = opts->serial_consistency;
 
     if (!PHP5TO7_ZVAL_IS_UNDEF(opts->retry_policy))
-      retry_policy = (PHP_CASSANDRA_GET_RETRY_POLICY(opts->retry_policy))->policy;
+      retry_policy = (PHP_CASSANDRA_GET_RETRY_POLICY(PHP5TO7_ZVAL_MAYBE_P(opts->retry_policy)))->policy;
   }
 
   switch (stmt->type) {
@@ -601,7 +601,7 @@ PHP_METHOD(DefaultSession, executeAsync)
       serial_consistency = opts->serial_consistency;
 
     if (!PHP5TO7_ZVAL_IS_UNDEF(opts->retry_policy))
-      retry_policy = (PHP_CASSANDRA_GET_RETRY_POLICY(opts->retry_policy))->policy;
+      retry_policy = (PHP_CASSANDRA_GET_RETRY_POLICY(PHP5TO7_ZVAL_MAYBE_P(opts->retry_policy)))->policy;
   }
 
   object_init_ex(return_value, cassandra_future_rows_ce);
