@@ -21,7 +21,7 @@ namespace Cassandra;
 /**
  * A PHP representation of the CQL `uuid` datatype
  */
-final class Uuid implements UuidInterface
+final class Uuid implements Value, UuidInterface
 {
     /**
      * Creates a uuid from a given uuid string or a random one.
@@ -36,6 +36,13 @@ final class Uuid implements UuidInterface
      * @return string uuid
      */
     public function __toString() {}
+
+    /**
+     * The type of this uuid.
+     *
+     * @return Type
+     */
+    public function type() {}
 
     /**
      * Returns this uuid as string.

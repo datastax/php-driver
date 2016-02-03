@@ -21,22 +21,22 @@ namespace Cassandra;
 /**
  * A PHP representation of the CQL `map` datatype
  */
-final class Map implements \Countable, \Iterator, \ArrayAccess
+final class Map implements Value, \Countable, \Iterator, \ArrayAccess
 {
     /**
      * Creates a new map of a given key and value type.
      *
-     * @param string $keyType   one of `Cassandra::TYPE_*`
-     * @param string $valueType one of `Cassandra::TYPE_*`
+     * @param Type $keyType
+     * @param Type $valueType
      */
     public function __construct($keyType, $valueType) {}
 
     /**
-     * Returns key type of this map.
+     * The type of this map.
      *
-     * @return string key type, one of `Cassandra::TYPE_*`
+     * @return Type
      */
-    public function keyType() {}
+    public function type() {}
 
     /**
      * Returns all keys in the map as an array.
@@ -44,13 +44,6 @@ final class Map implements \Countable, \Iterator, \ArrayAccess
      * @return array keys
      */
     public function keys() {}
-
-    /**
-     * Returns value type of this map.
-     *
-     * @return string value type, one of `Cassandra::TYPE_*`
-     */
-    public function valueType() {}
 
     /**
      * Returns all values in the map as an array.

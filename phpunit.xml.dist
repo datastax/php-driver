@@ -2,10 +2,17 @@
 
 <phpunit colors="true" bootstrap="vendor/autoload.php">
   <testsuites>
-    <testsuite name="php-driver">
-      <directory>./tests</directory>
+    <testsuite name="unit">
+      <directory>./tests/unit/</directory>
+    </testsuite>
+    <testsuite name="integration">
+      <directory>./tests/integration/</directory>
     </testsuite>
   </testsuites>
+
+  <listeners>
+    <listener class="TestSuiteListener" file="./tests/listener.php"></listener>
+  </listeners>
 
   <filter>
     <whitelist>

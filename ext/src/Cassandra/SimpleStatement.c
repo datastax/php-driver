@@ -6,8 +6,8 @@ ZEND_EXTERN_MODULE_GLOBALS(cassandra)
 
 PHP_METHOD(SimpleStatement, __construct)
 {
-  zval* cql = NULL;
-  cassandra_simple_statement* self = NULL;
+  zval *cql = NULL;
+  cassandra_statement *self = NULL;
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z", &cql) == FAILURE) {
     return;
@@ -17,7 +17,7 @@ PHP_METHOD(SimpleStatement, __construct)
     INVALID_ARGUMENT(cql, "a string");
   }
 
-  self = (cassandra_simple_statement*) zend_object_store_get_object(getThis() TSRMLS_CC);
+  self = PHP_CASSANDRA_GET_STATEMENT(getThis());
 
   self->cql = estrndup(Z_STRVAL_P(cql), Z_STRLEN_P(cql));
 }
@@ -33,10 +33,10 @@ static zend_function_entry cassandra_simple_statement_methods[] = {
 
 static zend_object_handlers cassandra_simple_statement_handlers;
 
-static HashTable*
+static HashTable *
 php_cassandra_simple_statement_properties(zval *object TSRMLS_DC)
 {
-  HashTable* props = zend_std_get_properties(object TSRMLS_CC);
+  HashTable *props = zend_std_get_properties(object TSRMLS_CC);
 
   return props;
 }
@@ -51,39 +51,29 @@ php_cassandra_simple_statement_compare(zval *obj1, zval *obj2 TSRMLS_DC)
 }
 
 static void
-php_cassandra_simple_statement_free(void *object TSRMLS_DC)
+php_cassandra_simple_statement_free(php5to7_zend_object_free *object TSRMLS_DC)
 {
-  cassandra_simple_statement* statement = (cassandra_simple_statement*) object;
+  cassandra_statement *self = PHP5TO7_ZEND_OBJECT_GET(statement, object);
 
-  if (statement->cql) {
-    efree(statement->cql);
-    statement->cql = NULL;
+  if (self->cql) {
+    efree(self->cql);
+    self->cql = NULL;
   }
 
-  zend_object_std_dtor(&statement->zval TSRMLS_CC);
-  efree(statement);
+  zend_object_std_dtor(&self->zval TSRMLS_CC);
+  PHP5TO7_MAYBE_EFREE(self);
 }
 
-static zend_object_value
-php_cassandra_simple_statement_new(zend_class_entry* class_type TSRMLS_DC)
+static php5to7_zend_object
+php_cassandra_simple_statement_new(zend_class_entry *ce TSRMLS_DC)
 {
-  zend_object_value retval;
-  cassandra_simple_statement *statement;
+  cassandra_statement *self =
+      PHP5TO7_ZEND_OBJECT_ECALLOC(statement, ce);
 
-  statement = (cassandra_simple_statement*) ecalloc(1, sizeof(cassandra_simple_statement));
+  self->type = CASSANDRA_SIMPLE_STATEMENT;
+  self->cql  = NULL;
 
-  zend_object_std_init(&statement->zval, class_type TSRMLS_CC);
-  object_properties_init(&statement->zval, class_type);
-
-  statement->type = CASSANDRA_SIMPLE_STATEMENT;
-  statement->cql  = NULL;
-
-  retval.handle   = zend_objects_store_put(statement,
-                      (zend_objects_store_dtor_t) zend_objects_destroy_object,
-                      php_cassandra_simple_statement_free, NULL TSRMLS_CC);
-  retval.handlers = &cassandra_simple_statement_handlers;
-
-  return retval;
+  PHP5TO7_ZEND_OBJECT_INIT_EX(statement, simple_statement, self, ce);
 }
 
 void cassandra_define_SimpleStatement(TSRMLS_D)
@@ -93,7 +83,7 @@ void cassandra_define_SimpleStatement(TSRMLS_D)
   INIT_CLASS_ENTRY(ce, "Cassandra\\SimpleStatement", cassandra_simple_statement_methods);
   cassandra_simple_statement_ce = zend_register_internal_class(&ce TSRMLS_CC);
   zend_class_implements(cassandra_simple_statement_ce TSRMLS_CC, 1, cassandra_statement_ce);
-  cassandra_simple_statement_ce->ce_flags     |= ZEND_ACC_FINAL_CLASS;
+  cassandra_simple_statement_ce->ce_flags     |= PHP5TO7_ZEND_ACC_FINAL;
   cassandra_simple_statement_ce->create_object = php_cassandra_simple_statement_new;
 
   memcpy(&cassandra_simple_statement_handlers, zend_get_std_object_handlers(), sizeof(zend_object_handlers));

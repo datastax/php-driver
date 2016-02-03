@@ -4,24 +4,6 @@ namespace Cassandra\Type;
 
 use Cassandra\Type;
 
-class UnsupportedType implements Type
-{
-    public function name()
-    {
-        return "unsupported";
-    }
-
-    public function __toString()
-    {
-        return "unsupported";
-    }
-
-    public function create($value = null)
-    {
-        return null;
-    }
-}
-
 /**
  * @requires extension cassandra
  */
@@ -87,12 +69,58 @@ class MapTest extends \PHPUnit_Framework_TestCase
      *                           Cassandra\Type::varint(), Cassandra\Type::boolean(),
      *                           Cassandra\Type::decimal(), Cassandra\Type::double(),
      *                           Cassandra\Type::float(), Cassandra\Type::inet(),
-     *                           Cassandra\Type::timestamp(), Cassandra\Type::uuid()
-     *                           or Cassandra\Type::timeuuid(), an instance of
-     *                           Cassandra\Type\UnsupportedType given
+     *                           Cassandra\Type::timestamp(), Cassandra\Type::uuid(),
+     *                           Cassandra\Type::timeuuid(), Cassandra\Type::map(),
+     *                           Cassandra\Type::set(), Cassandra\Type::collection(),
+     *                           Cassandra\Type::tuple() or Cassandra\Type::udt(),
+     *                           an instance of Cassandra\Type\UnsupportedType given
      */
     public function testPreventsDefiningMapsWithUnsupportedTypes()
     {
         Type::map(new UnsupportedType(), Type::varchar());
+    }
+
+    /**
+     * @dataProvider equalTypes
+     */
+    public function testCompareEquals($type1, $type2)
+    {
+        $this->assertEquals($type1, $type2);
+        $this->assertTrue($type1 == $type2);
+    }
+
+    public function equalTypes()
+    {
+        return array(
+            array(Type::map(Type::int(), Type::varchar()),
+                  Type::map(Type::int(), Type::varchar())),
+            array(Type::map(Type::varchar(), Type::collection(Type::int())),
+                  Type::map(Type::varchar(), Type::collection(Type::int()))),
+            array(Type::map(Type::collection(Type::int()), Type::varchar()),
+                  Type::map(Type::collection(Type::int()), Type::varchar())),
+            array(Type::map(Type::map(Type::int(), Type::varchar()), Type::varchar()),
+                  Type::map(Type::map(Type::int(), Type::varchar()), Type::varchar())),
+        );
+    }
+
+    /**
+     * @dataProvider notEqualTypes
+     */
+    public function testCompareNotEquals($type1, $type2)
+    {
+        $this->assertNotEquals($type1, $type2);
+        $this->assertFalse($type1 == $type2);
+    }
+
+    public function notEqualTypes()
+    {
+        return array(
+            array(Type::map(Type::int(), Type::varchar()),
+                  Type::map(Type::varchar(), Type::int())),
+            array(Type::map(Type::collection(Type::varchar()), Type::int()),
+                  Type::map(Type::collection(Type::int()), Type::int())),
+            array(Type::map(Type::map(Type::int(), Type::varchar()), Type::varchar()),
+                  Type::map(Type::map(Type::varchar(), Type::int()), Type::varchar())),
+        );
     }
 }

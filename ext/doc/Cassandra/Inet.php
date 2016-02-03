@@ -21,7 +21,7 @@ namespace Cassandra;
 /**
  * A PHP representation of the CQL `inet` datatype
  */
-final class Inet
+final class Inet implements Value
 {
     /**
      * Creates a new IPv4 or IPv6 inet address.
@@ -29,6 +29,13 @@ final class Inet
      * @param string $address any IPv4 or IPv6 address
      */
     public function __construct($address) {}
+
+    /**
+     * The type of this inet.
+     *
+     * @return Type
+     */
+    public function type() {}
 
     /**
      * Returns the normalized string representation of the address.

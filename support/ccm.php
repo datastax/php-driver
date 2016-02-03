@@ -5,7 +5,11 @@ use Cassandra\SimpleStatement;
 
 class CCM
 {
-    private $name;
+    const DEFAULT_CLUSTER_PREFIX = "php-driver";
+    const DEFAULT_CASSANDRA_VERSION = "2.1.12";
+    const PROCESS_TIMEOUT_IN_SECONDS = 480;
+    private $clusterPrefix;
+    private $isSilent;
     private $version;
     private $process;
     private $cluster;
@@ -15,10 +19,11 @@ class CCM
     private $dataCenterOneNodes;
     private $dataCenterTwoNodes;
 
-    public function __construct($name, $version)
+    public function __construct($version = self::DEFAULT_CASSANDRA_VERSION, $isSilent = false, $clusterPrefix = self::DEFAULT_CLUSTER_PREFIX)
     {
-        $this->name               = $name;
         $this->version            = $version;
+        $this->isSilent           = $isSilent;
+        $this->clusterPrefix      = $clusterPrefix;
         $this->process            = new Process(null);
         $this->cluster            = null;
         $this->session            = null;
@@ -26,6 +31,9 @@ class CCM
         $this->clientAuth         = false;
         $this->dataCenterOneNodes = 0;
         $this->dataCenterTwoNodes = 0;
+
+        // Increase the timeout to handle TravisCI timeouts
+        $this->process->setTimeout(self::PROCESS_TIMEOUT_IN_SECONDS);
     }
 
     public function setupSchema($schema)
@@ -39,7 +47,9 @@ class CCM
                 continue;
             }
 
-            echo "DROP KEYSPACE " . $keyspace . "\n";
+            if (!$this->isSilent) {
+                echo "DROP KEYSPACE " . $keyspace . "\n";
+            }
             $this->session->execute(new SimpleStatement("DROP KEYSPACE $keyspace"));
         }
 
@@ -50,7 +60,9 @@ class CCM
                 continue;
             }
 
-            echo $cql . "\n";
+            if (!$this->isSilent) {
+                echo $cql . "\n";
+            }
             $this->session->execute(new SimpleStatement($cql));
         }
     }
@@ -126,7 +138,7 @@ class CCM
         $this->dataCenterTwoNodes = $dataCenterTwoNodes;
 
         $clusters = $this->getClusters();
-        $clusterName = $this->name.'_'.$dataCenterOneNodes.'-'.$dataCenterTwoNodes;
+        $clusterName = $this->clusterPrefix.'_'.$this->version.'_'.$dataCenterOneNodes.'-'.$dataCenterTwoNodes;
         if ($clusters['active'] != $clusterName) {
             // Ensure any active cluster is stopped
             if (!empty($clusters['active'])) {
@@ -255,9 +267,13 @@ class CCM
         }
         $this->process->setCommandLine($command);
 
-        echo 'ccm > ' . $command . "\n";
+        if (!$this->isSilent) {
+            echo 'ccm > ' . $command . "\n";
+        }
         $this->process->mustRun(function ($type, $buffer) {
-            echo 'ccm > ' . $buffer;
+            if (!$this->isSilent) {
+                echo 'ccm > ' . $buffer;
+            }
         });
 
         return $this->process->getOutput();
@@ -268,10 +284,14 @@ class CCM
       return $this->run('remove', $cluster);
     }
 
-    public function removeAllClusters()
+    public function removeAllClusters($is_all = false)
     {
         $clusters = $this->getClusters();
         foreach ($clusters['list'] as $cluster) {
+            // Determine if the cluster should be deleted
+            if (!$is_all && substr(strtolower($cluster), 0, strlen($this->clusterPrefix)) != $this->clusterPrefix) {
+                continue;
+            }
             $this->removeCluster($cluster);
         }
     }

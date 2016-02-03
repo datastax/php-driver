@@ -154,4 +154,38 @@ class VarintTest extends \PHPUnit_Framework_TestCase
         $varint1 = new Varint("340282366920938463389587631136930004996");
         $this->assertEquals("18446744073709551614", (string)$varint1->sqrt());
     }
+
+    /**
+     * @dataProvider equalTypes
+     */
+    public function testCompareEquals($value1, $value2)
+    {
+        $this->assertEquals($value1, $value2);
+        $this->assertTrue($value1 == $value2);
+    }
+
+    public function equalTypes()
+    {
+        return array(
+            array(new Varint('123456789123456789123456789'), new Varint('123456789123456789123456789')),
+            array(new Varint(99), new Varint(99))
+        );
+    }
+
+    /**
+     * @dataProvider notEqualTypes
+     */
+    public function testCompareNotEquals($value1, $value2)
+    {
+        $this->assertNotEquals($value1, $value2);
+        $this->assertFalse($value1 == $value2);
+    }
+
+    public function notEqualTypes()
+    {
+        return array(
+            array(new Varint('123456789123456789123456789'), new Varint('999999999999999999999999999')),
+            array(new Varint(99), new Varint(999))
+        );
+    }
 }

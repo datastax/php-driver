@@ -12,6 +12,6 @@ void cassandra_define_RangeException(TSRMLS_D)
   zend_class_entry ce;
 
   INIT_CLASS_ENTRY(ce, "Cassandra\\Exception\\RangeException", RangeException_methods);
-  cassandra_range_exception_ce = zend_register_internal_class_ex(&ce, spl_ce_RangeException, NULL TSRMLS_CC);
+  cassandra_range_exception_ce = php5to7_zend_register_internal_class_ex(&ce, spl_ce_RangeException);
   zend_class_implements(cassandra_range_exception_ce TSRMLS_CC, 1, cassandra_exception_ce);
 }

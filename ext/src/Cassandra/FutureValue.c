@@ -6,16 +6,16 @@ ZEND_EXTERN_MODULE_GLOBALS(cassandra)
 
 PHP_METHOD(FutureValue, get)
 {
-  zval* timeout = NULL;
-  cassandra_future_value* self = NULL;
+  zval *timeout = NULL;
+  cassandra_future_value *self = NULL;
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "|z", &timeout) == FAILURE)
     return;
 
-  self = (cassandra_future_value*) zend_object_store_get_object(getThis() TSRMLS_CC);
+  self = PHP_CASSANDRA_GET_FUTURE_VALUE(getThis());
 
-  if (self->value) {
-    RETURN_ZVAL(self->value, 1, 0);
+  if (!PHP5TO7_ZVAL_IS_UNDEF(self->value)) {
+    RETURN_ZVAL(PHP5TO7_ZVAL_MAYBE_P(self->value), 1, 0);
   }
 }
 
@@ -30,10 +30,10 @@ static zend_function_entry cassandra_future_value_methods[] = {
 
 static zend_object_handlers cassandra_future_value_handlers;
 
-static HashTable*
+static HashTable *
 php_cassandra_future_value_properties(zval *object TSRMLS_DC)
 {
-  HashTable* props = zend_std_get_properties(object TSRMLS_CC);
+  HashTable *props = zend_std_get_properties(object TSRMLS_CC);
 
   return props;
 }
@@ -48,39 +48,26 @@ php_cassandra_future_value_compare(zval *obj1, zval *obj2 TSRMLS_DC)
 }
 
 static void
-php_cassandra_future_value_free(void *object TSRMLS_DC)
+php_cassandra_future_value_free(php5to7_zend_object_free *object TSRMLS_DC)
 {
-  cassandra_future_value* future = (cassandra_future_value*) object;
+  cassandra_future_value *self =
+      PHP5TO7_ZEND_OBJECT_GET(future_value, object);
 
-  zend_object_std_dtor(&future->zval TSRMLS_CC);
+  PHP5TO7_ZVAL_MAYBE_DESTROY(self->value);
 
-  if (future->value) {
-    zval_ptr_dtor(&future->value);
-    future->value = NULL;
-  }
-
-  efree(future);
+  zend_object_std_dtor(&self->zval TSRMLS_CC);
+  PHP5TO7_MAYBE_EFREE(self);
 }
 
-static zend_object_value
-php_cassandra_future_value_new(zend_class_entry* class_type TSRMLS_DC)
+static php5to7_zend_object
+php_cassandra_future_value_new(zend_class_entry *ce TSRMLS_DC)
 {
-  zend_object_value retval;
-  cassandra_future_value *future;
+  cassandra_future_value *self =
+      PHP5TO7_ZEND_OBJECT_ECALLOC(future_value, ce);
 
-  future = (cassandra_future_value*) ecalloc(1, sizeof(cassandra_future_value));
+  PHP5TO7_ZVAL_UNDEF(self->value);
 
-  zend_object_std_init(&future->zval, class_type TSRMLS_CC);
-  object_properties_init(&future->zval, class_type);
-
-  future->value = NULL;
-
-  retval.handle   = zend_objects_store_put(future,
-                      (zend_objects_store_dtor_t) zend_objects_destroy_object,
-                      php_cassandra_future_value_free, NULL TSRMLS_CC);
-  retval.handlers = &cassandra_future_value_handlers;
-
-  return retval;
+  PHP5TO7_ZEND_OBJECT_INIT(future_value, self, ce);
 }
 
 void cassandra_define_FutureValue(TSRMLS_D)
@@ -90,7 +77,7 @@ void cassandra_define_FutureValue(TSRMLS_D)
   INIT_CLASS_ENTRY(ce, "Cassandra\\FutureValue", cassandra_future_value_methods);
   cassandra_future_value_ce = zend_register_internal_class(&ce TSRMLS_CC);
   zend_class_implements(cassandra_future_value_ce TSRMLS_CC, 1, cassandra_future_ce);
-  cassandra_future_value_ce->ce_flags     |= ZEND_ACC_FINAL_CLASS;
+  cassandra_future_value_ce->ce_flags     |= PHP5TO7_ZEND_ACC_FINAL;
   cassandra_future_value_ce->create_object = php_cassandra_future_value_new;
 
   memcpy(&cassandra_future_value_handlers, zend_get_std_object_handlers(), sizeof(zend_object_handlers));

@@ -34,7 +34,7 @@ final class Cassandra
     const CONSISTENCY_ANY = 0;
 
     /**
-     * Consistency level ONE gurantess that data has been written to at least
+     * Consistency level ONE guarantees that data has been written to at least
      * one Replica node.
      *
      * @see Cassandra\ExecutionOptions::__construct()
@@ -49,7 +49,7 @@ final class Cassandra
      */
     const CONSISTENCY_LOCAL_ONE = 10;
     /**
-     * Consistency level TWO gurantess that data has been written to at least
+     * Consistency level TWO guarantees that data has been written to at least
      * two Replica nodes.
      *
      * @see Cassandra\ExecutionOptions::__construct()
@@ -57,7 +57,7 @@ final class Cassandra
     const CONSISTENCY_TWO = 2;
 
     /**
-     * Consistency level THREE gurantess that data has been written to at least
+     * Consistency level THREE guarantees that data has been written to at least
      * three Replica nodes.
      *
      * @see Cassandra\ExecutionOptions::__construct()
@@ -65,7 +65,7 @@ final class Cassandra
     const CONSISTENCY_THREE = 3;
 
     /**
-     * Consistency level QUORUM gurantess that data has been written to at least
+     * Consistency level QUORUM guarantees that data has been written to at least
      * the majority of Replica nodes. How many nodes exactly are a majority
      * depends on the replication factor of a given keyspace and is calculated
      * using the formula `ceil(RF / 2 + 1)`, where `ceil` is a mathematical
@@ -85,7 +85,7 @@ final class Cassandra
     const CONSISTENCY_LOCAL_QUORUM = 6;
 
     /**
-     * Consistency level EACH_QUORUM gurantess that data has been written to at
+     * Consistency level EACH_QUORUM guarantees that data has been written to at
      * least a majority Replica nodes in all datacenters. This consistency level
      * works only with `NetworkTopologyStrategy` replication.
      *
@@ -94,7 +94,7 @@ final class Cassandra
     const CONSISTENCY_EACH_QUORUM = 7;
 
     /**
-     * Consistency level ALL gurantess that data has been written to all
+     * Consistency level ALL guarantees that data has been written to all
      * Replica nodes.
      *
      * @see Cassandra\ExecutionOptions::__construct()
@@ -322,7 +322,12 @@ final class Cassandra
     /**
      * Current version of the extension.
      */
-    const VERSION = '1.0.0-beta';
+    const VERSION = '1.1';
+
+    /**
+     * Version of the cpp-driver the extension is compiled against.
+     */
+    const CPP_DRIVER_VERSION = '2.2.2';
 
     /**
      * Returns a Cluster Builder.

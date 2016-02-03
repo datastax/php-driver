@@ -21,7 +21,7 @@ namespace Cassandra;
 /**
  * A PHP representation of the CQL `float` datatype
  */
-final class Float implements Numeric
+final class Float implements Value, Numeric
 {
     /**
      * Minimum possible Float value
@@ -31,7 +31,7 @@ final class Float implements Numeric
     public static function min() {}
 
     /**
-     * Maximim possible Float value
+     * Maximum possible Float value
      *
      * @return Float maximum value
      */
@@ -43,6 +43,13 @@ final class Float implements Numeric
      * @param string $value float value as a string
      */
     public function __construct($value) {}
+
+    /**
+     * The type of this float.
+     *
+     * @return Type
+     */
+    public function type() {}
 
     /**
      * Returns the float value.
