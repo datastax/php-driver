@@ -14,27 +14,19 @@ protocol and Cassandra Query Language v3.
     <email>bulat.shakirzyanov@datastax.com</email>
     <active>yes</active>
   </lead>
-  <date>2015-11-20</date>
-  <time>12:39:30</time>
+  <date>2016-02-01</date>
+  <time>19:35:01</time>
   <version>
-    <release>1.0.1</release>
-    <api>1.0.1</api>
+    <release>1.1.0-dev</release>
+    <api>1.1.0-dev</api>
   </version>
   <stability>
-    <release>stable</release>
-    <api>stable</api>
+    <release>devel</release>
+    <api>devel</api>
   </stability>
   <license uri="http://www.apache.org/licenses/LICENSE-2.0">Apache License 2.0</license>
   <notes>
-# 1.0.1
-
-Features:
-
-* Added support for the 2.2.x release of the C/C++ driver
-
-Bug Fixes:
-
-* [PHP-53] Error when inserting a "0" Decimal
+# Official release under development
   </notes>
   <contents>
     <dir name="/">
@@ -117,15 +109,24 @@ Bug Fixes:
       <file role="src" name="src/Cassandra/Timestamp.h" />
       <file role="src" name="src/Cassandra/Timeuuid.c" />
       <file role="src" name="src/Cassandra/Timeuuid.h" />
+      <file role="src" name="src/Cassandra/Tuple.c" />
+      <file role="src" name="src/Cassandra/Tuple.h" />
       <file role="src" name="src/Cassandra/Type.c" />
       <file role="src" name="src/Cassandra/Type/Collection.c" />
       <file role="src" name="src/Cassandra/Type/Custom.c" />
       <file role="src" name="src/Cassandra/Type/Map.c" />
       <file role="src" name="src/Cassandra/Type/Scalar.c" />
       <file role="src" name="src/Cassandra/Type/Set.c" />
+      <file role="src" name="src/Cassandra/Type/Tuple.c" />
+      <file role="src" name="src/Cassandra/Type/Tuple.h" />
+      <file role="src" name="src/Cassandra/Type/UserType.c" />
+      <file role="src" name="src/Cassandra/Type/UserType.h" />
+      <file role="src" name="src/Cassandra/UserTypeValue.c" />
+      <file role="src" name="src/Cassandra/UserTypeValue.h" />
       <file role="src" name="src/Cassandra/Uuid.c" />
       <file role="src" name="src/Cassandra/Uuid.h" />
       <file role="src" name="src/Cassandra/UuidInterface.c" />
+      <file role="src" name="src/Cassandra/Value.c" />
       <file role="src" name="src/Cassandra/Varint.c" />
       <file role="src" name="src/Cassandra/Varint.h" />
       <file role="src" name="util/bytes.c" />
@@ -136,6 +137,8 @@ Bug Fixes:
       <file role="src" name="util/consistency.h" />
       <file role="src" name="util/future.c" />
       <file role="src" name="util/future.h" />
+      <file role="src" name="util/hash.c" />
+      <file role="src" name="util/hash.h" />
       <file role="src" name="util/inet.c" />
       <file role="src" name="util/inet.h" />
       <file role="src" name="util/math.c" />
@@ -146,6 +149,7 @@ Bug Fixes:
       <file role="src" name="util/result.h" />
       <file role="src" name="util/types.c" />
       <file role="src" name="util/types.h" />
+      <file role="src" name="util/uthash.h" />
       <file role="src" name="util/uuid_gen.c" />
       <file role="src" name="util/uuid_gen.h" />
       <file role="src" name="version.h" />
@@ -215,14 +219,19 @@ Bug Fixes:
       <file role="doc" name="doc/Cassandra/Table.php" />
       <file role="doc" name="doc/Cassandra/Timestamp.php" />
       <file role="doc" name="doc/Cassandra/Timeuuid.php" />
+      <file role="doc" name="doc/Cassandra/Tuple.php" />
       <file role="doc" name="doc/Cassandra/Type.php" />
       <file role="doc" name="doc/Cassandra/Type/Collection.php" />
       <file role="doc" name="doc/Cassandra/Type/Custom.php" />
       <file role="doc" name="doc/Cassandra/Type/Map.php" />
       <file role="doc" name="doc/Cassandra/Type/Scalar.php" />
       <file role="doc" name="doc/Cassandra/Type/Set.php" />
+      <file role="doc" name="doc/Cassandra/Type/Tuple.php" />
+      <file role="doc" name="doc/Cassandra/Type/UserType.php" />
+      <file role="doc" name="doc/Cassandra/UserTypeValue.php" />
       <file role="doc" name="doc/Cassandra/Uuid.php" />
       <file role="doc" name="doc/Cassandra/UuidInterface.php" />
+      <file role="doc" name="doc/Cassandra/Value.php" />
       <file role="doc" name="doc/Cassandra/Varint.php" />
       <file role="doc" name="doc/README.md" />
       <file role="test" name="tests/statements/init.phpt" />
@@ -232,7 +241,7 @@ Bug Fixes:
   <required>
    <php>
     <min>5.3.4</min>
-    <max>5.99.99</max>
+    <max>7.0.99</max>
    </php>
    <pearinstaller>
     <min>1.4.8</min>

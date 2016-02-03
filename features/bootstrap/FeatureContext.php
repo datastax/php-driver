@@ -30,9 +30,9 @@ class FeatureContext implements Context, SnippetAcceptingContext
      * You can also pass arbitrary arguments to the
      * context constructor through behat.yml.
      */
-    public function __construct($cluster_name, $cassandra_version)
+    public function __construct($cassandra_version)
     {
-        $this->ccm = new \CCM($cluster_name, $cassandra_version);
+        $this->ccm = new \CCM($cassandra_version);
     }
 
     /**

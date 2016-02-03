@@ -103,7 +103,7 @@ php_cassandra_log(const CassLogMessage *message, void *data)
   log[log_length] = '\0';
 
   if (log_length > 0) {
-    int fd = -1;
+    FILE *fd = NULL;
 #ifndef _WIN32
     if (!strcmp(log, "syslog")) {
       php_syslog(LOG_NOTICE, "cassandra | [%s] %s (%s:%d)",
@@ -113,12 +113,11 @@ php_cassandra_log(const CassLogMessage *message, void *data)
     }
 #endif
 
-    fd = open(log, O_CREAT | O_APPEND | O_WRONLY, 0644);
-
-    if (fd != 1) {
+    fd = fopen(log, "a");
+    if (fd) {
       time_t log_time;
       struct tm log_tm;
-      char log_time_str[32];
+      char log_time_str[64];
       size_t needed = 0;
       char *tmp     = NULL;
 
@@ -139,9 +138,9 @@ php_cassandra_log(const CassLogMessage *message, void *data)
               message->file, message->line,
               PHP_EOL);
 
-      write(fd, tmp, needed);
+      fwrite(tmp, 1, needed, fd);
       free(tmp);
-      close(fd);
+      fclose(fd);
       return;
     }
   }
@@ -340,6 +339,8 @@ PHP_MINIT_FUNCTION(cassandra)
   cassandra_define_Set(TSRMLS_C);
   cassandra_define_Map(TSRMLS_C);
   cassandra_define_Collection(TSRMLS_C);
+  cassandra_define_Tuple(TSRMLS_C);
+  cassandra_define_UserTypeValue(TSRMLS_C);
 
   cassandra_define_Cassandra(TSRMLS_C);
   cassandra_define_Cluster(TSRMLS_C);
@@ -376,6 +377,8 @@ PHP_MINIT_FUNCTION(cassandra)
   cassandra_define_TypeCollection(TSRMLS_C);
   cassandra_define_TypeSet(TSRMLS_C);
   cassandra_define_TypeMap(TSRMLS_C);
+  cassandra_define_TypeTuple(TSRMLS_C);
+  cassandra_define_TypeUserType(TSRMLS_C);
   cassandra_define_TypeCustom(TSRMLS_C);
 
   cassandra_define_RetryPolicy(TSRMLS_C);

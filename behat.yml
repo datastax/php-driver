@@ -7,8 +7,7 @@ default:
               tags: "~@cassandra-version-less-2.1&&~@cassandra-version-only-2.0&&~@broken"
             contexts:
                 - FeatureContext:
-                    cluster_name: php-driver-2.1-cluster
-                    cassandra_version: 2.1.9
+                    cassandra_version: 2.1.12
 
 cassandra-version-2.0:
     formatters:
@@ -19,8 +18,7 @@ cassandra-version-2.0:
               tags: "~@cassandra-version-2.1"
             contexts:
                 - FeatureContext:
-                    cluster_name: php-driver-2.0-cluster
-                    cassandra_version: 2.0.16
+                    cassandra_version: 2.0.17
 
 cassandra-version-1.2:
     formatters:
@@ -31,5 +29,4 @@ cassandra-version-1.2:
               tags: "~@cassandra-version-2.0&&~@cassandra-version-2.1&&~@cassandra-version-only-2.0"
             contexts:
                 - FeatureContext:
-                    cluster_name: php-driver-1.2-cluster
                     cassandra_version: 1.2.19
