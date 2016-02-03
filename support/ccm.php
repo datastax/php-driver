@@ -289,7 +289,7 @@ class CCM
         $clusters = $this->getClusters();
         foreach ($clusters['list'] as $cluster) {
             // Determine if the cluster should be deleted
-            if (!$is_all || substr(strtolower($cluster), 0, strlen($this->clusterPrefix)) != $this->clusterPrefix) {
+            if (!$is_all && substr(strtolower($cluster), 0, strlen($this->clusterPrefix)) != $this->clusterPrefix) {
                 continue;
             }
             $this->removeCluster($cluster);

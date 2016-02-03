@@ -23,10 +23,73 @@
  */
 class TestSuiteListener extends \PHPUnit_Framework_BaseTestListener {
     /**
+     * Name of the suite/test to listen for when finalizing test suite
+     * teardown.
+     *
+     * @var string
+     */
+    private static $endingSuiteTestName;
+
+    /**
+     * Determine if the debug argument was used when starting PHPUnit.
+     *
+     * @return bool True if debug argument was used; false otherwise
+     */
+    private function isDebug() {
+        return in_array("--debug", $_SERVER['argv']);
+    }
+
+    /**
+     * Determine if test suite is an integration test suite.
+     *
+     * @param PHPUnit_Framework_TestSuite $testSuite Test suite
+     * @param bool True if suite/test is starting; false otherwise
+     * @return bool True if integration suite/test; false otherwise.
+     */
+    private function isIntegrationSuiteOrTest(PHPUnit_Framework_TestSuite $testSuite, $isStarting) {
+        // Determine if the suite/test name should be initialized
+        if ($isStarting) {
+            // Determine if the suite/test is the setup suite/test
+            if (self::$endingSuiteTestName == "") {
+                // Determine if this is a test suite or integration test
+                $name = $testSuite->getName();
+                if (strpos($name, "integration") !== false) {
+                    // Test suite
+                    self::$endingSuiteTestName = $name;
+                    return true;
+                } else if (strpos(strtolower($name), "integration") !== false ||
+                    is_file($name = end($_SERVER['argv']))) {
+                    if (strpos(strtolower($name), "integration") !== false) {
+                        // Integration test
+                        self::$endingSuiteTestName = $name;
+                        return true;
+                    }
+                }
+            }
+        } else {
+            // Determine if the suite/test is the teardown suite/test
+            if (self::$endingSuiteTestName != "") {
+                if ($testSuite->getName() == self::$endingSuiteTestName ||
+                    end($_SERVER['argv']) == self::$endingSuiteTestName) {
+                    // Teardown suite/test
+                    self::$endingSuiteTestName = "";
+                    return true;
+                }
+            }
+        }
+
+        /*
+         * Unable to determine if suite/test is for integration purposes or the
+         * suite/test has already been initialized
+         */
+        return false;
+    }
+
+    /**
      * Destroy all CCM clusters when starting and stopping the integration tests.
      * This will only be run on startup and shutdown.
      */
-    private static function remove_test_clusters() {
+    private function removeTestClusters() {
         $ccm = new \CCM(CCM::DEFAULT_CASSANDRA_VERSION, true);
         $ccm->removeAllClusters();
     }
@@ -34,26 +97,30 @@ class TestSuiteListener extends \PHPUnit_Framework_BaseTestListener {
     /**
      * Handle the overall teardown steps for a test suite
      *
-     * @param PHPUnit_Framework_TestSuite $test_suite Test suite ending
+     * @param PHPUnit_Framework_TestSuite $testSuite Test suite ending
      */
-    public function endTestSuite(PHPUnit_Framework_TestSuite $test_suite) {
+    public function endTestSuite(PHPUnit_Framework_TestSuite $testSuite) {
         // Determine type of test suite being ending
-        if (strpos($test_suite->getName(), "integration") !== false ) {
-            printf("\nEntering PHP Driver Integration Tests Teardown\n");
-            TestSuiteListener::remove_test_clusters();
+        if ($this->isIntegrationSuiteOrTest($testSuite, false)) {
+            if ($this->isDebug()) {
+                echo PHP_EOL . PHP_EOL . "--=== Entering PHP Driver Integration Tests Teardown ===--" . PHP_EOL;
+            }
+            $this->removeTestClusters();
         }
     }
 
     /**
      * Handle the overall setup steps for a test suite
      *
-     * @param PHPUnit_Framework_TestSuite $test_suite Test suite starting
+     * @param PHPUnit_Framework_TestSuite $testSuite Test suite starting
      */
-    public function startTestSuite(PHPUnit_Framework_TestSuite $test_suite) {
+    public function startTestSuite(PHPUnit_Framework_TestSuite $testSuite) {
         // Determine type of test suite being started
-        if (strpos($test_suite->getName(), "integration") !== false ) {
-            printf("\nEntering PHP Driver Integration Tests Setup\n");
-            TestSuiteListener::remove_test_clusters();
+        if ($this->isIntegrationSuiteOrTest($testSuite, true)) {
+            if ($this->isDebug()) {
+                echo PHP_EOL . "--=== Entering PHP Driver Integration Tests Setup ===--" . PHP_EOL;
+            }
+            $this->removeTestClusters();
         }
     }
 }
