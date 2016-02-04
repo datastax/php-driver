@@ -71,6 +71,8 @@ if test "$PHP_CASSANDRA" != "no"; then
     src/Cassandra/Type/Map.c \
     src/Cassandra/Type/Scalar.c \
     src/Cassandra/Type/Set.c \
+    src/Cassandra/Type/Tuple.c \
+    src/Cassandra/Type/UserType.c \
     src/Cassandra/Type/Custom.c \
     src/Cassandra/TimestampGenerator.c \
     src/Cassandra/TimestampGenerator/Monotonic.c \
@@ -92,6 +94,8 @@ if test "$PHP_CASSANDRA" != "no"; then
     src/Cassandra/Set.c \
     src/Cassandra/Map.c \
     src/Cassandra/Collection.c \
+    src/Cassandra/Tuple.c \
+    src/Cassandra/UserTypeValue.c \
     src/Cassandra/Value.c \
   ";
 

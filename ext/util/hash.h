@@ -35,6 +35,7 @@ struct cassandra_set_entry_ {
 
 unsigned php_cassandra_value_hash(zval* zvalue TSRMLS_DC);
 int php_cassandra_value_compare(zval* zvalue1, zval* zvalue2 TSRMLS_DC);
+int php_cassandra_data_compare(const void* a, const void* b TSRMLS_DC);
 
 unsigned php_cassandra_mpz_hash(unsigned seed, mpz_t n);
 

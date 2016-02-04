@@ -9,6 +9,14 @@
 
 zend_class_entry *cassandra_type_map_ce = NULL;
 
+PHP_METHOD(TypeMap, __construct)
+{
+  zend_throw_exception_ex(cassandra_logic_exception_ce, 0 TSRMLS_CC,
+    "Instantiation of a Cassandra\\Type\\Map type is not supported."
+  );
+  return;
+}
+
 PHP_METHOD(TypeMap, name)
 {
   if (zend_parse_parameters_none() == FAILURE) {
@@ -110,21 +118,61 @@ ZEND_BEGIN_ARG_INFO_EX(arginfo_value, 0, ZEND_RETURN_VALUE, 0)
 ZEND_END_ARG_INFO()
 
 static zend_function_entry cassandra_type_map_methods[] = {
-  PHP_ME(TypeMap, name,       arginfo_none,  ZEND_ACC_PUBLIC)
-  PHP_ME(TypeMap, keyType,    arginfo_none,  ZEND_ACC_PUBLIC)
-  PHP_ME(TypeMap, valueType,  arginfo_none,  ZEND_ACC_PUBLIC)
-  PHP_ME(TypeMap, __toString, arginfo_none,  ZEND_ACC_PUBLIC)
-  PHP_ME(TypeMap, create,     arginfo_value, ZEND_ACC_PUBLIC)
+  PHP_ME(TypeMap, __construct, arginfo_none,  ZEND_ACC_PUBLIC)
+  PHP_ME(TypeMap, name,        arginfo_none,  ZEND_ACC_PUBLIC)
+  PHP_ME(TypeMap, keyType,     arginfo_none,  ZEND_ACC_PUBLIC)
+  PHP_ME(TypeMap, valueType,   arginfo_none,  ZEND_ACC_PUBLIC)
+  PHP_ME(TypeMap, __toString,  arginfo_none,  ZEND_ACC_PUBLIC)
+  PHP_ME(TypeMap, create,      arginfo_value, ZEND_ACC_PUBLIC)
   PHP_FE_END
 };
 
 static zend_object_handlers cassandra_type_map_handlers;
+
+static HashTable *
+php_cassandra_type_map_gc(zval *object, php5to7_zval_gc table, int *n TSRMLS_DC)
+{
+  *table = NULL;
+  *n = 0;
+  return zend_std_get_properties(object TSRMLS_CC);
+}
+
+static HashTable *
+php_cassandra_type_map_properties(zval *object TSRMLS_DC)
+{
+  cassandra_type *self  = PHP_CASSANDRA_GET_TYPE(object);
+  HashTable      *props = zend_std_get_properties(object TSRMLS_CC);
+
+  if (PHP5TO7_ZEND_HASH_UPDATE(props,
+                               "keyType", sizeof("keyType"),
+                               PHP5TO7_ZVAL_MAYBE_P(self->key_type), sizeof(zval))) {
+    Z_ADDREF_P(PHP5TO7_ZVAL_MAYBE_P(self->key_type));
+  }
+
+  if (PHP5TO7_ZEND_HASH_UPDATE(props,
+                               "valueType", sizeof("valueType"),
+                               PHP5TO7_ZVAL_MAYBE_P(self->value_type), sizeof(zval))) {
+    Z_ADDREF_P(PHP5TO7_ZVAL_MAYBE_P(self->value_type));
+  }
+
+  return props;
+}
+
+static int
+php_cassandra_type_map_compare(zval *obj1, zval *obj2 TSRMLS_DC)
+{
+  cassandra_type* type1 = PHP_CASSANDRA_GET_TYPE(obj1);
+  cassandra_type* type2 = PHP_CASSANDRA_GET_TYPE(obj2);
+
+  return php_cassandra_type_compare(type1, type2 TSRMLS_CC);
+}
 
 static void
 php_cassandra_type_map_free(php5to7_zend_object_free *object TSRMLS_DC)
 {
   cassandra_type *self = PHP5TO7_ZEND_OBJECT_GET(type, object);
 
+  if (self->data_type) cass_data_type_free(self->data_type);
   PHP5TO7_ZVAL_MAYBE_DESTROY(self->key_type);
   PHP5TO7_ZVAL_MAYBE_DESTROY(self->value_type);
 
@@ -139,6 +187,7 @@ php_cassandra_type_map_new(zend_class_entry *ce TSRMLS_DC)
       PHP5TO7_ZEND_OBJECT_ECALLOC(type, ce);
 
   self->type = CASS_VALUE_TYPE_MAP;
+  self->data_type = cass_data_type_new(self->type);
   PHP5TO7_ZVAL_UNDEF(self->key_type);
   PHP5TO7_ZVAL_UNDEF(self->value_type);
 
@@ -152,8 +201,12 @@ void cassandra_define_TypeMap(TSRMLS_D)
   INIT_CLASS_ENTRY(ce, "Cassandra\\Type\\Map", cassandra_type_map_methods);
   cassandra_type_map_ce = zend_register_internal_class(&ce TSRMLS_CC);
   zend_class_implements(cassandra_type_map_ce TSRMLS_CC, 1, cassandra_type_ce);
+  memcpy(&cassandra_type_map_handlers, zend_get_std_object_handlers(), sizeof(zend_object_handlers));
+  cassandra_type_map_handlers.get_properties  = php_cassandra_type_map_properties;
+#if PHP_VERSION_ID >= 50400
+  cassandra_type_map_handlers.get_gc          = php_cassandra_type_map_gc;
+#endif
+  cassandra_type_map_handlers.compare_objects = php_cassandra_type_map_compare;
   cassandra_type_map_ce->ce_flags     |= PHP5TO7_ZEND_ACC_FINAL;
   cassandra_type_map_ce->create_object = php_cassandra_type_map_new;
-
-  memcpy(&cassandra_type_map_handlers, zend_get_std_object_handlers(), sizeof(zend_object_handlers));
 }

@@ -203,4 +203,38 @@ class BigintTest extends \PHPUnit_Framework_TestCase
         $bigint1 = new Bigint("4");
         $this->assertEquals(2, (int)$bigint1->sqrt());
     }
+
+    /**
+     * @dataProvider equalTypes
+     */
+    public function testCompareEquals($value1, $value2)
+    {
+        $this->assertEquals($value1, $value2);
+        $this->assertTrue($value1 == $value2);
+    }
+
+    public function equalTypes()
+    {
+        return array(
+            array(new Bigint('99'), new Bigint('99')),
+            array(new Bigint(42), new Bigint(42))
+        );
+    }
+
+    /**
+     * @dataProvider notEqualTypes
+     */
+    public function testCompareNotEquals($value1, $value2)
+    {
+        $this->assertNotEquals($value1, $value2);
+        $this->assertFalse($value1 == $value2);
+    }
+
+    public function notEqualTypes()
+    {
+        return array(
+            array(new Bigint('99'), new Bigint('999')),
+            array(new Bigint(41), new Bigint(42))
+        );
+    }
 }
