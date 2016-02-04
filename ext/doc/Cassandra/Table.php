@@ -66,8 +66,8 @@ interface Table
     function bloomFilterFPChance();
 
     /**
-     * Returns memtable flush period in miliseconds
-     * @return int Memtable flush period in miliseconds
+     * Returns memtable flush period in milliseconds
+     * @return int Memtable flush period in milliseconds
      */
     function memtableFlushPeriodMs();
 
