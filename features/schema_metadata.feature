@@ -464,3 +464,21 @@ Feature: Schema Metadata
         }
       }
       """
+
+    Scenario: Disable schema metadata
+    Given the following example:
+      """php
+      <?php
+      $cluster   = Cassandra::cluster()
+                         ->withContactPoints('127.0.0.1')
+                         ->withSchemaMetadata(false)
+                         ->build();
+      $session   = $cluster->connect("simplex");
+      $schema    = $session->schema();
+      print count($schema->keyspaces()) . "\n";
+      """
+    When it is executed
+    Then its output should contain these lines in any order:
+      """
+      0
+      """
