@@ -365,13 +365,17 @@ php_cassandra_float_gc(zval *object, php5to7_zval_gc table, int *n TSRMLS_DC)
 static HashTable *
 php_cassandra_float_properties(zval *object TSRMLS_DC)
 {
+  php5to7_zval type;
+  php5to7_zval value;
+
   cassandra_numeric *self = PHP_CASSANDRA_GET_NUMERIC(object);
   HashTable         *props = zend_std_get_properties(object TSRMLS_CC);
-  php5to7_zval       value;
+
+  type = php_cassandra_type_scalar(CASS_VALUE_TYPE_FLOAT TSRMLS_CC);
+  PHP5TO7_ZEND_HASH_UPDATE(props, "type", sizeof("type"), PHP5TO7_ZVAL_MAYBE_P(type), sizeof(zval));
 
   PHP5TO7_ZVAL_MAYBE_MAKE(value);
   to_string(PHP5TO7_ZVAL_MAYBE_P(value), self TSRMLS_CC);
-
   PHP5TO7_ZEND_HASH_UPDATE(props, "value", sizeof("value"), PHP5TO7_ZVAL_MAYBE_P(value), sizeof(zval));
 
   return props;

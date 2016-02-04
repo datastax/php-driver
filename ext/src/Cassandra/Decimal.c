@@ -500,23 +500,26 @@ php_cassandra_decimal_gc(zval *object, php5to7_zval_gc table, int *n TSRMLS_DC)
 static HashTable*
 php_cassandra_decimal_properties(zval *object TSRMLS_DC)
 {
-  cassandra_numeric *self = PHP_CASSANDRA_GET_NUMERIC(object);
-  HashTable         *props = zend_std_get_properties(object TSRMLS_CC);
-  php5to7_zval      value;
-  php5to7_zval      scale;
-
   char* string;
   int string_len;
-  php_cassandra_format_integer(self->decimal_value, &string, &string_len);
+  php5to7_zval type;
+  php5to7_zval value;
+  php5to7_zval scale;
 
+  cassandra_numeric *self = PHP_CASSANDRA_GET_NUMERIC(object);
+  HashTable         *props = zend_std_get_properties(object TSRMLS_CC);
+
+  type = php_cassandra_type_scalar(CASS_VALUE_TYPE_DECIMAL TSRMLS_CC);
+  PHP5TO7_ZEND_HASH_UPDATE(props, "type", sizeof("type"), PHP5TO7_ZVAL_MAYBE_P(type), sizeof(zval));
+
+  php_cassandra_format_integer(self->decimal_value, &string, &string_len);
   PHP5TO7_ZVAL_MAYBE_MAKE(PHP5TO7_ZVAL_MAYBE_P(value));
   PHP5TO7_ZVAL_STRINGL(PHP5TO7_ZVAL_MAYBE_P(value), string, string_len);
   efree(string);
+  PHP5TO7_ZEND_HASH_UPDATE(props, "value", sizeof("value"), PHP5TO7_ZVAL_MAYBE_P(value), sizeof(zval));
 
   PHP5TO7_ZVAL_MAYBE_MAKE(scale);
   ZVAL_LONG(PHP5TO7_ZVAL_MAYBE_P(scale), self->decimal_scale);
-
-  PHP5TO7_ZEND_HASH_UPDATE(props, "value", sizeof("value"), PHP5TO7_ZVAL_MAYBE_P(value), sizeof(zval));
   PHP5TO7_ZEND_HASH_UPDATE(props, "scale", sizeof("scale"), PHP5TO7_ZVAL_MAYBE_P(scale), sizeof(zval));
 
   return props;
