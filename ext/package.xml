@@ -9,13 +9,13 @@ Cassandra and DataStax Enterprise using exclusively Cassandra's binary
 protocol and Cassandra Query Language v3.
   </description>
   <lead>
-    <name>Bulat Shakirzyanov</name>
-    <user>avalanche123</user>
-    <email>bulat.shakirzyanov@datastax.com</email>
+    <name>Michael Penick</name>
+    <user>mpenick</user>
+    <email>michael.penick@datastax.com</email>
     <active>yes</active>
   </lead>
-  <date>2016-02-01</date>
-  <time>19:35:01</time>
+  <date>2016-02-04</date>
+  <time>11:17:33</time>
   <version>
     <release>1.1.0-dev</release>
     <api>1.1.0-dev</api>

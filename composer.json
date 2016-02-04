@@ -13,6 +13,11 @@
   "license": "Apache-2.0",
   "authors": [
     {
+      "name": "Michael Penick",
+      "email": "michael.penick@datastax.com",
+      "homepage": "https://github.com/mpenick"
+    },
+    {
       "name": "Bulat Shakirzyanov",
       "email": "bulat.shakirzyanov@datastax.com",
       "homepage": "http://avalanche123.com"
