@@ -160,7 +160,7 @@ if (PHP_CASSANDRA != "no") {
               "Builder.c", "cassandra");
           ADD_SOURCES(configure_module_dirname + "/src/Cassandra/TimestampGenerator",
               "Monotonic.c " +
-              "ServerSide.c");
+              "ServerSide.c", "cassandra");
           ADD_SOURCES(configure_module_dirname + "/src/Cassandra/Type",
               "Collection.c " +
               "Custom.c " +
