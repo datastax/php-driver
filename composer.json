@@ -13,18 +13,23 @@
   "license": "Apache-2.0",
   "authors": [
     {
+      "name": "Michael Penick",
+      "email": "michael.penick@datastax.com",
+      "homepage": "https://github.com/mpenick"
+    },
+    {
       "name": "Bulat Shakirzyanov",
       "email": "bulat.shakirzyanov@datastax.com",
       "homepage": "http://avalanche123.com"
     }
   ],
   "require-dev": {
-    "php": ">=5.3.4",
+    "php": ">=5.5.0",
     "ext-cassandra": "*",
     "behat/behat": "~3.0.6",
     "phpunit/php-code-coverage": "~2.0",
     "phpunit/php-token-stream": "~1.3",
-    "phpunit/phpunit": "4.5.*",
+    "phpunit/phpunit": "~4.8",
     "symfony/process": "~2.1"
   },
   "config": {
@@ -34,6 +39,9 @@
     "test": "phpunit && behat"
   },
   "autoload-dev": {
-    "psr-0": { "Cassandra\\": ["tests/"] }
+    "psr-0": {
+      "Cassandra\\": ["tests/unit/", "tests/integration/"],
+      "": ["support/"]
+    }
   }
 }

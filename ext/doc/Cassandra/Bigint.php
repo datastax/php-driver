@@ -31,7 +31,7 @@ final class Bigint implements Value, Numeric
     public static function min() {}
 
     /**
-     * Maximim possible Bigint value
+     * Maximum possible Bigint value
      *
      * @return Bigint maximum value
      */

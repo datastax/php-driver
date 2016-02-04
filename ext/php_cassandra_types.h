@@ -29,6 +29,8 @@
   #define PHP_CASSANDRA_GET_COLLECTION(obj) php_cassandra_collection_object_fetch(Z_OBJ_P(obj))
   #define PHP_CASSANDRA_GET_MAP(obj) php_cassandra_map_object_fetch(Z_OBJ_P(obj))
   #define PHP_CASSANDRA_GET_SET(obj) php_cassandra_set_object_fetch(Z_OBJ_P(obj))
+  #define PHP_CASSANDRA_GET_TUPLE(obj) php_cassandra_tuple_object_fetch(Z_OBJ_P(obj))
+  #define PHP_CASSANDRA_GET_USER_TYPE_VALUE(obj) php_cassandra_user_type_value_object_fetch(Z_OBJ_P(obj))
   #define PHP_CASSANDRA_GET_CLUSTER(obj) php_cassandra_cluster_object_fetch(Z_OBJ_P(obj))
   #define PHP_CASSANDRA_GET_STATEMENT(obj) php_cassandra_statement_object_fetch(Z_OBJ_P(obj))
   #define PHP_CASSANDRA_GET_EXECUTION_OPTIONS(obj) php_cassandra_execution_options_object_fetch(Z_OBJ_P(obj))
@@ -56,6 +58,8 @@
   #define PHP_CASSANDRA_GET_COLLECTION(obj) (cassandra_collection *)zend_object_store_get_object((obj) TSRMLS_CC)
   #define PHP_CASSANDRA_GET_MAP(obj) (cassandra_map *)zend_object_store_get_object((obj) TSRMLS_CC)
   #define PHP_CASSANDRA_GET_SET(obj) (cassandra_set *)zend_object_store_get_object((obj) TSRMLS_CC)
+  #define PHP_CASSANDRA_GET_TUPLE(obj) (cassandra_tuple *)zend_object_store_get_object((obj) TSRMLS_CC)
+  #define PHP_CASSANDRA_GET_USER_TYPE_VALUE(obj) (cassandra_user_type_value *)zend_object_store_get_object((obj) TSRMLS_CC)
   #define PHP_CASSANDRA_GET_CLUSTER(obj) (cassandra_cluster *)zend_object_store_get_object((obj) TSRMLS_CC)
   #define PHP_CASSANDRA_GET_STATEMENT(obj) (cassandra_statement *)zend_object_store_get_object((obj) TSRMLS_CC)
   #define PHP_CASSANDRA_GET_EXECUTION_OPTIONS(obj) (cassandra_execution_options *)zend_object_store_get_object((obj) TSRMLS_CC)
@@ -142,6 +146,22 @@ PHP_CASSANDRA_BEGIN_OBJECT_TYPE(set)
   cassandra_set_entry *iter_temp;
   int iter_index;
 PHP_CASSANDRA_END_OBJECT_TYPE(set)
+
+PHP_CASSANDRA_BEGIN_OBJECT_TYPE(tuple)
+  php5to7_zval type;
+  HashTable values;
+  HashPosition pos;
+  unsigned hashv;
+  int dirty;
+PHP_CASSANDRA_END_OBJECT_TYPE(tuple)
+
+PHP_CASSANDRA_BEGIN_OBJECT_TYPE(user_type_value)
+  php5to7_zval type;
+  HashTable values;
+  HashPosition pos;
+  unsigned hashv;
+  int dirty;
+PHP_CASSANDRA_END_OBJECT_TYPE(user_type_value)
 
 PHP_CASSANDRA_BEGIN_OBJECT_TYPE(cluster)
   cass_byte_t *data;
@@ -325,12 +345,18 @@ PHP_CASSANDRA_END_OBJECT_TYPE(column)
 
 PHP_CASSANDRA_BEGIN_OBJECT_TYPE(type)
   CassValueType type;
+  CassDataType *data_type;
   union {
     struct {
       php5to7_zval key_type;
       php5to7_zval value_type;
     };
     char *name;
+    struct {
+      char *keyspace;
+      char *type_name;
+      HashTable types;
+    };
   };
 PHP_CASSANDRA_END_OBJECT_TYPE(type)
 
@@ -357,6 +383,8 @@ extern PHP_CASSANDRA_API zend_class_entry *cassandra_varint_ce;
 extern PHP_CASSANDRA_API zend_class_entry *cassandra_set_ce;
 extern PHP_CASSANDRA_API zend_class_entry *cassandra_map_ce;
 extern PHP_CASSANDRA_API zend_class_entry *cassandra_collection_ce;
+extern PHP_CASSANDRA_API zend_class_entry *cassandra_tuple_ce;
+extern PHP_CASSANDRA_API zend_class_entry *cassandra_user_type_value_ce;
 
 /* Exceptions */
 void cassandra_define_Exception(TSRMLS_D);
@@ -397,6 +425,8 @@ void cassandra_define_Inet(TSRMLS_D);
 void cassandra_define_Map(TSRMLS_D);
 void cassandra_define_Set(TSRMLS_D);
 void cassandra_define_Timestamp(TSRMLS_D);
+void cassandra_define_Tuple(TSRMLS_D);
+void cassandra_define_UserTypeValue(TSRMLS_D);
 void cassandra_define_UuidInterface(TSRMLS_D);
 void cassandra_define_Uuid(TSRMLS_D);
 void cassandra_define_Timeuuid(TSRMLS_D);
@@ -495,6 +525,8 @@ extern PHP_CASSANDRA_API zend_class_entry *cassandra_type_scalar_ce;
 extern PHP_CASSANDRA_API zend_class_entry *cassandra_type_collection_ce;
 extern PHP_CASSANDRA_API zend_class_entry *cassandra_type_set_ce;
 extern PHP_CASSANDRA_API zend_class_entry *cassandra_type_map_ce;
+extern PHP_CASSANDRA_API zend_class_entry *cassandra_type_tuple_ce;
+extern PHP_CASSANDRA_API zend_class_entry *cassandra_type_user_type_ce;
 extern PHP_CASSANDRA_API zend_class_entry *cassandra_type_custom_ce;
 
 void cassandra_define_Type(TSRMLS_D);
@@ -502,6 +534,8 @@ void cassandra_define_TypeScalar(TSRMLS_D);
 void cassandra_define_TypeCollection(TSRMLS_D);
 void cassandra_define_TypeSet(TSRMLS_D);
 void cassandra_define_TypeMap(TSRMLS_D);
+void cassandra_define_TypeTuple(TSRMLS_D);
+void cassandra_define_TypeUserType(TSRMLS_D);
 void cassandra_define_TypeCustom(TSRMLS_D);
 
 extern int php_le_cassandra_cluster();
