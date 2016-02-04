@@ -1,3 +1,21 @@
+# 1.1.0
+
+Features:
+
+* Added support for PHP 7
+* Added support for UDTs and tuples
+* Added support for nested collections
+* Added access to raw paging token (via `Cassandra\Rows::pagingStateToken()`)
+* Added support for client-side timestamps and timestamp generators
+* Added support for retry policys (includes logging, downgrading and fallthrough)
+* Added the ability to disable schema metadata updates (via `Cassandra\Cluster\withSchemaMetdata()`)
+* Added support for using named arguments with `Cassandra\SimpleStatement`
+* Changed the default consistency to `LOCAL_ONE` (from `ONE`)
+
+Bug Fixes:
+
+* [PHP-70] Fixed invalid encoding of decimals and varints
+
 # 1.0.1
 
 Features:
