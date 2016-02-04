@@ -36,7 +36,7 @@ Feature: Consistency Level
                        ->withContactPoints('127.0.0.1')
                        ->withRetryPolicy(new Cassandra\RetryPolicy\Logging($retry_policy))
                        ->build();
-                       $session     = $cluster->connect("simplex");
+      $session     = $cluster->connect("simplex");
       $statement   = new Cassandra\SimpleStatement("INSERT INTO playlists (id, song_id, artist, title, album)
                                                     VALUES (62c36092-82a1-3a00-93d1-46196ee77204, ?, ?, ?, ?)");
       $arguments   = array(new Cassandra\Uuid('756716f7-2e54-4715-9f00-91dcbea6cf50'),
@@ -75,7 +75,7 @@ Feature: Consistency Level
       $cluster     = Cassandra::cluster()
                        ->withContactPoints('127.0.0.1')
                        ->build();
-                       $session     = $cluster->connect("simplex");
+      $session     = $cluster->connect("simplex");
       $statement   = new Cassandra\SimpleStatement("INSERT INTO playlists (id, song_id, artist, title, album)
                                                     VALUES (62c36092-82a1-3a00-93d1-46196ee77204, ?, ?, ?, ?)");
       $arguments   = array(new Cassandra\Uuid('756716f7-2e54-4715-9f00-91dcbea6cf50'),
