@@ -919,7 +919,7 @@ php_cassandra_cluster_builder_new(zend_class_entry *ce TSRMLS_DC)
   self->password = NULL;
   self->connect_timeout = 5000;
   self->request_timeout = 12000;
-  self->default_consistency = CASS_CONSISTENCY_ONE;
+  self->default_consistency = PHP_CASSANDRA_DEFAULT_CONSISTENCY;
   self->default_page_size = 5000;
   self->persist = 1;
   self->protocol_version = 3;

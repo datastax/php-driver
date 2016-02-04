@@ -69,6 +69,8 @@ extern zend_module_entry cassandra_module_entry;
 #  include "TSRM.h"
 #endif
 
+#define PHP_CASSANDRA_DEFAULT_CONSISTENCY CASS_CONSISTENCY_LOCAL_ONE
+
 #if PHP_MAJOR_VERSION >= 7
 #define php5to7_zend_register_internal_class_ex(ce, parent_ce) zend_register_internal_class_ex((ce), (parent_ce) TSRMLS_CC);
 
