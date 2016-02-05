@@ -1,6 +1,6 @@
 #include "php_cassandra.h"
-
 #include "util/consistency.h"
+#include "util/math.h"
 
 zend_class_entry *cassandra_execution_options_ce = NULL;
 
@@ -15,6 +15,7 @@ PHP_METHOD(ExecutionOptions, __construct)
   php5to7_zval *page_size = NULL;
   php5to7_zval *timeout = NULL;
   php5to7_zval *arguments = NULL;
+  php5to7_zval *timestamp = NULL;
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z", &options) == FAILURE) {
     return;
@@ -66,6 +67,21 @@ PHP_METHOD(ExecutionOptions, __construct)
     }
     PHP5TO7_ZVAL_COPY(PHP5TO7_ZVAL_MAYBE_P(self->arguments), PHP5TO7_ZVAL_MAYBE_DEREF(arguments));
   }
+
+  if (PHP5TO7_ZEND_HASH_FIND(Z_ARRVAL_P(options), "timestamp", sizeof("timestamp"), timestamp)) {
+    if (Z_TYPE_P(PHP5TO7_ZVAL_MAYBE_DEREF(timestamp)) == IS_LONG) {
+      self->timestamp = Z_LVAL_P(PHP5TO7_ZVAL_MAYBE_DEREF(timestamp));
+    } else if (Z_TYPE_P(PHP5TO7_ZVAL_MAYBE_DEREF(timestamp)) == IS_STRING) {
+      if (!php_cassandra_parse_bigint(Z_STRVAL_P(PHP5TO7_ZVAL_MAYBE_DEREF(timestamp)),
+                                      Z_STRLEN_P(PHP5TO7_ZVAL_MAYBE_DEREF(timestamp)),
+                                      &self->timestamp TSRMLS_CC)) {
+        return;
+      }
+    } else {
+      throw_invalid_argument(PHP5TO7_ZVAL_MAYBE_DEREF(timestamp), "timestamp", "an integer or integer string" TSRMLS_CC);
+      return;
+    }
+  }
 }
 
 PHP_METHOD(ExecutionOptions, __get)
@@ -106,6 +122,18 @@ PHP_METHOD(ExecutionOptions, __get)
       RETURN_NULL();
     }
     RETURN_ZVAL(PHP5TO7_ZVAL_MAYBE_P(self->arguments), 1, 0);
+  } else if (name_len == 9 && strncmp("timestamp", name, name_len) == 0) {
+    char *string;
+    if (self->timestamp == INT64_MIN) {
+      RETURN_NULL();
+    }
+#ifdef WIN32
+    spprintf(&string, 0, "%I64d", (long long int) self->timestamp);
+#else
+    spprintf(&string, 0, "%lld", (long long int) self->timestamp);
+#endif
+    PHP5TO7_RETVAL_STRING(string);
+    efree(string);
   }
 }
 
@@ -149,6 +177,7 @@ php_cassandra_execution_options_free(php5to7_zend_object_free *object TSRMLS_DC)
       PHP5TO7_ZEND_OBJECT_GET(execution_options, object);
 
   PHP5TO7_ZVAL_MAYBE_DESTROY(self->arguments);
+  PHP5TO7_ZVAL_MAYBE_DESTROY(self->timeout);
 
   zend_object_std_dtor(&self->zval TSRMLS_CC);
   PHP5TO7_MAYBE_EFREE(self);
@@ -163,6 +192,7 @@ php_cassandra_execution_options_new(zend_class_entry *ce TSRMLS_DC)
   self->consistency = -1;
   self->serial_consistency = -1;
   self->page_size = -1;
+  self->timestamp = INT64_MIN;
   PHP5TO7_ZVAL_UNDEF(self->arguments);
   PHP5TO7_ZVAL_UNDEF(self->timeout);
 

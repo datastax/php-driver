@@ -25,6 +25,15 @@ namespace Cassandra;
  */
 abstract class BasicIntegrationTest extends \PHPUnit_Framework_TestCase {
     /**
+     * Conversion value for seconds to milliseconds.
+     */
+    const SECONDS_TO_MILLISECONDS = 1000;
+    /**
+     * Conversion value for seconds to microseconds.
+     */
+    const SECONDS_TO_MICROSECONDS = 1000000;
+
+    /**
      * Integration test instance (helper class).
      *
      * @var Integration

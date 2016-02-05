@@ -120,6 +120,7 @@ if (PHP_CASSANDRA != "no") {
               "Statement.c " +
               "Table.c " +
               "Timestamp.c " +
+              "TimestampGenerator.c " +
               "Timeuuid.c " +
               "Tuple.c " +
               "Type.c " +
@@ -157,6 +158,9 @@ if (PHP_CASSANDRA != "no") {
               "WriteTimeoutException.c", "cassandra");
           ADD_SOURCES(configure_module_dirname + "/src/Cassandra/SSLOptions",
               "Builder.c", "cassandra");
+          ADD_SOURCES(configure_module_dirname + "/src/Cassandra/TimestampGenerator",
+              "Monotonic.c " +
+              "ServerSide.c", "cassandra");
           ADD_SOURCES(configure_module_dirname + "/src/Cassandra/Type",
               "Collection.c " +
               "Custom.c " +

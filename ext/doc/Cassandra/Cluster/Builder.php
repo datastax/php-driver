@@ -236,6 +236,16 @@ final class Builder
     public function withTCPKeepalive($delay) {}
 
     /**
+     * Sets the timestamp generator.
+     *
+     * @param Cassandra\TimestampGenerator $generator A timestamp generator that will be used
+     *                                                to generate timestamps for statements.
+     *
+     * @return Builder self
+     */
+    public function withTimestampGenerator($generator) {}
+
+    /**
      * Enables/disables Schema Metadata.
      *
      * If disabled this allows the driver to skip over retrieving and
