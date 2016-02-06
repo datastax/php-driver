@@ -34,9 +34,9 @@
     "test": "phpunit && behat"
   },
   "autoload-dev": {
-    "psr-0": {
-      "Cassandra\\": ["tests/unit/", "tests/integration/"],
-      "": ["support/"]
+    "files": ["support/ccm.php"],
+    "psr-4": {
+      "Cassandra\\": ["tests/unit/Cassandra/", "tests/integration/Cassandra/"]
     }
   }
 }
