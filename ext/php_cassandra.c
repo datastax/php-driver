@@ -381,6 +381,16 @@ PHP_MINIT_FUNCTION(cassandra)
   cassandra_define_TypeUserType(TSRMLS_C);
   cassandra_define_TypeCustom(TSRMLS_C);
 
+  cassandra_define_RetryPolicy(TSRMLS_C);
+  cassandra_define_RetryPolicyDefault(TSRMLS_C);
+  cassandra_define_RetryPolicyDowngradingConsistency(TSRMLS_C);
+  cassandra_define_RetryPolicyFallthrough(TSRMLS_C);
+  cassandra_define_RetryPolicyLogging(TSRMLS_C);
+
+  cassandra_define_TimestampGenerator(TSRMLS_C);
+  cassandra_define_TimestampGeneratorMonotonic(TSRMLS_C);
+  cassandra_define_TimestampGeneratorServerSide(TSRMLS_C);
+
   return SUCCESS;
 }
 

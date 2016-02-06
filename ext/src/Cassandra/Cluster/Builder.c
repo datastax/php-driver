@@ -34,7 +34,7 @@ PHP_METHOD(ClusterBuilder, build)
     php5to7_zend_resource_le *le;
 
     hash_key_len = spprintf(&hash_key, 0,
-      "cassandra:%s:%d:%d:%s:%d:%d:%d:%s:%s:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d",
+      "cassandra:%s:%d:%d:%s:%d:%d:%d:%s:%s:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d",
       builder->contact_points, builder->port, builder->load_balancing_policy,
       SAFE_STR(builder->local_dc), builder->used_hosts_per_remote_dc,
       builder->allow_remote_dcs_for_local_cl, builder->use_token_aware_routing,
@@ -44,7 +44,7 @@ PHP_METHOD(ClusterBuilder, build)
       builder->core_connections_per_host, builder->max_connections_per_host,
       builder->reconnect_interval, builder->enable_latency_aware_routing,
       builder->enable_tcp_nodelay, builder->enable_tcp_keepalive,
-      builder->tcp_keepalive_delay);
+      builder->tcp_keepalive_delay, builder->enable_schema);
 
     cluster->hash_key     = hash_key;
     cluster->hash_key_len = hash_key_len;
@@ -93,6 +93,13 @@ PHP_METHOD(ClusterBuilder, build)
   cass_cluster_set_latency_aware_routing(cluster->cluster, builder->enable_latency_aware_routing);
   cass_cluster_set_tcp_nodelay(cluster->cluster, builder->enable_tcp_nodelay);
   cass_cluster_set_tcp_keepalive(cluster->cluster, builder->enable_tcp_keepalive, builder->tcp_keepalive_delay);
+  cass_cluster_set_use_schema(cluster->cluster, builder->enable_schema);
+
+  if (!PHP5TO7_ZVAL_IS_UNDEF(builder->timestamp_gen)) {
+    cassandra_timestamp_gen *timestamp_gen =
+        PHP_CASSANDRA_GET_TIMESTAMP_GEN(PHP5TO7_ZVAL_MAYBE_P(builder->timestamp_gen));
+    cass_cluster_set_timestamp_gen(cluster->cluster, timestamp_gen->gen);
+  }
 
   if (builder->persist) {
 #if PHP_MAJOR_VERSION >= 7
@@ -109,7 +116,12 @@ PHP_METHOD(ClusterBuilder, build)
       CASSANDRA_G(persistent_clusters)++;
     }
 #endif
+  }
 
+  if (!PHP5TO7_ZVAL_IS_UNDEF(builder->retry_policy)) {
+    cassandra_retry_policy *retry_policy =
+        PHP_CASSANDRA_GET_RETRY_POLICY(PHP5TO7_ZVAL_MAYBE_P(builder->retry_policy));
+    cass_cluster_set_retry_policy(cluster->cluster, retry_policy->policy);
   }
 }
 
@@ -586,6 +598,62 @@ PHP_METHOD(ClusterBuilder, withTCPKeepalive)
   RETURN_ZVAL(getThis(), 1, 0);
 }
 
+PHP_METHOD(ClusterBuilder, withRetryPolicy)
+{
+  zval *retry_policy = NULL;
+  cassandra_cluster_builder *builder = NULL;
+
+  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "O",
+                            &retry_policy, cassandra_retry_policy_ce) == FAILURE) {
+    return;
+  }
+
+  builder = PHP_CASSANDRA_GET_CLUSTER_BUILDER(getThis());
+
+  if (!PHP5TO7_ZVAL_IS_UNDEF(builder->retry_policy))
+    zval_ptr_dtor(&builder->retry_policy);
+
+  PHP5TO7_ZVAL_COPY(PHP5TO7_ZVAL_MAYBE_P(builder->retry_policy), retry_policy);
+
+  RETURN_ZVAL(getThis(), 1, 0);
+}
+
+PHP_METHOD(ClusterBuilder, withTimestampGenerator)
+{
+  zval *timestamp_gen = NULL;
+  cassandra_cluster_builder *builder = NULL;
+
+  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "O",
+                            &timestamp_gen, cassandra_timestamp_gen_ce) == FAILURE) {
+    return;
+  }
+
+  builder = PHP_CASSANDRA_GET_CLUSTER_BUILDER(getThis());
+
+  if (!PHP5TO7_ZVAL_IS_UNDEF(builder->timestamp_gen))
+    zval_ptr_dtor(&builder->timestamp_gen);
+
+  PHP5TO7_ZVAL_COPY(PHP5TO7_ZVAL_MAYBE_P(builder->timestamp_gen), timestamp_gen);
+
+  RETURN_ZVAL(getThis(), 1, 0);
+}
+
+PHP_METHOD(ClusterBuilder, withSchemaMetadata)
+{
+  zend_bool enabled = 1;
+  cassandra_cluster_builder *builder = NULL;
+
+  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "|b", &enabled) == FAILURE) {
+    return;
+  }
+
+  builder = PHP_CASSANDRA_GET_CLUSTER_BUILDER(getThis());
+
+  builder->enable_schema = enabled;
+
+  RETURN_ZVAL(getThis(), 1, 0);
+}
+
 ZEND_BEGIN_ARG_INFO_EX(arginfo_none, 0, ZEND_RETURN_VALUE, 0)
 ZEND_END_ARG_INFO()
 
@@ -649,6 +717,14 @@ ZEND_BEGIN_ARG_INFO_EX(arginfo_delay, 0, ZEND_RETURN_VALUE, 1)
   ZEND_ARG_INFO(0, delay)
 ZEND_END_ARG_INFO()
 
+ZEND_BEGIN_ARG_INFO_EX(arginfo_retry_policy, 0, ZEND_RETURN_VALUE, 1)
+  ZEND_ARG_OBJ_INFO(0, policy, Cassandra\\RetryPolicy, 0)
+ZEND_END_ARG_INFO()
+
+  ZEND_BEGIN_ARG_INFO_EX(arginfo_timestamp_gen, 0, ZEND_RETURN_VALUE, 1)
+  ZEND_ARG_OBJ_INFO(0, generator, Cassandra\\TimestampGenerator, 0)
+ZEND_END_ARG_INFO()
+
 static zend_function_entry cassandra_cluster_builder_methods[] = {
   PHP_ME(ClusterBuilder, build, arginfo_none, ZEND_ACC_PUBLIC)
   PHP_ME(ClusterBuilder, withDefaultConsistency, arginfo_consistency,
@@ -682,6 +758,10 @@ static zend_function_entry cassandra_cluster_builder_methods[] = {
   PHP_ME(ClusterBuilder, withTCPNodelay, arginfo_enabled,
         ZEND_ACC_PUBLIC)
   PHP_ME(ClusterBuilder, withTCPKeepalive, arginfo_delay,
+        ZEND_ACC_PUBLIC)
+  PHP_ME(ClusterBuilder, withRetryPolicy, arginfo_retry_policy, ZEND_ACC_PUBLIC)
+  PHP_ME(ClusterBuilder, withTimestampGenerator, arginfo_timestamp_gen, ZEND_ACC_PUBLIC)
+  PHP_ME(ClusterBuilder, withSchemaMetadata, arginfo_enabled,
         ZEND_ACC_PUBLIC)
   PHP_FE_END
 };
@@ -725,6 +805,9 @@ php_cassandra_cluster_builder_properties(zval *object TSRMLS_DC)
   php5to7_zval latencyAwareRouting;
   php5to7_zval tcpNodelay;
   php5to7_zval tcpKeepalive;
+  php5to7_zval retryPolicy;
+  php5to7_zval timestampGen;
+  php5to7_zval schemaMetadata;
 
   PHP5TO7_ZVAL_MAYBE_MAKE(contactPoints);
   PHP5TO7_ZVAL_STRING(PHP5TO7_ZVAL_MAYBE_P(contactPoints), self->contact_points);
@@ -812,6 +895,23 @@ php_cassandra_cluster_builder_properties(zval *object TSRMLS_DC)
     ZVAL_NULL(PHP5TO7_ZVAL_MAYBE_P(tcpKeepalive));
   }
 
+  PHP5TO7_ZVAL_MAYBE_MAKE(retryPolicy);
+  if (!PHP5TO7_ZVAL_IS_UNDEF(self->retry_policy)) {
+    PHP5TO7_ZVAL_COPY(PHP5TO7_ZVAL_MAYBE_P(retryPolicy), PHP5TO7_ZVAL_MAYBE_P(self->retry_policy));
+  } else {
+    ZVAL_NULL(PHP5TO7_ZVAL_MAYBE_P(retryPolicy));
+  }
+
+  PHP5TO7_ZVAL_MAYBE_MAKE(timestampGen);
+  if (!PHP5TO7_ZVAL_IS_UNDEF(self->timestamp_gen)) {
+    PHP5TO7_ZVAL_COPY(PHP5TO7_ZVAL_MAYBE_P(timestampGen), PHP5TO7_ZVAL_MAYBE_P(self->timestamp_gen));
+  } else {
+    ZVAL_NULL(PHP5TO7_ZVAL_MAYBE_P(timestampGen));
+  }
+
+  PHP5TO7_ZVAL_MAYBE_MAKE(schemaMetadata);
+  ZVAL_BOOL(PHP5TO7_ZVAL_MAYBE_P(schemaMetadata), self->enable_schema);
+
   PHP5TO7_ZEND_HASH_UPDATE(props, "contactPoints", sizeof("contactPoints"),
                            PHP5TO7_ZVAL_MAYBE_P(contactPoints), sizeof(zval));
   PHP5TO7_ZEND_HASH_UPDATE(props, "loadBalancingPolicy", sizeof("loadBalancingPolicy"),
@@ -858,6 +958,12 @@ php_cassandra_cluster_builder_properties(zval *object TSRMLS_DC)
                            PHP5TO7_ZVAL_MAYBE_P(tcpNodelay), sizeof(zval));
   PHP5TO7_ZEND_HASH_UPDATE(props, "tcpKeepalive", sizeof("tcpKeepalive"),
                            PHP5TO7_ZVAL_MAYBE_P(tcpKeepalive), sizeof(zval));
+  PHP5TO7_ZEND_HASH_UPDATE(props, "retryPolicy", sizeof("retryPolicy"),
+                           PHP5TO7_ZVAL_MAYBE_P(retryPolicy), sizeof(zval));
+  PHP5TO7_ZEND_HASH_UPDATE(props, "timestampGenerator", sizeof("timestampGenerator"),
+                           PHP5TO7_ZVAL_MAYBE_P(timestampGen), sizeof(zval));
+  PHP5TO7_ZEND_HASH_UPDATE(props, "schemaMetadata", sizeof("schemaMetadata"),
+                           PHP5TO7_ZVAL_MAYBE_P(schemaMetadata), sizeof(zval));
 
   return props;
 }
@@ -897,6 +1003,8 @@ php_cassandra_cluster_builder_free(php5to7_zend_object_free *object TSRMLS_DC)
 
   PHP5TO7_ZVAL_MAYBE_DESTROY(self->ssl_options);
   PHP5TO7_ZVAL_MAYBE_DESTROY(self->default_timeout);
+  PHP5TO7_ZVAL_MAYBE_DESTROY(self->retry_policy);
+  PHP5TO7_ZVAL_MAYBE_DESTROY(self->timestamp_gen);
 
   zend_object_std_dtor(&self->zval TSRMLS_CC);
   PHP5TO7_MAYBE_EFREE(self);
@@ -919,7 +1027,7 @@ php_cassandra_cluster_builder_new(zend_class_entry *ce TSRMLS_DC)
   self->password = NULL;
   self->connect_timeout = 5000;
   self->request_timeout = 12000;
-  self->default_consistency = CASS_CONSISTENCY_ONE;
+  self->default_consistency = PHP_CASSANDRA_DEFAULT_CONSISTENCY;
   self->default_page_size = 5000;
   self->persist = 1;
   self->protocol_version = 3;
@@ -931,9 +1039,12 @@ php_cassandra_cluster_builder_new(zend_class_entry *ce TSRMLS_DC)
   self->enable_tcp_nodelay = 1;
   self->enable_tcp_keepalive = 0;
   self->tcp_keepalive_delay = 0;
+  self->enable_schema = 1;
 
   PHP5TO7_ZVAL_UNDEF(self->ssl_options);
   PHP5TO7_ZVAL_UNDEF(self->default_timeout);
+  PHP5TO7_ZVAL_UNDEF(self->retry_policy);
+  PHP5TO7_ZVAL_UNDEF(self->timestamp_gen);
 
   PHP5TO7_ZEND_OBJECT_INIT(cluster_builder, self, ce);
 }

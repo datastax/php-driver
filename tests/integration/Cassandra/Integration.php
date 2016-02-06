@@ -87,6 +87,10 @@ class Integration {
      *                            (DEFAULT: 1).
      * @param int $numberDC2Nodes Number of nodes in data center two
      *                            (DEFAULT: 0).
+     * @param int $replicationFactor Replication factor override; default is
+     *                               calculated based on number of data center
+     *                               nodes; single data center is (nodes / 2)
+     *                               rounded up.
      * @param bool $isClientAuthentication True if client authentication
      *                                     should be enabled; false
      *                                     otherwise (DEFAULT: false).
@@ -98,6 +102,7 @@ class Integration {
                                 $testName = "",
                                 $numberDC1Nodes = 1,
                                 $numberDC2Nodes = 0,
+                                $replicationFactor = -1,
                                 $isClientAuthentication = false,
                                 $isSSL = false) {
         // Generate the keyspace name for the test
@@ -135,7 +140,9 @@ class Integration {
             $replicationStrategy = "'NetworkTopologyStrategy', 'dc1': " . $numberDC1Nodes . ", " .
                 "'dc2': " . $numberDC2Nodes;
         } else {
-            $replicationFactor = ($numberDC1Nodes % 2 == 0) ? $numberDC1Nodes / 2 : ($numberDC1Nodes + 1) / 2;
+            if ($replicationFactor < 0) {
+                $replicationFactor = ($numberDC1Nodes % 2 == 0) ? $numberDC1Nodes / 2 : ($numberDC1Nodes + 1) / 2;
+            }
             $replicationStrategy .= $replicationFactor;
         }
         $query = sprintf(Integration::SIMPLE_KEYSPACE_FORMAT, $this->keyspaceName, $replicationStrategy);
@@ -144,7 +151,7 @@ class Integration {
         try {
             // Create the session and integration test keypspace
             $this->cluster = \Cassandra::cluster()
-                ->withContactPoints(Integration::IP_ADDRESS)
+                ->withContactPoints($this->getContactPoints(Integration::IP_ADDRESS, ($numberDC1Nodes + $numberDC2Nodes)))
                 ->build();
             $this->session = $this->cluster->connect();
             $statement = new SimpleStatement($query);
@@ -175,6 +182,36 @@ class Integration {
                 ; // no-op
             }
         }
+    }
+
+    /**
+     * Get the short name of the class without the namespacing.
+     *
+     * @param $className Class name to remove namespace from
+     * @return string Short name for the class name
+     */
+    private function getShortName($className) {
+        $function = new \ReflectionClass($className);
+        return $function->getShortName();
+    }
+
+    /**
+     * Get the contact points for the cluster.
+     *
+     * @param $ipAddress Starting IP address
+     * @param $numberOfNodes Total number of nodes in the cluster
+     * @return string Comma delimited ip addresses
+     */
+    private function getContactPoints($ipAddress, $numberOfNodes) {
+        // Generate the contact points from the IP address and total nodes
+        $ipPrefix = substr($ipAddress, 0, strlen($ipAddress) - 1);
+        $contactPoints = $ipAddress;
+        foreach (range(2, $numberOfNodes) as $i ) {
+            $contactPoints .= ", {$ipPrefix}{$i}";
+        }
+
+        // Return the contact points
+        return $contactPoints;
     }
 
     public function __get($property) {
@@ -216,16 +253,5 @@ class Integration {
      */
     public static function disconnect() {
         unset(self::$instance);
-    }
-
-    /**
-     * Get the short name of the class without the namespacing.
-     *
-     * @param $className Class name to remove namespace from
-     * @return string Short name for the class name
-     */
-    private function getShortName($className) {
-        $function = new \ReflectionClass($className);
-        return $function->getShortName();
     }
 }

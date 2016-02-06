@@ -235,8 +235,36 @@ class CCM
     public function enableTracing($isEnabled)
     {
         $nodes = $this->dataCenterOneNodes + $this->dataCenterTwoNodes;
-        for($node = 1; $node <= $nodes; ++$node) {
+        for ($node = 1; $node <= $nodes; ++$node) {
             $this->run('node'.$node, 'nodetool', 'settraceprobability', ((bool) $isEnabled) ? 1 : 0);
+        }
+    }
+
+    public function pauseNode($nodes)
+    {
+        foreach (array($nodes) as $node) {
+            $this->run('node'.$node, 'pause');
+        }
+    }
+
+    public function resumeNode($nodes)
+    {
+        foreach (array($nodes) as $node) {
+            $this->run('node'.$node, 'resume');
+        }
+    }
+
+    public function startNode($nodes)
+    {
+        foreach (array($nodes) as $node) {
+            $this->run('node'.$node, 'start');
+        }
+    }
+
+    public function stopNode($nodes)
+    {
+        foreach (array($nodes) as $node) {
+            $this->run('node'.$node, 'stop');
         }
     }
 
