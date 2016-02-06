@@ -79,6 +79,9 @@ if test "$PHP_CASSANDRA" != "no"; then
     src/Cassandra/RetryPolicy/DowngradingConsistency.c \
     src/Cassandra/RetryPolicy/Fallthrough.c \
     src/Cassandra/RetryPolicy/Logging.c \
+    src/Cassandra/TimestampGenerator.c \
+    src/Cassandra/TimestampGenerator/Monotonic.c \
+    src/Cassandra/TimestampGenerator/ServerSide.c \
   ";
 
   CASSANDRA_TYPES="\
@@ -133,6 +136,7 @@ if test "$PHP_CASSANDRA" != "no"; then
   PHP_ADD_BUILD_DIR($ext_builddir/src/Cassandra/SSLOptions)
   PHP_ADD_BUILD_DIR($ext_builddir/src/Cassandra/Type)
   PHP_ADD_BUILD_DIR($ext_builddir/src/Cassandra/RetryPolicy)
+  PHP_ADD_BUILD_DIR($ext_builddir/src/Cassandra/TimestampGenerator)
   PHP_ADD_BUILD_DIR($ext_builddir/util)
   PHP_SUBST(CASSANDRA_SHARED_LIBADD)
   PHP_SUBST(CASSANDRA_CFLAGS)

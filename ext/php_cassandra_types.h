@@ -50,6 +50,7 @@
   #define PHP_CASSANDRA_GET_COLUMN(obj) php_cassandra_column_object_fetch(Z_OBJ_P(obj))
   #define PHP_CASSANDRA_GET_TYPE(obj) php_cassandra_type_object_fetch(Z_OBJ_P(obj))
   #define PHP_CASSANDRA_GET_RETRY_POLICY(obj) php_cassandra_retry_policy_object_fetch(Z_OBJ_P(obj))
+  #define PHP_CASSANDRA_GET_TIMESTAMP_GEN(obj) php_cassandra_timestamp_gen_object_fetch(Z_OBJ_P(obj))
 #else
   #define PHP_CASSANDRA_GET_NUMERIC(obj) (cassandra_numeric *)zend_object_store_get_object((obj) TSRMLS_CC)
   #define PHP_CASSANDRA_GET_BLOB(obj) (cassandra_blob *)zend_object_store_get_object((obj) TSRMLS_CC)
@@ -80,6 +81,7 @@
   #define PHP_CASSANDRA_GET_COLUMN(obj) (cassandra_column *)zend_object_store_get_object((obj) TSRMLS_CC)
   #define PHP_CASSANDRA_GET_TYPE(obj) (cassandra_type *)zend_object_store_get_object((obj) TSRMLS_CC)
   #define PHP_CASSANDRA_GET_RETRY_POLICY(obj) (cassandra_retry_policy *)zend_object_store_get_object((obj) TSRMLS_CC)
+  #define PHP_CASSANDRA_GET_TIMESTAMP_GEN(obj) (cassandra_timestamp_gen *)zend_object_store_get_object((obj) TSRMLS_CC)
 #endif
 
 typedef enum {
@@ -206,6 +208,7 @@ PHP_CASSANDRA_BEGIN_OBJECT_TYPE(execution_options)
   php5to7_zval timeout;
   php5to7_zval arguments;
   php5to7_zval retry_policy;
+  cass_int64_t timestamp;
 PHP_CASSANDRA_END_OBJECT_TYPE(execution_options)
 
 typedef enum {
@@ -264,6 +267,8 @@ PHP_CASSANDRA_BEGIN_OBJECT_TYPE(cluster_builder)
   cass_bool_t enable_tcp_keepalive;
   unsigned int tcp_keepalive_delay;
   php5to7_zval retry_policy;
+  php5to7_zval timestamp_gen;
+  cass_bool_t enable_schema;
 PHP_CASSANDRA_END_OBJECT_TYPE(cluster_builder)
 
 PHP_CASSANDRA_BEGIN_OBJECT_TYPE(future_prepared_statement)
@@ -365,6 +370,10 @@ PHP_CASSANDRA_END_OBJECT_TYPE(type)
 PHP_CASSANDRA_BEGIN_OBJECT_TYPE(retry_policy)
   CassRetryPolicy *policy;
 PHP_CASSANDRA_END_OBJECT_TYPE(retry_policy)
+
+PHP_CASSANDRA_BEGIN_OBJECT_TYPE(timestamp_gen)
+  CassTimestampGen *gen;
+PHP_CASSANDRA_END_OBJECT_TYPE(timestamp_gen)
 
 typedef unsigned (*php_cassandra_value_hash_t)(zval *obj TSRMLS_DC);
 
@@ -555,6 +564,14 @@ void cassandra_define_RetryPolicyDefault(TSRMLS_D);
 void cassandra_define_RetryPolicyDowngradingConsistency(TSRMLS_D);
 void cassandra_define_RetryPolicyFallthrough(TSRMLS_D);
 void cassandra_define_RetryPolicyLogging(TSRMLS_D);
+
+extern PHP_CASSANDRA_API zend_class_entry *cassandra_timestamp_gen_ce;
+extern PHP_CASSANDRA_API zend_class_entry *cassandra_timestamp_gen_monotonic_ce;
+extern PHP_CASSANDRA_API zend_class_entry *cassandra_timestamp_gen_server_side_ce;
+
+void cassandra_define_TimestampGenerator(TSRMLS_D);
+void cassandra_define_TimestampGeneratorMonotonic(TSRMLS_D);
+void cassandra_define_TimestampGeneratorServerSide(TSRMLS_D);
 
 extern int php_le_cassandra_cluster();
 extern int php_le_cassandra_session();

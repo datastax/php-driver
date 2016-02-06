@@ -25,6 +25,15 @@ namespace Cassandra;
  */
 abstract class BasicIntegrationTest extends \PHPUnit_Framework_TestCase {
     /**
+     * Conversion value for seconds to milliseconds.
+     */
+    const SECONDS_TO_MILLISECONDS = 1000;
+    /**
+     * Conversion value for seconds to microseconds.
+     */
+    const SECONDS_TO_MICROSECONDS = 1000000;
+
+    /**
      * Integration test instance (helper class).
      *
      * @var Integration
@@ -67,6 +76,12 @@ abstract class BasicIntegrationTest extends \PHPUnit_Framework_TestCase {
      */
     protected $serverVersion;
     /**
+     * Keyspace name being used for the test.
+     *
+     * @var string
+     */
+    protected $keyspaceName;
+    /**
      * Table name prefix being used for the test.
      *
      * @var string
@@ -85,7 +100,8 @@ abstract class BasicIntegrationTest extends \PHPUnit_Framework_TestCase {
         $this->session = $this->integration->session;
         $this->serverVersion = $this->integration->serverVersion;
 
-        // Assign the table name for the test
+        // Assign the keyspace and table name for the test
+        $this->keyspaceName = strtolower($this->integration->keyspaceName);
         $this->tableNamePrefix = strtolower($this->getName(false));
     }
 

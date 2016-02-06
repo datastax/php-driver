@@ -421,7 +421,7 @@ $session->execute($batch, new Cassandra\ExecutionOptions(array(
 
 [Read more about `Cassandra\Session::execute()`](http://datastax.github.io/php-driver/api/Cassandra/interface.Session/#method.execute)
 
-The default consistency level unless you've set it yourself is `Cassandra::CONSISTENCY_ONE`.
+The default consistency level unless you've set it yourself is `Cassandra::CONSISTENCY_LOCAL_ONE`.
 
 Consistency is ignored for `USE`, `TRUNCATE`, `CREATE` and `ALTER` statements, and some (like `Cassandra::CONSISTENCY_ANY`) aren't allowed in all situations.
 

@@ -387,6 +387,10 @@ PHP_MINIT_FUNCTION(cassandra)
   cassandra_define_RetryPolicyFallthrough(TSRMLS_C);
   cassandra_define_RetryPolicyLogging(TSRMLS_C);
 
+  cassandra_define_TimestampGenerator(TSRMLS_C);
+  cassandra_define_TimestampGeneratorMonotonic(TSRMLS_C);
+  cassandra_define_TimestampGeneratorServerSide(TSRMLS_C);
+
   return SUCCESS;
 }
 
