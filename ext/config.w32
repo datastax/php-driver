@@ -111,6 +111,7 @@ if (PHP_CASSANDRA != "no") {
               "Map.c " +
               "Numeric.c " +
               "PreparedStatement.c " +
+              "RetryPolicy.c " +
               "Rows.c " +
               "Schema.c " +
               "Session.c " +
@@ -156,6 +157,11 @@ if (PHP_CASSANDRA != "no") {
               "UnpreparedException.c " +
               "ValidationException.c " +
               "WriteTimeoutException.c", "cassandra");
+          ADD_SOURCES(configure_module_dirname + "/src/Cassandra/RetryPolicy",
+              "DefaultPolicy.c " +
+              "DowngradingConsistency.c " +
+              "Fallthrough.c " +
+              "Logging.c ", "cassandra");
           ADD_SOURCES(configure_module_dirname + "/src/Cassandra/SSLOptions",
               "Builder.c", "cassandra");
           ADD_SOURCES(configure_module_dirname + "/src/Cassandra/TimestampGenerator",

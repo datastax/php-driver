@@ -40,6 +40,30 @@ abstract class BasicIntegrationTest extends \PHPUnit_Framework_TestCase {
      */
     private $integration;
     /**
+     * Handle for interacting with CCM.
+     *
+     * @var CCM
+     */
+    protected $ccm;
+    /**
+     * Number of nodes in data center one.
+     *
+     * @var int
+     */
+    protected $numberDC1Nodes = 1;
+    /**
+     * Number of nodes in data center two.
+     *
+     * @var int
+     */
+    protected $numberDC2Nodes = 0;
+    /**
+     * Replication factor override.
+     *
+     * @var int
+     */
+    protected $replicationFactor = -1;
+    /**
      * Connected database session.
      *
      * @var \Cassandra\Session
@@ -69,7 +93,10 @@ abstract class BasicIntegrationTest extends \PHPUnit_Framework_TestCase {
      */
     protected function setUp() {
         // Initialize the database and establish a connection
-        $this->integration = new Integration(get_class(), $this->getName(false));
+        $this->integration = new Integration(get_class(), $this->getName(false),
+            $this->numberDC1Nodes, $this->numberDC2Nodes,
+            $this->replicationFactor);
+        $this->ccm = $this->integration->ccm;
         $this->session = $this->integration->session;
         $this->serverVersion = $this->integration->serverVersion;
 
@@ -80,10 +107,8 @@ abstract class BasicIntegrationTest extends \PHPUnit_Framework_TestCase {
 
     /**
      * Teardown the database for the integration tests.
-     *
-     * @after
      */
-    protected function teardown() {
+    protected function tearDown() {
         unset($this->integration);
     }
 }

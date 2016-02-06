@@ -49,11 +49,10 @@ class UserTypeIntegrationTest extends CollectionsIntegrationTest {
      */
     const ADDRESS_ZIP_CODE = 95054;
 
-
     /**
      * Setup the database for the user type tests.
      */
-    public function setUp() {
+    protected function setUp() {
         // Process parent setup steps
         parent::setUp();
 

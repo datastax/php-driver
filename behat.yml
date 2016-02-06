@@ -4,7 +4,7 @@ default:
     suites:
         default:
             filters:
-              tags: "~@cassandra-version-less-2.1&&~@cassandra-version-only-2.0"
+              tags: "~@cassandra-version-less-2.1&&~@cassandra-version-only-2.0&&~@broken"
             contexts:
                 - FeatureContext:
                     cassandra_version: 2.1.12
@@ -14,7 +14,7 @@ cassandra-version-2.0:
         pretty: true
     suites:
         default:
-            filters: 
+            filters:
               tags: "~@cassandra-version-2.1"
             contexts:
                 - FeatureContext:
