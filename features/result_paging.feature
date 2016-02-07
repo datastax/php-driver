@@ -117,3 +117,51 @@ Feature: Result paging
       entries in page 1: 10
       entries in page 2: 3
       """
+
+  @paging_state_token
+  Scenario: Use paging state token to get next result
+    Given the following example:
+      """php
+      <?php
+      $cluster   = Cassandra::cluster()
+                     ->withContactPoints('127.0.0.1')
+                     ->build();
+      $session   = $cluster->connect("simplex");
+      $statement = new Cassandra\SimpleStatement("SELECT * FROM entries");
+      $options = array('page_size' => 2);
+      $result = $session->execute($statement, new Cassandra\ExecutionOptions($options));
+
+      foreach ($result as $row) {
+        printf("key: '%s' value: %d\n", $row['key'], $row['value']);
+      }
+
+      while ($result->pagingStateToken()) {
+          $options = array(
+              'page_size' => 2,
+              'paging_state_token' => $result->pagingStateToken()
+          );
+
+          $result = $session->execute($statement, new Cassandra\ExecutionOptions($options));
+
+          foreach ($result as $row) {
+            printf("key: '%s' value: %d\n", $row['key'], $row['value']);
+          }
+      }
+      """
+    When it is executed
+    Then its output should contain:
+      """
+      key: 'a' value: 0
+      key: 'c' value: 2
+      key: 'm' value: 12
+      key: 'f' value: 5
+      key: 'g' value: 6
+      key: 'e' value: 4
+      key: 'd' value: 3
+      key: 'h' value: 7
+      key: 'l' value: 11
+      key: 'j' value: 9
+      key: 'i' value: 8
+      key: 'k' value: 10
+      key: 'b' value: 1
+      """

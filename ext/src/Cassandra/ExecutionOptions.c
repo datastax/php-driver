@@ -13,6 +13,7 @@ PHP_METHOD(ExecutionOptions, __construct)
   php5to7_zval *consistency = NULL;
   php5to7_zval *serial_consistency = NULL;
   php5to7_zval *page_size = NULL;
+  php5to7_zval *paging_state_token = NULL;
   php5to7_zval *timeout = NULL;
   php5to7_zval *arguments = NULL;
   php5to7_zval *retry_policy = NULL;
@@ -48,6 +49,16 @@ PHP_METHOD(ExecutionOptions, __construct)
       return;
     }
     self->page_size = Z_LVAL_P(PHP5TO7_ZVAL_MAYBE_DEREF(page_size));
+  }
+
+  if (PHP5TO7_ZEND_HASH_FIND(Z_ARRVAL_P(options), "paging_state_token", sizeof("paging_state_token"), paging_state_token)) {
+    if (Z_TYPE_P(PHP5TO7_ZVAL_MAYBE_DEREF(paging_state_token)) != IS_STRING) {
+      throw_invalid_argument(PHP5TO7_ZVAL_MAYBE_DEREF(paging_state_token), "paging_state_token", "a string" TSRMLS_CC);
+      return;
+    }
+    self->paging_state_token = estrndup(Z_STRVAL_P(PHP5TO7_ZVAL_MAYBE_DEREF(paging_state_token)),
+                                        Z_STRLEN_P(PHP5TO7_ZVAL_MAYBE_DEREF(paging_state_token)));
+    self->paging_state_token_size = Z_STRLEN_P(PHP5TO7_ZVAL_MAYBE_DEREF(paging_state_token));
   }
 
   if (PHP5TO7_ZEND_HASH_FIND(Z_ARRVAL_P(options), "timeout", sizeof("timeout"), timeout)) {
@@ -125,6 +136,12 @@ PHP_METHOD(ExecutionOptions, __get)
       RETURN_NULL();
     }
     RETURN_LONG(self->page_size);
+  } else if (name_len == 16 && strncmp("pagingStateToken", name, name_len) == 0) {
+    if (!self->paging_state_token) {
+      RETURN_NULL();
+    }
+    PHP5TO7_RETURN_STRINGL(self->paging_state_token,
+                           self->paging_state_token_size);
   } else if (name_len == 7 && strncmp("timeout", name, name_len) == 0) {
     if (PHP5TO7_ZVAL_IS_UNDEF(self->timeout)) {
       RETURN_NULL();
@@ -194,6 +211,9 @@ php_cassandra_execution_options_free(php5to7_zend_object_free *object TSRMLS_DC)
   cassandra_execution_options *self =
       PHP5TO7_ZEND_OBJECT_GET(execution_options, object);
 
+  if (self->paging_state_token) {
+    efree(self->paging_state_token);
+  }
   PHP5TO7_ZVAL_MAYBE_DESTROY(self->arguments);
   PHP5TO7_ZVAL_MAYBE_DESTROY(self->timeout);
   PHP5TO7_ZVAL_MAYBE_DESTROY(self->retry_policy);
@@ -211,6 +231,8 @@ php_cassandra_execution_options_new(zend_class_entry *ce TSRMLS_DC)
   self->consistency = -1;
   self->serial_consistency = -1;
   self->page_size = -1;
+  self->paging_state_token = NULL;
+  self->paging_state_token_size = 0;
   self->timestamp = INT64_MIN;
   PHP5TO7_ZVAL_UNDEF(self->arguments);
   PHP5TO7_ZVAL_UNDEF(self->timeout);

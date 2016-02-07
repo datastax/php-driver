@@ -31,11 +31,12 @@ final class ExecutionOptions
     /**
      * Creates a new options object for execution.
      *
-     * * array['arguments']          array      An array or positional or named arguments
-     * * array['consistency']        int        One of Cassandra::CONSISTENCY_*
-     * * array['timeout']            int|null   A number of seconds or null
-     * * array['page_size']          int        A number of rows to include in result for paging
-     * * array['serial_consistency'] int        Either Cassandra::CONSISTENCY_SERIAL or Cassandra::CONSISTENCY_LOCAL_SERIAL
+     * * array['arguments']          array    An array or positional or named arguments
+     * * array['consistency']        int      One of Cassandra::CONSISTENCY_*
+     * * array['timeout']            int|null A number of seconds or null
+     * * array['page_size']          int      A number of rows to include in result for paging
+     * * array['paging_state_token'] string   A string token use to resume from the state of a previous result set
+     * * array['serial_consistency'] int      Either Cassandra::CONSISTENCY_SERIAL or Cassandra::CONSISTENCY_LOCAL_SERIAL
      * * array['timestamp']          int|string Either an integer or integer string timestamp that represents the number
      *                                          of microseconds since the epoch.
      *

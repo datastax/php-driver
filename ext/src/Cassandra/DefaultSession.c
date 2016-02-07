@@ -384,7 +384,13 @@ create_batch(cassandra_statement *batch,
     return NULL;
   )
 
-  rc = cass_batch_set_retry_policy(cass_batch, retry_policy, timestamp);
+  rc = cass_batch_set_retry_policy(cass_batch, retry_policy);
+  ASSERT_SUCCESS_BLOCK(rc,
+    cass_batch_free(cass_batch);
+    return NULL;
+  )
+
+  rc = cass_batch_set_timestamp(cass_batch, timestamp);
   ASSERT_SUCCESS_BLOCK(rc,
     cass_batch_free(cass_batch);
     return NULL;
@@ -396,8 +402,9 @@ create_batch(cassandra_statement *batch,
 static CassStatement *
 create_single(cassandra_statement *statement, HashTable *arguments,
               CassConsistency consistency, long serial_consistency,
-              int page_size, CassRetryPolicy *retry_policy,
-              cass_int64_t timestamp TSRMLS_DC)
+              int page_size, const char* paging_state_token,
+              size_t paging_state_token_size,
+              CassRetryPolicy *retry_policy, cass_int64_t timestamp TSRMLS_DC)
 {
   CassError rc = CASS_OK;
   CassStatement *stmt = create_statement(statement, arguments TSRMLS_CC);
@@ -411,6 +418,12 @@ create_single(cassandra_statement *statement, HashTable *arguments,
 
   if (rc == CASS_OK && page_size >= 0)
     rc = cass_statement_set_paging_size(stmt, page_size);
+
+  if (rc == CASS_OK && paging_state_token) {
+    rc = cass_statement_set_paging_state_token(stmt,
+                                               paging_state_token,
+                                               paging_state_token_size);
+  }
 
   if (rc == CASS_OK && retry_policy)
     rc = cass_statement_set_retry_policy(stmt, retry_policy);
@@ -443,6 +456,8 @@ PHP_METHOD(DefaultSession, execute)
   HashTable *arguments = NULL;
   CassConsistency consistency = PHP_CASSANDRA_DEFAULT_CONSISTENCY;
   int page_size = -1;
+  char *paging_state_token = NULL;
+  size_t paging_state_token_size = 0;
   zval *timeout = NULL;
   long serial_consistency = -1;
   CassRetryPolicy *retry_policy = NULL;
@@ -480,6 +495,11 @@ PHP_METHOD(DefaultSession, execute)
     if (opts->page_size >= 0)
       page_size = opts->page_size;
 
+    if (opts->paging_state_token) {
+      paging_state_token = opts->paging_state_token;
+      paging_state_token_size = opts->paging_state_token_size;
+    }
+
     if (!PHP5TO7_ZVAL_IS_UNDEF(opts->timeout))
       timeout = PHP5TO7_ZVAL_MAYBE_P(opts->timeout);
 
@@ -497,6 +517,7 @@ PHP_METHOD(DefaultSession, execute)
     case CASSANDRA_PREPARED_STATEMENT:
       single = create_single(stmt, arguments, consistency,
                              serial_consistency, page_size,
+                             paging_state_token, paging_state_token_size,
                              retry_policy, timestamp TSRMLS_CC);
 
       if (!single)
@@ -571,6 +592,8 @@ PHP_METHOD(DefaultSession, executeAsync)
   HashTable *arguments = NULL;
   CassConsistency consistency = PHP_CASSANDRA_DEFAULT_CONSISTENCY;
   int page_size = -1;
+  char *paging_state_token = NULL;
+  size_t paging_state_token_size = 0;
   long serial_consistency = -1;
   CassRetryPolicy *retry_policy = NULL;
   cass_int64_t timestamp = INT64_MIN;
@@ -606,6 +629,11 @@ PHP_METHOD(DefaultSession, executeAsync)
     if (opts->page_size >= 0)
       page_size = opts->page_size;
 
+    if (opts->paging_state_token) {
+      paging_state_token = opts->paging_state_token;
+      paging_state_token_size = opts->paging_state_token_size;
+    }
+
     if (opts->serial_consistency >= 0)
       serial_consistency = opts->serial_consistency;
 
@@ -623,6 +651,7 @@ PHP_METHOD(DefaultSession, executeAsync)
     case CASSANDRA_PREPARED_STATEMENT:
       single = create_single(stmt, arguments, consistency,
                              serial_consistency, page_size,
+                             paging_state_token, paging_state_token_size,
                              retry_policy, timestamp TSRMLS_CC);
 
       if (!single)
