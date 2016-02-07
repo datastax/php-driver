@@ -384,7 +384,7 @@ create_batch(cassandra_statement *batch,
     return NULL;
   )
 
-  rc = cass_batch_set_retry_policy(cass_batch, retry_policy, timestamp);
+  rc = cass_batch_set_retry_policy(cass_batch, retry_policy);
   ASSERT_SUCCESS_BLOCK(rc,
     cass_batch_free(cass_batch);
     return NULL;
