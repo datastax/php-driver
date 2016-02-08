@@ -148,28 +148,22 @@ class Integration {
         $query = sprintf(Integration::SIMPLE_KEYSPACE_FORMAT, $this->keyspaceName, $replicationStrategy);
 
         // Create the session and keyspace for the integration test
-        try {
-            // Create the session and integration test keypspace
-            $this->cluster = \Cassandra::cluster()
-                ->withContactPoints($this->getContactPoints(Integration::IP_ADDRESS, ($numberDC1Nodes + $numberDC2Nodes)))
-                ->build();
-            $this->session = $this->cluster->connect();
-            $statement = new SimpleStatement($query);
-            $this->session->execute($statement);
+        $this->cluster = \Cassandra::cluster()
+            ->withContactPoints($this->getContactPoints(Integration::IP_ADDRESS, ($numberDC1Nodes + $numberDC2Nodes)))
+            ->withPersistentSessions(false)
+            ->build();
+        $this->session = $this->cluster->connect();
+        $statement = new SimpleStatement($query);
+        $this->session->execute($statement);
 
-            // Update the session to use the new keyspace by default
-            $statement = new SimpleStatement("USE " . $this->keyspaceName);
-            $this->session->execute($statement);
+        // Update the session to use the new keyspace by default
+        $statement = new SimpleStatement("USE " . $this->keyspaceName);
+        $this->session->execute($statement);
 
-            // Get the server version the session is connected to
-            $statement = new SimpleStatement(self::SELECT_SERVER_VERSION);
-            $rows = $this->session->execute($statement);
-            $this->serverVersion = $rows->first()["release_version"];
-
-        } catch (Exception $e) {
-            printf("Error Creating CCM Cluster: %s" . PHP_EOL . "%s" . PHP_EOL,
-                $e->getMessage(), $e->getTraceAsString());
-        }
+        // Get the server version the session is connected to
+        $statement = new SimpleStatement(self::SELECT_SERVER_VERSION);
+        $rows = $this->session->execute($statement);
+        $this->serverVersion = $rows->first()["release_version"];
     }
 
     public function __destruct() {
@@ -255,3 +249,25 @@ class Integration {
         unset(self::$instance);
     }
 }
+
+class IntegrationRemoveAllClusters {
+    private $ccm;
+    private static $instance;
+
+    function __construct() {
+        $this->ccm = new \CCM(\CCM::DEFAULT_CASSANDRA_VERSION, true);
+        $this->ccm->removeAllClusters();
+    }
+
+    function __destruct() {
+        $this->ccm->removeAllClusters();
+    }
+
+    public static function cleanup() {
+        if (!isset($instance)) {
+            self::$instance  = new IntegrationRemoveAllClusters();
+        }
+    }
+}
+
+IntegrationRemoveAllClusters::cleanup();
