@@ -17,6 +17,7 @@ namespace Cassandra;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+use Symfony\Component\DependencyInjection\Tests\Compiler\IntegrationTest;
 
 /**
  * Base class to provide common integration test functionality.
@@ -248,10 +249,34 @@ class Integration {
     public static function disconnect() {
         unset(self::$instance);
     }
+
+    /**
+     * Determine if the debug argument was used when starting PHPUnit.
+     *
+     * @return bool True if debug argument was used; false otherwise
+     */
+    public static function isDebug() {
+        return in_array("--debug", $_SERVER['argv']);
+    }
 }
 
-class IntegrationRemoveAllClusters {
+/**
+ * This class will act as a fixture for the integration test suite. This
+ * fixture will ensure startup and shutdown procedures when running the
+ * integration tests.
+ */
+class IntegrationTestFixture {
+    /**
+     * Handle for communicating with CCM.
+     *
+     * @var \CCM
+     */
     private $ccm;
+    /**
+     * Singleton instance for the fixture.
+     *
+     * @var IntegrationTestFixture
+     */
     private static $instance;
 
     function __construct() {
@@ -263,11 +288,17 @@ class IntegrationRemoveAllClusters {
         $this->ccm->removeAllClusters();
     }
 
-    public static function cleanup() {
+    /**
+     * Create the integration test fixture for performing startup and shutdown
+     * procedures required by the integration test suite.
+     */
+    public static function createFixture() {
+        // Ensure only one instance (singleton)
         if (!isset($instance)) {
-            self::$instance  = new IntegrationRemoveAllClusters();
+            self::$instance  = new IntegrationTestFixture();
         }
     }
 }
 
-IntegrationRemoveAllClusters::cleanup();
+// Create the integration test fixture
+IntegrationTestFixture::createFixture();
