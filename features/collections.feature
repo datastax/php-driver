@@ -213,7 +213,7 @@ Feature: Collections
     When it is executed
     Then its output should contain:
       """
-ID: 56357d2b-4586-433c-ad24-afa9918bc415
+      ID: 56357d2b-4586-433c-ad24-afa9918bc415
       Name: Charles Wallace
       Addresses: Cassandra\Map::__set_state(array(
          'type' =>
@@ -317,8 +317,8 @@ ID: 56357d2b-4586-433c-ad24-afa9918bc415
             ),
              'values' =>
             array (
-              0 => '1000 Database Road',
-              1 => '10025',
+              0 => '10024',
+              1 => '60  SSTable Drive',
               2 => 'New York',
             ),
           )),
@@ -343,8 +343,8 @@ ID: 56357d2b-4586-433c-ad24-afa9918bc415
             ),
              'values' =>
             array (
-              0 => '10024',
-              1 => '60  SSTable Drive',
+              0 => '1000 Database Road',
+              1 => '10025',
               2 => 'New York',
             ),
           )),

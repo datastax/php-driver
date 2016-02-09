@@ -277,192 +277,74 @@ Feature: Schema Metadata
 
       foreach ($keyspace->userTypes() as $name => $type) {
         print "Name: $type\n";
-        var_dump($type);
+        print "Type: " . var_export($type, true) . "\n";
       }
       """
     When it is executed
     Then its output should contain:
       """
       Name: simplex.type1
-      object(Cassandra\Type\UserType)#6 (1) {
-        ["types"]=>
-        array(2) {
-          ["a"]=>
-          object(Cassandra\Type\Scalar)#7 (1) {
-            ["name"]=>
-            string(3) "int"
-          }
-          ["b"]=>
-          object(Cassandra\Type\Scalar)#8 (1) {
-            ["name"]=>
-            string(7) "varchar"
-          }
-        }
-      }
+      Type: Cassandra\Type\UserType::__set_state(array(
+         'types' =>
+        array (
+          'a' =>
+          Cassandra\Type\Scalar::__set_state(array(
+             'name' => 'int',
+          )),
+          'b' =>
+          Cassandra\Type\Scalar::__set_state(array(
+             'name' => 'varchar',
+          )),
+        ),
+      ))
       Name: simplex.type2
-      object(Cassandra\Type\UserType)#9 (1) {
-        ["types"]=>
-        array(2) {
-          ["a"]=>
-          object(Cassandra\Type\Map)#10 (2) {
-            ["keyType"]=>
-            object(Cassandra\Type\Scalar)#8 (1) {
-              ["name"]=>
-              string(7) "varchar"
-            }
-            ["valueType"]=>
-            object(Cassandra\Type\Scalar)#7 (1) {
-              ["name"]=>
-              string(3) "int"
-            }
-          }
-          ["b"]=>
-          object(Cassandra\Type\Scalar)#11 (1) {
-            ["name"]=>
-            string(6) "bigint"
-          }
-        }
-      }
+      Type: Cassandra\Type\UserType::__set_state(array(
+         'types' =>
+        array (
+          'a' =>
+          Cassandra\Type\Map::__set_state(array(
+             'keyType' =>
+            Cassandra\Type\Scalar::__set_state(array(
+               'name' => 'varchar',
+            )),
+             'valueType' =>
+            Cassandra\Type\Scalar::__set_state(array(
+               'name' => 'int',
+            )),
+          )),
+          'b' =>
+          Cassandra\Type\Scalar::__set_state(array(
+             'name' => 'bigint',
+          )),
+        ),
+      ))
       Name: simplex.type3
-      object(Cassandra\Type\UserType)#12 (1) {
-        ["types"]=>
-        array(2) {
-          ["a"]=>
-          object(Cassandra\Type\Map)#14 (2) {
-            ["keyType"]=>
-            object(Cassandra\Type\Scalar)#8 (1) {
-              ["name"]=>
-              string(7) "varchar"
-            }
-            ["valueType"]=>
-            object(Cassandra\Type\Set)#13 (1) {
-              ["valueType"]=>
-              object(Cassandra\Type\Scalar)#7 (1) {
-                ["name"]=>
-                string(3) "int"
-              }
-            }
-          }
-          ["b"]=>
-          object(Cassandra\Type\Collection)#16 (1) {
-            ["valueType"]=>
-            object(Cassandra\Type\Scalar)#15 (1) {
-              ["name"]=>
-              string(4) "uuid"
-            }
-          }
-        }
-      }
-      """
-
-    @cassandra-version-2.1
-    Scenario: Getting metadata for user type by name
-    Given the following schema:
-      """php
-      CREATE KEYSPACE simplex WITH replication = {
-        'class': 'SimpleStrategy',
-        'replication_factor': 1
-      };
-      USE simplex;
-      CREATE TYPE type1 (a int, b text);
-      CREATE TYPE type2 (a map<text, int>, b bigint);
-      CREATE TYPE type3 (a map<text, frozen<set<varint>>>, b list<uuid>);
-      """
-    And the following example:
-      """php
-      <?php
-      $cluster   = Cassandra::cluster()
-                         ->withContactPoints('127.0.0.1')
-                         ->build();
-      $session   = $cluster->connect("simplex");
-      $schema    = $session->schema();
-      $keyspace  = $schema->keyspace("simplex");
-
-      $type      = $keyspace->userType("type1");
-      print "Name: $type\n";
-      var_dump($type);
-
-      $type      = $keyspace->userType("type2");
-      print "Name: $type\n";
-      var_dump($type);
-
-      $type      = $keyspace->userType("type3");
-      print "Name: $type\n";
-      var_dump($type);
-      """
-    When it is executed
-    Then its output should contain:
-      """
-      Name: simplex.type1
-      object(Cassandra\Type\UserType)#6 (1) {
-        ["types"]=>
-        array(2) {
-          ["a"]=>
-          object(Cassandra\Type\Scalar)#7 (1) {
-            ["name"]=>
-            string(3) "int"
-          }
-          ["b"]=>
-          object(Cassandra\Type\Scalar)#8 (1) {
-            ["name"]=>
-            string(7) "varchar"
-          }
-        }
-      }
-      Name: simplex.type2
-      object(Cassandra\Type\UserType)#9 (1) {
-        ["types"]=>
-        array(2) {
-          ["a"]=>
-          object(Cassandra\Type\Map)#10 (2) {
-            ["keyType"]=>
-            object(Cassandra\Type\Scalar)#8 (1) {
-              ["name"]=>
-              string(7) "varchar"
-            }
-            ["valueType"]=>
-            object(Cassandra\Type\Scalar)#7 (1) {
-              ["name"]=>
-              string(3) "int"
-            }
-          }
-          ["b"]=>
-          object(Cassandra\Type\Scalar)#11 (1) {
-            ["name"]=>
-            string(6) "bigint"
-          }
-        }
-      }
-      Name: simplex.type3
-      object(Cassandra\Type\UserType)#6 (1) {
-        ["types"]=>
-        array(2) {
-          ["a"]=>
-          object(Cassandra\Type\Map)#13 (2) {
-            ["keyType"]=>
-            object(Cassandra\Type\Scalar)#8 (1) {
-              ["name"]=>
-              string(7) "varchar"
-            }
-            ["valueType"]=>
-            object(Cassandra\Type\Set)#12 (1) {
-              ["valueType"]=>
-              object(Cassandra\Type\Scalar)#7 (1) {
-                ["name"]=>
-                string(3) "int"
-              }
-            }
-          }
-          ["b"]=>
-          object(Cassandra\Type\Collection)#15 (1) {
-            ["valueType"]=>
-            object(Cassandra\Type\Scalar)#14 (1) {
-              ["name"]=>
-              string(4) "uuid"
-            }
-          }
-        }
-      }
+      Type: Cassandra\Type\UserType::__set_state(array(
+         'types' =>
+        array (
+          'a' =>
+          Cassandra\Type\Map::__set_state(array(
+             'keyType' =>
+            Cassandra\Type\Scalar::__set_state(array(
+               'name' => 'varchar',
+            )),
+             'valueType' =>
+            Cassandra\Type\Set::__set_state(array(
+               'valueType' =>
+              Cassandra\Type\Scalar::__set_state(array(
+                 'name' => 'int',
+              )),
+            )),
+          )),
+          'b' =>
+          Cassandra\Type\Collection::__set_state(array(
+             'valueType' =>
+            Cassandra\Type\Scalar::__set_state(array(
+               'name' => 'uuid',
+            )),
+          )),
+        ),
+      ))
       """
 
     Scenario: Disable schema metadata

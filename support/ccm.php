@@ -90,8 +90,8 @@ class CCM
                 $this->session = $this->cluster->connect();
                 break;
             } catch (Cassandra\Exception\RuntimeException $e) {
-                $this->cluster = null;
-                $this->session = null;
+                unset($this->session);
+                unset($this->cluster);
                 sleep($retries * 0.4);
             }
         }
@@ -103,11 +103,8 @@ class CCM
 
     public function stop()
     {
-        if ($this->session) {
-            $this->session->close();
-            $this->session = null;
-            $this->cluster = null;
-        }
+        unset($this->session);
+        unset($this->cluster);
         $this->run('stop');
     }
 
@@ -139,6 +136,15 @@ class CCM
 
         $clusters = $this->getClusters();
         $clusterName = $this->clusterPrefix.'_'.$this->version.'_'.$dataCenterOneNodes.'-'.$dataCenterTwoNodes;
+
+        if ($this->ssl) {
+            $clusterName .= "_ssl";
+        }
+
+        if ($this->clientAuth) {
+            $clusterName .= "_client_auth";
+        }
+
         if ($clusters['active'] != $clusterName) {
             // Ensure any active cluster is stopped
             if (!empty($clusters['active'])) {
@@ -189,21 +195,12 @@ class CCM
                 $this->run('populate', '-n', $dataCenterOneNodes.':'.$dataCenterTwoNodes, '-i', '127.0.0.');
             }
         }
-
-        if ($this->ssl || $this->clientAuth) {
-            $this->stop();
-            $this->run('updateconf',
-                'client_encryption_options.enabled: false',
-                'client_encryption_options.require_client_auth: false'
-            );
-            $this->ssl        = false;
-            $this->clientAuth = false;
-        }
     }
 
     public function setupSSL()
     {
         if (!$this->ssl) {
+            $this->ssl = true;
             $this->setup(1, 0);
             $this->stop();
             $this->run('updateconf',
@@ -211,13 +208,13 @@ class CCM
                 'client_encryption_options.keystore: ' . realpath(__DIR__ . '/ssl/.keystore'),
                 'client_encryption_options.keystore_password: php-driver'
             );
-            $this->ssl = true;
         }
     }
 
     public function setupClientVerification()
     {
         if (!$this->clientAuth) {
+            $this->clientAuth = true;
             $this->setup(1, 0);
             $this->stop();
             $this->run('updateconf',
@@ -228,7 +225,6 @@ class CCM
                 'client_encryption_options.truststore: ' . realpath(__DIR__ . '/ssl/.truststore'),
                 'client_encryption_options.truststore_password: php-driver'
             );
-            $this->clientAuth = true;
         }
     }
 
