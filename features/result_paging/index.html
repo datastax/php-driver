@@ -42,7 +42,7 @@
             <div class="col-md-8">
               <form id="search" class="form-search dropdown visible-lg-block" ng-controller="search" ng-class="{open: hasResults}" role="search" ng-submit="submit()" data-spy="affix" data-offset-top="130">
                 <div class="form-group has-feedback">
-                  <input type="search" class="form-control input-sm mousetrap" placeholder="Search..." ng-model="q" ng-change="search('v1.0.0')" ng-disabled="!searchReady" disabled data-hotkey="{down: moveDown, up: moveUp, esc: reset}" data-search>
+                  <input type="search" class="form-control input-sm mousetrap" placeholder="Search..." ng-model="q" ng-change="search('v1.1.0')" ng-disabled="!searchReady" disabled data-hotkey="{down: moveDown, up: moveUp, esc: reset}" data-search>
                 </div>
                 <ul class="dropdown-menu search-results" role="menu">
                   <li ng-repeat="result in results" ng-class="{'bg-warning': $index == current}"><a ng-href="{{basePath}}{{result.path}}"><span ng-bind-html="summary(result)"></span></a></li>
@@ -63,12 +63,16 @@
               <li>
                 <div class="btn-group">
                   <button id="current-version" class="btn btn-default btn-sm dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    v1.0.0
+                    v1.1.0
                     <span class="caret"></span>
                   </button>
                   <ul class="dropdown-menu" role="menu" aria-labelledby="current-version">
                   
-                    <li class="disabled"><a href="./">v1.0.0</a></li>
+                    <li class="disabled"><a href="./">v1.1.0</a></li>
+                  
+                    <li><a href="../../v1.0.1/features/result_paging/">v1.0.1</a></li>
+                  
+                    <li><a href="../../v1.0.0/features/result_paging/">v1.0.0</a></li>
                   
                     <li><a href="../../v1.0.0-rc/features/result_paging/">v1.0.0-rc</a></li>
                   
@@ -105,6 +109,8 @@
 </a></li>
 <li><a href="#accessing-page-info-after-loading-next-one">Accessing page info after loading next one
 </a></li>
+<li><a href="#use-paging-state-token-to-get-next-result">Use paging state token to get next result
+</a></li>
                   </ul>
                 </div>
               </li>
@@ -126,7 +132,9 @@
   
   
   
-  <li><a href="../../api/">API docs <small>index</small></a></li>
+  <li>
+    <a href="../../api/">API docs <small>index</small></a>
+  </li>
   
   
   
@@ -137,27 +145,37 @@
   
   
   
-  <li><a href="../datatypes/">Datatypes <small>feature</small></a></li>
+  <li>
+    <a href="../datatypes/">Datatypes <small>feature</small></a>
+  </li>
   
   
   
   
-  <li><a href="../simple_statements/">Simple Statements <small>feature</small></a></li>
+  <li>
+    <a href="../simple_statements/">Simple Statements <small>feature</small></a>
+  </li>
   
   
   
   
-  <li><a href="../prepared_statements/">Prepared Statements <small>feature</small></a></li>
+  <li>
+    <a href="../prepared_statements/">Prepared Statements <small>feature</small></a>
+  </li>
   
   
   
   
-  <li><a href="../batch_statements/">Batch statements <small>feature</small></a></li>
+  <li>
+    <a href="../batch_statements/">Batch statements <small>feature</small></a>
+  </li>
   
   
   
   
-  <li><a href="../consistency_level/">Consistency Level <small>feature</small></a></li>
+  <li>
+    <a href="../consistency_level/">Consistency Level <small>feature</small></a>
+  </li>
   
   
   
@@ -170,22 +188,65 @@
   
   
   
-  <li><a href="../sessions/">Sessions <small>page</small></a></li>
+  <li>
+    <a href="../sessions/">Sessions <small>page</small></a>
+  </li>
   
   
   
   
-  <li><a href="../ssl_encryption/">SSL encryption <small>feature</small></a></li>
+  <li>
+    <a href="../ssl_encryption/">SSL encryption <small>feature</small></a>
+  </li>
   
   
   
   
-  <li><a href="../logging/">Logging <small>feature</small></a></li>
+  <li>
+    <a href="../logging/">Logging <small>feature</small></a>
+  </li>
   
   
   
   
-  <li><a href="../schema_metadata/">Schema Metadata <small>feature</small></a></li>
+  <li>
+    <a href="../client_side_timestamps/">Client-side timestamps <small>feature</small></a>
+  </li>
+  
+  
+  
+  
+  <li>
+    <a href="../schema_metadata/">Schema Metadata <small>feature</small></a>
+  </li>
+  
+  
+  
+  
+  <li>
+    <a href="../retry_polices/">Consistency Level <small>feature</small></a>
+  </li>
+  
+  
+  
+  
+  <li>
+    <a href="../collections/">Collections <small>feature</small></a>
+  </li>
+  
+  
+  
+  
+  <li>
+    <a href="../tuples/">Tuples <small>feature</small></a>
+  </li>
+  
+  
+  
+  
+  <li>
+    <a href="../user_defined_types/">User defined types <small>feature</small></a>
+  </li>
   
   
 </ul>
@@ -325,6 +386,57 @@ key: b, value: 1
 2: last
 entries in page 1: 10
 entries in page 2: 3
+</code></pre>
+</dd>
+</dl>
+<div class="pull-right"><span class="label label-primary">since cassadra v@paging_state_token</span></div>
+<h2 id="use-paging-state-token-to-get-next-result" class="target">Use paging state token to get next result<a class="anchor" href="#use-paging-state-token-to-get-next-result" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+</h2>
+<dl class="steps">
+<dt>Given </dt>
+<dd>the following example:<pre class="highlight"><code><span class="cp">&lt;?php</span>
+<span class="nv">$cluster</span>   <span class="o">=</span> <span class="nx">Cassandra</span><span class="o">::</span><span class="na">cluster</span><span class="p">()</span>
+               <span class="o">-&gt;</span><span class="na">withContactPoints</span><span class="p">(</span><span class="s1">'127.0.0.1'</span><span class="p">)</span>
+               <span class="o">-&gt;</span><span class="na">build</span><span class="p">();</span>
+<span class="nv">$session</span>   <span class="o">=</span> <span class="nv">$cluster</span><span class="o">-&gt;</span><span class="na">connect</span><span class="p">(</span><span class="s2">"simplex"</span><span class="p">);</span>
+<span class="nv">$statement</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Cassandra\SimpleStatement</span><span class="p">(</span><span class="s2">"SELECT * FROM entries"</span><span class="p">);</span>
+<span class="nv">$options</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span><span class="s1">'page_size'</span> <span class="o">=&gt;</span> <span class="mi">2</span><span class="p">);</span>
+<span class="nv">$result</span> <span class="o">=</span> <span class="nv">$session</span><span class="o">-&gt;</span><span class="na">execute</span><span class="p">(</span><span class="nv">$statement</span><span class="p">,</span> <span class="k">new</span> <span class="nx">Cassandra\ExecutionOptions</span><span class="p">(</span><span class="nv">$options</span><span class="p">));</span>
+
+<span class="k">foreach</span> <span class="p">(</span><span class="nv">$result</span> <span class="k">as</span> <span class="nv">$row</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nb">printf</span><span class="p">(</span><span class="s2">"key: '%s' value: %d</span><span class="se">\n</span><span class="s2">"</span><span class="p">,</span> <span class="nv">$row</span><span class="p">[</span><span class="s1">'key'</span><span class="p">],</span> <span class="nv">$row</span><span class="p">[</span><span class="s1">'value'</span><span class="p">]);</span>
+<span class="p">}</span>
+
+<span class="k">while</span> <span class="p">(</span><span class="nv">$result</span><span class="o">-&gt;</span><span class="na">pagingStateToken</span><span class="p">())</span> <span class="p">{</span>
+    <span class="nv">$options</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span>
+        <span class="s1">'page_size'</span> <span class="o">=&gt;</span> <span class="mi">2</span><span class="p">,</span>
+        <span class="s1">'paging_state_token'</span> <span class="o">=&gt;</span> <span class="nv">$result</span><span class="o">-&gt;</span><span class="na">pagingStateToken</span><span class="p">()</span>
+    <span class="p">);</span>
+
+    <span class="nv">$result</span> <span class="o">=</span> <span class="nv">$session</span><span class="o">-&gt;</span><span class="na">execute</span><span class="p">(</span><span class="nv">$statement</span><span class="p">,</span> <span class="k">new</span> <span class="nx">Cassandra\ExecutionOptions</span><span class="p">(</span><span class="nv">$options</span><span class="p">));</span>
+
+    <span class="k">foreach</span> <span class="p">(</span><span class="nv">$result</span> <span class="k">as</span> <span class="nv">$row</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nb">printf</span><span class="p">(</span><span class="s2">"key: '%s' value: %d</span><span class="se">\n</span><span class="s2">"</span><span class="p">,</span> <span class="nv">$row</span><span class="p">[</span><span class="s1">'key'</span><span class="p">],</span> <span class="nv">$row</span><span class="p">[</span><span class="s1">'value'</span><span class="p">]);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre>
+</dd>
+<dt>When </dt>
+<dd>it is executed</dd>
+<dt>Then </dt>
+<dd>its output should contain:<pre><code>key: 'a' value: 0
+key: 'c' value: 2
+key: 'm' value: 12
+key: 'f' value: 5
+key: 'g' value: 6
+key: 'e' value: 4
+key: 'd' value: 3
+key: 'h' value: 7
+key: 'l' value: 11
+key: 'j' value: 9
+key: 'i' value: 8
+key: 'k' value: 10
+key: 'b' value: 1
 </code></pre>
 </dd>
 </dl>

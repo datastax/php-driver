@@ -42,7 +42,7 @@
             <div class="col-md-8">
               <form id="search" class="form-search dropdown visible-lg-block" ng-controller="search" ng-class="{open: hasResults}" role="search" ng-submit="submit()" data-spy="affix" data-offset-top="130">
                 <div class="form-group has-feedback">
-                  <input type="search" class="form-control input-sm mousetrap" placeholder="Search..." ng-model="q" ng-change="search('v1.0.0')" ng-disabled="!searchReady" disabled data-hotkey="{down: moveDown, up: moveUp, esc: reset}" data-search>
+                  <input type="search" class="form-control input-sm mousetrap" placeholder="Search..." ng-model="q" ng-change="search('v1.1.0')" ng-disabled="!searchReady" disabled data-hotkey="{down: moveDown, up: moveUp, esc: reset}" data-search>
                 </div>
                 <ul class="dropdown-menu search-results" role="menu">
                   <li ng-repeat="result in results" ng-class="{'bg-warning': $index == current}"><a ng-href="{{basePath}}{{result.path}}"><span ng-bind-html="summary(result)"></span></a></li>
@@ -63,12 +63,16 @@
               <li>
                 <div class="btn-group">
                   <button id="current-version" class="btn btn-default btn-sm dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    v1.0.0
+                    v1.1.0
                     <span class="caret"></span>
                   </button>
                   <ul class="dropdown-menu" role="menu" aria-labelledby="current-version">
                   
-                    <li class="disabled"><a href="./">v1.0.0</a></li>
+                    <li class="disabled"><a href="./">v1.1.0</a></li>
+                  
+                    <li><a href="../../v1.0.1/features/consistency_level/">v1.0.1</a></li>
+                  
+                    <li><a href="../../v1.0.0/features/consistency_level/">v1.0.0</a></li>
                   
                     <li><a href="../../v1.0.0-rc/features/consistency_level/">v1.0.0-rc</a></li>
                   
@@ -124,7 +128,9 @@
   
   
   
-  <li><a href="../../api/">API docs <small>index</small></a></li>
+  <li>
+    <a href="../../api/">API docs <small>index</small></a>
+  </li>
   
   
   
@@ -135,22 +141,30 @@
   
   
   
-  <li><a href="../datatypes/">Datatypes <small>feature</small></a></li>
+  <li>
+    <a href="../datatypes/">Datatypes <small>feature</small></a>
+  </li>
   
   
   
   
-  <li><a href="../simple_statements/">Simple Statements <small>feature</small></a></li>
+  <li>
+    <a href="../simple_statements/">Simple Statements <small>feature</small></a>
+  </li>
   
   
   
   
-  <li><a href="../prepared_statements/">Prepared Statements <small>feature</small></a></li>
+  <li>
+    <a href="../prepared_statements/">Prepared Statements <small>feature</small></a>
+  </li>
   
   
   
   
-  <li><a href="../batch_statements/">Batch statements <small>feature</small></a></li>
+  <li>
+    <a href="../batch_statements/">Batch statements <small>feature</small></a>
+  </li>
   
   
   
@@ -163,27 +177,72 @@
   
   
   
-  <li><a href="../result_paging/">Result paging <small>feature</small></a></li>
+  <li>
+    <a href="../result_paging/">Result paging <small>feature</small></a>
+  </li>
   
   
   
   
-  <li><a href="../sessions/">Sessions <small>page</small></a></li>
+  <li>
+    <a href="../sessions/">Sessions <small>page</small></a>
+  </li>
   
   
   
   
-  <li><a href="../ssl_encryption/">SSL encryption <small>feature</small></a></li>
+  <li>
+    <a href="../ssl_encryption/">SSL encryption <small>feature</small></a>
+  </li>
   
   
   
   
-  <li><a href="../logging/">Logging <small>feature</small></a></li>
+  <li>
+    <a href="../logging/">Logging <small>feature</small></a>
+  </li>
   
   
   
   
-  <li><a href="../schema_metadata/">Schema Metadata <small>feature</small></a></li>
+  <li>
+    <a href="../client_side_timestamps/">Client-side timestamps <small>feature</small></a>
+  </li>
+  
+  
+  
+  
+  <li>
+    <a href="../schema_metadata/">Schema Metadata <small>feature</small></a>
+  </li>
+  
+  
+  
+  
+  <li>
+    <a href="../retry_polices/">Consistency Level <small>feature</small></a>
+  </li>
+  
+  
+  
+  
+  <li>
+    <a href="../collections/">Collections <small>feature</small></a>
+  </li>
+  
+  
+  
+  
+  <li>
+    <a href="../tuples/">Tuples <small>feature</small></a>
+  </li>
+  
+  
+  
+  
+  <li>
+    <a href="../user_defined_types/">User defined types <small>feature</small></a>
+  </li>
   
   
 </ul>

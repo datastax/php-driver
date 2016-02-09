@@ -42,7 +42,7 @@
             <div class="col-md-8">
               <form id="search" class="form-search dropdown visible-lg-block" ng-controller="search" ng-class="{open: hasResults}" role="search" ng-submit="submit()" data-spy="affix" data-offset-top="130">
                 <div class="form-group has-feedback">
-                  <input type="search" class="form-control input-sm mousetrap" placeholder="Search..." ng-model="q" ng-change="search('v1.0.0')" ng-disabled="!searchReady" disabled data-hotkey="{down: moveDown, up: moveUp, esc: reset}" data-search>
+                  <input type="search" class="form-control input-sm mousetrap" placeholder="Search..." ng-model="q" ng-change="search('v1.1.0')" ng-disabled="!searchReady" disabled data-hotkey="{down: moveDown, up: moveUp, esc: reset}" data-search>
                 </div>
                 <ul class="dropdown-menu search-results" role="menu">
                   <li ng-repeat="result in results" ng-class="{'bg-warning': $index == current}"><a ng-href="{{basePath}}{{result.path}}"><span ng-bind-html="summary(result)"></span></a></li>
@@ -63,12 +63,16 @@
               <li>
                 <div class="btn-group">
                   <button id="current-version" class="btn btn-default btn-sm dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    v1.0.0
+                    v1.1.0
                     <span class="caret"></span>
                   </button>
                   <ul class="dropdown-menu" role="menu" aria-labelledby="current-version">
                   
-                    <li class="disabled"><a href="./">v1.0.0</a></li>
+                    <li class="disabled"><a href="./">v1.1.0</a></li>
+                  
+                    <li><a href="../../v1.0.1/features/schema_metadata/">v1.0.1</a></li>
+                  
+                    <li><a href="../../v1.0.0/features/schema_metadata/">v1.0.0</a></li>
                   
                     <li><a href="../../v1.0.0-rc/">v1.0.0-rc</a></li>
                   
@@ -115,6 +119,10 @@
 </a></li>
 <li><a href="#getting-metadata-for-column-and-types">Getting metadata for column and types
 </a></li>
+<li><a href="#getting-metadata-for-user-types">Getting metadata for user types
+</a></li>
+<li><a href="#disable-schema-metadata">Disable schema metadata
+</a></li>
                   </ul>
                 </div>
               </li>
@@ -136,7 +144,9 @@
   
   
   
-  <li><a href="../../api/">API docs <small>index</small></a></li>
+  <li>
+    <a href="../../api/">API docs <small>index</small></a>
+  </li>
   
   
   
@@ -147,47 +157,72 @@
   
   
   
-  <li><a href="../datatypes/">Datatypes <small>feature</small></a></li>
+  <li>
+    <a href="../datatypes/">Datatypes <small>feature</small></a>
+  </li>
   
   
   
   
-  <li><a href="../simple_statements/">Simple Statements <small>feature</small></a></li>
+  <li>
+    <a href="../simple_statements/">Simple Statements <small>feature</small></a>
+  </li>
   
   
   
   
-  <li><a href="../prepared_statements/">Prepared Statements <small>feature</small></a></li>
+  <li>
+    <a href="../prepared_statements/">Prepared Statements <small>feature</small></a>
+  </li>
   
   
   
   
-  <li><a href="../batch_statements/">Batch statements <small>feature</small></a></li>
+  <li>
+    <a href="../batch_statements/">Batch statements <small>feature</small></a>
+  </li>
   
   
   
   
-  <li><a href="../consistency_level/">Consistency Level <small>feature</small></a></li>
+  <li>
+    <a href="../consistency_level/">Consistency Level <small>feature</small></a>
+  </li>
   
   
   
   
-  <li><a href="../result_paging/">Result paging <small>feature</small></a></li>
+  <li>
+    <a href="../result_paging/">Result paging <small>feature</small></a>
+  </li>
   
   
   
   
-  <li><a href="../sessions/">Sessions <small>page</small></a></li>
+  <li>
+    <a href="../sessions/">Sessions <small>page</small></a>
+  </li>
   
   
   
   
-  <li><a href="../ssl_encryption/">SSL encryption <small>feature</small></a></li>
+  <li>
+    <a href="../ssl_encryption/">SSL encryption <small>feature</small></a>
+  </li>
   
   
   
   
-  <li><a href="../logging/">Logging <small>feature</small></a></li>
+  <li>
+    <a href="../logging/">Logging <small>feature</small></a>
+  </li>
+  
+  
+  
+  
+  <li>
+    <a href="../client_side_timestamps/">Client-side timestamps <small>feature</small></a>
+  </li>
   
   
   
@@ -195,6 +230,34 @@
   <li class="active">
     <a href="./" class="current">Schema Metadata <small>feature</small></a>
     
+  </li>
+  
+  
+  
+  
+  <li>
+    <a href="../retry_polices/">Consistency Level <small>feature</small></a>
+  </li>
+  
+  
+  
+  
+  <li>
+    <a href="../collections/">Collections <small>feature</small></a>
+  </li>
+  
+  
+  
+  
+  <li>
+    <a href="../tuples/">Tuples <small>feature</small></a>
+  </li>
+  
+  
+  
+  
+  <li>
+    <a href="../user_defined_types/">User defined types <small>feature</small></a>
   </li>
   
   
@@ -466,7 +529,7 @@ Minimum Index Interval: 4
 <dt>When </dt>
 <dd>it is executed</dd>
 <dt>Then </dt>
-<dd>its output should contain:<pre><code>ascii_value: ascii
+<dd>its output should contain these lines in any order:<pre><code>ascii_value: ascii
 bigint_value: bigint
 blob_value: blob
 decimal_value: decimal
@@ -484,6 +547,125 @@ timeuuid_value: timeuuid
 uuid_value: uuid
 varchar_value: varchar
 varint_value: varint
+</code></pre>
+</dd>
+</dl>
+<div class="pull-right"><span class="label label-primary">since cassadra v2.1</span></div>
+<h2 id="getting-metadata-for-user-types" class="target">Getting metadata for user types<a class="anchor" href="#getting-metadata-for-user-types" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+</h2>
+<dl class="steps">
+<dt>Given </dt>
+<dd>the following schema:<pre class="highlight"><code>CREATE KEYSPACE simplex WITH replication = {
+  'class': 'SimpleStrategy',
+  'replication_factor': 1
+};
+USE simplex;
+CREATE TYPE type1 (a int, b text);
+CREATE TYPE type2 (a map<span class="nt">&lt;text</span><span class="err">,</span> <span class="na">int</span><span class="nt">&gt;</span>, b bigint);
+CREATE TYPE type3 (a map<span class="nt">&lt;text</span><span class="err">,</span> <span class="na">frozen</span><span class="err">&lt;</span><span class="na">set</span><span class="err">&lt;</span><span class="na">varint</span><span class="nt">&gt;</span>&gt;&gt;, b list<span class="nt">&lt;uuid&gt;</span>);
+</code></pre>
+</dd>
+<dt>And </dt>
+<dd>the following example:<pre class="highlight"><code><span class="cp">&lt;?php</span>
+<span class="nv">$cluster</span>   <span class="o">=</span> <span class="nx">Cassandra</span><span class="o">::</span><span class="na">cluster</span><span class="p">()</span>
+                   <span class="o">-&gt;</span><span class="na">withContactPoints</span><span class="p">(</span><span class="s1">'127.0.0.1'</span><span class="p">)</span>
+                   <span class="o">-&gt;</span><span class="na">build</span><span class="p">();</span>
+<span class="nv">$session</span>   <span class="o">=</span> <span class="nv">$cluster</span><span class="o">-&gt;</span><span class="na">connect</span><span class="p">(</span><span class="s2">"simplex"</span><span class="p">);</span>
+<span class="nv">$schema</span>    <span class="o">=</span> <span class="nv">$session</span><span class="o">-&gt;</span><span class="na">schema</span><span class="p">();</span>
+<span class="nv">$keyspace</span>  <span class="o">=</span> <span class="nv">$schema</span><span class="o">-&gt;</span><span class="na">keyspace</span><span class="p">(</span><span class="s2">"simplex"</span><span class="p">);</span>
+
+<span class="k">foreach</span> <span class="p">(</span><span class="nv">$keyspace</span><span class="o">-&gt;</span><span class="na">userTypes</span><span class="p">()</span> <span class="k">as</span> <span class="nv">$name</span> <span class="o">=&gt;</span> <span class="nv">$type</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">print</span> <span class="s2">"Name: </span><span class="nv">$type</span><span class="se">\n</span><span class="s2">"</span><span class="p">;</span>
+  <span class="k">print</span> <span class="s2">"Type: "</span> <span class="o">.</span> <span class="nb">var_export</span><span class="p">(</span><span class="nv">$type</span><span class="p">,</span> <span class="kc">true</span><span class="p">)</span> <span class="o">.</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre>
+</dd>
+<dt>When </dt>
+<dd>it is executed</dd>
+<dt>Then </dt>
+<dd>its output should contain:<pre><code>Name: simplex.type1
+Type: Cassandra\Type\UserType::__set_state(array(
+   'types' =&gt;
+  array (
+    'a' =&gt;
+    Cassandra\Type\Scalar::__set_state(array(
+       'name' =&gt; 'int',
+    )),
+    'b' =&gt;
+    Cassandra\Type\Scalar::__set_state(array(
+       'name' =&gt; 'varchar',
+    )),
+  ),
+))
+Name: simplex.type2
+Type: Cassandra\Type\UserType::__set_state(array(
+   'types' =&gt;
+  array (
+    'a' =&gt;
+    Cassandra\Type\Map::__set_state(array(
+       'keyType' =&gt;
+      Cassandra\Type\Scalar::__set_state(array(
+         'name' =&gt; 'varchar',
+      )),
+       'valueType' =&gt;
+      Cassandra\Type\Scalar::__set_state(array(
+         'name' =&gt; 'int',
+      )),
+    )),
+    'b' =&gt;
+    Cassandra\Type\Scalar::__set_state(array(
+       'name' =&gt; 'bigint',
+    )),
+  ),
+))
+Name: simplex.type3
+Type: Cassandra\Type\UserType::__set_state(array(
+   'types' =&gt;
+  array (
+    'a' =&gt;
+    Cassandra\Type\Map::__set_state(array(
+       'keyType' =&gt;
+      Cassandra\Type\Scalar::__set_state(array(
+         'name' =&gt; 'varchar',
+      )),
+       'valueType' =&gt;
+      Cassandra\Type\Set::__set_state(array(
+         'valueType' =&gt;
+        Cassandra\Type\Scalar::__set_state(array(
+           'name' =&gt; 'int',
+        )),
+      )),
+    )),
+    'b' =&gt;
+    Cassandra\Type\Collection::__set_state(array(
+       'valueType' =&gt;
+      Cassandra\Type\Scalar::__set_state(array(
+         'name' =&gt; 'uuid',
+      )),
+    )),
+  ),
+))
+</code></pre>
+</dd>
+</dl>
+<h2 id="disable-schema-metadata" class="target">Disable schema metadata<a class="anchor" href="#disable-schema-metadata" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+</h2>
+<dl class="steps">
+<dt>Given </dt>
+<dd>the following example:<pre class="highlight"><code><span class="cp">&lt;?php</span>
+<span class="nv">$cluster</span>   <span class="o">=</span> <span class="nx">Cassandra</span><span class="o">::</span><span class="na">cluster</span><span class="p">()</span>
+                   <span class="o">-&gt;</span><span class="na">withContactPoints</span><span class="p">(</span><span class="s1">'127.0.0.1'</span><span class="p">)</span>
+                   <span class="o">-&gt;</span><span class="na">withSchemaMetadata</span><span class="p">(</span><span class="kc">false</span><span class="p">)</span>
+                   <span class="o">-&gt;</span><span class="na">build</span><span class="p">();</span>
+<span class="nv">$session</span>   <span class="o">=</span> <span class="nv">$cluster</span><span class="o">-&gt;</span><span class="na">connect</span><span class="p">(</span><span class="s2">"simplex"</span><span class="p">);</span>
+<span class="nv">$schema</span>    <span class="o">=</span> <span class="nv">$session</span><span class="o">-&gt;</span><span class="na">schema</span><span class="p">();</span>
+<span class="k">print</span> <span class="nb">count</span><span class="p">(</span><span class="nv">$schema</span><span class="o">-&gt;</span><span class="na">keyspaces</span><span class="p">())</span> <span class="o">.</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">;</span>
+</code></pre>
+</dd>
+<dt>When </dt>
+<dd>it is executed</dd>
+<dt>Then </dt>
+<dd>its output should contain these lines in any order:<pre><code>0
 </code></pre>
 </dd>
 </dl>

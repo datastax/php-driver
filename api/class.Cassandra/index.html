@@ -42,7 +42,7 @@
             <div class="col-md-8">
               <form id="search" class="form-search dropdown visible-lg-block" ng-controller="search" ng-class="{open: hasResults}" role="search" ng-submit="submit()" data-spy="affix" data-offset-top="130">
                 <div class="form-group has-feedback">
-                  <input type="search" class="form-control input-sm mousetrap" placeholder="Search..." ng-model="q" ng-change="search('v1.0.0')" ng-disabled="!searchReady" disabled data-hotkey="{down: moveDown, up: moveUp, esc: reset}" data-search>
+                  <input type="search" class="form-control input-sm mousetrap" placeholder="Search..." ng-model="q" ng-change="search('v1.1.0')" ng-disabled="!searchReady" disabled data-hotkey="{down: moveDown, up: moveUp, esc: reset}" data-search>
                 </div>
                 <ul class="dropdown-menu search-results" role="menu">
                   <li ng-repeat="result in results" ng-class="{'bg-warning': $index == current}"><a ng-href="{{basePath}}{{result.path}}"><span ng-bind-html="summary(result)"></span></a></li>
@@ -63,12 +63,16 @@
               <li>
                 <div class="btn-group">
                   <button id="current-version" class="btn btn-default btn-sm dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    v1.0.0
+                    v1.1.0
                     <span class="caret"></span>
                   </button>
                   <ul class="dropdown-menu" role="menu" aria-labelledby="current-version">
                   
-                    <li class="disabled"><a href="./">v1.0.0</a></li>
+                    <li class="disabled"><a href="./">v1.1.0</a></li>
+                  
+                    <li><a href="../../v1.0.1/api/class.Cassandra/">v1.0.1</a></li>
+                  
+                    <li><a href="../../v1.0.0/api/class.Cassandra/">v1.0.0</a></li>
                   
                     <li><a href="../../v1.0.0-rc/api/class.Cassandra/">v1.0.0-rc</a></li>
                   
@@ -204,6 +208,9 @@ TYPE_INET
 <li><a href="#constant-VERSION">
 VERSION
 </a></li>
+<li><a href="#constant-CPP_DRIVER_VERSION">
+CPP_DRIVER_VERSION
+</a></li>
 </ul>
 </li>
 <li>
@@ -250,7 +257,9 @@ VERSION
   
   
   
-  <li><a href="../Cassandra/">Cassandra <small>namespace</small></a></li>
+  <li>
+    <a href="../Cassandra/">Cassandra <small>namespace</small></a>
+  </li>
   
   
 </ul>
@@ -260,7 +269,9 @@ VERSION
   
   
   
-  <li><a href="../../features/">Features <small>page</small></a></li>
+  <li>
+    <a href="../../features/">Features <small>page</small></a>
+  </li>
   
   
 </ul>
@@ -317,7 +328,7 @@ VERSION
 </h3> <big>=</big> <var>1</var>
     </div>
     <div class="panel-body constant-body">
-      <p>Consistency level ONE gurantess that data has been written to at least one Replica node.</p>
+      <p>Consistency level ONE guarantees that data has been written to at least one Replica node.</p>
 
       <dl class="tags">
 <dt class="tag-title">See Also:</dt>
@@ -347,7 +358,7 @@ VERSION
 </h3> <big>=</big> <var>2</var>
     </div>
     <div class="panel-body constant-body">
-      <p>Consistency level TWO gurantess that data has been written to at least two Replica nodes.</p>
+      <p>Consistency level TWO guarantees that data has been written to at least two Replica nodes.</p>
 
       <dl class="tags">
 <dt class="tag-title">See Also:</dt>
@@ -362,7 +373,7 @@ VERSION
 </h3> <big>=</big> <var>3</var>
     </div>
     <div class="panel-body constant-body">
-      <p>Consistency level THREE gurantess that data has been written to at least three Replica nodes.</p>
+      <p>Consistency level THREE guarantees that data has been written to at least three Replica nodes.</p>
 
       <dl class="tags">
 <dt class="tag-title">See Also:</dt>
@@ -377,7 +388,7 @@ VERSION
 </h3> <big>=</big> <var>4</var>
     </div>
     <div class="panel-body constant-body">
-      <p>Consistency level QUORUM gurantess that data has been written to at least the majority of Replica nodes. How many nodes exactly are a majority depends on the replication factor of a given keyspace and is calculated using the formula <code>ceil(RF / 2 + 1)</code>, where <code>ceil</code> is a mathematical ceiling function and <code>RF</code> is the replication factor used. For example, for a replication factor of <code>5</code>, the majority is <code>ceil(5 / 2 + 1) = 3</code>.</p>
+      <p>Consistency level QUORUM guarantees that data has been written to at least the majority of Replica nodes. How many nodes exactly are a majority depends on the replication factor of a given keyspace and is calculated using the formula <code>ceil(RF / 2 + 1)</code>, where <code>ceil</code> is a mathematical ceiling function and <code>RF</code> is the replication factor used. For example, for a replication factor of <code>5</code>, the majority is <code>ceil(5 / 2 + 1) = 3</code>.</p>
 
       <dl class="tags">
 <dt class="tag-title">See Also:</dt>
@@ -407,7 +418,7 @@ VERSION
 </h3> <big>=</big> <var>7</var>
     </div>
     <div class="panel-body constant-body">
-      <p>Consistency level EACH_QUORUM gurantess that data has been written to at least a majority Replica nodes in all datacenters. This consistency level works only with <code>NetworkTopologyStrategy</code> replication.</p>
+      <p>Consistency level EACH_QUORUM guarantees that data has been written to at least a majority Replica nodes in all datacenters. This consistency level works only with <code>NetworkTopologyStrategy</code> replication.</p>
 
       <dl class="tags">
 <dt class="tag-title">See Also:</dt>
@@ -422,7 +433,7 @@ VERSION
 </h3> <big>=</big> <var>5</var>
     </div>
     <div class="panel-body constant-body">
-      <p>Consistency level ALL gurantess that data has been written to all Replica nodes.</p>
+      <p>Consistency level ALL guarantees that data has been written to all Replica nodes.</p>
 
       <dl class="tags">
 <dt class="tag-title">See Also:</dt>
@@ -857,10 +868,22 @@ VERSION
     <div class="panel-heading constant-heading">
       <h3 id="constant-VERSION" class="target">
 <code>VERSION</code><a class="anchor" href="#constant-VERSION" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
-</h3> <big>=</big> <var>&#8216;1.0.0-beta&#8217;</var>
+</h3> <big>=</big> <var>&#8216;1.1&#8217;</var>
     </div>
     <div class="panel-body constant-body">
       <p>Current version of the extension.</p>
+
+      
+    </div>
+  </div>
+  <div class="panel panel-default member-definition">
+    <div class="panel-heading constant-heading">
+      <h3 id="constant-CPP_DRIVER_VERSION" class="target">
+<code>CPP_DRIVER_VERSION</code><a class="anchor" href="#constant-CPP_DRIVER_VERSION" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+</h3> <big>=</big> <var>&#8216;2.2.2&#8217;</var>
+    </div>
+    <div class="panel-body constant-body">
+      <p>Version of the cpp-driver the extension is compiled against.</p>
 
       
     </div>
