@@ -129,7 +129,7 @@ class CCM
         return array('active' => $active, 'list' => $clusters);
     }
 
-    public function setup($dataCenterOneNodes, $dataCenterTwoNodes)
+    private function internalSetup($dataCenterOneNodes, $dataCenterTwoNodes)
     {
         $this->dataCenterOneNodes = $dataCenterOneNodes;
         $this->dataCenterTwoNodes = $dataCenterTwoNodes;
@@ -197,11 +197,17 @@ class CCM
         }
     }
 
+    public function setup($dataCenterOneNodes, $dataCenterTwoNodes) {
+        $this->ssl = false;
+        $this->clientAuth = false;
+        $this->internalSetup($dataCenterOneNodes, $dataCenterTwoNodes);
+    }
+
     public function setupSSL()
     {
         if (!$this->ssl) {
             $this->ssl = true;
-            $this->setup(1, 0);
+            $this->internalSetup(1, 0);
             $this->stop();
             $this->run('updateconf',
                 'client_encryption_options.enabled: true',
@@ -215,7 +221,7 @@ class CCM
     {
         if (!$this->clientAuth) {
             $this->clientAuth = true;
-            $this->setup(1, 0);
+            $this->internalSetup(1, 0);
             $this->stop();
             $this->run('updateconf',
                 'client_encryption_options.enabled: true',

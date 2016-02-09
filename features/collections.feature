@@ -178,11 +178,7 @@ Feature: Collections
                   'home', $addressType->create(
                       'city', 'New York',
                       'street', '1000 Database Road',
-                      'zip', '10025'),
-                  'work', $addressType->create(
-                      'city', 'New York',
-                      'street', '60  SSTable Drive',
-                      'zip', '10024')
+                      'zip', '10025')
               )
           ),
           array(
@@ -292,37 +288,10 @@ Feature: Collections
          'keys' =>
         array (
           0 => 'home',
-          1 => 'work',
         ),
          'values' =>
         array (
           0 =>
-          Cassandra\Map::__set_state(array(
-             'type' =>
-            Cassandra\Type\Map::__set_state(array(
-               'keyType' =>
-              Cassandra\Type\Scalar::__set_state(array(
-                 'name' => 'varchar',
-              )),
-               'valueType' =>
-              Cassandra\Type\Scalar::__set_state(array(
-                 'name' => 'varchar',
-              )),
-            )),
-             'keys' =>
-            array (
-              0 => 'city',
-              1 => 'street',
-              2 => 'zip',
-            ),
-             'values' =>
-            array (
-              0 => '10024',
-              1 => '60  SSTable Drive',
-              2 => 'New York',
-            ),
-          )),
-          1 =>
           Cassandra\Map::__set_state(array(
              'type' =>
             Cassandra\Type\Map::__set_state(array(
