@@ -17,13 +17,13 @@ This is a wrapper around [the DataStax C/C++ Driver for Apache Cassandra and Dat
 ## What's new in v1.1.0:
 
 * Support for PHP 7
-* [User defined types]()
-* [Tuples]()
-* [Nested collection]()
-* [Client-side timestamps]()
-* [Retry policies]()
-* [Named parameters]()
-* [Raw paging token access]()
+* [User defined types](http://datastax.github.io/php-driver/features/user_defined_types/)
+* [Tuples](http://datastax.github.io/php-driver/features/tuples/)
+* [Nested collection](http://datastax.github.io/php-driver/features/collections/#using-cassandra-nested-collections)
+* [Client-side timestamps](http://datastax.github.io/php-driver/features/client_side_timestamps/)
+* [Retry policies](http://datastax.github.io/php-driver/features/retry_polices/)
+* [Named parameters](http://datastax.github.io/php-driver/features/simple_statements/#simple-statements-also-support-named-arguments)
+* [Raw paging token access](http://datastax.github.io/php-driver/features/result_paging/#use-paging-state-token-to-get-next-result)
 
 ## Feedback Requested
 
