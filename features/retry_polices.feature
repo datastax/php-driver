@@ -1,4 +1,4 @@
-Feature: Consistency Level
+Feature: Retry Policies
 
   PHP Driver supports consistency levels when executing statements.
 
