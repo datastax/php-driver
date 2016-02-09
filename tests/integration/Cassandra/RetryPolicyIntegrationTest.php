@@ -23,6 +23,16 @@ namespace Cassandra;
  */
 class RetryPolicyIntegrationTest extends BasicIntegrationTest {
     /**
+     * The number of inserts and asserts to perform during testing.
+     */
+    const NUMBER_OF_INSERTS = 25;
+    /**
+     * Maximum number of TimeoutExceptions to bound the insert/assert functions
+     * recursive calls/
+     */
+    const NUMBER_OF_TIMEOUT_EXCEPTIONS = 5;
+
+    /**
      * Insert query generated for a retry policy test.
      *
      * @var string
@@ -53,7 +63,7 @@ class RetryPolicyIntegrationTest extends BasicIntegrationTest {
      */
     public function tearDown() {
         $nodes = range(1, $this->numberDC1Nodes);
-        $this->ccm->resumeNode($nodes);
+        $this->ccm->startNode($nodes);
 
         // Process parent teardown steps
         parent::tearDown();
@@ -66,8 +76,10 @@ class RetryPolicyIntegrationTest extends BasicIntegrationTest {
      * @param $key Key value
      * @param $numberOfInserts Number of inserts to perform
      * @param $consistency Consistency level to execute statement
+     * @param $retries Number of TimeoutException retries
+     *                 (DEFAULT: self::NUMBER_OF_TIMEOUT_EXCEPTIONS)
      */
-    private function insert(RetryPolicy $policy, $key, $numberOfInserts, $consistency) {
+    private function insert(RetryPolicy $policy, $key, $numberOfInserts, $consistency, $retries = self::NUMBER_OF_TIMEOUT_EXCEPTIONS) {
         try {
             // Create and prepare the insert statements
             $prepare = $this->session->prepare($this->insertQuery);
@@ -94,7 +106,15 @@ class RetryPolicyIntegrationTest extends BasicIntegrationTest {
             ));
             $this->session->execute($batch, $options);
         } catch (Exception\TimeoutException $te) {
-            $this->insert($policy, $key, $numberOfInserts, $consistency);
+            if (Integration::isDebug()) {
+                fprintf(STDOUT, "Insert TimeoutException: %s (%s:%d)" . PHP_EOL,
+                    $te->getMessage(), $te->getFile(), $te->getLine());
+            }
+            if ($retries > 0) {
+                $this->insert($policy, $key, $numberOfInserts, $consistency, ($retries - 1));
+            } else {
+                throw $te;
+            }
         }
     }
 
@@ -105,8 +125,10 @@ class RetryPolicyIntegrationTest extends BasicIntegrationTest {
      * @param $key Key value
      * @param $numberOfAsserts Number of inserts to perform
      * @param $consistency Consistency level to execute statement
+     * @param $retries Number of TimeoutException retries
+     *                 (DEFAULT: self::NUMBER_OF_TIMEOUT_EXCEPTIONS)
      */
-    private function assert(RetryPolicy $policy, $key, $numberOfAsserts, $consistency) {
+    private function assert(RetryPolicy $policy, $key, $numberOfAsserts, $consistency, $retries = self::NUMBER_OF_TIMEOUT_EXCEPTIONS) {
         try {
             // Select the values
             $query = "SELECT value_int FROM {$this->tableNamePrefix} WHERE key = {$key}";
@@ -123,7 +145,15 @@ class RetryPolicyIntegrationTest extends BasicIntegrationTest {
                 $this->assertEquals(($i + 1), $row["value_int"]);
             }
         } catch (Exception\TimeoutException $te) {
-            $this->insert($policy, $key, $numberOfAsserts, $consistency);
+            if (Integration::isDebug()) {
+                fprintf(STDOUT, "Assert TimeoutException: %s (%s:%d)" . PHP_EOL,
+                    $te->getMessage(), $te->getFile(), $te->getLine());
+            }
+            if ($retries > 0) {
+                $this->assert($policy, $key, $numberOfAsserts, $consistency, ($retries - 1));
+            } else {
+                throw $te;
+            }
         }
     }
 
@@ -143,26 +173,26 @@ class RetryPolicyIntegrationTest extends BasicIntegrationTest {
         $policy = new RetryPolicy\DowngradingConsistency();
 
         // Disable node one
-        $this->ccm->pauseNode(1);
+        $this->ccm->stopNode(1);
 
         // Insert and assert values with CONSISTENCY_ALL
-        $this->insert($policy, 0, 1, \Cassandra::CONSISTENCY_ALL);
-        $this->assert($policy, 0, 1, \Cassandra::CONSISTENCY_ALL);
+        $this->insert($policy, 0, self::NUMBER_OF_INSERTS, \Cassandra::CONSISTENCY_ALL);
+        $this->assert($policy, 0, self::NUMBER_OF_INSERTS, \Cassandra::CONSISTENCY_ALL);
 
         // Disable node three
-        $this->ccm->pauseNode(3);
+        $this->ccm->stopNode(3);
 
         // Insert and assert values with CONSISTENCY_ALL
-        $this->insert($policy, 1, 1, \Cassandra::CONSISTENCY_ALL);
-        $this->assert($policy, 1, 1, \Cassandra::CONSISTENCY_ALL);
+        $this->insert($policy, 1, self::NUMBER_OF_INSERTS, \Cassandra::CONSISTENCY_ALL);
+        $this->assert($policy, 1, self::NUMBER_OF_INSERTS, \Cassandra::CONSISTENCY_ALL);
 
         // Insert and assert values with CONSISTENCY_QUORUM
-        $this->insert($policy, 2, 1, \Cassandra::CONSISTENCY_QUORUM);
-        $this->assert($policy, 2, 1, \Cassandra::CONSISTENCY_QUORUM);
+        $this->insert($policy, 2, self::NUMBER_OF_INSERTS, \Cassandra::CONSISTENCY_QUORUM);
+        $this->assert($policy, 2, self::NUMBER_OF_INSERTS, \Cassandra::CONSISTENCY_QUORUM);
 
         // Insert and assert values with CONSISTENCY_TWO
-        $this->insert($policy, 3, 1, \Cassandra::CONSISTENCY_TWO);
-        $this->assert($policy, 3, 1, \Cassandra::CONSISTENCY_TWO);
+        $this->insert($policy, 3, self::NUMBER_OF_INSERTS, \Cassandra::CONSISTENCY_TWO);
+        $this->assert($policy, 3, self::NUMBER_OF_INSERTS, \Cassandra::CONSISTENCY_TWO);
     }
 
     /**
@@ -179,16 +209,15 @@ class RetryPolicyIntegrationTest extends BasicIntegrationTest {
      * @cassandra-version-2.0
      *
      * @expectedException \Cassandra\Exception\WriteTimeoutException
-     * @expectedExceptionMessageRegExp Operation timed out - received only .*
-     *                                 responses.
+     * @expectedExceptionMessageRegExp |Operation timed out - received only .* responses|
      */
     public function testFallThroughPolicyWrite() {
         // Create the retry policy
         $policy = new RetryPolicy\Fallthrough();
 
         // Create a WriteTimeoutException
-        $this->ccm->pauseNode(1);
-        $this->insert($policy, 0, 1, \Cassandra::CONSISTENCY_ALL);
+        $this->ccm->stopNode(1);
+        $this->insert($policy, 0, self::NUMBER_OF_INSERTS, \Cassandra::CONSISTENCY_ALL);
     }
 
     /**
@@ -205,18 +234,17 @@ class RetryPolicyIntegrationTest extends BasicIntegrationTest {
      * @cassandra-version-2.0
      *
      * @expectedException \Cassandra\Exception\ReadTimeoutException
-     * @expectedExceptionMessageRegExp Operation timed out - received only .*
-     *                                 responses.
+     * @expectedExceptionMessageRegExp |Operation timed out - received only .* responses|
      */
     public function testFallThroughPolicyRead() {
         // Create the retry policy
         $policy = new RetryPolicy\Fallthrough();
 
         // Insert values with CONSISTENCY_ALL
-        $this->insert($policy, 0, 1, \Cassandra::CONSISTENCY_ALL);
+        $this->insert($policy, 0, self::NUMBER_OF_INSERTS, \Cassandra::CONSISTENCY_ALL);
 
         // Create a ReadTimeoutException
-        $this->ccm->pauseNode(1);
-        $this->assert($policy, 0, 1, \Cassandra::CONSISTENCY_ALL);
+        $this->ccm->stopNode(1);
+        $this->assert($policy, 0, self::NUMBER_OF_INSERTS, \Cassandra::CONSISTENCY_ALL);
     }
 }

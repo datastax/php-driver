@@ -261,6 +261,7 @@ class CCM
         foreach (array($nodes) as $node) {
             $this->run('node'.$node, 'start');
         }
+        sleep(5); //TODO: Mechanism required to ensure node is up
     }
 
     public function stopNode($nodes)
@@ -268,6 +269,7 @@ class CCM
         foreach (array($nodes) as $node) {
             $this->run('node'.$node, 'stop');
         }
+        sleep(5); //TODO: Mechanism required to ensure node is down
     }
 
     private function isActive($clusterName)

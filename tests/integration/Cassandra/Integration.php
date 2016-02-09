@@ -43,12 +43,6 @@ class Integration {
     const SELECT_SERVER_VERSION = "SELECT release_version FROM system.local";
 
     /**
-     * Static instance for connect and disconnect methods to utilize.
-     *
-     * @var Integration
-     */
-    private static $instance;
-    /**
      * Generated keyspace name for the integration test.
      *
      * @var string
@@ -147,6 +141,9 @@ class Integration {
             $replicationStrategy .= $replicationFactor;
         }
         $query = sprintf(Integration::SIMPLE_KEYSPACE_FORMAT, $this->keyspaceName, $replicationStrategy);
+        if (self::isDebug() && self::isVerbose()) {
+            fprintf(STDOUT, "Creating Keyspace: %s" . PHP_EOL, $query);
+        }
 
         // Create the session and keyspace for the integration test
         $this->cluster = \Cassandra::cluster()
@@ -216,41 +213,6 @@ class Integration {
     }
 
     /**
-     * Connect and establish basis for integration test.
-     *
-     * @param $className Name of the class for the executed test.
-     * @param string $testName Name of the test being executed.
-     * @param int $numberDC1Nodes Number of nodes in data center one
-     *                            (DEFAULT: 1).
-     * @param int $numberDC2Nodes Number of nodes in data center two
-     *                            (DEFAULT: 0).
-     * @param bool $isClientAuthentication True if client authentication
-     *                                     should be enabled; false
-     *                                     otherwise (DEFAULT: false).
-     * @param bool $isSSL True if SSL should be enabled; false otherwise
-     *                    (DEFAULT: false).
-     * @return Integration Instance of the Integration class created.
-     */
-    public static function connect($className,
-                                   $testName = "",
-                                   $numberDC1Nodes = 1,
-                                   $numberDC2Nodes = 0,
-                                   $isClientAuthentication = false,
-                                   $isSSL = false) {
-        self::$instance = new Integration($className, $testName,
-            $numberDC1Nodes, $numberDC2Nodes,
-            $isClientAuthentication, $isSSL);
-        return self::$instance;
-    }
-
-    /**
-     * Disconnect and perform cleanup of the integration test.
-     */
-    public static function disconnect() {
-        unset(self::$instance);
-    }
-
-    /**
      * Determine if the debug argument was used when starting PHPUnit.
      *
      * @return bool True if debug argument was used; false otherwise
@@ -258,6 +220,14 @@ class Integration {
     public static function isDebug() {
         return in_array("--debug", $_SERVER['argv']);
     }
+
+    /**
+     * Determine if the verbose argument was used when starting PHPUnit.
+     * @return bool True if verbose argument was used; false otherwise
+     */
+    public static function isVerbose() {
+        return in_array("--verbose", $_SERVER['argv']);
+     }
 }
 
 /**
