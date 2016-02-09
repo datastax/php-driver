@@ -17,6 +17,7 @@ namespace Cassandra;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+use Symfony\Component\DependencyInjection\Tests\Compiler\IntegrationTest;
 
 /**
  * Base class to provide common integration test functionality.
@@ -148,28 +149,22 @@ class Integration {
         $query = sprintf(Integration::SIMPLE_KEYSPACE_FORMAT, $this->keyspaceName, $replicationStrategy);
 
         // Create the session and keyspace for the integration test
-        try {
-            // Create the session and integration test keypspace
-            $this->cluster = \Cassandra::cluster()
-                ->withContactPoints($this->getContactPoints(Integration::IP_ADDRESS, ($numberDC1Nodes + $numberDC2Nodes)))
-                ->build();
-            $this->session = $this->cluster->connect();
-            $statement = new SimpleStatement($query);
-            $this->session->execute($statement);
+        $this->cluster = \Cassandra::cluster()
+            ->withContactPoints($this->getContactPoints(Integration::IP_ADDRESS, ($numberDC1Nodes + $numberDC2Nodes)))
+            ->withPersistentSessions(false)
+            ->build();
+        $this->session = $this->cluster->connect();
+        $statement = new SimpleStatement($query);
+        $this->session->execute($statement);
 
-            // Update the session to use the new keyspace by default
-            $statement = new SimpleStatement("USE " . $this->keyspaceName);
-            $this->session->execute($statement);
+        // Update the session to use the new keyspace by default
+        $statement = new SimpleStatement("USE " . $this->keyspaceName);
+        $this->session->execute($statement);
 
-            // Get the server version the session is connected to
-            $statement = new SimpleStatement(self::SELECT_SERVER_VERSION);
-            $rows = $this->session->execute($statement);
-            $this->serverVersion = $rows->first()["release_version"];
-
-        } catch (Exception $e) {
-            printf("Error Creating CCM Cluster: %s" . PHP_EOL . "%s" . PHP_EOL,
-                $e->getMessage(), $e->getTraceAsString());
-        }
+        // Get the server version the session is connected to
+        $statement = new SimpleStatement(self::SELECT_SERVER_VERSION);
+        $rows = $this->session->execute($statement);
+        $this->serverVersion = $rows->first()["release_version"];
     }
 
     public function __destruct() {
@@ -254,4 +249,56 @@ class Integration {
     public static function disconnect() {
         unset(self::$instance);
     }
+
+    /**
+     * Determine if the debug argument was used when starting PHPUnit.
+     *
+     * @return bool True if debug argument was used; false otherwise
+     */
+    public static function isDebug() {
+        return in_array("--debug", $_SERVER['argv']);
+    }
 }
+
+/**
+ * This class will act as a fixture for the integration test suite. This
+ * fixture will ensure startup and shutdown procedures when running the
+ * integration tests.
+ */
+class IntegrationTestFixture {
+    /**
+     * Handle for communicating with CCM.
+     *
+     * @var \CCM
+     */
+    private $ccm;
+    /**
+     * Singleton instance for the fixture.
+     *
+     * @var IntegrationTestFixture
+     */
+    private static $instance;
+
+    function __construct() {
+        $this->ccm = new \CCM(\CCM::DEFAULT_CASSANDRA_VERSION, true);
+        $this->ccm->removeAllClusters();
+    }
+
+    function __destruct() {
+        $this->ccm->removeAllClusters();
+    }
+
+    /**
+     * Create the integration test fixture for performing startup and shutdown
+     * procedures required by the integration test suite.
+     */
+    public static function createFixture() {
+        // Ensure only one instance (singleton)
+        if (!isset($instance)) {
+            self::$instance  = new IntegrationTestFixture();
+        }
+    }
+}
+
+// Create the integration test fixture
+IntegrationTestFixture::createFixture();
