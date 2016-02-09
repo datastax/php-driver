@@ -318,7 +318,7 @@ php_cassandra_get_keyspace_field(const CassKeyspaceMeta *metadata, const char *f
 
   value = cass_keyspace_meta_field_by_name(metadata, field_name);
 
-  if (value == NULL) {
+  if (value == NULL || cass_value_is_null(value)) {
     PHP5TO7_ZVAL_MAYBE_MAKE(*out);
     ZVAL_NULL(PHP5TO7_ZVAL_MAYBE_DEREF(out));
     return SUCCESS;
@@ -334,7 +334,7 @@ php_cassandra_get_table_field(const CassTableMeta *metadata, const char *field_n
 
   value = cass_table_meta_field_by_name(metadata, field_name);
 
-  if (value == NULL) {
+  if (value == NULL || cass_value_is_null(value)) {
     PHP5TO7_ZVAL_MAYBE_MAKE(*out);
     ZVAL_NULL(PHP5TO7_ZVAL_MAYBE_DEREF(out));
     return SUCCESS;
@@ -350,7 +350,7 @@ php_cassandra_get_column_field(const CassColumnMeta *metadata, const char *field
 
   value = cass_column_meta_field_by_name(metadata, field_name);
 
-  if (value == NULL) {
+  if (value == NULL || cass_value_is_null(value)) {
     PHP5TO7_ZVAL_MAYBE_MAKE(*out);
     ZVAL_NULL(PHP5TO7_ZVAL_MAYBE_DEREF(out));
     return SUCCESS;

@@ -78,4 +78,63 @@ class SchemaMetadataIntegrationTest extends BasicIntegrationTest {
         $this->assertCount(0, $schema->keyspaces());
         $this->assertNotEquals($this->schema->keyspaces(), $schema->keyspaces());
     }
+
+    /**
+     * Schema metadata data with null fields.
+     *
+     * This test ensures that table and column metadata with null fields
+     * are returned correctly.
+     *
+     * @test
+     */
+    public function testSchemaMetadataWithNullFields() {
+        $statement = new SimpleStatement(
+            "CREATE TABLE {$this->tableNamePrefix}_null_comment (key int PRIMARY KEY, value int)"
+        );
+        $this->session->execute($statement);
+
+        $keyspace = $this->session->schema()->keyspace($this->keyspaceName);
+        $table = $keyspace->table("{$this->tableNamePrefix}_null_comment");
+        $this->assertNull($table->comment());
+
+        $column = $table->column("value");
+        $this->assertNull($column->indexName());
+    }
+
+    /**
+     * Schema metadata data with deeply nested collection.
+     *
+     * This test ensures that the validator parser correctly parses and builds
+     * columns with deeply nested collection types.
+     *
+     * @test
+     * @ticket PHP-62
+     */
+    public function testSchemaMetadataWithNestedColumnTypes() {
+        $statement = new SimpleStatement(
+            "CREATE TABLE {$this->tableNamePrefix}_nested1 (key int PRIMARY KEY, value map<frozen<list<varchar>>, varchar>)"
+        );
+        $this->session->execute($statement);
+
+        $statement = new SimpleStatement(
+            "CREATE TABLE {$this->tableNamePrefix}_nested2 (key int PRIMARY KEY, value map<varchar, frozen<list<varchar>>>)"
+        );
+        $this->session->execute($statement);
+
+        $statement = new SimpleStatement(
+            "CREATE TABLE {$this->tableNamePrefix}_nested3 (key int PRIMARY KEY, value list<frozen<map<varchar, frozen<set<varchar>>>>>)"
+        );
+        $this->session->execute($statement);
+
+        $keyspace = $this->session->schema()->keyspace($this->keyspaceName);
+
+        $table1 = $keyspace->table("{$this->tableNamePrefix}_nested1");
+        $this->assertEquals((string)$table1->column("value")->type(), "map<list<varchar>, varchar>");
+
+        $table2 = $keyspace->table("{$this->tableNamePrefix}_nested2");
+        $this->assertEquals((string)$table2->column("value")->type(), "map<varchar, list<varchar>>");
+
+        $table3 = $keyspace->table("{$this->tableNamePrefix}_nested3");
+        $this->assertEquals((string)$table3->column("value")->type(), "list<map<varchar, set<varchar>>>");
+    }
 }
