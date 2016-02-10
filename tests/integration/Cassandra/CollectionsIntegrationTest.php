@@ -34,7 +34,7 @@ abstract class CollectionsIntegrationTest extends BasicIntegrationTest {
             array(Type::bigint(), array(new Bigint("1"), new Bigint("2"), new Bigint("3"))),
             array(Type::blob(), array(new Blob("x"), new Blob("y"), new Blob("z"))),
             array(Type::boolean(), array(true, false, true, false)),
-            #array(Type::decimal(), array(new Decimal(1.1), new Decimal(2.2), new Decimal(3.3))),
+            array(Type::decimal(), array(new Decimal(1.1), new Decimal(2.2), new Decimal(3.3))),
             array(Type::double(), array(1.1, 2.2, 3.3, 4.4)),
             array(Type::float(), array(new Float(1.0), new Float(2.2), new Float(2.2))),
             array(Type::inet(), array(new Inet("127.0.0.1"), new Inet("127.0.0.2"), new Inet("127.0.0.3"))),
