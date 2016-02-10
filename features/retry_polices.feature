@@ -106,6 +106,9 @@ Feature: Retry Policies
     And the log file "feature-retry-policy.log" should contain "Retrying on unavailable error at consistency ONE"
 
 
+  # This scenario is broken because cpp-driver <= 2.2.2 fails to retry with
+  # a downgraded consistency when using batches. Fix:
+  # https://github.com/datastax/cpp-driver/commit/ddb21b9878dff83049dc494b5f3ecfa58bdadce5
   @broken
   Scenario: Retry policy can be set when executing a batch
     Given tracing is enabled
