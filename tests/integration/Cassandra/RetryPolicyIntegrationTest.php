@@ -31,6 +31,18 @@ class RetryPolicyIntegrationTest extends BasicIntegrationTest {
      * recursive calls/
      */
     const NUMBER_OF_TIMEOUT_EXCEPTIONS = 5;
+    /**
+     * Batch statement type
+     */
+    const BATCH_STATEMENT = 1;
+    /**
+     * Prepared statement type
+     */
+    const PREPARED_STATEMENT = 2;
+    /**
+     * Simple statement type
+     */
+    const SIMPLE_STATEMENT = 3;
 
     /**
      * Insert query generated for a retry policy test.
@@ -43,8 +55,7 @@ class RetryPolicyIntegrationTest extends BasicIntegrationTest {
      * Setup the retry policy for multiple nodes.
      */
     public function setUp() {
-        // Ensure there are three nodes in data center one with RF = 3
-        $this->numberDC1Nodes = 3;
+        // Ensure RF = 3 (anything greater than 1 is good)
         $this->replicationFactor = 3;
 
         // Process parent setup steps
@@ -59,52 +70,57 @@ class RetryPolicyIntegrationTest extends BasicIntegrationTest {
     }
 
     /**
-     * Teardown; Ensure all nodes have been restarted
-     */
-    public function tearDown() {
-        $nodes = range(1, $this->numberDC1Nodes);
-        $this->ccm->startNode($nodes);
-
-        // Process parent teardown steps
-        parent::tearDown();
-    }
-
-    /**
      * Insert n values into the table for a given key.
      *
+     * @param $statementType Type of statement to create for inserts
      * @param RetryPolicy $policy RetryPolicy to use when executing statements
      * @param $key Key value
      * @param $numberOfInserts Number of inserts to perform
      * @param $consistency Consistency level to execute statement
-     * @param $retries Number of TimeoutException retries
-     *                 (DEFAULT: self::NUMBER_OF_TIMEOUT_EXCEPTIONS)
+     * @param int $retries Number of TimeoutException retries
+     *                     (DEFAULT: self::NUMBER_OF_TIMEOUT_EXCEPTIONS)
      */
-    private function insert(RetryPolicy $policy, $key, $numberOfInserts, $consistency, $retries = self::NUMBER_OF_TIMEOUT_EXCEPTIONS) {
+    private function insert($statementType, RetryPolicy $policy, $key, $numberOfInserts, $consistency, $retries = self::NUMBER_OF_TIMEOUT_EXCEPTIONS) {
         try {
-            // Create and prepare the insert statements
+            // Create all statement types
+            $batch = new BatchStatement(\Cassandra::BATCH_UNLOGGED);
             $prepare = $this->session->prepare($this->insertQuery);
             $simple = new SimpleStatement($this->insertQuery);
-            $batch = new BatchStatement(\Cassandra::BATCH_UNLOGGED);
 
-            // Create the batched inserts
+
+            // Create the default execution options
+            $options = array(
+                "consistency" => $consistency,
+                "retry_policy" => $policy
+            );
+
+            // Create the inserts
             foreach (range(1, $numberOfInserts) as $i) {
                 $values = array(
                     $key,
                     $i
                 );
-                if ($i % 2 == 0) {
-                    $batch->add($prepare, $values);
+                if ($statementType == self::BATCH_STATEMENT) {
+                    if ($i % 2 == 0) {
+                        $batch->add($prepare, $values);
+                    } else {
+                        $batch->add($simple, $values);
+                    }
                 } else {
-                    $batch->add($simple, $values);
+                    // Execute either the prepare or simple statment
+                    $statement = $prepare;
+                    if ($statementType == self::SIMPLE_STATEMENT) {
+                        $statement = $simple;
+                    }
+                    $options["arguments"] = $values;
+                    $this->session->execute($statement, new ExecutionOptions($options));
                 }
             }
 
             // Execute the batched insert
-            $options = new ExecutionOptions(array(
-                "consistency" => $consistency,
-                "retry_policy" => $policy
-            ));
-            $this->session->execute($batch, $options);
+            if ($statementType == self::BATCH_STATEMENT) {
+                $this->session->execute($batch,  new ExecutionOptions($options));
+            }
         } catch (Exception\TimeoutException $te) {
             if (Integration::isDebug()) {
                 fprintf(STDOUT, "Insert TimeoutException: %s (%s:%d)" . PHP_EOL,
@@ -125,8 +141,8 @@ class RetryPolicyIntegrationTest extends BasicIntegrationTest {
      * @param $key Key value
      * @param $numberOfAsserts Number of inserts to perform
      * @param $consistency Consistency level to execute statement
-     * @param $retries Number of TimeoutException retries
-     *                 (DEFAULT: self::NUMBER_OF_TIMEOUT_EXCEPTIONS)
+     * @param int $retries Number of TimeoutException retries
+     *                     (DEFAULT: self::NUMBER_OF_TIMEOUT_EXCEPTIONS)
      */
     private function assert(RetryPolicy $policy, $key, $numberOfAsserts, $consistency, $retries = self::NUMBER_OF_TIMEOUT_EXCEPTIONS) {
         try {
@@ -169,30 +185,32 @@ class RetryPolicyIntegrationTest extends BasicIntegrationTest {
      * @cassandra-version-2.0
      */
     public function testDowngradingPolicy() {
-        // Create the retry policy
+        // Create the retry policy (RF = 3 with 1 node)
         $policy = new RetryPolicy\DowngradingConsistency();
 
-        // Disable node one
-        $this->ccm->stopNode(1);
+        // Iterate over each statement type
+        foreach (range(1, 3) as $statementType) {
+            // Determine if the statement type should be skipped
+            if ($statementType == self::BATCH_STATEMENT
+                && version_compare(\Cassandra::CPP_DRIVER_VERSION, "2.2.3") < 0) {
+                if (Integration::isDebug()) {
+                    fprintf(STDOUT, "Skipping Batch Statements in %s: Issue fixed in DataStax C/C++ v2.2.3" . PHP_EOL,
+                        $this->getName());
+                }
+            } else {
+                // Insert and assert values with CONSISTENCY_ALL
+                $this->insert($statementType, $policy, 0, self::NUMBER_OF_INSERTS, \Cassandra::CONSISTENCY_ALL);
+                $this->assert($policy, 0, self::NUMBER_OF_INSERTS, \Cassandra::CONSISTENCY_ALL);
 
-        // Insert and assert values with CONSISTENCY_ALL
-        $this->insert($policy, 0, self::NUMBER_OF_INSERTS, \Cassandra::CONSISTENCY_ALL);
-        $this->assert($policy, 0, self::NUMBER_OF_INSERTS, \Cassandra::CONSISTENCY_ALL);
+                // Insert and assert values with CONSISTENCY_QUORUM
+                $this->insert($statementType, $policy, 1, self::NUMBER_OF_INSERTS, \Cassandra::CONSISTENCY_QUORUM);
+                $this->assert($policy, 1, self::NUMBER_OF_INSERTS, \Cassandra::CONSISTENCY_QUORUM);
 
-        // Disable node three
-        $this->ccm->stopNode(3);
-
-        // Insert and assert values with CONSISTENCY_ALL
-        $this->insert($policy, 1, self::NUMBER_OF_INSERTS, \Cassandra::CONSISTENCY_ALL);
-        $this->assert($policy, 1, self::NUMBER_OF_INSERTS, \Cassandra::CONSISTENCY_ALL);
-
-        // Insert and assert values with CONSISTENCY_QUORUM
-        $this->insert($policy, 2, self::NUMBER_OF_INSERTS, \Cassandra::CONSISTENCY_QUORUM);
-        $this->assert($policy, 2, self::NUMBER_OF_INSERTS, \Cassandra::CONSISTENCY_QUORUM);
-
-        // Insert and assert values with CONSISTENCY_TWO
-        $this->insert($policy, 3, self::NUMBER_OF_INSERTS, \Cassandra::CONSISTENCY_TWO);
-        $this->assert($policy, 3, self::NUMBER_OF_INSERTS, \Cassandra::CONSISTENCY_TWO);
+                // Insert and assert values with CONSISTENCY_TWO
+                $this->insert($statementType, $policy, 2, self::NUMBER_OF_INSERTS, \Cassandra::CONSISTENCY_TWO);
+                $this->assert($policy, 2, self::NUMBER_OF_INSERTS, \Cassandra::CONSISTENCY_TWO);
+            }
+        }
     }
 
     /**
@@ -208,16 +226,27 @@ class RetryPolicyIntegrationTest extends BasicIntegrationTest {
      *
      * @cassandra-version-2.0
      *
-     * @expectedException \Cassandra\Exception\WriteTimeoutException
-     * @expectedExceptionMessageRegExp |Operation timed out - received only .* responses|
+     * @expectedException \Cassandra\Exception\UnavailableException
+     * @expectedExceptionMessageRegExp |Cannot achieve consistency level .*|
      */
     public function testFallThroughPolicyWrite() {
-        // Create the retry policy
+        // Create the retry policy (RF = 3 with 1 node)
         $policy = new RetryPolicy\Fallthrough();
 
-        // Create a WriteTimeoutException
-        $this->ccm->stopNode(1);
-        $this->insert($policy, 0, self::NUMBER_OF_INSERTS, \Cassandra::CONSISTENCY_ALL);
+        // Iterate over each statement type
+        foreach (range(1, 3) as $statementType) {
+            // Determine if the statement type should be skipped
+            if ($statementType == self::BATCH_STATEMENT
+                && version_compare(\Cassandra::CPP_DRIVER_VERSION, "2.2.3") < 0) {
+                if (Integration::isDebug()) {
+                    fprintf(STDOUT, "Skipping Batch Statements in %s: Issue fixed in DataStax C/C++ v2.2.3" . PHP_EOL,
+                        $this->getName());
+                }
+            } else {
+                // Create an exception during write
+                $this->insert($statementType, $policy, 0, self::NUMBER_OF_INSERTS, \Cassandra::CONSISTENCY_ALL);
+            }
+        }
     }
 
     /**
@@ -233,18 +262,27 @@ class RetryPolicyIntegrationTest extends BasicIntegrationTest {
      *
      * @cassandra-version-2.0
      *
-     * @expectedException \Cassandra\Exception\ReadTimeoutException
-     * @expectedExceptionMessageRegExp |Operation timed out - received only .* responses|
+     * @expectedException \Cassandra\Exception\UnavailableException
+     * @expectedExceptionMessageRegExp |Cannot achieve consistency level .*|
      */
     public function testFallThroughPolicyRead() {
-        // Create the retry policy
+        // Create the retry policy (RF = 3 with 1 node)
         $policy = new RetryPolicy\Fallthrough();
 
-        // Insert values with CONSISTENCY_ALL
-        $this->insert($policy, 0, self::NUMBER_OF_INSERTS, \Cassandra::CONSISTENCY_ALL);
-
-        // Create a ReadTimeoutException
-        $this->ccm->stopNode(1);
-        $this->assert($policy, 0, self::NUMBER_OF_INSERTS, \Cassandra::CONSISTENCY_ALL);
+        // Iterate over each statement type
+        foreach (range(1, 3) as $statementType) {
+            // Determine if the statement type should be skipped
+            if ($statementType == self::BATCH_STATEMENT
+                && version_compare(\Cassandra::CPP_DRIVER_VERSION, "2.2.3") < 0) {
+                if (Integration::isDebug()) {
+                    fprintf(STDOUT, "Skipping Batch Statements in %s: Issue fixed in DataStax C/C++ v2.2.3" . PHP_EOL,
+                        $this->getName());
+                }
+            } else {
+                // Create an exception during read
+                $this->insert($statementType, $policy, 0, self::NUMBER_OF_INSERTS, \Cassandra::CONSISTENCY_ONE);
+                $this->assert($policy, 0, self::NUMBER_OF_INSERTS, \Cassandra::CONSISTENCY_ALL);
+            }
+        }
     }
 }
