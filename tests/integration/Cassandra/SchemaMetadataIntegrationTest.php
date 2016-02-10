@@ -40,6 +40,33 @@ class SchemaMetadataIntegrationTest extends BasicIntegrationTest {
         $this->schema = $this->session->schema();
     }
 
+    protected static function generateKeyspaceName($prefix) {
+        return substr(uniqid($prefix), 0, 48);
+    }
+
+    protected function createKeyspace($keyspaceName, $replicationFactor = 1) {
+        $statement = new SimpleStatement(
+            "CREATE KEYSPACE $keyspaceName ".
+            "WITH REPLICATION = { 'class' : 'SimpleStrategy', 'replication_factor' : $replicationFactor }"
+        );
+        $this->session->execute($statement);
+    }
+
+    protected function createKeyspaceWithSchema($keyspaceName, $tableSchemas) {
+        $this->createKeyspace($keyspaceName);
+        foreach ($tableSchemas as $tableName => $tableSchema) {
+            $query = sprintf("CREATE TABLE $keyspaceName.$tableName (%s, PRIMARY KEY(%s))",
+                implode(", ",
+                    array_map(function ($key, $value) { return "$key $value"; },
+                    array_keys($tableSchema), array_values($tableSchema))),
+                implode(", ",
+                    array_filter(array_keys($tableSchema),
+                    function($columnName) { return strpos($columnName, "key") === 0; }))
+            );
+            $this->session->execute(new SimpleStatement($query));
+        }
+    }
+
     /**
      * Schema metadata support is available; basic test.
      *
@@ -77,6 +104,134 @@ class SchemaMetadataIntegrationTest extends BasicIntegrationTest {
         // Ensure the new session has no schema metadata
         $this->assertCount(0, $schema->keyspaces());
         $this->assertNotEquals($this->schema->keyspaces(), $schema->keyspaces());
+    }
+
+    /**
+     * Enumerate over keyspaces in schema metadata.
+     *
+     * This test ensures that driver correctly enumerates over keyspace
+     * metadata.
+     *
+     * @test
+     */
+    public function testEnumerateKeyspaces() {
+        $keyspaceNames =  array(
+            self::generateKeyspaceName("enumerate_ks0"),
+            self::generateKeyspaceName("enumerate_ks1"),
+            self::generateKeyspaceName("enumerate_ks2"),
+            "system",
+        );
+
+        foreach ($keyspaceNames as $keyspaceName) {
+            if (strpos($keyspaceName, "system") === 0) continue;
+            $this->createKeyspace($keyspaceName);
+        }
+
+        $count = 0;
+        foreach($this->session->schema()->keyspaces() as $keyspace) {
+            if (in_array($keyspace->name(), $keyspaceNames)) {
+                $count++;
+            }
+        }
+
+        $this->assertEquals($count, count($keyspaceNames));
+    }
+
+    /**
+     * Get keyspace from schema metadata using keyspace name.
+     *
+     * This test ensures that the driver is able to access keyspace metadata by
+     * name.
+     *
+     * @test
+     */
+    public function testGetKeyspaceByName() {
+        $keyspaceNames =  array(
+            self::generateKeyspaceName("by_name_ks0"),
+            self::generateKeyspaceName("by_name_ks1"),
+            self::generateKeyspaceName("by_name_ks2"),
+            "system",
+        );
+
+        foreach ($keyspaceNames as $keyspaceName) {
+            if (strpos($keyspaceName, "system") === 0) continue;
+            $this->createKeyspace($keyspaceName);
+        }
+
+        $count = 0;
+        foreach($keyspaceNames as $keyspaceName) {
+            $keyspace = $this->session->schema()->keyspace($keyspaceName);
+            if (isset($keyspace)) {
+                $count++;
+            }
+        }
+
+        $this->assertEquals($count, count($keyspaceNames));
+    }
+
+    /**
+     * Enumerate over tables and columns in schema metadata.
+     *
+     * This test ensures that driver correctly enumerates over table and column
+     * metadata.
+     *
+     * @test
+     */
+    public function testEnumerateTablesAndColumns() {
+        $keyspaceName = self::generateKeyspaceName("enumerate");
+
+        $tableSchemas = array(
+            "table_int_varchar" => array("key" => "int", "value" => "varchar"),
+            "table_varchar_bigint" => array("key" => "varchar", "value" => "bigint"),
+            "table_varchar_map" => array("key" => "varchar", "value" => "map<bigint, varchar>")
+        );
+
+        $this->createKeyspaceWithSchema($keyspaceName, $tableSchemas);
+
+        $keyspace = $this->session->schema()->keyspace($keyspaceName);
+
+        $this->assertEquals(count($tableSchemas), count($keyspace->tables()));
+        foreach($keyspace->tables() as $table) {
+            $tableSchema = $tableSchemas[$table->name()];
+            $this->assertEquals(count($tableSchema), count($table->columns()));
+            foreach ($table->columns() as $column) {
+                $columnType = $tableSchema[$column->name()];
+                $this->assertEquals($columnType, (string)$column->type());
+            }
+        }
+    }
+
+    /**
+     * Get tables and columns from schema metadata using their names.
+     *
+     * This test ensures that the driver is able to access table and column
+     * metadata by name.
+     *
+     * @test
+     */
+    public function testGetTableAndColumnByName() {
+        $keyspaceName = self::generateKeyspaceName("by_name");
+
+        $tableSchemas = array(
+            "table_int_varchar" => array("key" => "int", "value" => "varchar"),
+            "table_varchar_bigint" => array("key" => "varchar", "value" => "bigint"),
+            "table_varchar_map" => array("key" => "varchar", "value" => "map<bigint, varchar>")
+        );
+
+        $this->createKeyspaceWithSchema($keyspaceName, $tableSchemas);
+
+        $keyspace = $this->session->schema()->keyspace($keyspaceName);
+
+        $this->assertEquals(count($tableSchemas), count($keyspace->tables()));
+
+        foreach ($tableSchemas as $tableName => $tableSchema) {
+            $table = $keyspace->table($tableName);
+            $this->assertEquals(count($tableSchema), count($table->columns()));
+            foreach ($tableSchema as $columnName => $columnType) {
+                $column = $table->column($columnName);
+                $this->assertEquals($columnType, (string)$column->type());
+            }
+        }
     }
 
     /**
