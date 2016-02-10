@@ -235,6 +235,45 @@ class SchemaMetadataIntegrationTest extends BasicIntegrationTest {
     }
 
     /**
+     * Get index options metdata from a column
+     *
+     * This test ensures that index options metadata are properly returned from
+     * an indexed column.
+     *
+     * @test
+     */
+    public function testGetColumnIndexOptions() {
+        $statement = new SimpleStatement(
+            "CREATE TABLE {$this->tableNamePrefix}_with_index (key int PRIMARY KEY, value map<text, frozen<map<int, int>>>)"
+        );
+        $this->session->execute($statement);
+
+        $keyspace = $this->session->schema()->keyspace($this->keyspaceName);
+        $this->assertNotNull($keyspace);
+
+        $table = $keyspace->table("{$this->tableNamePrefix}_with_index");
+        $this->assertNotNull($table);
+
+        $indexOptions = $table->column("value")->indexOptions();
+        $this->assertNull($indexOptions);
+
+        $statement = new SimpleStatement(
+            "CREATE INDEX ON {$this->tableNamePrefix}_with_index (value)"
+        );
+        $this->session->execute($statement);
+
+        $keyspace = $this->session->schema()->keyspace($this->keyspaceName);
+        $this->assertNotNull($keyspace);
+
+        $table = $keyspace->table("{$this->tableNamePrefix}_with_index");
+        $this->assertNotNull($table);
+
+        $indexOptions = $table->column("value")->indexOptions();
+        $this->assertNotNull($indexOptions);
+        $this->assertInstanceOf('Cassandra\Map', $indexOptions);
+    }
+
+    /**
      * Schema metadata data with null fields.
      *
      * This test ensures that table and column metadata with null fields
