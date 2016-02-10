@@ -1,3 +1,4 @@
+@cassandra-version-2.1
 Feature: User defined types
 
   PHP Driver supports Cassandra UDTs

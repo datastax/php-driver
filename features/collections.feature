@@ -134,6 +134,7 @@ Feature: Collections
       ))
       """
 
+  @cassandra-version-2.1
   Scenario: Using Cassandra nested collections
     Given the following schema:
       """cql

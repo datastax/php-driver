@@ -1,3 +1,4 @@
+@cassandra-version-2.1
 Feature: Tuples
 
   PHP Driver supports Cassandra tuples
