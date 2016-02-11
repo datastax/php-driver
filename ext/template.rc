@@ -38,7 +38,7 @@ BEGIN
       VALUE "FileDescription", "PHP extension for Cassandra " BUILD_INFORMATION
       VALUE "FileVersion", PHP_CASSANDRA_MAJOR,PHP_CASSANDRA_MINOR,PHP_CASSANDRA_RELEASE,0
       VALUE "InternalName", FILE_NAME
-      VALUE "LegalCopyright", "Copyright © 2015 DataStax, Inc."
+      VALUE "LegalCopyright", "Copyright © 2015-2016 DataStax, Inc."
       VALUE "OriginalFilename", FILE_NAME
       VALUE "ProductName", "Cassandra PHP driver " BUILD_INFORMATION
       VALUE "ProductVersion", PHP_CASSANDRA_VERSION

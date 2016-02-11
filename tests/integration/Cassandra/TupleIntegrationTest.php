@@ -1,7 +1,5 @@
 <?php
 
-namespace Cassandra;
-
 /**
  * Copyright 2015-2016 DataStax, Inc.
  *
@@ -17,7 +15,8 @@ namespace Cassandra;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-use Cassandra\Type\UserType;
+
+namespace Cassandra;
 
 /**
  * Tuple integration tests.
