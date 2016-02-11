@@ -1,5 +1,21 @@
 <?php
 
+/**
+ * Copyright 2015-2016 DataStax, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 namespace Cassandra;
 
 /**
@@ -157,9 +173,10 @@ abstract class CollectionsIntegrationTest extends BasicIntegrationTest {
     }
 
     /**
-     * Create a table this a string key and a value use the $type parameter
+     * Create a table named for the CQL $type parameter
      *
      * @param $type Cassandra\Type
+     * @return string Table name generated from $type
      */
     public function createTable($type) {
         $query = "CREATE TABLE IF NOT EXISTS %s (key text PRIMARY KEY, value %s)";
@@ -234,6 +251,7 @@ abstract class CollectionsIntegrationTest extends BasicIntegrationTest {
      * using CQL
      *
      * @param $type Cassandra\Type
+     * @return string String representation of type
      */
     public static function typeString($type) {
         if ($type instanceof Type\Tuple || $type instanceof Type\Collection ||
@@ -250,6 +268,7 @@ abstract class CollectionsIntegrationTest extends BasicIntegrationTest {
      * user type using CQL
      *
      * @param $userType Cassandra\Type
+     * @return string String representation of the UserType
      */
     public static function userTypeString($userType) {
         return sprintf("%s", implode("_", array_map(function ($name, $type) {

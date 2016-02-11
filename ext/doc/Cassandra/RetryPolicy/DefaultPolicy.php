@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright 2015 DataStax, Inc.
+ * Copyright 2015-2016 DataStax, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@ use Cassandra\RetryPolicy;
  * The default retry policy. This policy retries a query, using the
  * request's original consistency level, in the following cases:
  *
- * * On a read timeout, if enough replicas replied but the data was not recieved.
+ * * On a read timeout, if enough replicas replied but the data was not received.
  * * On a write timeout, if a timeout occurs while writing a distributed batch log.
  * * On unavailable, it will move to the next host.
  *

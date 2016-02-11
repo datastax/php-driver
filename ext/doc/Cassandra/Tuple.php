@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright 2015 DataStax, Inc.
+ * Copyright 2015-2016 DataStax, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,7 +26,7 @@ final class Tuple implements Value, \Countable, \Iterator
     /**
      * Creates a new tuple with the given types.
      *
-     * @param array $type Array of types
+     * @param array $types Array of types
      */
     public function __construct($types) {}
 

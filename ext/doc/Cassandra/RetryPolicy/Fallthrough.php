@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright 2015 DataStax, Inc.
+ * Copyright 2015-2016 DataStax, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@ namespace Cassandra\RetryPolicy;
 use Cassandra\RetryPolicy;
 
 /**
- * A retry policy that never retries and allows all errors to fallthough.
+ * A retry policy that never retries and allows all errors to fallthrough.
  */
 final class Fallthrough implements RetryPolicy
 {

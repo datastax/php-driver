@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright 2015 DataStax, Inc.
+ * Copyright 2015-2016 DataStax, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,7 +28,7 @@ final class Logging implements RetryPolicy
     /**
      * Creates a new Logging retry policy.
      *
-     * @param Cassandra\RetryPolicy $childPolicy Any retry poilcy other than
+     * @param Cassandra\RetryPolicy $childPolicy Any retry policy other than
      *                                           Cassandra\Logging
      */
     public function __construct($childPolicy) {}
