@@ -149,7 +149,7 @@ end
   <dependencies>
   <required>
    <php>
-    <min>5.3.4</min>
+    <min>5.5.0</min>
     <max>7.0.99</max>
    </php>
    <pearinstaller>
