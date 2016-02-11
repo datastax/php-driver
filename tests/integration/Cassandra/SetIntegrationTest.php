@@ -111,7 +111,7 @@ class SetIntegrationTest extends CollectionsIntegrationTest
     }
 
     /**
-     * Bind statment with an empty set
+     * Bind statement with an empty set
      */
     public function testEmpty() {
         $setType = Type::set(Type::int());
@@ -120,7 +120,7 @@ class SetIntegrationTest extends CollectionsIntegrationTest
     }
 
     /**
-     * Bind statment with an null set
+     * Bind statement with an null set
      */
     public function testNull() {
         $setType = Type::set(Type::int());

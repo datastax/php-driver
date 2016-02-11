@@ -144,7 +144,7 @@ final class Rows implements \Iterator, \Countable, \ArrayAccess
      *
      * @return string
      */
-    public function pagingStateToken {}
+    public function pagingStateToken() {}
 
     /**
      * Get the first row.

@@ -173,9 +173,10 @@ abstract class CollectionsIntegrationTest extends BasicIntegrationTest {
     }
 
     /**
-     * Create a table this a string key and a value use the $type parameter
+     * Create a table named for the CQL $type parameter
      *
      * @param $type Cassandra\Type
+     * @return string Table name generated from $type
      */
     public function createTable($type) {
         $query = "CREATE TABLE IF NOT EXISTS %s (key text PRIMARY KEY, value %s)";
@@ -250,6 +251,7 @@ abstract class CollectionsIntegrationTest extends BasicIntegrationTest {
      * using CQL
      *
      * @param $type Cassandra\Type
+     * @return string String representation of type
      */
     public static function typeString($type) {
         if ($type instanceof Type\Tuple || $type instanceof Type\Collection ||
@@ -266,6 +268,7 @@ abstract class CollectionsIntegrationTest extends BasicIntegrationTest {
      * user type using CQL
      *
      * @param $userType Cassandra\Type
+     * @return string String representation of the UserType
      */
     public static function userTypeString($userType) {
         return sprintf("%s", implode("_", array_map(function ($name, $type) {

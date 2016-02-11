@@ -111,7 +111,7 @@ class CollectionIntegrationTest extends CollectionsIntegrationTest
     }
 
     /**
-     * Bind statment with an empty list
+     * Bind statement with an empty list
      *
      * @test
      */

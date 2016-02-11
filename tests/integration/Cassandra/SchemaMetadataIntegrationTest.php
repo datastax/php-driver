@@ -235,7 +235,7 @@ class SchemaMetadataIntegrationTest extends BasicIntegrationTest {
     }
 
     /**
-     * Get index options metdata from a column
+     * Get index options metadata from a column
      *
      * This test ensures that index options metadata are properly returned from
      * an indexed column.

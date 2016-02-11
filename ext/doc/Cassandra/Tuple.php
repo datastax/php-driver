@@ -26,7 +26,7 @@ final class Tuple implements Value, \Countable, \Iterator
     /**
      * Creates a new tuple with the given types.
      *
-     * @param array $type Array of types
+     * @param array $types Array of types
      */
     public function __construct($types) {}
 

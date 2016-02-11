@@ -33,7 +33,7 @@ class TimestampIntegrationTest extends BasicIntegrationTest {
     /**
      * Common insert query for timestamp tests.
      *
-     * @var sting
+     * @var string
      */
     private $insertQuery;
     /**

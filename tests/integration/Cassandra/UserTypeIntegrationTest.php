@@ -334,7 +334,7 @@ class UserTypeIntegrationTest extends CollectionsIntegrationTest {
     }
 
     /**
-     * Bind statment with an empty user type
+     * Bind statement with an empty user type
      *
      * @test
      * @ticket PHP-58
@@ -361,7 +361,7 @@ class UserTypeIntegrationTest extends CollectionsIntegrationTest {
     }
 
     /**
-     * Bind statment with an null user type
+     * Bind statement with an null user type
      *
      * @test
      * @ticket PHP-58

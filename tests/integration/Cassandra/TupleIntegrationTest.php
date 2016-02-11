@@ -169,7 +169,7 @@ class TupleIntegrationTest extends CollectionsIntegrationTest {
     }
 
     /**
-     * Bind statment with an null tuple
+     * Bind statement with an null tuple
      *
      * @test
      * @ticket PHP-58

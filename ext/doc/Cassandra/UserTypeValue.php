@@ -26,7 +26,7 @@ final class UserTypeValue implements Value, \Countable, \Iterator
     /**
      * Creates a new user type value with the given name/type pairs.
      *
-     * @param array $type Array of types
+     * @param array $types Array of types
      */
     public function __construct($types) {}
 

@@ -150,7 +150,7 @@ class MapIntegrationTest extends CollectionsIntegrationTest
     }
 
     /**
-     * Bind statment with an empty map
+     * Bind statement with an empty map
      */
     public function testNull() {
         $mapType = Type::map(Type::int(), Type::int());
@@ -159,7 +159,7 @@ class MapIntegrationTest extends CollectionsIntegrationTest
     }
 
     /**
-     * Bind statment with an null map
+     * Bind statement with an null map
      */
     public function testEmpty() {
         $mapType = Type::map(Type::int(), Type::int());

@@ -253,7 +253,7 @@ final class Builder
      * routing and $session->schema() will always return an empty object. This
      * can be useful for reducing the startup overhead of short-lived sessions.
      *
-     * @param bool $enabled whether the driver fetches and maintains schema metadata.
+     * @param bool $enable whether the driver fetches and maintains schema metadata.
      *
      * @return Builder self
      */
