@@ -20,7 +20,7 @@ namespace Cassandra\Type;
 
 use Cassandra\Type;
 
-final class Map implements Type
+final class Map extends Type
 {
     /**
      * Returns "map"

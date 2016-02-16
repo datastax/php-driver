@@ -20,7 +20,7 @@ namespace Cassandra\Type;
 
 use Cassandra\Type;
 
-final class Set implements Type
+final class Set extends Type
 {
     /**
      * Returns "set"

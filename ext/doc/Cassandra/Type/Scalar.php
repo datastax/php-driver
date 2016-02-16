@@ -20,7 +20,7 @@ namespace Cassandra\Type;
 
 use Cassandra\Type;
 
-final class Scalar implements Type
+final class Scalar extends Type
 {
     public function name() {}
     public function __toString() {}

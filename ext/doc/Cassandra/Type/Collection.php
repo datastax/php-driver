@@ -20,7 +20,7 @@ namespace Cassandra\Type;
 
 use Cassandra\Type;
 
-final class Collection implements Type
+final class Collection extends Type
 {
     /**
      * Returns "list"

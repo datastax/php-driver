@@ -21,7 +21,7 @@ namespace Cassandra;
 /**
  * Cluster object is used to create Sessions.
  */
-interface Type
+abstract class Type
 {
     /**
      * Get representation of cassandra varchar type

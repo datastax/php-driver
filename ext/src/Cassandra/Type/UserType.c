@@ -328,8 +328,7 @@ void cassandra_define_TypeUserType(TSRMLS_D)
   zend_class_entry ce;
 
   INIT_CLASS_ENTRY(ce, "Cassandra\\Type\\UserType", cassandra_type_user_type_methods);
-  cassandra_type_user_type_ce = zend_register_internal_class(&ce TSRMLS_CC);
-  zend_class_implements(cassandra_type_user_type_ce TSRMLS_CC, 1, cassandra_type_ce);
+  cassandra_type_user_type_ce = php5to7_zend_register_internal_class_ex(&ce, cassandra_type_ce);
   memcpy(&cassandra_type_user_type_handlers, zend_get_std_object_handlers(), sizeof(zend_object_handlers));
   cassandra_type_user_type_handlers.get_properties  = php_cassandra_type_user_type_properties;
 #if PHP_VERSION_ID >= 50400

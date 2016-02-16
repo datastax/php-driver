@@ -215,8 +215,7 @@ void cassandra_define_TypeMap(TSRMLS_D)
   zend_class_entry ce;
 
   INIT_CLASS_ENTRY(ce, "Cassandra\\Type\\Map", cassandra_type_map_methods);
-  cassandra_type_map_ce = zend_register_internal_class(&ce TSRMLS_CC);
-  zend_class_implements(cassandra_type_map_ce TSRMLS_CC, 1, cassandra_type_ce);
+  cassandra_type_map_ce = php5to7_zend_register_internal_class_ex(&ce, cassandra_type_ce);
   memcpy(&cassandra_type_map_handlers, zend_get_std_object_handlers(), sizeof(zend_object_handlers));
   cassandra_type_map_handlers.get_properties  = php_cassandra_type_map_properties;
 #if PHP_VERSION_ID >= 50400
