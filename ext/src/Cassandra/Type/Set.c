@@ -183,8 +183,7 @@ void cassandra_define_TypeSet(TSRMLS_D)
   zend_class_entry ce;
 
   INIT_CLASS_ENTRY(ce, "Cassandra\\Type\\Set", cassandra_type_set_methods);
-  cassandra_type_set_ce = zend_register_internal_class(&ce TSRMLS_CC);
-  zend_class_implements(cassandra_type_set_ce TSRMLS_CC, 1, cassandra_type_ce);
+  cassandra_type_set_ce = php5to7_zend_register_internal_class_ex(&ce, cassandra_type_ce);
   memcpy(&cassandra_type_set_handlers, zend_get_std_object_handlers(), sizeof(zend_object_handlers));
   cassandra_type_set_handlers.get_properties  = php_cassandra_type_set_properties;
 #if PHP_VERSION_ID >= 50400

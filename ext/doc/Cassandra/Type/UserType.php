@@ -20,7 +20,7 @@ namespace Cassandra\Type;
 
 use Cassandra\Type;
 
-final class UserType implements Type
+final class UserType extends Type
 {
     /**
      * Returns type name for the user type

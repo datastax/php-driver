@@ -20,7 +20,7 @@ namespace Cassandra\Type;
 
 use Cassandra\Type;
 
-class UnsupportedType implements Type
+class UnsupportedType extends Type
 {
     public function name()
     {

@@ -20,7 +20,7 @@ namespace Cassandra\Type;
 
 use Cassandra\Type;
 
-final class Tuple implements Type
+final class Tuple extends Type
 {
     /**
      * Returns "tuple"

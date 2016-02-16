@@ -233,5 +233,5 @@ void cassandra_define_Type(TSRMLS_D)
 
   INIT_CLASS_ENTRY(ce, "Cassandra\\Type", cassandra_type_methods);
   cassandra_type_ce = zend_register_internal_class(&ce TSRMLS_CC);
-  cassandra_type_ce->ce_flags |= ZEND_ACC_INTERFACE;
+  cassandra_type_ce->ce_flags |= ZEND_ACC_ABSTRACT;
 }

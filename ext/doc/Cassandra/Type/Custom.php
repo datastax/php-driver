@@ -20,7 +20,7 @@ namespace Cassandra\Type;
 
 use Cassandra\Type;
 
-final class Custom implements Type
+final class Custom extends Type
 {
     /**
      * {@inheritDoc}
