@@ -49,7 +49,7 @@ installing any of its dependencies.
 #### Installing with pecl
 
 The PHP driver is published to the official PECL repository, in order to install it,
-you have to first [install the 2.0 version of the C/C++ driver](http://datastax.github.io/cpp-driver/topics/building/)
+you have to first [install the C/C++ driver v2.2.2+](http://datastax.github.io/cpp-driver/topics/building/)
 and then run the following command.
 
 ```bash
