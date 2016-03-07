@@ -10,10 +10,6 @@
     </testsuite>
   </testsuites>
 
-  <listeners>
-    <listener class="TestSuiteListener" file="./tests/listener.php"></listener>
-  </listeners>
-
   <filter>
     <whitelist>
       <directory suffix=".php">./src/</directory>

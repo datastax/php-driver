@@ -1,5 +1,21 @@
 <?php
 
+/**
+ * Copyright 2015-2016 DataStax, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 namespace Cassandra;
 
 /**
@@ -34,7 +50,7 @@ abstract class CollectionsIntegrationTest extends BasicIntegrationTest {
             array(Type::bigint(), array(new Bigint("1"), new Bigint("2"), new Bigint("3"))),
             array(Type::blob(), array(new Blob("x"), new Blob("y"), new Blob("z"))),
             array(Type::boolean(), array(true, false, true, false)),
-            #array(Type::decimal(), array(new Decimal(1.1), new Decimal(2.2), new Decimal(3.3))),
+            array(Type::decimal(), array(new Decimal(1.1), new Decimal(2.2), new Decimal(3.3))),
             array(Type::double(), array(1.1, 2.2, 3.3, 4.4)),
             array(Type::float(), array(new Float(1.0), new Float(2.2), new Float(2.2))),
             array(Type::inet(), array(new Inet("127.0.0.1"), new Inet("127.0.0.2"), new Inet("127.0.0.3"))),
@@ -157,9 +173,10 @@ abstract class CollectionsIntegrationTest extends BasicIntegrationTest {
     }
 
     /**
-     * Create a table this a string key and a value use the $type parameter
+     * Create a table named for the CQL $type parameter
      *
      * @param $type Cassandra\Type
+     * @return string Table name generated from $type
      */
     public function createTable($type) {
         $query = "CREATE TABLE IF NOT EXISTS %s (key text PRIMARY KEY, value %s)";
@@ -234,6 +251,7 @@ abstract class CollectionsIntegrationTest extends BasicIntegrationTest {
      * using CQL
      *
      * @param $type Cassandra\Type
+     * @return string String representation of type
      */
     public static function typeString($type) {
         if ($type instanceof Type\Tuple || $type instanceof Type\Collection ||
@@ -250,6 +268,7 @@ abstract class CollectionsIntegrationTest extends BasicIntegrationTest {
      * user type using CQL
      *
      * @param $userType Cassandra\Type
+     * @return string String representation of the UserType
      */
     public static function userTypeString($userType) {
         return sprintf("%s", implode("_", array_map(function ($name, $type) {

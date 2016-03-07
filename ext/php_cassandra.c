@@ -1,3 +1,19 @@
+/**
+ * Copyright 2015-2016 DataStax, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 #include "php_cassandra.h"
 #include <php_ini.h>
 #ifndef _WIN32
@@ -380,6 +396,16 @@ PHP_MINIT_FUNCTION(cassandra)
   cassandra_define_TypeTuple(TSRMLS_C);
   cassandra_define_TypeUserType(TSRMLS_C);
   cassandra_define_TypeCustom(TSRMLS_C);
+
+  cassandra_define_RetryPolicy(TSRMLS_C);
+  cassandra_define_RetryPolicyDefault(TSRMLS_C);
+  cassandra_define_RetryPolicyDowngradingConsistency(TSRMLS_C);
+  cassandra_define_RetryPolicyFallthrough(TSRMLS_C);
+  cassandra_define_RetryPolicyLogging(TSRMLS_C);
+
+  cassandra_define_TimestampGenerator(TSRMLS_C);
+  cassandra_define_TimestampGeneratorMonotonic(TSRMLS_C);
+  cassandra_define_TimestampGeneratorServerSide(TSRMLS_C);
 
   return SUCCESS;
 }

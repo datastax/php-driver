@@ -13,6 +13,11 @@
   "license": "Apache-2.0",
   "authors": [
     {
+      "name": "Michael Penick",
+      "email": "michael.penick@datastax.com",
+      "homepage": "https://github.com/mpenick"
+    },
+    {
       "name": "Bulat Shakirzyanov",
       "email": "bulat.shakirzyanov@datastax.com",
       "homepage": "http://avalanche123.com"
@@ -34,9 +39,9 @@
     "test": "phpunit && behat"
   },
   "autoload-dev": {
-    "psr-0": {
-      "Cassandra\\": ["tests/unit/", "tests/integration/"],
-      "": ["support/"]
+    "files": ["support/ccm.php"],
+    "psr-4": {
+      "Cassandra\\": ["tests/unit/Cassandra/", "tests/integration/Cassandra/"]
     }
   }
 }

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright 2015 DataStax, Inc.
+ * Copyright 2015-2016 DataStax, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@ namespace Cassandra\Type;
 
 use Cassandra\Type;
 
-final class Map implements Type
+final class Map extends Type
 {
     /**
      * Returns "map"

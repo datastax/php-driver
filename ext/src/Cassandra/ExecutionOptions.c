@@ -1,6 +1,22 @@
-#include "php_cassandra.h"
+/**
+ * Copyright 2015-2016 DataStax, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
+#include "php_cassandra.h"
 #include "util/consistency.h"
+#include "util/math.h"
 
 zend_class_entry *cassandra_execution_options_ce = NULL;
 
@@ -13,8 +29,11 @@ PHP_METHOD(ExecutionOptions, __construct)
   php5to7_zval *consistency = NULL;
   php5to7_zval *serial_consistency = NULL;
   php5to7_zval *page_size = NULL;
+  php5to7_zval *paging_state_token = NULL;
   php5to7_zval *timeout = NULL;
   php5to7_zval *arguments = NULL;
+  php5to7_zval *retry_policy = NULL;
+  php5to7_zval *timestamp = NULL;
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z", &options) == FAILURE) {
     return;
@@ -48,6 +67,16 @@ PHP_METHOD(ExecutionOptions, __construct)
     self->page_size = Z_LVAL_P(PHP5TO7_ZVAL_MAYBE_DEREF(page_size));
   }
 
+  if (PHP5TO7_ZEND_HASH_FIND(Z_ARRVAL_P(options), "paging_state_token", sizeof("paging_state_token"), paging_state_token)) {
+    if (Z_TYPE_P(PHP5TO7_ZVAL_MAYBE_DEREF(paging_state_token)) != IS_STRING) {
+      throw_invalid_argument(PHP5TO7_ZVAL_MAYBE_DEREF(paging_state_token), "paging_state_token", "a string" TSRMLS_CC);
+      return;
+    }
+    self->paging_state_token = estrndup(Z_STRVAL_P(PHP5TO7_ZVAL_MAYBE_DEREF(paging_state_token)),
+                                        Z_STRLEN_P(PHP5TO7_ZVAL_MAYBE_DEREF(paging_state_token)));
+    self->paging_state_token_size = Z_STRLEN_P(PHP5TO7_ZVAL_MAYBE_DEREF(paging_state_token));
+  }
+
   if (PHP5TO7_ZEND_HASH_FIND(Z_ARRVAL_P(options), "timeout", sizeof("timeout"), timeout)) {
     if (!(Z_TYPE_P(PHP5TO7_ZVAL_MAYBE_DEREF(timeout)) == IS_LONG   && Z_LVAL_P(PHP5TO7_ZVAL_MAYBE_DEREF(timeout)) > 0) &&
         !(Z_TYPE_P(PHP5TO7_ZVAL_MAYBE_DEREF(timeout)) == IS_DOUBLE && Z_DVAL_P(PHP5TO7_ZVAL_MAYBE_DEREF(timeout)) > 0) &&
@@ -65,6 +94,33 @@ PHP_METHOD(ExecutionOptions, __construct)
       return;
     }
     PHP5TO7_ZVAL_COPY(PHP5TO7_ZVAL_MAYBE_P(self->arguments), PHP5TO7_ZVAL_MAYBE_DEREF(arguments));
+  }
+
+  if (PHP5TO7_ZEND_HASH_FIND(Z_ARRVAL_P(options), "retry_policy", sizeof("retry_policy"), retry_policy)) {
+    if (Z_TYPE_P(PHP5TO7_ZVAL_MAYBE_DEREF(retry_policy)) != IS_OBJECT &&
+        !instanceof_function(Z_OBJCE_P(PHP5TO7_ZVAL_MAYBE_DEREF(retry_policy)),
+                                       cassandra_retry_policy_ce TSRMLS_CC)) {
+      throw_invalid_argument(PHP5TO7_ZVAL_MAYBE_DEREF(retry_policy),
+                             "retry_policy",
+                             "an instance of Cassandra\\RetryPolicy" TSRMLS_CC);
+      return;
+    }
+    PHP5TO7_ZVAL_COPY(PHP5TO7_ZVAL_MAYBE_P(self->retry_policy), PHP5TO7_ZVAL_MAYBE_DEREF(retry_policy));
+  }
+
+  if (PHP5TO7_ZEND_HASH_FIND(Z_ARRVAL_P(options), "timestamp", sizeof("timestamp"), timestamp)) {
+    if (Z_TYPE_P(PHP5TO7_ZVAL_MAYBE_DEREF(timestamp)) == IS_LONG) {
+      self->timestamp = Z_LVAL_P(PHP5TO7_ZVAL_MAYBE_DEREF(timestamp));
+    } else if (Z_TYPE_P(PHP5TO7_ZVAL_MAYBE_DEREF(timestamp)) == IS_STRING) {
+      if (!php_cassandra_parse_bigint(Z_STRVAL_P(PHP5TO7_ZVAL_MAYBE_DEREF(timestamp)),
+                                      Z_STRLEN_P(PHP5TO7_ZVAL_MAYBE_DEREF(timestamp)),
+                                      &self->timestamp TSRMLS_CC)) {
+        return;
+      }
+    } else {
+      throw_invalid_argument(PHP5TO7_ZVAL_MAYBE_DEREF(timestamp), "timestamp", "an integer or integer string" TSRMLS_CC);
+      return;
+    }
   }
 }
 
@@ -96,6 +152,12 @@ PHP_METHOD(ExecutionOptions, __get)
       RETURN_NULL();
     }
     RETURN_LONG(self->page_size);
+  } else if (name_len == 16 && strncmp("pagingStateToken", name, name_len) == 0) {
+    if (!self->paging_state_token) {
+      RETURN_NULL();
+    }
+    PHP5TO7_RETURN_STRINGL(self->paging_state_token,
+                           self->paging_state_token_size);
   } else if (name_len == 7 && strncmp("timeout", name, name_len) == 0) {
     if (PHP5TO7_ZVAL_IS_UNDEF(self->timeout)) {
       RETURN_NULL();
@@ -106,6 +168,23 @@ PHP_METHOD(ExecutionOptions, __get)
       RETURN_NULL();
     }
     RETURN_ZVAL(PHP5TO7_ZVAL_MAYBE_P(self->arguments), 1, 0);
+  } else if (name_len == 11 && strncmp("retryPolicy", name, name_len) == 0) {
+    if (PHP5TO7_ZVAL_IS_UNDEF(self->retry_policy)) {
+      RETURN_NULL();
+    }
+    RETURN_ZVAL(PHP5TO7_ZVAL_MAYBE_P(self->retry_policy), 1, 0);
+  } else if (name_len == 9 && strncmp("timestamp", name, name_len) == 0) {
+    char *string;
+    if (self->timestamp == INT64_MIN) {
+      RETURN_NULL();
+    }
+#ifdef WIN32
+    spprintf(&string, 0, "%I64d", (long long int) self->timestamp);
+#else
+    spprintf(&string, 0, "%lld", (long long int) self->timestamp);
+#endif
+    PHP5TO7_RETVAL_STRING(string);
+    efree(string);
   }
 }
 
@@ -148,7 +227,12 @@ php_cassandra_execution_options_free(php5to7_zend_object_free *object TSRMLS_DC)
   cassandra_execution_options *self =
       PHP5TO7_ZEND_OBJECT_GET(execution_options, object);
 
+  if (self->paging_state_token) {
+    efree(self->paging_state_token);
+  }
   PHP5TO7_ZVAL_MAYBE_DESTROY(self->arguments);
+  PHP5TO7_ZVAL_MAYBE_DESTROY(self->timeout);
+  PHP5TO7_ZVAL_MAYBE_DESTROY(self->retry_policy);
 
   zend_object_std_dtor(&self->zval TSRMLS_CC);
   PHP5TO7_MAYBE_EFREE(self);
@@ -163,8 +247,12 @@ php_cassandra_execution_options_new(zend_class_entry *ce TSRMLS_DC)
   self->consistency = -1;
   self->serial_consistency = -1;
   self->page_size = -1;
+  self->paging_state_token = NULL;
+  self->paging_state_token_size = 0;
+  self->timestamp = INT64_MIN;
   PHP5TO7_ZVAL_UNDEF(self->arguments);
   PHP5TO7_ZVAL_UNDEF(self->timeout);
+  PHP5TO7_ZVAL_UNDEF(self->retry_policy);
 
   PHP5TO7_ZEND_OBJECT_INIT(execution_options, self, ce);
 

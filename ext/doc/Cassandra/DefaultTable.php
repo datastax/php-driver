@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright 2015 DataStax, Inc.
+ * Copyright 2015-2016 DataStax, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -125,25 +125,25 @@ final class DefaultTable implements Table
      * {@inheritDoc}
      * @return boolean Value of `populate_io_cache_on_flush` or null
      */
-    public function populateIOCacheOnFlush();
+    public function populateIOCacheOnFlush() {}
 
     /**
      * {@inheritDoc}
      * @return boolean Value of `replicate_on_write` or null
      */
-    public function replicateOnWrite();
+    public function replicateOnWrite() {}
 
     /**
      * {@inheritDoc}
      * @return int Value of `max_index_interval` or null
      */
-    public function maxIndexInterval();
+    public function maxIndexInterval() {}
 
     /**
      * {@inheritDoc}
      * @return int Value of `min_index_interval` or null
      */
-    public function minIndexInterval();
+    public function minIndexInterval() {}
 
     /**
      * {@inheritDoc}

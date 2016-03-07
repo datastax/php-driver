@@ -9,24 +9,40 @@ Cassandra and DataStax Enterprise using exclusively Cassandra's binary
 protocol and Cassandra Query Language v3.
   </description>
   <lead>
-    <name>Bulat Shakirzyanov</name>
-    <user>avalanche123</user>
-    <email>bulat.shakirzyanov@datastax.com</email>
+    <name>Michael Penick</name>
+    <user>mpenick</user>
+    <email>michael.penick@datastax.com</email>
     <active>yes</active>
   </lead>
-  <date>2016-02-01</date>
-  <time>19:35:01</time>
+  <date>2016-02-11</date>
+  <time>10:16:05</time>
   <version>
-    <release>1.1.0-dev</release>
-    <api>1.1.0-dev</api>
+    <release>1.1.0</release>
+    <api>1.1.0</api>
   </version>
   <stability>
-    <release>devel</release>
-    <api>devel</api>
+    <release>stable</release>
+    <api>stable</api>
   </stability>
   <license uri="http://www.apache.org/licenses/LICENSE-2.0">Apache License 2.0</license>
   <notes>
-# Official release under development
+# 1.1.0
+
+Features:
+
+* Added support for PHP 7
+* Added support for UDTs and tuples
+* Added support for nested collections
+* Added access to raw paging token (via `Cassandra\Rows::pagingStateToken()`)
+* Added support for client-side timestamps and timestamp generators
+* Added support for retry policys (includes logging, downgrading and fallthrough)
+* Added the ability to disable schema metadata updates (via `Cassandra\Cluster\withSchemaMetdata()`)
+* Added support for using named arguments with `Cassandra\SimpleStatement`
+* Changed the default consistency to `LOCAL_ONE` (from `ONE`)
+
+Bug Fixes:
+
+* [PHP-70] Fixed invalid encoding of decimals and varints
   </notes>
   <contents>
     <dir name="/">
@@ -95,6 +111,11 @@ protocol and Cassandra Query Language v3.
       <file role="src" name="src/Cassandra/Map.h" />
       <file role="src" name="src/Cassandra/Numeric.c" />
       <file role="src" name="src/Cassandra/PreparedStatement.c" />
+      <file role="src" name="src/Cassandra/RetryPolicy.c" />
+      <file role="src" name="src/Cassandra/RetryPolicy/DefaultPolicy.c" />
+      <file role="src" name="src/Cassandra/RetryPolicy/DowngradingConsistency.c" />
+      <file role="src" name="src/Cassandra/RetryPolicy/Fallthrough.c" />
+      <file role="src" name="src/Cassandra/RetryPolicy/Logging.c" />
       <file role="src" name="src/Cassandra/Rows.c" />
       <file role="src" name="src/Cassandra/SSLOptions.c" />
       <file role="src" name="src/Cassandra/SSLOptions/Builder.c" />
@@ -107,6 +128,9 @@ protocol and Cassandra Query Language v3.
       <file role="src" name="src/Cassandra/Table.c" />
       <file role="src" name="src/Cassandra/Timestamp.c" />
       <file role="src" name="src/Cassandra/Timestamp.h" />
+      <file role="src" name="src/Cassandra/TimestampGenerator.c" />
+      <file role="src" name="src/Cassandra/TimestampGenerator/Monotonic.c" />
+      <file role="src" name="src/Cassandra/TimestampGenerator/ServerSide.c" />
       <file role="src" name="src/Cassandra/Timeuuid.c" />
       <file role="src" name="src/Cassandra/Timeuuid.h" />
       <file role="src" name="src/Cassandra/Tuple.c" />
@@ -208,6 +232,11 @@ protocol and Cassandra Query Language v3.
       <file role="doc" name="doc/Cassandra/Map.php" />
       <file role="doc" name="doc/Cassandra/Numeric.php" />
       <file role="doc" name="doc/Cassandra/PreparedStatement.php" />
+      <file role="doc" name="doc/Cassandra/RetryPolicy.php" />
+      <file role="doc" name="doc/Cassandra/RetryPolicy/DefaultPolicy.php" />
+      <file role="doc" name="doc/Cassandra/RetryPolicy/DowngradingConsistency.php" />
+      <file role="doc" name="doc/Cassandra/RetryPolicy/Fallthrough.php" />
+      <file role="doc" name="doc/Cassandra/RetryPolicy/Logging.php" />
       <file role="doc" name="doc/Cassandra/Rows.php" />
       <file role="doc" name="doc/Cassandra/SSLOptions.php" />
       <file role="doc" name="doc/Cassandra/SSLOptions/Builder.php" />
@@ -218,6 +247,9 @@ protocol and Cassandra Query Language v3.
       <file role="doc" name="doc/Cassandra/Statement.php" />
       <file role="doc" name="doc/Cassandra/Table.php" />
       <file role="doc" name="doc/Cassandra/Timestamp.php" />
+      <file role="doc" name="doc/Cassandra/TimestampGenerator.php" />
+      <file role="doc" name="doc/Cassandra/TimestampGenerator/Monotonic.php" />
+      <file role="doc" name="doc/Cassandra/TimestampGenerator/ServerSide.php" />
       <file role="doc" name="doc/Cassandra/Timeuuid.php" />
       <file role="doc" name="doc/Cassandra/Tuple.php" />
       <file role="doc" name="doc/Cassandra/Type.php" />
@@ -240,7 +272,7 @@ protocol and Cassandra Query Language v3.
   <dependencies>
   <required>
    <php>
-    <min>5.3.4</min>
+    <min>5.5.0</min>
     <max>7.0.99</max>
    </php>
    <pearinstaller>

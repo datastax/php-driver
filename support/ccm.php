@@ -1,5 +1,21 @@
 <?php
 
+/**
+ * Copyright 2015-2016 DataStax, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 use Symfony\Component\Process\Process;
 use Cassandra\SimpleStatement;
 
@@ -90,8 +106,8 @@ class CCM
                 $this->session = $this->cluster->connect();
                 break;
             } catch (Cassandra\Exception\RuntimeException $e) {
-                $this->cluster = null;
-                $this->session = null;
+                unset($this->session);
+                unset($this->cluster);
                 sleep($retries * 0.4);
             }
         }
@@ -103,11 +119,8 @@ class CCM
 
     public function stop()
     {
-        if ($this->session) {
-            $this->session->close();
-            $this->session = null;
-            $this->cluster = null;
-        }
+        unset($this->session);
+        unset($this->cluster);
         $this->run('stop');
     }
 
@@ -132,13 +145,22 @@ class CCM
         return array('active' => $active, 'list' => $clusters);
     }
 
-    public function setup($dataCenterOneNodes, $dataCenterTwoNodes)
+    private function internalSetup($dataCenterOneNodes, $dataCenterTwoNodes)
     {
         $this->dataCenterOneNodes = $dataCenterOneNodes;
         $this->dataCenterTwoNodes = $dataCenterTwoNodes;
 
         $clusters = $this->getClusters();
         $clusterName = $this->clusterPrefix.'_'.$this->version.'_'.$dataCenterOneNodes.'-'.$dataCenterTwoNodes;
+
+        if ($this->ssl) {
+            $clusterName .= "_ssl";
+        }
+
+        if ($this->clientAuth) {
+            $clusterName .= "_client_auth";
+        }
+
         if ($clusters['active'] != $clusterName) {
             // Ensure any active cluster is stopped
             if (!empty($clusters['active'])) {
@@ -189,36 +211,33 @@ class CCM
                 $this->run('populate', '-n', $dataCenterOneNodes.':'.$dataCenterTwoNodes, '-i', '127.0.0.');
             }
         }
+    }
 
-        if ($this->ssl || $this->clientAuth) {
-            $this->stop();
-            $this->run('updateconf',
-                'client_encryption_options.enabled: false',
-                'client_encryption_options.require_client_auth: false'
-            );
-            $this->ssl        = false;
-            $this->clientAuth = false;
-        }
+    public function setup($dataCenterOneNodes, $dataCenterTwoNodes) {
+        $this->ssl = false;
+        $this->clientAuth = false;
+        $this->internalSetup($dataCenterOneNodes, $dataCenterTwoNodes);
     }
 
     public function setupSSL()
     {
         if (!$this->ssl) {
-            $this->setup(1, 0);
+            $this->ssl = true;
+            $this->internalSetup(1, 0);
             $this->stop();
             $this->run('updateconf',
                 'client_encryption_options.enabled: true',
                 'client_encryption_options.keystore: ' . realpath(__DIR__ . '/ssl/.keystore'),
                 'client_encryption_options.keystore_password: php-driver'
             );
-            $this->ssl = true;
         }
     }
 
     public function setupClientVerification()
     {
         if (!$this->clientAuth) {
-            $this->setup(1, 0);
+            $this->clientAuth = true;
+            $this->internalSetup(1, 0);
             $this->stop();
             $this->run('updateconf',
                 'client_encryption_options.enabled: true',
@@ -228,16 +247,45 @@ class CCM
                 'client_encryption_options.truststore: ' . realpath(__DIR__ . '/ssl/.truststore'),
                 'client_encryption_options.truststore_password: php-driver'
             );
-            $this->clientAuth = true;
         }
     }
 
     public function enableTracing($isEnabled)
     {
         $nodes = $this->dataCenterOneNodes + $this->dataCenterTwoNodes;
-        for($node = 1; $node <= $nodes; ++$node) {
+        for ($node = 1; $node <= $nodes; ++$node) {
             $this->run('node'.$node, 'nodetool', 'settraceprobability', ((bool) $isEnabled) ? 1 : 0);
         }
+    }
+
+    public function pauseNode($nodes)
+    {
+        foreach (array($nodes) as $node) {
+            $this->run('node'.$node, 'pause');
+        }
+    }
+
+    public function resumeNode($nodes)
+    {
+        foreach (array($nodes) as $node) {
+            $this->run('node'.$node, 'resume');
+        }
+    }
+
+    public function startNode($nodes)
+    {
+        foreach (array($nodes) as $node) {
+            $this->run('node'.$node, 'start');
+        }
+        sleep(5); //TODO: Mechanism required to ensure node is up
+    }
+
+    public function stopNode($nodes)
+    {
+        foreach (array($nodes) as $node) {
+            $this->run('node'.$node, 'stop');
+        }
+        sleep(5); //TODO: Mechanism required to ensure node is down
     }
 
     private function isActive($clusterName)

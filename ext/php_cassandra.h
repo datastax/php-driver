@@ -1,3 +1,19 @@
+/**
+ * Copyright 2015-2016 DataStax, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 #ifndef PHP_CASSANDRA_H
 #define PHP_CASSANDRA_H
 
@@ -68,6 +84,8 @@ extern zend_module_entry cassandra_module_entry;
 #ifdef ZTS
 #  include "TSRM.h"
 #endif
+
+#define PHP_CASSANDRA_DEFAULT_CONSISTENCY CASS_CONSISTENCY_LOCAL_ONE
 
 #if PHP_MAJOR_VERSION >= 7
 #define php5to7_zend_register_internal_class_ex(ce, parent_ce) zend_register_internal_class_ex((ce), (parent_ce) TSRMLS_CC);
@@ -191,6 +209,7 @@ php5to7_string_compare(php5to7_string s1, php5to7_string s2)
 
 #define PHP5TO7_ZVAL_COPY(zv1, zv2) ZVAL_COPY(zv1, zv2)
 #define PHP5TO7_ZVAL_IS_UNDEF(zv) Z_ISUNDEF(zv)
+#define PHP5TO7_ZVAL_IS_UNDEF_P(zv) Z_ISUNDEF_P(zv)
 
 #define PHP5TO7_ZVAL_IS_BOOL_P(zv) \
   (Z_TYPE_P(zv) == IS_TRUE  || Z_TYPE_P(zv) == IS_FALSE)
@@ -210,6 +229,7 @@ php5to7_string_compare(php5to7_string s1, php5to7_string s2)
 #define PHP5TO7_ZVAL_STRINGL(zv, s, len) ZVAL_STRINGL(zv, s, len)
 #define PHP5TO7_RETVAL_STRING(s) RETVAL_STRING(s)
 #define PHP5TO7_RETVAL_STRINGL(s, len) RETVAL_STRINGL(s, len)
+#define PHP5TO7_RETURN_STRINGL(s, len) RETURN_STRINGL(s, len)
 
 #define PHP5TO7_ZVAL_ARG(zv) &(zv)
 #define PHP5TO7_ZVAL_MAYBE_DEREF(zv) (zv)
@@ -360,6 +380,7 @@ php5to7_string_compare(php5to7_string s1, php5to7_string s2)
 } while(0)
 
 #define PHP5TO7_ZVAL_IS_UNDEF(zv) ((zv) == NULL)
+#define PHP5TO7_ZVAL_IS_UNDEF_P(zv) ((zv) == NULL)
 #define PHP5TO7_ZVAL_IS_BOOL_P(zv) (Z_TYPE_P(zv) == IS_BOOL)
 #define PHP5TO7_ZVAL_IS_FALSE_P(zv) (Z_TYPE_P(zv) == IS_BOOL && !Z_BVAL_P(zv))
 #define PHP5TO7_ZVAL_IS_TRUE_P(zv) (Z_TYPE_P(zv) == IS_BOOL && Z_BVAL_P(zv))
@@ -377,6 +398,7 @@ php5to7_string_compare(php5to7_string s1, php5to7_string s2)
 #define PHP5TO7_ZVAL_STRINGL(zv, s, len) ZVAL_STRINGL(zv, s, len, 1)
 #define PHP5TO7_RETVAL_STRING(s) RETVAL_STRING(s, 1)
 #define PHP5TO7_RETVAL_STRINGL(s, len) RETVAL_STRINGL(s, len, 1)
+#define PHP5TO7_RETURN_STRINGL(s, len) RETURN_STRINGL(s, len, 1)
 
 #define PHP5TO7_ZVAL_ARG(zv) *(zv)
 #define PHP5TO7_ZVAL_MAYBE_DEREF(zv) *(zv)

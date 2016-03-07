@@ -276,53 +276,91 @@ Feature: Schema Metadata
       $keyspace  = $schema->keyspace("simplex");
 
       foreach ($keyspace->userTypes() as $name => $type) {
-        print "$type\n";
+        print "Name: $type\n";
+        print "Type: " . var_export($type, true) . "\n";
       }
       """
     When it is executed
     Then its output should contain:
       """
-      simplex.type1<a:int, b:text>
-      simplex.type2<a:map<text, int>, b:bigint>
-      simplex.type3<a:map<text, set<int>>, b:list<uuid>>
+      Name: simplex.type1
+      Type: Cassandra\Type\UserType::__set_state(array(
+         'types' =>
+        array (
+          'a' =>
+          Cassandra\Type\Scalar::__set_state(array(
+             'name' => 'int',
+          )),
+          'b' =>
+          Cassandra\Type\Scalar::__set_state(array(
+             'name' => 'varchar',
+          )),
+        ),
+      ))
+      Name: simplex.type2
+      Type: Cassandra\Type\UserType::__set_state(array(
+         'types' =>
+        array (
+          'a' =>
+          Cassandra\Type\Map::__set_state(array(
+             'keyType' =>
+            Cassandra\Type\Scalar::__set_state(array(
+               'name' => 'varchar',
+            )),
+             'valueType' =>
+            Cassandra\Type\Scalar::__set_state(array(
+               'name' => 'int',
+            )),
+          )),
+          'b' =>
+          Cassandra\Type\Scalar::__set_state(array(
+             'name' => 'bigint',
+          )),
+        ),
+      ))
+      Name: simplex.type3
+      Type: Cassandra\Type\UserType::__set_state(array(
+         'types' =>
+        array (
+          'a' =>
+          Cassandra\Type\Map::__set_state(array(
+             'keyType' =>
+            Cassandra\Type\Scalar::__set_state(array(
+               'name' => 'varchar',
+            )),
+             'valueType' =>
+            Cassandra\Type\Set::__set_state(array(
+               'valueType' =>
+              Cassandra\Type\Scalar::__set_state(array(
+                 'name' => 'int',
+              )),
+            )),
+          )),
+          'b' =>
+          Cassandra\Type\Collection::__set_state(array(
+             'valueType' =>
+            Cassandra\Type\Scalar::__set_state(array(
+               'name' => 'uuid',
+            )),
+          )),
+        ),
+      ))
       """
 
-    @cassandra-version-2.1
-    Scenario: Getting metadata for user type by name
-    Given the following schema:
-      """php
-      CREATE KEYSPACE simplex WITH replication = {
-        'class': 'SimpleStrategy',
-        'replication_factor': 1
-      };
-      USE simplex;
-      CREATE TYPE type1 (a int, b text);
-      CREATE TYPE type2 (a map<text, int>, b bigint);
-      CREATE TYPE type3 (a map<text, frozen<set<varint>>>, b list<uuid>);
-      """
-    And the following example:
+    Scenario: Disable schema metadata
+    Given the following example:
       """php
       <?php
       $cluster   = Cassandra::cluster()
                          ->withContactPoints('127.0.0.1')
+                         ->withSchemaMetadata(false)
                          ->build();
       $session   = $cluster->connect("simplex");
       $schema    = $session->schema();
-      $keyspace  = $schema->keyspace("simplex");
-
-      $type      = $keyspace->userType("type1");
-      print "$type\n";
-
-      $type      = $keyspace->userType("type2");
-      print "$type\n";
-
-      $type      = $keyspace->userType("type3");
-      print "$type\n";
+      print count($schema->keyspaces()) . "\n";
       """
     When it is executed
-    Then its output should contain:
+    Then its output should contain these lines in any order:
       """
-      simplex.type1<a:int, b:text>
-      simplex.type2<a:map<text, int>, b:bigint>
-      simplex.type3<a:map<text, set<int>>, b:list<uuid>>
+      0
       """

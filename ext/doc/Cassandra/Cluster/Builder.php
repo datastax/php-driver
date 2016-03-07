@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright 2015 DataStax, Inc.
+ * Copyright 2015-2016 DataStax, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -234,4 +234,29 @@ final class Builder
      * @return Builder self
      */
     public function withTCPKeepalive($delay) {}
+
+    /**
+     * Sets the timestamp generator.
+     *
+     * @param Cassandra\TimestampGenerator $generator A timestamp generator that will be used
+     *                                                to generate timestamps for statements.
+     *
+     * @return Builder self
+     */
+    public function withTimestampGenerator($generator) {}
+
+    /**
+     * Enables/disables Schema Metadata.
+     *
+     * If disabled this allows the driver to skip over retrieving and
+     * updating schema metadata, but it also disables the usage of token-aware
+     * routing and $session->schema() will always return an empty object. This
+     * can be useful for reducing the startup overhead of short-lived sessions.
+     *
+     * @param bool $enable whether the driver fetches and maintains schema metadata.
+     *
+     * @return Builder self
+     */
+    public function withSchemaMetadata($enable = true) {}
+
 }

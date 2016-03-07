@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright 2015 DataStax, Inc.
+ * Copyright 2015-2016 DataStax, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -138,6 +138,13 @@ final class Rows implements \Iterator, \Countable, \ArrayAccess
      * @return Future returns future of the next result page
      */
     public function nextPageAsync() {}
+
+    /**
+     * Returns the raw paging state token.
+     *
+     * @return string
+     */
+    public function pagingStateToken() {}
 
     /**
      * Get the first row.

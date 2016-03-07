@@ -1,3 +1,19 @@
+/**
+ * Copyright 2015-2016 DataStax, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 #include "php_cassandra.h"
 #include "util/result.h"
 #include "util/ref.h"
@@ -102,7 +118,7 @@ PHP_METHOD(DefaultKeyspace, tables)
     const CassValue      *value;
     const char           *table_name;
     size_t                table_name_len;
-    zval                 *ztable = NULL;
+    php5to7_zval          ztable;
     cassandra_table      *table;
 
     meta = cass_iterator_get_table_meta(iterator);
@@ -114,13 +130,13 @@ PHP_METHOD(DefaultKeyspace, tables)
     );
 
     PHP5TO7_ZVAL_MAYBE_MAKE(ztable);
-    object_init_ex(ztable, cassandra_default_table_ce);
-    table = PHP_CASSANDRA_GET_TABLE(ztable);
+    object_init_ex(PHP5TO7_ZVAL_MAYBE_P(ztable), cassandra_default_table_ce);
+    table = PHP_CASSANDRA_GET_TABLE(PHP5TO7_ZVAL_MAYBE_P(ztable));
     table->schema = php_cassandra_add_ref(self->schema);
     table->meta   = meta;
     PHP5TO7_ADD_ASSOC_ZVAL_EX(return_value,
                               table_name, table_name_len + 1,
-                              ztable);
+                              PHP5TO7_ZVAL_MAYBE_P(ztable));
   }
 
   cass_iterator_free(iterator);

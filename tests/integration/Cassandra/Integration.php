@@ -1,7 +1,5 @@
 <?php
 
-namespace Cassandra;
-
 /**
  * Copyright 2015-2016 DataStax, Inc.
  *
@@ -17,6 +15,8 @@ namespace Cassandra;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+namespace Cassandra;
 
 /**
  * Base class to provide common integration test functionality.
@@ -41,12 +41,6 @@ class Integration {
      */
     const SELECT_SERVER_VERSION = "SELECT release_version FROM system.local";
 
-    /**
-     * Static instance for connect and disconnect methods to utilize.
-     *
-     * @var Integration
-     */
-    private static $instance;
     /**
      * Generated keyspace name for the integration test.
      *
@@ -87,6 +81,10 @@ class Integration {
      *                            (DEFAULT: 1).
      * @param int $numberDC2Nodes Number of nodes in data center two
      *                            (DEFAULT: 0).
+     * @param int $replicationFactor Replication factor override; default is
+     *                               calculated based on number of data center
+     *                               nodes; single data center is (nodes / 2)
+     *                               rounded up.
      * @param bool $isClientAuthentication True if client authentication
      *                                     should be enabled; false
      *                                     otherwise (DEFAULT: false).
@@ -98,6 +96,7 @@ class Integration {
                                 $testName = "",
                                 $numberDC1Nodes = 1,
                                 $numberDC2Nodes = 0,
+                                $replicationFactor = -1,
                                 $isClientAuthentication = false,
                                 $isSSL = false) {
         // Generate the keyspace name for the test
@@ -135,34 +134,33 @@ class Integration {
             $replicationStrategy = "'NetworkTopologyStrategy', 'dc1': " . $numberDC1Nodes . ", " .
                 "'dc2': " . $numberDC2Nodes;
         } else {
-            $replicationFactor = ($numberDC1Nodes % 2 == 0) ? $numberDC1Nodes / 2 : ($numberDC1Nodes + 1) / 2;
+            if ($replicationFactor < 0) {
+                $replicationFactor = ($numberDC1Nodes % 2 == 0) ? $numberDC1Nodes / 2 : ($numberDC1Nodes + 1) / 2;
+            }
             $replicationStrategy .= $replicationFactor;
         }
         $query = sprintf(Integration::SIMPLE_KEYSPACE_FORMAT, $this->keyspaceName, $replicationStrategy);
+        if (self::isDebug() && self::isVerbose()) {
+            fprintf(STDOUT, "Creating Keyspace: %s" . PHP_EOL, $query);
+        }
 
         // Create the session and keyspace for the integration test
-        try {
-            // Create the session and integration test keypspace
-            $this->cluster = \Cassandra::cluster()
-                ->withContactPoints(Integration::IP_ADDRESS)
-                ->build();
-            $this->session = $this->cluster->connect();
-            $statement = new SimpleStatement($query);
-            $this->session->execute($statement);
+        $this->cluster = \Cassandra::cluster()
+            ->withContactPoints($this->getContactPoints(Integration::IP_ADDRESS, ($numberDC1Nodes + $numberDC2Nodes)))
+            ->withPersistentSessions(false)
+            ->build();
+        $this->session = $this->cluster->connect();
+        $statement = new SimpleStatement($query);
+        $this->session->execute($statement);
 
-            // Update the session to use the new keyspace by default
-            $statement = new SimpleStatement("USE " . $this->keyspaceName);
-            $this->session->execute($statement);
+        // Update the session to use the new keyspace by default
+        $statement = new SimpleStatement("USE " . $this->keyspaceName);
+        $this->session->execute($statement);
 
-            // Get the server version the session is connected to
-            $statement = new SimpleStatement(self::SELECT_SERVER_VERSION);
-            $rows = $this->session->execute($statement);
-            $this->serverVersion = $rows->first()["release_version"];
-
-        } catch (Exception $e) {
-            printf("Error Creating CCM Cluster: %s" . PHP_EOL . "%s" . PHP_EOL,
-                $e->getMessage(), $e->getTraceAsString());
-        }
+        // Get the server version the session is connected to
+        $statement = new SimpleStatement(self::SELECT_SERVER_VERSION);
+        $rows = $this->session->execute($statement);
+        $this->serverVersion = $rows->first()["release_version"];
     }
 
     public function __destruct() {
@@ -177,47 +175,6 @@ class Integration {
         }
     }
 
-    public function __get($property) {
-        if (property_exists($this, $property)) {
-            return $this->$property;
-        }
-    }
-
-    /**
-     * Connect and establish basis for integration test.
-     *
-     * @param $className Name of the class for the executed test.
-     * @param string $testName Name of the test being executed.
-     * @param int $numberDC1Nodes Number of nodes in data center one
-     *                            (DEFAULT: 1).
-     * @param int $numberDC2Nodes Number of nodes in data center two
-     *                            (DEFAULT: 0).
-     * @param bool $isClientAuthentication True if client authentication
-     *                                     should be enabled; false
-     *                                     otherwise (DEFAULT: false).
-     * @param bool $isSSL True if SSL should be enabled; false otherwise
-     *                    (DEFAULT: false).
-     * @return Integration Instance of the Integration class created.
-     */
-    public static function connect($className,
-                                   $testName = "",
-                                   $numberDC1Nodes = 1,
-                                   $numberDC2Nodes = 0,
-                                   $isClientAuthentication = false,
-                                   $isSSL = false) {
-        self::$instance = new Integration($className, $testName,
-            $numberDC1Nodes, $numberDC2Nodes,
-            $isClientAuthentication, $isSSL);
-        return self::$instance;
-    }
-
-    /**
-     * Disconnect and perform cleanup of the integration test.
-     */
-    public static function disconnect() {
-        unset(self::$instance);
-    }
-
     /**
      * Get the short name of the class without the namespacing.
      *
@@ -228,4 +185,89 @@ class Integration {
         $function = new \ReflectionClass($className);
         return $function->getShortName();
     }
+
+    /**
+     * Get the contact points for the cluster.
+     *
+     * @param $ipAddress Starting IP address
+     * @param $numberOfNodes Total number of nodes in the cluster
+     * @return string Comma delimited ip addresses
+     */
+    private function getContactPoints($ipAddress, $numberOfNodes) {
+        // Generate the contact points from the IP address and total nodes
+        $ipPrefix = substr($ipAddress, 0, strlen($ipAddress) - 1);
+        $contactPoints = $ipAddress;
+        foreach (range(2, $numberOfNodes) as $i ) {
+            $contactPoints .= ", {$ipPrefix}{$i}";
+        }
+
+        // Return the contact points
+        return $contactPoints;
+    }
+
+    public function __get($property) {
+        if (property_exists($this, $property)) {
+            return $this->$property;
+        }
+    }
+
+    /**
+     * Determine if the debug argument was used when starting PHPUnit.
+     *
+     * @return bool True if debug argument was used; false otherwise
+     */
+    public static function isDebug() {
+        return in_array("--debug", $_SERVER['argv']);
+    }
+
+    /**
+     * Determine if the verbose argument was used when starting PHPUnit.
+     * @return bool True if verbose argument was used; false otherwise
+     */
+    public static function isVerbose() {
+        return in_array("--verbose", $_SERVER['argv']);
+     }
 }
+
+/**
+ * This class will act as a fixture for the integration test suite. This
+ * fixture will ensure startup and shutdown procedures when running the
+ * integration tests.
+ */
+class IntegrationTestFixture {
+    /**
+     * Handle for communicating with CCM.
+     *
+     * @var \CCM
+     */
+    private $ccm;
+    /**
+     * Singleton instance for the fixture.
+     *
+     * @var IntegrationTestFixture
+     */
+    private static $instance;
+
+    function __construct() {
+        $this->ccm = new \CCM(\CCM::DEFAULT_CASSANDRA_VERSION, true);
+        $this->ccm->removeAllClusters();
+    }
+
+    function __destruct() {
+        $this->ccm->removeAllClusters();
+    }
+
+    /**
+     * Create the integration test fixture for performing startup and shutdown
+     * procedures required by the integration test suite.
+     */
+    public static function createFixture() {
+        // Ensure only one instance (singleton)
+        if (!isset($instance)) {
+            self::$instance  = new IntegrationTestFixture();
+        }
+    }
+}
+
+// Create the integration test fixture
+IntegrationTestFixture::createFixture();

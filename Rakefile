@@ -116,9 +116,9 @@ Cassandra and DataStax Enterprise using exclusively Cassandra's binary
 protocol and Cassandra Query Language v3.
   </description>
   <lead>
-    <name>Bulat Shakirzyanov</name>
-    <user>avalanche123</user>
-    <email>bulat.shakirzyanov@datastax.com</email>
+    <name>Michael Penick</name>
+    <user>mpenick</user>
+    <email>michael.penick@datastax.com</email>
     <active>yes</active>
   </lead>
   <date><%= timestamp.strftime('%Y-%m-%d') %></date>
@@ -149,7 +149,7 @@ end
   <dependencies>
   <required>
    <php>
-    <min>5.3.4</min>
+    <min>5.5.0</min>
     <max>7.0.99</max>
    </php>
    <pearinstaller>
