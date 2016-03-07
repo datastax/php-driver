@@ -1,3 +1,0 @@
-#!/bin/sh
-
-rm -f /etc/php5/conf.d/cassandra.ini

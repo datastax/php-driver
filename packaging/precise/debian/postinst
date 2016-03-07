@@ -1,3 +1,0 @@
-#!/bin/sh
-
-echo "extension=cassandra.so" > /etc/php5/conf.d/cassandra.ini
