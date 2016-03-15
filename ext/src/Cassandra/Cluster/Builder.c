@@ -343,7 +343,7 @@ PHP_METHOD(ClusterBuilder, withDatacenterAwareRoundRobinLoadBalancingPolicy)
 }
 
 
-PHP_METHOD(ClusterBuilder, withBlackListNodes)
+PHP_METHOD(ClusterBuilder, withBlackListHosts)
 {
     zval *hosts = NULL;
     php5to7_zval_args args = NULL;
@@ -388,7 +388,7 @@ PHP_METHOD(ClusterBuilder, withBlackListNodes)
     RETURN_ZVAL(getThis(), 1, 0);
 }
 
-PHP_METHOD(ClusterBuilder, withWhiteListNodes)
+PHP_METHOD(ClusterBuilder, withWhiteListHosts)
 {
     zval *hosts = NULL;
     php5to7_zval_args args = NULL;
@@ -433,7 +433,7 @@ PHP_METHOD(ClusterBuilder, withWhiteListNodes)
     RETURN_ZVAL(getThis(), 1, 0);
 }
 
-PHP_METHOD(ClusterBuilder, withBlackListDC)
+PHP_METHOD(ClusterBuilder, withBlackListDCs)
 {
     zval *dcs = NULL;
     php5to7_zval_args args = NULL;
@@ -478,7 +478,7 @@ PHP_METHOD(ClusterBuilder, withBlackListDC)
     RETURN_ZVAL(getThis(), 1, 0);
 }
 
-PHP_METHOD(ClusterBuilder, withWhiteListDC)
+PHP_METHOD(ClusterBuilder, withWhiteListDCs)
 {
     zval *dcs = NULL;
     php5to7_zval_args args = NULL;
@@ -968,13 +968,13 @@ static zend_function_entry cassandra_cluster_builder_methods[] = {
          ZEND_ACC_PUBLIC)
   PHP_ME(ClusterBuilder, withDatacenterAwareRoundRobinLoadBalancingPolicy,
          arginfo_dc_aware, ZEND_ACC_PUBLIC)
-  PHP_ME(ClusterBuilder, withBlackListNodes,
+  PHP_ME(ClusterBuilder, withBlackListHosts,
          arginfo_blacklist_nodes, ZEND_ACC_PUBLIC)
-  PHP_ME(ClusterBuilder, withWhiteListNodes,
+  PHP_ME(ClusterBuilder, withWhiteListHosts,
           arginfo_whitelist_nodes, ZEND_ACC_PUBLIC)
-  PHP_ME(ClusterBuilder, withBlackListDC,
+  PHP_ME(ClusterBuilder, withBlackListDCs,
           arginfo_blacklist_dcs, ZEND_ACC_PUBLIC)
-  PHP_ME(ClusterBuilder, withWhiteListDC,
+  PHP_ME(ClusterBuilder, withWhiteListDCs,
           arginfo_whitelist_dcs, ZEND_ACC_PUBLIC)
   PHP_ME(ClusterBuilder, withTokenAwareRouting, arginfo_enabled,
          ZEND_ACC_PUBLIC)
