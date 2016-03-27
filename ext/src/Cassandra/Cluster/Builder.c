@@ -1062,8 +1062,8 @@ php_cassandra_cluster_builder_free(php5to7_zend_object_free *object TSRMLS_DC)
   efree(self->contact_points);
   self->contact_points = NULL;
 
-  efree(builder->whitelist_filtering);
-  builder->whitelist_filtering = NULL;
+  efree(self->whitelist_filtering);
+  self->whitelist_filtering = NULL;
   
   if (self->local_dc) {
     efree(self->local_dc);
