@@ -844,7 +844,7 @@ IF !ENABLE_BUILD_PACKAGES! EQU !FALSE! (
         ECHO.
 
         REM Reset the system PATH
-        SET "PATH=!STORED_PATH!
+        SET "PATH=!STORED_PATH!"
       )
     ) ELSE (
       ECHO Visual Studio !PHP_VISUAL_STUDIO_VERSION! not Detected: PHP v%%A package will not be created
