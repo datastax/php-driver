@@ -21,7 +21,7 @@
 
 #if !defined(HAVE_STDINT_H) && !defined(_MSC_STDINT_H_)
 #  define INT64_MAX 9223372036854775807LL
-#  define INT64_MIN (-INT_MAX-1)
+#  define INT64_MIN (-INT64_MAX-1)
 #endif
 
 zend_class_entry *cassandra_bigint_ce = NULL;
