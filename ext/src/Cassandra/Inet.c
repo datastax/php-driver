@@ -190,4 +190,5 @@ void cassandra_define_Inet(TSRMLS_D)
   cassandra_inet_ce->create_object = php_cassandra_inet_new;
 
   cassandra_inet_handlers.hash_value = php_cassandra_inet_hash_value;
+  cassandra_inet_handlers.std.clone_obj = NULL;
 }

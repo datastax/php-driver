@@ -477,4 +477,5 @@ void cassandra_define_DefaultTable(TSRMLS_D)
   memcpy(&cassandra_default_table_handlers, zend_get_std_object_handlers(), sizeof(zend_object_handlers));
   cassandra_default_table_handlers.get_properties  = php_cassandra_default_table_properties;
   cassandra_default_table_handlers.compare_objects = php_cassandra_default_table_compare;
+  cassandra_default_table_handlers.clone_obj = NULL;
 }

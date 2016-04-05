@@ -480,4 +480,5 @@ void cassandra_define_UserTypeValue(TSRMLS_D)
   zend_class_implements(cassandra_user_type_value_ce TSRMLS_CC, 2, spl_ce_Countable, zend_ce_iterator);
 
   cassandra_user_type_value_handlers.hash_value = php_cassandra_user_type_value_hash_value;
+  cassandra_user_type_value_handlers.std.clone_obj = NULL;
 }

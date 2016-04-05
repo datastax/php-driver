@@ -163,4 +163,5 @@ void cassandra_define_FutureRows(TSRMLS_D)
   memcpy(&cassandra_future_rows_handlers, zend_get_std_object_handlers(), sizeof(zend_object_handlers));
   cassandra_future_rows_handlers.get_properties  = php_cassandra_future_rows_properties;
   cassandra_future_rows_handlers.compare_objects = php_cassandra_future_rows_compare;
+  cassandra_future_rows_handlers.clone_obj = NULL;
 }

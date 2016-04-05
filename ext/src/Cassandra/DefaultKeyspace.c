@@ -273,4 +273,5 @@ void cassandra_define_DefaultKeyspace(TSRMLS_D)
   memcpy(&cassandra_default_keyspace_handlers, zend_get_std_object_handlers(), sizeof(zend_object_handlers));
   cassandra_default_keyspace_handlers.get_properties  = php_cassandra_default_keyspace_properties;
   cassandra_default_keyspace_handlers.compare_objects = php_cassandra_default_keyspace_compare;
+  cassandra_default_keyspace_handlers.clone_obj = NULL;
 }

@@ -631,4 +631,5 @@ void cassandra_define_Decimal(TSRMLS_D)
   cassandra_decimal_handlers.std.cast_object     = php_cassandra_decimal_cast;
 
   cassandra_decimal_handlers.hash_value = php_cassandra_decimal_hash_value;
+  cassandra_decimal_handlers.std.clone_obj = NULL;
 }

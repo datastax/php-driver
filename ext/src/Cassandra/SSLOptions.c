@@ -75,4 +75,5 @@ void cassandra_define_SSLOptions(TSRMLS_D)
   memcpy(&cassandra_ssl_handlers, zend_get_std_object_handlers(), sizeof(zend_object_handlers));
   cassandra_ssl_handlers.get_properties  = php_cassandra_ssl_properties;
   cassandra_ssl_handlers.compare_objects = php_cassandra_ssl_compare;
+  cassandra_ssl_handlers.clone_obj = NULL;
 }

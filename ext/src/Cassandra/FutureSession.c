@@ -119,8 +119,12 @@ php_cassandra_future_session_free(php5to7_zend_object_free *object TSRMLS_DC)
   if (self->persist) {
     efree(self->hash_key);
   } else {
-    cass_future_free(self->future);
-    cass_session_free(self->session);
+    if (self->future) {
+      cass_future_free(self->future);
+    }
+    if (self->session) {
+      cass_session_free(self->session);
+    }
   }
 
   if (self->exception_message)
@@ -158,4 +162,5 @@ void cassandra_define_FutureSession(TSRMLS_D)
   memcpy(&cassandra_future_session_handlers, zend_get_std_object_handlers(), sizeof(zend_object_handlers));
   cassandra_future_session_handlers.get_properties  = php_cassandra_future_session_properties;
   cassandra_future_session_handlers.compare_objects = php_cassandra_future_session_compare;
+  cassandra_future_session_handlers.clone_obj = NULL;
 }

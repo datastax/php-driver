@@ -257,4 +257,5 @@ cassandra_define_Timeuuid(TSRMLS_D)
   cassandra_timeuuid_ce->create_object = php_cassandra_timeuuid_new;
 
   cassandra_timeuuid_handlers.hash_value = php_cassandra_timeuuid_hash_value;
+  cassandra_timeuuid_handlers.std.clone_obj = NULL;
 }

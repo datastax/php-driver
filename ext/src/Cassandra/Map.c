@@ -599,4 +599,5 @@ void cassandra_define_Map(TSRMLS_D)
   zend_class_implements(cassandra_map_ce TSRMLS_CC, 3, spl_ce_Countable, zend_ce_iterator, zend_ce_arrayaccess);
 
   cassandra_map_handlers.hash_value = php_cassandra_map_hash_value;
+  cassandra_map_handlers.std.clone_obj = NULL;
 }
