@@ -236,6 +236,15 @@ final class Builder
     public function withTCPKeepalive($delay) {}
 
     /**
+     * Configures the retry policy.
+     *
+     * @param RetryPolicy $policy the retry policy to use.
+     *
+     * @return Builder self
+     */
+    public function withRetryPolicy(RetryPolicy $policy) {}
+
+    /**
      * Sets the timestamp generator.
      *
      * @param Cassandra\TimestampGenerator $generator A timestamp generator that will be used
