@@ -68,7 +68,7 @@ class UserTypeTest extends \PHPUnit_Framework_TestCase
      *                           odd argument is a name and each even
      *                           argument is a type,
      *                           e.g udt(name, type, name, type, name, type)'
-     *                           contains 'argument must be a string, '1' given
+     *                           contains 'argument must be a string, 1 given
      */
     public function testPreventsCreatingUserTypeTypeWithInvalidName()
     {
@@ -83,7 +83,7 @@ class UserTypeTest extends \PHPUnit_Framework_TestCase
      *                           odd argument is a name and each even
      *                           argument is a value,
      *                           e.g udt(name, value, name, value, name, value)'
-     *                           contains 'argument must be a string, '1' given'.
+     *                           contains 'argument must be a string, 1 given'.
      */
     public function testPreventsCreatingUserTypeWithInvalidName()
     {
@@ -93,7 +93,7 @@ class UserTypeTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @expectedException        InvalidArgumentException
-     * @expectedExceptionMessage argument must be a string, '1' given
+     * @expectedExceptionMessage argument must be a string, 1 given
      */
     public function testPreventsCreatingUserTypeWithUnsupportedTypes()
     {
