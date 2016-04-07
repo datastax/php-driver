@@ -496,6 +496,7 @@ ZEND_BEGIN_MODULE_GLOBALS(cassandra)
   php5to7_zval          type_timestamp;
   php5to7_zval          type_uuid;
   php5to7_zval          type_timeuuid;
+  php5to7_zval          type_smallint;
 ZEND_END_MODULE_GLOBALS(cassandra)
 
 #ifdef ZTS

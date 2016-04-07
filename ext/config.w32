@@ -125,6 +125,7 @@ if (PHP_CASSANDRA != "no") {
               "Session.c " +
               "Set.c " +
               "SimpleStatement.c " +
+              "Smallint.c " +
               "SSLOptions.c " +
               "Statement.c " +
               "Table.c " +

@@ -71,4 +71,30 @@ class DatatypeIntegrationTest extends BasicIntegrationTest {
             $this->assertEquals($values[2], $row["value_varint"]);
         }
     }
+
+    /**
+     * @test
+     * @ticket PHP-63
+     */
+    public function testSupportsSmallint() {
+        // Create the table
+        $query = "CREATE TABLE {$this->tableNamePrefix} (value_smallint smallint PRIMARY KEY)";
+        $this->session->execute(new SimpleStatement($query));
+        $statement = $this->session->prepare("INSERT INTO {$this->tableNamePrefix} (value_smallint) VALUES (?)");
+
+        $futures = array();
+        foreach (range(Smallint::min(), Smallint::max()) as $value) {
+            $futures[] = $this->session->executeAsync($statement, new ExecutionOptions(array("arguments" => array(new Smallint($value)))));
+        }
+        foreach ($futures as $future) {
+            $future->get();
+        }
+        unset($futures);
+
+        $rows = $this->session->execute(new SimpleStatement("SELECT * FROM {$this->tableNamePrefix}"));
+        $this->assertCount(65536, $rows);
+        $row = $rows->first();
+        $this->assertNotNull($row);
+        $this->assertEquals(new Smallint(-1), $row["value_smallint"]);
+    }
 }

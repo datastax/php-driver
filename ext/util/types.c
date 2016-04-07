@@ -22,6 +22,7 @@
 #include <ext/standard/php_smart_str.h>
 #endif
 #include "src/Cassandra/Bigint.h"
+#include "src/Cassandra/Smallint.h"
 #include "src/Cassandra/Blob.h"
 #include "src/Cassandra/Decimal.h"
 #include "src/Cassandra/Float.h"
@@ -262,29 +263,7 @@ int php_cassandra_type_validate(zval *object, const char *object_name TSRMLS_DC)
       !instanceof_function(Z_OBJCE_P(object), cassandra_type_set_ce TSRMLS_CC) &&
       !instanceof_function(Z_OBJCE_P(object), cassandra_type_tuple_ce TSRMLS_CC) &&
       !instanceof_function(Z_OBJCE_P(object), cassandra_type_user_type_ce TSRMLS_CC)) {
-    throw_invalid_argument(object, object_name,
-                           "Cassandra\\Type::varchar(), " \
-                           "Cassandra\\Type::text(), " \
-                           "Cassandra\\Type::blob(), " \
-                           "Cassandra\\Type::ascii(), " \
-                           "Cassandra\\Type::bigint(), " \
-                           "Cassandra\\Type::counter(), " \
-                           "Cassandra\\Type::int(), " \
-                           "Cassandra\\Type::varint(), " \
-                           "Cassandra\\Type::boolean(), " \
-                           "Cassandra\\Type::decimal(), " \
-                           "Cassandra\\Type::double(), " \
-                           "Cassandra\\Type::float(), " \
-                           "Cassandra\\Type::inet(), " \
-                           "Cassandra\\Type::timestamp(), " \
-                           "Cassandra\\Type::uuid(), " \
-                           "Cassandra\\Type::timeuuid(), " \
-                           "Cassandra\\Type::map(), " \
-                           "Cassandra\\Type::set(), " \
-                           "Cassandra\\Type::collection(), " \
-                           "Cassandra\\Type::tuple() or " \
-                           "Cassandra\\Type::userType()"
-                           TSRMLS_CC);
+    throw_invalid_argument(object, object_name, "a valid Cassandra\\Type" TSRMLS_CC);
     return 0;
   }
   return 1;
@@ -1112,6 +1091,10 @@ php_cassandra_lookup_type(struct node_s *node TSRMLS_DC)
 
   if (strncmp("org.apache.cassandra.db.marshal.LongType", node->name, node->name_length) == 0) {
     return CASS_VALUE_TYPE_BIGINT;
+  }
+
+  if (strncmp("org.apache.cassandra.db.marshal.ShortType", node->name, node->name_length) == 0) {
+    return CASS_VALUE_TYPE_SMALL_INT;
   }
 
   if (strncmp("org.apache.cassandra.db.marshal.BytesType", node->name, node->name_length) == 0) {
