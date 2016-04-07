@@ -88,6 +88,14 @@ php_cassandra_value(const CassValue* value, const CassDataType* data_type, php5t
       return FAILURE;
     )
     break;
+  case CASS_VALUE_TYPE_SMALL_INT:
+    object_init_ex(PHP5TO7_ZVAL_MAYBE_DEREF(out), cassandra_smallint_ce);
+    numeric = PHP_CASSANDRA_GET_NUMERIC(PHP5TO7_ZVAL_MAYBE_DEREF(out));
+    ASSERT_SUCCESS_BLOCK(cass_value_get_int16(value, &numeric->smallint_value),
+      zval_ptr_dtor(out);
+      return FAILURE;
+    )
+    break;
   case CASS_VALUE_TYPE_TIMESTAMP:
     object_init_ex(PHP5TO7_ZVAL_MAYBE_DEREF(out), cassandra_timestamp_ce);
     timestamp = PHP_CASSANDRA_GET_TIMESTAMP(PHP5TO7_ZVAL_MAYBE_DEREF(out));

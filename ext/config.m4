@@ -87,6 +87,7 @@ if test "$PHP_CASSANDRA" != "no"; then
   CASSANDRA_TYPES="\
     src/Cassandra/Float.c \
     src/Cassandra/Bigint.c \
+    src/Cassandra/Smallint.c \
     src/Cassandra/Blob.c \
     src/Cassandra/Decimal.c \
     src/Cassandra/Inet.c \

@@ -83,6 +83,12 @@ php_cassandra_validate_object(zval *object, zval *ztype TSRMLS_DC)
     }
 
     return 1;
+  case CASS_VALUE_TYPE_SMALL_INT:
+    if (!INSTANCE_OF(cassandra_smallint_ce)) {
+      EXPECTING_VALUE("an instance of Cassandra\\Smallint");
+    }
+
+    return 1;
   case CASS_VALUE_TYPE_BLOB:
     if (!INSTANCE_OF(cassandra_blob_ce)) {
       EXPECTING_VALUE("an instance of Cassandra\\Blob");
@@ -199,6 +205,8 @@ php_cassandra_value_type(char *type, CassValueType *value_type TSRMLS_DC)
     *value_type = CASS_VALUE_TYPE_ASCII;
   } else if (strcmp("bigint", type) == 0) {
     *value_type = CASS_VALUE_TYPE_BIGINT;
+  } else if (strcmp("smallint", type) == 0) {
+    *value_type = CASS_VALUE_TYPE_SMALL_INT;
   } else if (strcmp("blob", type) == 0) {
     *value_type = CASS_VALUE_TYPE_BLOB;
   } else if (strcmp("boolean", type) == 0) {
@@ -266,6 +274,10 @@ php_cassandra_collection_append(CassCollection *collection, zval *value, CassVal
   case CASS_VALUE_TYPE_COUNTER:
     numeric = PHP_CASSANDRA_GET_NUMERIC(value);
     CHECK_ERROR(cass_collection_append_int64(collection, numeric->bigint_value));
+    break;
+  case CASS_VALUE_TYPE_SMALL_INT:
+    numeric = PHP_CASSANDRA_GET_NUMERIC(value);
+    CHECK_ERROR(cass_collection_append_int16(collection, numeric->smallint_value));
     break;
   case CASS_VALUE_TYPE_BLOB:
     blob = PHP_CASSANDRA_GET_BLOB(value);
@@ -386,6 +398,10 @@ php_cassandra_tuple_set(CassTuple *tuple, php5to7_ulong index, zval *value, Cass
   case CASS_VALUE_TYPE_COUNTER:
     numeric = PHP_CASSANDRA_GET_NUMERIC(value);
     CHECK_ERROR(cass_tuple_set_int64(tuple, index, numeric->bigint_value));
+    break;
+  case CASS_VALUE_TYPE_SMALL_INT:
+    numeric = PHP_CASSANDRA_GET_NUMERIC(value);
+    CHECK_ERROR(cass_tuple_set_int16(tuple, index, numeric->smallint_value));
     break;
   case CASS_VALUE_TYPE_BLOB:
     blob = PHP_CASSANDRA_GET_BLOB(value);
@@ -508,6 +524,10 @@ php_cassandra_user_type_set(CassUserType *ut,
   case CASS_VALUE_TYPE_COUNTER:
     numeric = PHP_CASSANDRA_GET_NUMERIC(value);
     CHECK_ERROR(cass_user_type_set_int64_by_name(ut, name, numeric->bigint_value));
+    break;
+  case CASS_VALUE_TYPE_SMALL_INT:
+    numeric = PHP_CASSANDRA_GET_NUMERIC(value);
+    CHECK_ERROR(cass_user_type_set_int16_by_name(ut, name, numeric->smallint_value));
     break;
   case CASS_VALUE_TYPE_BLOB:
     blob = PHP_CASSANDRA_GET_BLOB(value);

@@ -281,6 +281,7 @@ static PHP_GINIT_FUNCTION(cassandra)
   PHP5TO7_ZVAL_UNDEF(cassandra_globals->type_blob);
   PHP5TO7_ZVAL_UNDEF(cassandra_globals->type_ascii);
   PHP5TO7_ZVAL_UNDEF(cassandra_globals->type_bigint);
+  PHP5TO7_ZVAL_UNDEF(cassandra_globals->type_smallint);
   PHP5TO7_ZVAL_UNDEF(cassandra_globals->type_counter);
   PHP5TO7_ZVAL_UNDEF(cassandra_globals->type_int);
   PHP5TO7_ZVAL_UNDEF(cassandra_globals->type_varint);
@@ -342,6 +343,7 @@ PHP_MINIT_FUNCTION(cassandra)
   cassandra_define_Value(TSRMLS_C);
   cassandra_define_Numeric(TSRMLS_C);
   cassandra_define_Bigint(TSRMLS_C);
+  cassandra_define_Smallint(TSRMLS_C);
   cassandra_define_Blob(TSRMLS_C);
   cassandra_define_Decimal(TSRMLS_C);
   cassandra_define_Float(TSRMLS_C);
