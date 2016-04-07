@@ -48,7 +48,7 @@ class SetTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @expectedException        InvalidArgumentException
-     * @expectedExceptionMessage argument must be a string, '1' given
+     * @expectedExceptionMessage argument must be a string, 1 given
      */
     public function testPreventsCreatingSetWithUnsupportedTypes()
     {
