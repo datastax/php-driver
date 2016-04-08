@@ -82,19 +82,12 @@ class DatatypeIntegrationTest extends BasicIntegrationTest {
         $this->session->execute(new SimpleStatement($query));
         $statement = $this->session->prepare("INSERT INTO {$this->tableNamePrefix} (value_smallint) VALUES (?)");
 
-        $futures = array();
-        foreach (range(Smallint::min(), Smallint::max()) as $value) {
-            $futures[] = $this->session->executeAsync($statement, new ExecutionOptions(array("arguments" => array(new Smallint($value)))));
-        }
-        foreach ($futures as $future) {
-            $future->get();
-        }
-        unset($futures);
-
+        $value = rand(Smallint::min()->toInt(), Smallint::max()->toInt());
+        $this->session->executeAsync($statement, new ExecutionOptions(array("arguments" => array(new Smallint($value)))));
         $rows = $this->session->execute(new SimpleStatement("SELECT * FROM {$this->tableNamePrefix}"));
-        $this->assertCount(65536, $rows);
+        $this->assertCount(1, $rows);
         $row = $rows->first();
         $this->assertNotNull($row);
-        $this->assertEquals(new Smallint(-1), $row["value_smallint"]);
+        $this->assertEquals(new Smallint($value), $row["value_smallint"]);
     }
 }
