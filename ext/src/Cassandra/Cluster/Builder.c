@@ -1046,7 +1046,7 @@ php_cassandra_cluster_builder_new(zend_class_entry *ce TSRMLS_DC)
   self->default_consistency = PHP_CASSANDRA_DEFAULT_CONSISTENCY;
   self->default_page_size = 5000;
   self->persist = 1;
-  self->protocol_version = 3;
+  self->protocol_version = 4;
   self->io_threads = 1;
   self->core_connections_per_host = 1;
   self->max_connections_per_host = 2;
