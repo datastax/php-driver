@@ -24,8 +24,6 @@
 #  define INT16_MIN (-INT16_MAX-1)
 #endif
 
-#define str(s) #s
-
 zend_class_entry *cassandra_smallint_ce = NULL;
 
 static int
@@ -125,33 +123,37 @@ PHP_METHOD(Smallint, value)
 {
   cassandra_numeric *self = PHP_CASSANDRA_GET_NUMERIC(getThis());
 
-  to_string(return_value, self TSRMLS_CC);
+  to_long(return_value, self TSRMLS_CC);
 }
 /* }}} */
 
 /* {{{ Cassandra\Smallint::add() */
 PHP_METHOD(Smallint, add)
 {
-  zval *num;
+  zval *addend;
   cassandra_numeric *self;
   cassandra_numeric *smallint;
   cassandra_numeric *result;
 
-  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z", &num) == FAILURE) {
+  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z", &addend) == FAILURE) {
     return;
   }
 
-  if (Z_TYPE_P(num) == IS_OBJECT &&
-      instanceof_function(Z_OBJCE_P(num), cassandra_smallint_ce TSRMLS_CC)) {
+  if (Z_TYPE_P(addend) == IS_OBJECT &&
+      instanceof_function(Z_OBJCE_P(addend), cassandra_smallint_ce TSRMLS_CC)) {
     self = PHP_CASSANDRA_GET_NUMERIC(getThis());
-    smallint = PHP_CASSANDRA_GET_NUMERIC(num);
+    smallint = PHP_CASSANDRA_GET_NUMERIC(addend);
 
     object_init_ex(return_value, cassandra_smallint_ce);
     result = PHP_CASSANDRA_GET_NUMERIC(return_value);
 
     result->smallint_value = self->smallint_value + smallint->smallint_value;
+    if (result->smallint_value - smallint->smallint_value != self->smallint_value) {
+      zend_throw_exception_ex(cassandra_range_exception_ce, 0 TSRMLS_CC, "Sum is out of range");
+      return;
+    }
   } else {
-    INVALID_ARGUMENT(num, "a Cassandra\\Smallint");
+    INVALID_ARGUMENT(addend, "a Cassandra\\Smallint");
   }
 }
 /* }}} */
@@ -159,24 +161,28 @@ PHP_METHOD(Smallint, add)
 /* {{{ Cassandra\Smallint::sub() */
 PHP_METHOD(Smallint, sub)
 {
-  zval *num;
+  zval *difference;
   cassandra_numeric *result = NULL;
 
-  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z", &num) == FAILURE) {
+  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z", &difference) == FAILURE) {
     return;
   }
 
-  if (Z_TYPE_P(num) == IS_OBJECT &&
-      instanceof_function(Z_OBJCE_P(num), cassandra_smallint_ce TSRMLS_CC)) {
+  if (Z_TYPE_P(difference) == IS_OBJECT &&
+      instanceof_function(Z_OBJCE_P(difference), cassandra_smallint_ce TSRMLS_CC)) {
     cassandra_numeric *self = PHP_CASSANDRA_GET_NUMERIC(getThis());
-    cassandra_numeric *smallint = PHP_CASSANDRA_GET_NUMERIC(num);
+    cassandra_numeric *smallint = PHP_CASSANDRA_GET_NUMERIC(difference);
 
     object_init_ex(return_value, cassandra_smallint_ce);
     result = PHP_CASSANDRA_GET_NUMERIC(return_value);
 
     result->smallint_value = self->smallint_value - smallint->smallint_value;
+    if (result->smallint_value + smallint->smallint_value != self->smallint_value) {
+      zend_throw_exception_ex(cassandra_range_exception_ce, 0 TSRMLS_CC, "Difference is out of range");
+      return;
+    }
   } else {
-    INVALID_ARGUMENT(num, "a Cassandra\\Smallint");
+    INVALID_ARGUMENT(difference, "a Cassandra\\Smallint");
   }
 }
 /* }}} */
@@ -184,24 +190,29 @@ PHP_METHOD(Smallint, sub)
 /* {{{ Cassandra\Smallint::mul() */
 PHP_METHOD(Smallint, mul)
 {
-  zval *num;
+  zval *multiplier;
   cassandra_numeric *result = NULL;
 
-  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z", &num) == FAILURE) {
+  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z", &multiplier) == FAILURE) {
     return;
   }
 
-  if (Z_TYPE_P(num) == IS_OBJECT &&
-      instanceof_function(Z_OBJCE_P(num), cassandra_smallint_ce TSRMLS_CC)) {
+  if (Z_TYPE_P(multiplier) == IS_OBJECT &&
+      instanceof_function(Z_OBJCE_P(multiplier), cassandra_smallint_ce TSRMLS_CC)) {
     cassandra_numeric *self = PHP_CASSANDRA_GET_NUMERIC(getThis());
-    cassandra_numeric *smallint = PHP_CASSANDRA_GET_NUMERIC(num);
+    cassandra_numeric *smallint = PHP_CASSANDRA_GET_NUMERIC(multiplier);
 
     object_init_ex(return_value, cassandra_smallint_ce);
     result = PHP_CASSANDRA_GET_NUMERIC(return_value);
 
     result->smallint_value = self->smallint_value * smallint->smallint_value;
+    if (smallint->smallint_value != 0 &&
+        result->smallint_value / smallint->smallint_value != self->smallint_value) {
+      zend_throw_exception_ex(cassandra_range_exception_ce, 0 TSRMLS_CC, "Product is out of range");
+      return;
+    }
   } else {
-    INVALID_ARGUMENT(num, "a Cassandra\\Smallint");
+    INVALID_ARGUMENT(multiplier, "a Cassandra\\Smallint");
   }
 }
 /* }}} */
@@ -209,17 +220,17 @@ PHP_METHOD(Smallint, mul)
 /* {{{ Cassandra\Smallint::div() */
 PHP_METHOD(Smallint, div)
 {
-  zval *num;
+  zval *divisor;
   cassandra_numeric *result = NULL;
 
-  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z", &num) == FAILURE) {
+  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z", &divisor) == FAILURE) {
     return;
   }
 
-  if (Z_TYPE_P(num) == IS_OBJECT &&
-      instanceof_function(Z_OBJCE_P(num), cassandra_smallint_ce TSRMLS_CC)) {
+  if (Z_TYPE_P(divisor) == IS_OBJECT &&
+      instanceof_function(Z_OBJCE_P(divisor), cassandra_smallint_ce TSRMLS_CC)) {
     cassandra_numeric *self = PHP_CASSANDRA_GET_NUMERIC(getThis());
-    cassandra_numeric *smallint = PHP_CASSANDRA_GET_NUMERIC(num);
+    cassandra_numeric *smallint = PHP_CASSANDRA_GET_NUMERIC(divisor);
 
     object_init_ex(return_value, cassandra_smallint_ce);
     result = PHP_CASSANDRA_GET_NUMERIC(return_value);
@@ -230,8 +241,12 @@ PHP_METHOD(Smallint, div)
     }
 
     result->smallint_value = self->smallint_value / smallint->smallint_value;
+    if (result->smallint_value * smallint->smallint_value != self->smallint_value) {
+      zend_throw_exception_ex(cassandra_range_exception_ce, 0 TSRMLS_CC, "Quotient is out of range");
+      return;
+    }
   } else {
-    INVALID_ARGUMENT(num, "a Cassandra\\Smallint");
+    INVALID_ARGUMENT(divisor, "a Cassandra\\Smallint");
   }
 }
 /* }}} */
@@ -239,17 +254,17 @@ PHP_METHOD(Smallint, div)
 /* {{{ Cassandra\Smallint::mod() */
 PHP_METHOD(Smallint, mod)
 {
-  zval *num;
+  zval *divisor;
   cassandra_numeric *result = NULL;
 
-  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z", &num) == FAILURE) {
+  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z", &divisor) == FAILURE) {
     return;
   }
 
-  if (Z_TYPE_P(num) == IS_OBJECT &&
-      instanceof_function(Z_OBJCE_P(num), cassandra_smallint_ce TSRMLS_CC)) {
+  if (Z_TYPE_P(divisor) == IS_OBJECT &&
+      instanceof_function(Z_OBJCE_P(divisor), cassandra_smallint_ce TSRMLS_CC)) {
     cassandra_numeric *self = PHP_CASSANDRA_GET_NUMERIC(getThis());
-    cassandra_numeric *smallint = PHP_CASSANDRA_GET_NUMERIC(num);
+    cassandra_numeric *smallint = PHP_CASSANDRA_GET_NUMERIC(divisor);
 
     object_init_ex(return_value, cassandra_smallint_ce);
     result = PHP_CASSANDRA_GET_NUMERIC(return_value);
@@ -261,7 +276,7 @@ PHP_METHOD(Smallint, mod)
 
     result->smallint_value = self->smallint_value % smallint->smallint_value;
   } else {
-    INVALID_ARGUMENT(num, "a Cassandra\\Smallint");
+    INVALID_ARGUMENT(divisor, "a Cassandra\\Smallint");
   }
 }
 /* }}} */
@@ -289,6 +304,11 @@ PHP_METHOD(Smallint, neg)
   cassandra_numeric *result = NULL;
   cassandra_numeric *self = PHP_CASSANDRA_GET_NUMERIC(getThis());
 
+  if (self->smallint_value == INT16_MIN) {
+    zend_throw_exception_ex(cassandra_range_exception_ce, 0 TSRMLS_CC, "Value doesn't exist");
+    return;
+  }
+
   object_init_ex(return_value, cassandra_smallint_ce);
   result = PHP_CASSANDRA_GET_NUMERIC(return_value);
   result->smallint_value = -self->smallint_value;
@@ -308,7 +328,7 @@ PHP_METHOD(Smallint, sqrt)
 
   object_init_ex(return_value, cassandra_smallint_ce);
   result = PHP_CASSANDRA_GET_NUMERIC(return_value);
-  result->smallint_value = (cass_int64_t) sqrt((long double) self->smallint_value);
+  result->smallint_value = (cass_int16_t) sqrt((long double) self->smallint_value);
 }
 /* }}} */
 

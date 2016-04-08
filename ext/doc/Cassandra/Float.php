@@ -40,7 +40,7 @@ final class Float implements Value, Numeric
     /**
      * Creates a new float.
      *
-     * @param string $value float value as a string
+     * @param mixed $value float value as a string, number or Cassandra\Float
      */
     public function __construct($value) {}
 
@@ -54,7 +54,7 @@ final class Float implements Value, Numeric
     /**
      * Returns the float value.
      *
-     * @return string float value
+     * @return float float value
      */
     public function value() {}
 

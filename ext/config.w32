@@ -132,6 +132,7 @@ if (PHP_CASSANDRA != "no") {
               "Timestamp.c " +
               "TimestampGenerator.c " +
               "Timeuuid.c " +
+              "Tinyint.c " +
               "Tuple.c " +
               "Type.c " +
               "UserTypeValue.c " +

@@ -119,6 +119,7 @@ typedef enum {
 PHP_CASSANDRA_BEGIN_OBJECT_TYPE(numeric)
   cassandra_numeric_type type;
   union {
+    cass_int8_t tinyint_value;
     cass_int16_t smallint_value;
     cass_int64_t bigint_value;
     cass_float_t float_value;
@@ -464,6 +465,7 @@ extern PHP_CASSANDRA_API zend_class_entry *cassandra_value_ce;
 extern PHP_CASSANDRA_API zend_class_entry *cassandra_numeric_ce;
 extern PHP_CASSANDRA_API zend_class_entry *cassandra_bigint_ce;
 extern PHP_CASSANDRA_API zend_class_entry *cassandra_smallint_ce;
+extern PHP_CASSANDRA_API zend_class_entry *cassandra_tinyint_ce;
 extern PHP_CASSANDRA_API zend_class_entry *cassandra_blob_ce;
 extern PHP_CASSANDRA_API zend_class_entry *cassandra_decimal_ce;
 extern PHP_CASSANDRA_API zend_class_entry *cassandra_float_ce;
@@ -512,6 +514,7 @@ void cassandra_define_Value(TSRMLS_D);
 void cassandra_define_Numeric(TSRMLS_D);
 void cassandra_define_Bigint(TSRMLS_D);
 void cassandra_define_Smallint(TSRMLS_D);
+void cassandra_define_Tinyint(TSRMLS_D);
 void cassandra_define_Blob(TSRMLS_D);
 void cassandra_define_Collection(TSRMLS_D);
 void cassandra_define_Decimal(TSRMLS_D);

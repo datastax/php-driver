@@ -23,6 +23,7 @@
 #endif
 #include "src/Cassandra/Bigint.h"
 #include "src/Cassandra/Smallint.h"
+#include "src/Cassandra/Tinyint.h"
 #include "src/Cassandra/Blob.h"
 #include "src/Cassandra/Decimal.h"
 #include "src/Cassandra/Float.h"
@@ -1095,6 +1096,10 @@ php_cassandra_lookup_type(struct node_s *node TSRMLS_DC)
 
   if (strncmp("org.apache.cassandra.db.marshal.ShortType", node->name, node->name_length) == 0) {
     return CASS_VALUE_TYPE_SMALL_INT;
+  }
+
+  if (strncmp("org.apache.cassandra.db.marshal.ByteType", node->name, node->name_length) == 0) {
+    return CASS_VALUE_TYPE_TINY_INT;
   }
 
   if (strncmp("org.apache.cassandra.db.marshal.BytesType", node->name, node->name_length) == 0) {

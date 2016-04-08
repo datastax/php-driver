@@ -83,11 +83,31 @@ class DatatypeIntegrationTest extends BasicIntegrationTest {
         $statement = $this->session->prepare("INSERT INTO {$this->tableNamePrefix} (value_smallint) VALUES (?)");
 
         $value = rand(Smallint::min()->toInt(), Smallint::max()->toInt());
-        $this->session->executeAsync($statement, new ExecutionOptions(array("arguments" => array(new Smallint($value)))));
+        $this->session->execute($statement, new ExecutionOptions(array("arguments" => array(new Smallint($value)))));
         $rows = $this->session->execute(new SimpleStatement("SELECT * FROM {$this->tableNamePrefix}"));
         $this->assertCount(1, $rows);
         $row = $rows->first();
         $this->assertNotNull($row);
         $this->assertEquals(new Smallint($value), $row["value_smallint"]);
+    }
+
+    /**
+     * @test
+     * @ticket PHP-63
+     */
+    public function testSupportsTinyint() {
+        // Create the table
+        $query = "CREATE TABLE {$this->tableNamePrefix} (value_tinyint tinyint PRIMARY KEY)";
+        $this->session->execute(new SimpleStatement($query));
+        $statement = $this->session->prepare("INSERT INTO {$this->tableNamePrefix} (value_tinyint) VALUES (?)");
+
+        $value = rand(Tinyint::min()->toInt(), Tinyint::max()->toInt());
+        fprintf(STDERR, "value is %d\n", $value);
+        $this->session->execute($statement, new ExecutionOptions(array("arguments" => array(new Tinyint($value)))));
+        $rows = $this->session->execute(new SimpleStatement("SELECT * FROM {$this->tableNamePrefix}"));
+        $this->assertCount(1, $rows);
+        $row = $rows->first();
+        $this->assertNotNull($row);
+        $this->assertEquals(new Tinyint($value), $row["value_tinyint"]);
     }
 }
