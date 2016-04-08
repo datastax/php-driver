@@ -19,24 +19,24 @@
 namespace Cassandra;
 
 
-final class Smallint implements Value, Numeric
+final class Tinyint implements Value, Numeric
 {
     /**
-     * Minimum possible Smallint value
+     * Minimum possible Tinyint value
      *
-     * @return Smallint minimum value
+     * @return Tinyint minimum value
      */
     public static function min() {}
 
     /**
-     * Maximum possible Smallint value
+     * Maximum possible Tinyint value
      *
-     * @return Smallint maximum value
+     * @return Tinyint maximum value
      */
     public static function max() {}
 
     /**
-     * Creates a new 16bit integer.
+     * Creates a new 8bit integer.
      *
      * @param string $value integer value as a string
      */
@@ -103,7 +103,7 @@ final class Smallint implements Value, Numeric
     public function toDouble() {}
 
     /**
-     * The type of this value (smallint).
+     * The type of this value (tinyint).
      *
      * @return Type
      */
