@@ -90,6 +90,7 @@ if (PHP_CASSANDRA != "no") {
               "Cluster.c " +
               "Collection.c " +
               "Column.c " +
+              "Date.c " +
               "Decimal.c " +
               "DefaultCluster.c " +
               "DefaultColumn.c " +
@@ -121,6 +122,7 @@ if (PHP_CASSANDRA != "no") {
               "SSLOptions.c " +
               "Statement.c " +
               "Table.c " +
+              "Time.c " +
               "Timestamp.c " +
               "TimestampGenerator.c " +
               "Timeuuid.c " +

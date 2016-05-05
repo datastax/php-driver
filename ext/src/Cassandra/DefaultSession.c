@@ -77,6 +77,16 @@ bind_argument_by_index(CassStatement *statement, size_t index, zval *value TSRML
       CHECK_RESULT(cass_statement_bind_int64(statement, index, timestamp->timestamp));
     }
 
+    if (instanceof_function(Z_OBJCE_P(value), cassandra_date_ce TSRMLS_CC)) {
+      cassandra_date *date = PHP_CASSANDRA_GET_DATE(value);
+      CHECK_RESULT(cass_statement_bind_uint32(statement, index, date->date));
+    }
+
+    if (instanceof_function(Z_OBJCE_P(value), cassandra_time_ce TSRMLS_CC)) {
+      cassandra_time *time = PHP_CASSANDRA_GET_TIME(value);
+      CHECK_RESULT(cass_statement_bind_int64(statement, index, time->time));
+    }
+
     if (instanceof_function(Z_OBJCE_P(value), cassandra_blob_ce TSRMLS_CC)) {
       cassandra_blob *blob = PHP_CASSANDRA_GET_BLOB(value);
       CHECK_RESULT(cass_statement_bind_bytes(statement, index, blob->data, blob->size));
@@ -221,6 +231,16 @@ bind_argument_by_name(CassStatement *statement, const char *name,
     if (instanceof_function(Z_OBJCE_P(value), cassandra_timestamp_ce TSRMLS_CC)) {
       cassandra_timestamp *timestamp = PHP_CASSANDRA_GET_TIMESTAMP(value);
       CHECK_RESULT(cass_statement_bind_int64_by_name(statement, name, timestamp->timestamp));
+    }
+
+    if (instanceof_function(Z_OBJCE_P(value), cassandra_date_ce TSRMLS_CC)) {
+      cassandra_date *date = PHP_CASSANDRA_GET_DATE(value);
+      CHECK_RESULT(cass_statement_bind_uint32_by_name(statement, name, date->date));
+    }
+
+    if (instanceof_function(Z_OBJCE_P(value), cassandra_time_ce TSRMLS_CC)) {
+      cassandra_time *time = PHP_CASSANDRA_GET_TIME(value);
+      CHECK_RESULT(cass_statement_bind_int64_by_name(statement, name, time->time));
     }
 
     if (instanceof_function(Z_OBJCE_P(value), cassandra_blob_ce TSRMLS_CC)) {

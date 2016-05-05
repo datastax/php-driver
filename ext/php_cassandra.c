@@ -350,6 +350,8 @@ PHP_MINIT_FUNCTION(cassandra)
   cassandra_define_Float(TSRMLS_C);
   cassandra_define_Inet(TSRMLS_C);
   cassandra_define_Timestamp(TSRMLS_C);
+  cassandra_define_Date(TSRMLS_C);
+  cassandra_define_Time(TSRMLS_C);
   cassandra_define_UuidInterface(TSRMLS_C);
   cassandra_define_Timeuuid(TSRMLS_C);
   cassandra_define_Uuid(TSRMLS_C);

@@ -96,6 +96,8 @@ if test "$PHP_CASSANDRA" != "no"; then
     src/Cassandra/UuidInterface.c \
     src/Cassandra/Uuid.c \
     src/Cassandra/Timestamp.c \
+    src/Cassandra/Date.c \
+    src/Cassandra/Time.c \
     src/Cassandra/Timeuuid.c \
     src/Cassandra/Varint.c \
     src/Cassandra/Set.c \

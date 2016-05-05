@@ -29,6 +29,8 @@
 #include "src/Cassandra/Float.h"
 #include "src/Cassandra/Inet.h"
 #include "src/Cassandra/Timestamp.h"
+#include "src/Cassandra/Date.h"
+#include "src/Cassandra/Time.h"
 #include "src/Cassandra/Timeuuid.h"
 #include "src/Cassandra/Uuid.h"
 #include "src/Cassandra/Varint.h"
@@ -1141,6 +1143,14 @@ php_cassandra_lookup_type(struct node_s *node TSRMLS_DC)
   if (strncmp("org.apache.cassandra.db.marshal.TimestampType", node->name, node->name_length) == 0 ||
       strncmp("org.apache.cassandra.db.marshal.DateType",      node->name, node->name_length) == 0) {
     return CASS_VALUE_TYPE_TIMESTAMP;
+  }
+
+  if (strncmp("org.apache.cassandra.db.marshal.SimpleDateType", node->name, node->name_length) == 0) {
+    return CASS_VALUE_TYPE_DATE;
+  }
+
+  if (strncmp("org.apache.cassandra.db.marshal.TimeType", node->name, node->name_length) == 0) {
+    return CASS_VALUE_TYPE_TIME;
   }
 
   if (strncmp("org.apache.cassandra.db.marshal.UUIDType", node->name, node->name_length) == 0) {

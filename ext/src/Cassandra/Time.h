@@ -1,5 +1,3 @@
-<?php
-
 /**
  * Copyright 2015-2016 DataStax, Inc.
  *
@@ -16,34 +14,9 @@
  * limitations under the License.
  */
 
-namespace Cassandra;
+#ifndef PHP_CASSANDRA_TIME_H
+#define PHP_CASSANDRA_TIME_H
 
-/**
- * Common interface implemented by all Cassandra value types.
- *
- * @see Bigint
- * @see Blob
- * @see Collection
- * @see Float
- * @see Inet
- * @see Map
- * @see Set
- * @see Timestamp
- * @see Timeuuid
- * @see Uuid
- * @see Varint
- * @see Date
- * @see Time
- *
- * @see Numeric
- * @see UuidInterface
- */
-interface Value
-{
-    /**
-     * The type of represented by the value.
-     *
-     * @return Type
-     */
-    function type();
-}
+void php_cassandra_time_init(INTERNAL_FUNCTION_PARAMETERS);
+
+#endif /* PHP_CASSANDRA_TIME_H */
