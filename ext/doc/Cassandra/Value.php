@@ -22,6 +22,8 @@ namespace Cassandra;
  * Common interface implemented by all Cassandra value types.
  *
  * @see Bigint
+ * @see Smallint
+ * @see Tinyint
  * @see Blob
  * @see Collection
  * @see Float
