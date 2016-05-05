@@ -110,4 +110,42 @@ class DatatypeIntegrationTest extends BasicIntegrationTest {
         $this->assertNotNull($row);
         $this->assertEquals(new Tinyint($value), $row["value_tinyint"]);
     }
+
+    /**
+     * @test
+     * @ticket PHP-64
+     */
+    public function testSupportsDate() {
+        // Create the table
+        $query = "CREATE TABLE {$this->tableNamePrefix} (value_date date PRIMARY KEY)";
+        $this->session->execute(new SimpleStatement($query));
+        $statement = $this->session->prepare("INSERT INTO {$this->tableNamePrefix} (value_date) VALUES (?)");
+
+        $date = new Date();
+        $this->session->execute($statement, new ExecutionOptions(array("arguments" => array($date))));
+        $rows = $this->session->execute(new SimpleStatement("SELECT * FROM {$this->tableNamePrefix}"));
+        $this->assertCount(1, $rows);
+        $row = $rows->first();
+        $this->assertNotNull($row);
+        $this->assertEquals($date, $row["value_date"]);
+    }
+
+    /**
+     * @test
+     * @ticket PHP-64
+     */
+    public function testSupportsTime() {
+        // Create the table
+        $query = "CREATE TABLE {$this->tableNamePrefix} (value_time time PRIMARY KEY)";
+        $this->session->execute(new SimpleStatement($query));
+        $statement = $this->session->prepare("INSERT INTO {$this->tableNamePrefix} (value_time) VALUES (?)");
+
+        $time = new Time();
+        $this->session->execute($statement, new ExecutionOptions(array("arguments" => array($time))));
+        $rows = $this->session->execute(new SimpleStatement("SELECT * FROM {$this->tableNamePrefix}"));
+        $this->assertCount(1, $rows);
+        $row = $rows->first();
+        $this->assertNotNull($row);
+        $this->assertEquals($time, $row["value_time"]);
+    }
 }

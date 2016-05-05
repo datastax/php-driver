@@ -113,6 +113,18 @@ php_cassandra_validate_object(zval *object, zval *ztype TSRMLS_DC)
     }
 
     return 1;
+  case CASS_VALUE_TYPE_DATE:
+    if (!INSTANCE_OF(cassandra_date_ce)) {
+      EXPECTING_VALUE("an instance of Cassandra\\Date");
+    }
+
+    return 1;
+  case CASS_VALUE_TYPE_TIME:
+    if (!INSTANCE_OF(cassandra_time_ce)) {
+      EXPECTING_VALUE("an instance of Cassandra\\Time");
+    }
+
+    return 1;
   case CASS_VALUE_TYPE_UUID:
     if (!INSTANCE_OF(cassandra_uuid_ce)) {
       EXPECTING_VALUE("an instance of Cassandra\\Uuid");
@@ -233,6 +245,10 @@ php_cassandra_value_type(char *type, CassValueType *value_type TSRMLS_DC)
     *value_type = CASS_VALUE_TYPE_TEXT;
   } else if (strcmp("timestamp", type) == 0) {
     *value_type = CASS_VALUE_TYPE_TIMESTAMP;
+  } else if (strcmp("date", type) == 0) {
+    *value_type = CASS_VALUE_TYPE_DATE;
+  } else if (strcmp("time", type) == 0) {
+    *value_type = CASS_VALUE_TYPE_TIME;
   } else if (strcmp("uuid", type) == 0) {
     *value_type = CASS_VALUE_TYPE_UUID;
   } else if (strcmp("varchar", type) == 0) {
@@ -259,6 +275,8 @@ php_cassandra_collection_append(CassCollection *collection, zval *value, CassVal
   cassandra_blob       *blob;
   cassandra_numeric    *numeric;
   cassandra_timestamp  *timestamp;
+  cassandra_date       *date;
+  cassandra_time       *time;
   cassandra_uuid       *uuid;
   cassandra_inet       *inet;
   size_t                size;
@@ -315,6 +333,14 @@ php_cassandra_collection_append(CassCollection *collection, zval *value, CassVal
   case CASS_VALUE_TYPE_TIMESTAMP:
     timestamp = PHP_CASSANDRA_GET_TIMESTAMP(value);
     CHECK_ERROR(cass_collection_append_int64(collection, timestamp->timestamp));
+    break;
+  case CASS_VALUE_TYPE_DATE:
+    date = PHP_CASSANDRA_GET_DATE(value);
+    CHECK_ERROR(cass_collection_append_uint32(collection, date->date));
+    break;
+  case CASS_VALUE_TYPE_TIME:
+    time = PHP_CASSANDRA_GET_TIME(value);
+    CHECK_ERROR(cass_collection_append_int64(collection, time->time));
     break;
   case CASS_VALUE_TYPE_UUID:
   case CASS_VALUE_TYPE_TIMEUUID:
@@ -382,6 +408,8 @@ php_cassandra_tuple_set(CassTuple *tuple, php5to7_ulong index, zval *value, Cass
   cassandra_blob       *blob;
   cassandra_numeric    *numeric;
   cassandra_timestamp  *timestamp;
+  cassandra_date       *date;
+  cassandra_time       *time;
   cassandra_uuid       *uuid;
   cassandra_inet       *inet;
   size_t                size;
@@ -443,6 +471,14 @@ php_cassandra_tuple_set(CassTuple *tuple, php5to7_ulong index, zval *value, Cass
   case CASS_VALUE_TYPE_TIMESTAMP:
     timestamp = PHP_CASSANDRA_GET_TIMESTAMP(value);
     CHECK_ERROR(cass_tuple_set_int64(tuple, index, timestamp->timestamp));
+    break;
+  case CASS_VALUE_TYPE_DATE:
+    date = PHP_CASSANDRA_GET_DATE(value);
+    CHECK_ERROR(cass_tuple_set_uint32(tuple, index, date->date));
+    break;
+  case CASS_VALUE_TYPE_TIME:
+    time = PHP_CASSANDRA_GET_TIME(value);
+    CHECK_ERROR(cass_tuple_set_int64(tuple, index, time->time));
     break;
   case CASS_VALUE_TYPE_UUID:
   case CASS_VALUE_TYPE_TIMEUUID:
@@ -512,6 +548,8 @@ php_cassandra_user_type_set(CassUserType *ut,
   cassandra_blob       *blob;
   cassandra_numeric    *numeric;
   cassandra_timestamp  *timestamp;
+  cassandra_date       *date;
+  cassandra_time       *time;
   cassandra_uuid       *uuid;
   cassandra_inet       *inet;
   size_t                size;
@@ -573,6 +611,14 @@ php_cassandra_user_type_set(CassUserType *ut,
   case CASS_VALUE_TYPE_TIMESTAMP:
     timestamp = PHP_CASSANDRA_GET_TIMESTAMP(value);
     CHECK_ERROR(cass_user_type_set_int64_by_name(ut, name, timestamp->timestamp));
+    break;
+  case CASS_VALUE_TYPE_DATE:
+    date = PHP_CASSANDRA_GET_DATE(value);
+    CHECK_ERROR(cass_user_type_set_uint32_by_name(ut, name, date->date));
+    break;
+  case CASS_VALUE_TYPE_TIME:
+    time = PHP_CASSANDRA_GET_TIME(value);
+    CHECK_ERROR(cass_user_type_set_int64_by_name(ut, name, time->time));
     break;
   case CASS_VALUE_TYPE_UUID:
   case CASS_VALUE_TYPE_TIMEUUID:

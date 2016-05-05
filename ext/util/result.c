@@ -42,6 +42,8 @@ php_cassandra_value(const CassValue* value, const CassDataType* data_type, php5t
   CassIterator *iterator;
   cassandra_numeric *numeric = NULL;
   cassandra_timestamp *timestamp = NULL;
+  cassandra_date *date = NULL;
+  cassandra_time *time = NULL;
   cassandra_blob *blob = NULL;
   cassandra_inet *inet = NULL;
   cassandra_collection *collection = NULL;
@@ -108,6 +110,22 @@ php_cassandra_value(const CassValue* value, const CassDataType* data_type, php5t
     object_init_ex(PHP5TO7_ZVAL_MAYBE_DEREF(out), cassandra_timestamp_ce);
     timestamp = PHP_CASSANDRA_GET_TIMESTAMP(PHP5TO7_ZVAL_MAYBE_DEREF(out));
     ASSERT_SUCCESS_BLOCK(cass_value_get_int64(value, &timestamp->timestamp),
+      zval_ptr_dtor(out);
+      return FAILURE;
+    )
+    break;
+  case CASS_VALUE_TYPE_DATE:
+    object_init_ex(PHP5TO7_ZVAL_MAYBE_DEREF(out), cassandra_date_ce);
+    date = PHP_CASSANDRA_GET_DATE(PHP5TO7_ZVAL_MAYBE_DEREF(out));
+    ASSERT_SUCCESS_BLOCK(cass_value_get_uint32(value, &date->date),
+      zval_ptr_dtor(out);
+      return FAILURE;
+    )
+    break;
+  case CASS_VALUE_TYPE_TIME:
+    object_init_ex(PHP5TO7_ZVAL_MAYBE_DEREF(out), cassandra_time_ce);
+    time = PHP_CASSANDRA_GET_TIME(PHP5TO7_ZVAL_MAYBE_DEREF(out));
+    ASSERT_SUCCESS_BLOCK(cass_value_get_int64(value, &time->time),
       zval_ptr_dtor(out);
       return FAILURE;
     )
