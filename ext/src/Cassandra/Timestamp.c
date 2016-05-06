@@ -274,4 +274,5 @@ void cassandra_define_Timestamp(TSRMLS_D)
   cassandra_timestamp_ce->create_object = php_cassandra_timestamp_new;
 
   cassandra_timestamp_handlers.hash_value = php_cassandra_timestamp_hash_value;
+  cassandra_timestamp_handlers.std.clone_obj = NULL;
 }

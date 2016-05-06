@@ -216,4 +216,5 @@ cassandra_define_Uuid(TSRMLS_D)
   cassandra_uuid_ce->create_object = php_cassandra_uuid_new;
 
   cassandra_uuid_handlers.hash_value = php_cassandra_uuid_hash_value;
+  cassandra_uuid_handlers.std.clone_obj = NULL;
 }

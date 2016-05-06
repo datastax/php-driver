@@ -499,4 +499,5 @@ void cassandra_define_Bigint(TSRMLS_D)
   cassandra_bigint_handlers.std.cast_object     = php_cassandra_bigint_cast;
 
   cassandra_bigint_handlers.hash_value = php_cassandra_bigint_hash_value;
+  cassandra_bigint_handlers.std.clone_obj = NULL;
 }

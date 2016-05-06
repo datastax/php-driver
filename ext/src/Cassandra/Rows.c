@@ -483,4 +483,5 @@ void cassandra_define_Rows(TSRMLS_D)
   memcpy(&cassandra_rows_handlers, zend_get_std_object_handlers(), sizeof(zend_object_handlers));
   cassandra_rows_handlers.get_properties  = php_cassandra_rows_properties;
   cassandra_rows_handlers.compare_objects = php_cassandra_rows_compare;
+  cassandra_rows_handlers.clone_obj = NULL;
 }

@@ -174,4 +174,5 @@ void cassandra_define_BatchStatement(TSRMLS_D)
   memcpy(&cassandra_batch_statement_handlers, zend_get_std_object_handlers(), sizeof(zend_object_handlers));
   cassandra_batch_statement_handlers.get_properties  = php_cassandra_batch_statement_properties;
   cassandra_batch_statement_handlers.compare_objects = php_cassandra_batch_statement_compare;
+  cassandra_batch_statement_handlers.clone_obj = NULL;
 }

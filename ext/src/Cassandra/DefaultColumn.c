@@ -208,4 +208,5 @@ void cassandra_define_DefaultColumn(TSRMLS_D)
   memcpy(&cassandra_default_column_handlers, zend_get_std_object_handlers(), sizeof(zend_object_handlers));
   cassandra_default_column_handlers.get_properties  = php_cassandra_default_column_properties;
   cassandra_default_column_handlers.compare_objects = php_cassandra_default_column_compare;
+  cassandra_default_column_handlers.clone_obj = NULL;
 }

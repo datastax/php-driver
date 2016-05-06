@@ -434,4 +434,5 @@ void cassandra_define_Tuple(TSRMLS_D)
   zend_class_implements(cassandra_tuple_ce TSRMLS_CC, 2, spl_ce_Countable, zend_ce_iterator);
 
   cassandra_tuple_handlers.hash_value = php_cassandra_tuple_hash_value;
+  cassandra_tuple_handlers.std.clone_obj = NULL;
 }

@@ -482,4 +482,5 @@ void cassandra_define_Varint(TSRMLS_D)
   cassandra_varint_handlers.std.cast_object = php_cassandra_varint_cast;
 
   cassandra_varint_handlers.hash_value = php_cassandra_varint_hash_value;
+  cassandra_varint_handlers.std.clone_obj = NULL;
 }

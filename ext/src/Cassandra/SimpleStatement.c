@@ -105,4 +105,5 @@ void cassandra_define_SimpleStatement(TSRMLS_D)
   memcpy(&cassandra_simple_statement_handlers, zend_get_std_object_handlers(), sizeof(zend_object_handlers));
   cassandra_simple_statement_handlers.get_properties  = php_cassandra_simple_statement_properties;
   cassandra_simple_statement_handlers.compare_objects = php_cassandra_simple_statement_compare;
+  cassandra_simple_statement_handlers.clone_obj = NULL;
 }

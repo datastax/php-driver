@@ -175,7 +175,9 @@ php_cassandra_blob_free(php5to7_zend_object_free *object TSRMLS_DC)
 {
   cassandra_blob *self = PHP5TO7_ZEND_OBJECT_GET(blob, object);
 
-  efree(self->data);
+  if (self->data) {
+    efree(self->data);
+  }
 
   zend_object_std_dtor(&self->zval TSRMLS_CC);
   PHP5TO7_MAYBE_EFREE(self);
@@ -207,4 +209,5 @@ void cassandra_define_Blob(TSRMLS_D)
   cassandra_blob_ce->create_object = php_cassandra_blob_new;
 
   cassandra_blob_handlers.hash_value = php_cassandra_blob_hash_value;
+  cassandra_blob_handlers.std.clone_obj = NULL;
 }

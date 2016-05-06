@@ -232,7 +232,9 @@ php_cassandra_default_cluster_free(php5to7_zend_object_free *object TSRMLS_DC)
   if (self->persist) {
     efree(self->hash_key);
   } else {
-    cass_cluster_free(self->cluster);
+    if (self->cluster) {
+      cass_cluster_free(self->cluster);
+    }
   }
 
   zend_object_std_dtor(&self->zval TSRMLS_CC);

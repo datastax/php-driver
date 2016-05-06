@@ -451,4 +451,5 @@ void cassandra_define_Collection(TSRMLS_D)
   zend_class_implements(cassandra_collection_ce TSRMLS_CC, 2, spl_ce_Countable, zend_ce_iterator);
 
   cassandra_collection_handlers.hash_value = php_cassandra_collection_hash_value;
+  cassandra_collection_handlers.std.clone_obj = NULL;
 }

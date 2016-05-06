@@ -270,4 +270,5 @@ void cassandra_define_ExecutionOptions(TSRMLS_D)
   memcpy(&cassandra_execution_options_handlers, zend_get_std_object_handlers(), sizeof(zend_object_handlers));
   cassandra_execution_options_handlers.get_properties  = php_cassandra_execution_options_properties;
   cassandra_execution_options_handlers.compare_objects = php_cassandra_execution_options_compare;
+  cassandra_execution_options_handlers.clone_obj = NULL;
 }

@@ -85,4 +85,5 @@ void cassandra_define_PreparedStatement(TSRMLS_D)
   memcpy(&cassandra_prepared_statement_handlers, zend_get_std_object_handlers(), sizeof(zend_object_handlers));
   cassandra_prepared_statement_handlers.get_properties  = php_cassandra_prepared_statement_properties;
   cassandra_prepared_statement_handlers.compare_objects = php_cassandra_prepared_statement_compare;
+  cassandra_prepared_statement_handlers.clone_obj = NULL;
 }

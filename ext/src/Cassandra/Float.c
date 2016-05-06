@@ -493,4 +493,5 @@ void cassandra_define_Float(TSRMLS_D)
   cassandra_float_handlers.std.cast_object     = php_cassandra_float_cast;
 
   cassandra_float_handlers.hash_value = php_cassandra_float_hash_value;
+  cassandra_float_handlers.std.clone_obj = NULL;
 }

@@ -905,4 +905,5 @@ void cassandra_define_DefaultSession(TSRMLS_D)
   memcpy(&cassandra_default_session_handlers, zend_get_std_object_handlers(), sizeof(zend_object_handlers));
   cassandra_default_session_handlers.get_properties  = php_cassandra_default_session_properties;
   cassandra_default_session_handlers.compare_objects = php_cassandra_default_session_compare;
+  cassandra_default_session_handlers.clone_obj = NULL;
 }
