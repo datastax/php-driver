@@ -287,6 +287,10 @@ PHP_CASSANDRA_BEGIN_OBJECT_TYPE(cluster_builder)
   php5to7_zval retry_policy;
   php5to7_zval timestamp_gen;
   cass_bool_t enable_schema;
+  char *blacklist_hosts;
+  char *whitelist_hosts;
+  char *blacklist_dcs;
+  char *whitelist_dcs;
 PHP_CASSANDRA_END_OBJECT_TYPE(cluster_builder)
 
 PHP_CASSANDRA_BEGIN_OBJECT_TYPE(future_prepared_statement)
