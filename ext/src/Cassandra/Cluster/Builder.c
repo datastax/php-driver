@@ -1054,7 +1054,7 @@ php_cassandra_cluster_builder_properties(zval *object TSRMLS_DC)
   PHP5TO7_ZVAL_STRING(PHP5TO7_ZVAL_MAYBE_P(contactPoints), self->contact_points);
 
   PHP5TO7_ZVAL_MAYBE_MAKE(loadBalancingPolicy);
-  ZVAL_DOUBLE(PHP5TO7_ZVAL_MAYBE_P(loadBalancingPolicy), self->load_balancing_policy);
+  ZVAL_LONG(PHP5TO7_ZVAL_MAYBE_P(loadBalancingPolicy), self->load_balancing_policy);
 
   PHP5TO7_ZVAL_MAYBE_MAKE(localDatacenter);
   PHP5TO7_ZVAL_MAYBE_MAKE(hostPerRemoteDatacenter);
@@ -1295,7 +1295,7 @@ php_cassandra_cluster_builder_new(zend_class_entry *ce TSRMLS_DC)
 
   self->contact_points = estrdup("127.0.0.1");
   self->port = 9042;
-  self->load_balancing_policy = LOAD_BALANCING_ROUND_ROBIN;
+  self->load_balancing_policy = LOAD_BALANCING_DEFAULT;
   self->local_dc = NULL;
   self->used_hosts_per_remote_dc = 0;
   self->allow_remote_dcs_for_local_cl = 0;
