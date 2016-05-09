@@ -356,7 +356,7 @@ PHP_METHOD(Tinyint, min)
   cassandra_numeric *tinyint = NULL;
   object_init_ex(return_value, cassandra_tinyint_ce);
   tinyint = PHP_CASSANDRA_GET_NUMERIC(return_value);
-  tinyint->tinyint_value = INT16_MIN;
+  tinyint->tinyint_value = INT8_MIN;
 }
 /* }}} */
 
@@ -366,7 +366,7 @@ PHP_METHOD(Tinyint, max)
   cassandra_numeric *tinyint = NULL;
   object_init_ex(return_value, cassandra_tinyint_ce);
   tinyint = PHP_CASSANDRA_GET_NUMERIC(return_value);
-  tinyint->tinyint_value = INT16_MAX;
+  tinyint->tinyint_value = INT8_MAX;
 }
 /* }}} */
 
