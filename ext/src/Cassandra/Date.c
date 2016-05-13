@@ -20,16 +20,7 @@
 #include <time.h>
 #include <ext/date/php_date.h>
 
-#define NUM_SECONDS_PER_DAY (24U * 60U * 60U)
-#define CASS_DATE_EPOCH 2147483648U // 2^31
-
 zend_class_entry *cassandra_date_ce = NULL;
-
-static cass_int64_t
-php_cassandra_timestamp_from_date(cass_uint32_t date)
-{
-    return ((cass_int64_t) date - CASS_DATE_EPOCH) * NUM_SECONDS_PER_DAY;
-}
 
 void
 php_cassandra_date_init(INTERNAL_FUNCTION_PARAMETERS)
@@ -78,7 +69,7 @@ PHP_METHOD(Date, seconds)
 {
   cassandra_date *self = PHP_CASSANDRA_GET_DATE(getThis());
 
-  RETURN_LONG(php_cassandra_timestamp_from_date(self->date));
+  RETURN_LONG(cass_date_time_to_epoch(self->date, 0));
 }
 /* }}} */
 
@@ -106,7 +97,7 @@ PHP_METHOD(Date, toDateTime)
   datetime_obj = zend_object_store_get_object(datetime TSRMLS_CC);
 #endif
 
-  str_len = spprintf(&str, 0, "%lld", php_cassandra_timestamp_from_date(self->date));
+  str_len = spprintf(&str, 0, "%lld", cass_date_time_to_epoch(self->date, 0));
   php_date_initialize(datetime_obj, str, str_len, NULL, NULL, 0 TSRMLS_CC);
   efree(str);
 
@@ -126,7 +117,7 @@ PHP_METHOD(Date, __toString)
 
   self = PHP_CASSANDRA_GET_DATE(getThis());
 
-  spprintf(&ret, 0, "Cassandra\\Date(seconds=%lld)", php_cassandra_timestamp_from_date(self->date));
+  spprintf(&ret, 0, "Cassandra\\Date(seconds=%lld)", cass_date_time_to_epoch(self->date, 0));
   PHP5TO7_RETVAL_STRING(ret);
   efree(ret);
 }
@@ -171,7 +162,7 @@ php_cassandra_date_properties(zval *object TSRMLS_DC)
   PHP5TO7_ZEND_HASH_UPDATE(props, "type", sizeof("type"), PHP5TO7_ZVAL_MAYBE_P(type), sizeof(zval));
 
   PHP5TO7_ZVAL_MAYBE_MAKE(seconds);
-  ZVAL_LONG(PHP5TO7_ZVAL_MAYBE_P(seconds), php_cassandra_timestamp_from_date(self->date));
+  ZVAL_LONG(PHP5TO7_ZVAL_MAYBE_P(seconds), cass_date_time_to_epoch(self->date, 0));
   PHP5TO7_ZEND_HASH_UPDATE(props, "seconds", sizeof("seconds"), PHP5TO7_ZVAL_MAYBE_P(seconds), sizeof(zval));
 
   return props;

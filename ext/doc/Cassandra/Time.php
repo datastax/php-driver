@@ -30,6 +30,14 @@ final class Time implements Value
      */
     public function __construct($nanoseconds = 0) {}
 
+
+    /**
+     * Creates a new Time object with the current time.
+     *
+     * @return Time
+     */
+    public static function now() {}
+
     /**
      * The type of this date.
      *
