@@ -24,6 +24,54 @@ zend_class_entry *cassandra_time_ce = NULL;
 
 #define NANOSECONDS_PER_DAY (24U * 60U * 60U * 1000000000LL)
 
+#if defined(_WIN32)
+#ifndef _WINSOCKAPI_
+#define _WINSOCKAPI_
+#endif
+#include <Windows.h>
+#elif defined(__APPLE__) && defined(__MACH__)
+#include <sys/time.h>
+#else
+#include <time.h>
+#endif
+
+namespace cass {
+
+#if defined(_WIN32)
+
+#define NUM_NANOSECONDS_PER_DAY (24U * 60U * 60U * 1000U * 1000U * 1000U)
+
+cass_uint64_t php_cassandra_time_now_ns() {
+  _FILETIME ft;
+  GetSystemTimeAsFileTime(&ft);
+  cass_uint64_t ns100 = (static_cast<cass_uint64_t>(ft.dwHighDateTime) << 32 |
+                         static_cast<cass_uint64_t>(ft.dwLowDateTime)) -
+                         116444736000000000LL; // 100 nanosecond increments between
+                                               // Jan. 1, 1601 - Jan. 1, 1970
+  return (ns100 * 100) % NUM_NANOSECONDS_PER_DAY;
+}
+
+#elif defined(__APPLE__) && defined(__MACH__)
+
+cass_uint64_t php_cassandra_time_now_ns() {
+  struct timeval tv;
+  gettimeofday(&tv, NULL);
+  return cass_time_from_epoch(static_cast<cass_uint64_t>(tv.tv_sec)) +
+      static_cast<cass_uint64_t>(tv.tv_usec) * 1000;
+}
+
+#else
+
+cass_uint64_t php_cassandra_time_now_ns() {
+  struct timespec ts;
+  clock_gettime(CLOCK_REALTIME, &ts);
+  return cass_time_from_epoch(static_cast<cass_uint64_t>(tv.tv_sec)) +
+      static_cast<cass_uint64_t>(ts.tv_nsec);
+}
+
+#endif
+}
+
 static int
 to_string(zval *result, cassandra_time *time TSRMLS_DC)
 {
@@ -85,8 +133,26 @@ PHP_METHOD(Time, __construct)
 /* {{{ Cassandra\Time::type() */
 PHP_METHOD(Time, type)
 {
+  cassandra_time *self;
+
   php5to7_zval type = php_cassandra_type_scalar(CASS_VALUE_TYPE_TIME TSRMLS_CC);
   RETURN_ZVAL(PHP5TO7_ZVAL_MAYBE_P(type), 1, 1);
+}
+/* }}} */
+
+/* {{{ Cassandra\Time::now() */
+PHP_METHOD(Time, now)
+{
+  cassandra_time *self;
+
+  if (zend_parse_parameters_none() == FAILURE) {
+    return;
+  }
+
+  object_init_ex(return_value, cassandra_time_ce);
+  self = PHP_CASSANDRA_GET_TIME(return_value);
+
+  self->time = php_cassandra_time_now_ns();
 }
 /* }}} */
 
@@ -101,6 +167,7 @@ ZEND_END_ARG_INFO()
 static zend_function_entry cassandra_time_methods[] = {
   PHP_ME(Time, __construct, arginfo__construct, ZEND_ACC_CTOR|ZEND_ACC_PUBLIC)
   PHP_ME(Time, type, arginfo_none, ZEND_ACC_PUBLIC)
+  PHP_ME(Time, now, arginfo_none, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
   PHP_FE_END
 };
 
