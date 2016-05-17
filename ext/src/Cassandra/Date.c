@@ -77,12 +77,15 @@ PHP_METHOD(Date, seconds)
 PHP_METHOD(Date, toDateTime)
 {
   cassandra_date *self;
+  cassandra_time* time_obj = NULL;
   zval *datetime = NULL;
   php_date_obj *datetime_obj = NULL;
   char *str;
   int str_len;
 
-  if (zend_parse_parameters_none() == FAILURE) {
+  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "|O",
+                            &time_obj,
+                            cassandra_time_ce) == FAILURE) {
     return;
   }
 
@@ -97,13 +100,50 @@ PHP_METHOD(Date, toDateTime)
   datetime_obj = zend_object_store_get_object(datetime TSRMLS_CC);
 #endif
 
-  str_len = spprintf(&str, 0, "%lld", cass_date_time_to_epoch(self->date, 0));
+  str_len = spprintf(&str, 0, "%lld",
+                     cass_date_time_to_epoch(self->date,
+                                             time_obj != NULL ? time_obj->time : 0));
   php_date_initialize(datetime_obj, str, str_len, NULL, NULL, 0 TSRMLS_CC);
   efree(str);
 
   RETVAL_ZVAL(datetime, 0, 0);
 }
 /* }}} */
+
+/* {{{ Cassandra\Date::fromDateTime() */
+PHP_METHOD(Date, fromDateTime)
+{
+  cassandra_date *self;
+  php_date_obj* datetime_obj;
+  timelib_long timestamp;
+  int error;
+
+  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "O",
+                            &datetime_obj,
+                            php_date_get_date_ce()) == FAILURE) {
+    return;
+  }
+
+  if (!datetime_obj->time) {
+    zend_throw_exception_ex(cassandra_invalid_argument_exception_ce, 0 TSRMLS_CC,
+                            "DateTime object has not been correctly initialized");
+    return;
+  }
+  timelib_update_ts(datetime_obj->time, NULL);
+
+  timestamp = timelib_date_to_int(dateobj->time, &error);
+  if (error) {
+    zend_throw_exception_ex(cassandra_invalid_argument_exception_ce, 0 TSRMLS_CC,
+                            "DateTime object's timestamp is out of range");
+    return;
+  }
+
+  object_init_ex(return_value, cassandra_date);
+  self = PHP_CASSANDRA_GET_TIME(return_value);
+  self->date = cass_date_from_epoch(timestamp);
+}
+/* }}} */
+
 
 /* {{{ Cassandra\Date::__toString() */
 PHP_METHOD(Date, __toString)
@@ -127,6 +167,14 @@ ZEND_BEGIN_ARG_INFO_EX(arginfo__construct, 0, ZEND_RETURN_VALUE, 0)
   ZEND_ARG_INFO(0, seconds)
 ZEND_END_ARG_INFO()
 
+ZEND_BEGIN_ARG_INFO_EX(arginfo_time, 0, ZEND_RETURN_VALUE, 0)
+  ZEND_ARG_OBJ_INFO(0, time, Cassandra\\Time, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_INFO_EX(arginfo_datetime, 0, ZEND_RETURN_VALUE, 1)
+  ZEND_ARG_OBJ_INFO(0, datetime, DateTime, 0)
+ZEND_END_ARG_INFO()
+
 ZEND_BEGIN_ARG_INFO_EX(arginfo_none, 0, ZEND_RETURN_VALUE, 0)
 ZEND_END_ARG_INFO()
 
@@ -134,7 +182,8 @@ static zend_function_entry cassandra_date_methods[] = {
   PHP_ME(Date, __construct, arginfo__construct, ZEND_ACC_CTOR|ZEND_ACC_PUBLIC)
   PHP_ME(Date, type, arginfo_none, ZEND_ACC_PUBLIC)
   PHP_ME(Date, seconds, arginfo_none, ZEND_ACC_PUBLIC)
-  PHP_ME(Date, toDateTime, arginfo_none, ZEND_ACC_PUBLIC)
+  PHP_ME(Date, toDateTime, arginfo_time, ZEND_ACC_PUBLIC)
+  PHP_ME(Time, fromDateTime, arginfo_datetime, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
   PHP_ME(Date, __toString, arginfo_none, ZEND_ACC_PUBLIC)
   PHP_FE_END
 };
