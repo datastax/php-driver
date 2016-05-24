@@ -364,12 +364,17 @@ PHP_METHOD(DefaultKeyspace, functions)
     const CassFunctionMeta *meta = cass_iterator_get_function_meta(iterator);
     php5to7_zval zfunction = php_cassandra_create_function(self->schema, meta TSRMLS_CC);
 
-    if (PHP5TO7_ZVAL_IS_UNDEF(zfunction)) {
-      zval_ptr_dtor(PHP5TO7_ZVAL_MAYBE_ADDR_OF(return_value));
-      cass_iterator_free(iterator);
-      return;
-    } else {
-      add_next_index_zval(return_value, PHP5TO7_ZVAL_MAYBE_P(zfunction));
+    if (!PHP5TO7_ZVAL_IS_UNDEF(zfunction)) {
+      cassandra_function *function = PHP_CASSANDRA_GET_FUNCTION(PHP5TO7_ZVAL_MAYBE_P(zfunction));
+
+      if (PHP5TO7_Z_TYPE_MAYBE_P(function->signature) == IS_STRING) {
+        PHP5TO7_ADD_ASSOC_ZVAL_EX(return_value,
+                                  PHP5TO7_Z_STRVAL_MAYBE_P(function->signature),
+                                  PHP5TO7_Z_STRLEN_MAYBE_P(function->signature) + 1,
+                                  PHP5TO7_ZVAL_MAYBE_P(zfunction));
+      } else {
+        add_next_function_zval(return_value, PHP5TO7_ZVAL_MAYBE_P(zfunction));
+      }
     }
   }
 
@@ -382,6 +387,8 @@ php_cassandra_create_aggregate(cassandra_ref* schema,
 {
   php5to7_zval result;
   cassandra_aggregate *aggregate;
+  const char *full_name;
+  size_t full_name_length;
 
   PHP5TO7_ZVAL_UNDEF(result);
 
@@ -391,6 +398,10 @@ php_cassandra_create_aggregate(cassandra_ref* schema,
   aggregate = PHP_CASSANDRA_GET_AGGREGATE(PHP5TO7_ZVAL_MAYBE_P(result));
   aggregate->schema = php_cassandra_add_ref(schema);
   aggregate->meta   = meta;
+
+  cass_aggregate_meta_full_name(aggregate->meta, &full_name, &full_name_length);
+  PHP5TO7_ZVAL_MAYBE_MAKE(aggregate->signature);
+  PHP5TO7_ZVAL_STRINGL(PHP5TO7_ZVAL_MAYBE_P(aggregate->signature), full_name, full_name_length);
 
   return result;
 }
@@ -451,12 +462,17 @@ PHP_METHOD(DefaultKeyspace, aggregates)
     const CassAggregateMeta *meta = cass_iterator_get_aggregate_meta(iterator);
     php5to7_zval zaggregate = php_cassandra_create_aggregate(self->schema, meta TSRMLS_CC);
 
-    if (PHP5TO7_ZVAL_IS_UNDEF(zaggregate)) {
-      zval_ptr_dtor(PHP5TO7_ZVAL_MAYBE_ADDR_OF(return_value));
-      cass_iterator_free(iterator);
-      return;
-    } else {
-      add_next_index_zval(return_value, PHP5TO7_ZVAL_MAYBE_P(zaggregate));
+    if (!PHP5TO7_ZVAL_IS_UNDEF(zaggregate)) {
+      cassandra_aggregate *aggregate = PHP_CASSANDRA_GET_AGGREGATE(PHP5TO7_ZVAL_MAYBE_P(zaggregate));
+
+      if (PHP5TO7_Z_TYPE_MAYBE_P(aggregate->signature) == IS_STRING) {
+        PHP5TO7_ADD_ASSOC_ZVAL_EX(return_value,
+                                  PHP5TO7_Z_STRVAL_MAYBE_P(aggregate->signature),
+                                  PHP5TO7_Z_STRLEN_MAYBE_P(aggregate->signature) + 1,
+                                  PHP5TO7_ZVAL_MAYBE_P(zaggregate));
+      } else {
+        add_next_aggregate_zval(return_value, PHP5TO7_ZVAL_MAYBE_P(zaggregate));
+      }
     }
   }
 

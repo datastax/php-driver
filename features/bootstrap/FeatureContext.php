@@ -138,6 +138,15 @@ class FeatureContext implements Context, SnippetAcceptingContext
     }
 
     /**
+     * @Given a running cassandra cluster with user-defined function enabled
+     */
+    public function aRunningCassandraClusterWithUserDefinedFunctionEnabled()
+    {
+        $this->ccm->setupUserDefinedFunctions();
+        $this->ccm->start();
+    }
+
+    /**
      * @Given tracing is enabled
      */
     public function tracingIsEnabled()
@@ -159,6 +168,14 @@ class FeatureContext implements Context, SnippetAcceptingContext
     public function theFollowingSchema(PyStringNode $string)
     {
         $this->ccm->setupSchema((string) $string);
+    }
+
+    /**
+     * @Given /^additional schema:$/
+     */
+    public function additionalSchema(PyStringNode $string)
+    {
+        $this->ccm->setupSchema((string) $string, false);
     }
 
     /**
