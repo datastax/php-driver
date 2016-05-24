@@ -25,7 +25,7 @@
 #include "src/Cassandra/Tuple.h"
 #include "src/Cassandra/UserTypeValue.h"
 
-static int
+int
 php_cassandra_value(const CassValue* value, const CassDataType* data_type, php5to7_zval *out TSRMLS_DC)
 {
   const char *v_string;

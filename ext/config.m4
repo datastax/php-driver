@@ -60,6 +60,14 @@ if test "$PHP_CASSANDRA" != "no"; then
     src/Cassandra/Rows.c \
     src/Cassandra/Column.c \
     src/Cassandra/DefaultColumn.c \
+    src/Cassandra/Index.c \
+    src/Cassandra/DefaultIndex.c \
+    src/Cassandra/MaterializedView.c \
+    src/Cassandra/DefaultMaterializedView.c \
+    src/Cassandra/Function.c \
+    src/Cassandra/DefaultFunction.c \
+    src/Cassandra/Aggregate.c \
+    src/Cassandra/DefaultAggregate.c \
     src/Cassandra/DefaultKeyspace.c \
     src/Cassandra/DefaultSchema.c \
     src/Cassandra/DefaultTable.c \

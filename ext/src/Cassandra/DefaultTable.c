@@ -14,6 +14,11 @@
  * limitations under the License.
  */
 
+#include "DefaultColumn.h"
+#include "DefaultMaterializedView.h"
+#include "DefaultIndex.h"
+#include "Table.h"
+
 #include "php_cassandra.h"
 #include "util/result.h"
 #include "util/ref.h"
@@ -21,246 +26,313 @@
 
 zend_class_entry *cassandra_default_table_ce = NULL;
 
+php5to7_zval
+php_cassandra_create_table(cassandra_ref* schema,
+                           const CassTableMeta *meta TSRMLS_DC)
+{
+  php5to7_zval result;
+  cassandra_table *table;
+  const char *name;
+  size_t name_length;
+
+  PHP5TO7_ZVAL_UNDEF(result);
+
+  PHP5TO7_ZVAL_MAYBE_MAKE(result);
+  object_init_ex(PHP5TO7_ZVAL_MAYBE_P(result), cassandra_default_table_ce);
+
+  table = PHP_CASSANDRA_GET_TABLE(PHP5TO7_ZVAL_MAYBE_P(result));
+  table->schema = php_cassandra_add_ref(schema);
+  table->meta   = meta;
+
+  cass_table_meta_name(meta, &name, &name_length);
+  PHP5TO7_ZVAL_MAYBE_MAKE(table->name);
+  PHP5TO7_ZVAL_STRINGL(PHP5TO7_ZVAL_MAYBE_P(table->name), name, name_length);
+
+  return result;
+}
+
+void
+php_cassandra_default_table_build_options(cassandra_table *table TSRMLS_DC) {
+  CassIterator *iterator =
+      cass_iterator_fields_from_table_meta(table->meta);
+  table->options = php_cassandra_table_build_options(iterator TSRMLS_CC);
+  cass_iterator_free(iterator);
+}
+
+void
+php_cassandra_table_get_option(cassandra_table *table,
+                               const char *name,
+                               zval *result TSRMLS_DC) {
+  zval *zvalue;
+  if (PHP5TO7_ZVAL_IS_UNDEF(table->options)) {
+    php_cassandra_default_table_build_options(table TSRMLS_CC);
+  }
+
+  if (!PHP5TO7_ZEND_HASH_FIND(PHP5TO7_Z_ARRVAL_MAYBE_P(table->options),
+                         name, strlen(name) + 1,
+                         zvalue)) {
+    ZVAL_FALSE(result);
+    return;
+  }
+
+  PHP5TO7_ZVAL_COPY(result, zvalue);
+}
+
 PHP_METHOD(DefaultTable, name)
 {
   cassandra_table *self;
-  php5to7_zval value;
 
   if (zend_parse_parameters_none() == FAILURE)
     return;
 
   self = PHP_CASSANDRA_GET_TABLE(getThis());
+  RETURN_ZVAL(PHP5TO7_ZVAL_MAYBE_P(self->name), 1, 0);
+}
 
-  php_cassandra_get_table_field(self->meta, "columnfamily_name", &value TSRMLS_CC);
-  RETURN_ZVAL(PHP5TO7_ZVAL_MAYBE_P(value), 0, 1);
+PHP_METHOD(DefaultTable, option)
+{
+  char *name;
+  php5to7_size name_len;
+  cassandra_table *self;
+  php5to7_zval* result;
+
+  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s",
+                            &name, &name_len) == FAILURE) {
+    return;
+  }
+
+  self = PHP_CASSANDRA_GET_TABLE(getThis());
+  if (PHP5TO7_ZVAL_IS_UNDEF(self->options)) {
+    php_cassandra_default_table_build_options(self TSRMLS_CC);
+  }
+
+  if (PHP5TO7_ZEND_HASH_FIND(PHP5TO7_Z_ARRVAL_MAYBE_P(self->options),
+                         name, name_len + 1,
+                         result)) {
+    RETURN_ZVAL(PHP5TO7_ZVAL_MAYBE_DEREF(result), 1, 0);
+  }
+  RETURN_FALSE;
+}
+
+PHP_METHOD(DefaultTable, options)
+{
+  cassandra_table *self;
+
+  if (zend_parse_parameters_none() == FAILURE)
+    return;
+
+  self = PHP_CASSANDRA_GET_TABLE(getThis());
+  if (PHP5TO7_ZVAL_IS_UNDEF(self->options)) {
+    php_cassandra_default_table_build_options(self TSRMLS_CC);
+  }
+
+  RETURN_ZVAL(PHP5TO7_ZVAL_MAYBE_P(self->options), 1, 0);
 }
 
 PHP_METHOD(DefaultTable, comment)
 {
   cassandra_table *self;
-  php5to7_zval value;
 
   if (zend_parse_parameters_none() == FAILURE)
     return;
 
   self = PHP_CASSANDRA_GET_TABLE(getThis());
 
-  php_cassandra_get_table_field(self->meta, "comment", &value TSRMLS_CC);
-  RETURN_ZVAL(PHP5TO7_ZVAL_MAYBE_P(value), 0, 1);
+  php_cassandra_table_get_option(self, "comment", return_value TSRMLS_CC);
 }
 
 PHP_METHOD(DefaultTable, readRepairChance)
 {
   cassandra_table *self;
-  php5to7_zval value;
 
   if (zend_parse_parameters_none() == FAILURE)
     return;
 
   self = PHP_CASSANDRA_GET_TABLE(getThis());
 
-  php_cassandra_get_table_field(self->meta, "read_repair_chance", &value TSRMLS_CC);
-  RETURN_ZVAL(PHP5TO7_ZVAL_MAYBE_P(value), 0, 1);
+  php_cassandra_table_get_option(self, "read_repair_chance", return_value TSRMLS_CC);
 }
 
 PHP_METHOD(DefaultTable, localReadRepairChance)
 {
   cassandra_table *self;
-  php5to7_zval value;
 
   if (zend_parse_parameters_none() == FAILURE)
     return;
 
   self = PHP_CASSANDRA_GET_TABLE(getThis());
 
-  php_cassandra_get_table_field(self->meta, "local_read_repair_chance", &value TSRMLS_CC);
-  RETURN_ZVAL(PHP5TO7_ZVAL_MAYBE_P(value), 0, 1);
+  php_cassandra_table_get_option(self, "local_read_repair_chance", return_value TSRMLS_CC);
 }
 
 PHP_METHOD(DefaultTable, gcGraceSeconds)
 {
   cassandra_table *self;
-  php5to7_zval value;
 
   if (zend_parse_parameters_none() == FAILURE)
     return;
 
   self = PHP_CASSANDRA_GET_TABLE(getThis());
 
-  php_cassandra_get_table_field(self->meta, "gc_grace_seconds", &value TSRMLS_CC);
-  RETURN_ZVAL(PHP5TO7_ZVAL_MAYBE_P(value), 0, 1);
+  php_cassandra_table_get_option(self, "gc_grace_seconds", return_value TSRMLS_CC);
 }
 
 PHP_METHOD(DefaultTable, caching)
 {
   cassandra_table *self;
-  php5to7_zval value;
 
   if (zend_parse_parameters_none() == FAILURE)
     return;
 
   self = PHP_CASSANDRA_GET_TABLE(getThis());
 
-  php_cassandra_get_table_field(self->meta, "caching", &value TSRMLS_CC);
-  RETURN_ZVAL(PHP5TO7_ZVAL_MAYBE_P(value), 0, 1);
+  php_cassandra_table_get_option(self, "caching", return_value TSRMLS_CC);
 }
 
 PHP_METHOD(DefaultTable, bloomFilterFPChance)
 {
   cassandra_table *self;
-  php5to7_zval value;
 
   if (zend_parse_parameters_none() == FAILURE)
     return;
 
   self = PHP_CASSANDRA_GET_TABLE(getThis());
 
-  php_cassandra_get_table_field(self->meta, "bloom_filter_fp_chance", &value TSRMLS_CC);
-  RETURN_ZVAL(PHP5TO7_ZVAL_MAYBE_P(value), 0, 1);
+  php_cassandra_table_get_option(self, "bloom_filter_fp_chance", return_value TSRMLS_CC);
 }
 
 PHP_METHOD(DefaultTable, memtableFlushPeriodMs)
 {
   cassandra_table *self;
-  php5to7_zval value;
 
   if (zend_parse_parameters_none() == FAILURE)
     return;
 
   self = PHP_CASSANDRA_GET_TABLE(getThis());
 
-  php_cassandra_get_table_field(self->meta, "memtable_flush_period_in_ms", &value TSRMLS_CC);
-  RETURN_ZVAL(PHP5TO7_ZVAL_MAYBE_P(value), 0, 1);
+  php_cassandra_table_get_option(self, "memtable_flush_period_in_ms", return_value TSRMLS_CC);
 }
 
 PHP_METHOD(DefaultTable, defaultTTL)
 {
   cassandra_table *self;
-  php5to7_zval value;
 
   if (zend_parse_parameters_none() == FAILURE)
     return;
 
   self = PHP_CASSANDRA_GET_TABLE(getThis());
 
-  php_cassandra_get_table_field(self->meta, "default_time_to_live", &value TSRMLS_CC);
-  RETURN_ZVAL(PHP5TO7_ZVAL_MAYBE_P(value), 0, 1);
+  php_cassandra_table_get_option(self, "default_time_to_live", return_value TSRMLS_CC);
 }
 
 PHP_METHOD(DefaultTable, speculativeRetry)
 {
   cassandra_table *self;
-  php5to7_zval value;
 
   if (zend_parse_parameters_none() == FAILURE)
     return;
 
   self = PHP_CASSANDRA_GET_TABLE(getThis());
 
-  php_cassandra_get_table_field(self->meta, "speculative_retry", &value TSRMLS_CC);
-  RETURN_ZVAL(PHP5TO7_ZVAL_MAYBE_P(value), 0, 1);
+  php_cassandra_table_get_option(self, "speculative_retry", return_value TSRMLS_CC);
 }
 
 PHP_METHOD(DefaultTable, indexInterval)
 {
   cassandra_table *self;
-  php5to7_zval value;
 
   if (zend_parse_parameters_none() == FAILURE)
     return;
 
   self = PHP_CASSANDRA_GET_TABLE(getThis());
 
-  php_cassandra_get_table_field(self->meta, "index_interval", &value TSRMLS_CC);
-  RETURN_ZVAL(PHP5TO7_ZVAL_MAYBE_P(value), 0, 1);
+  php_cassandra_table_get_option(self, "index_interval", return_value TSRMLS_CC);
 }
 
 PHP_METHOD(DefaultTable, compactionStrategyClassName)
 {
   cassandra_table *self;
-  php5to7_zval value;
 
   if (zend_parse_parameters_none() == FAILURE)
     return;
 
   self = PHP_CASSANDRA_GET_TABLE(getThis());
 
-  php_cassandra_get_table_field(self->meta, "compaction_strategy_class", &value TSRMLS_CC);
-  RETURN_ZVAL(PHP5TO7_ZVAL_MAYBE_P(value), 0, 1);
+  php_cassandra_table_get_option(self, "compaction_strategy_class", return_value TSRMLS_CC);
 }
 
 PHP_METHOD(DefaultTable, compactionStrategyOptions)
 {
   cassandra_table *self;
-  php5to7_zval value;
 
   if (zend_parse_parameters_none() == FAILURE)
     return;
 
   self = PHP_CASSANDRA_GET_TABLE(getThis());
 
-  php_cassandra_get_table_field(self->meta, "compaction_strategy_options", &value TSRMLS_CC);
-  RETURN_ZVAL(PHP5TO7_ZVAL_MAYBE_P(value), 0, 1);
+  php_cassandra_table_get_option(self, "compaction_strategy_options", return_value TSRMLS_CC);
 }
 
 PHP_METHOD(DefaultTable, compressionParameters)
 {
   cassandra_table *self;
-  php5to7_zval value;
 
   if (zend_parse_parameters_none() == FAILURE)
     return;
 
   self = PHP_CASSANDRA_GET_TABLE(getThis());
 
-  php_cassandra_get_table_field(self->meta, "compression_parameters", &value TSRMLS_CC);
-  RETURN_ZVAL(PHP5TO7_ZVAL_MAYBE_P(value), 0, 1);
+  php_cassandra_table_get_option(self, "compression_parameters", return_value TSRMLS_CC);
 }
 
-static php5to7_zval
-php_cassandra_create_column(cassandra_ref *schema,
-                            cassandra_column_meta *meta TSRMLS_DC)
+PHP_METHOD(DefaultTable, populateIOCacheOnFlush)
 {
-  php5to7_zval result;
-  cassandra_column *column;
-  const CassValue *value;
+  cassandra_table *self;
 
-  const char *validator;
-  size_t      validator_length;
+  if (zend_parse_parameters_none() == FAILURE)
+    return;
 
-  PHP5TO7_ZVAL_UNDEF(result);
+  self = PHP_CASSANDRA_GET_TABLE(getThis());
 
-
-  value = cass_column_meta_field_by_name(meta, "validator");
-
-  ASSERT_SUCCESS_VALUE(cass_value_get_string(value, &validator,
-                                             &validator_length), result);
-
-  PHP5TO7_ZVAL_MAYBE_MAKE(result);
-  object_init_ex(PHP5TO7_ZVAL_MAYBE_P(result), cassandra_default_column_ce);
-
-  column = PHP_CASSANDRA_GET_COLUMN(PHP5TO7_ZVAL_MAYBE_P(result));
-
-  ASSERT_SUCCESS_BLOCK(php_cassandra_get_column_field(meta, "column_name",
-                                                      &column->name TSRMLS_CC),
-    zval_ptr_dtor(&result);
-    PHP5TO7_ZVAL_UNDEF(result);
-    return result;
-  );
-
-  if (php_cassandra_parse_column_type(validator, validator_length,
-                                      &column->reversed, &column->frozen,
-                                      &column->type TSRMLS_CC) == FAILURE) {
-    zval_ptr_dtor(&result);
-    PHP5TO7_ZVAL_UNDEF(result);
-    return result;
-  }
-
-  column->meta   = meta;
-  column->schema = php_cassandra_add_ref(schema);
-
-  return result;
+  php_cassandra_table_get_option(self, "populate_io_cache_on_flush", return_value TSRMLS_CC);
 }
+
+PHP_METHOD(DefaultTable, replicateOnWrite)
+{
+  cassandra_table *self;
+
+  if (zend_parse_parameters_none() == FAILURE)
+    return;
+
+  self = PHP_CASSANDRA_GET_TABLE(getThis());
+
+  php_cassandra_table_get_option(self, "replicate_on_write", return_value TSRMLS_CC);
+}
+
+PHP_METHOD(DefaultTable, maxIndexInterval)
+{
+  cassandra_table *self;
+
+  if (zend_parse_parameters_none() == FAILURE)
+    return;
+
+  self = PHP_CASSANDRA_GET_TABLE(getThis());
+
+  php_cassandra_table_get_option(self, "max_index_interval", return_value TSRMLS_CC);
+}
+
+PHP_METHOD(DefaultTable, minIndexInterval)
+{
+  cassandra_table *self;
+
+  if (zend_parse_parameters_none() == FAILURE)
+    return;
+
+  self = PHP_CASSANDRA_GET_TABLE(getThis());
+
+  php_cassandra_table_get_option(self, "min_index_interval", return_value TSRMLS_CC);
+}
+
 
 PHP_METHOD(DefaultTable, column)
 {
@@ -268,7 +340,7 @@ PHP_METHOD(DefaultTable, column)
   char *name;
   php5to7_size name_len;
   php5to7_zval column;
-  cassandra_column_meta *meta;
+  const CassColumnMeta *meta;
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &name, &name_len) == FAILURE) {
     return;
@@ -276,9 +348,8 @@ PHP_METHOD(DefaultTable, column)
 
   self = PHP_CASSANDRA_GET_TABLE(getThis());
   meta = cass_table_meta_column_by_name(self->meta, name);
-
   if (meta == NULL) {
-    return;
+    RETURN_FALSE
   }
 
   column = php_cassandra_create_column(self->schema, meta TSRMLS_CC);
@@ -303,18 +374,14 @@ PHP_METHOD(DefaultTable, columns)
 
   array_init(return_value);
   while (cass_iterator_next(iterator)) {
-    cassandra_column_meta *meta;
+    const CassColumnMeta *meta;
     php5to7_zval zcolumn;
     cassandra_column *column;
 
     meta    = cass_iterator_get_column_meta(iterator);
     zcolumn = php_cassandra_create_column(self->schema, meta TSRMLS_CC);
 
-    if (PHP5TO7_ZVAL_IS_UNDEF(zcolumn)) {
-      zval_ptr_dtor(PHP5TO7_ZVAL_MAYBE_ADDR_OF(return_value));
-      cass_iterator_free(iterator);
-      return;
-    } else {
+    if (!PHP5TO7_ZVAL_IS_UNDEF(zcolumn)) {
       column = PHP_CASSANDRA_GET_COLUMN(PHP5TO7_ZVAL_MAYBE_P(zcolumn));
 
       if (PHP5TO7_Z_TYPE_MAYBE_P(column->name) == IS_STRING) {
@@ -331,60 +398,218 @@ PHP_METHOD(DefaultTable, columns)
   cass_iterator_free(iterator);
 }
 
-PHP_METHOD(DefaultTable, populateIOCacheOnFlush)
+PHP_METHOD(DefaultTable, primaryKey)
 {
   cassandra_table *self;
-  php5to7_zval value;
 
   if (zend_parse_parameters_none() == FAILURE)
     return;
 
   self = PHP_CASSANDRA_GET_TABLE(getThis());
+  if (PHP5TO7_ZVAL_IS_UNDEF(self->partition_key)) {
+    PHP5TO7_ZVAL_MAYBE_MAKE(self->partition_key);
+    array_init(PHP5TO7_ZVAL_MAYBE_P(self->partition_key));
+    size_t i, count = cass_table_meta_partition_key_count(self->meta);
+    for (i = 0; i < count; ++i) {
+      const CassColumnMeta *column =
+          cass_table_meta_partition_key(self->meta, i);
+      if (column) {
+        php5to7_zval zcolumn = php_cassandra_create_column(self->schema, column TSRMLS_CC);
+        if (!PHP5TO7_ZVAL_IS_UNDEF(zcolumn)) {
+          add_next_index_zval(PHP5TO7_ZVAL_MAYBE_P(self->partition_key),
+                              PHP5TO7_ZVAL_MAYBE_P(zcolumn));
+        }
+      }
+    }
+  }
 
-  php_cassandra_get_table_field(self->meta, "populate_io_cache_on_flush", &value TSRMLS_CC);
-  RETURN_ZVAL(PHP5TO7_ZVAL_MAYBE_P(value), 0, 1);
+  RETURN_ZVAL(PHP5TO7_ZVAL_MAYBE_P(self->partition_key), 1, 0);
 }
 
-PHP_METHOD(DefaultTable, replicateOnWrite)
+PHP_METHOD(DefaultTable, clusteringKey)
 {
   cassandra_table *self;
-  php5to7_zval value;
 
   if (zend_parse_parameters_none() == FAILURE)
     return;
 
   self = PHP_CASSANDRA_GET_TABLE(getThis());
+  if (PHP5TO7_ZVAL_IS_UNDEF(self->clustering_key)) {
+    PHP5TO7_ZVAL_MAYBE_MAKE(self->clustering_key);
+    array_init(PHP5TO7_ZVAL_MAYBE_P(self->clustering_key));
+    size_t i, count = cass_table_meta_clustering_key_count(self->meta);
+    for (i = 0; i < count; ++i) {
+      const CassColumnMeta *column =
+          cass_table_meta_clustering_key(self->meta, i);
+      if (column) {
+        php5to7_zval zcolumn = php_cassandra_create_column(self->schema, column TSRMLS_CC);
+        if (!PHP5TO7_ZVAL_IS_UNDEF(zcolumn)) {
+          add_next_index_zval(PHP5TO7_ZVAL_MAYBE_P(self->clustering_key),
+                              PHP5TO7_ZVAL_MAYBE_P(zcolumn));
+        }
+      }
+    }
+  }
 
-  php_cassandra_get_table_field(self->meta, "replicate_on_write", &value TSRMLS_CC);
-  RETURN_ZVAL(PHP5TO7_ZVAL_MAYBE_P(value), 0, 1);
+  RETURN_ZVAL(PHP5TO7_ZVAL_MAYBE_P(self->clustering_key), 1, 0);
 }
 
-PHP_METHOD(DefaultTable, maxIndexInterval)
+PHP_METHOD(DefaultTable, clusteringOrder)
 {
   cassandra_table *self;
-  php5to7_zval value;
 
   if (zend_parse_parameters_none() == FAILURE)
     return;
 
   self = PHP_CASSANDRA_GET_TABLE(getThis());
+  if (PHP5TO7_ZVAL_IS_UNDEF(self->clustering_order)) {
+    PHP5TO7_ZVAL_MAYBE_MAKE(self->clustering_order);
+    array_init(PHP5TO7_ZVAL_MAYBE_P(self->clustering_order));
+    size_t i, count = cass_table_meta_clustering_key_count(self->meta);
+    for (i = 0; i < count; ++i) {
+      CassClusteringOrder order =
+          cass_table_meta_clustering_key_order(self->meta, i);
+      switch (order) {
+        case CASS_CLUSTERING_ORDER_ASC:
+          PHP5TO7_ADD_NEXT_INDEX_STRING(PHP5TO7_ZVAL_MAYBE_P(self->clustering_order), "asc");
+          break;
+        case CASS_CLUSTERING_ORDER_DESC:
+          PHP5TO7_ADD_NEXT_INDEX_STRING(PHP5TO7_ZVAL_MAYBE_P(self->clustering_order), "desc");
+          break;
+        case CASS_CLUSTERING_ORDER_NONE:
+          PHP5TO7_ADD_NEXT_INDEX_STRING(PHP5TO7_ZVAL_MAYBE_P(self->clustering_order), "none");
+          break;
+      }
+    }
+  }
 
-  php_cassandra_get_table_field(self->meta, "max_index_interval", &value TSRMLS_CC);
-  RETURN_ZVAL(PHP5TO7_ZVAL_MAYBE_P(value), 0, 1);
+  RETURN_ZVAL(PHP5TO7_ZVAL_MAYBE_P(self->clustering_order), 1, 0);
 }
 
-PHP_METHOD(DefaultTable, minIndexInterval)
+PHP_METHOD(DefaultTable, index)
 {
   cassandra_table *self;
-  php5to7_zval value;
+  char *name;
+  php5to7_size name_len;
+  php5to7_zval index;
+  const CassIndexMeta *meta;
+
+  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &name, &name_len) == FAILURE) {
+    return;
+  }
+
+  self = PHP_CASSANDRA_GET_TABLE(getThis());
+  meta = cass_table_meta_index_by_name(self->meta, name);
+  if (meta == NULL) {
+    RETURN_FALSE;
+  }
+
+  index = php_cassandra_create_index(self->schema, meta TSRMLS_CC);
+  if (PHP5TO7_ZVAL_IS_UNDEF(index)) {
+    return;
+  }
+
+  RETURN_ZVAL(PHP5TO7_ZVAL_MAYBE_P(index), 0, 1);
+}
+
+PHP_METHOD(DefaultTable, indexes)
+{
+  cassandra_table *self;
+  CassIterator *iterator;
 
   if (zend_parse_parameters_none() == FAILURE)
     return;
 
-  self = PHP_CASSANDRA_GET_TABLE(getThis());
+  self     = PHP_CASSANDRA_GET_TABLE(getThis());
+  iterator = cass_iterator_indexes_from_table_meta(self->meta);
 
-  php_cassandra_get_table_field(self->meta, "min_index_interval", &value TSRMLS_CC);
-  RETURN_ZVAL(PHP5TO7_ZVAL_MAYBE_P(value), 0, 1);
+  array_init(return_value);
+  while (cass_iterator_next(iterator)) {
+    const CassIndexMeta *meta;
+    php5to7_zval zindex;
+
+    meta   = cass_iterator_get_index_meta(iterator);
+    zindex = php_cassandra_create_index(self->schema, meta TSRMLS_CC);
+
+    if (!PHP5TO7_ZVAL_IS_UNDEF(zindex)) {
+      cassandra_index *index = PHP_CASSANDRA_GET_INDEX(PHP5TO7_ZVAL_MAYBE_P(zindex));
+
+      if (PHP5TO7_Z_TYPE_MAYBE_P(index->name) == IS_STRING) {
+        PHP5TO7_ADD_ASSOC_ZVAL_EX(return_value,
+                                  PHP5TO7_Z_STRVAL_MAYBE_P(index->name),
+                                  PHP5TO7_Z_STRLEN_MAYBE_P(index->name) + 1,
+                                  PHP5TO7_ZVAL_MAYBE_P(zindex));
+      } else {
+        add_next_index_zval(return_value, PHP5TO7_ZVAL_MAYBE_P(zindex));
+      }
+    }
+  }
+
+  cass_iterator_free(iterator);
+}
+
+PHP_METHOD(DefaultTable, materializedView)
+{
+  cassandra_table *self;
+  char *name;
+  php5to7_size name_len;
+  php5to7_zval zview;
+  const CassMaterializedViewMeta *meta;
+
+  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &name, &name_len) == FAILURE) {
+    return;
+  }
+
+  self = PHP_CASSANDRA_GET_TABLE(getThis());
+  meta = cass_table_meta_materialized_view_by_name_n(self->meta,
+                                                     name, name_len);
+  if (meta == NULL) {
+    RETURN_FALSE;
+  }
+
+  zview = php_cassandra_create_materialized_view(self->schema, meta TSRMLS_CC);
+  if (PHP5TO7_ZVAL_IS_UNDEF(zview)) {
+    return;
+  }
+
+  RETURN_ZVAL(PHP5TO7_ZVAL_MAYBE_P(zview), 0, 1);
+}
+
+PHP_METHOD(DefaultTable, materializedViews)
+{
+  cassandra_table *self;
+  CassIterator *iterator;
+
+  if (zend_parse_parameters_none() == FAILURE)
+    return;
+
+  self     = PHP_CASSANDRA_GET_TABLE(getThis());
+  iterator = cass_iterator_materialized_views_from_table_meta(self->meta);
+
+  array_init(return_value);
+  while (cass_iterator_next(iterator)) {
+    const CassMaterializedViewMeta *meta;
+    php5to7_zval zview;
+    cassandra_materialized_view *view;
+
+    meta  = cass_iterator_get_materialized_view_meta(iterator);
+    zview = php_cassandra_create_materialized_view(self->schema, meta TSRMLS_CC);
+
+    if (!PHP5TO7_ZVAL_IS_UNDEF(zview)) {
+      view = PHP_CASSANDRA_GET_MATERIALIZED_VIEW(PHP5TO7_ZVAL_MAYBE_P(zview));
+
+      if (PHP5TO7_Z_TYPE_MAYBE_P(view->name) == IS_STRING) {
+        PHP5TO7_ADD_ASSOC_ZVAL_EX(return_value,
+                                  PHP5TO7_Z_STRVAL_MAYBE_P(view->name),
+                                  PHP5TO7_Z_STRLEN_MAYBE_P(view->name) + 1,
+                                  PHP5TO7_ZVAL_MAYBE_P(zview));
+      } else {
+        add_next_materialized_view_zval(return_value, PHP5TO7_ZVAL_MAYBE_P(zview));
+      }
+    }
+  }
+
+  cass_iterator_free(iterator);
 }
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_name, 0, ZEND_RETURN_VALUE, 1)
@@ -396,6 +621,8 @@ ZEND_END_ARG_INFO()
 
 static zend_function_entry cassandra_default_table_methods[] = {
   PHP_ME(DefaultTable, name, arginfo_none, ZEND_ACC_PUBLIC)
+  PHP_ME(DefaultTable, option, arginfo_name, ZEND_ACC_PUBLIC)
+  PHP_ME(DefaultTable, options, arginfo_none, ZEND_ACC_PUBLIC)
   PHP_ME(DefaultTable, comment, arginfo_none, ZEND_ACC_PUBLIC)
   PHP_ME(DefaultTable, readRepairChance, arginfo_none, ZEND_ACC_PUBLIC)
   PHP_ME(DefaultTable, localReadRepairChance, arginfo_none, ZEND_ACC_PUBLIC)
@@ -415,10 +642,25 @@ static zend_function_entry cassandra_default_table_methods[] = {
   PHP_ME(DefaultTable, minIndexInterval, arginfo_none, ZEND_ACC_PUBLIC)
   PHP_ME(DefaultTable, column, arginfo_name, ZEND_ACC_PUBLIC)
   PHP_ME(DefaultTable, columns, arginfo_none, ZEND_ACC_PUBLIC)
+  PHP_ME(DefaultTable, primaryKey, arginfo_none, ZEND_ACC_PUBLIC)
+  PHP_ME(DefaultTable, clusteringKey, arginfo_none, ZEND_ACC_PUBLIC)
+  PHP_ME(DefaultTable, clusteringOrder, arginfo_none, ZEND_ACC_PUBLIC)
+  PHP_ME(DefaultTable, index, arginfo_name, ZEND_ACC_PUBLIC)
+  PHP_ME(DefaultTable, indexes, arginfo_none, ZEND_ACC_PUBLIC)
+  PHP_ME(DefaultTable, materializedView, arginfo_name, ZEND_ACC_PUBLIC)
+  PHP_ME(DefaultTable, materializedViews, arginfo_none, ZEND_ACC_PUBLIC)
   PHP_FE_END
 };
 
 static zend_object_handlers cassandra_default_table_handlers;
+
+static HashTable *
+php_cassandra_type_default_table_gc(zval *object, php5to7_zval_gc table, int *n TSRMLS_DC)
+{
+  *table = NULL;
+  *n = 0;
+  return zend_std_get_properties(object TSRMLS_CC);
+}
 
 static HashTable *
 php_cassandra_default_table_properties(zval *object TSRMLS_DC)
@@ -442,6 +684,12 @@ php_cassandra_default_table_free(php5to7_zend_object_free *object TSRMLS_DC)
 {
   cassandra_table *self = PHP5TO7_ZEND_OBJECT_GET(table, object);
 
+  PHP5TO7_ZVAL_MAYBE_DESTROY(self->name);
+  PHP5TO7_ZVAL_MAYBE_DESTROY(self->options);
+  PHP5TO7_ZVAL_MAYBE_DESTROY(self->partition_key);
+  PHP5TO7_ZVAL_MAYBE_DESTROY(self->clustering_key);
+  PHP5TO7_ZVAL_MAYBE_DESTROY(self->clustering_order);
+
   if (self->schema) {
     php_cassandra_del_ref(&self->schema);
     self->schema = NULL;
@@ -457,6 +705,12 @@ php_cassandra_default_table_new(zend_class_entry *ce TSRMLS_DC)
 {
   cassandra_table *self =
       PHP5TO7_ZEND_OBJECT_ECALLOC(table, ce);
+
+  PHP5TO7_ZVAL_UNDEF(self->name);
+  PHP5TO7_ZVAL_UNDEF(self->options);
+  PHP5TO7_ZVAL_UNDEF(self->partition_key);
+  PHP5TO7_ZVAL_UNDEF(self->clustering_key);
+  PHP5TO7_ZVAL_UNDEF(self->clustering_order);
 
   self->meta   = NULL;
   self->schema = NULL;
@@ -476,6 +730,9 @@ void cassandra_define_DefaultTable(TSRMLS_D)
 
   memcpy(&cassandra_default_table_handlers, zend_get_std_object_handlers(), sizeof(zend_object_handlers));
   cassandra_default_table_handlers.get_properties  = php_cassandra_default_table_properties;
+#if PHP_VERSION_ID >= 50400
+  cassandra_default_table_handlers.get_gc          = php_cassandra_type_default_table_gc;
+#endif
   cassandra_default_table_handlers.compare_objects = php_cassandra_default_table_compare;
   cassandra_default_table_handlers.clone_obj = NULL;
 }

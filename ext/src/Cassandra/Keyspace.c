@@ -22,6 +22,11 @@ ZEND_BEGIN_ARG_INFO_EX(arginfo_name, 0, ZEND_RETURN_VALUE, 1)
   ZEND_ARG_INFO(0, name)
 ZEND_END_ARG_INFO()
 
+ZEND_BEGIN_ARG_INFO_EX(arginfo_signature, 0, ZEND_RETURN_VALUE, 1)
+  ZEND_ARG_INFO(0, name)
+  ZEND_ARG_INFO(0, ...)
+ZEND_END_ARG_INFO()
+
 ZEND_BEGIN_ARG_INFO_EX(arginfo_none, 0, ZEND_RETURN_VALUE, 0)
 ZEND_END_ARG_INFO()
 
@@ -34,6 +39,12 @@ static zend_function_entry cassandra_keyspace_methods[] = {
   PHP_ABSTRACT_ME(Keyspace, tables, arginfo_none)
   PHP_ABSTRACT_ME(Keyspace, userType, arginfo_name)
   PHP_ABSTRACT_ME(Keyspace, userTypes, arginfo_none)
+  PHP_ABSTRACT_ME(Keyspace, materializedView, arginfo_name)
+  PHP_ABSTRACT_ME(Keyspace, materializedViews, arginfo_none)
+  PHP_ABSTRACT_ME(Keyspace, function, arginfo_signature)
+  PHP_ABSTRACT_ME(Keyspace, functions, arginfo_none)
+  PHP_ABSTRACT_ME(Keyspace, aggregate, arginfo_signature)
+  PHP_ABSTRACT_ME(Keyspace, aggregates, arginfo_none)
   PHP_FE_END
 };
 

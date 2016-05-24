@@ -25,7 +25,7 @@ PHP_METHOD(DefaultSchema, keyspace)
   php5to7_size name_len;
   cassandra_schema *self;
   cassandra_keyspace *keyspace;
-  cassandra_keyspace_meta *meta;
+  const CassKeyspaceMeta *meta;
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &name, &name_len) == FAILURE) {
     return;
@@ -33,9 +33,8 @@ PHP_METHOD(DefaultSchema, keyspace)
 
   self = PHP_CASSANDRA_GET_SCHEMA(getThis());
   meta = cass_schema_meta_keyspace_by_name_n((CassSchemaMeta *) self->schema->data, name, name_len);
-
   if (meta == NULL) {
-    RETURN_NULL();
+    RETURN_FALSE;
   }
 
   object_init_ex(return_value, cassandra_default_keyspace_ce);
@@ -57,7 +56,7 @@ PHP_METHOD(DefaultSchema, keyspaces)
 
   array_init(return_value);
   while (cass_iterator_next(iterator)) {
-    cassandra_keyspace_meta *meta;
+    const CassKeyspaceMeta  *meta;
     const CassValue         *value;
     const char              *keyspace_name;
     size_t                   keyspace_name_len;
