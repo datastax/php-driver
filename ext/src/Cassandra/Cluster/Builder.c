@@ -1144,29 +1144,29 @@ php_cassandra_cluster_builder_properties(zval *object TSRMLS_DC)
   }
 
   PHP5TO7_ZVAL_MAYBE_MAKE(blacklistHosts);
-  if (!PHP5TO7_ZVAL_IS_UNDEF(self->blacklist_hosts)) {
-    PHP5TO7_ZVAL_COPY(PHP5TO7_ZVAL_MAYBE_P(blacklistHosts), PHP5TO7_ZVAL_MAYBE_P(self->blacklist_hosts));
+  if (self->blacklist_hosts) {
+    PHP5TO7_ZVAL_STRING(PHP5TO7_ZVAL_MAYBE_P(blacklistHosts), self->blacklist_hosts);
   } else {
     ZVAL_NULL(PHP5TO7_ZVAL_MAYBE_P(blacklistHosts));
   }
 
   PHP5TO7_ZVAL_MAYBE_MAKE(whitelistHosts);
-  if (!PHP5TO7_ZVAL_IS_UNDEF(self->whitelist_hosts)) {
-    PHP5TO7_ZVAL_COPY(PHP5TO7_ZVAL_MAYBE_P(whitelistHosts), PHP5TO7_ZVAL_MAYBE_P(self->whitelist_hosts));
+  if (self->whitelist_hosts) {
+    PHP5TO7_ZVAL_STRING(PHP5TO7_ZVAL_MAYBE_P(whitelistHosts), self->whitelist_hosts);
   } else {
     ZVAL_NULL(PHP5TO7_ZVAL_MAYBE_P(whitelistHosts));
   }
 
   PHP5TO7_ZVAL_MAYBE_MAKE(blacklistDCs);
-  if (!PHP5TO7_ZVAL_IS_UNDEF(self->blacklist_dcs)) {
-    PHP5TO7_ZVAL_COPY(PHP5TO7_ZVAL_MAYBE_P(blacklistDCs), PHP5TO7_ZVAL_MAYBE_P(self->blacklist_dcs));
+  if (self->blacklist_dcs) {
+    PHP5TO7_ZVAL_STRING(PHP5TO7_ZVAL_MAYBE_P(blacklistDCs), self->blacklist_dcs);
   } else {
     ZVAL_NULL(PHP5TO7_ZVAL_MAYBE_P(blacklistDCs));
   }
 
   PHP5TO7_ZVAL_MAYBE_MAKE(whitelistDCs);
-  if (!PHP5TO7_ZVAL_IS_UNDEF(self->whitelist_dcs)) {
-    PHP5TO7_ZVAL_COPY(PHP5TO7_ZVAL_MAYBE_P(whitelistDCs), PHP5TO7_ZVAL_MAYBE_P(self->whitelist_dcs));
+  if (self->whitelist_dcs) {
+    PHP5TO7_ZVAL_STRING(PHP5TO7_ZVAL_MAYBE_P(whitelistDCs), self->whitelist_dcs);
   } else {
     ZVAL_NULL(PHP5TO7_ZVAL_MAYBE_P(whitelistDCs));
   }
