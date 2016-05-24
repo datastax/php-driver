@@ -52,24 +52,32 @@ class CCM
         $this->process->setTimeout(self::PROCESS_TIMEOUT_IN_SECONDS);
     }
 
-    public function setupSchema($schema)
+    public function setupSchema($schema, $dropExistingKeyspaces = true)
     {
-        $keyspaces = $this->session->execute(new SimpleStatement("SELECT keyspace_name FROM system.schema_keyspaces"));
-
-        foreach ($keyspaces as $row) {
-            $keyspace = $row['keyspace_name'];
-
-            if ($this->startsWith("system", $keyspace)) {
-                continue;
+        if ($dropExistingKeyspaces) {
+            if (version_compare($this->version, "3.0.0", ">=")) {
+                $system_keyspaces = "system_schema.keyspaces";
+            } else {
+                $system_keyspaces = "system.schema_keyspaces";
             }
 
-            if (!$this->isSilent) {
-                echo "DROP KEYSPACE " . $keyspace . "\n";
+            $keyspaces = $this->session->execute(new SimpleStatement("SELECT keyspace_name FROM $system_keyspaces"));
+
+            foreach ($keyspaces as $row) {
+                $keyspace = $row['keyspace_name'];
+
+                if ($this->startsWith("system", $keyspace)) {
+                    continue;
+                }
+
+                if (!$this->isSilent) {
+                    echo "DROP KEYSPACE " . $keyspace . "\n";
+                }
+                $this->session->execute(new SimpleStatement("DROP KEYSPACE $keyspace"));
             }
-            $this->session->execute(new SimpleStatement("DROP KEYSPACE $keyspace"));
         }
 
-        foreach (explode(";", $schema) as $cql) {
+        foreach (explode(";\n", $schema) as $cql) {
             $cql = trim($cql);
 
             if (empty($cql)) {
@@ -248,6 +256,13 @@ class CCM
                 'client_encryption_options.truststore_password: php-driver'
             );
         }
+    }
+
+    public function setupUserDefinedFunctions() {
+        $this->ssl = false;
+        $this->clientAuth = false;
+        $this->internalSetup(1, 0);
+        $this->run('updateconf', 'enable_user_defined_functions: true');
     }
 
     public function enableTracing($isEnabled)

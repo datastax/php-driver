@@ -28,6 +28,8 @@ php_cassandra_create_function(cassandra_ref* schema,
 {
   php5to7_zval result;
   cassandra_function *function;
+  const char *full_name;
+  size_t full_name_length;
 
   PHP5TO7_ZVAL_UNDEF(result);
 
@@ -37,6 +39,10 @@ php_cassandra_create_function(cassandra_ref* schema,
   function = PHP_CASSANDRA_GET_FUNCTION(PHP5TO7_ZVAL_MAYBE_P(result));
   function->schema = php_cassandra_add_ref(schema);
   function->meta   = meta;
+
+  cass_function_meta_full_name(function->meta, &full_name, &full_name_length);
+  PHP5TO7_ZVAL_MAYBE_MAKE(function->signature);
+  PHP5TO7_ZVAL_STRINGL(PHP5TO7_ZVAL_MAYBE_P(function->signature), full_name, full_name_length);
 
   return result;
 }
@@ -116,14 +122,6 @@ PHP_METHOD(DefaultFunction, signature)
     return;
 
   self = PHP_CASSANDRA_GET_FUNCTION(getThis());
-  if (PHP5TO7_ZVAL_IS_UNDEF(self->signature)) {
-    const char *full_name;
-    size_t full_name_length;
-    cass_function_meta_full_name(self->meta, &full_name, &full_name_length);
-    PHP5TO7_ZVAL_MAYBE_MAKE(self->signature);
-    PHP5TO7_ZVAL_STRINGL(PHP5TO7_ZVAL_MAYBE_P(self->signature), full_name, full_name_length);
-  }
-
   RETURN_ZVAL(PHP5TO7_ZVAL_MAYBE_P(self->signature), 1, 0);
 }
 

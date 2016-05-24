@@ -172,14 +172,6 @@ PHP_METHOD(DefaultAggregate, signature)
     return;
 
   self = PHP_CASSANDRA_GET_AGGREGATE(getThis());
-  if (PHP5TO7_ZVAL_IS_UNDEF(self->signature)) {
-    const char *full_name;
-    size_t full_name_length;
-    cass_aggregate_meta_full_name(self->meta, &full_name, &full_name_length);
-    PHP5TO7_ZVAL_MAYBE_MAKE(self->signature);
-    PHP5TO7_ZVAL_STRINGL(PHP5TO7_ZVAL_MAYBE_P(self->signature), full_name, full_name_length);
-  }
-
   RETURN_ZVAL(PHP5TO7_ZVAL_MAYBE_P(self->signature), 1, 0);
 }
 
