@@ -387,6 +387,14 @@ PHP_MINIT_FUNCTION(cassandra)
   cassandra_define_DefaultTable(TSRMLS_C);
   cassandra_define_Column(TSRMLS_C);
   cassandra_define_DefaultColumn(TSRMLS_C);
+  cassandra_define_Index(TSRMLS_C);
+  cassandra_define_DefaultIndex(TSRMLS_C);
+  cassandra_define_MaterializedView(TSRMLS_C);
+  cassandra_define_DefaultMaterializedView(TSRMLS_C);
+  cassandra_define_Function(TSRMLS_C);
+  cassandra_define_DefaultFunction(TSRMLS_C);
+  cassandra_define_Aggregate(TSRMLS_C);
+  cassandra_define_DefaultAggregate(TSRMLS_C);
 
   cassandra_define_Type(TSRMLS_C);
   cassandra_define_TypeScalar(TSRMLS_C);
