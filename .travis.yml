@@ -51,24 +51,25 @@ before_install:
   - export CPP_DRIVER_VERSION_MINOR=$(grep CASS_VERSION_MINOR ${CPP_DRIVER_SOURCE_DIRECTORY}/include/cassandra.h | sed 's/[^0-9]*//g')
   - export CPP_DRIVER_VERSION_PATCH=$(grep CASS_VERSION_PATCH ${CPP_DRIVER_SOURCE_DIRECTORY}/include/cassandra.h | sed 's/[^0-9]*//g')
   - export CPP_DRIVER_VERSION=${CPP_DRIVER_VERSION_MAJOR}.${CPP_DRIVER_VERSION_MINOR}.${CPP_DRIVER_VERSION_PATCH}
+  - pushd lib/cpp-driver; export CPP_DRIVER_VERSION_SHA=$(git rev-parse --short HEAD); popd
   # Build the C/C++ driver dependency (or used cached C/C++ driver)
-  - if [ ! -d "${CPP_DRIVER_INSTALL_DIRECTORY}/${CPP_DRIVER_VERSION}" ]; then
+  - if [ ! -d "${CPP_DRIVER_INSTALL_DIRECTORY}/${CPP_DRIVER_VERSION}/${CPP_DRIVER_VERSION_SHA}" ]; then
       mkdir -p ${CPP_DRIVER_BUILD_DIRECTORY};
       pushd ${CPP_DRIVER_BUILD_DIRECTORY};
-      cmake -DCMAKE_CXX_FLAGS="-fPIC" -DCMAKE_INSTALL_PREFIX:PATH=${CPP_DRIVER_INSTALL_DIRECTORY}/${CPP_DRIVER_VERSION} -DCASS_BUILD_STATIC=ON -DCASS_BUILD_SHARED=OFF -DCMAKE_BUILD_TYPE=RELEASE -DCASS_USE_ZLIB=ON ${CPP_DRIVER_SOURCE_DIRECTORY};
+      cmake -DCMAKE_CXX_FLAGS="-fPIC" -DCMAKE_INSTALL_PREFIX:PATH=${CPP_DRIVER_INSTALL_DIRECTORY}/${CPP_DRIVER_VERSION}/${CPP_DRIVER_VERSION_SHA} -DCASS_BUILD_STATIC=ON -DCASS_BUILD_SHARED=OFF -DCMAKE_BUILD_TYPE=RELEASE -DCASS_USE_ZLIB=ON ${CPP_DRIVER_SOURCE_DIRECTORY};
       make -j$(nproc) install;
-      pushd ${CPP_DRIVER_INSTALL_DIRECTORY}/${CPP_DRIVER_VERSION}/lib;
+      pushd ${CPP_DRIVER_INSTALL_DIRECTORY}/${CPP_DRIVER_VERSION}/${CPP_DRIVER_VERSION_SHA}/lib;
       rm -f libcassandra.{dylib,so};
       mv libcassandra_static.a libcassandra.a;
       popd;
       popd;
-    else echo "Using Cached C/C++ driver v${CPP_DRIVER_VERSION}. Dependency does not need to be re-compiled";
+    else echo "Using Cached C/C++ driver v${CPP_DRIVER_VERSION}-${CPP_DRIVER_VERSION_SHA}. Dependency does not need to be re-compiled";
     fi
   # PHPize the extension for configuration and building
   - pushd ${TRAVIS_BUILD_DIR}/ext && phpize && popd
   # Configure, build, and install the extension
   - pushd ${PHP_DRIVER_BUILD_DIRECTORY}
-  - LIBS="-lssl -lz -luv -lm -lstdc++" LDFLAGS="-L${CPP_DRIVER_INSTALL_DIRECTORY}/${CPP_DRIVER_VERSION}/lib -L${LIBUV_ROOT_DIR}/lib" ${TRAVIS_BUILD_DIR}/ext/configure --with-cassandra=${CPP_DRIVER_INSTALL_DIRECTORY}/${CPP_DRIVER_VERSION} --with-uv=${LIBUV_ROOT_DIR}
+  - LIBS="-lssl -lz -luv -lm -lstdc++" LDFLAGS="-L${CPP_DRIVER_INSTALL_DIRECTORY}/${CPP_DRIVER_VERSION}/${CPP_DRIVER_VERSION_SHA}/lib -L${LIBUV_ROOT_DIR}/lib" ${TRAVIS_BUILD_DIR}/ext/configure --with-cassandra=${CPP_DRIVER_INSTALL_DIRECTORY}/${CPP_DRIVER_VERSION}/${CPP_DRIVER_VERSION_SHA} --with-uv=${LIBUV_ROOT_DIR}
   - make -j$(nproc) install
   - popd
   # Enable the extension
@@ -76,10 +77,10 @@ before_install:
   ### Install CCM for Behat testing ###
   - pip install --user ccm
 
-install:
-  - composer install -n
-
 before_script:
+  # Install composer dependencies
+  - composer self-update
+  - composer install -n
   # Use the BEHAT_EXTRA_OPTIONS to supply options to Behat runs
   - BEHAT_EXTRA_OPTIONS=
   # Use the BEHAT_SKIP_TAGS to skip tests on TravisCI
