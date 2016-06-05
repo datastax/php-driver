@@ -1,6 +1,7 @@
 # DataStax PHP Driver for Apache Cassandra
 
-[![Build Status](https://travis-ci.org/datastax/php-driver.svg)](https://travis-ci.org/datastax/php-driver)
+[![Build Status: Linux](https://travis-ci.org/datastax/php-driver.svg)](https://travis-ci.org/datastax/php-driver)
+[![Build Status: Windows](https://ci.appveyor.com/api/projects/status/8vrxpkfl4xm2f3nm?svg=true)](https://ci.appveyor.com/project/DataStax/php-driver)
 
 A modern, [feature-rich](features) and highly tunable PHP client library for [Apache Cassandra](http://cassandra.apache.org/) (1.2+) and [DataStax Enterprise](http://www.datastax.com/products/products-index) (3.1+) using exclusively Cassandra's binary protocol and Cassandra Query Language v3.
 
