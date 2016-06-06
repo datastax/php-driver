@@ -38,7 +38,7 @@ final class Collection extends Type
      * Returns type of values
      * @return Type Type of values
      */
-    public function type() {}
+    public function valueType() {}
 
     /**
      * Creates a new Cassandra\Collection from the given values.
