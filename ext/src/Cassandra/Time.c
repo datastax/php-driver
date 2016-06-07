@@ -35,18 +35,17 @@ zend_class_entry *cassandra_time_ce = NULL;
 #include <time.h>
 #endif
 
-namespace cass {
-
 #if defined(_WIN32)
 
 #define NUM_NANOSECONDS_PER_DAY (24LL * 60LL * 60LL * 1000LL * 1000LL * 1000LL)
 
 cass_int64_t php_cassandra_time_now_ns() {
-  _FILETIME ft;
+  FILETIME ft;
+  cass_int64_t ns100;
   GetSystemTimeAsFileTime(&ft);
-  cass_int64_t ns100 = (static_cast<cass_int64_t>(ft.dwHighDateTime) << 32 |
-                        static_cast<cass_int64_t>(ft.dwLowDateTime)) -
-                       116444736000000000LL; /* 100 nanosecond increments between */
+  ns100 = (((cass_int64_t) ft.dwHighDateTime) << 32 |
+           (cass_int64_t) ft.dwLowDateTime) -
+           116444736000000000LL; /* 100 nanosecond increments between */
   /* Jan. 1, 1601 - Jan. 1, 1970 */
   return (ns100 * 100) % NUM_NANOSECONDS_PER_DAY;
 }
@@ -56,8 +55,8 @@ cass_int64_t php_cassandra_time_now_ns() {
 cass_int64_t php_cassandra_time_now_ns() {
   struct timeval tv;
   gettimeofday(&tv, NULL);
-  return cass_time_from_epoch(static_cast<cass_int64_t>(tv.tv_sec)) +
-      static_cast<cass_int64_t>(tv.tv_usec) * 1000;
+  return cass_time_from_epoch((cass_int64_t) tv.tv_sec) +
+      (cass_int64_t) tv.tv_usec * 1000;
 }
 
 #else
@@ -65,12 +64,11 @@ cass_int64_t php_cassandra_time_now_ns() {
 cass_int64_t php_cassandra_time_now_ns() {
   struct timespec ts;
   clock_gettime(CLOCK_REALTIME, &ts);
-  return cass_time_from_epoch(static_cast<cass_int64_t>(tv.tv_sec)) +
-      static_cast<cass_int64_t>(ts.tv_nsec);
+  return cass_time_from_epoch((cass_int64_t) tv.tv_sec) +
+      (cass_int64_t) ts.tv_nsec;
 }
 
 #endif
-}
 
 static int
 to_string(zval *result, cassandra_time *time TSRMLS_DC)
@@ -117,7 +115,7 @@ php_cassandra_time_init(INTERNAL_FUNCTION_PARAMETERS)
       INVALID_ARGUMENT(nanoseconds, "a string or int representing a number of nanoseconds since midnight");
     }
 
-    if (self->time < 0 || self->time > NANOSECONDS_PER_DAY) {
+    if (self->time < 0 || self->time > NUM_NANOSECONDS_PER_DAY) {
       INVALID_ARGUMENT(nanoseconds, "nanoseconds since midnight");
     }
   }
@@ -133,8 +131,6 @@ PHP_METHOD(Time, __construct)
 /* {{{ Cassandra\Time::type() */
 PHP_METHOD(Time, type)
 {
-  cassandra_time *self;
-
   php5to7_zval type = php_cassandra_type_scalar(CASS_VALUE_TYPE_TIME TSRMLS_CC);
   RETURN_ZVAL(PHP5TO7_ZVAL_MAYBE_P(type), 1, 1);
 }
@@ -161,7 +157,11 @@ PHP_METHOD(Time, fromDateTime)
 {
   cassandra_time *self;
   php_date_obj* datetime_obj;
+#if PHP_VERSION_ID < 50600
+  long timestamp;
+#else
   timelib_long timestamp;
+#endif
   int error;
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "O",
@@ -177,7 +177,7 @@ PHP_METHOD(Time, fromDateTime)
   }
   timelib_update_ts(datetime_obj->time, NULL);
 
-  timestamp = timelib_date_to_int(dateobj->time, &error);
+  timestamp = timelib_date_to_int(datetime_obj->time, &error);
   if (error) {
     zend_throw_exception_ex(cassandra_invalid_argument_exception_ce, 0 TSRMLS_CC,
                             "DateTime object's timestamp is out of range");
