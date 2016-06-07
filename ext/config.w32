@@ -206,6 +206,7 @@ if (PHP_CASSANDRA != "no") {
               "/LTCG " +
               "/NODEFAULTLIB:LIBCMT.LIB " +
               "/NODEFAULTLIB:LIBCMTD.LIB");
+          CHECK_HEADER_ADD_INCLUDE("timelib_config.h", "CFLAGS_CASSANDRA", "ext/date/lib");
           ADD_FLAG("CFLAGS_CASSANDRA",
               "/I " + configure_module_dirname + " " +
               "/I " + PHP_CASSANDRA_CPP_DRIVER + "/include " +

@@ -115,7 +115,11 @@ PHP_METHOD(Date, fromDateTime)
 {
   cassandra_date *self;
   php_date_obj* datetime_obj;
+#if PHP_VERSION_ID < 50600
+  long timestamp;
+#else
   timelib_long timestamp;
+#endif
   int error;
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "O",
@@ -131,15 +135,15 @@ PHP_METHOD(Date, fromDateTime)
   }
   timelib_update_ts(datetime_obj->time, NULL);
 
-  timestamp = timelib_date_to_int(dateobj->time, &error);
+  timestamp = timelib_date_to_int(datetime_obj->time, &error);
   if (error) {
     zend_throw_exception_ex(cassandra_invalid_argument_exception_ce, 0 TSRMLS_CC,
                             "DateTime object's timestamp is out of range");
     return;
   }
 
-  object_init_ex(return_value, cassandra_date);
-  self = PHP_CASSANDRA_GET_TIME(return_value);
+  object_init_ex(return_value, cassandra_date_ce);
+  self = PHP_CASSANDRA_GET_DATE(return_value);
   self->date = cass_date_from_epoch(timestamp);
 }
 /* }}} */
@@ -183,7 +187,7 @@ static zend_function_entry cassandra_date_methods[] = {
   PHP_ME(Date, type, arginfo_none, ZEND_ACC_PUBLIC)
   PHP_ME(Date, seconds, arginfo_none, ZEND_ACC_PUBLIC)
   PHP_ME(Date, toDateTime, arginfo_time, ZEND_ACC_PUBLIC)
-  PHP_ME(Time, fromDateTime, arginfo_datetime, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
+  PHP_ME(Date, fromDateTime, arginfo_datetime, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
   PHP_ME(Date, __toString, arginfo_none, ZEND_ACC_PUBLIC)
   PHP_FE_END
 };
