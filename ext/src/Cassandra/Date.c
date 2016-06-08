@@ -115,7 +115,7 @@ PHP_METHOD(Date, fromDateTime)
 {
   cassandra_date *self;
   php_date_obj* datetime_obj;
-#if PHP_VERSION_ID < 50600
+#if PHP_VERSION_ID < 50615
   long timestamp;
 #else
   timelib_long timestamp;
