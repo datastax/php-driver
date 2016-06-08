@@ -35,9 +35,9 @@ zend_class_entry *cassandra_time_ce = NULL;
 #include <time.h>
 #endif
 
-#if defined(_WIN32)
-
 #define NUM_NANOSECONDS_PER_DAY (24LL * 60LL * 60LL * 1000LL * 1000LL * 1000LL)
+
+#if defined(_WIN32)
 
 cass_int64_t php_cassandra_time_now_ns() {
   FILETIME ft;
@@ -64,7 +64,7 @@ cass_int64_t php_cassandra_time_now_ns() {
 cass_int64_t php_cassandra_time_now_ns() {
   struct timespec ts;
   clock_gettime(CLOCK_REALTIME, &ts);
-  return cass_time_from_epoch((cass_int64_t) tv.tv_sec) +
+  return cass_time_from_epoch((cass_int64_t) ts.tv_sec) +
       (cass_int64_t) ts.tv_nsec;
 }
 
@@ -234,7 +234,7 @@ php_cassandra_time_properties(zval *object TSRMLS_DC)
 
   PHP5TO7_ZVAL_MAYBE_MAKE(nanoseconds);
   to_string(PHP5TO7_ZVAL_MAYBE_P(nanoseconds), self TSRMLS_CC);
-  PHP5TO7_ZEND_HASH_UPDATE(nanoseconds, "nanoseconds", sizeof("nanoseconds"), PHP5TO7_ZVAL_MAYBE_P(nanoseconds), sizeof(zval));
+  PHP5TO7_ZEND_HASH_UPDATE(props, "nanoseconds", sizeof("nanoseconds"), PHP5TO7_ZVAL_MAYBE_P(nanoseconds), sizeof(zval));
 
   return props;
 }
