@@ -50,8 +50,9 @@ PHP_METHOD(ClusterBuilder, build)
     php5to7_zend_resource_le *le;
 
     hash_key_len = spprintf(&hash_key, 0,
-      "cassandra:%s:%d:%d:%s:%d:%d:%d:%s:%s:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d",
+      "cassandra:%s:%d:%d:%s:%s:%d:%d:%d:%s:%s:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d",
       builder->contact_points, builder->port, builder->load_balancing_policy,
+      builder->whitelist_filtering,
       SAFE_STR(builder->local_dc), builder->used_hosts_per_remote_dc,
       builder->allow_remote_dcs_for_local_cl, builder->use_token_aware_routing,
       SAFE_STR(builder->username), SAFE_STR(builder->password),
@@ -115,6 +116,11 @@ PHP_METHOD(ClusterBuilder, build)
   }
 
   ASSERT_SUCCESS(cass_cluster_set_contact_points(cluster->cluster, builder->contact_points));
+
+  if (builder->whitelist_filtering) {
+    cass_cluster_set_whitelist_filtering(cluster->cluster, builder->whitelist_filtering);
+  }
+
   ASSERT_SUCCESS(cass_cluster_set_port(cluster->cluster, builder->port));
 
   ASSERT_SUCCESS(cass_cluster_set_protocol_version(cluster->cluster, builder->protocol_version));
@@ -263,6 +269,50 @@ PHP_METHOD(ClusterBuilder, withContactPoints)
   smart_str_free(&contactPoints);
 #else
   builder->contact_points = contactPoints.c;
+#endif
+
+  RETURN_ZVAL(getThis(), 1, 0);
+}
+
+PHP_METHOD(ClusterBuilder, withWhitelistFiltering)
+{
+  php5to7_zval_args args = NULL;
+  zval *host;
+  int argc = 0, i;
+  smart_str whitelistFiltering = PHP5TO7_SMART_STR_INIT;
+  cassandra_cluster_builder* builder = NULL;
+
+  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "+", &args, &argc) == FAILURE) {
+    return;
+  }
+  for (i = 0; i < argc; i++) {
+    host = PHP5TO7_ZVAL_ARG(args[i]);
+
+    if (Z_TYPE_P(host) != IS_STRING) {
+      smart_str_free(&whitelistFiltering);
+      throw_invalid_argument(host, "host", "a string ip address or hostname" TSRMLS_CC);
+      PHP5TO7_MAYBE_EFREE(args);
+      return;
+    }
+
+    if (i > 0) {
+      smart_str_appendl(&whitelistFiltering, ",", 1);
+    }
+
+    smart_str_appendl(&whitelistFiltering, Z_STRVAL_P(host), Z_STRLEN_P(host));
+  }
+
+  PHP5TO7_MAYBE_EFREE(args);
+  smart_str_0(&whitelistFiltering);
+
+  builder = PHP_CASSANDRA_GET_CLUSTER_BUILDER(getThis());
+
+  efree(builder->whitelist_filtering);
+#if PHP_MAJOR_VERSION >= 7
+  builder->whitelist_filtering = estrndup(whitelistFiltering.s->val, whitelistFiltering.s->len);
+  smart_str_free(&whitelistFiltering);
+#else
+  builder->whitelist_filtering = whitelistFiltering.c;
 #endif
 
   RETURN_ZVAL(getThis(), 1, 0);
@@ -882,6 +932,10 @@ ZEND_BEGIN_ARG_INFO_EX(arginfo_contact_points, 0, ZEND_RETURN_VALUE, 1)
   ZEND_ARG_INFO(0, host)
 ZEND_END_ARG_INFO()
 
+ZEND_BEGIN_ARG_INFO_EX(arginfo_whitelist_filtering, 0, ZEND_RETURN_VALUE, 1)
+  ZEND_ARG_INFO(0, host)
+ZEND_END_ARG_INFO()
+
 ZEND_BEGIN_ARG_INFO_EX(arginfo_port, 0, ZEND_RETURN_VALUE, 1)
   ZEND_ARG_INFO(0, port)
 ZEND_END_ARG_INFO()
@@ -963,6 +1017,8 @@ static zend_function_entry cassandra_cluster_builder_methods[] = {
   PHP_ME(ClusterBuilder, withDefaultTimeout, arginfo_timeout, ZEND_ACC_PUBLIC)
   PHP_ME(ClusterBuilder, withContactPoints, arginfo_contact_points,
          ZEND_ACC_PUBLIC)
+  PHP_ME(ClusterBuilder, withWhitelistFiltering, arginfo_whitelist_filtering,
+         ZEND_ACC_PUBLIC)
   PHP_ME(ClusterBuilder, withPort, arginfo_port, ZEND_ACC_PUBLIC)
   PHP_ME(ClusterBuilder, withRoundRobinLoadBalancingPolicy, arginfo_none,
          ZEND_ACC_PUBLIC)
@@ -1020,6 +1076,7 @@ php_cassandra_cluster_builder_properties(zval *object TSRMLS_DC)
   HashTable *props = zend_std_get_properties(object TSRMLS_CC);
 
   php5to7_zval contactPoints;
+  php5to7_zval whitelistFiltering;
   php5to7_zval loadBalancingPolicy;
   php5to7_zval localDatacenter;
   php5to7_zval hostPerRemoteDatacenter;
@@ -1052,6 +1109,9 @@ php_cassandra_cluster_builder_properties(zval *object TSRMLS_DC)
 
   PHP5TO7_ZVAL_MAYBE_MAKE(contactPoints);
   PHP5TO7_ZVAL_STRING(PHP5TO7_ZVAL_MAYBE_P(contactPoints), self->contact_points);
+  
+  PHP5TO7_ZVAL_MAYBE_MAKE(whitelistFiltering);
+  PHP5TO7_ZVAL_STRING(PHP5TO7_ZVAL_MAYBE_P(whitelistFiltering), self->whitelist_filtering);
 
   PHP5TO7_ZVAL_MAYBE_MAKE(loadBalancingPolicy);
   ZVAL_LONG(PHP5TO7_ZVAL_MAYBE_P(loadBalancingPolicy), self->load_balancing_policy);
@@ -1263,6 +1323,9 @@ php_cassandra_cluster_builder_free(php5to7_zend_object_free *object TSRMLS_DC)
   efree(self->contact_points);
   self->contact_points = NULL;
 
+  efree(self->whitelist_filtering);
+  self->whitelist_filtering = NULL;
+  
   if (self->local_dc) {
     efree(self->local_dc);
     self->local_dc = NULL;
@@ -1294,6 +1357,7 @@ php_cassandra_cluster_builder_new(zend_class_entry *ce TSRMLS_DC)
       PHP5TO7_ZEND_OBJECT_ECALLOC(cluster_builder, ce);
 
   self->contact_points = estrdup("127.0.0.1");
+  self->whitelist_filtering = NULL;
   self->port = 9042;
   self->load_balancing_policy = LOAD_BALANCING_DEFAULT;
   self->local_dc = NULL;

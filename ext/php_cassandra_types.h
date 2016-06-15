@@ -261,6 +261,7 @@ PHP_CASSANDRA_END_OBJECT_TYPE(future_rows)
 
 PHP_CASSANDRA_BEGIN_OBJECT_TYPE(cluster_builder)
   char *contact_points;
+  char *whitelist_filtering;
   int port;
   cassandra_load_balancing load_balancing_policy;
   char *local_dc;

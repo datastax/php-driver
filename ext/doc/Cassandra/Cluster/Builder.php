@@ -72,6 +72,15 @@ final class Builder
     public function withContactPoints($host) {}
 
     /**
+     * Configures the nodes to be used, ignore the rest.
+     *
+     * @param string $host,... one or more ip addresses or hostnames
+     *
+     * @return Builder self
+     */
+    public function withWhitelistFiltering($host) {}
+
+    /**
      * Specify a different port to be used when connecting to the cluster.
      *
      * @throws \Cassandra\Exception\InvalidArgumentException
