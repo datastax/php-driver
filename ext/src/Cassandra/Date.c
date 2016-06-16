@@ -77,25 +77,25 @@ PHP_METHOD(Date, seconds)
 PHP_METHOD(Date, toDateTime)
 {
   cassandra_date *self;
+  zval *ztime;
   cassandra_time* time_obj = NULL;
-  zval *datetime = NULL;
+  php5to7_zval datetime;
   php_date_obj *datetime_obj = NULL;
   char *str;
   int str_len;
 
-  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "|O",
-                            &time_obj,
-                            cassandra_time_ce) == FAILURE) {
+  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "|z", &ztime) == FAILURE) {
     return;
   }
 
+  time_obj = PHP_CASSANDRA_GET_TIME(ztime);
   self = PHP_CASSANDRA_GET_DATE(getThis());
 
   PHP5TO7_ZVAL_MAYBE_MAKE(datetime);
-  php_date_instantiate(php_date_get_date_ce(), datetime TSRMLS_CC);
+  php_date_instantiate(php_date_get_date_ce(), PHP5TO7_ZVAL_MAYBE_P(datetime) TSRMLS_CC);
 
 #if PHP_MAJOR_VERSION >= 7
-  datetime_obj = php_date_obj_from_obj(Z_OBJ_P(datetime));
+  datetime_obj = php_date_obj_from_obj(Z_OBJ(datetime));
 #else
   datetime_obj = zend_object_store_get_object(datetime TSRMLS_CC);
 #endif
@@ -103,10 +103,10 @@ PHP_METHOD(Date, toDateTime)
   str_len = spprintf(&str, 0, "%lld",
                      cass_date_time_to_epoch(self->date,
                                              time_obj != NULL ? time_obj->time : 0));
-  php_date_initialize(datetime_obj, str, str_len, NULL, NULL, 0 TSRMLS_CC);
+  php_date_initialize(datetime_obj, str, str_len, "U", NULL, 0 TSRMLS_CC);
   efree(str);
 
-  RETVAL_ZVAL(datetime, 0, 0);
+  RETVAL_ZVAL(PHP5TO7_ZVAL_MAYBE_P(datetime), 0, 0);
 }
 /* }}} */
 
@@ -114,37 +114,27 @@ PHP_METHOD(Date, toDateTime)
 PHP_METHOD(Date, fromDateTime)
 {
   cassandra_date *self;
-  php_date_obj* datetime_obj;
-#if PHP_VERSION_ID < 50615
-  long timestamp;
-#else
-  timelib_long timestamp;
-#endif
-  int error;
+  zval *zdatetime;
+  php5to7_zval retval;
 
-  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "O",
-                            &datetime_obj,
-                            php_date_get_date_ce()) == FAILURE) {
+  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z", &zdatetime) == FAILURE) {
     return;
   }
 
-  if (!datetime_obj->time) {
-    zend_throw_exception_ex(cassandra_invalid_argument_exception_ce, 0 TSRMLS_CC,
-                            "DateTime object has not been correctly initialized");
+  zend_call_method_with_0_params(zdatetime,
+                                 php_date_get_date_ce(),
+                                 NULL,
+                                 "gettimestamp",
+                                 &retval);
+
+  if (!PHP5TO7_ZVAL_IS_UNDEF(retval) &&
+      Z_TYPE_P(PHP5TO7_ZVAL_MAYBE_P(retval)) == IS_LONG) {
+    object_init_ex(return_value, cassandra_date_ce);
+    self = PHP_CASSANDRA_GET_DATE(return_value);
+    self->date = cass_date_from_epoch(PHP5TO7_Z_LVAL_MAYBE_P(retval));
+    zval_ptr_dtor(&retval);
     return;
   }
-  timelib_update_ts(datetime_obj->time, NULL);
-
-  timestamp = timelib_date_to_int(datetime_obj->time, &error);
-  if (error) {
-    zend_throw_exception_ex(cassandra_invalid_argument_exception_ce, 0 TSRMLS_CC,
-                            "DateTime object's timestamp is out of range");
-    return;
-  }
-
-  object_init_ex(return_value, cassandra_date_ce);
-  self = PHP_CASSANDRA_GET_DATE(return_value);
-  self->date = cass_date_from_epoch(timestamp);
 }
 /* }}} */
 
@@ -256,6 +246,8 @@ php_cassandra_date_new(zend_class_entry *ce TSRMLS_DC)
 {
   cassandra_date *self =
       PHP5TO7_ZEND_OBJECT_ECALLOC(date, ce);
+
+  self->date = 0;
 
   PHP5TO7_ZEND_OBJECT_INIT(date, self, ce);
 }
