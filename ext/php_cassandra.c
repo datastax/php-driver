@@ -432,6 +432,12 @@ PHP_MSHUTDOWN_FUNCTION(cassandra)
 
 PHP_RINIT_FUNCTION(cassandra)
 {
+#define XX_SCALAR(name, value) \
+  PHP5TO7_ZVAL_UNDEF(CASSANDRA_G(type_##name));
+
+  PHP_CASSANDRA_SCALAR_TYPES_MAP(XX_SCALAR)
+#undef XX_SCALAR
+
   return SUCCESS;
 }
 

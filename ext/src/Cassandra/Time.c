@@ -35,7 +35,9 @@ zend_class_entry *cassandra_time_ce = NULL;
 #include <time.h>
 #endif
 
-#define NUM_NANOSECONDS_PER_DAY (24LL * 60LL * 60LL * 1000LL * 1000LL * 1000LL)
+#define NUM_NANOSECONDS_PER_DAY 86399999999999LL
+#define NANOSECONDS_PER_SECOND 1000000000LL
+
 
 #if defined(_WIN32)
 
@@ -102,7 +104,7 @@ php_cassandra_time_init(INTERNAL_FUNCTION_PARAMETERS)
   }
 
   if (nanoseconds == NULL) {
-    self->time = cass_time_from_epoch(time(NULL));
+    self->time = php_cassandra_time_now_ns();
   } else {
     if (Z_TYPE_P(nanoseconds) == IS_LONG) {
       self->time = Z_LVAL_P(nanoseconds);
@@ -136,19 +138,11 @@ PHP_METHOD(Time, type)
 }
 /* }}} */
 
-/* {{{ Cassandra\Time::now() */
-PHP_METHOD(Time, now)
+/* {{{ Cassandra\Time::seconds() */
+PHP_METHOD(Time, seconds)
 {
-  cassandra_time *self;
-
-  if (zend_parse_parameters_none() == FAILURE) {
-    return;
-  }
-
-  object_init_ex(return_value, cassandra_time_ce);
-  self = PHP_CASSANDRA_GET_TIME(return_value);
-
-  self->time = php_cassandra_time_now_ns();
+  cassandra_time *self = PHP_CASSANDRA_GET_TIME(getThis());
+  RETURN_LONG(self->time / NANOSECONDS_PER_SECOND);
 }
 /* }}} */
 
@@ -156,37 +150,41 @@ PHP_METHOD(Time, now)
 PHP_METHOD(Time, fromDateTime)
 {
   cassandra_time *self;
-  php_date_obj* datetime_obj;
-#if PHP_VERSION_ID < 50615
-  long timestamp;
-#else
-  timelib_long timestamp;
-#endif
-  int error;
+  zval *zdatetime;
+  php5to7_zval retval;
 
-  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "O",
-                            &datetime_obj,
-                            php_date_get_date_ce()) == FAILURE) {
+  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z", &zdatetime) == FAILURE) {
     return;
   }
 
-  if (!datetime_obj->time) {
-    zend_throw_exception_ex(cassandra_invalid_argument_exception_ce, 0 TSRMLS_CC,
-                            "DateTime object has not been correctly initialized");
+  zend_call_method_with_0_params(zdatetime,
+                                 php_date_get_date_ce(),
+                                 NULL,
+                                 "gettimestamp",
+                                 &retval);
+
+  if (!PHP5TO7_ZVAL_IS_UNDEF(retval) &&
+      Z_TYPE_P(PHP5TO7_ZVAL_MAYBE_P(retval)) == IS_LONG) {
+    object_init_ex(return_value, cassandra_time_ce);
+    self = PHP_CASSANDRA_GET_TIME(return_value);
+    self->time = cass_time_from_epoch(PHP5TO7_Z_LVAL_MAYBE_P(retval));
+    zval_ptr_dtor(&retval);
     return;
   }
-  timelib_update_ts(datetime_obj->time, NULL);
+}
+/* }}} */
 
-  timestamp = timelib_date_to_int(datetime_obj->time, &error);
-  if (error) {
-    zend_throw_exception_ex(cassandra_invalid_argument_exception_ce, 0 TSRMLS_CC,
-                            "DateTime object's timestamp is out of range");
+/* {{{ Cassandra\Time::__toString() */
+PHP_METHOD(Time, __toString)
+{
+  cassandra_time *self;
+
+  if (zend_parse_parameters_none() == FAILURE) {
     return;
   }
 
-  object_init_ex(return_value, cassandra_time_ce);
-  self = PHP_CASSANDRA_GET_TIME(return_value);
-  self->time = cass_time_from_epoch(timestamp);
+  self = PHP_CASSANDRA_GET_TIME(getThis());
+  to_string(return_value, self);
 }
 /* }}} */
 
@@ -205,8 +203,9 @@ ZEND_END_ARG_INFO()
 static zend_function_entry cassandra_time_methods[] = {
   PHP_ME(Time, __construct, arginfo__construct, ZEND_ACC_CTOR|ZEND_ACC_PUBLIC)
   PHP_ME(Time, type, arginfo_none, ZEND_ACC_PUBLIC)
-  PHP_ME(Time, now, arginfo_none, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
+  PHP_ME(Time, seconds, arginfo_none, ZEND_ACC_PUBLIC)
   PHP_ME(Time, fromDateTime, arginfo_datetime, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
+  PHP_ME(Time, __toString, arginfo_none, ZEND_ACC_PUBLIC)
   PHP_FE_END
 };
 
@@ -226,7 +225,7 @@ php_cassandra_time_properties(zval *object TSRMLS_DC)
   php5to7_zval type;
   php5to7_zval nanoseconds;
 
-  cassandra_time *self = PHP_CASSANDRA_GET_NUMERIC(object);
+  cassandra_time *self = PHP_CASSANDRA_GET_TIME(object);
   HashTable *props = zend_std_get_properties(object TSRMLS_CC);
 
   type = php_cassandra_type_scalar(CASS_VALUE_TYPE_TIME TSRMLS_CC);
@@ -274,6 +273,8 @@ php_cassandra_time_new(zend_class_entry *ce TSRMLS_DC)
 {
   cassandra_time *self =
       PHP5TO7_ZEND_OBJECT_ECALLOC(time, ce);
+
+  self->time = 0;
 
   PHP5TO7_ZEND_OBJECT_INIT(time, self, ce);
 }
