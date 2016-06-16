@@ -50,7 +50,7 @@ PHP_METHOD(ClusterBuilder, build)
     php5to7_zend_resource_le *le;
 
     hash_key_len = spprintf(&hash_key, 0,
-      "cassandra:%s:%d:%d:%s:%d:%d:%d:%s:%s:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d",
+      "cassandra:%s:%d:%d:%s:%d:%d:%d:%s:%s:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%s:%s:%s:%s",
       builder->contact_points, builder->port, builder->load_balancing_policy,
       SAFE_STR(builder->local_dc), builder->used_hosts_per_remote_dc,
       builder->allow_remote_dcs_for_local_cl, builder->use_token_aware_routing,
@@ -60,7 +60,9 @@ PHP_METHOD(ClusterBuilder, build)
       builder->core_connections_per_host, builder->max_connections_per_host,
       builder->reconnect_interval, builder->enable_latency_aware_routing,
       builder->enable_tcp_nodelay, builder->enable_tcp_keepalive,
-      builder->tcp_keepalive_delay, builder->enable_schema);
+      builder->tcp_keepalive_delay, builder->enable_schema,
+      SAFE_STR(builder->whitelist_hosts), SAFE_STR(builder->whitelist_dcs),
+      SAFE_STR(builder->blacklist_hosts), SAFE_STR(builder->blacklist_dcs));
 
     cluster->hash_key     = hash_key;
     cluster->hash_key_len = hash_key_len;
@@ -1276,6 +1278,26 @@ php_cassandra_cluster_builder_free(php5to7_zend_object_free *object TSRMLS_DC)
   if (self->password) {
     efree(self->password);
     self->password = NULL;
+  }
+
+  if (self->whitelist_hosts) {
+    efree(self->whitelist_hosts);
+    self->whitelist_hosts = NULL;
+  }
+
+  if (self->blacklist_hosts) {
+    efree(self->blacklist_hosts);
+    self->blacklist_hosts = NULL;
+  }
+
+  if (self->whitelist_dcs) {
+    efree(self->whitelist_dcs);
+    self->whitelist_dcs = NULL;
+  }
+
+  if (self->blacklist_dcs) {
+    efree(self->blacklist_dcs);
+    self->whitelist_dcs = NULL;
   }
 
   PHP5TO7_ZVAL_MAYBE_DESTROY(self->ssl_options);
