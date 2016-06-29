@@ -604,7 +604,7 @@ PHP_METHOD(DefaultTable, materializedViews)
                                   PHP5TO7_Z_STRLEN_MAYBE_P(view->name) + 1,
                                   PHP5TO7_ZVAL_MAYBE_P(zview));
       } else {
-        add_next_materialized_view_zval(return_value, PHP5TO7_ZVAL_MAYBE_P(zview));
+        add_next_index_zval(return_value, PHP5TO7_ZVAL_MAYBE_P(zview));
       }
     }
   }
