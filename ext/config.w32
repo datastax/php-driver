@@ -4,8 +4,8 @@ ARG_ENABLE("cassandra", "Enable DataStax PHP Cassandra extension", "no");
 
 // Establish the minimum Cassandra C/C++ driver version
 var minimum_major = 2;
-var minimum_minor = 3;
-var minimum_patch = 0;
+var minimum_minor = 4;
+var minimum_patch = 2;
 var minimum_version = minimum_major + "." + minimum_minor + "." + minimum_patch;
 
 function compare_minimum_version(major, minor, patch) {
@@ -84,6 +84,7 @@ if (PHP_CASSANDRA != "no") {
           ADD_SOURCES(configure_module_dirname + "/src",
               "Cassandra.c", "cassandra");
           ADD_SOURCES(configure_module_dirname + "/src/Cassandra",
+              "Aggregate.c " +
               "BatchStatement.c " +
               "Bigint.c " +
               "Blob.c " +
@@ -91,24 +92,31 @@ if (PHP_CASSANDRA != "no") {
               "Collection.c " +
               "Column.c " +
               "Decimal.c " +
+              "DefaultAggregate.c " +
               "DefaultCluster.c " +
               "DefaultColumn.c " +
+              "DefaultFunction.c " +
+              "DefaultIndex.c " +
               "DefaultKeyspace.c " +
+              "DefaultMaterializedView.c " +
               "DefaultSchema.c " +
               "DefaultSession.c " +
               "DefaultTable.c " +
               "Exception.c " +
               "ExecutionOptions.c " +
               "Float.c " +
+              "Function.c " +
               "Future.c " +
               "FutureClose.c " +
               "FuturePreparedStatement.c " +
               "FutureRows.c " +
               "FutureSession.c " +
               "FutureValue.c " +
+              "Index.c " +
               "Inet.c " +
               "Keyspace.c " +
               "Map.c " +
+              "MaterializedView.c " +
               "Numeric.c " +
               "PreparedStatement.c " +
               "RetryPolicy.c " +

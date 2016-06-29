@@ -27,13 +27,14 @@ php_cassandra_table_build_options(CassIterator* iterator TSRMLS_DC) {
   PHP5TO7_ZVAL_MAYBE_MAKE(zoptions);
   array_init(PHP5TO7_ZVAL_MAYBE_P(zoptions));
   while (cass_iterator_next(iterator)) {
+    const CassValue *value = NULL;
     if (cass_iterator_get_meta_field_name(iterator, &name, &name_length) == CASS_OK) {
       if (strncmp(name, "keyspace_name", name_length) == 0 ||
           strncmp(name, "table_name", name_length) == 0 ||
           strncmp(name, "columnfamily_name", name_length) == 0) {
         break;
       }
-      const CassValue *value = cass_iterator_get_meta_field_value(iterator);
+      value = cass_iterator_get_meta_field_value(iterator);
       if (value) {
         const CassDataType *data_type = cass_value_data_type(value);
         if (data_type) {

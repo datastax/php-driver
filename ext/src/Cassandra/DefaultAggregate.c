@@ -51,9 +51,9 @@ PHP_METHOD(DefaultAggregate, argumentTypes)
 
   self = PHP_CASSANDRA_GET_AGGREGATE(getThis());
   if (PHP5TO7_ZVAL_IS_UNDEF(self->argument_types)) {
+    size_t i, count = cass_aggregate_meta_argument_count(self->meta);
     PHP5TO7_ZVAL_MAYBE_MAKE(self->argument_types);
     array_init(PHP5TO7_ZVAL_MAYBE_P(self->argument_types));
-    size_t i, count = cass_aggregate_meta_argument_count(self->meta);
     for (i = 0; i < count; ++i) {
       const CassDataType* data_type = cass_aggregate_meta_argument_type(self->meta, i);
       if (data_type) {

@@ -407,9 +407,9 @@ PHP_METHOD(DefaultTable, primaryKey)
 
   self = PHP_CASSANDRA_GET_TABLE(getThis());
   if (PHP5TO7_ZVAL_IS_UNDEF(self->partition_key)) {
+    size_t i, count = cass_table_meta_partition_key_count(self->meta);
     PHP5TO7_ZVAL_MAYBE_MAKE(self->partition_key);
     array_init(PHP5TO7_ZVAL_MAYBE_P(self->partition_key));
-    size_t i, count = cass_table_meta_partition_key_count(self->meta);
     for (i = 0; i < count; ++i) {
       const CassColumnMeta *column =
           cass_table_meta_partition_key(self->meta, i);
@@ -435,9 +435,9 @@ PHP_METHOD(DefaultTable, clusteringKey)
 
   self = PHP_CASSANDRA_GET_TABLE(getThis());
   if (PHP5TO7_ZVAL_IS_UNDEF(self->clustering_key)) {
+    size_t i, count = cass_table_meta_clustering_key_count(self->meta);
     PHP5TO7_ZVAL_MAYBE_MAKE(self->clustering_key);
     array_init(PHP5TO7_ZVAL_MAYBE_P(self->clustering_key));
-    size_t i, count = cass_table_meta_clustering_key_count(self->meta);
     for (i = 0; i < count; ++i) {
       const CassColumnMeta *column =
           cass_table_meta_clustering_key(self->meta, i);
@@ -463,9 +463,9 @@ PHP_METHOD(DefaultTable, clusteringOrder)
 
   self = PHP_CASSANDRA_GET_TABLE(getThis());
   if (PHP5TO7_ZVAL_IS_UNDEF(self->clustering_order)) {
+    size_t i, count = cass_table_meta_clustering_key_count(self->meta);
     PHP5TO7_ZVAL_MAYBE_MAKE(self->clustering_order);
     array_init(PHP5TO7_ZVAL_MAYBE_P(self->clustering_order));
-    size_t i, count = cass_table_meta_clustering_key_count(self->meta);
     for (i = 0; i < count; ++i) {
       CassClusteringOrder order =
           cass_table_meta_clustering_key_order(self->meta, i);
