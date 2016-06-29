@@ -61,15 +61,15 @@ class TimeTest extends \PHPUnit_Framework_TestCase
 
     public function testFromDateTime()
     {
-        $datetime = new \DateTime("1970-01-01T00:00:00");
+        $datetime = new \DateTime("1970-01-01T00:00:00+0000");
         $time = Time::fromDateTime($datetime);
         $this->assertEquals((string)$time, "0");
 
-        $datetime = new \DateTime("1970-01-01T00:00:01");
+        $datetime = new \DateTime("1970-01-01T00:00:01+0000");
         $time = Time::fromDateTime($datetime);
         $this->assertEquals((string)$time, "1000000000");
 
-        $datetime = new \DateTime("1970-01-01T23:59:59");
+        $datetime = new \DateTime("1970-01-01T23:59:59+0000");
         $time = Time::fromDateTime($datetime);
         $this->assertEquals((string)$time, "86399000000000");
     }

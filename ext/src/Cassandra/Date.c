@@ -77,7 +77,7 @@ PHP_METHOD(Date, seconds)
 PHP_METHOD(Date, toDateTime)
 {
   cassandra_date *self;
-  zval *ztime;
+  zval *ztime = NULL;
   cassandra_time* time_obj = NULL;
   php5to7_zval datetime;
   php_date_obj *datetime_obj = NULL;
@@ -88,7 +88,9 @@ PHP_METHOD(Date, toDateTime)
     return;
   }
 
-  time_obj = PHP_CASSANDRA_GET_TIME(ztime);
+  if (ztime != NULL) {
+    time_obj = PHP_CASSANDRA_GET_TIME(ztime);
+  }
   self = PHP_CASSANDRA_GET_DATE(getThis());
 
   PHP5TO7_ZVAL_MAYBE_MAKE(datetime);
@@ -106,7 +108,7 @@ PHP_METHOD(Date, toDateTime)
   php_date_initialize(datetime_obj, str, str_len, "U", NULL, 0 TSRMLS_CC);
   efree(str);
 
-  RETVAL_ZVAL(PHP5TO7_ZVAL_MAYBE_P(datetime), 0, 0);
+  RETVAL_ZVAL(PHP5TO7_ZVAL_MAYBE_P(datetime), 0, 1);
 }
 /* }}} */
 
@@ -121,7 +123,7 @@ PHP_METHOD(Date, fromDateTime)
     return;
   }
 
-  zend_call_method_with_0_params(zdatetime,
+  zend_call_method_with_0_params(PHP5TO7_ZVAL_MAYBE_ADDR_OF(zdatetime),
                                  php_date_get_date_ce(),
                                  NULL,
                                  "gettimestamp",
