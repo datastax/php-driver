@@ -286,7 +286,7 @@ PHP_METHOD(Tinyint, abs)
   cassandra_numeric *result = NULL;
   cassandra_numeric *self = PHP_CASSANDRA_GET_NUMERIC(getThis());
 
-  if (self->tinyint_value == INT16_MIN) {
+  if (self->tinyint_value == INT8_MIN) {
     zend_throw_exception_ex(cassandra_range_exception_ce, 0 TSRMLS_CC, "Value doesn't exist");
     return;
   }
@@ -303,7 +303,7 @@ PHP_METHOD(Tinyint, neg)
   cassandra_numeric *result = NULL;
   cassandra_numeric *self = PHP_CASSANDRA_GET_NUMERIC(getThis());
 
-  if (self->tinyint_value == INT16_MIN) {
+  if (self->tinyint_value == INT8_MIN) {
     zend_throw_exception_ex(cassandra_range_exception_ce, 0 TSRMLS_CC, "Value doesn't exist");
     return;
   }

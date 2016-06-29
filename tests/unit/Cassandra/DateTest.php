@@ -46,13 +46,13 @@ class DateTest extends \PHPUnit_Framework_TestCase
     public function testFromDateTime()
     {
         // Epoch
-        $datetime = new \DateTime("1970-01-01T00:00:00");
+        $datetime = new \DateTime("1970-01-01T00:00:00+0000");
         $date = Date::fromDateTime($datetime);
         $this->assertEquals($date->seconds(), 0);
         $this->assertEquals($date->toDateTime(), $datetime);
 
         // Epoch + 1
-        $datetime = new \DateTime("1970-01-02T00:00:00");
+        $datetime = new \DateTime("1970-01-02T00:00:00+0000");
         $date = Date::fromDateTime($datetime);
         $this->assertEquals($date->seconds(), 24 * 60 * 60);
         $this->assertEquals($date->toDateTime(), $datetime);
@@ -65,7 +65,7 @@ class DateTest extends \PHPUnit_Framework_TestCase
     public function testToDateTimeWithTime()
     {
         // Epoch
-        $datetime = new \DateTime("1970-01-01T00:00:01");
+        $datetime = new \DateTime("1970-01-01T00:00:01+0000");
         $date = Date::fromDateTime($datetime);
         $this->assertEquals($date->seconds(), 0);
         $this->assertEquals($date->toDateTime(new Time(1000 * 1000 * 1000)), $datetime);

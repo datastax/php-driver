@@ -157,7 +157,7 @@ PHP_METHOD(Time, fromDateTime)
     return;
   }
 
-  zend_call_method_with_0_params(zdatetime,
+  zend_call_method_with_0_params(PHP5TO7_ZVAL_MAYBE_ADDR_OF(zdatetime),
                                  php_date_get_date_ce(),
                                  NULL,
                                  "gettimestamp",
@@ -184,7 +184,7 @@ PHP_METHOD(Time, __toString)
   }
 
   self = PHP_CASSANDRA_GET_TIME(getThis());
-  to_string(return_value, self);
+  to_string(return_value, self TSRMLS_CC);
 }
 /* }}} */
 
