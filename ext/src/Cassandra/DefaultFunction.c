@@ -75,9 +75,9 @@ PHP_METHOD(DefaultFunction, arguments)
 
   self = PHP_CASSANDRA_GET_FUNCTION(getThis());
   if (PHP5TO7_ZVAL_IS_UNDEF(self->arguments)) {
+    size_t i, count = cass_function_meta_argument_count(self->meta);
     PHP5TO7_ZVAL_MAYBE_MAKE(self->arguments);
     array_init(PHP5TO7_ZVAL_MAYBE_P(self->arguments));
-    size_t i, count = cass_function_meta_argument_count(self->meta);
     for (i = 0; i < count; ++i) {
       const char *name;
       size_t name_length;

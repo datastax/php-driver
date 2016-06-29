@@ -316,6 +316,7 @@ PHP_METHOD(DefaultKeyspace, function)
   php5to7_zval_args args = NULL;
   smart_str arguments = PHP5TO7_SMART_STR_INIT;
   int argc = 0;
+  const CassFunctionMeta *meta = NULL;
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s|*",
                             &name, &name_len,
@@ -332,7 +333,7 @@ PHP_METHOD(DefaultKeyspace, function)
     }
   }
 
-  const CassFunctionMeta *meta =
+  meta =
       cass_keyspace_meta_function_by_name_n(self->meta,
                                             name, name_len,
                                             PHP5TO7_SMART_STR_VAL(arguments),
@@ -414,6 +415,7 @@ PHP_METHOD(DefaultKeyspace, aggregate)
   php5to7_zval_args args = NULL;
   smart_str arguments = PHP5TO7_SMART_STR_INIT;
   int argc = 0;
+  const CassFunctionMeta *meta = NULL;
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s|*",
                             &name, &name_len,
@@ -430,7 +432,7 @@ PHP_METHOD(DefaultKeyspace, aggregate)
     }
   }
 
-  const CassAggregateMeta *meta =
+  meta =
       cass_keyspace_meta_aggregate_by_name_n(self->meta,
                                             name, name_len,
                                             PHP5TO7_SMART_STR_VAL(arguments),
