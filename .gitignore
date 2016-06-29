@@ -2,6 +2,7 @@
 /.idea/
 /.vagrant/
 /bin/
+/build/
 /docs/
 /vendor/
 /venv/
