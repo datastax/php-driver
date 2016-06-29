@@ -30,9 +30,9 @@ sudo apt-get install g++ make cmake libuv-dev libssl-dev libgmp-dev php5 php5-de
 ```bash
 sudo yum install automake cmake gcc gcc-c++ git libtool openssl-devel wget gmp gmp-devel boost php-devel pcre-devel git
 pushd /tmp
-wget http://dist.libuv.org/dist/v1.4.2/libuv-v1.4.2.tar.gz
-tar xzf libuv-v1.4.2.tar.gz
-pushd libuv-v1.4.2
+wget http://dist.libuv.org/dist/v1.8.0/libuv-v1.8.0.tar.gz
+tar xzf libuv-v1.8.0.tar.gz
+pushd libuv-v1.8.0
 sh autogen.sh
 ./configure
 sudo make install
