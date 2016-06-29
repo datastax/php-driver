@@ -16,6 +16,8 @@
 
 #include "php_cassandra.h"
 
+#include "util/result.h"
+
 zend_class_entry *cassandra_table_ce = NULL;
 
 php5to7_zval
@@ -42,7 +44,7 @@ php_cassandra_table_build_options(CassIterator* iterator TSRMLS_DC) {
           PHP5TO7_ZVAL_UNDEF(zvalue);
           if (php_cassandra_value(value,
                                   data_type,
-                                  PHP5TO7_ZVAL_MAYBE_P(zvalue)) == SUCCESS) {
+                                  &zvalue TSRMLS_CC) == SUCCESS) {
             PHP5TO7_ADD_ASSOC_ZVAL_EX(PHP5TO7_ZVAL_MAYBE_P(zoptions),
                                       name, name_length + 1,
                                       PHP5TO7_ZVAL_MAYBE_P(zvalue));

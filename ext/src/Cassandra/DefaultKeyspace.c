@@ -268,7 +268,7 @@ PHP_METHOD(DefaultKeyspace, materializedViews)
                                   PHP5TO7_Z_STRLEN_MAYBE_P(view->name) + 1,
                                   PHP5TO7_ZVAL_MAYBE_P(zview));
       } else {
-        add_next_materialized_view_zval(return_value, PHP5TO7_ZVAL_MAYBE_P(zview));
+        add_next_index_zval(return_value, PHP5TO7_ZVAL_MAYBE_P(zview));
       }
     }
   }
@@ -374,7 +374,7 @@ PHP_METHOD(DefaultKeyspace, functions)
                                   PHP5TO7_Z_STRLEN_MAYBE_P(function->signature) + 1,
                                   PHP5TO7_ZVAL_MAYBE_P(zfunction));
       } else {
-        add_next_function_zval(return_value, PHP5TO7_ZVAL_MAYBE_P(zfunction));
+        add_next_index_zval(return_value, PHP5TO7_ZVAL_MAYBE_P(zfunction));
       }
     }
   }
@@ -415,7 +415,7 @@ PHP_METHOD(DefaultKeyspace, aggregate)
   php5to7_zval_args args = NULL;
   smart_str arguments = PHP5TO7_SMART_STR_INIT;
   int argc = 0;
-  const CassFunctionMeta *meta = NULL;
+  const CassAggregateMeta *meta = NULL;
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s|*",
                             &name, &name_len,
@@ -473,7 +473,7 @@ PHP_METHOD(DefaultKeyspace, aggregates)
                                   PHP5TO7_Z_STRLEN_MAYBE_P(aggregate->signature) + 1,
                                   PHP5TO7_ZVAL_MAYBE_P(zaggregate));
       } else {
-        add_next_aggregate_zval(return_value, PHP5TO7_ZVAL_MAYBE_P(zaggregate));
+        add_next_index_zval(return_value, PHP5TO7_ZVAL_MAYBE_P(zaggregate));
       }
     }
   }
