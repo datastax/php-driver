@@ -122,6 +122,117 @@ class SchemaMetadataIntegrationTest extends BasicIntegrationTest {
     }
 
     /**
+     * Create the tables for the materialized views
+     */
+    protected function createTablesForMaterializedViews() {
+        $statement = new SimpleStatement(
+            "CREATE TABLE {$this->tableNamePrefix}_1 (key1 text, value1 int, PRIMARY KEY(key1))"
+        );
+        $this->session->execute($statement);
+        $statement = new SimpleStatement(
+            "CREATE TABLE {$this->tableNamePrefix}_2 (key1 text, key2 int, value1 int, PRIMARY KEY(key1, key2))"
+        );
+        $this->session->execute($statement);
+    }
+
+    /**
+     * Create the simple materialized view using the first table
+     */
+    protected function createSimpleMaterializedView() {
+        $statement = new SimpleStatement(
+            "CREATE MATERIALIZED VIEW simple AS " .
+            "SELECT key1 FROM {$this->tableNamePrefix}_1 WHERE value1 IS NOT NULL " .
+            "PRIMARY KEY(value1, key1)"
+        );
+        $this->session->execute($statement);
+    }
+
+    /**
+     * Create the primary key materialized view using the second table
+     */
+    protected function createPrimaryKeyMaterializedView() {
+        $statement = new SimpleStatement(
+            "CREATE MATERIALIZED VIEW primary_key AS " .
+            "SELECT key1 FROM {$this->tableNamePrefix}_2 WHERE key2 IS NOT NULL AND value1 IS NOT NULL " .
+            "PRIMARY KEY((value1, key2), key1)"
+        );
+        $this->session->execute($statement);
+    }
+
+    /**
+     * Create the primary key materialized view using the second table
+     */
+    protected function createClusteringKeyMaterializedView() {
+        $statement = new SimpleStatement(
+            "CREATE MATERIALIZED VIEW clustering_key AS " .
+            "SELECT key1 FROM {$this->tableNamePrefix}_2 WHERE key2 IS NOT NULL AND value1 IS NOT NULL " .
+            "PRIMARY KEY(value1, key2, key1) " .
+            "WITH CLUSTERING ORDER BY (key2 DESC)"
+        );
+        $this->session->execute($statement);
+    }
+
+    /**
+     * Assert the materialized views are equal
+     *
+     * @param $materializedViewOne First materialized view
+     * @param $materializedViewTwo Second materialized view
+     */
+    protected function assertMaterializedViewsEqual($materializedViewOne, $materializedViewTwo) {
+        $this->assertEquals($materializedViewOne->name(), $materializedViewTwo->name());
+        $this->assertEquals($materializedViewOne->options(), $materializedViewTwo->options());
+        $this->assertEquals($materializedViewOne->comment(), $materializedViewTwo->comment());
+        $this->assertEquals($materializedViewOne->readRepairChance(), $materializedViewTwo->readRepairChance());
+        $this->assertEquals($materializedViewOne->localReadRepairChance(), $materializedViewTwo->localReadRepairChance());
+        $this->assertEquals($materializedViewOne->gcGraceSeconds(), $materializedViewTwo->gcGraceSeconds());
+        $this->assertEquals($materializedViewOne->caching(), $materializedViewTwo->caching());
+        $this->assertEquals($materializedViewOne->bloomFilterFPChance(), $materializedViewTwo->bloomFilterFPChance());
+        $this->assertEquals($materializedViewOne->memtableFlushPeriodMs(), $materializedViewTwo->memtableFlushPeriodMs());
+        $this->assertEquals($materializedViewOne->defaultTTL(), $materializedViewTwo->defaultTTL());
+        $this->assertEquals($materializedViewOne->speculativeRetry(), $materializedViewTwo->speculativeRetry());
+        $this->assertEquals($materializedViewOne->indexInterval(), $materializedViewTwo->indexInterval());
+        $this->assertEquals($materializedViewOne->compactionStrategyClassName(), $materializedViewTwo->compactionStrategyClassName());
+        $this->assertEquals($materializedViewOne->compactionStrategyOptions(), $materializedViewTwo->compactionStrategyOptions());
+        $this->assertEquals($materializedViewOne->compressionParameters(), $materializedViewTwo->compressionParameters());
+        $this->assertEquals($materializedViewOne->populateIOCacheOnFlush(), $materializedViewTwo->populateIOCacheOnFlush());
+        $this->assertEquals($materializedViewOne->replicateOnWrite(), $materializedViewTwo->replicateOnWrite());
+        $this->assertEquals($materializedViewOne->maxIndexInterval(), $materializedViewTwo->maxIndexInterval());
+        $this->assertEquals($materializedViewOne->minIndexInterval(), $materializedViewTwo->minIndexInterval());
+        $this->assertEquals($materializedViewOne->columns(), $materializedViewTwo->columns());
+        $this->assertEquals($materializedViewOne->primaryKey(), $materializedViewTwo->primaryKey());
+        $this->assertEquals($materializedViewOne->clusteringKey(), $materializedViewTwo->clusteringKey());
+        $this->assertEquals($materializedViewOne->clusteringOrder(), $materializedViewTwo->clusteringOrder());
+        $this->assertEquals($materializedViewOne->baseTable(), $materializedViewTwo->baseTable());
+    }
+
+    /**
+     * Assert the materialized view (not all elements)
+     *
+     * @param $materializedView Materialized view to validate
+     * @param $name Name to assert
+     * @param $tableName Table name to assert
+     * @param $columns Columns names to assert
+     * @param $primaryKeyColumns Primary key column names to assert
+     * @param $clusteringKeyColumns Cluster key column names to assert
+     */
+    protected function assertMaterializedView($materializedView, $name, $tableName, $columns, $primaryKeyColumns, $clusteringKeyColumns) {
+        $this->assertEquals($materializedView->name(), $name);
+        $this->assertEquals($materializedView->baseTable()->name(), $tableName);
+        $i = 0;
+        foreach ($materializedView->columns() as $column) {
+            $this->assertEquals($columns[$i++], $column->name());
+        }
+        $i = 0;
+        foreach ($materializedView->primaryKey() as $column) {
+            $this->assertEquals($primaryKeyColumns[$i++], $column->name());
+        }
+        $i = 0;
+        foreach ($materializedView->clusteringKey() as $column) {
+            $this->assertEquals($clusteringKeyColumns[$i++], $column->name());
+        }
+    }
+
+    /**
      * Schema metadata support is available; basic test.
      *
      * This test will ensure that the PHP driver supports schema metadata.
@@ -471,5 +582,199 @@ class SchemaMetadataIntegrationTest extends BasicIntegrationTest {
         foreach ($indexes as $index) {
             $this->assertTrue($index->name() == "simple" || $index->name() == "collection");
         }
+    }
+
+    /**
+     * Schema metadata to validate no materialized views exist
+     *
+     * This test ensures that materialized views are properly handled by the
+     * driver.
+     *
+     * @test
+     * @ticket PHP-79
+     * @cassandra-3.0
+     */
+    public function testNoMaterializedViews() {
+        // Create the tables
+        $this->createTablesForMaterializedViews();
+
+        // Validate the schema metadata (no materialized views exist)
+        $keyspace = $this->session->schema()->keyspace($this->keyspaceName);
+        $this->assertCount(0, $keyspace->materializedViews());
+        $this->assertFalse($keyspace->materializedView("invalid"));
+        $table = $this->session->schema()->keyspace($this->keyspaceName)->table("{$this->tableNamePrefix}_1");
+        $this->assertCount(0, $table->materializedViews());
+        $this->assertFalse($table->materializedView("invalid"));
+        $table = $this->session->schema()->keyspace($this->keyspaceName)->table("{$this->tableNamePrefix}_2");
+        $this->assertCount(0, $table->materializedViews());
+        $this->assertFalse($table->materializedView("invalid"));
+    }
+
+    /**
+     * Schema metadata to validate a simple materialized view exist
+     *
+     * This test ensures that materialized views are properly handled by the
+     * driver.
+     *
+     * @test
+     * @ticket PHP-79
+     * @cassandra-3.0
+     */
+    public function testMaterializedViews() {
+        // Create the tables
+        $this->createTablesForMaterializedViews();
+
+        // Create the materialized view
+        $this->createSimpleMaterializedView();
+
+        // Validate the schema metadata (a single materialized views exist)
+        $keyspace = $this->session->schema()->keyspace($this->keyspaceName);
+        $this->assertCount(1, $keyspace->materializedViews());
+        $table = $keyspace->table("{$this->tableNamePrefix}_1");
+        $this->assertCount(1, $table->materializedViews());
+        $materializedView = $keyspace->materializedView("simple");
+        $this->assertMaterializedViewsEqual($materializedView, $table->materializedView("simple"));
+        $this->assertMaterializedView($materializedView, "simple", "{$this->tableNamePrefix}_1",
+            array("value1", "key1"), array("value1"), array("key1"));
+    }
+
+    /**
+     * Schema metadata to validate a materialized view exist when using a
+     * primary key
+     *
+     * This test ensures that materialized views are properly handled by the
+     * driver.
+     *
+     * @test
+     * @ticket PHP-79
+     * @cassandra-3.0
+     */
+    public function testPrimaryKeyMaterializedViews() {
+        // Create the tables
+        $this->createTablesForMaterializedViews();
+
+        // Create the materialized view
+        $this->createPrimaryKeyMaterializedView();
+
+        // Validate the schema metadata (two materialized views should exist now)
+        $keyspace = $this->session->schema()->keyspace($this->keyspaceName);
+        $this->assertCount(1, $keyspace->materializedViews());
+        $table = $keyspace->table("{$this->tableNamePrefix}_2");
+        $this->assertCount(1, $table->materializedViews());
+        $materializedView = $keyspace->materializedView("primary_key");
+        $this->assertMaterializedViewsEqual($materializedView, $table->materializedView("primary_key"));
+        $this->assertMaterializedView($materializedView, "primary_key", "{$this->tableNamePrefix}_2",
+            array("value1", "key2", "key1"), array("value1", "key2"), array("key1"));
+    }
+
+    /**
+     * Schema metadata to validate a materialized view exist when using a
+     * clustering key
+     *
+     * This test ensures that materialized views are properly handled by the
+     * driver.
+     *
+     * @test
+     * @ticket PHP-79
+     * @cassandra-3.0
+     */
+    public function testClusteringKeyMaterializedViews() {
+        // Create the tables
+        $this->createTablesForMaterializedViews();
+
+        // Create the materialized view
+        $this->createClusteringKeyMaterializedView();
+
+        // Validate the schema metadata (three materialized views should exist now as well as two in table 2)
+        $keyspace = $this->session->schema()->keyspace($this->keyspaceName);
+        $this->assertCount(1, $keyspace->materializedViews());
+        $table = $keyspace->table("{$this->tableNamePrefix}_2");
+        $this->assertCount(1, $table->materializedViews());
+        $materializedView = $keyspace->materializedView("clustering_key");
+        $this->assertMaterializedViewsEqual($materializedView, $table->materializedView("clustering_key"));
+        $this->assertMaterializedView($materializedView, "clustering_key", "{$this->tableNamePrefix}_2",
+            array("value1", "key2", "key1"), array("value1"), array("key2", "key1"));
+    }
+
+    /**
+     * Schema metadata to validate materialized views exist using iterator
+     *
+     * This test ensures that materialized views are properly handled by the
+     * driver.
+     *
+     * @test
+     * @ticket PHP-79
+     * @cassandra-version-3.0
+     */
+    public function testIteratorMaterializedViews() {
+        // Create the tables
+        $this->createTablesForMaterializedViews();
+
+        // Create the materialized views
+        $this->createSimpleMaterializedView();
+        $this->createPrimaryKeyMaterializedView();
+        $this->createClusteringKeyMaterializedView();
+
+        // Validate the materialized views
+        $keyspace = $this->session->schema()->keyspace($this->keyspaceName);
+        $this->assertCount(3, $keyspace->materializedViews());
+        $table = $keyspace->table("{$this->tableNamePrefix}_1");
+        $materializedViews = $table->materializedViews();
+        foreach ($materializedViews as $materializedView) {
+            if ($materializedView->name() == "simple") {
+                $this->assertMaterializedView($materializedView, "simple",
+                    "{$this->tableNamePrefix}_1", array("value1", "key1"),
+                    array("value1"), array("key1"));
+            } else {
+                $this->fail("Invalid Materialized View Name: {$materializedView->name()}");
+            }
+        }
+        $this->assertCount(1, $materializedViews);
+        $table = $keyspace->table("{$this->tableNamePrefix}_2");
+        $materializedViews = $table->materializedViews();
+        $this->assertCount(2, $materializedViews);
+        foreach ($materializedViews as $materializedView) {
+            if ($materializedView->name() == "primary_key") {
+                $this->assertMaterializedView($materializedView, "primary_key",
+                    "{$this->tableNamePrefix}_2", array("value1", "key2", "key1"),
+                    array("value1", "key2"), array("key1"));
+            } else if ($materializedView->name() == "clustering_key") {
+                $this->assertMaterializedView($materializedView, "clustering_key",
+                    "{$this->tableNamePrefix}_2", array("value1", "key2", "key1"),
+                    array("value1"), array("key2", "key1"));
+            } else {
+                $this->fail("Invalid Materialized View Name: {$materializedView->name()}");
+            }
+        }
+    }
+
+    /**
+     * Schema metadata to validate materialized views are dropped correctly
+     *
+     * This test ensures that materialized views are properly handled by the
+     * driver.
+     *
+     * @test
+     * @ticket PHP-79
+     * @cassandra-version-3.0
+     */
+    public function testDropMaterializedViews() {
+        // Create the tables
+        $this->createTablesForMaterializedViews();
+
+        // Create the materialized views
+        $this->createSimpleMaterializedView();
+
+        // Validate the materialized view exists
+        $keyspace = $this->session->schema()->keyspace($this->keyspaceName);
+        $this->assertCount(1, $keyspace->materializedViews());
+        $this->assertNotEmpty($keyspace->materializedView("simple"));
+
+        // Drop the materialized view and validate it no longer exists
+        $statement = new SimpleStatement("DROP MATERIALIZED VIEW simple");
+        $this->session->execute($statement);
+        $keyspace = $this->session->schema()->keyspace($this->keyspaceName);
+        $this->assertCount(0, $keyspace->materializedViews());
+        $this->assertEmpty($keyspace->materializedView("simple"));
     }
 }
