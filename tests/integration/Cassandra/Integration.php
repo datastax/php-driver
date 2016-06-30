@@ -27,7 +27,6 @@ class Integration {
     /**
      * Default Cassandra server version
      */
-    //const DEFAULT_CASSANDRA_VERSION = "2.2.6";
     const DEFAULT_CASSANDRA_VERSION = "3.0.7";
     /**
      * Default verbosity for CCM output
