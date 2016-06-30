@@ -46,7 +46,7 @@ class SchemaMetadataIntegrationTest extends BasicIntegrationTest {
 
     protected function createKeyspace($keyspaceName, $replicationFactor = 1) {
         $statement = new SimpleStatement(
-            "CREATE KEYSPACE $keyspaceName ".
+            "CREATE KEYSPACE $keyspaceName " .
             "WITH REPLICATION = { 'class' : 'SimpleStrategy', 'replication_factor' : $replicationFactor }"
         );
         $this->session->execute($statement);
@@ -61,9 +61,63 @@ class SchemaMetadataIntegrationTest extends BasicIntegrationTest {
                     array_keys($tableSchema), array_values($tableSchema))),
                 implode(", ",
                     array_filter(array_keys($tableSchema),
-                    function($columnName) { return strpos($columnName, "key") === 0; }))
+                    function ($columnName) { return strpos($columnName, "key") === 0; }))
             );
             $this->session->execute(new SimpleStatement($query));
+        }
+    }
+
+    /**
+     * Create the table for the secondary indexes
+     */
+    protected function createTableForSecondaryIndexes() {
+        $statement = new SimpleStatement(
+            "CREATE TABLE {$this->tableNamePrefix} (key1 text, value1 int, value2 map<text, text>, PRIMARY KEY(key1))"
+        );
+        $this->session->execute($statement);
+    }
+
+    /**
+     * Create the simple secondary index using the table
+     */
+    protected function createSimpleSecondaryIndex() {
+        $statement = new SimpleStatement(
+            "CREATE INDEX simple ON {$this->tableNamePrefix} (value1)"
+        );
+        $this->session->execute($statement);
+    }
+
+    /**
+     * Create the collections secondary index using the table
+     */
+    protected function createCollectionSecondaryIndex() {
+        $statement = new SimpleStatement(
+            "CREATE INDEX collection ON {$this->tableNamePrefix} (KEYS(value2))"
+        );
+        $this->session->execute($statement);
+    }
+
+    /**
+     * Assert the index instance
+     *
+     * @param $index Index to assert against
+     * @param $kind Kind to assert
+     * @param $target Target (and index->option('target')) to assert for index->target()
+     * @param $className Boolean or string value to assert for index->className
+     * @param $isCustom Value of index->isCustom() to assert
+     */
+    protected function assertIndex($index, $kind, $target, $className, $isCustom) {
+        $this->assertEquals($kind, $index->kind());
+        $this->assertEquals($target, $index->target());
+        $this->assertEquals($isCustom, $index->isCustom());
+        if ($isCustom) {
+            $this->assertEquals($className, $index->className());
+        } else {
+            $this->assertFalse($index->className());
+        }
+        if (version_compare($this->serverVersion, "3.0.0", ">=")) {
+            $this->assertCount(1, $index->options());
+            $this->assertEquals($target, $index->option("target"));
         }
     }
 
@@ -92,11 +146,11 @@ class SchemaMetadataIntegrationTest extends BasicIntegrationTest {
      */
     public function testDisableSchemaMetadata() {
         // Create a new session with schema metadata disabled
-        $cluster   = \Cassandra::cluster()
-            ->withContactPoints(Integration::IP_ADDRESS) //TODO: Need to use configured value when support added
+        $cluster = \Cassandra::cluster()
+            ->withContactPoints(Integration::IP_ADDRESS)//TODO: Need to use configured value when support added
             ->withSchemaMetadata(false)
             ->build();
-        $session   = $cluster->connect();
+        $session = $cluster->connect();
 
         // Get the schema from the new session
         $schema = $session->schema();
@@ -115,7 +169,7 @@ class SchemaMetadataIntegrationTest extends BasicIntegrationTest {
      * @test
      */
     public function testEnumerateKeyspaces() {
-        $keyspaceNames =  array(
+        $keyspaceNames = array(
             self::generateKeyspaceName("enumerate_ks0"),
             self::generateKeyspaceName("enumerate_ks1"),
             self::generateKeyspaceName("enumerate_ks2"),
@@ -128,7 +182,7 @@ class SchemaMetadataIntegrationTest extends BasicIntegrationTest {
         }
 
         $count = 0;
-        foreach($this->session->schema()->keyspaces() as $keyspace) {
+        foreach ($this->session->schema()->keyspaces() as $keyspace) {
             if (in_array($keyspace->name(), $keyspaceNames)) {
                 $count++;
             }
@@ -146,7 +200,7 @@ class SchemaMetadataIntegrationTest extends BasicIntegrationTest {
      * @test
      */
     public function testGetKeyspaceByName() {
-        $keyspaceNames =  array(
+        $keyspaceNames = array(
             self::generateKeyspaceName("by_name_ks0"),
             self::generateKeyspaceName("by_name_ks1"),
             self::generateKeyspaceName("by_name_ks2"),
@@ -159,7 +213,7 @@ class SchemaMetadataIntegrationTest extends BasicIntegrationTest {
         }
 
         $count = 0;
-        foreach($keyspaceNames as $keyspaceName) {
+        foreach ($keyspaceNames as $keyspaceName) {
             $keyspace = $this->session->schema()->keyspace($keyspaceName);
             if (isset($keyspace)) {
                 $count++;
@@ -191,7 +245,7 @@ class SchemaMetadataIntegrationTest extends BasicIntegrationTest {
         $keyspace = $this->session->schema()->keyspace($keyspaceName);
 
         $this->assertEquals(count($tableSchemas), count($keyspace->tables()));
-        foreach($keyspace->tables() as $table) {
+        foreach ($keyspace->tables() as $table) {
             $tableSchema = $tableSchemas[$table->name()];
             $this->assertEquals(count($tableSchema), count($table->columns()));
             foreach ($table->columns() as $column) {
@@ -330,5 +384,92 @@ class SchemaMetadataIntegrationTest extends BasicIntegrationTest {
 
         $table3 = $keyspace->table("{$this->tableNamePrefix}_nested3");
         $this->assertEquals((string)$table3->column("value")->type(), "list<map<varchar, set<varchar>>>");
+    }
+
+    /**
+     * Schema metadata to validate no secondary indexes exist
+     *
+     * This test ensures that secondary indexes are properly handled by the
+     * driver.
+     *
+     * @test
+     * @ticket PHP-80
+     * @cassandra-version-1.2
+     */
+    public function testNoSecondaryIndexes() {
+        // Create the table and validate no indexes exist
+        $this->createTableForSecondaryIndexes();
+        $table = $this->session->schema()->keyspace($this->keyspaceName)->table($this->tableNamePrefix);
+        $this->assertCount(0, $table->indexes());
+        $this->assertFalse($table->index("invalid"));
+    }
+
+    /**
+     * Schema metadata to validate secondary indexes exist
+     *
+     * This test ensures that secondary indexes are properly handled by the
+     * driver.
+     *
+     * @test
+     * @ticket PHP-80
+     * @cassandra-version-1.2
+     */
+    public function testSecondaryIndexes() {
+        // Create the table and secondary index
+        $this->createTableForSecondaryIndexes();
+        $this->createSimpleSecondaryIndex();
+
+        // Validate the schema metadata (no indexes exist)
+        $table = $this->session->schema()->keyspace($this->keyspaceName)->table($this->tableNamePrefix);
+        $this->assertCount(1, $table->indexes());
+        $index = $table->index("simple");
+        $this->assertIndex($index, "composites", "value1", false, false);
+    }
+
+    /**
+     * Schema metadata to validate collection secondary indexes exist
+     *
+     * This test ensures that secondary indexes are properly handled by the
+     * driver.
+     *
+     * @test
+     * @ticket PHP-80
+     * @cassandra-version-2.1
+     */
+    public function testCollectionSecondaryIndexes() {
+        // Create the table and secondary index
+        $this->createTableForSecondaryIndexes();
+        $this->createCollectionSecondaryIndex();
+
+        // Validate the schema metadata
+        $table = $this->session->schema()->keyspace($this->keyspaceName)->table($this->tableNamePrefix);
+        $this->assertCount(1, $table->indexes());
+        $index = $table->index("collection");
+        $this->assertIndex($index, "composites", "keys(value2)", false, false);
+    }
+
+    /**
+     * Schema metadata to validate secondary indexes exist using iterator
+     *
+     * This test ensures that secondary indexes are properly handled by the
+     * driver.
+     *
+     * @test
+     * @ticket PHP-80
+     * @cassandra-version-2.1
+     */
+    public function testIteratorSecondaryIndexes() {
+        // Create the table and secondary indexes
+        $this->createTableForSecondaryIndexes();
+        $this->createSimpleSecondaryIndex();
+        $this->createCollectionSecondaryIndex();
+
+        // Validate the schema metadata
+        $table = $this->session->schema()->keyspace($this->keyspaceName)->table($this->tableNamePrefix);
+        $indexes = $table->indexes();
+        $this->assertCount(2, $indexes);
+        foreach ($indexes as $index) {
+            $this->assertTrue($index->name() == "simple" || $index->name() == "collection");
+        }
     }
 }
