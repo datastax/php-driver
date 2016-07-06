@@ -159,11 +159,15 @@ final class Builder
     /**
      * Force the driver to use a specific binary protocol version.
      *
-     * * Apache Cassandra 1.2+ supports protocol version 1
-     * * Apache Cassandra 2.0+ supports protocol version 2
+     * Apache Cassandra 1.2+ supports protocol version 1
+     * Apache Cassandra 2.0+ supports protocol version 2
+     * Apache Cassandra 2.1+ supports protocol version 3
+     * Apache Cassandra 2.2+ supports protocol version 4
      *
-     * @param int $version the actual protocol version, only `1` or `2`
-     *                         are supported
+     * NOTE: Apache Cassandra 3.x supports protocol version 3 and 4 only
+     *
+     * @param int $version the actual protocol version, only `1`, `2`, `3`, or
+     *                     `4` are supported
      *
      * @return Builder self
      */
@@ -172,7 +176,8 @@ final class Builder
     /**
      * Total number of IO threads to use for handling the requests.
      *
-     * Note: number of io threads * core connections per host <= total number of connections <= number of io threads * max connections per host
+     * Note: number of io threads * core connections per host <= total number
+     *       of connections <= number of io threads * max connections per host
      *
      * @param int $count total number of threads.
      *
