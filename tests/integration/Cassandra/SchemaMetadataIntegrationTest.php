@@ -33,6 +33,12 @@ class SchemaMetadataIntegrationTest extends BasicIntegrationTest {
      * Setup the schema metadata for the schema metadata tests.
      */
     public function setUp() {
+        // Determine if UDA/UDF functionality should be enabled
+        $testName = $this->getName();
+        if (strpos($testName, "UserDefined") !== false) {
+            $this->isUserDefinedAggregatesFunctions = true;
+        }
+
         // Process parent setup steps
         parent::setUp();
 
@@ -230,6 +236,167 @@ class SchemaMetadataIntegrationTest extends BasicIntegrationTest {
         foreach ($materializedView->clusteringKey() as $column) {
             $this->assertEquals($clusteringKeyColumns[$i++], $column->name());
         }
+    }
+
+    /**
+     * Create the user defined function
+     */
+    protected function createUserDefinedFunction() {
+        $statement = new SimpleStatement(
+          "CREATE OR REPLACE FUNCTION user_defined_function(rhs int, lhs int) " .
+          "RETURNS NULL ON NULL INPUT " .
+          "RETURNS int LANGUAGE javascript AS 'lhs + rhs'"
+        );
+        $this->session->execute($statement);
+
+        $cluster = \Cassandra::cluster()
+            ->withContactPoints("127.0.0.1")
+            ->withPersistentSessions(false)
+            ->build();
+        $session = $cluster->connect();
+    }
+
+    /**
+     * Assert the `user_defined_function` function
+     */
+    protected function assertUserDefinedFunction() {
+        // Get the UDF from the current keyspace
+        $keyspace = $this->session->schema()->keyspace($this->keyspaceName);
+        $function = $keyspace->function("user_defined_function",
+            Type::int(), Type::int());
+        $expectedArguments = array(
+            "rhs" => "int",
+            "lhs" => "int"
+        );
+
+        // Assert the UDF
+        $this->assertEquals("user_defined_function", $function->simpleName());
+        $arguments = array();
+        foreach ($function->arguments() as $name => $argument) {
+            $arguments[$name] = "{$argument}";
+        }
+        $this->assertEquals($expectedArguments, $arguments);
+        $this->assertEquals("int", $function->returnType());
+        $this->assertEquals("user_defined_function(int,int)", $function->signature());
+        $this->assertEquals("javascript", $function->language());
+        $this->assertEquals("lhs + rhs", $function->body());
+        $this->assertEquals(false, $function->isCalledOnNullInput());
+    }
+
+    /**
+     * Assert the UDFs are equal
+     *
+     * @param $name Name of user defined function to look up and compare
+     * @param $function User defined function to compare
+     */
+    protected function assertUserDefinedFunctionsEqual($name, $function) {
+        // Get the UDF from the current keyspace
+        $keyspace = $this->session->schema()->keyspace($this->keyspaceName);
+        $expectedFunction = null;
+        foreach ($keyspace->functions() as $compareFunction) {
+            if ($compareFunction->simpleName() == $name) {
+                $expectedFunction = $compareFunction;
+                continue;
+            }
+        }
+        if (is_null($expectedFunction)) {
+            $this->fail("Unable to Locate Function: ${name}");
+        }
+
+        $this->assertEquals($expectedFunction->simpleName(),
+            $function->simpleName());
+        $this->assertEquals($expectedFunction->arguments(),
+            $function->arguments());
+        $this->assertEquals($expectedFunction->returnType(),
+            $function->returnType());
+        $this->assertEquals($expectedFunction->signature(),
+            $function->signature());
+        $this->assertEquals($expectedFunction->language(),
+            $function->language());
+        $this->assertEquals($expectedFunction->body(),
+            $function->body());
+        $this->assertEquals($expectedFunction->isCalledOnNullInput(),
+            $function->isCalledOnNullInput());
+    }
+
+    /**
+     * Create the user defined aggregate and two user defined functions for the
+     * associated aggregate
+     */
+    protected function createUserDefinedAggregate() {
+        // Ensure the UDF has been created
+        $this->createUserDefinedFunction();
+
+        // Create the UDA
+        $statement = new SimpleStatement(
+            "CREATE OR REPLACE FUNCTION uda_udf_final(val int) " .
+            "RETURNS NULL ON NULL INPUT " .
+            "RETURNS int LANGUAGE javascript AS 'val * val'"
+        );
+        $this->session->execute($statement);
+        $statement = new SimpleStatement(
+            "CREATE OR REPLACE AGGREGATE user_defined_aggregate(int) " .
+            "SFUNC user_defined_function " .
+            "STYPE int " .
+            "FINALFUNC uda_udf_final " .
+            "INITCOND 0"
+        );
+        $this->session->execute($statement);
+    }
+
+    /**
+     * Assert the `uda_udf_final` function
+     */
+    protected function assertAggregateUserDefinedFunction() {
+        // Get the UDF from the current keyspace
+        $keyspace = $this->session->schema()->keyspace($this->keyspaceName);
+        $function = $keyspace->function("uda_udf_final", Type::int());
+        $expectedArguments = array(
+            "val" => "int"
+        );
+
+        // Assert the UDF
+        $this->assertEquals("uda_udf_final", $function->simpleName());
+        $arguments = array();
+        foreach ($function->arguments() as $name => $argument) {
+            $arguments[$name] = "{$argument}";
+        }
+        $this->assertEquals($expectedArguments, $arguments);
+        $this->assertEquals("int", $function->returnType());
+        $this->assertEquals("uda_udf_final(int)", $function->signature());
+        $this->assertEquals("javascript", $function->language());
+        $this->assertEquals("val * val", $function->body());
+        $this->assertEquals(false, $function->isCalledOnNullInput());
+    }
+
+    /**
+     * Assert the `user_defined_aggregate` aggregate
+     */
+    protected function assertUserDefinedAggregate() {
+        // Get the UDA from the current keyspace
+        $keyspace = $this->session->schema()->keyspace($this->keyspaceName);
+        $function = $keyspace->aggregate("user_defined_aggregate", Type::int());
+        $expectedArgumentTypes = array("int");
+
+        // Assert the UDA
+        $this->assertEquals("user_defined_aggregate", $function->simpleName());
+        $argumentTypes = array();
+        foreach ($function->argumentTypes() as $argumentType) {
+            $argumentTypes[] = "{$argumentType}";
+        }
+        $this->assertEquals($expectedArgumentTypes, $argumentTypes);
+        $this->assertUserDefinedFunctionsEqual("user_defined_function",
+            $function->stateFunction());
+        $this->assertUserDefinedFunctionsEqual("uda_udf_final",
+            $function->finalFunction());
+        $this->assertEquals(0, $function->initialCondition());
+        $this->assertEquals("int", $function->stateType());
+        $this->assertEquals("int", $function->returnType());
+        $this->assertEquals("user_defined_aggregate(int)", $function->signature());
+
+        // Assert the UDFs
+        $this->assertUserDefinedFunction();
+        $this->assertAggregateUserDefinedFunction();
     }
 
     /**
@@ -776,5 +943,193 @@ class SchemaMetadataIntegrationTest extends BasicIntegrationTest {
         $keyspace = $this->session->schema()->keyspace($this->keyspaceName);
         $this->assertCount(0, $keyspace->materializedViews());
         $this->assertEmpty($keyspace->materializedView("simple"));
+    }
+
+    /**
+     * Schema metadata to validate no UDFs exist
+     *
+     * This test ensures that UDFs are properly handled by the driver.
+     *
+     * @test
+     * @ticket PHP-66
+     * @cassandra-version-2.2
+     */
+    public function testNoUserDefinedFunctions() {
+        $keyspace = $this->session->schema()->keyspace($this->keyspaceName);
+        $this->assertCount(0, $keyspace->functions());
+        $this->assertFalse($keyspace->function("invalid"));
+    }
+
+    /**
+     * Schema metadata to validate a UDF exist
+     *
+     * This test ensures that UDFs are properly handled by the driver.
+     *
+     * @test
+     * @ticket PHP-66
+     * @cassandra-2.2
+     */
+    public function testUserDefinedFunctions() {
+        // Create the UDF
+        $this->createUserDefinedFunction();
+
+        // Validate the UDF exists
+        $keyspace = $this->session->schema()->keyspace($this->keyspaceName);
+        $this->assertCount(1, $keyspace->functions());
+        $this->assertUserDefinedFunction();
+    }
+
+    /**
+     * Schema metadata to validate UDFs exist using iterator
+     *
+     * This test ensures that UDFs are properly handled by the driver.
+     *
+     * @test
+     * @ticket PHP-66
+     * @cassandra-version-2.2
+     */
+    public function testIteratorUserDefinedFunctions() {
+        // Create the UDFs (createUserDefinedAggregate creates both functions)
+        $this->createUserDefinedAggregate();
+
+        // Validate the UDFs exists
+        $keyspace = $this->session->schema()->keyspace($this->keyspaceName);
+        $this->assertCount(2, $keyspace->functions());
+        foreach ($keyspace->functions() as $function) {
+            if ($function->simpleName() == "user_defined_function") {
+                $this->assertUserDefinedFunction();
+            } else if ($function->simpleName() == "uda_udf_final") {
+                $this->assertAggregateUserDefinedFunction();
+            } else {
+                $this->fail("Invalid Function Name: {$function->simpleName()}");
+            }
+        }
+    }
+
+    /**
+     * Schema metadata to validate UDFs are dropped correctly
+     *
+     * This test ensures that UDFs are properly handled by the driver.
+     *
+     * @test
+     * @ticket PHP-66
+     * @cassandra-version-2.2
+     */
+    public function testDropUserDefinedFunctions() {
+        // Create the UDF
+        $this->createUserDefinedFunction();
+
+        // Validate the UDF exists
+        $keyspace = $this->session->schema()->keyspace($this->keyspaceName);
+        $this->assertCount(1, $keyspace->functions());
+        $this->assertUserDefinedFunction();
+
+        // Drop the UDF and validate it no longer exists
+        $statement = new SimpleStatement("DROP FUNCTION user_defined_function");
+        $this->session->execute($statement);
+        $keyspace = $this->session->schema()->keyspace($this->keyspaceName);
+        $this->assertCount(0, $keyspace->functions());
+        $this->assertEmpty($keyspace->function("user_defined_function"));
+    }
+
+    /**
+     * Schema metadata to validate no UDAs exist
+     *
+     * This test ensures that UDAs are properly handled by the driver.
+     *
+     * @test
+     * @ticket PHP-66
+     * @cassandra-version-2.2
+     */
+    public function testNoUserDefinedAggregates() {
+        $keyspace = $this->session->schema()->keyspace($this->keyspaceName);
+        $this->assertCount(0, $keyspace->aggregates());
+        $this->assertFalse($keyspace->aggregate("invalid"));
+    }
+
+    /**
+     * Schema metadata to validate a UDA exist
+     *
+     * This test ensures that UDAs are properly handled by the driver.
+     *
+     * @test
+     * @ticket PHP-66
+     * @cassandra-2.2
+     */
+    public function testUserDefinedAggregates() {
+        // Create the UDA
+        $this->createUserDefinedAggregate();
+
+        // Validate the UDA exists
+        $keyspace = $this->session->schema()->keyspace($this->keyspaceName);
+        $this->assertCount(1, $keyspace->aggregates());
+        $this->assertCount(2, $keyspace->functions());
+        $this->assertUserDefinedAggregate();
+    }
+
+    /**
+     * Schema metadata to validate UDAs exist using iterator
+     *
+     * This test ensures that UDAs are properly handled by the driver.
+     *
+     * @test
+     * @ticket PHP-66
+     * @cassandra-version-2.2
+     */
+    public function testIteratorUserDefinedAggregates() {
+        // Create the UDAs (the same UDA with a different name)
+        $this->createUserDefinedAggregate();
+        $statement = new SimpleStatement(
+            "CREATE OR REPLACE AGGREGATE user_defined_aggregate_repeat(int) " .
+            "SFUNC user_defined_function " .
+            "STYPE int " .
+            "FINALFUNC uda_udf_final " .
+            "INITCOND 0"
+        );
+        $this->session->execute($statement);
+
+        // Validate the UDAs exists
+        $keyspace = $this->session->schema()->keyspace($this->keyspaceName);
+        $this->assertCount(2, $keyspace->aggregates());
+        $count = 0;
+        foreach ($keyspace->aggregates() as $aggregate) {
+            if ($aggregate->simpleName() == "user_defined_aggregate") {
+                $this->assertUserDefinedFunction();
+                $count++;
+            } else if ($aggregate->simpleName() == "user_defined_aggregate_repeat") {
+                $count++;
+            } else {
+                $this->fail("Invalid Aggregate Name: {$aggregate->simpleName()}");
+            }
+        }
+        $this->assertEquals(2, $count);
+    }
+
+    /**
+     * Schema metadata to validate UDAs are dropped correctly
+     *
+     * This test ensures that UDAs are properly handled by the driver.
+     *
+     * @test
+     * @ticket PHP-66
+     * @cassandra-version-2.2
+     */
+    public function testDropUserDefinedAggregates() {
+        // Create the UDA
+        $this->createUserDefinedAggregate();
+
+        // Validate the UDA exists
+        $keyspace = $this->session->schema()->keyspace($this->keyspaceName);
+        $this->assertCount(1, $keyspace->aggregates());
+        $this->assertCount(2, $keyspace->functions());
+        $this->assertUserDefinedAggregate();
+
+        // Drop the UDA and validate it no longer exists
+        $statement = new SimpleStatement("DROP AGGREGATE user_defined_aggregate");
+        $this->session->execute($statement);
+        $keyspace = $this->session->schema()->keyspace($this->keyspaceName);
+        $this->assertCount(0, $keyspace->aggregates());
+        $this->assertEmpty($keyspace->function("user_defined_aggregate"));
+        $this->assertCount(2, $keyspace->functions());
     }
 }

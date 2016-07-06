@@ -22,7 +22,7 @@ use Cassandra\SimpleStatement;
 class CCM
 {
     const DEFAULT_CLUSTER_PREFIX = "php-driver";
-    const DEFAULT_CASSANDRA_VERSION = "2.1.12";
+    const DEFAULT_CASSANDRA_VERSION = "3.0.7";
     const PROCESS_TIMEOUT_IN_SECONDS = 480;
     private $clusterPrefix;
     private $isSilent;
@@ -262,7 +262,12 @@ class CCM
         $this->ssl = false;
         $this->clientAuth = false;
         $this->internalSetup(1, 0);
-        $this->run('updateconf', 'enable_user_defined_functions: true');
+        if (version_compare($this->version, "2.2.0", ">=")) {
+            $this->run('updateconf', 'enable_user_defined_functions: true');
+        }
+        if (version_compare($this->version, "3.0.0", ">=")) {
+            $this->run('updateconf', 'enable_scripted_user_defined_functions: true');
+        }
     }
 
     public function enableTracing($isEnabled)

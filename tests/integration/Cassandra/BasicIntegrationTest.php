@@ -87,6 +87,24 @@ abstract class BasicIntegrationTest extends \PHPUnit_Framework_TestCase {
      * @var string
      */
     protected $tableNamePrefix;
+    /**
+     * Flag to determine if client authentication should be enabled.
+     *
+     * @var bool
+     */
+    protected $isClientAuthentication = false;
+    /**
+     * Flag to determine if SSL should be enabled.
+     *
+     * @var bool
+     */
+    protected $isSSL = false;
+    /**
+     * Flag to determine if UDA/UDF functionality should be enabled.
+     *
+     * @var bool
+     */
+    protected $isUserDefinedAggregatesFunctions = false;
 
     /**
      * Setup the database for the integration tests.
@@ -95,7 +113,8 @@ abstract class BasicIntegrationTest extends \PHPUnit_Framework_TestCase {
         // Initialize the database and establish a connection
         $this->integration = new Integration(get_class(), $this->getName(false),
             $this->numberDC1Nodes, $this->numberDC2Nodes,
-            $this->replicationFactor);
+            $this->replicationFactor, $this->isClientAuthentication,
+            $this->isSSL, $this->isUserDefinedAggregatesFunctions);
         $this->ccm = $this->integration->ccm;
         $this->session = $this->integration->session;
         $this->serverVersion = $this->integration->serverVersion;

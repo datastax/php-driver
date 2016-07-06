@@ -96,6 +96,10 @@ class Integration {
      *                                     otherwise (DEFAULT: false).
      * @param bool $isSSL True if SSL should be enabled; false otherwise
      *                    (DEFAULT: false).
+     * @param bool $isUserDefinedAggregatesFunctions True if UDA/UDF
+     *                                               functionality should be
+     *                                               enabled; false otherwise
+     *                                               (DEFAULT: false).
      * @return Integration Instance of the Integration class created.
      */
     public function __construct($className,
@@ -104,7 +108,8 @@ class Integration {
                                 $numberDC2Nodes = 0,
                                 $replicationFactor = -1,
                                 $isClientAuthentication = false,
-                                $isSSL = false) {
+                                $isSSL = false,
+                                $isUserDefinedAggregatesFunctions = false) {
         // Generate the keyspace name for the test
         $this->keyspaceName = $this->getShortName($className);
         if (!empty($testName)) {
@@ -131,6 +136,9 @@ class Integration {
         }
         if ($isSSL) {
             $this->ccm->setupSSL();
+        }
+        if ($isUserDefinedAggregatesFunctions) {
+            $this->ccm->setupUserDefinedFunctions();
         }
         $this->ccm->start();
 
