@@ -30,6 +30,12 @@ zend_class_entry *cassandra_default_session_ce = NULL;
   return SUCCESS; \
 }
 
+static void
+free_result(void *result)
+{
+  cass_result_free((CassResult *) result);
+}
+
 static int
 bind_argument_by_index(CassStatement *statement, size_t index, zval *value TSRMLS_DC)
 {
@@ -584,8 +590,8 @@ PHP_METHOD(DefaultSession, execute)
 
     if (single && cass_result_has_more_pages(result)) {
       rows->statement = php_cassandra_new_ref(single, free_statement);
+      rows->result    = php_cassandra_new_ref((void *)result, free_result);
       PHP5TO7_ZVAL_COPY(PHP5TO7_ZVAL_MAYBE_P(rows->session), getThis());
-      rows->result    = result;
       return;
     }
 

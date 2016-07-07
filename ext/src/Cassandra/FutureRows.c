@@ -24,75 +24,73 @@ zend_class_entry *cassandra_future_rows_ce = NULL;
 ZEND_EXTERN_MODULE_GLOBALS(cassandra)
 
 static void
-php_cassandra_future_clear(cassandra_future_rows *self)
+free_result(void *result)
 {
-  if (self->statement) {
-    php_cassandra_del_ref(&self->statement);
-    self->statement = NULL;
+  cass_result_free((CassResult *) result);
+}
+
+int
+php_cassandra_future_rows_get_result(cassandra_future_rows *future_rows, zval *timeout TSRMLS_DC)
+{
+  if (!future_rows->result) {
+    const CassResult *result = NULL;
+
+    if (php_cassandra_future_wait_timed(future_rows->future, timeout TSRMLS_CC) == FAILURE) {
+      return FAILURE;
+    }
+
+    if (php_cassandra_future_is_error(future_rows->future TSRMLS_CC) == FAILURE) {
+      return FAILURE;
+    }
+
+    result = cass_future_get_result(future_rows->future);
+    if (!result) {
+      zend_throw_exception_ex(cassandra_runtime_exception_ce, 0 TSRMLS_CC,
+                              "Future doesn't contain a result.");
+      return FAILURE;
+    }
+
+    future_rows->result = php_cassandra_new_ref((void *)result, free_result);
   }
 
-  PHP5TO7_ZVAL_MAYBE_DESTROY(self->session);
-  if (self->future) {
-    cass_future_free(self->future);
-    self->future = NULL;
-  }
+  return SUCCESS;
 }
 
 PHP_METHOD(FutureRows, get)
 {
   zval *timeout = NULL;
   cassandra_rows *rows = NULL;
-  const CassResult *result = NULL;
 
   cassandra_future_rows *self = PHP_CASSANDRA_GET_FUTURE_ROWS(getThis());
-
-  if (!PHP5TO7_ZVAL_IS_UNDEF(self->rows)) {
-    RETURN_ZVAL(PHP5TO7_ZVAL_MAYBE_P(self->rows), 1, 0);
-  }
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "|z", &timeout) == FAILURE) {
     return;
   }
 
-  if (php_cassandra_future_wait_timed(self->future, timeout TSRMLS_CC) == FAILURE) {
+  if (php_cassandra_future_rows_get_result(self, timeout TSRMLS_CC) == FAILURE) {
     return;
   }
 
-  if (php_cassandra_future_is_error(self->future TSRMLS_CC) == FAILURE) {
-    return;
+  if (PHP5TO7_ZVAL_IS_UNDEF(self->rows)) {
+    if (php_cassandra_get_result((const CassResult *) self->result->data,
+                                 &self->rows TSRMLS_CC) == FAILURE) {
+      PHP5TO7_ZVAL_MAYBE_DESTROY(self->rows);
+      return;
+    }
   }
 
-  result = cass_future_get_result(self->future);
+  object_init_ex(return_value, cassandra_rows_ce);
+  rows = PHP_CASSANDRA_GET_ROWS(return_value);
 
-  if (!result) {
-    zend_throw_exception_ex(cassandra_runtime_exception_ce, 0 TSRMLS_CC,
-                            "Future doesn't contain a result.");
-    return;
-  }
+  PHP5TO7_ZVAL_COPY(PHP5TO7_ZVAL_MAYBE_P(rows->rows),
+                    PHP5TO7_ZVAL_MAYBE_P(self->rows));
 
-  PHP5TO7_ZVAL_MAYBE_MAKE(self->rows);
-  object_init_ex(PHP5TO7_ZVAL_MAYBE_P(self->rows), cassandra_rows_ce);
-  rows = PHP_CASSANDRA_GET_ROWS(PHP5TO7_ZVAL_MAYBE_P(self->rows));
-
-  if (php_cassandra_get_result(result, &rows->rows TSRMLS_CC) == FAILURE) {
-    cass_result_free(result);
-    zval_ptr_dtor(&self->rows);
-    PHP5TO7_ZVAL_UNDEF(self->rows);
-    return;
-  }
-
-  if (cass_result_has_more_pages(result)) {
+  if (cass_result_has_more_pages((const CassResult *)self->result->data)) {
     PHP5TO7_ZVAL_COPY(PHP5TO7_ZVAL_MAYBE_P(rows->session),
                       PHP5TO7_ZVAL_MAYBE_P(self->session));
     rows->statement = php_cassandra_add_ref(self->statement);
-    rows->result    = result;
-  } else {
-    cass_result_free(result);
+    rows->result    = php_cassandra_add_ref(self->result);
   }
-
-  php_cassandra_future_clear(self);
-
-  RETURN_ZVAL(PHP5TO7_ZVAL_MAYBE_P(self->rows), 1, 0);
 }
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_timeout, 0, ZEND_RETURN_VALUE, 0)
@@ -129,8 +127,12 @@ php_cassandra_future_rows_free(php5to7_zend_object_free *object TSRMLS_DC)
   cassandra_future_rows *self = PHP5TO7_ZEND_OBJECT_GET(future_rows, object);
 
   PHP5TO7_ZVAL_MAYBE_DESTROY(self->rows);
+  PHP5TO7_ZVAL_MAYBE_DESTROY(self->session);
 
-  php_cassandra_future_clear(self);
+  php_cassandra_del_ref(&self->statement);
+  php_cassandra_del_ref(&self->result);
+
+  cass_future_free(self->future);
 
   zend_object_std_dtor(&self->zval TSRMLS_CC);
   PHP5TO7_MAYBE_EFREE(self);
@@ -144,6 +146,7 @@ php_cassandra_future_rows_new(zend_class_entry *ce TSRMLS_DC)
 
   self->future    = NULL;
   self->statement = NULL;
+  self->result    = NULL;
   PHP5TO7_ZVAL_UNDEF(self->rows);
   PHP5TO7_ZVAL_UNDEF(self->session);
 
