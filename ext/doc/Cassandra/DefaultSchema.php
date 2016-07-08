@@ -37,4 +37,11 @@ final class DefaultSchema implements Schema
      * @return array An array of `Cassandra\Keyspace` instances.
      */
     public function keyspaces() {}
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return int Version of the schema.
+     */
+    public function version() {}
 }

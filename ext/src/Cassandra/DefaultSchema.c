@@ -84,6 +84,17 @@ PHP_METHOD(DefaultSchema, keyspaces)
   cass_iterator_free(iterator);
 }
 
+PHP_METHOD(DefaultSchema, version)
+{
+  cassandra_schema *self;
+
+  if (zend_parse_parameters_none() == FAILURE)
+    return;
+
+  self = PHP_CASSANDRA_GET_SCHEMA(getThis());
+  RETURN_LONG(cass_schema_meta_snapshot_version((CassSchemaMeta *) self->schema->data));
+}
+
 ZEND_BEGIN_ARG_INFO_EX(arginfo_name, 0, ZEND_RETURN_VALUE, 1)
   ZEND_ARG_INFO(0, name)
 ZEND_END_ARG_INFO()
@@ -94,6 +105,7 @@ ZEND_END_ARG_INFO()
 static zend_function_entry cassandra_default_schema_methods[] = {
   PHP_ME(DefaultSchema, keyspace, arginfo_name, ZEND_ACC_PUBLIC)
   PHP_ME(DefaultSchema, keyspaces, arginfo_none, ZEND_ACC_PUBLIC)
+  PHP_ME(DefaultSchema, version, arginfo_none, ZEND_ACC_PUBLIC)
   PHP_FE_END
 };
 

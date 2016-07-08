@@ -125,6 +125,9 @@ class SchemaMetadataIntegrationTest extends BasicIntegrationTest {
             $this->assertCount(1, $index->options());
             $this->assertEquals($target, $index->option("target"));
         }
+
+        //echo "${index}" . PHP_EOL;
+        var_dump($index);
     }
 
     /**
@@ -1131,5 +1134,26 @@ class SchemaMetadataIntegrationTest extends BasicIntegrationTest {
         $this->assertCount(0, $keyspace->aggregates());
         $this->assertEmpty($keyspace->function("user_defined_aggregate"));
         $this->assertCount(2, $keyspace->functions());
+    }
+
+    /**
+     * Schema metadata versioning
+     *
+     * This test ensures that schema metadata has a version identifier to
+     * quickly determine if one schema is different than another.
+     *
+     * @test
+     */
+    public function testVersion() {
+        // Ensure the version information is available
+        $version = $this->session->schema()->version();
+        $this->assertGreaterThan(0, $version);
+
+        // Ensure the version is incremented by forcing a keyspace created event
+        $this->createKeyspace("{$this->keyspaceName}_new");
+        $this->assertEquals($version + 1, $this->session->schema()->version());
+
+        // Ensure the version is not incremented (no changes occurred)
+        $this->assertEquals($version + 1, $this->session->schema()->version());
     }
 }
