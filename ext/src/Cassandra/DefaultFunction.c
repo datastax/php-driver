@@ -47,6 +47,18 @@ php_cassandra_create_function(cassandra_ref* schema,
   return result;
 }
 
+PHP_METHOD(DefaultFunction, name)
+{
+  cassandra_function *self;
+
+  if (zend_parse_parameters_none() == FAILURE)
+    return;
+
+  self = PHP_CASSANDRA_GET_FUNCTION(getThis());
+
+  RETURN_ZVAL(PHP5TO7_ZVAL_MAYBE_P(self->signature), 1, 0);
+}
+
 PHP_METHOD(DefaultFunction, simpleName)
 {
   cassandra_function *self;
@@ -179,6 +191,7 @@ ZEND_BEGIN_ARG_INFO_EX(arginfo_none, 0, ZEND_RETURN_VALUE, 0)
 ZEND_END_ARG_INFO()
 
 static zend_function_entry cassandra_default_function_methods[] = {
+  PHP_ME(DefaultFunction, name, arginfo_none, ZEND_ACC_PUBLIC)
   PHP_ME(DefaultFunction, simpleName, arginfo_none, ZEND_ACC_PUBLIC)
   PHP_ME(DefaultFunction, arguments, arginfo_none, ZEND_ACC_PUBLIC)
   PHP_ME(DefaultFunction, returnType, arginfo_none, ZEND_ACC_PUBLIC)
