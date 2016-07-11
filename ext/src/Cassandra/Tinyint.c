@@ -112,7 +112,7 @@ PHP_METHOD(Tinyint, __toString)
 /* {{{ Cassandra\Tinyint::type() */
 PHP_METHOD(Tinyint, type)
 {
-  php5to7_zval type = php_cassandra_type_scalar(CASS_VALUE_TYPE_SMALL_INT TSRMLS_CC);
+  php5to7_zval type = php_cassandra_type_scalar(CASS_VALUE_TYPE_TINY_INT TSRMLS_CC);
   RETURN_ZVAL(PHP5TO7_ZVAL_MAYBE_P(type), 1, 1);
 }
 /* }}} */
@@ -420,7 +420,7 @@ php_cassandra_tinyint_properties(zval *object TSRMLS_DC)
   cassandra_numeric *self = PHP_CASSANDRA_GET_NUMERIC(object);
   HashTable         *props = zend_std_get_properties(object TSRMLS_CC);
 
-  type = php_cassandra_type_scalar(CASS_VALUE_TYPE_SMALL_INT TSRMLS_CC);
+  type = php_cassandra_type_scalar(CASS_VALUE_TYPE_TINY_INT TSRMLS_CC);
   PHP5TO7_ZEND_HASH_UPDATE(props, "type", sizeof("type"), PHP5TO7_ZVAL_MAYBE_P(type), sizeof(zval));
 
   PHP5TO7_ZVAL_MAYBE_MAKE(value);
@@ -491,7 +491,7 @@ php_cassandra_tinyint_new(zend_class_entry *ce TSRMLS_DC)
   cassandra_numeric *self =
       PHP5TO7_ZEND_OBJECT_ECALLOC(numeric, ce);
 
-  self->type = CASSANDRA_SMALLINT;
+  self->type = CASSANDRA_TINYINT;
 
   PHP5TO7_ZEND_OBJECT_INIT_EX(numeric, tinyint, self, ce);
 }
