@@ -87,6 +87,7 @@ static zend_function_entry cassandra_table_methods[] = {
   PHP_ABSTRACT_ME(Table, minIndexInterval, arginfo_none)
   PHP_ABSTRACT_ME(Table, column, arginfo_name)
   PHP_ABSTRACT_ME(Table, columns, arginfo_none)
+  PHP_ABSTRACT_ME(Table, partitionKey, arginfo_none)
   PHP_ABSTRACT_ME(Table, primaryKey, arginfo_none)
   PHP_ABSTRACT_ME(Table, clusteringKey, arginfo_none)
   PHP_ABSTRACT_ME(Table, clusteringOrder, arginfo_none)
