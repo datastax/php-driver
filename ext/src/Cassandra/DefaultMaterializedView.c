@@ -26,6 +26,38 @@
 
 zend_class_entry *cassandra_default_materialized_view_ce = NULL;
 
+static void
+populate_partition_key(cassandra_materialized_view *view, zval *result TSRMLS_DC)
+{
+  size_t i, count = cass_materialized_view_meta_partition_key_count(view->meta);
+  for (i = 0; i < count; ++i) {
+    const CassColumnMeta *column =
+        cass_materialized_view_meta_partition_key(view->meta, i);
+    if (column) {
+      php5to7_zval zcolumn = php_cassandra_create_column(view->schema, column TSRMLS_CC);
+      if (!PHP5TO7_ZVAL_IS_UNDEF(zcolumn)) {
+        add_next_index_zval(result, PHP5TO7_ZVAL_MAYBE_P(zcolumn));
+      }
+    }
+  }
+}
+
+static void
+populate_clustering_key(cassandra_materialized_view *view, zval *result TSRMLS_DC)
+{
+  size_t i, count = cass_materialized_view_meta_clustering_key_count(view->meta);
+  for (i = 0; i < count; ++i) {
+    const CassColumnMeta *column =
+        cass_materialized_view_meta_clustering_key(view->meta, i);
+    if (column) {
+      php5to7_zval zcolumn = php_cassandra_create_column(view->schema, column TSRMLS_CC);
+      if (!PHP5TO7_ZVAL_IS_UNDEF(zcolumn)) {
+        add_next_index_zval(result, PHP5TO7_ZVAL_MAYBE_P(zcolumn));
+      }
+    }
+  }
+}
+
 php5to7_zval
 php_cassandra_create_materialized_view(cassandra_ref* schema,
                                        const CassMaterializedViewMeta *meta TSRMLS_DC)
@@ -398,7 +430,7 @@ PHP_METHOD(DefaultMaterializedView, columns)
   cass_iterator_free(iterator);
 }
 
-PHP_METHOD(DefaultMaterializedView, primaryKey)
+PHP_METHOD(DefaultMaterializedView, partitionKey)
 {
   cassandra_materialized_view *self;
 
@@ -407,23 +439,30 @@ PHP_METHOD(DefaultMaterializedView, primaryKey)
 
   self = PHP_CASSANDRA_GET_MATERIALIZED_VIEW(getThis());
   if (PHP5TO7_ZVAL_IS_UNDEF(self->partition_key)) {
-    size_t i, count = cass_materialized_view_meta_partition_key_count(self->meta);
     PHP5TO7_ZVAL_MAYBE_MAKE(self->partition_key);
     array_init(PHP5TO7_ZVAL_MAYBE_P(self->partition_key));
-    for (i = 0; i < count; ++i) {
-      const CassColumnMeta *column =
-          cass_materialized_view_meta_partition_key(self->meta, i);
-      if (column) {
-        php5to7_zval zcolumn = php_cassandra_create_column(self->schema, column TSRMLS_CC);
-        if (!PHP5TO7_ZVAL_IS_UNDEF(zcolumn)) {
-          add_next_index_zval(PHP5TO7_ZVAL_MAYBE_P(self->partition_key),
-                              PHP5TO7_ZVAL_MAYBE_P(zcolumn));
-        }
-      }
-    }
+    populate_partition_key(self, PHP5TO7_ZVAL_MAYBE_P(self->partition_key) TSRMLS_CC);
   }
 
   RETURN_ZVAL(PHP5TO7_ZVAL_MAYBE_P(self->partition_key), 1, 0);
+}
+
+PHP_METHOD(DefaultMaterializedView, primaryKey)
+{
+  cassandra_materialized_view *self;
+
+  if (zend_parse_parameters_none() == FAILURE)
+    return;
+
+  self = PHP_CASSANDRA_GET_MATERIALIZED_VIEW(getThis());
+  if (PHP5TO7_ZVAL_IS_UNDEF(self->primary_key)) {
+    PHP5TO7_ZVAL_MAYBE_MAKE(self->primary_key);
+    array_init(PHP5TO7_ZVAL_MAYBE_P(self->primary_key));
+    populate_partition_key(self, PHP5TO7_ZVAL_MAYBE_P(self->primary_key) TSRMLS_CC);
+    populate_clustering_key(self, PHP5TO7_ZVAL_MAYBE_P(self->primary_key) TSRMLS_CC);
+  }
+
+  RETURN_ZVAL(PHP5TO7_ZVAL_MAYBE_P(self->primary_key), 1, 0);
 }
 
 PHP_METHOD(DefaultMaterializedView, clusteringKey)
@@ -435,20 +474,9 @@ PHP_METHOD(DefaultMaterializedView, clusteringKey)
 
   self = PHP_CASSANDRA_GET_MATERIALIZED_VIEW(getThis());
   if (PHP5TO7_ZVAL_IS_UNDEF(self->clustering_key)) {
-    size_t i, count = cass_materialized_view_meta_clustering_key_count(self->meta);
     PHP5TO7_ZVAL_MAYBE_MAKE(self->clustering_key);
     array_init(PHP5TO7_ZVAL_MAYBE_P(self->clustering_key));
-    for (i = 0; i < count; ++i) {
-      const CassColumnMeta *column =
-          cass_materialized_view_meta_clustering_key(self->meta, i);
-      if (column) {
-        php5to7_zval zcolumn = php_cassandra_create_column(self->schema, column TSRMLS_CC);
-        if (!PHP5TO7_ZVAL_IS_UNDEF(zcolumn)) {
-          add_next_index_zval(PHP5TO7_ZVAL_MAYBE_P(self->clustering_key),
-                              PHP5TO7_ZVAL_MAYBE_P(zcolumn));
-        }
-      }
-    }
+    populate_clustering_key(self, PHP5TO7_ZVAL_MAYBE_P(self->clustering_key) TSRMLS_CC);
   }
 
   RETURN_ZVAL(PHP5TO7_ZVAL_MAYBE_P(self->clustering_key), 1, 0);
@@ -538,6 +566,7 @@ static zend_function_entry cassandra_default_materialized_view_methods[] = {
   PHP_ME(DefaultMaterializedView, minIndexInterval, arginfo_none, ZEND_ACC_PUBLIC)
   PHP_ME(DefaultMaterializedView, column, arginfo_name, ZEND_ACC_PUBLIC)
   PHP_ME(DefaultMaterializedView, columns, arginfo_none, ZEND_ACC_PUBLIC)
+  PHP_ME(DefaultMaterializedView, partitionKey, arginfo_none, ZEND_ACC_PUBLIC)
   PHP_ME(DefaultMaterializedView, primaryKey, arginfo_none, ZEND_ACC_PUBLIC)
   PHP_ME(DefaultMaterializedView, clusteringKey, arginfo_none, ZEND_ACC_PUBLIC)
   PHP_ME(DefaultMaterializedView, clusteringOrder, arginfo_none, ZEND_ACC_PUBLIC)
@@ -580,6 +609,7 @@ php_cassandra_default_materialized_view_free(php5to7_zend_object_free *object TS
   PHP5TO7_ZVAL_MAYBE_DESTROY(self->name);
   PHP5TO7_ZVAL_MAYBE_DESTROY(self->options);
   PHP5TO7_ZVAL_MAYBE_DESTROY(self->partition_key);
+  PHP5TO7_ZVAL_MAYBE_DESTROY(self->primary_key);
   PHP5TO7_ZVAL_MAYBE_DESTROY(self->clustering_key);
   PHP5TO7_ZVAL_MAYBE_DESTROY(self->clustering_order);
   PHP5TO7_ZVAL_MAYBE_DESTROY(self->base_table);
@@ -603,6 +633,7 @@ php_cassandra_default_materialized_view_new(zend_class_entry *ce TSRMLS_DC)
   PHP5TO7_ZVAL_UNDEF(self->name);
   PHP5TO7_ZVAL_UNDEF(self->options);
   PHP5TO7_ZVAL_UNDEF(self->partition_key);
+  PHP5TO7_ZVAL_UNDEF(self->primary_key);
   PHP5TO7_ZVAL_UNDEF(self->clustering_key);
   PHP5TO7_ZVAL_UNDEF(self->clustering_order);
   PHP5TO7_ZVAL_UNDEF(self->base_table);

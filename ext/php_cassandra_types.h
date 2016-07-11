@@ -365,6 +365,7 @@ PHP_CASSANDRA_BEGIN_OBJECT_TYPE(table)
   php5to7_zval name;
   php5to7_zval options;
   php5to7_zval partition_key;
+  php5to7_zval primary_key;
   php5to7_zval clustering_key;
   php5to7_zval clustering_order;
   cassandra_ref *schema;
@@ -375,6 +376,7 @@ PHP_CASSANDRA_BEGIN_OBJECT_TYPE(materialized_view)
   php5to7_zval name;
   php5to7_zval options;
   php5to7_zval partition_key;
+  php5to7_zval primary_key;
   php5to7_zval clustering_key;
   php5to7_zval clustering_order;
   php5to7_zval base_table;
