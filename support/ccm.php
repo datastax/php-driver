@@ -210,6 +210,15 @@ class CCM
                     $params[] = 'in_memory_compaction_limit_in_mb: 1';
                 }
 
+                if (version_compare($this->version, "2.2.0", ">=")) {
+                    $this->run('updateconf', 'enable_user_defined_functions: true');
+                }
+
+                if (version_compare($this->version, "3.0.0", ">=")) {
+                    $this->run('updateconf', 'enable_scripted_user_defined_functions: true');
+                }
+
+
                 $params[] = 'key_cache_size_in_mb: 0';
                 $params[] = 'key_cache_save_period: 0';
                 $params[] = 'memtable_flush_writers: 1';
@@ -255,18 +264,6 @@ class CCM
                 'client_encryption_options.truststore: ' . realpath(__DIR__ . '/ssl/.truststore'),
                 'client_encryption_options.truststore_password: php-driver'
             );
-        }
-    }
-
-    public function setupUserDefinedFunctions() {
-        $this->ssl = false;
-        $this->clientAuth = false;
-        $this->internalSetup(1, 0);
-        if (version_compare($this->version, "2.2.0", ">=")) {
-            $this->run('updateconf', 'enable_user_defined_functions: true');
-        }
-        if (version_compare($this->version, "3.0.0", ">=")) {
-            $this->run('updateconf', 'enable_scripted_user_defined_functions: true');
         }
     }
 

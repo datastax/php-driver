@@ -58,7 +58,7 @@ Feature: Secondary Index Metadata
       echo "Kind: " . $index->kind() . "\n";
       echo "Target: " . $index->target() . "\n";
       echo "IsCustom: " . ($index->isCustom() ? "true" : "false") . "\n";
-      echo "Options: "; var_dump($index->options());
+      echo "Options: " . var_export($index->options(), true) . "\n";
       """
     When it is executed
     Then its output should contain:
@@ -67,10 +67,9 @@ Feature: Secondary Index Metadata
       Kind: composites
       Target: name
       IsCustom: false
-      Options: array(1) {
-        ["target"]=>
-        string(4) "name"
-      }
+      Options: array (
+        'target' => 'name',
+      )
       """
 
   @cassandra-version-3.0
@@ -96,7 +95,7 @@ Feature: Secondary Index Metadata
       echo "Target: " . $index->target() . "\n";
       echo "IsCustom: " . ($index->isCustom() ? "true" : "false") . "\n";
       echo "ClassName: " . $index->className() . "\n";
-      echo "Options: "; var_dump($index->options());
+      echo "Options: " . var_export($index->options(), true) . "\n";
       """
     When it is executed
     Then its output should contain:
@@ -106,10 +105,8 @@ Feature: Secondary Index Metadata
       Target: name
       IsCustom: true
       ClassName: org.apache.cassandra.index.internal.composites.ClusteringColumnIndex
-      Options: array(2) {
-        ["class_name"]=>
-        string(68) "org.apache.cassandra.index.internal.composites.ClusteringColumnIndex"
-        ["target"]=>
-        string(4) "name"
-      }
+      Options: array (
+        'class_name' => 'org.apache.cassandra.index.internal.composites.ClusteringColumnIndex',
+        'target' => 'name',
+      )
       """

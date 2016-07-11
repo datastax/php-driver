@@ -4,7 +4,7 @@ Feature: User-defined Function (UDF) and Aggregate Metadata (UDA)
   PHP Driver exposes the Cassandra Schema Metadata for UDFs and UDAs.
 
   Background:
-    Given a running cassandra cluster with user-defined function enabled
+    Given a running cassandra cluster
     And the following schema:
       """cql
       CREATE KEYSPACE simplex WITH replication = {
@@ -34,8 +34,8 @@ Feature: User-defined Function (UDF) and Aggregate Metadata (UDA)
       echo "Signature: " . $function->signature() . "\n";
       echo "Language: " . $function->language() . "\n";
       echo "Body: " . $function->body() . "\n";
-      echo "Arguments: "; var_dump($function->arguments());
-      echo "ReturnType: "; var_dump($function->returnType());
+      echo "Arguments: " . var_export($function->arguments(), true) . "\n";
+      echo "ReturnType: " . var_export($function->returnType(), true) . "\n";
       echo "IsCalledOnNullInput: " . ($function->isCalledOnNullInput() ? "true" : "false") . "\n";
       """
     When it is executed
@@ -45,17 +45,15 @@ Feature: User-defined Function (UDF) and Aggregate Metadata (UDA)
       Signature: flog(double)
       Language: java
       Body: return Double.valueOf(Math.log(input.doubleValue()));
-      Arguments: array(1) {
-        ["input"]=>
-        object(Cassandra\Type\Scalar)#6 (1) {
-          ["name"]=>
-          string(6) "double"
-        }
-      }
-      ReturnType: object(Cassandra\Type\Scalar)#6 (1) {
-        ["name"]=>
-        string(6) "double"
-      }
+      Arguments: array (
+        'input' =>
+        Cassandra\Type\Scalar::__set_state(array(
+           'name' => 'double',
+        )),
+      )
+      ReturnType: Cassandra\Type\Scalar::__set_state(array(
+         'name' => 'double',
+      ))
       IsCalledOnNullInput: true
       """
 
@@ -73,10 +71,10 @@ Feature: User-defined Function (UDF) and Aggregate Metadata (UDA)
 
       echo "Name: " . $aggregate->simpleName() . "\n";
       echo "Signature: " . $aggregate->signature() . "\n";
-      echo "ArgumentTypes: "; var_dump($aggregate->argumentTypes());
-      echo "StateType: "; var_dump($aggregate->stateType());
-      echo "ReturnType: "; var_dump($aggregate->returnType());
-      echo "InitialCondition: "; var_dump($aggregate->initialCondition());
+      echo "ArgumentTypes: " . var_export($aggregate->argumentTypes(), true) . "\n";
+      echo "StateType: " . var_export($aggregate->stateType(), true) . "\n";
+      echo "ReturnType: " . var_export($aggregate->returnType(), true) . "\n";
+      echo "InitialCondition: " . var_export($aggregate->initialCondition(), true) . "\n";
       echo "StateFunction: " .  $aggregate->stateFunction()->signature() . "\n";
       echo "FinalFunction: " .  $aggregate->finalFunction()->signature() . "\n";
       """
@@ -85,33 +83,56 @@ Feature: User-defined Function (UDF) and Aggregate Metadata (UDA)
       """
       Name: average
       Signature: average(int)
-      ArgumentTypes: array(1) {
-        [0]=>
-        object(Cassandra\Type\Scalar)#6 (1) {
-          ["name"]=>
-          string(3) "int"
-        }
-      }
-      StateType: object(Cassandra\Type\Tuple)#5 (1) {
-        ["types"]=>
-        array(2) {
-          [0]=>
-          object(Cassandra\Type\Scalar)#6 (1) {
-            ["name"]=>
-            string(3) "int"
-          }
-          [1]=>
-          object(Cassandra\Type\Scalar)#8 (1) {
-            ["name"]=>
-            string(6) "bigint"
-          }
-        }
-      }
-      ReturnType: object(Cassandra\Type\Scalar)#9 (1) {
-        ["name"]=>
-        string(6) "double"
-      }
-      InitialCondition: string(6) "(0, 0)"
+      ArgumentTypes: array (
+        0 =>
+        Cassandra\Type\Scalar::__set_state(array(
+           'name' => 'int',
+        )),
+      )
+      StateType: Cassandra\Type\Tuple::__set_state(array(
+         'types' =>
+        array (
+          0 =>
+          Cassandra\Type\Scalar::__set_state(array(
+             'name' => 'int',
+          )),
+          1 =>
+          Cassandra\Type\Scalar::__set_state(array(
+             'name' => 'bigint',
+          )),
+        ),
+      ))
+      ReturnType: Cassandra\Type\Scalar::__set_state(array(
+         'name' => 'double',
+      ))
+      InitialCondition: Cassandra\Tuple::__set_state(array(
+         'type' =>
+        Cassandra\Type\Tuple::__set_state(array(
+           'types' =>
+          array (
+            0 =>
+            Cassandra\Type\Scalar::__set_state(array(
+               'name' => 'int',
+            )),
+            1 =>
+            Cassandra\Type\Scalar::__set_state(array(
+               'name' => 'bigint',
+            )),
+          ),
+        )),
+         'values' =>
+        array (
+          0 => 0,
+          1 =>
+          Cassandra\Bigint::__set_state(array(
+             'type' =>
+            Cassandra\Type\Scalar::__set_state(array(
+               'name' => 'bigint',
+            )),
+             'value' => '0',
+          )),
+        ),
+      ))
       StateFunction: avgstate(frozen<tuple<int,bigint>>,int)
       FinalFunction: avgfinal(frozen<tuple<int,bigint>>)
       """

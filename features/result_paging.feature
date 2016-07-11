@@ -23,20 +23,20 @@ Feature: Result paging
         'replication_factor': 1
       };
       USE simplex;
-      CREATE TABLE entries (key text, value int, PRIMARY KEY(key, value));
-      INSERT INTO entries (key, value) VALUES ('a', 0);
-      INSERT INTO entries (key, value) VALUES ('b', 1);
-      INSERT INTO entries (key, value) VALUES ('c', 2);
-      INSERT INTO entries (key, value) VALUES ('d', 3);
-      INSERT INTO entries (key, value) VALUES ('e', 4);
-      INSERT INTO entries (key, value) VALUES ('f', 5);
-      INSERT INTO entries (key, value) VALUES ('g', 6);
-      INSERT INTO entries (key, value) VALUES ('h', 7);
-      INSERT INTO entries (key, value) VALUES ('i', 8);
-      INSERT INTO entries (key, value) VALUES ('j', 9);
-      INSERT INTO entries (key, value) VALUES ('k', 10);
-      INSERT INTO entries (key, value) VALUES ('l', 11);
-      INSERT INTO entries (key, value) VALUES ('m', 12);
+      CREATE TABLE paging_entries (key text, value int, PRIMARY KEY(key, value));
+      INSERT INTO paging_entries (key, value) VALUES ('a', 0);
+      INSERT INTO paging_entries (key, value) VALUES ('b', 1);
+      INSERT INTO paging_entries (key, value) VALUES ('c', 2);
+      INSERT INTO paging_entries (key, value) VALUES ('d', 3);
+      INSERT INTO paging_entries (key, value) VALUES ('e', 4);
+      INSERT INTO paging_entries (key, value) VALUES ('f', 5);
+      INSERT INTO paging_entries (key, value) VALUES ('g', 6);
+      INSERT INTO paging_entries (key, value) VALUES ('h', 7);
+      INSERT INTO paging_entries (key, value) VALUES ('i', 8);
+      INSERT INTO paging_entries (key, value) VALUES ('j', 9);
+      INSERT INTO paging_entries (key, value) VALUES ('k', 10);
+      INSERT INTO paging_entries (key, value) VALUES ('l', 11);
+      INSERT INTO paging_entries (key, value) VALUES ('m', 12);
       """
 
   Scenario: Paging through results synchronously
@@ -47,7 +47,7 @@ Feature: Result paging
                      ->withContactPoints('127.0.0.1')
                      ->build();
       $session   = $cluster->connect("simplex");
-      $statement = new Cassandra\SimpleStatement("SELECT * FROM entries");
+      $statement = new Cassandra\SimpleStatement("SELECT * FROM paging_entries");
       $options   = new Cassandra\ExecutionOptions(array('page_size' => 5));
       $rows      = $session->execute($statement, $options);
 
@@ -94,7 +94,7 @@ Feature: Result paging
                      ->withContactPoints('127.0.0.1')
                      ->build();
       $session   = $cluster->connect("simplex");
-      $statement = new Cassandra\SimpleStatement("SELECT * FROM entries");
+      $statement = new Cassandra\SimpleStatement("SELECT * FROM paging_entries");
       $options   = new Cassandra\ExecutionOptions(array('page_size' => 10));
       $rows      = $session->execute($statement, $options);
 
@@ -127,7 +127,7 @@ Feature: Result paging
                      ->withContactPoints('127.0.0.1')
                      ->build();
       $session   = $cluster->connect("simplex");
-      $statement = new Cassandra\SimpleStatement("SELECT * FROM entries");
+      $statement = new Cassandra\SimpleStatement("SELECT * FROM paging_entries");
       $options = array('page_size' => 2);
       $result = $session->execute($statement, new Cassandra\ExecutionOptions($options));
 

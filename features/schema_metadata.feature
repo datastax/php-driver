@@ -1,3 +1,4 @@
+@skip-ci
 Feature: Schema Metadata
 
   PHP Driver exposes the Cassandra Schema Metadata for keyspaces, tables, and

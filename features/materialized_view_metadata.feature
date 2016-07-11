@@ -1,4 +1,3 @@
-@materialized-view
 @cassandra-version-3.0
 Feature: Materialized View Metadata
 
@@ -31,7 +30,7 @@ Feature: Materialized View Metadata
       echo "Name: " . $view->name() . "\n";
       echo "BaseTable: " . $view->baseTable()->name() . "\n";
       echo "DefaultTimeToLive: " . $view->option("default_time_to_live") . "\n";
-      echo "Compression: "; var_dump($view->option("compression"));
+      echo "Compression: " . var_export($view->option("compression"), true) . "\n";
       """
     When it is executed
     Then its output should contain:
@@ -39,34 +38,28 @@ Feature: Materialized View Metadata
       Name: users_view
       BaseTable: users
       DefaultTimeToLive: 0
-      Compression: object(Cassandra\Map)#13 (3) {
-        ["type"]=>
-        object(Cassandra\Type\Map)#14 (2) {
-          ["keyType"]=>
-          object(Cassandra\Type\Scalar)#9 (1) {
-            ["name"]=>
-            string(7) "varchar"
-          }
-          ["valueType"]=>
-          object(Cassandra\Type\Scalar)#9 (1) {
-            ["name"]=>
-            string(7) "varchar"
-          }
-        }
-        ["keys"]=>
-        array(2) {
-          [0]=>
-          string(18) "chunk_length_in_kb"
-          [1]=>
-          string(5) "class"
-        }
-        ["values"]=>
-        array(2) {
-          [0]=>
-          string(2) "64"
-          [1]=>
-          string(46) "org.apache.cassandra.io.compress.LZ4Compressor"
-        }
-      }
+      Compression: Cassandra\Map::__set_state(array(
+         'type' =>
+        Cassandra\Type\Map::__set_state(array(
+           'keyType' =>
+          Cassandra\Type\Scalar::__set_state(array(
+             'name' => 'varchar',
+          )),
+           'valueType' =>
+          Cassandra\Type\Scalar::__set_state(array(
+             'name' => 'varchar',
+          )),
+        )),
+         'keys' =>
+        array (
+          0 => 'chunk_length_in_kb',
+          1 => 'class',
+        ),
+         'values' =>
+        array (
+          0 => '64',
+          1 => 'org.apache.cassandra.io.compress.LZ4Compressor',
+        ),
+      ))
       """
 
