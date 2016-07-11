@@ -21,7 +21,37 @@ namespace Cassandra;
 /**
  * Datatype integration tests.
  */
-class DatatypeIntegrationTest extends BasicIntegrationTest {
+class DatatypeIntegrationTest extends DatatypeIntegrationTests {
+    /**
+     * Scalar data types
+     *
+     * This test ensures that data types work with all Cassandra's scalar
+     * types.
+     *
+     * @test
+     * @dataProvider dataTypes
+     */
+    public function testDataTypes($type, $values) {
+        foreach ($values as $value) {
+            $this->createTableInsertAndVerifyValueByIndex($type, $value);
+            $this->createTableInsertAndVerifyValueByName($type, $value);
+        }
+    }
+
+    /**
+     * Data provider scalar data types
+     */
+    public function dataTypes() {
+        return array_map(function ($cassandraType) {
+            $type = $cassandraType[0];
+            $values = array();
+            foreach ($cassandraType[1] as $value) {
+                $values[] = $value;
+            }
+            return array($type, $values);
+        }, $this->scalarCassandraTypes());
+    }
+
     /**
      * Ensure Decimal/Varint encoding on byte boundaries
      *
@@ -70,82 +100,5 @@ class DatatypeIntegrationTest extends BasicIntegrationTest {
             $this->assertArrayHasKey("value_varint", $row);
             $this->assertEquals($values[2], $row["value_varint"]);
         }
-    }
-
-    /**
-     * @test
-     * @ticket PHP-63
-     */
-    public function testSupportsSmallint() {
-        // Create the table
-        $query = "CREATE TABLE {$this->tableNamePrefix} (value_smallint smallint PRIMARY KEY)";
-        $this->session->execute(new SimpleStatement($query));
-        $statement = $this->session->prepare("INSERT INTO {$this->tableNamePrefix} (value_smallint) VALUES (?)");
-
-        $value = rand(Smallint::min()->toInt(), Smallint::max()->toInt());
-        $this->session->execute($statement, new ExecutionOptions(array("arguments" => array(new Smallint($value)))));
-        $rows = $this->session->execute(new SimpleStatement("SELECT * FROM {$this->tableNamePrefix}"));
-        $this->assertCount(1, $rows);
-        $row = $rows->first();
-        $this->assertNotNull($row);
-        $this->assertEquals(new Smallint($value), $row["value_smallint"]);
-    }
-
-    /**
-     * @test
-     * @ticket PHP-63
-     */
-    public function testSupportsTinyint() {
-        // Create the table
-        $query = "CREATE TABLE {$this->tableNamePrefix} (value_tinyint tinyint PRIMARY KEY)";
-        $this->session->execute(new SimpleStatement($query));
-        $statement = $this->session->prepare("INSERT INTO {$this->tableNamePrefix} (value_tinyint) VALUES (?)");
-
-        $value = rand(Tinyint::min()->toInt(), Tinyint::max()->toInt());
-        fprintf(STDERR, "value is %d\n", $value);
-        $this->session->execute($statement, new ExecutionOptions(array("arguments" => array(new Tinyint($value)))));
-        $rows = $this->session->execute(new SimpleStatement("SELECT * FROM {$this->tableNamePrefix}"));
-        $this->assertCount(1, $rows);
-        $row = $rows->first();
-        $this->assertNotNull($row);
-        $this->assertEquals(new Tinyint($value), $row["value_tinyint"]);
-    }
-
-    /**
-     * @test
-     * @ticket PHP-64
-     */
-    public function testSupportsDate() {
-        // Create the table
-        $query = "CREATE TABLE {$this->tableNamePrefix} (value_date date PRIMARY KEY)";
-        $this->session->execute(new SimpleStatement($query));
-        $statement = $this->session->prepare("INSERT INTO {$this->tableNamePrefix} (value_date) VALUES (?)");
-
-        $date = new Date();
-        $this->session->execute($statement, new ExecutionOptions(array("arguments" => array($date))));
-        $rows = $this->session->execute(new SimpleStatement("SELECT * FROM {$this->tableNamePrefix}"));
-        $this->assertCount(1, $rows);
-        $row = $rows->first();
-        $this->assertNotNull($row);
-        $this->assertEquals($date, $row["value_date"]);
-    }
-
-    /**
-     * @test
-     * @ticket PHP-64
-     */
-    public function testSupportsTime() {
-        // Create the table
-        $query = "CREATE TABLE {$this->tableNamePrefix} (value_time time PRIMARY KEY)";
-        $this->session->execute(new SimpleStatement($query));
-        $statement = $this->session->prepare("INSERT INTO {$this->tableNamePrefix} (value_time) VALUES (?)");
-
-        $time = new Time();
-        $this->session->execute($statement, new ExecutionOptions(array("arguments" => array($time))));
-        $rows = $this->session->execute(new SimpleStatement("SELECT * FROM {$this->tableNamePrefix}"));
-        $this->assertCount(1, $rows);
-        $row = $rows->first();
-        $this->assertNotNull($row);
-        $this->assertEquals($time, $row["value_time"]);
     }
 }
