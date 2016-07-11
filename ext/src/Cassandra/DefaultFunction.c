@@ -106,9 +106,10 @@ PHP_METHOD(DefaultFunction, returnType)
   self = PHP_CASSANDRA_GET_FUNCTION(getThis());
   if (PHP5TO7_ZVAL_IS_UNDEF(self->return_type)) {
     const CassDataType* data_type = cass_function_meta_return_type(self->meta);
-    if (data_type) {
-      self->return_type = php_cassandra_type_from_data_type(data_type TSRMLS_CC);
+    if (!data_type) {
+      return;
     }
+    self->return_type = php_cassandra_type_from_data_type(data_type TSRMLS_CC);
   }
 
   RETURN_ZVAL(PHP5TO7_ZVAL_MAYBE_P(self->return_type), 1, 0);

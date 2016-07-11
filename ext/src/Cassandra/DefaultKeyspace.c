@@ -439,7 +439,7 @@ PHP_METHOD(DefaultKeyspace, aggregate)
                                             PHP5TO7_SMART_STR_LEN(arguments));
   if (meta) {
     php5to7_zval zaggregate = php_cassandra_create_aggregate(self->schema, meta TSRMLS_CC);
-    RETVAL_ZVAL(PHP5TO7_ZVAL_MAYBE_P(zaggregate), 0, 0);
+    RETVAL_ZVAL(PHP5TO7_ZVAL_MAYBE_P(zaggregate), 0, 1);
   } else {
     RETVAL_FALSE;
   }
