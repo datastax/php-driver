@@ -79,10 +79,11 @@ PHP_METHOD(DefaultAggregate, stateFunction)
   self = PHP_CASSANDRA_GET_AGGREGATE(getThis());
   if (PHP5TO7_ZVAL_IS_UNDEF(self->state_function)) {
     const CassFunctionMeta* function = cass_aggregate_meta_state_func(self->meta);
-    if (function) {
-      self->state_function =
-          php_cassandra_create_function(self->schema, function TSRMLS_CC);
+    if (!function) {
+      return;
     }
+    self->state_function =
+        php_cassandra_create_function(self->schema, function TSRMLS_CC);
   }
 
   RETURN_ZVAL(PHP5TO7_ZVAL_MAYBE_P(self->state_function), 1, 0);
@@ -98,10 +99,11 @@ PHP_METHOD(DefaultAggregate, finalFunction)
   self = PHP_CASSANDRA_GET_AGGREGATE(getThis());
   if (PHP5TO7_ZVAL_IS_UNDEF(self->final_function)) {
     const CassFunctionMeta* function = cass_aggregate_meta_final_func(self->meta);
-    if (function) {
-      self->final_function =
-          php_cassandra_create_function(self->schema, function TSRMLS_CC);
+    if (!function) {
+      return;
     }
+    self->final_function =
+        php_cassandra_create_function(self->schema, function TSRMLS_CC);
   }
 
   RETURN_ZVAL(PHP5TO7_ZVAL_MAYBE_P(self->final_function), 1, 0);
@@ -117,12 +119,14 @@ PHP_METHOD(DefaultAggregate, initialCondition)
   self = PHP_CASSANDRA_GET_AGGREGATE(getThis());
   if (PHP5TO7_ZVAL_IS_UNDEF(self->initial_condition)) {
     const CassValue *value = cass_aggregate_meta_init_cond(self->meta);
-    if (value) {
-      const CassDataType *data_type = cass_value_data_type(value);
-      if (data_type) {
-        php_cassandra_value(value, data_type, &self->initial_condition TSRMLS_CC);
-      }
+    if (!value) {
+      return;
     }
+    const CassDataType *data_type = cass_value_data_type(value);
+    if (!data_type) {
+      return;
+    }
+    php_cassandra_value(value, data_type, &self->initial_condition TSRMLS_CC);
   }
 
   RETURN_ZVAL(PHP5TO7_ZVAL_MAYBE_P(self->initial_condition), 1, 0);
@@ -138,9 +142,10 @@ PHP_METHOD(DefaultAggregate, stateType)
   self = PHP_CASSANDRA_GET_AGGREGATE(getThis());
   if (PHP5TO7_ZVAL_IS_UNDEF(self->state_type)) {
     const CassDataType* data_type = cass_aggregate_meta_state_type(self->meta);
-    if (data_type) {
-      self->state_type = php_cassandra_type_from_data_type(data_type TSRMLS_CC);
+    if (!data_type) {
+      return;
     }
+    self->state_type = php_cassandra_type_from_data_type(data_type TSRMLS_CC);
   }
 
   RETURN_ZVAL(PHP5TO7_ZVAL_MAYBE_P(self->state_type), 1, 0);
@@ -156,9 +161,10 @@ PHP_METHOD(DefaultAggregate, returnType)
   self = PHP_CASSANDRA_GET_AGGREGATE(getThis());
   if (PHP5TO7_ZVAL_IS_UNDEF(self->return_type)) {
     const CassDataType* data_type = cass_aggregate_meta_return_type(self->meta);
-    if (data_type) {
-      self->return_type = php_cassandra_type_from_data_type(data_type TSRMLS_CC);
+    if (!data_type) {
+      return;
     }
+    self->return_type = php_cassandra_type_from_data_type(data_type TSRMLS_CC);
   }
 
   RETURN_ZVAL(PHP5TO7_ZVAL_MAYBE_P(self->return_type), 1, 0);

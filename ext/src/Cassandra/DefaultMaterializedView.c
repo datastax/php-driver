@@ -497,10 +497,11 @@ PHP_METHOD(DefaultMaterializedView, baseTable)
   if (PHP5TO7_ZVAL_IS_UNDEF(self->base_table)) {
     const CassTableMeta *table =
         cass_materialized_view_meta_base_table(self->meta);
-    if (table) {
-      self->base_table = php_cassandra_create_table(self->schema,
-                                                    table TSRMLS_CC);
+    if (!table) {
+      return;
     }
+    self->base_table = php_cassandra_create_table(self->schema,
+                                                  table TSRMLS_CC);
   }
 
   RETURN_ZVAL(PHP5TO7_ZVAL_MAYBE_P(self->base_table), 1, 0);
