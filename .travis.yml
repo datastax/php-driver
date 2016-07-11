@@ -4,6 +4,7 @@ addons:
   apt:
     packages:
       - libssl-dev
+      - oracle-java8-installer
 cache:
   ccache: true
   directories:
@@ -81,10 +82,20 @@ install:
 
 before_script:
   # Use the BEHAT_EXTRA_OPTIONS to supply options to Behat runs
-  - BEHAT_EXTRA_OPTIONS=
+  - BEHAT_EXTRA_OPTIONS=--profile=cassandra-version-2.2
   # Use the BEHAT_SKIP_TAGS to skip tests on TravisCI
-  - BEHAT_SKIP_TAGS=~@skip-travisci
+  - BEHAT_SKIP_TAGS=~@skip-ci
   - export BEHAT_EXTRA_OPTIONS BEHAT_SKIP_TAGS
+  # Switch to Java 8 for non-java projects
+  - if [ $(uname -a | grep x86_64 >/dev/null) ]; then
+      ARCH_SUFFIX=amd64;
+    else ARCH_SUFFIX=i386;
+    fi
+  - if [ -d "/usr/lib/jvm/java-8-oracle-$ARCH_SUFFIX" ]; then
+      export JAVA_HOME="/usr/lib/jvm/java-8-oracle-$ARCH_SUFFIX";
+    else export JAVA_HOME="/usr/lib/jvm/java-8-oracle";
+    fi
+  - export PATH=${JAVA_HOME}/bin:${PATH}
 
 script:
   # Execute .phpt tests
