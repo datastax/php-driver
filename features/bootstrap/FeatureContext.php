@@ -138,15 +138,6 @@ class FeatureContext implements Context, SnippetAcceptingContext
     }
 
     /**
-     * @Given a running cassandra cluster with user-defined function enabled
-     */
-    public function aRunningCassandraClusterWithUserDefinedFunctionEnabled()
-    {
-        $this->ccm->setupUserDefinedFunctions();
-        $this->ccm->start();
-    }
-
-    /**
      * @Given tracing is enabled
      */
     public function tracingIsEnabled()
