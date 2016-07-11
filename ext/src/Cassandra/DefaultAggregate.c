@@ -23,6 +23,18 @@
 
 zend_class_entry *cassandra_default_aggregate_ce = NULL;
 
+PHP_METHOD(DefaultAggregate, name)
+{
+  cassandra_aggregate *self;
+
+  if (zend_parse_parameters_none() == FAILURE)
+    return;
+
+  self = PHP_CASSANDRA_GET_AGGREGATE(getThis());
+
+  RETURN_ZVAL(PHP5TO7_ZVAL_MAYBE_P(self->signature), 1, 0);
+}
+
 PHP_METHOD(DefaultAggregate, simpleName)
 {
   cassandra_aggregate *self;
@@ -185,6 +197,7 @@ ZEND_BEGIN_ARG_INFO_EX(arginfo_none, 0, ZEND_RETURN_VALUE, 0)
 ZEND_END_ARG_INFO()
 
 static zend_function_entry cassandra_default_aggregate_methods[] = {
+  PHP_ME(DefaultAggregate, name, arginfo_none, ZEND_ACC_PUBLIC)
   PHP_ME(DefaultAggregate, simpleName, arginfo_none, ZEND_ACC_PUBLIC)
   PHP_ME(DefaultAggregate, argumentTypes, arginfo_none, ZEND_ACC_PUBLIC)
   PHP_ME(DefaultAggregate, stateFunction, arginfo_none, ZEND_ACC_PUBLIC)

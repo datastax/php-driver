@@ -22,6 +22,7 @@ ZEND_BEGIN_ARG_INFO_EX(arginfo_none, 0, ZEND_RETURN_VALUE, 0)
 ZEND_END_ARG_INFO()
 
 static zend_function_entry cassandra_function_methods[] = {
+  PHP_ABSTRACT_ME(Function, name, arginfo_none)
   PHP_ABSTRACT_ME(Function, simpleName, arginfo_none)
   PHP_ABSTRACT_ME(Function, arguments, arginfo_none)
   PHP_ABSTRACT_ME(Function, returnType, arginfo_none)

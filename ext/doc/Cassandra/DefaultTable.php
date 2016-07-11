@@ -33,6 +33,21 @@ final class DefaultTable implements Table
     /**
      * {@inheritDoc}
      *
+     * @return Cassandra\Value Value of an option by name
+     */
+    public function option($name) {}
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return array A dictionary of `string` and `Cassandra\Value pairs of the
+     *               table's options.
+     */
+    public function options() {}
+
+    /**
+     * {@inheritDoc}
+     *
      * @return string Table description or null
      */
     public function comment() {}
@@ -149,7 +164,7 @@ final class DefaultTable implements Table
      * {@inheritDoc}
      *
      * @param  string           $name Name of the column
-     * @return Cassandra\Column       Column instance
+     * @return Cassandra\Column Column instance
      */
     public function column($name) {}
 
@@ -159,4 +174,32 @@ final class DefaultTable implements Table
      * @return array A list of `Cassandra\Column` instances
      */
     public function columns() {}
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return array A list of of `Cassandra\Column` instance
+     */
+    public function partitionKey() {}
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return array A list of of `Cassandra\Column` instance
+     */
+    public function primaryKey() {}
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return array A list of of `Cassandra\Column` instances
+     */
+    public function clusteringKey() {}
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return array A list of cluster column orders ('asc' and 'desc')
+     */
+    public function clusteringOrder() {}
 }
