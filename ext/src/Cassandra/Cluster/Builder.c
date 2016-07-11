@@ -657,11 +657,10 @@ PHP_METHOD(ClusterBuilder, withProtocolVersion)
   builder = PHP_CASSANDRA_GET_CLUSTER_BUILDER(getThis());
 
   if (Z_TYPE_P(version) == IS_LONG &&
-      Z_LVAL_P(version) < 5 &&
-      Z_LVAL_P(version) > 0) {
+      Z_LVAL_P(version) >= 1) {
     builder->protocol_version = Z_LVAL_P(version);
   } else {
-    INVALID_ARGUMENT(version, "either 1, 2, 3, or 4");
+    INVALID_ARGUMENT(version, "must be >= 1");
   }
 
   RETURN_ZVAL(getThis(), 1, 0);
