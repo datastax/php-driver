@@ -86,7 +86,6 @@ PHP_METHOD(TypeMap, __toString)
 
 PHP_METHOD(TypeMap, create)
 {
-  cassandra_type *self;
   cassandra_map *map;
   php5to7_zval_args args = NULL;
   int argc = 0, i;
@@ -105,8 +104,6 @@ PHP_METHOD(TypeMap, create)
                             "e.g create(key, value, key, value, key, value)");
     return;
   }
-
-  self = PHP_CASSANDRA_GET_TYPE(getThis());
 
   object_init_ex(return_value, cassandra_map_ce);
   map = PHP_CASSANDRA_GET_MAP(return_value);

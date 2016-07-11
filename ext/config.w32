@@ -90,6 +90,7 @@ if (PHP_CASSANDRA != "no") {
               "Cluster.c " +
               "Collection.c " +
               "Column.c " +
+              "Date.c " +
               "Decimal.c " +
               "DefaultCluster.c " +
               "DefaultColumn.c " +
@@ -117,12 +118,15 @@ if (PHP_CASSANDRA != "no") {
               "Session.c " +
               "Set.c " +
               "SimpleStatement.c " +
+              "Smallint.c " +
               "SSLOptions.c " +
               "Statement.c " +
               "Table.c " +
+              "Time.c " +
               "Timestamp.c " +
               "TimestampGenerator.c " +
               "Timeuuid.c " +
+              "Tinyint.c " +
               "Tuple.c " +
               "Type.c " +
               "UserTypeValue.c " +
@@ -194,6 +198,7 @@ if (PHP_CASSANDRA != "no") {
               "/LTCG " +
               "/NODEFAULTLIB:LIBCMT.LIB " +
               "/NODEFAULTLIB:LIBCMTD.LIB");
+          CHECK_HEADER_ADD_INCLUDE("timelib_config.h", "CFLAGS_CASSANDRA", "ext/date/lib");
           ADD_FLAG("CFLAGS_CASSANDRA",
               "/I " + configure_module_dirname + " " +
               "/I " + PHP_CASSANDRA_CPP_DRIVER + "/include " +

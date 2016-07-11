@@ -43,17 +43,7 @@ class SetTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @expectedException        InvalidArgumentException
-     * @expectedExceptionMessage type must be Cassandra\Type::varchar(),
-     *                           Cassandra\Type::text(), Cassandra\Type::blob(),
-     *                           Cassandra\Type::ascii(), Cassandra\Type::bigint(),
-     *                           Cassandra\Type::counter(), Cassandra\Type::int(),
-     *                           Cassandra\Type::varint(), Cassandra\Type::boolean(),
-     *                           Cassandra\Type::decimal(), Cassandra\Type::double(),
-     *                           Cassandra\Type::float(), Cassandra\Type::inet(),
-     *                           Cassandra\Type::timestamp(), Cassandra\Type::uuid(),
-     *                           Cassandra\Type::timeuuid(), Cassandra\Type::map(),
-     *                           Cassandra\Type::set(), Cassandra\Type::collection(),
-     *                           Cassandra\Type::tuple() or Cassandra\Type::udt(),
+     * @expectedExceptionMessage type must be a valid Cassandra\Type,
      *                           an instance of Cassandra\Type\UnsupportedType given
      */
     public function testUnsupportedType()

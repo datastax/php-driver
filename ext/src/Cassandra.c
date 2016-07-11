@@ -77,6 +77,8 @@ void cassandra_define_Cassandra(TSRMLS_D)
   zend_declare_class_constant_string(cassandra_ce, ZEND_STRL("TYPE_ASCII"),     "ascii" TSRMLS_CC);
   zend_declare_class_constant_string(cassandra_ce, ZEND_STRL("TYPE_VARCHAR"),   "varchar" TSRMLS_CC);
   zend_declare_class_constant_string(cassandra_ce, ZEND_STRL("TYPE_BIGINT"),    "bigint" TSRMLS_CC);
+  zend_declare_class_constant_string(cassandra_ce, ZEND_STRL("TYPE_SMALLINT"),  "smallint" TSRMLS_CC);
+  zend_declare_class_constant_string(cassandra_ce, ZEND_STRL("TYPE_TINYINT"),   "tinyint" TSRMLS_CC);
   zend_declare_class_constant_string(cassandra_ce, ZEND_STRL("TYPE_BLOB"),      "blob" TSRMLS_CC);
   zend_declare_class_constant_string(cassandra_ce, ZEND_STRL("TYPE_BOOLEAN"),   "boolean" TSRMLS_CC);
   zend_declare_class_constant_string(cassandra_ce, ZEND_STRL("TYPE_COUNTER"),   "counter" TSRMLS_CC);

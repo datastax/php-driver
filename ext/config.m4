@@ -87,6 +87,8 @@ if test "$PHP_CASSANDRA" != "no"; then
   CASSANDRA_TYPES="\
     src/Cassandra/Float.c \
     src/Cassandra/Bigint.c \
+    src/Cassandra/Smallint.c \
+    src/Cassandra/Tinyint.c \
     src/Cassandra/Blob.c \
     src/Cassandra/Decimal.c \
     src/Cassandra/Inet.c \
@@ -94,6 +96,8 @@ if test "$PHP_CASSANDRA" != "no"; then
     src/Cassandra/UuidInterface.c \
     src/Cassandra/Uuid.c \
     src/Cassandra/Timestamp.c \
+    src/Cassandra/Date.c \
+    src/Cassandra/Time.c \
     src/Cassandra/Timeuuid.c \
     src/Cassandra/Varint.c \
     src/Cassandra/Set.c \

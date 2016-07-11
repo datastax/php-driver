@@ -24,9 +24,9 @@ PHP_METHOD(TypeScalar, __construct)
   zend_throw_exception_ex(cassandra_logic_exception_ce, 0 TSRMLS_CC,
     "Instantiation of a Cassandra\\Type\\Scalar objects directly is not " \
     "supported, call varchar(), text(), blob(), ascii(), bigint(), " \
-    "counter(), int(), varint(), boolean(), decimal(), double(), float(), " \
-    "inet(), timestamp(), uuid(), timeuuid(), map(), collection() or set() " \
-    "on Cassandra\\Type statically instead."
+    "smallint(), tinyint(), counter(), int(), varint(), boolean(), " \
+    "decimal(), double(), float(), inet(), timestamp(), uuid(), timeuuid(), " \
+    "map(), collection() or set() on Cassandra\\Type statically instead."
   );
   return;
 }
