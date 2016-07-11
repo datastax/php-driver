@@ -218,7 +218,7 @@ class SimpleStatementIntegrationTest extends BasicIntegrationTest {
         $this->session->execute(new SimpleStatement($query));
 
         // Create the insert query and attempt to insert invalid valid name
-        $query = "INSERT INTO {$this->tableNamePrefix} (key, value_int, \"value_iNT\") VALUES (?, ?, ?)";
+        $query = "INSERT INTO {$this->tableNamePrefix} (key, \"value_TeXT\", \"value_iNT\") VALUES (?, ?, ?)";
         $values = array(
             "key" => new Timeuuid(),
             "value_iNT" => 1,

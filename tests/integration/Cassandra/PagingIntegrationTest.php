@@ -106,7 +106,7 @@ class PagingIntegrationTest extends BasicIntegrationTest
      * @ticket PHP-46
      *
      * @expectedException Cassandra\Exception\InvalidArgumentException
-     * @expectedExceptionMessage paging_state_token must be a string, '' given
+     * @expectedExceptionMessageRegExp |paging_state_token must be a string.*|
      */
     public function testNullToken() {
         $statement = new SimpleStatement(
