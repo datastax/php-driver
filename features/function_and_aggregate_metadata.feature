@@ -57,6 +57,7 @@ Feature: User-defined Function (UDF) and Aggregate Metadata (UDA)
       IsCalledOnNullInput: true
       """
 
+  @skip-ci
   Scenario: Getting an aggregates's metadata
     Given the following example:
       """php
