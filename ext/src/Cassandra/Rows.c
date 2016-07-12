@@ -42,7 +42,7 @@ php_cassandra_rows_create(cassandra_rows *current, zval *result TSRMLS_DC) {
   }
 
   object_init_ex(result, cassandra_rows_ce);
-  rows = PHP_CASSANDRA_GET_ROWS(PHP5TO7_ZVAL_MAYBE_P(result));
+  rows = PHP_CASSANDRA_GET_ROWS(result);
 
   PHP5TO7_ZVAL_COPY(PHP5TO7_ZVAL_MAYBE_P(rows->rows),
                     PHP5TO7_ZVAL_MAYBE_P(current->next_rows));
