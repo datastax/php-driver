@@ -25,7 +25,7 @@ PHP_METHOD(DefaultSchema, keyspace)
   php5to7_size name_len;
   cassandra_schema *self;
   cassandra_keyspace *keyspace;
-  cassandra_keyspace_meta *meta;
+  const CassKeyspaceMeta *meta;
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &name, &name_len) == FAILURE) {
     return;
@@ -33,9 +33,8 @@ PHP_METHOD(DefaultSchema, keyspace)
 
   self = PHP_CASSANDRA_GET_SCHEMA(getThis());
   meta = cass_schema_meta_keyspace_by_name_n((CassSchemaMeta *) self->schema->data, name, name_len);
-
   if (meta == NULL) {
-    RETURN_NULL();
+    RETURN_FALSE;
   }
 
   object_init_ex(return_value, cassandra_default_keyspace_ce);
@@ -57,7 +56,7 @@ PHP_METHOD(DefaultSchema, keyspaces)
 
   array_init(return_value);
   while (cass_iterator_next(iterator)) {
-    cassandra_keyspace_meta *meta;
+    const CassKeyspaceMeta  *meta;
     const CassValue         *value;
     const char              *keyspace_name;
     size_t                   keyspace_name_len;
@@ -85,6 +84,17 @@ PHP_METHOD(DefaultSchema, keyspaces)
   cass_iterator_free(iterator);
 }
 
+PHP_METHOD(DefaultSchema, version)
+{
+  cassandra_schema *self;
+
+  if (zend_parse_parameters_none() == FAILURE)
+    return;
+
+  self = PHP_CASSANDRA_GET_SCHEMA(getThis());
+  RETURN_LONG(cass_schema_meta_snapshot_version((CassSchemaMeta *) self->schema->data));
+}
+
 ZEND_BEGIN_ARG_INFO_EX(arginfo_name, 0, ZEND_RETURN_VALUE, 1)
   ZEND_ARG_INFO(0, name)
 ZEND_END_ARG_INFO()
@@ -95,6 +105,7 @@ ZEND_END_ARG_INFO()
 static zend_function_entry cassandra_default_schema_methods[] = {
   PHP_ME(DefaultSchema, keyspace, arginfo_name, ZEND_ACC_PUBLIC)
   PHP_ME(DefaultSchema, keyspaces, arginfo_none, ZEND_ACC_PUBLIC)
+  PHP_ME(DefaultSchema, version, arginfo_none, ZEND_ACC_PUBLIC)
   PHP_FE_END
 };
 

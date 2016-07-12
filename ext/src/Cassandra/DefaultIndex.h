@@ -1,5 +1,3 @@
-<?php
-
 /**
  * Copyright 2015-2016 DataStax, Inc.
  *
@@ -16,32 +14,13 @@
  * limitations under the License.
  */
 
-namespace Cassandra;
+#ifndef PHP_CASSANDRA_DEFAULT_INDEX_H
+#define PHP_CASSANDRA_DEFAULT_INDEX_H
 
-/**
- * A PHP representation of a schema
- */
-final class DefaultSchema implements Schema
-{
-    /**
-     * {@inheritDoc}
-     *
-     * @param  string             $name Name of the keyspace to get
-     * @return Cassandra\Keyspace       Keyspace instance or null
-     */
-    public function keyspace($name) {}
+#include "php_cassandra.h"
 
-    /**
-     * {@inheritDoc}
-     *
-     * @return array An array of `Cassandra\Keyspace` instances.
-     */
-    public function keyspaces() {}
+php5to7_zval
+php_cassandra_create_index(cassandra_ref* schema,
+                           const CassIndexMeta *meta TSRMLS_DC);
 
-    /**
-     * {@inheritDoc}
-     *
-     * @return int Version of the schema.
-     */
-    public function version() {}
-}
+#endif /* PHP_CASSANDRA_DEFAULT_INDEX_H */

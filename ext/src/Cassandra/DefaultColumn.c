@@ -14,11 +14,95 @@
  * limitations under the License.
  */
 
+#include "DefaultColumn.h"
+
 #include "php_cassandra.h"
 #include "util/result.h"
+#include "util/types.h"
 #include "util/ref.h"
 
 zend_class_entry *cassandra_default_column_ce = NULL;
+
+php5to7_zval
+php_cassandra_create_column(cassandra_ref *schema,
+                            const CassColumnMeta *meta TSRMLS_DC)
+{
+  php5to7_zval result;
+  cassandra_column *column;
+  const char *name;
+  size_t name_length;
+  const CassValue *value;
+
+  PHP5TO7_ZVAL_UNDEF(result);
+
+  PHP5TO7_ZVAL_MAYBE_MAKE(result);
+  object_init_ex(PHP5TO7_ZVAL_MAYBE_P(result), cassandra_default_column_ce);
+
+  column = PHP_CASSANDRA_GET_COLUMN(PHP5TO7_ZVAL_MAYBE_P(result));
+  column->schema = php_cassandra_add_ref(schema);
+  column->meta   = meta;
+
+  cass_column_meta_name(meta, &name, &name_length);
+  PHP5TO7_ZVAL_MAYBE_MAKE(column->name);
+  PHP5TO7_ZVAL_STRINGL(PHP5TO7_ZVAL_MAYBE_P(column->name), name, name_length);
+
+  value = cass_column_meta_field_by_name(meta, "validator");
+  if (value) {
+    const char *validator;
+    size_t validator_length;
+
+    ASSERT_SUCCESS_BLOCK(cass_value_get_string(value,
+                                               &validator,
+                                               &validator_length),
+     zval_ptr_dtor(&result);
+     PHP5TO7_ZVAL_UNDEF(result);
+     return result;
+    );
+
+    if (php_cassandra_parse_column_type(validator, validator_length,
+                                        &column->reversed, &column->frozen,
+                                        &column->type TSRMLS_CC) == FAILURE) {
+      zval_ptr_dtor(&result);
+      PHP5TO7_ZVAL_UNDEF(result);
+      return result;
+    }
+  } else {
+    const CassDataType *data_type = cass_column_meta_data_type(meta);
+    if (data_type) {
+      const char *clustering_order;
+      size_t clustering_order_length;
+      column->type = php_cassandra_type_from_data_type(data_type TSRMLS_CC);
+
+#if CURRENT_CPP_DRIVER_VERSION > CPP_DRIVER_VERSION(2, 2, 0)
+      column->frozen = cass_data_type_is_frozen(data_type);
+#else
+      column->frozen = 0;
+#endif
+
+      value = cass_column_meta_field_by_name(meta, "clustering_order");
+      if (!value) {
+        zend_throw_exception_ex(cassandra_runtime_exception_ce, 0 TSRMLS_CC,
+                                "Unable to get column field \"clustering_order\"");
+        zval_ptr_dtor(&result);
+        PHP5TO7_ZVAL_UNDEF(result);
+        return result;
+      }
+
+     ASSERT_SUCCESS_BLOCK(cass_value_get_string(value,
+                                                &clustering_order,
+                                                &clustering_order_length),
+        zval_ptr_dtor(&result);
+        PHP5TO7_ZVAL_UNDEF(result);
+        return result;
+      );
+      column->reversed =
+          strncmp(clustering_order, "desc", clustering_order_length) == 0 ? 1 : 0;
+    }
+  }
+
+  return result;
+}
+
 
 PHP_METHOD(DefaultColumn, name)
 {
@@ -62,9 +146,6 @@ PHP_METHOD(DefaultColumn, isReversed)
 PHP_METHOD(DefaultColumn, isStatic)
 {
   cassandra_column *self;
-  const CassValue  *value;
-  const char       *str;
-  size_t            str_len;
 
   if (zend_parse_parameters_none() == FAILURE) {
     return;
@@ -72,17 +153,7 @@ PHP_METHOD(DefaultColumn, isStatic)
 
   self  = PHP_CASSANDRA_GET_COLUMN(getThis());
 
-  value = cass_column_meta_field_by_name(self->meta, "type");
-
-  ASSERT_SUCCESS_BLOCK(cass_value_get_string(value, &str, &str_len),
-    RETURN_FALSE;
-  );
-
-  if (strncmp("STATIC", str, str_len) == 0) {
-    RETURN_TRUE;
-  }
-
-  RETURN_FALSE;
+  RETURN_BOOL(cass_column_meta_type(self->meta) == CASS_COLUMN_TYPE_STATIC);
 }
 
 PHP_METHOD(DefaultColumn, isFrozen)
@@ -134,15 +205,23 @@ ZEND_END_ARG_INFO()
 static zend_function_entry cassandra_default_column_methods[] = {
   PHP_ME(DefaultColumn, name,         arginfo_none, ZEND_ACC_PUBLIC)
   PHP_ME(DefaultColumn, type,         arginfo_none, ZEND_ACC_PUBLIC)
-  PHP_ME(DefaultColumn, isReversed,   arginfo_none, ZEND_ACC_PUBLIC)
+  PHP_ME(DefaultColumn, isReversed,   arginfo_none, ZEND_ACC_PUBLIC|ZEND_ACC_DEPRECATED)
   PHP_ME(DefaultColumn, isStatic,     arginfo_none, ZEND_ACC_PUBLIC)
   PHP_ME(DefaultColumn, isFrozen,     arginfo_none, ZEND_ACC_PUBLIC)
-  PHP_ME(DefaultColumn, indexName,    arginfo_none, ZEND_ACC_PUBLIC)
-  PHP_ME(DefaultColumn, indexOptions, arginfo_none, ZEND_ACC_PUBLIC)
+  PHP_ME(DefaultColumn, indexName,    arginfo_none, ZEND_ACC_PUBLIC|ZEND_ACC_DEPRECATED)
+  PHP_ME(DefaultColumn, indexOptions, arginfo_none, ZEND_ACC_PUBLIC|ZEND_ACC_DEPRECATED)
   PHP_FE_END
 };
 
 static zend_object_handlers cassandra_default_column_handlers;
+
+static HashTable *
+php_cassandra_type_default_column_gc(zval *object, php5to7_zval_gc table, int *n TSRMLS_DC)
+{
+  *table = NULL;
+  *n = 0;
+  return zend_std_get_properties(object TSRMLS_CC);
+}
 
 static HashTable *
 php_cassandra_default_column_properties(zval *object TSRMLS_DC)
@@ -207,6 +286,9 @@ void cassandra_define_DefaultColumn(TSRMLS_D)
 
   memcpy(&cassandra_default_column_handlers, zend_get_std_object_handlers(), sizeof(zend_object_handlers));
   cassandra_default_column_handlers.get_properties  = php_cassandra_default_column_properties;
+#if PHP_VERSION_ID >= 50400
+  cassandra_default_column_handlers.get_gc          = php_cassandra_type_default_column_gc;
+#endif
   cassandra_default_column_handlers.compare_objects = php_cassandra_default_column_compare;
   cassandra_default_column_handlers.clone_obj = NULL;
 }

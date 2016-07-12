@@ -116,7 +116,8 @@ php5to7_string_compare(php5to7_string s1, php5to7_string s2)
   php_cassandra_##type_name##_object_fetch(object);
 
 #define PHP5TO7_SMART_STR_INIT { NULL, 0 }
-#define PHP5TO7_SMART_STR_VAL(ss) (ss).s->val
+#define PHP5TO7_SMART_STR_VAL(ss) ((ss).s ? (ss).s->val : NULL)
+#define PHP5TO7_SMART_STR_LEN(ss) ((ss).s ? (ss).s->len : 0)
 
 #define PHP5TO7_STRCMP(s, c) strcmp((s)->val, (c))
 #define PHP5TO7_STRVAL(s) ((s)->val)
@@ -143,6 +144,12 @@ php5to7_string_compare(php5to7_string s1, php5to7_string s2)
 
 #define PHP5TO7_ADD_ASSOC_ZVAL_EX(zv, key, len, val) \
   add_assoc_zval_ex((zv), (key), (size_t)(len - 1), val)
+
+#define PHP5TO7_ADD_ASSOC_STRINGL_EX(zv, key, key_len, str, str_len) \
+  add_assoc_stringl_ex((zv), (key), (size_t)(key_len - 1), (char *)(str), (size_t)(str_len))
+
+#define PHP5TO7_ADD_NEXT_INDEX_STRING(zv, str) \
+  add_next_index_string((zv), (char*)(str));
 
 #define PHP5TO7_ZEND_HASH_FOREACH_VAL(ht, _val) \
   ZEND_HASH_FOREACH_VAL(ht, _val)
@@ -228,6 +235,7 @@ php5to7_string_compare(php5to7_string s1, php5to7_string s2)
 #define PHP5TO7_ZVAL_STRING(zv, s) ZVAL_STRING(zv, s)
 #define PHP5TO7_ZVAL_STRINGL(zv, s, len) ZVAL_STRINGL(zv, s, len)
 #define PHP5TO7_RETVAL_STRING(s) RETVAL_STRING(s)
+#define PHP5TO7_RETURN_STRING(s) RETURN_STRING(s)
 #define PHP5TO7_RETVAL_STRINGL(s, len) RETVAL_STRINGL(s, len)
 #define PHP5TO7_RETURN_STRINGL(s, len) RETURN_STRINGL(s, len)
 
@@ -271,6 +279,7 @@ php5to7_string_compare(php5to7_string s1, php5to7_string s2)
 
 #define PHP5TO7_SMART_STR_INIT { NULL, 0, 0 }
 #define PHP5TO7_SMART_STR_VAL(ss) (ss).c
+#define PHP5TO7_SMART_STR_LEN(ss) (ss).len
 
 #define PHP5TO7_STRCMP(s, c) strcmp((s), (c))
 #define PHP5TO7_STRVAL(s) (s)
@@ -298,6 +307,12 @@ php5to7_string_compare(php5to7_string s1, php5to7_string s2)
 
 #define PHP5TO7_ADD_ASSOC_ZVAL_EX(zv, key, len, val) \
   add_assoc_zval_ex((zv), (key), (uint)(len), val)
+
+#define PHP5TO7_ADD_ASSOC_STRINGL_EX(zv, key, key_len, str, str_len) \
+  add_assoc_stringl_ex((zv), (key), (uint)(key_len), (char*)(str), (uint)(str_len), 1)
+
+#define PHP5TO7_ADD_NEXT_INDEX_STRING(zv, str) \
+  add_next_index_string((zv), (char*)(str), 1);
 
 #define PHP5TO7_ZEND_HASH_FOREACH_VAL(ht, _val) do { \
   HashPosition _pos; \
@@ -397,6 +412,7 @@ php5to7_string_compare(php5to7_string s1, php5to7_string s2)
 #define PHP5TO7_ZVAL_STRING(zv, s) ZVAL_STRING(zv, s, 1)
 #define PHP5TO7_ZVAL_STRINGL(zv, s, len) ZVAL_STRINGL(zv, s, len, 1)
 #define PHP5TO7_RETVAL_STRING(s) RETVAL_STRING(s, 1)
+#define PHP5TO7_RETURN_STRING(s) RETURN_STRING(s, 1)
 #define PHP5TO7_RETVAL_STRINGL(s, len) RETVAL_STRINGL(s, len, 1)
 #define PHP5TO7_RETURN_STRINGL(s, len) RETURN_STRINGL(s, len, 1)
 

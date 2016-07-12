@@ -24,8 +24,14 @@ namespace Cassandra;
 class Integration {
     //TODO: Remove these constant and make them configurable
     const IP_ADDRESS = "127.0.0.1";
-    const CASSANDRA_VERSION = "2.2.4"; // This is needed for Windows testing right now
-    const IS_CCM_SILENT = true;
+    /**
+     * Default Cassandra server version
+     */
+    const DEFAULT_CASSANDRA_VERSION = "3.0.7";
+    /**
+     * Default verbosity for CCM output
+     */
+    const DEFAULT_IS_CCM_SILENT = true;
 
     /**
      * Maximum length for the keyspace (server limit)
@@ -90,6 +96,10 @@ class Integration {
      *                                     otherwise (DEFAULT: false).
      * @param bool $isSSL True if SSL should be enabled; false otherwise
      *                    (DEFAULT: false).
+     * @param bool $isUserDefinedAggregatesFunctions True if UDA/UDF
+     *                                               functionality should be
+     *                                               enabled; false otherwise
+     *                                               (DEFAULT: false).
      * @return Integration Instance of the Integration class created.
      */
     public function __construct($className,
@@ -98,7 +108,8 @@ class Integration {
                                 $numberDC2Nodes = 0,
                                 $replicationFactor = -1,
                                 $isClientAuthentication = false,
-                                $isSSL = false) {
+                                $isSSL = false,
+                                $isUserDefinedAggregatesFunctions = false) {
         // Generate the keyspace name for the test
         $this->keyspaceName = $this->getShortName($className);
         if (!empty($testName)) {
@@ -118,13 +129,16 @@ class Integration {
 
         // Create the Cassandra cluster for the test
         //TODO: Need to add the ability to switch the Cassandra version (command line)
-        $this->ccm = new \CCM(self::CASSANDRA_VERSION, self::IS_CCM_SILENT);
+        $this->ccm = new \CCM(self::DEFAULT_CASSANDRA_VERSION, self::DEFAULT_IS_CCM_SILENT);
         $this->ccm->setup($numberDC1Nodes, $numberDC2Nodes);
         if ($isClientAuthentication) {
             $this->ccm->setupClientVerification();
         }
         if ($isSSL) {
             $this->ccm->setupSSL();
+        }
+        if ($isUserDefinedAggregatesFunctions) {
+            $this->ccm->setupUserDefinedFunctions();
         }
         $this->ccm->start();
 
@@ -222,6 +236,7 @@ class Integration {
 
     /**
      * Determine if the verbose argument was used when starting PHPUnit.
+     *
      * @return bool True if verbose argument was used; false otherwise
      */
     public static function isVerbose() {

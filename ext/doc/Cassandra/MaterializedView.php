@@ -19,29 +19,13 @@
 namespace Cassandra;
 
 /**
- * A PHP representation of a schema
+ * A PHP representation of a materialized view
  */
-final class DefaultSchema implements Schema
+interface MaterializedView implements Table
 {
     /**
-     * {@inheritDoc}
-     *
-     * @param  string             $name Name of the keyspace to get
-     * @return Cassandra\Keyspace       Keyspace instance or null
+     * Returns the base table of the view
+     * @return Cassandra\Table Base table of the view
      */
-    public function keyspace($name) {}
-
-    /**
-     * {@inheritDoc}
-     *
-     * @return array An array of `Cassandra\Keyspace` instances.
-     */
-    public function keyspaces() {}
-
-    /**
-     * {@inheritDoc}
-     *
-     * @return int Version of the schema.
-     */
-    public function version() {}
+    function baseTable();
 }

@@ -162,6 +162,14 @@ class FeatureContext implements Context, SnippetAcceptingContext
     }
 
     /**
+     * @Given /^additional schema:$/
+     */
+    public function additionalSchema(PyStringNode $string)
+    {
+        $this->ccm->setupSchema((string) $string, false);
+    }
+
+    /**
      * @Given /^the following example:$/
      */
     public function theFollowingExample(PyStringNode $string)

@@ -22,7 +22,7 @@ use Cassandra\SimpleStatement;
 class CCM
 {
     const DEFAULT_CLUSTER_PREFIX = "php-driver";
-    const DEFAULT_CASSANDRA_VERSION = "2.1.12";
+    const DEFAULT_CASSANDRA_VERSION = "3.0.7";
     const PROCESS_TIMEOUT_IN_SECONDS = 480;
     private $clusterPrefix;
     private $isSilent;
@@ -52,24 +52,32 @@ class CCM
         $this->process->setTimeout(self::PROCESS_TIMEOUT_IN_SECONDS);
     }
 
-    public function setupSchema($schema)
+    public function setupSchema($schema, $dropExistingKeyspaces = true)
     {
-        $keyspaces = $this->session->execute(new SimpleStatement("SELECT keyspace_name FROM system.schema_keyspaces"));
-
-        foreach ($keyspaces as $row) {
-            $keyspace = $row['keyspace_name'];
-
-            if ($this->startsWith("system", $keyspace)) {
-                continue;
+        if ($dropExistingKeyspaces) {
+            if (version_compare($this->version, "3.0.0", ">=")) {
+                $system_keyspaces = "system_schema.keyspaces";
+            } else {
+                $system_keyspaces = "system.schema_keyspaces";
             }
 
-            if (!$this->isSilent) {
-                echo "DROP KEYSPACE " . $keyspace . "\n";
+            $keyspaces = $this->session->execute(new SimpleStatement("SELECT keyspace_name FROM $system_keyspaces"));
+
+            foreach ($keyspaces as $row) {
+                $keyspace = $row['keyspace_name'];
+
+                if ($this->startsWith("system", $keyspace)) {
+                    continue;
+                }
+
+                if (!$this->isSilent) {
+                    echo "DROP KEYSPACE " . $keyspace . "\n";
+                }
+                $this->session->execute(new SimpleStatement("DROP KEYSPACE $keyspace"));
             }
-            $this->session->execute(new SimpleStatement("DROP KEYSPACE $keyspace"));
         }
 
-        foreach (explode(";", $schema) as $cql) {
+        foreach (explode(";\n", $schema) as $cql) {
             $cql = trim($cql);
 
             if (empty($cql)) {
@@ -201,6 +209,15 @@ class CCM
                 if (strcmp($this->version, '2.1') < 0) {
                     $params[] = 'in_memory_compaction_limit_in_mb: 1';
                 }
+
+                if (version_compare($this->version, "2.2.0", ">=")) {
+                    $this->run('updateconf', 'enable_user_defined_functions: true');
+                }
+
+                if (version_compare($this->version, "3.0.0", ">=")) {
+                    $this->run('updateconf', 'enable_scripted_user_defined_functions: true');
+                }
+
 
                 $params[] = 'key_cache_size_in_mb: 0';
                 $params[] = 'key_cache_save_period: 0';
