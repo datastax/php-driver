@@ -18,8 +18,7 @@
 
 namespace Cassandra;
 
-class PagingIntegrationTest extends BasicIntegrationTest
-{
+class PagingIntegrationTest extends BasicIntegrationTest {
     public function setUp() {
         parent::setUp();
 
@@ -38,6 +37,66 @@ class PagingIntegrationTest extends BasicIntegrationTest
             ));
             $this->session->execute($statement, $options);
         }
+    }
+
+    /**
+     * Generate a random string
+     *
+     * @param int $length Length of string to generate (DEFAULT: random length
+     *                    from 1 - 1024 characters)
+     * @return string Randomly genreated text
+     */
+    private function randomString($length = -1) {
+        // Determine if the length should be random
+        if ($length < 0) {
+            $length = mt_rand(1, 1024);
+        }
+
+        // Generate the random string from the below character set
+        $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ ';
+        $charactersLength = strlen($characters);
+        $randomString = '';
+        foreach (range(1, $length) as $i) {
+            $randomString .= $characters[rand(0, $charactersLength - 1)];
+        }
+        return $randomString;
+    }
+
+    /**
+     * Page through the results while validating no memory leaks exists
+     *
+     * @param $start Starting memory value
+     * @return int Number of rows visited
+     */
+    private function validatePageResults($rows) {
+        // Get the starting memory usage
+        $start = memory_get_usage() / 1024;
+        if (Integration::isDebug() && Integration::isVerbose()) {
+            fprintf(STDOUT, "Start Usage: %dkb" . PHP_EOL, $start);
+        }
+
+         // Page over each result set and count the number of rows visited
+        $count = $rows->count();
+        while ($rows = $rows->nextPage()) {
+            if ($rows->count() != 0) {
+                $count += $rows->count();
+                if (Integration::isDebug() && Integration::isVerbose()) {
+                    fprintf(STDOUT, "Page %d: Current memory usage is %dkb" . PHP_EOL,
+                    ($count / 2), ((memory_get_usage() / 1024) - $start));
+                }
+            }
+        }
+
+        // Get the final memory usage (and apply a tolerance to compensate for GC)
+        $end = memory_get_usage() / 1024;
+        if (Integration::isDebug() && Integration::isVerbose()) {
+            fprintf(STDOUT, "End Usage: %dkb [%dkb]" . PHP_EOL, $end, ($end - $start));
+        }
+        $difference = ($end - $start) - 20; // 20KB tolerance
+        $this->assertLessThanOrEqual(0, $difference);
+
+        // Return the number of rows visited
+        return $count;
     }
 
     /**
@@ -118,5 +177,73 @@ class PagingIntegrationTest extends BasicIntegrationTest
         ));
 
         $result = $this->session->execute($statement, $options);
+    }
+
+    /**
+     * Paging advancement does not create memory leak
+     *
+     * This test will ensure that the driver does not create memory leaks
+     * associated advancing to the next page of results.
+     *
+     * @test
+     * @ticket PHP-101
+     */
+    public function testNoPagingMemoryLeak() {
+        // Create the user types and table for the test
+        $this->session->execute(new SimpleStatement(
+            "DROP TABLE {$this->tableNamePrefix}"
+        ));
+        $this->session->execute(new SimpleStatement(
+            "CREATE TYPE price_history (time timestamp, price float)"
+        ));
+        $priceHistory = Type::userType(
+            "time", Type::timestamp(),
+            "price", Type::float());
+        $this->session->execute(new SimpleStatement(
+            "CREATE TYPE purchase_stats (day_of_week int, total_purchases int)"
+        ));
+        $purchaseStats = Type::userType(
+            "day_of_week", Type::int(),
+            "total_purchases", Type::int());
+        $this->session->execute(new SimpleStatement(
+            "CREATE TABLE {$this->tableNamePrefix} (id uuid PRIMARY KEY,
+                history frozen<price_history>, stats frozen<purchase_stats>,
+                comments text)"
+        ));
+
+        // Populate the table with some random data
+        $totalInserts = 500;
+        $statement = $this->session->prepare("INSERT INTO {$this->tableNamePrefix}
+            (id, history, stats, comments) VALUES (?, ?, ?, ?)");
+        foreach (range(1, $totalInserts) as $i) {
+            // Create the values for the insert
+            $history = $priceHistory->create(
+                "time", new Timestamp(mt_rand(1270094400000, 1459483200000)), // 04-01-2010 - 04-01-2016
+                "price", new Float((mt_rand(1, 1000) / 100))
+            );
+            $stats = $purchaseStats->create(
+                "day_of_week", mt_rand(0, 6),
+                "total_purchases", mt_rand(0, 1000)
+            );
+            $values = array(
+                new Uuid(),
+                $history,
+                $stats,
+                $this->randomString()
+            );
+
+            $options = new ExecutionOptions(array("arguments" => $values));
+            $this->session->execute($statement, $options);
+        }
+
+        // Select all the rows in the table using paging
+        $statement = new SimpleStatement("SELECT * FROM {$this->tableNamePrefix}");
+        $options = new ExecutionOptions(array("page_size" => 2));
+        $rows = $this->session->execute($statement, $options);
+
+
+        // Validate paging and ensure all the rows were read
+        $count = $this->validatePageResults($rows);
+        $this->assertEquals($totalInserts, $count);
     }
 }
