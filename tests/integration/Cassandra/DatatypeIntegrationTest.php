@@ -21,7 +21,37 @@ namespace Cassandra;
 /**
  * Datatype integration tests.
  */
-class DatatypeIntegrationTest extends BasicIntegrationTest {
+class DatatypeIntegrationTest extends DatatypeIntegrationTests {
+    /**
+     * Scalar data types
+     *
+     * This test ensures that data types work with all Cassandra's scalar
+     * types.
+     *
+     * @test
+     * @dataProvider dataTypes
+     */
+    public function testDataTypes($type, $values) {
+        foreach ($values as $value) {
+            $this->createTableInsertAndVerifyValueByIndex($type, $value);
+            $this->createTableInsertAndVerifyValueByName($type, $value);
+        }
+    }
+
+    /**
+     * Data provider scalar data types
+     */
+    public function dataTypes() {
+        return array_map(function ($cassandraType) {
+            $type = $cassandraType[0];
+            $values = array();
+            foreach ($cassandraType[1] as $value) {
+                $values[] = $value;
+            }
+            return array($type, $values);
+        }, $this->scalarCassandraTypes());
+    }
+
     /**
      * Ensure Decimal/Varint encoding on byte boundaries
      *

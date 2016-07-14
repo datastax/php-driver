@@ -22,6 +22,8 @@ namespace Cassandra;
  * Common interface implemented by all Cassandra value types.
  *
  * @see Bigint
+ * @see Smallint
+ * @see Tinyint
  * @see Blob
  * @see Collection
  * @see Float
@@ -32,6 +34,8 @@ namespace Cassandra;
  * @see Timeuuid
  * @see Uuid
  * @see Varint
+ * @see Date
+ * @see Time
  *
  * @see Numeric
  * @see UuidInterface

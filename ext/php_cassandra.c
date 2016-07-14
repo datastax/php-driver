@@ -281,6 +281,7 @@ static PHP_GINIT_FUNCTION(cassandra)
   PHP5TO7_ZVAL_UNDEF(cassandra_globals->type_blob);
   PHP5TO7_ZVAL_UNDEF(cassandra_globals->type_ascii);
   PHP5TO7_ZVAL_UNDEF(cassandra_globals->type_bigint);
+  PHP5TO7_ZVAL_UNDEF(cassandra_globals->type_smallint);
   PHP5TO7_ZVAL_UNDEF(cassandra_globals->type_counter);
   PHP5TO7_ZVAL_UNDEF(cassandra_globals->type_int);
   PHP5TO7_ZVAL_UNDEF(cassandra_globals->type_varint);
@@ -342,11 +343,15 @@ PHP_MINIT_FUNCTION(cassandra)
   cassandra_define_Value(TSRMLS_C);
   cassandra_define_Numeric(TSRMLS_C);
   cassandra_define_Bigint(TSRMLS_C);
+  cassandra_define_Smallint(TSRMLS_C);
+  cassandra_define_Tinyint(TSRMLS_C);
   cassandra_define_Blob(TSRMLS_C);
   cassandra_define_Decimal(TSRMLS_C);
   cassandra_define_Float(TSRMLS_C);
   cassandra_define_Inet(TSRMLS_C);
   cassandra_define_Timestamp(TSRMLS_C);
+  cassandra_define_Date(TSRMLS_C);
+  cassandra_define_Time(TSRMLS_C);
   cassandra_define_UuidInterface(TSRMLS_C);
   cassandra_define_Timeuuid(TSRMLS_C);
   cassandra_define_Uuid(TSRMLS_C);
@@ -427,6 +432,12 @@ PHP_MSHUTDOWN_FUNCTION(cassandra)
 
 PHP_RINIT_FUNCTION(cassandra)
 {
+#define XX_SCALAR(name, value) \
+  PHP5TO7_ZVAL_UNDEF(CASSANDRA_G(type_##name));
+
+  PHP_CASSANDRA_SCALAR_TYPES_MAP(XX_SCALAR)
+#undef XX_SCALAR
+
   return SUCCESS;
 }
 
@@ -573,9 +584,13 @@ throw_invalid_argument(zval *object,
                               "%s must be %s, an instance of Unknown Class given",
                               object_name, expected_type);
     }
-  } else {
+  } else if (Z_TYPE_P(object) == IS_STRING) {
     zend_throw_exception_ex(cassandra_invalid_argument_exception_ce, 0 TSRMLS_CC,
                             "%s must be %s, '%Z' given",
+                            object_name, expected_type, object);
+  } else {
+    zend_throw_exception_ex(cassandra_invalid_argument_exception_ce, 0 TSRMLS_CC,
+                            "%s must be %s, %Z given",
                             object_name, expected_type, object);
   }
 }

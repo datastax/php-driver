@@ -18,52 +18,29 @@
 
 namespace Cassandra;
 
-/**
- * A PHP representation of the CQL `float` datatype
- */
-final class Float implements Value, Numeric
+
+final class Smallint implements Value, Numeric
 {
     /**
-     * Minimum possible Float value
+     * Minimum possible Smallint value
      *
-     * @return Float minimum value
+     * @return Smallint minimum value
      */
     public static function min() {}
 
     /**
-     * Maximum possible Float value
+     * Maximum possible Smallint value
      *
-     * @return Float maximum value
+     * @return Smallint maximum value
      */
     public static function max() {}
 
     /**
-     * Creates a new float.
+     * Creates a new 16bit integer.
      *
-     * @param mixed $value float value as a string, number or Cassandra\Float
+     * @param string $value integer value as a string
      */
     public function __construct($value) {}
-
-    /**
-     * The type of this float.
-     *
-     * @return Type
-     */
-    public function type() {}
-
-    /**
-     * Returns the float value.
-     *
-     * @return float float value
-     */
-    public function value() {}
-
-    /**
-     * Returns string representation of the float value.
-     *
-     * @return string float value
-     */
-    public function __toString() {}
 
     /**
      * @param Numeric $addend a number to add to this one
@@ -124,4 +101,18 @@ final class Float implements Value, Numeric
      * @return float this number as float
      */
     public function toDouble() {}
+
+    /**
+     * The type of this value (smallint).
+     *
+     * @return Type
+     */
+    public function type() {}
+
+    /**
+     * Returns the integer value.
+     *
+     * @return int integer value
+     */
+    public function value() {}
 }

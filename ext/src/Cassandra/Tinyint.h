@@ -1,5 +1,3 @@
-<?php
-
 /**
  * Copyright 2015-2016 DataStax, Inc.
  *
@@ -16,20 +14,9 @@
  * limitations under the License.
  */
 
-namespace Cassandra\RetryPolicy;
+#ifndef PHP_CASSANDRA_TINYINT_H
+#define PHP_CASSANDRA_TINYINT_H
 
-use Cassandra\RetryPolicy;
+void php_cassandra_tinyint_init(INTERNAL_FUNCTION_PARAMETERS);
 
-/**
- * A retry policy that logs the decisions of its child policy.
- */
-final class Logging implements RetryPolicy
-{
-    /**
-     * Creates a new Logging retry policy.
-     *
-     * @param Cassandra\RetryPolicy $childPolicy Any retry policy other than
-     *                                           Cassandra\Logging
-     */
-    public function __construct(RetryPolicy $childPolicy) {}
-}
+#endif /* PHP_CASSANDRA_TINYINT_H */
