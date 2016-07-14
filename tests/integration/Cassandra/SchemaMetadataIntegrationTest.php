@@ -125,9 +125,6 @@ class SchemaMetadataIntegrationTest extends BasicIntegrationTest {
             $this->assertCount(1, $index->options());
             $this->assertEquals($target, $index->option("target"));
         }
-
-        //echo "${index}" . PHP_EOL;
-        var_dump($index);
     }
 
     /**
@@ -208,6 +205,7 @@ class SchemaMetadataIntegrationTest extends BasicIntegrationTest {
         $this->assertEquals($materializedViewOne->maxIndexInterval(), $materializedViewTwo->maxIndexInterval());
         $this->assertEquals($materializedViewOne->minIndexInterval(), $materializedViewTwo->minIndexInterval());
         $this->assertEquals($materializedViewOne->columns(), $materializedViewTwo->columns());
+        $this->assertEquals($materializedViewOne->partitionKey(), $materializedViewTwo->partitionKey());
         $this->assertEquals($materializedViewOne->primaryKey(), $materializedViewTwo->primaryKey());
         $this->assertEquals($materializedViewOne->clusteringKey(), $materializedViewTwo->clusteringKey());
         $this->assertEquals($materializedViewOne->clusteringOrder(), $materializedViewTwo->clusteringOrder());
@@ -221,10 +219,10 @@ class SchemaMetadataIntegrationTest extends BasicIntegrationTest {
      * @param $name Name to assert
      * @param $tableName Table name to assert
      * @param $columns Columns names to assert
-     * @param $primaryKeyColumns Primary key column names to assert
+     * @param $partitionKeyColumns Primary key column names to assert
      * @param $clusteringKeyColumns Cluster key column names to assert
      */
-    protected function assertMaterializedView($materializedView, $name, $tableName, $columns, $primaryKeyColumns, $clusteringKeyColumns) {
+    protected function assertMaterializedView($materializedView, $name, $tableName, $columns, $partitionKeyColumns, $clusteringKeyColumns) {
         $this->assertEquals($materializedView->name(), $name);
         $this->assertEquals($materializedView->baseTable()->name(), $tableName);
         $i = 0;
@@ -232,12 +230,17 @@ class SchemaMetadataIntegrationTest extends BasicIntegrationTest {
             $this->assertEquals($columns[$i++], $column->name());
         }
         $i = 0;
-        foreach ($materializedView->primaryKey() as $column) {
-            $this->assertEquals($primaryKeyColumns[$i++], $column->name());
+        foreach ($materializedView->partitionKey() as $column) {
+            $this->assertEquals($partitionKeyColumns[$i++], $column->name());
         }
         $i = 0;
         foreach ($materializedView->clusteringKey() as $column) {
             $this->assertEquals($clusteringKeyColumns[$i++], $column->name());
+        }
+        $primaryKeyColumns = array_merge($partitionKeyColumns, $clusteringKeyColumns);
+        $i = 0;
+        foreach ($materializedView->primaryKey() as $column) {
+            $this->assertEquals($primaryKeyColumns[$i++], $column->name());
         }
     }
 
@@ -510,15 +513,17 @@ class SchemaMetadataIntegrationTest extends BasicIntegrationTest {
      * This test ensures that driver correctly enumerates over table and column
      * metadata.
      *
+     * @todo: Add "varchar" and "text" tests
+     *
      * @test
      */
     public function testEnumerateTablesAndColumns() {
         $keyspaceName = self::generateKeyspaceName("enumerate");
 
         $tableSchemas = array(
-            "table_int_varchar" => array("key" => "int", "value" => "varchar"),
-            "table_varchar_bigint" => array("key" => "varchar", "value" => "bigint"),
-            "table_varchar_map" => array("key" => "varchar", "value" => "map<bigint, varchar>")
+            "table_int_int" => array("key" => "int", "value" => "int"),
+            "table_int_bigint" => array("key" => "int", "value" => "bigint"),
+            "table_decimal_map" => array("key" => "decimal", "value" => "map<bigint, uuid>")
         );
 
         $this->createKeyspaceWithSchema($keyspaceName, $tableSchemas);
@@ -542,15 +547,17 @@ class SchemaMetadataIntegrationTest extends BasicIntegrationTest {
      * This test ensures that the driver is able to access table and column
      * metadata by name.
      *
+     * @todo: Add "varchar" and "text" tests
+     *
      * @test
      */
     public function testGetTableAndColumnByName() {
         $keyspaceName = self::generateKeyspaceName("by_name");
 
         $tableSchemas = array(
-            "table_int_varchar" => array("key" => "int", "value" => "varchar"),
-            "table_varchar_bigint" => array("key" => "varchar", "value" => "bigint"),
-            "table_varchar_map" => array("key" => "varchar", "value" => "map<bigint, varchar>")
+            "table_int_int" => array("key" => "int", "value" => "int"),
+            "table_int_bigint" => array("key" => "int", "value" => "bigint"),
+            "table_decimal_map" => array("key" => "decimal", "value" => "map<bigint, uuid>")
         );
 
         $this->createKeyspaceWithSchema($keyspaceName, $tableSchemas);
@@ -636,35 +643,37 @@ class SchemaMetadataIntegrationTest extends BasicIntegrationTest {
      * This test ensures that the validator parser correctly parses and builds
      * columns with deeply nested collection types.
      *
+     * @todo: Add "varchar" and "text" tests
+     *
      * @test
      * @ticket PHP-62
      */
     public function testSchemaMetadataWithNestedColumnTypes() {
         $statement = new SimpleStatement(
-            "CREATE TABLE {$this->tableNamePrefix}_nested1 (key int PRIMARY KEY, value map<frozen<list<varchar>>, varchar>)"
+            "CREATE TABLE {$this->tableNamePrefix}_nested1 (key int PRIMARY KEY, value map<frozen<list<int>>, int>)"
         );
         $this->session->execute($statement);
 
         $statement = new SimpleStatement(
-            "CREATE TABLE {$this->tableNamePrefix}_nested2 (key int PRIMARY KEY, value map<varchar, frozen<list<varchar>>>)"
+            "CREATE TABLE {$this->tableNamePrefix}_nested2 (key int PRIMARY KEY, value map<int, frozen<list<int>>>)"
         );
         $this->session->execute($statement);
 
         $statement = new SimpleStatement(
-            "CREATE TABLE {$this->tableNamePrefix}_nested3 (key int PRIMARY KEY, value list<frozen<map<varchar, frozen<set<varchar>>>>>)"
+            "CREATE TABLE {$this->tableNamePrefix}_nested3 (key int PRIMARY KEY, value list<frozen<map<int, frozen<set<int>>>>>)"
         );
         $this->session->execute($statement);
 
         $keyspace = $this->session->schema()->keyspace($this->keyspaceName);
 
         $table1 = $keyspace->table("{$this->tableNamePrefix}_nested1");
-        $this->assertEquals((string)$table1->column("value")->type(), "map<list<varchar>, varchar>");
+        $this->assertEquals((string)$table1->column("value")->type(), "map<list<int>, int>");
 
         $table2 = $keyspace->table("{$this->tableNamePrefix}_nested2");
-        $this->assertEquals((string)$table2->column("value")->type(), "map<varchar, list<varchar>>");
+        $this->assertEquals((string)$table2->column("value")->type(), "map<int, list<int>>");
 
         $table3 = $keyspace->table("{$this->tableNamePrefix}_nested3");
-        $this->assertEquals((string)$table3->column("value")->type(), "list<map<varchar, set<varchar>>>");
+        $this->assertEquals((string)$table3->column("value")->type(), "list<map<int, set<int>>>");
     }
 
     /**
@@ -805,7 +814,7 @@ class SchemaMetadataIntegrationTest extends BasicIntegrationTest {
         $materializedView = $keyspace->materializedView("simple");
         $this->assertMaterializedViewsEqual($materializedView, $table->materializedView("simple"));
         $this->assertMaterializedView($materializedView, "simple", "{$this->tableNamePrefix}_1",
-            array("value1", "key1"), array("value1"), array("key1"));
+            array("value1", "key1"), array("value1", "key1"), array("key1"));
     }
 
     /**

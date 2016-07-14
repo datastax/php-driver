@@ -120,29 +120,29 @@ class SimpleStatementIntegrationTest extends BasicIntegrationTest {
         $values = array(
             // Reversed order from table and insert queries
             array(
-                "value_BooLeaN" => false,
-                "value_boolean" => true,
-                "value_iNT" => 11,
-                "value_int" => 1,
+                "\"value_BooLeaN\"" => false,
+                "\"value_boolean\"" => true,
+                "\"value_iNT\"" => 11,
+                "\"value_int\"" => 1,
                 "key" => new Timeuuid()
             ),
 
             // Random order
             array(
-                "value_int" => 2,
-                "value_BooLeaN" => true,
+                "\"value_int\"" => 2,
+                "\"value_BooLeaN\"" => true,
                 "key" => new Timeuuid(),
-                "value_boolean" => false,
-                "value_iNT" => 22
+                "\"value_boolean\"" => false,
+                "\"value_iNT\"" => 22
             ),
 
-            // In order
+            #// In order
             array(
                 "key" => new Timeuuid(),
-                "value_int" => 3,
-                "value_iNT" => 33,
-                "value_boolean" => false,
-                "value_BooLeaN" => true
+                "\"value_int\"" => 3,
+                "\"value_iNT\"" => 33,
+                "\"value_boolean\"" => false,
+                "\"value_BooLeaN\"" => true
             )
         );
         $statement = new SimpleStatement($query);
@@ -157,8 +157,11 @@ class SimpleStatementIntegrationTest extends BasicIntegrationTest {
         $rows = $this->session->execute($statement);
         $this->assertCount(count($values), $rows);
         foreach ($rows as $i => $row) {
-            $values[$i];
-            $this->assertEquals($values[$i], $row);
+            $expected = array();
+            foreach ($values[$i] as $key => $value) {
+                $expected[trim($key, "\"")] = $value;
+            }
+            $this->assertEquals($expected, $row);
         }
     }
 

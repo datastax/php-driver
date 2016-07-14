@@ -267,6 +267,19 @@ class CCM
         }
     }
 
+    public function setupUserDefinedFunctions()
+    {
+        $this->ssl = false;
+        $this->clientAuth = false;
+        $this->internalSetup(1, 0);
+        if (version_compare($this->version, "2.2.0", ">=")) {
+            $this->run('updateconf', 'enable_user_defined_functions: true');
+        }
+        if (version_compare($this->version, "3.0.0", ">=")) {
+            $this->run('updateconf', 'enable_scripted_user_defined_functions: true');
+        }
+    }
+
     public function enableTracing($isEnabled)
     {
         $nodes = $this->dataCenterOneNodes + $this->dataCenterTwoNodes;

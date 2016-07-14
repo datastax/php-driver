@@ -31,6 +31,7 @@ if test "$PHP_CASSANDRA" != "no"; then
     src/Cassandra/Cluster/Builder.c \
     src/Cassandra/Collection.c \
     src/Cassandra/Column.c \
+    src/Cassandra/Date.c \
     src/Cassandra/Decimal.c \
     src/Cassandra/DefaultAggregate.c \
     src/Cassandra/DefaultCluster.c \
@@ -65,15 +66,18 @@ if test "$PHP_CASSANDRA" != "no"; then
     src/Cassandra/Session.c \
     src/Cassandra/Set.c \
     src/Cassandra/SimpleStatement.c \
+    src/Cassandra/Smallint.c \
     src/Cassandra/SSLOptions.c \
     src/Cassandra/SSLOptions/Builder.c \
     src/Cassandra/Statement.c \
     src/Cassandra/Table.c \
+    src/Cassandra/Time.c \
     src/Cassandra/Timestamp.c \
     src/Cassandra/TimestampGenerator.c \
     src/Cassandra/TimestampGenerator/Monotonic.c \
     src/Cassandra/TimestampGenerator/ServerSide.c \
     src/Cassandra/Timeuuid.c \
+    src/Cassandra/Tinyint.c \
     src/Cassandra/Tuple.c \
     src/Cassandra/Type.c \
     src/Cassandra/UserTypeValue.c \

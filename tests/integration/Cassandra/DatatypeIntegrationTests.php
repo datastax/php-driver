@@ -158,7 +158,7 @@ abstract class DatatypeIntegrationTests extends BasicIntegrationTest {
 
         $this->assertEquals($row['value'], $value);
         $this->assertTrue($row['value'] == $value);
-        if ($row['value']) {
+        if (isset($row['value'])) {
             $this->assertEquals(count($row['value']), count($value));
             if (is_object($row['value'])) {
                 $this->assertEquals($row['value']->type(), $type);
