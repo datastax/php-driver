@@ -40,6 +40,22 @@ class PagingIntegrationTest extends BasicIntegrationTest {
     }
 
     /**
+     * Convert a single column of a collection of rows into an array
+     *
+     * @param Cassandra\Rows
+     * @param string Column name to consolidate
+     *
+     * @return array Array of column values using the provided column name
+     */
+    private static function convertRowsToArray($rows, $columnName) {
+        $values = array();
+        foreach ($rows as $row) {
+            $values []= $row[$columnName];
+        }
+        return $values;
+    }
+
+    /**
      * Generate a random string
      *
      * @param int $length Length of string to generate (DEFAULT: random length
@@ -177,6 +193,96 @@ class PagingIntegrationTest extends BasicIntegrationTest {
         ));
 
         $result = $this->session->execute($statement, $options);
+    }
+
+    /**
+     * Verify next page caching in `Cassandra\Rows`
+     *
+     * @test
+     * @ticket PHP-101
+     */
+    public function testNextPageCaching() {
+        $results = array();
+        $pageSize = 2;
+
+        $options = array("page_size" => $pageSize);
+        $statement = new SimpleStatement(
+            "SELECT * FROM {$this->tableNamePrefix}"
+        );
+
+        // Get first page
+        $rows = $this->session->execute($statement, new ExecutionOptions($options));
+        $this->assertEquals($rows->count(), $pageSize);
+        $values = self::convertRowsToArray($rows, "value");
+
+        // Get next page (verify that it's a different page)
+        $nextRows = $rows->nextPage();
+        $nextValues = self::convertRowsToArray($nextRows, "value");
+        $this->assertEquals($nextRows->count(), $pageSize);
+        $this->assertNotEquals($values, $nextValues);
+
+        // Get next page again (verify that it's the same)
+        $nextRowsAgain = $rows->nextPage();
+        $this->assertEquals($nextRowsAgain->count(), $pageSize);
+        $nextValuesAgain = self::convertRowsToArray($nextRowsAgain, "value");
+        $this->assertEquals($nextValues, $nextValuesAgain);
+
+        // Get next page asynchonously (verify that it's the same)
+        $nextRowsAsync = $rows->nextPageAsync()->get();
+        $this->assertEquals($nextRowsAsync->count(), $pageSize);
+        $nextValuesAsync = self::convertRowsToArray($nextRowsAsync, "value");
+        $this->assertEquals($nextValues, $nextValuesAsync);
+
+        // Get the next page's page (verify that it's a different page)
+        $lastRows = $nextRows->nextPage();
+        $this->assertEquals($lastRows->count(), $pageSize);
+        $lastValues = self::convertRowsToArray($lastRows, "value");
+        $this->assertNotEquals($nextValues, $lastValues);
+    }
+
+    /**
+     * Verify next page asynchronous caching in `Cassandra\Rows`
+     *
+     * @test
+     * @ticket PHP-101
+     */
+    public function testNextPageAsyncCaching() {
+        $results = array();
+        $pageSize = 2;
+
+        $options = array("page_size" => $pageSize);
+        $statement = new SimpleStatement(
+            "SELECT * FROM {$this->tableNamePrefix}"
+        );
+
+        // Get first page
+        $rows = $this->session->execute($statement, new ExecutionOptions($options));
+        $this->assertEquals($rows->count(), $pageSize);
+        $values = self::convertRowsToArray($rows, "value");
+
+        // Get next page asynchronously (verify that it's a different page)
+        $nextRowsAsync = $rows->nextPageAsync()->get();
+        $this->assertEquals($nextRowsAsync->count(), $pageSize);
+        $nextValuesAsync = self::convertRowsToArray($nextRowsAsync, "value");
+        $this->assertNotEquals($values, $nextValuesAsync);
+
+        // Get next page asynchronously again (verify that it's the same)
+        $nextRowsAgainAsync = $rows->nextPageAsync()->get();
+        $this->assertEquals($nextRowsAgainAsync->count(), $pageSize);
+        $nextValuesAgainAsync = self::convertRowsToArray($nextRowsAgainAsync, "value");
+        $this->assertEquals($nextValuesAsync, $nextValuesAgainAsync);
+
+        // Get the next page again synchonously (verify that it's the same)
+        $nextRows = $rows->nextPage();
+        $nextValues = self::convertRowsToArray($nextRows, "value");
+        $this->assertEquals($nextRows->count(), $pageSize);
+        $this->assertEquals($nextValuesAsync, $nextValues);
+
+        // Get the next page's page asynchronously (verify that it's a different page)
+        $lastRowsAsync = $nextRowsAsync->nextPageAsync()->get();
+        $this->assertEquals($lastRowsAsync->count(), $pageSize);
+        $lastValuesAsync = self::convertRowsToArray($lastRowsAsync, "value");
+        $this->assertNotEquals($nextValuesAsync, $lastValuesAsync);
     }
 
     /**
