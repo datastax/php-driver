@@ -131,10 +131,11 @@ PHP_METHOD(DefaultAggregate, initialCondition)
   self = PHP_CASSANDRA_GET_AGGREGATE(getThis());
   if (PHP5TO7_ZVAL_IS_UNDEF(self->initial_condition)) {
     const CassValue *value = cass_aggregate_meta_init_cond(self->meta);
+    const CassDataType *data_type = NULL;
     if (!value) {
       return;
     }
-    const CassDataType *data_type = cass_value_data_type(value);
+    data_type = cass_value_data_type(value);
     if (!data_type) {
       return;
     }
