@@ -271,8 +271,9 @@ PHP_CASSANDRA_BEGIN_OBJECT_TYPE(rows)
   cassandra_ref *statement;
   php5to7_zval session;
   php5to7_zval rows;
-  const CassResult *result;
-  php5to7_zval next_page;
+  php5to7_zval next_rows;
+  cassandra_ref *result;
+  cassandra_ref *next_result;
   php5to7_zval future_next_page;
 PHP_CASSANDRA_END_OBJECT_TYPE(rows)
 
@@ -280,6 +281,7 @@ PHP_CASSANDRA_BEGIN_OBJECT_TYPE(future_rows)
   cassandra_ref *statement;
   php5to7_zval session;
   php5to7_zval rows;
+  cassandra_ref *result;
   CassFuture *future;
 PHP_CASSANDRA_END_OBJECT_TYPE(future_rows)
 
