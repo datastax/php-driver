@@ -42,7 +42,7 @@
             <div class="col-md-8">
               <form id="search" class="form-search dropdown visible-lg-block" ng-controller="search" ng-class="{open: hasResults}" role="search" ng-submit="submit()" data-spy="affix" data-offset-top="130">
                 <div class="form-group has-feedback">
-                  <input type="search" class="form-control input-sm mousetrap" placeholder="Search..." ng-model="q" ng-change="search('v1.1.0')" ng-disabled="!searchReady" disabled data-hotkey="{down: moveDown, up: moveUp, esc: reset}" data-search>
+                  <input type="search" class="form-control input-sm mousetrap" placeholder="Search..." ng-model="q" ng-change="search('local')" ng-disabled="!searchReady" disabled data-hotkey="{down: moveDown, up: moveUp, esc: reset}" data-search>
                 </div>
                 <ul class="dropdown-menu search-results" role="menu">
                   <li ng-repeat="result in results" ng-class="{'bg-warning': $index == current}"><a ng-href="{{basePath}}{{result.path}}"><span ng-bind-html="summary(result)"></span></a></li>
@@ -59,26 +59,6 @@
         <div class="col-md-12">
           <nav id="crumbs" data-spy="affix" data-offset-top="130">
             <ol class="breadcrumb">
-              
-              <li>
-                <div class="btn-group">
-                  <button id="current-version" class="btn btn-default btn-sm dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    v1.1.0
-                    <span class="caret"></span>
-                  </button>
-                  <ul class="dropdown-menu" role="menu" aria-labelledby="current-version">
-                  
-                    <li class="disabled"><a href="./">v1.1.0</a></li>
-                  
-                    <li><a href="../../../v1.0.1/api/Cassandra/Exception/">v1.0.1</a></li>
-                  
-                    <li><a href="../../../v1.0.0/api/Cassandra/Exception/">v1.0.0</a></li>
-                  
-                    <li><a href="../../../v1.0.0-rc/api/Cassandra/Exception/">v1.0.0-rc</a></li>
-                  
-                  </ul>
-                </div>
-              </li>
               
               
               
@@ -152,6 +132,13 @@
   
   
   <li>
+    <a href="../interface.Aggregate/">Aggregate <small>interface</small></a>
+  </li>
+  
+  
+  
+  
+  <li>
     <a href="../class.BatchStatement/">BatchStatement <small>class</small></a>
   </li>
   
@@ -173,14 +160,14 @@
   
   
   <li>
-    <a href="../interface.Cluster/">Cluster <small>interface</small></a>
+    <a href="../Cluster/">Cluster <small>namespace</small></a>
   </li>
   
   
   
   
   <li>
-    <a href="../Cluster/">Cluster <small>namespace</small></a>
+    <a href="../interface.Cluster/">Cluster <small>interface</small></a>
   </li>
   
   
@@ -201,7 +188,21 @@
   
   
   <li>
+    <a href="../class.Date/">Date <small>class</small></a>
+  </li>
+  
+  
+  
+  
+  <li>
     <a href="../class.Decimal/">Decimal <small>class</small></a>
+  </li>
+  
+  
+  
+  
+  <li>
+    <a href="../class.DefaultAggregate/">DefaultAggregate <small>class</small></a>
   </li>
   
   
@@ -222,7 +223,21 @@
   
   
   <li>
+    <a href="../class.DefaultIndex/">DefaultIndex <small>class</small></a>
+  </li>
+  
+  
+  
+  
+  <li>
     <a href="../class.DefaultKeyspace/">DefaultKeyspace <small>class</small></a>
+  </li>
+  
+  
+  
+  
+  <li>
+    <a href="../class.DefaultMaterializedView/">DefaultMaterializedView <small>class</small></a>
   </li>
   
   
@@ -450,6 +465,13 @@
   
   
   <li>
+    <a href="../interface.Function/">Function <small>interface</small></a>
+  </li>
+  
+  
+  
+  
+  <li>
     <a href="../interface.Future/">Future <small>interface</small></a>
   </li>
   
@@ -499,6 +521,13 @@
   
   
   <li>
+    <a href="../interface.Index/">Index <small>interface</small></a>
+  </li>
+  
+  
+  
+  
+  <li>
     <a href="../class.Inet/">Inet <small>class</small></a>
   </li>
   
@@ -520,6 +549,13 @@
   
   
   <li>
+    <a href="../interface.MaterializedView/">MaterializedView <small>interface</small></a>
+  </li>
+  
+  
+  
+  
+  <li>
     <a href="../interface.Numeric/">Numeric <small>interface</small></a>
   </li>
   
@@ -534,14 +570,14 @@
   
   
   <li>
-    <a href="../RetryPolicy/">RetryPolicy <small>namespace</small></a>
+    <a href="../interface.RetryPolicy/">RetryPolicy <small>interface</small></a>
   </li>
   
   
   
   
   <li>
-    <a href="../interface.RetryPolicy/">RetryPolicy <small>interface</small></a>
+    <a href="../RetryPolicy/">RetryPolicy <small>namespace</small></a>
   </li>
   
   
@@ -597,6 +633,13 @@
   
   
   <li>
+    <a href="../class.Smallint/">Smallint <small>class</small></a>
+  </li>
+  
+  
+  
+  
+  <li>
     <a href="../interface.Statement/">Statement <small>interface</small></a>
   </li>
   
@@ -611,14 +654,14 @@
   
   
   <li>
-    <a href="../class.Timestamp/">Timestamp <small>class</small></a>
+    <a href="../class.Time/">Time <small>class</small></a>
   </li>
   
   
   
   
   <li>
-    <a href="../TimestampGenerator/">TimestampGenerator <small>namespace</small></a>
+    <a href="../class.Timestamp/">Timestamp <small>class</small></a>
   </li>
   
   
@@ -632,7 +675,21 @@
   
   
   <li>
+    <a href="../TimestampGenerator/">TimestampGenerator <small>namespace</small></a>
+  </li>
+  
+  
+  
+  
+  <li>
     <a href="../class.Timeuuid/">Timeuuid <small>class</small></a>
+  </li>
+  
+  
+  
+  
+  <li>
+    <a href="../class.Tinyint/">Tinyint <small>class</small></a>
   </li>
   
   
@@ -646,14 +703,14 @@
   
   
   <li>
-    <a href="../Type/">Type <small>namespace</small></a>
+    <a href="../class.Type/">Type <small>class</small></a>
   </li>
   
   
   
   
   <li>
-    <a href="../interface.Type/">Type <small>interface</small></a>
+    <a href="../Type/">Type <small>namespace</small></a>
   </li>
   
   
@@ -694,6 +751,13 @@
   
 </ul>
 
+  </li>
+  
+  
+  
+  
+  <li>
+    <a href="../../class.DefaultFunction/">DefaultFunction <small>class</small></a>
   </li>
   
   

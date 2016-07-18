@@ -42,7 +42,7 @@
             <div class="col-md-8">
               <form id="search" class="form-search dropdown visible-lg-block" ng-controller="search" ng-class="{open: hasResults}" role="search" ng-submit="submit()" data-spy="affix" data-offset-top="130">
                 <div class="form-group has-feedback">
-                  <input type="search" class="form-control input-sm mousetrap" placeholder="Search..." ng-model="q" ng-change="search('v1.1.0')" ng-disabled="!searchReady" disabled data-hotkey="{down: moveDown, up: moveUp, esc: reset}" data-search>
+                  <input type="search" class="form-control input-sm mousetrap" placeholder="Search..." ng-model="q" ng-change="search('local')" ng-disabled="!searchReady" disabled data-hotkey="{down: moveDown, up: moveUp, esc: reset}" data-search>
                 </div>
                 <ul class="dropdown-menu search-results" role="menu">
                   <li ng-repeat="result in results" ng-class="{'bg-warning': $index == current}"><a ng-href="{{basePath}}{{result.path}}"><span ng-bind-html="summary(result)"></span></a></li>
@@ -59,26 +59,6 @@
         <div class="col-md-12">
           <nav id="crumbs" data-spy="affix" data-offset-top="130">
             <ol class="breadcrumb">
-              
-              <li>
-                <div class="btn-group">
-                  <button id="current-version" class="btn btn-default btn-sm dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    v1.1.0
-                    <span class="caret"></span>
-                  </button>
-                  <ul class="dropdown-menu" role="menu" aria-labelledby="current-version">
-                  
-                    <li class="disabled"><a href="./">v1.1.0</a></li>
-                  
-                    <li><a href="../../v1.0.1/">v1.0.1</a></li>
-                  
-                    <li><a href="../../v1.0.0/">v1.0.0</a></li>
-                  
-                    <li><a href="../../v1.0.0-rc/">v1.0.0-rc</a></li>
-                  
-                  </ul>
-                </div>
-              </li>
               
               
               
@@ -243,7 +223,28 @@
   
   
   <li>
+    <a href="../secondary_index_metadata/">Secondary Index Metadata <small>feature</small></a>
+  </li>
+  
+  
+  
+  
+  <li>
+    <a href="../function_and_aggregate_metadata/">User-defined Function (UDF) and Aggregate Metadata (UDA) <small>feature</small></a>
+  </li>
+  
+  
+  
+  
+  <li>
     <a href="../retry_polices/">Retry Policies <small>feature</small></a>
+  </li>
+  
+  
+  
+  
+  <li>
+    <a href="../materialized_view_metadata/">Materialized View Metadata <small>feature</small></a>
   </li>
   
   
@@ -400,6 +401,7 @@ Ip Addresses: Cassandra\Set::__set_state(array(
 </code></pre>
 </dd>
 </dl>
+<div class="pull-right"><span class="label label-primary">since cassadra v2.1</span></div>
 <h2 id="using-cassandra-nested-collections" class="target">Using Cassandra nested collections<a class="anchor" href="#using-cassandra-nested-collections" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
 </h2>
 <dl class="steps">

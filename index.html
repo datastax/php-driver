@@ -42,7 +42,7 @@
             <div class="col-md-8">
               <form id="search" class="form-search dropdown visible-lg-block" ng-controller="search" ng-class="{open: hasResults}" role="search" ng-submit="submit()" data-spy="affix" data-offset-top="130">
                 <div class="form-group has-feedback">
-                  <input type="search" class="form-control input-sm mousetrap" placeholder="Search..." ng-model="q" ng-change="search('v1.1.0')" ng-disabled="!searchReady" disabled data-hotkey="{down: moveDown, up: moveUp, esc: reset}" data-search>
+                  <input type="search" class="form-control input-sm mousetrap" placeholder="Search..." ng-model="q" ng-change="search('local')" ng-disabled="!searchReady" disabled data-hotkey="{down: moveDown, up: moveUp, esc: reset}" data-search>
                 </div>
                 <ul class="dropdown-menu search-results" role="menu">
                   <li ng-repeat="result in results" ng-class="{'bg-warning': $index == current}"><a ng-href="{{basePath}}{{result.path}}"><span ng-bind-html="summary(result)"></span></a></li>
@@ -60,26 +60,6 @@
           <nav id="crumbs" data-spy="affix" data-offset-top="130">
             <ol class="breadcrumb">
               
-              <li>
-                <div class="btn-group">
-                  <button id="current-version" class="btn btn-default btn-sm dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    v1.1.0
-                    <span class="caret"></span>
-                  </button>
-                  <ul class="dropdown-menu" role="menu" aria-labelledby="current-version">
-                  
-                    <li class="disabled"><a href="./">v1.1.0</a></li>
-                  
-                    <li><a href="v1.0.1/">v1.0.1</a></li>
-                  
-                    <li><a href="v1.0.0/">v1.0.0</a></li>
-                  
-                    <li><a href="v1.0.0-rc/">v1.0.0-rc</a></li>
-                  
-                  </ul>
-                </div>
-              </li>
-              
               
               
               
@@ -91,7 +71,7 @@
                   </button>
                   <ul class="dropdown-menu nav nav-pills nav-stacked">
                     <li><a href="#data-stax-php-driver-for-apache-cassandra">Page Top <span class="glyphicon glyphicon-chevron-up" aria-hidden="true"></span></a></li>
-<li><a href="#what-s-new-in-v1-1-0">What’s new in v1.1.0:
+<li><a href="#what-s-new-in-v1-2-0">What’s new in v1.2.0:
 </a></li>
 <li><a href="#feedback-requested">Feedback Requested
 </a></li>
@@ -152,14 +132,15 @@
 <h1 id="data-stax-php-driver-for-apache-cassandra" class="target">DataStax PHP Driver for Apache Cassandra<a class="anchor" href="#data-stax-php-driver-for-apache-cassandra" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
 </h1>
 
-<p><a href="https://travis-ci.org/datastax/php-driver"><img src="https://travis-ci.org/datastax/php-driver.svg" alt="Build Status"></a></p>
+<p><a href="https://travis-ci.org/datastax/php-driver"><img src="https://travis-ci.org/datastax/php-driver.svg" alt="Build Status: Linux"></a>
+<a href="https://ci.appveyor.com/project/DataStax/php-driver"><img src="https://ci.appveyor.com/api/projects/status/8vrxpkfl4xm2f3nm?svg=true" alt="Build Status: Windows"></a></p>
 
 <p>A modern, <a href="features">feature-rich</a> and highly tunable PHP client library for <a href="http://cassandra.apache.org/">Apache Cassandra</a> (1.2+) and <a href="http://www.datastax.com/products/products-index">DataStax Enterprise</a> (3.1+) using exclusively Cassandra’s binary protocol and Cassandra Query Language v3.</p>
 
 <p>This is a wrapper around <a href="http://datastax.github.io/cpp-driver/">the DataStax C/C++ Driver for Apache Cassandra and DataStax Enterprise</a>.</p>
 
 <ul>
-<li>Binaries: <a href="http://downloads.datastax.com/php-driver/1.1.0/">http://downloads.datastax.com/php-driver/1.1.0</a>
+<li>Binaries: <a href="http://downloads.datastax.com/php-driver/1.2.0/">http://downloads.datastax.com/php-driver/1.2.0</a>
 </li>
 <li>Docs: <a href="./">http://datastax.github.io/php-driver/</a>
 </li>
@@ -175,18 +156,17 @@
 </li>
 </ul>
 
-<h2 id="what-s-new-in-v1-1-0" class="target">What’s new in v1.1.0:<a class="anchor" href="#what-s-new-in-v1-1-0" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+<h2 id="what-s-new-in-v1-2-0" class="target">What’s new in v1.2.0:<a class="anchor" href="#what-s-new-in-v1-2-0" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
 </h2>
 
 <ul>
-<li>Support for PHP 7</li>
-<li><a href="features/user_defined_types/">User defined types</a></li>
-<li><a href="features/tuples/">Tuples</a></li>
-<li><a href="features/collections/#using-cassandra-nested-collections">Nested collection</a></li>
-<li><a href="features/client_side_timestamps/">Client-side timestamps</a></li>
-<li><a href="features/retry_polices/">Retry policies</a></li>
-<li><a href="features/simple_statements/#simple-statements-also-support-named-arguments">Named parameters</a></li>
-<li><a href="features/result_paging/#use-paging-state-token-to-get-next-result">Raw paging token access</a></li>
+<li>Full support for Apache Cassandra 2.2 and 3.0+</li>
+<li>Support for <a href="features/datatypes/#using-cassandra-the-tinyint-and-smallint-types"><code>tinyint</code> and <code>smallint</code></a>
+</li>
+<li>Support for <a href="features/datatypes/#using-cassandra-date-type"><code>date</code></a> and <a href="http://datastax.github.io/php-driver/features/http://localhost:8000/features/datatypes/#using-cassandra-time-type"><code>time</code></a>
+</li>
+<li>Support for <a href="features/function_and_aggregate_metadata/">user-defined function and aggregate</a> metadata</li>
+<li>Support for <a href="features/secondary_index_metadata/">secondary index</a> and <a href="features/function_and_aggregate_metadata/">materialize view</a> metadata</li>
 </ul>
 
 <h2 id="feedback-requested" class="target">Feedback Requested<a class="anchor" href="#feedback-requested" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
@@ -224,13 +204,11 @@
 Cassandra’s native protocol. The current version works with:</p>
 
 <ul>
-<li>Apache Cassandra versions 1.2, 2.0 and partially 2.1</li>
+<li>Apache Cassandra versions 1.2, 2.0, 2.1, 2.2 and 3.0+</li>
 <li>DataStax Enterprise 3.1, 3.2, 4.0 and 4.5</li>
 <li>PHP 5.5+ and PHP 7.0+</li>
 <li>Compilers: GCC 4.1.2+, Clang 3.4+, and MSVC 2010/2012/2013/2015</li>
 </ul>
-
-<p><strong>NOTE</strong>: Apache Cassandra 2.1 support is limited to the Cassandra 2.0 API (native protocol v2), e.g. no user-defined types.</p>
 
 <h2 id="contributing" class="target">Contributing<a class="anchor" href="#contributing" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
 </h2>
@@ -264,7 +242,7 @@ vagrant ssh
 <h2 id="copyright" class="target">Copyright<a class="anchor" href="#copyright" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
 </h2>
 
-<p>Copyright 2015 DataStax, Inc.</p>
+<p>Copyright 2015-2016 DataStax, Inc.</p>
 
 <p>Licensed under the Apache License, Version 2.0 (the “License”); you may not use this file except in compliance with the License. You may obtain a copy of the License at</p>
 

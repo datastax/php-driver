@@ -42,7 +42,7 @@
             <div class="col-md-8">
               <form id="search" class="form-search dropdown visible-lg-block" ng-controller="search" ng-class="{open: hasResults}" role="search" ng-submit="submit()" data-spy="affix" data-offset-top="130">
                 <div class="form-group has-feedback">
-                  <input type="search" class="form-control input-sm mousetrap" placeholder="Search..." ng-model="q" ng-change="search('v1.1.0')" ng-disabled="!searchReady" disabled data-hotkey="{down: moveDown, up: moveUp, esc: reset}" data-search>
+                  <input type="search" class="form-control input-sm mousetrap" placeholder="Search..." ng-model="q" ng-change="search('local')" ng-disabled="!searchReady" disabled data-hotkey="{down: moveDown, up: moveUp, esc: reset}" data-search>
                 </div>
                 <ul class="dropdown-menu search-results" role="menu">
                   <li ng-repeat="result in results" ng-class="{'bg-warning': $index == current}"><a ng-href="{{basePath}}{{result.path}}"><span ng-bind-html="summary(result)"></span></a></li>
@@ -59,26 +59,6 @@
         <div class="col-md-12">
           <nav id="crumbs" data-spy="affix" data-offset-top="130">
             <ol class="breadcrumb">
-              
-              <li>
-                <div class="btn-group">
-                  <button id="current-version" class="btn btn-default btn-sm dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    v1.1.0
-                    <span class="caret"></span>
-                  </button>
-                  <ul class="dropdown-menu" role="menu" aria-labelledby="current-version">
-                  
-                    <li class="disabled"><a href="./">v1.1.0</a></li>
-                  
-                    <li><a href="../../../../v1.0.1/api/Cassandra/Cluster/class.Builder/">v1.0.1</a></li>
-                  
-                    <li><a href="../../../../v1.0.0/api/Cassandra/Cluster/class.Builder/">v1.0.0</a></li>
-                  
-                    <li><a href="../../../../v1.0.0-rc/api/Cassandra/Cluster/class.Builder/">v1.0.0-rc</a></li>
-                  
-                  </ul>
-                </div>
-              </li>
               
               
               
@@ -160,6 +140,8 @@
 </a></li>
 <li><a href="#method-withTCPKeepalive">withTCPKeepalive
 </a></li>
+<li><a href="#method-withRetryPolicy">withRetryPolicy
+</a></li>
 <li><a href="#method-withTimestampGenerator">withTimestampGenerator
 </a></li>
 <li><a href="#method-withSchemaMetadata">withSchemaMetadata
@@ -207,6 +189,13 @@
   
   
   <li>
+    <a href="../../interface.Aggregate/">Aggregate <small>interface</small></a>
+  </li>
+  
+  
+  
+  
+  <li>
     <a href="../../class.BatchStatement/">BatchStatement <small>class</small></a>
   </li>
   
@@ -222,13 +211,6 @@
   
   <li>
     <a href="../../class.Blob/">Blob <small>class</small></a>
-  </li>
-  
-  
-  
-  
-  <li>
-    <a href="../../interface.Cluster/">Cluster <small>interface</small></a>
   </li>
   
   
@@ -254,6 +236,13 @@
   
   
   <li>
+    <a href="../../interface.Cluster/">Cluster <small>interface</small></a>
+  </li>
+  
+  
+  
+  
+  <li>
     <a href="../../class.Collection/">Collection <small>class</small></a>
   </li>
   
@@ -268,7 +257,21 @@
   
   
   <li>
+    <a href="../../class.Date/">Date <small>class</small></a>
+  </li>
+  
+  
+  
+  
+  <li>
     <a href="../../class.Decimal/">Decimal <small>class</small></a>
+  </li>
+  
+  
+  
+  
+  <li>
+    <a href="../../class.DefaultAggregate/">DefaultAggregate <small>class</small></a>
   </li>
   
   
@@ -289,7 +292,21 @@
   
   
   <li>
+    <a href="../../class.DefaultIndex/">DefaultIndex <small>class</small></a>
+  </li>
+  
+  
+  
+  
+  <li>
     <a href="../../class.DefaultKeyspace/">DefaultKeyspace <small>class</small></a>
+  </li>
+  
+  
+  
+  
+  <li>
+    <a href="../../class.DefaultMaterializedView/">DefaultMaterializedView <small>class</small></a>
   </li>
   
   
@@ -345,6 +362,13 @@
   
   
   <li>
+    <a href="../../interface.Function/">Function <small>interface</small></a>
+  </li>
+  
+  
+  
+  
+  <li>
     <a href="../../interface.Future/">Future <small>interface</small></a>
   </li>
   
@@ -394,6 +418,13 @@
   
   
   <li>
+    <a href="../../interface.Index/">Index <small>interface</small></a>
+  </li>
+  
+  
+  
+  
+  <li>
     <a href="../../class.Inet/">Inet <small>class</small></a>
   </li>
   
@@ -415,6 +446,13 @@
   
   
   <li>
+    <a href="../../interface.MaterializedView/">MaterializedView <small>interface</small></a>
+  </li>
+  
+  
+  
+  
+  <li>
     <a href="../../interface.Numeric/">Numeric <small>interface</small></a>
   </li>
   
@@ -429,14 +467,14 @@
   
   
   <li>
-    <a href="../../RetryPolicy/">RetryPolicy <small>namespace</small></a>
+    <a href="../../interface.RetryPolicy/">RetryPolicy <small>interface</small></a>
   </li>
   
   
   
   
   <li>
-    <a href="../../interface.RetryPolicy/">RetryPolicy <small>interface</small></a>
+    <a href="../../RetryPolicy/">RetryPolicy <small>namespace</small></a>
   </li>
   
   
@@ -492,6 +530,13 @@
   
   
   <li>
+    <a href="../../class.Smallint/">Smallint <small>class</small></a>
+  </li>
+  
+  
+  
+  
+  <li>
     <a href="../../interface.Statement/">Statement <small>interface</small></a>
   </li>
   
@@ -506,14 +551,14 @@
   
   
   <li>
-    <a href="../../class.Timestamp/">Timestamp <small>class</small></a>
+    <a href="../../class.Time/">Time <small>class</small></a>
   </li>
   
   
   
   
   <li>
-    <a href="../../TimestampGenerator/">TimestampGenerator <small>namespace</small></a>
+    <a href="../../class.Timestamp/">Timestamp <small>class</small></a>
   </li>
   
   
@@ -527,7 +572,21 @@
   
   
   <li>
+    <a href="../../TimestampGenerator/">TimestampGenerator <small>namespace</small></a>
+  </li>
+  
+  
+  
+  
+  <li>
     <a href="../../class.Timeuuid/">Timeuuid <small>class</small></a>
+  </li>
+  
+  
+  
+  
+  <li>
+    <a href="../../class.Tinyint/">Tinyint <small>class</small></a>
   </li>
   
   
@@ -541,14 +600,14 @@
   
   
   <li>
-    <a href="../../Type/">Type <small>namespace</small></a>
+    <a href="../../class.Type/">Type <small>class</small></a>
   </li>
   
   
   
   
   <li>
-    <a href="../../interface.Type/">Type <small>interface</small></a>
+    <a href="../../Type/">Type <small>namespace</small></a>
   </li>
   
   
@@ -589,6 +648,13 @@
   
 </ul>
 
+  </li>
+  
+  
+  
+  
+  <li>
+    <a href="../../../class.DefaultFunction/">DefaultFunction <small>class</small></a>
   </li>
   
   
@@ -1207,10 +1273,9 @@
     <div class="panel-body method-body">
       <p>Force the driver to use a specific binary protocol version.</p>
 
-<ul>
-<li>Apache <code><a href="../../../class.Cassandra/">Cassandra</a></code> 1.2+ supports protocol version 1</li>
-<li>Apache <code><a href="../../../class.Cassandra/">Cassandra</a></code> 2.0+ supports protocol version 2</li>
-</ul>
+<p>Apache <code><a href="../../../class.Cassandra/">Cassandra</a></code> 1.2+ supports protocol version 1 Apache <code><a href="../../../class.Cassandra/">Cassandra</a></code> 2.0+ supports protocol version 2 Apache <code><a href="../../../class.Cassandra/">Cassandra</a></code> 2.1+ supports protocol version 3 Apache <code><a href="../../../class.Cassandra/">Cassandra</a></code> 2.2+ supports protocol version 4</p>
+
+<p>NOTE: Apache <code><a href="../../../class.Cassandra/">Cassandra</a></code> 3.x supports protocol version 3 and 4 only</p>
 
       <dl class="tags">
 <dt class="tag-title">Parameters:</dt>
@@ -1224,7 +1289,7 @@
 <td><var>$version</var></td>
 <td><code>int</code></td>
 <td>
-<p>the actual protocol version, only <code>1</code> or <code>2</code> are supported</p>
+<p>the actual protocol version, only <code>1</code>, <code>2</code>, <code>3</code>, or <code>4</code> are supported</p>
 </td>
 </tr></tbody>
 </table></dd>
@@ -1497,6 +1562,46 @@
   </div>
   <div class="panel panel-default member-definition">
     <div class="panel-heading method-heading">
+      <code><a href="./">Cluster\Builder</a></code> <h3 id="method-withRetryPolicy" class="target">withRetryPolicy<a class="anchor" href="#method-withRetryPolicy" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+</h3> <big>(</big> <code><a href="../../interface.RetryPolicy/">Cassandra\RetryPolicy</a></code> $policy <big>)</big>
+    </div>
+    <div class="panel-body method-body">
+      <p>Configures the retry policy.</p>
+
+      <dl class="tags">
+<dt class="tag-title">Parameters:</dt>
+<dd class="tag-content"><table class="table table-striped param">
+<thead><tr>
+<th class="name">Name</th>
+<th class="type">Type</th>
+<th class="details">Details</th>
+</tr></thead>
+<tbody><tr>
+<td><var>$policy</var></td>
+<td><code><a href="../../interface.RetryPolicy/">Cassandra\RetryPolicy</a></code></td>
+<td>
+<p>the retry policy to use.</p>
+</td>
+</tr></tbody>
+</table></dd>
+<dt class="tag-title">Returns:</dt>
+<dd class="tag-content"><table class="table table-striped return">
+<thead><tr>
+<th class="type">Type</th>
+<th class="details">Details</th>
+</tr></thead>
+<tbody><tr>
+<td><code><a href="./">Cluster\Builder</a></code></td>
+<td>
+<p>self</p>
+</td>
+</tr></tbody>
+</table></dd>
+</dl>
+    </div>
+  </div>
+  <div class="panel panel-default member-definition">
+    <div class="panel-heading method-heading">
       <code><a href="./">Cluster\Builder</a></code> <h3 id="method-withTimestampGenerator" class="target">withTimestampGenerator<a class="anchor" href="#method-withTimestampGenerator" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
 </h3> <big>(</big> <code><a href="../../interface.TimestampGenerator/">Cassandra\TimestampGenerator</a></code> $generator <big>)</big>
     </div>
@@ -1538,7 +1643,7 @@
   <div class="panel panel-default member-definition">
     <div class="panel-heading method-heading">
       <code><a href="./">Cluster\Builder</a></code> <h3 id="method-withSchemaMetadata" class="target">withSchemaMetadata<a class="anchor" href="#method-withSchemaMetadata" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
-</h3> <big>(</big>  $enable <big>=</big> <var>true</var>, <code>bool</code> $enabled <big>)</big>
+</h3> <big>(</big> <code>bool</code> $enable <big>=</big> <var>true</var> <big>)</big>
     </div>
     <div class="panel-body method-body">
       <p>Enables/disables <code><a href="../../interface.Schema/">Cassandra\Schema</a></code> Metadata.</p>
@@ -1553,20 +1658,13 @@
 <th class="type">Type</th>
 <th class="details">Details</th>
 </tr></thead>
-<tbody>
-<tr>
+<tbody><tr>
 <td><var>$enable</var></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td><var>$enabled</var></td>
 <td><code>bool</code></td>
 <td>
 <p>whether the driver fetches and maintains schema metadata.</p>
 </td>
-</tr>
-</tbody>
+</tr></tbody>
 </table></dd>
 <dt class="tag-title">Returns:</dt>
 <dd class="tag-content"><table class="table table-striped return">

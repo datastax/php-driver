@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <meta name="description" content="DataStax PHP Driver for Apache Cassandra">
+    <meta name="author" content="DataStax">
+
+    <title>DataStax PHP Driver - User-defined Function (UDF) and Aggregate Metadata (UDA)</title>
+
+    <link rel="icon" href="../../favicon.ico">
+    <link rel="apple-touch-icon" href="../../favicon.png">
+    <link href="../../css/style.css" rel="stylesheet">
+    <link href="../../css/pygments.css" rel="stylesheet">
+    <link href="../../css/hotkeys.css" rel="stylesheet">
+
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  </head>
+  <body ng-app="docs" data-spy="scroll" data-target="#table-of-contents" data-offset="69">
+    <header class="container-fluid navbar">
+      <div class="row">
+        <div class="col-sm-4">
+          <a class="navbar-brand" href="../../"><img alt="Brand" src="../../img/logo.png">DataStax PHP Driver</a>
+        </div>
+        <div class="col-md-4 col-md-offset-4">
+          <div class="row">
+            <div class="col-md-12">
+              <ul class="list-inline" role="nav">
+                <li><a href="https://academy.datastax.com/" class="navbar-link">DataStax Academy</a></li>
+                <li><a href="http://www.datastax.com/dev/blog" class="navbar-link">Tech Blog</a></li>
+                <li><a href="http://www.datastax.com/what-we-offer/products-services/support" class="navbar-link">Support</a></li>
+              </ul>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-8">
+              <form id="search" class="form-search dropdown visible-lg-block" ng-controller="search" ng-class="{open: hasResults}" role="search" ng-submit="submit()" data-spy="affix" data-offset-top="130">
+                <div class="form-group has-feedback">
+                  <input type="search" class="form-control input-sm mousetrap" placeholder="Search..." ng-model="q" ng-change="search('local')" ng-disabled="!searchReady" disabled data-hotkey="{down: moveDown, up: moveUp, esc: reset}" data-search>
+                </div>
+                <ul class="dropdown-menu search-results" role="menu">
+                  <li ng-repeat="result in results" ng-class="{'bg-warning': $index == current}"><a ng-href="{{basePath}}{{result.path}}"><span ng-bind-html="summary(result)"></span></a></li>
+                </ul>
+              </form>
+            </div>
+            <div class="col-md-4">
+              <a href="http://www.datastax.com/download" class="btn btn-primary btn-sm">Download</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row crumbs-wrapper">
+        <div class="col-md-12">
+          <nav id="crumbs" data-spy="affix" data-offset-top="130">
+            <ol class="breadcrumb">
+              
+              
+              
+              
+              <li><a href="../../">Home</a></li>
+              
+              
+              
+              
+              
+              <li><a href="../">Features</a></li>
+              
+              
+              
+              
+              
+              <li class="active">User-defined Function (UDF) and Aggregate Metadata (UDA)</li>
+              <li class="dropdown" id="table-of-contents">
+                <div class="btn-group">
+                  <button id="current-section" type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown">
+                    Jump to&#8230; <span class="caret"></span><span class="sr-only">Table of Contents</span>
+                  </button>
+                  <ul class="dropdown-menu nav nav-pills nav-stacked">
+                    <li><a href="#user-defined-function-udf-and-aggregate-metadata-uda">Page Top <span class="glyphicon glyphicon-chevron-up" aria-hidden="true"></span></a></li>
+<li><a href="#background">Background
+</a></li>
+<li><a href="#getting-a-function-s-metadata">Getting a function&#8217;s metadata
+</a></li>
+<li><a href="#getting-an-aggregates-s-metadata">Getting an aggregates&#8217;s metadata
+</a></li>
+                  </ul>
+                </div>
+              </li>
+              
+              
+              
+            </ol>
+          </nav>
+        </div>
+      </div>
+    </header>
+
+    <div class="container-fluid" id="content">
+      <div class="row">
+        <div class="col-md-3">
+          <div id="navigation" class="side-nav" role="tablist" aria-multiselectable="true">
+            <h3>Contents</h3>
+            <ul class="nav nav-pills nav-stacked">
+  
+  
+  
+  <li>
+    <a href="../../api/">API docs <small>index</small></a>
+  </li>
+  
+  
+  
+  
+  <li class="active">
+    <a href="../">Features <small>page</small></a>
+    <ul class="nav nav-pills nav-stacked">
+  
+  
+  
+  <li>
+    <a href="../datatypes/">Datatypes <small>feature</small></a>
+  </li>
+  
+  
+  
+  
+  <li>
+    <a href="../consistency_level/">Consistency Level <small>feature</small></a>
+  </li>
+  
+  
+  
+  
+  <li>
+    <a href="../client_side_timestamps/">Client-side timestamps <small>feature</small></a>
+  </li>
+  
+  
+  
+  
+  <li>
+    <a href="../simple_statements/">Simple Statements <small>feature</small></a>
+  </li>
+  
+  
+  
+  
+  <li>
+    <a href="../prepared_statements/">Prepared Statements <small>feature</small></a>
+  </li>
+  
+  
+  
+  
+  <li>
+    <a href="../batch_statements/">Batch statements <small>feature</small></a>
+  </li>
+  
+  
+  
+  
+  <li>
+    <a href="../logging/">Logging <small>feature</small></a>
+  </li>
+  
+  
+  
+  
+  <li>
+    <a href="../result_paging/">Result paging <small>feature</small></a>
+  </li>
+  
+  
+  
+  
+  <li>
+    <a href="../schema_metadata/">Schema Metadata <small>feature</small></a>
+  </li>
+  
+  
+  
+  
+  <li>
+    <a href="../sessions/">Sessions <small>page</small></a>
+  </li>
+  
+  
+  
+  
+  <li>
+    <a href="../ssl_encryption/">SSL encryption <small>feature</small></a>
+  </li>
+  
+  
+  
+  
+  <li>
+    <a href="../user_defined_types/">User defined types <small>feature</small></a>
+  </li>
+  
+  
+  
+  
+  <li>
+    <a href="../tuples/">Tuples <small>feature</small></a>
+  </li>
+  
+  
+  
+  
+  <li>
+    <a href="../collections/">Collections <small>feature</small></a>
+  </li>
+  
+  
+  
+  
+  <li>
+    <a href="../secondary_index_metadata/">Secondary Index Metadata <small>feature</small></a>
+  </li>
+  
+  
+  
+  
+  <li class="active">
+    <a href="./" class="current">User-defined Function (UDF) and Aggregate Metadata (UDA) <small>feature</small></a>
+    
+  </li>
+  
+  
+  
+  
+  <li>
+    <a href="../retry_polices/">Retry Policies <small>feature</small></a>
+  </li>
+  
+  
+  
+  
+  <li>
+    <a href="../materialized_view_metadata/">Materialized View Metadata <small>feature</small></a>
+  </li>
+  
+  
+</ul>
+
+  </li>
+  
+  
+</ul>
+
+          </div>
+        </div>
+        <div class="col-md-9 content">
+          
+<div class="feature-section">
+<div class="pull-right"><span class="label label-primary">since cassadra v2.2</span></div>
+<h1 id="user-defined-function-udf-and-aggregate-metadata-uda" class="target">User-defined Function (UDF) and Aggregate Metadata (UDA)<a class="anchor" href="#user-defined-function-udf-and-aggregate-metadata-uda" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+</h1>
+<p>PHP Driver exposes the Cassandra Schema Metadata for UDFs and UDAs.</p>
+<h2 id="background" class="target">Background<a class="anchor" href="#background" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+</h2>
+<dl class="steps">
+<dt>Given </dt>
+<dd>a running cassandra cluster</dd>
+<dt>And </dt>
+<dd>the following schema:<pre class="highlight"><code><span class="k">CREATE</span> <span class="k">KEYSPACE</span> <span class="n">simplex</span> <span class="k">WITH</span> <span class="n">replication</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="s1">'class'</span><span class="p">:</span> <span class="s1">'SimpleStrategy'</span><span class="p">,</span>
+  <span class="s1">'replication_factor'</span><span class="p">:</span> <span class="mi">1</span>
+<span class="p">}</span> <span class="k">AND</span> <span class="n">DURABLE_WRITES</span> <span class="o">=</span> <span class="k">false</span><span class="p">;</span>
+<span class="k">USE</span> <span class="n">simplex</span><span class="p">;</span>
+<span class="k">CREATE</span> <span class="n">OR</span> <span class="n">REPLACE</span> <span class="n">FUNCTION</span> <span class="n">fLog</span> <span class="p">(</span><span class="n">input</span> <span class="k">double</span><span class="p">)</span> <span class="n">CALLED</span> <span class="k">ON</span> <span class="k">NULL</span> <span class="n">INPUT</span> <span class="n">RETURNS</span> <span class="k">double</span> <span class="n">LANGUAGE</span> <span class="n">java</span> <span class="k">AS</span> <span class="s1">'return Double.valueOf(Math.log(input.doubleValue()));'</span><span class="p">;</span>
+<span class="k">CREATE</span> <span class="n">OR</span> <span class="n">REPLACE</span> <span class="n">FUNCTION</span> <span class="n">avgState</span> <span class="p">(</span> <span class="n">state</span> <span class="n">tuple</span><span class="o">&lt;</span><span class="k">int</span><span class="p">,</span><span class="k">bigint</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">val</span> <span class="k">int</span> <span class="p">)</span> <span class="n">CALLED</span> <span class="k">ON</span> <span class="k">NULL</span> <span class="n">INPUT</span> <span class="n">RETURNS</span> <span class="n">tuple</span><span class="o">&lt;</span><span class="k">int</span><span class="p">,</span><span class="k">bigint</span><span class="o">&gt;</span> <span class="n">LANGUAGE</span> <span class="n">java</span> <span class="k">AS</span> <span class="s1">'if (val !=null) { state.setInt(0, state.getInt(0)+1); state.setLong(1, state.getLong(1)+val.intValue()); } return state;'</span><span class="p">;</span>
+<span class="k">CREATE</span> <span class="n">OR</span> <span class="n">REPLACE</span> <span class="n">FUNCTION</span> <span class="n">avgFinal</span> <span class="p">(</span> <span class="n">state</span> <span class="n">tuple</span><span class="o">&lt;</span><span class="k">int</span><span class="p">,</span><span class="k">bigint</span><span class="o">&gt;</span> <span class="p">)</span> <span class="n">CALLED</span> <span class="k">ON</span> <span class="k">NULL</span> <span class="n">INPUT</span> <span class="n">RETURNS</span> <span class="k">double</span> <span class="n">LANGUAGE</span> <span class="n">java</span> <span class="k">AS</span> <span class="s1">'double r = 0; if (state.getInt(0) == 0) return null; r = state.getLong(1); r/= state.getInt(0); return Double.valueOf(r);'</span><span class="p">;</span>
+<span class="k">CREATE</span> <span class="n">AGGREGATE</span> <span class="k">IF</span> <span class="k">NOT</span> <span class="k">EXISTS</span> <span class="n">average</span> <span class="p">(</span> <span class="k">int</span> <span class="p">)</span> <span class="n">SFUNC</span> <span class="n">avgState</span> <span class="n">STYPE</span> <span class="n">tuple</span><span class="o">&lt;</span><span class="k">int</span><span class="p">,</span><span class="k">bigint</span><span class="o">&gt;</span> <span class="n">FINALFUNC</span> <span class="n">avgFinal</span> <span class="n">INITCOND</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">);</span>
+</code></pre>
+</dd>
+</dl>
+<h2 id="getting-a-function-s-metadata" class="target">Getting a function&#8217;s metadata<a class="anchor" href="#getting-a-function-s-metadata" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+</h2>
+<dl class="steps">
+<dt>Given </dt>
+<dd>the following example:<pre class="highlight"><code><span class="cp">&lt;?php</span>
+<span class="nv">$cluster</span> <span class="o">=</span> <span class="nx">Cassandra</span><span class="o">::</span><span class="na">cluster</span><span class="p">()</span>
+                  <span class="o">-&gt;</span><span class="na">withContactPoints</span><span class="p">(</span><span class="s1">'127.0.0.1'</span><span class="p">)</span>
+                  <span class="o">-&gt;</span><span class="na">build</span><span class="p">();</span>
+<span class="nv">$session</span> <span class="o">=</span> <span class="nv">$cluster</span><span class="o">-&gt;</span><span class="na">connect</span><span class="p">(</span><span class="s2">"simplex"</span><span class="p">);</span>
+<span class="nv">$schema</span> <span class="o">=</span> <span class="nv">$session</span><span class="o">-&gt;</span><span class="na">schema</span><span class="p">();</span>
+
+<span class="nv">$function</span> <span class="o">=</span> <span class="nv">$schema</span><span class="o">-&gt;</span><span class="na">keyspace</span><span class="p">(</span><span class="s2">"simplex"</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">function</span><span class="p">(</span><span class="s2">"flog"</span><span class="p">,</span> <span class="nx">Cassandra\Type</span><span class="o">::</span><span class="na">double</span><span class="p">());</span>
+
+<span class="k">echo</span> <span class="s2">"Name: "</span> <span class="o">.</span> <span class="nv">$function</span><span class="o">-&gt;</span><span class="na">simpleName</span><span class="p">()</span> <span class="o">.</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">;</span>
+<span class="k">echo</span> <span class="s2">"Signature: "</span> <span class="o">.</span> <span class="nv">$function</span><span class="o">-&gt;</span><span class="na">signature</span><span class="p">()</span> <span class="o">.</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">;</span>
+<span class="k">echo</span> <span class="s2">"Language: "</span> <span class="o">.</span> <span class="nv">$function</span><span class="o">-&gt;</span><span class="na">language</span><span class="p">()</span> <span class="o">.</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">;</span>
+<span class="k">echo</span> <span class="s2">"Body: "</span> <span class="o">.</span> <span class="nv">$function</span><span class="o">-&gt;</span><span class="na">body</span><span class="p">()</span> <span class="o">.</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">;</span>
+<span class="k">echo</span> <span class="s2">"Arguments: "</span> <span class="o">.</span> <span class="nb">var_export</span><span class="p">(</span><span class="nv">$function</span><span class="o">-&gt;</span><span class="na">arguments</span><span class="p">(),</span> <span class="kc">true</span><span class="p">)</span> <span class="o">.</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">;</span>
+<span class="k">echo</span> <span class="s2">"ReturnType: "</span> <span class="o">.</span> <span class="nb">var_export</span><span class="p">(</span><span class="nv">$function</span><span class="o">-&gt;</span><span class="na">returnType</span><span class="p">(),</span> <span class="kc">true</span><span class="p">)</span> <span class="o">.</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">;</span>
+<span class="k">echo</span> <span class="s2">"IsCalledOnNullInput: "</span> <span class="o">.</span> <span class="p">(</span><span class="nv">$function</span><span class="o">-&gt;</span><span class="na">isCalledOnNullInput</span><span class="p">()</span> <span class="o">?</span> <span class="s2">"true"</span> <span class="o">:</span> <span class="s2">"false"</span><span class="p">)</span> <span class="o">.</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">;</span>
+</code></pre>
+</dd>
+<dt>When </dt>
+<dd>it is executed</dd>
+<dt>Then </dt>
+<dd>its output should contain:<pre><code>Name: flog
+Signature: flog(double)
+Language: java
+Body: return Double.valueOf(Math.log(input.doubleValue()));
+Arguments: array (
+  'input' =&gt;
+  Cassandra\Type\Scalar::__set_state(array(
+     'name' =&gt; 'double',
+  )),
+)
+ReturnType: Cassandra\Type\Scalar::__set_state(array(
+   'name' =&gt; 'double',
+))
+IsCalledOnNullInput: true
+</code></pre>
+</dd>
+</dl>
+<div class="pull-right"><span class="label label-primary">since cassadra v@skip-ci</span></div>
+<h2 id="getting-an-aggregates-s-metadata" class="target">Getting an aggregates&#8217;s metadata<a class="anchor" href="#getting-an-aggregates-s-metadata" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+</h2>
+<dl class="steps">
+<dt>Given </dt>
+<dd>the following example:<pre class="highlight"><code><span class="cp">&lt;?php</span>
+<span class="nv">$cluster</span> <span class="o">=</span> <span class="nx">Cassandra</span><span class="o">::</span><span class="na">cluster</span><span class="p">()</span>
+                  <span class="o">-&gt;</span><span class="na">withContactPoints</span><span class="p">(</span><span class="s1">'127.0.0.1'</span><span class="p">)</span>
+                  <span class="o">-&gt;</span><span class="na">build</span><span class="p">();</span>
+<span class="nv">$session</span> <span class="o">=</span> <span class="nv">$cluster</span><span class="o">-&gt;</span><span class="na">connect</span><span class="p">(</span><span class="s2">"simplex"</span><span class="p">);</span>
+<span class="nv">$schema</span> <span class="o">=</span> <span class="nv">$session</span><span class="o">-&gt;</span><span class="na">schema</span><span class="p">();</span>
+
+<span class="nv">$aggregate</span> <span class="o">=</span> <span class="nv">$schema</span><span class="o">-&gt;</span><span class="na">keyspace</span><span class="p">(</span><span class="s2">"simplex"</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">aggregate</span><span class="p">(</span><span class="s2">"average"</span><span class="p">,</span> <span class="nx">Cassandra\Type</span><span class="o">::</span><span class="na">int</span><span class="p">());</span>
+
+<span class="k">echo</span> <span class="s2">"Name: "</span> <span class="o">.</span> <span class="nv">$aggregate</span><span class="o">-&gt;</span><span class="na">simpleName</span><span class="p">()</span> <span class="o">.</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">;</span>
+<span class="k">echo</span> <span class="s2">"Signature: "</span> <span class="o">.</span> <span class="nv">$aggregate</span><span class="o">-&gt;</span><span class="na">signature</span><span class="p">()</span> <span class="o">.</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">;</span>
+<span class="k">echo</span> <span class="s2">"ArgumentTypes: "</span> <span class="o">.</span> <span class="nb">var_export</span><span class="p">(</span><span class="nv">$aggregate</span><span class="o">-&gt;</span><span class="na">argumentTypes</span><span class="p">(),</span> <span class="kc">true</span><span class="p">)</span> <span class="o">.</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">;</span>
+<span class="k">echo</span> <span class="s2">"StateType: "</span> <span class="o">.</span> <span class="nb">var_export</span><span class="p">(</span><span class="nv">$aggregate</span><span class="o">-&gt;</span><span class="na">stateType</span><span class="p">(),</span> <span class="kc">true</span><span class="p">)</span> <span class="o">.</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">;</span>
+<span class="k">echo</span> <span class="s2">"ReturnType: "</span> <span class="o">.</span> <span class="nb">var_export</span><span class="p">(</span><span class="nv">$aggregate</span><span class="o">-&gt;</span><span class="na">returnType</span><span class="p">(),</span> <span class="kc">true</span><span class="p">)</span> <span class="o">.</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">;</span>
+<span class="k">echo</span> <span class="s2">"InitialCondition: "</span> <span class="o">.</span> <span class="nb">var_export</span><span class="p">(</span><span class="nv">$aggregate</span><span class="o">-&gt;</span><span class="na">initialCondition</span><span class="p">(),</span> <span class="kc">true</span><span class="p">)</span> <span class="o">.</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">;</span>
+<span class="k">echo</span> <span class="s2">"StateFunction: "</span> <span class="o">.</span>  <span class="nv">$aggregate</span><span class="o">-&gt;</span><span class="na">stateFunction</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">signature</span><span class="p">()</span> <span class="o">.</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">;</span>
+<span class="k">echo</span> <span class="s2">"FinalFunction: "</span> <span class="o">.</span>  <span class="nv">$aggregate</span><span class="o">-&gt;</span><span class="na">finalFunction</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">signature</span><span class="p">()</span> <span class="o">.</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">;</span>
+</code></pre>
+</dd>
+<dt>When </dt>
+<dd>it is executed</dd>
+<dt>Then </dt>
+<dd>its output should contain:<pre><code>Name: average
+Signature: average(int)
+ArgumentTypes: array (
+  0 =&gt;
+  Cassandra\Type\Scalar::__set_state(array(
+     'name' =&gt; 'int',
+  )),
+)
+StateType: Cassandra\Type\Tuple::__set_state(array(
+   'types' =&gt;
+  array (
+    0 =&gt;
+    Cassandra\Type\Scalar::__set_state(array(
+       'name' =&gt; 'int',
+    )),
+    1 =&gt;
+    Cassandra\Type\Scalar::__set_state(array(
+       'name' =&gt; 'bigint',
+    )),
+  ),
+))
+ReturnType: Cassandra\Type\Scalar::__set_state(array(
+   'name' =&gt; 'double',
+))
+InitialCondition: Cassandra\Tuple::__set_state(array(
+   'type' =&gt;
+  Cassandra\Type\Tuple::__set_state(array(
+     'types' =&gt;
+    array (
+      0 =&gt;
+      Cassandra\Type\Scalar::__set_state(array(
+         'name' =&gt; 'int',
+      )),
+      1 =&gt;
+      Cassandra\Type\Scalar::__set_state(array(
+         'name' =&gt; 'bigint',
+      )),
+    ),
+  )),
+   'values' =&gt;
+  array (
+    0 =&gt; 0,
+    1 =&gt;
+    Cassandra\Bigint::__set_state(array(
+       'type' =&gt;
+      Cassandra\Type\Scalar::__set_state(array(
+         'name' =&gt; 'bigint',
+      )),
+       'value' =&gt; '0',
+    )),
+  ),
+))
+StateFunction: avgstate(frozen&lt;tuple&lt;int,bigint&gt;&gt;,int)
+FinalFunction: avgfinal(frozen&lt;tuple&lt;int,bigint&gt;&gt;)
+</code></pre>
+</dd>
+</dl>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+    <footer class="container text-muted">
+      <ul class="list-inline">
+      
+        
+        <li>
+          <a href="http://downloads.datastax.com/php-driver/">Binaries</a>
+        </li>
+      
+        <li>·</li>
+        <li>
+          <a href="https://github.com/datastax/php-driver/">Code</a>
+        </li>
+      
+        <li>·</li>
+        <li>
+          <a href="http://datastax.github.io/php-driver/">Docs</a>
+        </li>
+      
+        <li>·</li>
+        <li>
+          <a href="https://datastax-oss.atlassian.net/browse/PHP/">Issues</a>
+        </li>
+      
+        <li>·</li>
+        <li>
+          <a href="https://groups.google.com/a/lists.datastax.com/forum/#!forum/php-driver-user">Mailing List</a>
+        </li>
+      
+        <li>·</li>
+        <li>
+          <a href="irc://irc.freenode.net/datastax-drivers">IRC Channel</a>
+        </li>
+      
+        <li>·</li>
+        <li>
+          <a href="https://github.com/datastax/php-driver/releases">Releases</a>
+        </li>
+      
+      </ul>
+    </footer>
+    
+
+    <script src="../../js/jquery.js"></script>
+    <script src="../../js/bootstrap.js"></script>
+    <script src="../../js/angular.js"></script>
+    <script src="../../js/mousetrap.js"></script>
+    <script src="../../js/hotkeys.js"></script>
+    <script src="../../js/ZeroClipboard.js"></script>
+    <script src="../../js/lunr.js"></script>
+    <script src="../../js/app.js"></script>
+  </body>
+</html>

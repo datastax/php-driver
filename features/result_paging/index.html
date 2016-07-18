@@ -42,7 +42,7 @@
             <div class="col-md-8">
               <form id="search" class="form-search dropdown visible-lg-block" ng-controller="search" ng-class="{open: hasResults}" role="search" ng-submit="submit()" data-spy="affix" data-offset-top="130">
                 <div class="form-group has-feedback">
-                  <input type="search" class="form-control input-sm mousetrap" placeholder="Search..." ng-model="q" ng-change="search('v1.1.0')" ng-disabled="!searchReady" disabled data-hotkey="{down: moveDown, up: moveUp, esc: reset}" data-search>
+                  <input type="search" class="form-control input-sm mousetrap" placeholder="Search..." ng-model="q" ng-change="search('local')" ng-disabled="!searchReady" disabled data-hotkey="{down: moveDown, up: moveUp, esc: reset}" data-search>
                 </div>
                 <ul class="dropdown-menu search-results" role="menu">
                   <li ng-repeat="result in results" ng-class="{'bg-warning': $index == current}"><a ng-href="{{basePath}}{{result.path}}"><span ng-bind-html="summary(result)"></span></a></li>
@@ -59,26 +59,6 @@
         <div class="col-md-12">
           <nav id="crumbs" data-spy="affix" data-offset-top="130">
             <ol class="breadcrumb">
-              
-              <li>
-                <div class="btn-group">
-                  <button id="current-version" class="btn btn-default btn-sm dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    v1.1.0
-                    <span class="caret"></span>
-                  </button>
-                  <ul class="dropdown-menu" role="menu" aria-labelledby="current-version">
-                  
-                    <li class="disabled"><a href="./">v1.1.0</a></li>
-                  
-                    <li><a href="../../v1.0.1/features/result_paging/">v1.0.1</a></li>
-                  
-                    <li><a href="../../v1.0.0/features/result_paging/">v1.0.0</a></li>
-                  
-                    <li><a href="../../v1.0.0-rc/features/result_paging/">v1.0.0-rc</a></li>
-                  
-                  </ul>
-                </div>
-              </li>
               
               
               
@@ -245,7 +225,28 @@
   
   
   <li>
+    <a href="../secondary_index_metadata/">Secondary Index Metadata <small>feature</small></a>
+  </li>
+  
+  
+  
+  
+  <li>
+    <a href="../function_and_aggregate_metadata/">User-defined Function (UDF) and Aggregate Metadata (UDA) <small>feature</small></a>
+  </li>
+  
+  
+  
+  
+  <li>
     <a href="../retry_polices/">Retry Policies <small>feature</small></a>
+  </li>
+  
+  
+  
+  
+  <li>
+    <a href="../materialized_view_metadata/">Materialized View Metadata <small>feature</small></a>
   </li>
   
   
@@ -287,20 +288,20 @@ methods for synchronous and asynchronous next page retrieval accordingly.</p>
   <span class="s1">'replication_factor'</span><span class="p">:</span> <span class="mi">1</span>
 <span class="p">};</span>
 <span class="k">USE</span> <span class="n">simplex</span><span class="p">;</span>
-<span class="k">CREATE</span> <span class="k">TABLE</span> <span class="n">entries</span> <span class="p">(</span><span class="k">key</span> <span class="k">text</span><span class="p">,</span> <span class="n">value</span> <span class="k">int</span><span class="p">,</span> <span class="k">PRIMARY</span> <span class="k">KEY</span><span class="p">(</span><span class="k">key</span><span class="p">,</span> <span class="n">value</span><span class="p">));</span>
-<span class="k">INSERT</span> <span class="k">INTO</span> <span class="n">entries</span> <span class="p">(</span><span class="k">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span> <span class="k">VALUES</span> <span class="p">(</span><span class="s1">'a'</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
-<span class="k">INSERT</span> <span class="k">INTO</span> <span class="n">entries</span> <span class="p">(</span><span class="k">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span> <span class="k">VALUES</span> <span class="p">(</span><span class="s1">'b'</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
-<span class="k">INSERT</span> <span class="k">INTO</span> <span class="n">entries</span> <span class="p">(</span><span class="k">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span> <span class="k">VALUES</span> <span class="p">(</span><span class="s1">'c'</span><span class="p">,</span> <span class="mi">2</span><span class="p">);</span>
-<span class="k">INSERT</span> <span class="k">INTO</span> <span class="n">entries</span> <span class="p">(</span><span class="k">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span> <span class="k">VALUES</span> <span class="p">(</span><span class="s1">'d'</span><span class="p">,</span> <span class="mi">3</span><span class="p">);</span>
-<span class="k">INSERT</span> <span class="k">INTO</span> <span class="n">entries</span> <span class="p">(</span><span class="k">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span> <span class="k">VALUES</span> <span class="p">(</span><span class="s1">'e'</span><span class="p">,</span> <span class="mi">4</span><span class="p">);</span>
-<span class="k">INSERT</span> <span class="k">INTO</span> <span class="n">entries</span> <span class="p">(</span><span class="k">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span> <span class="k">VALUES</span> <span class="p">(</span><span class="s1">'f'</span><span class="p">,</span> <span class="mi">5</span><span class="p">);</span>
-<span class="k">INSERT</span> <span class="k">INTO</span> <span class="n">entries</span> <span class="p">(</span><span class="k">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span> <span class="k">VALUES</span> <span class="p">(</span><span class="s1">'g'</span><span class="p">,</span> <span class="mi">6</span><span class="p">);</span>
-<span class="k">INSERT</span> <span class="k">INTO</span> <span class="n">entries</span> <span class="p">(</span><span class="k">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span> <span class="k">VALUES</span> <span class="p">(</span><span class="s1">'h'</span><span class="p">,</span> <span class="mi">7</span><span class="p">);</span>
-<span class="k">INSERT</span> <span class="k">INTO</span> <span class="n">entries</span> <span class="p">(</span><span class="k">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span> <span class="k">VALUES</span> <span class="p">(</span><span class="s1">'i'</span><span class="p">,</span> <span class="mi">8</span><span class="p">);</span>
-<span class="k">INSERT</span> <span class="k">INTO</span> <span class="n">entries</span> <span class="p">(</span><span class="k">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span> <span class="k">VALUES</span> <span class="p">(</span><span class="s1">'j'</span><span class="p">,</span> <span class="mi">9</span><span class="p">);</span>
-<span class="k">INSERT</span> <span class="k">INTO</span> <span class="n">entries</span> <span class="p">(</span><span class="k">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span> <span class="k">VALUES</span> <span class="p">(</span><span class="s1">'k'</span><span class="p">,</span> <span class="mi">10</span><span class="p">);</span>
-<span class="k">INSERT</span> <span class="k">INTO</span> <span class="n">entries</span> <span class="p">(</span><span class="k">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span> <span class="k">VALUES</span> <span class="p">(</span><span class="s1">'l'</span><span class="p">,</span> <span class="mi">11</span><span class="p">);</span>
-<span class="k">INSERT</span> <span class="k">INTO</span> <span class="n">entries</span> <span class="p">(</span><span class="k">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span> <span class="k">VALUES</span> <span class="p">(</span><span class="s1">'m'</span><span class="p">,</span> <span class="mi">12</span><span class="p">);</span>
+<span class="k">CREATE</span> <span class="k">TABLE</span> <span class="n">paging_entries</span> <span class="p">(</span><span class="k">key</span> <span class="k">text</span><span class="p">,</span> <span class="n">value</span> <span class="k">int</span><span class="p">,</span> <span class="k">PRIMARY</span> <span class="k">KEY</span><span class="p">(</span><span class="k">key</span><span class="p">,</span> <span class="n">value</span><span class="p">));</span>
+<span class="k">INSERT</span> <span class="k">INTO</span> <span class="n">paging_entries</span> <span class="p">(</span><span class="k">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span> <span class="k">VALUES</span> <span class="p">(</span><span class="s1">'a'</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+<span class="k">INSERT</span> <span class="k">INTO</span> <span class="n">paging_entries</span> <span class="p">(</span><span class="k">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span> <span class="k">VALUES</span> <span class="p">(</span><span class="s1">'b'</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+<span class="k">INSERT</span> <span class="k">INTO</span> <span class="n">paging_entries</span> <span class="p">(</span><span class="k">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span> <span class="k">VALUES</span> <span class="p">(</span><span class="s1">'c'</span><span class="p">,</span> <span class="mi">2</span><span class="p">);</span>
+<span class="k">INSERT</span> <span class="k">INTO</span> <span class="n">paging_entries</span> <span class="p">(</span><span class="k">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span> <span class="k">VALUES</span> <span class="p">(</span><span class="s1">'d'</span><span class="p">,</span> <span class="mi">3</span><span class="p">);</span>
+<span class="k">INSERT</span> <span class="k">INTO</span> <span class="n">paging_entries</span> <span class="p">(</span><span class="k">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span> <span class="k">VALUES</span> <span class="p">(</span><span class="s1">'e'</span><span class="p">,</span> <span class="mi">4</span><span class="p">);</span>
+<span class="k">INSERT</span> <span class="k">INTO</span> <span class="n">paging_entries</span> <span class="p">(</span><span class="k">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span> <span class="k">VALUES</span> <span class="p">(</span><span class="s1">'f'</span><span class="p">,</span> <span class="mi">5</span><span class="p">);</span>
+<span class="k">INSERT</span> <span class="k">INTO</span> <span class="n">paging_entries</span> <span class="p">(</span><span class="k">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span> <span class="k">VALUES</span> <span class="p">(</span><span class="s1">'g'</span><span class="p">,</span> <span class="mi">6</span><span class="p">);</span>
+<span class="k">INSERT</span> <span class="k">INTO</span> <span class="n">paging_entries</span> <span class="p">(</span><span class="k">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span> <span class="k">VALUES</span> <span class="p">(</span><span class="s1">'h'</span><span class="p">,</span> <span class="mi">7</span><span class="p">);</span>
+<span class="k">INSERT</span> <span class="k">INTO</span> <span class="n">paging_entries</span> <span class="p">(</span><span class="k">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span> <span class="k">VALUES</span> <span class="p">(</span><span class="s1">'i'</span><span class="p">,</span> <span class="mi">8</span><span class="p">);</span>
+<span class="k">INSERT</span> <span class="k">INTO</span> <span class="n">paging_entries</span> <span class="p">(</span><span class="k">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span> <span class="k">VALUES</span> <span class="p">(</span><span class="s1">'j'</span><span class="p">,</span> <span class="mi">9</span><span class="p">);</span>
+<span class="k">INSERT</span> <span class="k">INTO</span> <span class="n">paging_entries</span> <span class="p">(</span><span class="k">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span> <span class="k">VALUES</span> <span class="p">(</span><span class="s1">'k'</span><span class="p">,</span> <span class="mi">10</span><span class="p">);</span>
+<span class="k">INSERT</span> <span class="k">INTO</span> <span class="n">paging_entries</span> <span class="p">(</span><span class="k">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span> <span class="k">VALUES</span> <span class="p">(</span><span class="s1">'l'</span><span class="p">,</span> <span class="mi">11</span><span class="p">);</span>
+<span class="k">INSERT</span> <span class="k">INTO</span> <span class="n">paging_entries</span> <span class="p">(</span><span class="k">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span> <span class="k">VALUES</span> <span class="p">(</span><span class="s1">'m'</span><span class="p">,</span> <span class="mi">12</span><span class="p">);</span>
 </code></pre>
 </dd>
 </dl>
@@ -313,7 +314,7 @@ methods for synchronous and asynchronous next page retrieval accordingly.</p>
                <span class="o">-&gt;</span><span class="na">withContactPoints</span><span class="p">(</span><span class="s1">'127.0.0.1'</span><span class="p">)</span>
                <span class="o">-&gt;</span><span class="na">build</span><span class="p">();</span>
 <span class="nv">$session</span>   <span class="o">=</span> <span class="nv">$cluster</span><span class="o">-&gt;</span><span class="na">connect</span><span class="p">(</span><span class="s2">"simplex"</span><span class="p">);</span>
-<span class="nv">$statement</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Cassandra\SimpleStatement</span><span class="p">(</span><span class="s2">"SELECT * FROM entries"</span><span class="p">);</span>
+<span class="nv">$statement</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Cassandra\SimpleStatement</span><span class="p">(</span><span class="s2">"SELECT * FROM paging_entries"</span><span class="p">);</span>
 <span class="nv">$options</span>   <span class="o">=</span> <span class="k">new</span> <span class="nx">Cassandra\ExecutionOptions</span><span class="p">(</span><span class="k">array</span><span class="p">(</span><span class="s1">'page_size'</span> <span class="o">=&gt;</span> <span class="mi">5</span><span class="p">));</span>
 <span class="nv">$rows</span>      <span class="o">=</span> <span class="nv">$session</span><span class="o">-&gt;</span><span class="na">execute</span><span class="p">(</span><span class="nv">$statement</span><span class="p">,</span> <span class="nv">$options</span><span class="p">);</span>
 
@@ -363,7 +364,7 @@ key: b, value: 1
                <span class="o">-&gt;</span><span class="na">withContactPoints</span><span class="p">(</span><span class="s1">'127.0.0.1'</span><span class="p">)</span>
                <span class="o">-&gt;</span><span class="na">build</span><span class="p">();</span>
 <span class="nv">$session</span>   <span class="o">=</span> <span class="nv">$cluster</span><span class="o">-&gt;</span><span class="na">connect</span><span class="p">(</span><span class="s2">"simplex"</span><span class="p">);</span>
-<span class="nv">$statement</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Cassandra\SimpleStatement</span><span class="p">(</span><span class="s2">"SELECT * FROM entries"</span><span class="p">);</span>
+<span class="nv">$statement</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Cassandra\SimpleStatement</span><span class="p">(</span><span class="s2">"SELECT * FROM paging_entries"</span><span class="p">);</span>
 <span class="nv">$options</span>   <span class="o">=</span> <span class="k">new</span> <span class="nx">Cassandra\ExecutionOptions</span><span class="p">(</span><span class="k">array</span><span class="p">(</span><span class="s1">'page_size'</span> <span class="o">=&gt;</span> <span class="mi">10</span><span class="p">));</span>
 <span class="nv">$rows</span>      <span class="o">=</span> <span class="nv">$session</span><span class="o">-&gt;</span><span class="na">execute</span><span class="p">(</span><span class="nv">$statement</span><span class="p">,</span> <span class="nv">$options</span><span class="p">);</span>
 
@@ -399,7 +400,7 @@ entries in page 2: 3
                <span class="o">-&gt;</span><span class="na">withContactPoints</span><span class="p">(</span><span class="s1">'127.0.0.1'</span><span class="p">)</span>
                <span class="o">-&gt;</span><span class="na">build</span><span class="p">();</span>
 <span class="nv">$session</span>   <span class="o">=</span> <span class="nv">$cluster</span><span class="o">-&gt;</span><span class="na">connect</span><span class="p">(</span><span class="s2">"simplex"</span><span class="p">);</span>
-<span class="nv">$statement</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Cassandra\SimpleStatement</span><span class="p">(</span><span class="s2">"SELECT * FROM entries"</span><span class="p">);</span>
+<span class="nv">$statement</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Cassandra\SimpleStatement</span><span class="p">(</span><span class="s2">"SELECT * FROM paging_entries"</span><span class="p">);</span>
 <span class="nv">$options</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span><span class="s1">'page_size'</span> <span class="o">=&gt;</span> <span class="mi">2</span><span class="p">);</span>
 <span class="nv">$result</span> <span class="o">=</span> <span class="nv">$session</span><span class="o">-&gt;</span><span class="na">execute</span><span class="p">(</span><span class="nv">$statement</span><span class="p">,</span> <span class="k">new</span> <span class="nx">Cassandra\ExecutionOptions</span><span class="p">(</span><span class="nv">$options</span><span class="p">));</span>
 
