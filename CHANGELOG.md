@@ -1,3 +1,19 @@
+# 1.2.0
+
+Features:
+
+* Added support for `tinyint` and `smallint` types
+* Added support for `date` and `time` types
+* Added support for secondary index metadata
+* Added support for UDF/UDA metadata
+* Added support for materialized view metadata
+* Added blacklist and whitelist datacenter and host policies
+
+Bug Fixes:
+
+* [PHP-100] Whitelist/Blacklist LB setting should update the cluster builder hash key
+* [PHP-101] Memory leak when paging results
+
 # 1.1.0
 
 Features:

@@ -152,3 +152,127 @@ Bigint: Cassandra\Bigint::__set_state(array(
          'address' => '200.199.198.197',
       ))
       """
+
+  @cassandra-version-2.2
+  @tinyint
+  @smallint
+  Scenario: Using Cassandra tinyint and smallint types
+    Given the following schema:
+      """cql
+      CREATE KEYSPACE simplex WITH replication = {
+        'class': 'SimpleStrategy',
+        'replication_factor': 1
+      };
+      USE simplex;
+      CREATE TABLE values (
+        id int PRIMARY KEY,
+        tinyint_value tinyint,
+        smallint_value smallint,
+      );
+      """
+    And the following example:
+      """php
+      <?php
+      $cluster   = Cassandra::cluster()
+                     ->withContactPoints('127.0.0.1')
+                     ->build();
+      $session   = $cluster->connect("simplex");
+
+      $statement = new Cassandra\SimpleStatement("INSERT INTO values (id, tinyint_value, smallint_value) VALUES (?, ?, ?)");
+      $options   = new Cassandra\ExecutionOptions(array('arguments' =>
+        array(1, new Cassandra\Tinyint(127), new Cassandra\Smallint(32767))
+      ));
+      $session->execute($statement, $options);
+
+      $statement = new Cassandra\SimpleStatement("SELECT * FROM values");
+      $result    = $session->execute($statement);
+      $row       = $result->first();
+
+      echo "Tinyint: " . $row['tinyint_value']->value() . "\n";
+      echo "Smallint: " . $row['smallint_value']->value() . "\n";
+      """
+    When it is executed
+    Then its output should contain:
+      """
+      Tinyint: 127
+      Smallint: 32767
+      """
+
+  @cassandra-version-2.2
+  @date
+  Scenario: Using Cassandra date type
+    Given the following schema:
+      """cql
+      CREATE KEYSPACE simplex WITH replication = {
+        'class': 'SimpleStrategy',
+        'replication_factor': 1
+      };
+      USE simplex;
+      CREATE TABLE date_values (
+        id int PRIMARY KEY,
+        date_value date
+      );
+      """
+    And the following example:
+      """php
+      <?php
+      $cluster   = Cassandra::cluster()
+                     ->withContactPoints('127.0.0.1')
+                     ->build();
+      $session   = $cluster->connect("simplex");
+
+      $statement = new Cassandra\SimpleStatement("INSERT INTO date_values (id, date_value) VALUES (?, ?)");
+      $options   = new Cassandra\ExecutionOptions(array('arguments' => array(1, new Cassandra\Date(0))));
+      $session->execute($statement, $options);
+
+      $statement = new Cassandra\SimpleStatement("SELECT * FROM date_values");
+      $result    = $session->execute($statement);
+      $row       = $result->first();
+
+      echo "Date: " . $row['date_value']->toDateTime()->format("Y-m-d H:i:s") . "\n";
+      """
+    When it is executed
+    Then its output should contain:
+      """
+      Date: 1970-01-01 00:00:00
+      """
+
+  @cassandra-version-2.2
+  @time
+  Scenario: Using Cassandra time type
+    Given the following schema:
+      """cql
+      CREATE KEYSPACE simplex WITH replication = {
+        'class': 'SimpleStrategy',
+        'replication_factor': 1
+      };
+      USE simplex;
+      CREATE TABLE time_values (
+        id int PRIMARY KEY,
+        time_value time
+      );
+      """
+    And the following example:
+      """php
+      <?php
+      $cluster   = Cassandra::cluster()
+                     ->withContactPoints('127.0.0.1')
+                     ->build();
+      $session   = $cluster->connect("simplex");
+
+      $statement = new Cassandra\SimpleStatement("INSERT INTO time_values (id, time_value) VALUES (?, ?)");
+      $datetime = new \DateTime("1970-01-01T00:00:01+0000");
+      $options   = new Cassandra\ExecutionOptions(array('arguments' => array(1, Cassandra\Time::fromDateTime($datetime))));
+      $session->execute($statement, $options);
+
+      $statement = new Cassandra\SimpleStatement("SELECT * FROM time_values");
+      $result    = $session->execute($statement);
+      $row       = $result->first();
+
+      echo "Time: " . $row['time_value'] . "\n";
+      """
+    When it is executed
+    Then its output should contain:
+      """
+      Time: 1000000000
+      """

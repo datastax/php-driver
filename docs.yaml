@@ -35,8 +35,10 @@ links:
   - title: Releases
     href:  https://github.com/datastax/php-driver/releases
 versions:
-  - name: v1.1.0
+  - name: v1.2.0
     ref:  HEAD
+  - name: v1.1.0
+    ref:  v1.1.0
   - name: v1.0.1
     ref:  v1.0.1
   - name: v1.0.0

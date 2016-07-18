@@ -7,7 +7,7 @@ A modern, [feature-rich](features) and highly tunable PHP client library for [Ap
 
 This is a wrapper around [the DataStax C/C++ Driver for Apache Cassandra and DataStax Enterprise](http://datastax.github.io/cpp-driver/).
 
-* Binaries: [http://downloads.datastax.com/php-driver/1.1.0](http://downloads.datastax.com/php-driver/1.1.0/)
+* Binaries: [http://downloads.datastax.com/php-driver/1.2.0](http://downloads.datastax.com/php-driver/1.2.0/)
 * Docs: [http://datastax.github.io/php-driver/](http://datastax.github.io/php-driver/)
 * Code: [https://github.com/datastax/php-driver](https://github.com/datastax/php-driver)
 * Jira: [https://datastax-oss.atlassian.net/browse/PHP](https://datastax-oss.atlassian.net/browse/PHP)
@@ -15,16 +15,13 @@ This is a wrapper around [the DataStax C/C++ Driver for Apache Cassandra and Dat
 * IRC: #datastax-drivers on [irc.freenode.net](http://freenode.net>)
 * Twitter: Follow the latest news about DataStax Drivers - [@avalanche123](http://twitter.com/avalanche123), [@al3xandru](https://twitter.com/al3xandru)
 
-## What's new in v1.1.0:
+## What's new in v1.2.0:
 
-* Support for PHP 7
-* [User defined types](http://datastax.github.io/php-driver/features/user_defined_types/)
-* [Tuples](http://datastax.github.io/php-driver/features/tuples/)
-* [Nested collection](http://datastax.github.io/php-driver/features/collections/#using-cassandra-nested-collections)
-* [Client-side timestamps](http://datastax.github.io/php-driver/features/client_side_timestamps/)
-* [Retry policies](http://datastax.github.io/php-driver/features/retry_polices/)
-* [Named parameters](http://datastax.github.io/php-driver/features/simple_statements/#simple-statements-also-support-named-arguments)
-* [Raw paging token access](http://datastax.github.io/php-driver/features/result_paging/#use-paging-state-token-to-get-next-result)
+* Full support for Apache Cassandra 2.2 and 3.0+
+* Support for [`tinyint` and `smallint`](http://datastax.github.io/php-driver/features/datatypes/#using-cassandra-the-tinyint-and-smallint-types)
+* Support for [`date`](http://datastax.github.io/php-driver/features/datatypes/#using-cassandra-date-type) and [`time`](http://datastax.github.io/php-driver/features/http://localhost:8000/features/datatypes/#using-cassandra-time-type)
+* Support for [user-defined function and aggregate](http://datastax.github.io/php-driver/features/function_and_aggregate_metadata) metadata
+* Support for [secondary index](http://datastax.github.io/php-driver/features/secondary_index_metadata) and [materialize view](http://datastax.github.io/php-driver/features/function_and_aggregate_metadata) metadata
 
 ## Feedback Requested
 
@@ -62,7 +59,7 @@ pecl install cassandra
 This driver works exclusively with the Cassandra Query Language v3 (CQL3) and
 Cassandra's native protocol. The current version works with:
 
-* Apache Cassandra versions 1.2, 2.0 and 2.1
+* Apache Cassandra versions 1.2, 2.0, 2.1, 2.2 and 3.0+
 * DataStax Enterprise 3.1, 3.2, 4.0 and 4.5
 * PHP 5.5+ and PHP 7.0+
 * Compilers: GCC 4.1.2+, Clang 3.4+, and MSVC 2010/2012/2013/2015

@@ -14,11 +14,11 @@ protocol and Cassandra Query Language v3.
     <email>michael.penick@datastax.com</email>
     <active>yes</active>
   </lead>
-  <date>2016-02-11</date>
-  <time>10:16:05</time>
+  <date>2016-07-18</date>
+  <time>11:29:26</time>
   <version>
-    <release>1.1.0</release>
-    <api>1.1.0</api>
+    <release>1.2.0</release>
+    <api>1.2.0</api>
   </version>
   <stability>
     <release>stable</release>
@@ -26,23 +26,21 @@ protocol and Cassandra Query Language v3.
   </stability>
   <license uri="http://www.apache.org/licenses/LICENSE-2.0">Apache License 2.0</license>
   <notes>
-# 1.1.0
+# 1.2.0
 
 Features:
 
-* Added support for PHP 7
-* Added support for UDTs and tuples
-* Added support for nested collections
-* Added access to raw paging token (via `Cassandra\Rows::pagingStateToken()`)
-* Added support for client-side timestamps and timestamp generators
-* Added support for retry policys (includes logging, downgrading and fallthrough)
-* Added the ability to disable schema metadata updates (via `Cassandra\Cluster\withSchemaMetdata()`)
-* Added support for using named arguments with `Cassandra\SimpleStatement`
-* Changed the default consistency to `LOCAL_ONE` (from `ONE`)
+* Added support for `tinyint` and `smallint` types
+* Added support for `date` and `time` types
+* Added support for secondary index metadata
+* Added support for UDF/UDA metadata
+* Added support for materialized view metadata
+* Added blacklist and whitelist datacenter and host policies
 
 Bug Fixes:
 
-* [PHP-70] Fixed invalid encoding of decimals and varints
+* [PHP-100] Whitelist/Blacklist LB setting should update the cluster builder hash key
+* [PHP-101] Memory leak when paging results
   </notes>
   <contents>
     <dir name="/">
@@ -52,6 +50,7 @@ Bug Fixes:
       <file role="src" name="php_cassandra.h" />
       <file role="src" name="php_cassandra_types.h" />
       <file role="src" name="src/Cassandra.c" />
+      <file role="src" name="src/Cassandra/Aggregate.c" />
       <file role="src" name="src/Cassandra/BatchStatement.c" />
       <file role="src" name="src/Cassandra/Bigint.c" />
       <file role="src" name="src/Cassandra/Bigint.h" />
@@ -62,14 +61,25 @@ Bug Fixes:
       <file role="src" name="src/Cassandra/Collection.c" />
       <file role="src" name="src/Cassandra/Collection.h" />
       <file role="src" name="src/Cassandra/Column.c" />
+      <file role="src" name="src/Cassandra/Date.c" />
+      <file role="src" name="src/Cassandra/Date.h" />
       <file role="src" name="src/Cassandra/Decimal.c" />
       <file role="src" name="src/Cassandra/Decimal.h" />
+      <file role="src" name="src/Cassandra/DefaultAggregate.c" />
       <file role="src" name="src/Cassandra/DefaultCluster.c" />
       <file role="src" name="src/Cassandra/DefaultColumn.c" />
+      <file role="src" name="src/Cassandra/DefaultColumn.h" />
+      <file role="src" name="src/Cassandra/DefaultFunction.c" />
+      <file role="src" name="src/Cassandra/DefaultFunction.h" />
+      <file role="src" name="src/Cassandra/DefaultIndex.c" />
+      <file role="src" name="src/Cassandra/DefaultIndex.h" />
       <file role="src" name="src/Cassandra/DefaultKeyspace.c" />
+      <file role="src" name="src/Cassandra/DefaultMaterializedView.c" />
+      <file role="src" name="src/Cassandra/DefaultMaterializedView.h" />
       <file role="src" name="src/Cassandra/DefaultSchema.c" />
       <file role="src" name="src/Cassandra/DefaultSession.c" />
       <file role="src" name="src/Cassandra/DefaultTable.c" />
+      <file role="src" name="src/Cassandra/DefaultTable.h" />
       <file role="src" name="src/Cassandra/Exception.c" />
       <file role="src" name="src/Cassandra/Exception/AlreadyExistsException.c" />
       <file role="src" name="src/Cassandra/Exception/AuthenticationException.c" />
@@ -98,17 +108,20 @@ Bug Fixes:
       <file role="src" name="src/Cassandra/ExecutionOptions.c" />
       <file role="src" name="src/Cassandra/Float.c" />
       <file role="src" name="src/Cassandra/Float.h" />
+      <file role="src" name="src/Cassandra/Function.c" />
       <file role="src" name="src/Cassandra/Future.c" />
       <file role="src" name="src/Cassandra/FutureClose.c" />
       <file role="src" name="src/Cassandra/FuturePreparedStatement.c" />
       <file role="src" name="src/Cassandra/FutureRows.c" />
       <file role="src" name="src/Cassandra/FutureSession.c" />
       <file role="src" name="src/Cassandra/FutureValue.c" />
+      <file role="src" name="src/Cassandra/Index.c" />
       <file role="src" name="src/Cassandra/Inet.c" />
       <file role="src" name="src/Cassandra/Inet.h" />
       <file role="src" name="src/Cassandra/Keyspace.c" />
       <file role="src" name="src/Cassandra/Map.c" />
       <file role="src" name="src/Cassandra/Map.h" />
+      <file role="src" name="src/Cassandra/MaterializedView.c" />
       <file role="src" name="src/Cassandra/Numeric.c" />
       <file role="src" name="src/Cassandra/PreparedStatement.c" />
       <file role="src" name="src/Cassandra/RetryPolicy.c" />
@@ -124,8 +137,13 @@ Bug Fixes:
       <file role="src" name="src/Cassandra/Set.c" />
       <file role="src" name="src/Cassandra/Set.h" />
       <file role="src" name="src/Cassandra/SimpleStatement.c" />
+      <file role="src" name="src/Cassandra/Smallint.c" />
+      <file role="src" name="src/Cassandra/Smallint.h" />
       <file role="src" name="src/Cassandra/Statement.c" />
       <file role="src" name="src/Cassandra/Table.c" />
+      <file role="src" name="src/Cassandra/Table.h" />
+      <file role="src" name="src/Cassandra/Time.c" />
+      <file role="src" name="src/Cassandra/Time.h" />
       <file role="src" name="src/Cassandra/Timestamp.c" />
       <file role="src" name="src/Cassandra/Timestamp.h" />
       <file role="src" name="src/Cassandra/TimestampGenerator.c" />
@@ -133,6 +151,8 @@ Bug Fixes:
       <file role="src" name="src/Cassandra/TimestampGenerator/ServerSide.c" />
       <file role="src" name="src/Cassandra/Timeuuid.c" />
       <file role="src" name="src/Cassandra/Timeuuid.h" />
+      <file role="src" name="src/Cassandra/Tinyint.c" />
+      <file role="src" name="src/Cassandra/Tinyint.h" />
       <file role="src" name="src/Cassandra/Tuple.c" />
       <file role="src" name="src/Cassandra/Tuple.h" />
       <file role="src" name="src/Cassandra/Type.c" />
@@ -179,6 +199,7 @@ Bug Fixes:
       <file role="src" name="version.h" />
       <file role="doc" name="LICENSE" />
       <file role="doc" name="doc/Cassandra.php" />
+      <file role="doc" name="doc/Cassandra/Aggregate.php" />
       <file role="doc" name="doc/Cassandra/BatchStatement.php" />
       <file role="doc" name="doc/Cassandra/Bigint.php" />
       <file role="doc" name="doc/Cassandra/Blob.php" />
@@ -186,10 +207,15 @@ Bug Fixes:
       <file role="doc" name="doc/Cassandra/Cluster/Builder.php" />
       <file role="doc" name="doc/Cassandra/Collection.php" />
       <file role="doc" name="doc/Cassandra/Column.php" />
+      <file role="doc" name="doc/Cassandra/Date.php" />
       <file role="doc" name="doc/Cassandra/Decimal.php" />
+      <file role="doc" name="doc/Cassandra/DefaultAggregate.php" />
       <file role="doc" name="doc/Cassandra/DefaultCluster.php" />
       <file role="doc" name="doc/Cassandra/DefaultColumn.php" />
+      <file role="doc" name="doc/Cassandra/DefaultFunction.php" />
+      <file role="doc" name="doc/Cassandra/DefaultIndex.php" />
       <file role="doc" name="doc/Cassandra/DefaultKeyspace.php" />
+      <file role="doc" name="doc/Cassandra/DefaultMaterialzedView.php" />
       <file role="doc" name="doc/Cassandra/DefaultSchema.php" />
       <file role="doc" name="doc/Cassandra/DefaultSession.php" />
       <file role="doc" name="doc/Cassandra/DefaultTable.php" />
@@ -220,6 +246,7 @@ Bug Fixes:
       <file role="doc" name="doc/Cassandra/Exception/WriteTimeoutException.php" />
       <file role="doc" name="doc/Cassandra/ExecutionOptions.php" />
       <file role="doc" name="doc/Cassandra/Float.php" />
+      <file role="doc" name="doc/Cassandra/Function.php" />
       <file role="doc" name="doc/Cassandra/Future.php" />
       <file role="doc" name="doc/Cassandra/FutureClose.php" />
       <file role="doc" name="doc/Cassandra/FutureException.php" />
@@ -227,9 +254,11 @@ Bug Fixes:
       <file role="doc" name="doc/Cassandra/FutureRows.php" />
       <file role="doc" name="doc/Cassandra/FutureSession.php" />
       <file role="doc" name="doc/Cassandra/FutureValue.php" />
+      <file role="doc" name="doc/Cassandra/Index.php" />
       <file role="doc" name="doc/Cassandra/Inet.php" />
       <file role="doc" name="doc/Cassandra/Keyspace.php" />
       <file role="doc" name="doc/Cassandra/Map.php" />
+      <file role="doc" name="doc/Cassandra/MaterializedView.php" />
       <file role="doc" name="doc/Cassandra/Numeric.php" />
       <file role="doc" name="doc/Cassandra/PreparedStatement.php" />
       <file role="doc" name="doc/Cassandra/RetryPolicy.php" />
@@ -244,13 +273,16 @@ Bug Fixes:
       <file role="doc" name="doc/Cassandra/Session.php" />
       <file role="doc" name="doc/Cassandra/Set.php" />
       <file role="doc" name="doc/Cassandra/SimpleStatement.php" />
+      <file role="doc" name="doc/Cassandra/Smallint.php" />
       <file role="doc" name="doc/Cassandra/Statement.php" />
       <file role="doc" name="doc/Cassandra/Table.php" />
+      <file role="doc" name="doc/Cassandra/Time.php" />
       <file role="doc" name="doc/Cassandra/Timestamp.php" />
       <file role="doc" name="doc/Cassandra/TimestampGenerator.php" />
       <file role="doc" name="doc/Cassandra/TimestampGenerator/Monotonic.php" />
       <file role="doc" name="doc/Cassandra/TimestampGenerator/ServerSide.php" />
       <file role="doc" name="doc/Cassandra/Timeuuid.php" />
+      <file role="doc" name="doc/Cassandra/Tinyint.php" />
       <file role="doc" name="doc/Cassandra/Tuple.php" />
       <file role="doc" name="doc/Cassandra/Type.php" />
       <file role="doc" name="doc/Cassandra/Type/Collection.php" />
