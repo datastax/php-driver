@@ -113,7 +113,8 @@ PHP_METHOD(Timestamp, microtime)
 PHP_METHOD(Timestamp, toDateTime)
 {
   cassandra_timestamp *self;
-  zval *datetime = NULL;
+  zval datetime_object;
+  zval *datetime = &datetime_object;
   php_date_obj *datetime_obj = NULL;
   char *str;
   int str_len;

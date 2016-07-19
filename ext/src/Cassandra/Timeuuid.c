@@ -110,7 +110,8 @@ PHP_METHOD(Timeuuid, time)
 PHP_METHOD(Timeuuid, toDateTime)
 {
   cassandra_uuid *self;
-  zval *datetime = NULL;
+  zval datetime_object;
+  zval *datetime = &datetime_object;
   php_date_obj *datetime_obj = NULL;
   char *str;
   int str_len;
