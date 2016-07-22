@@ -28,6 +28,13 @@ final class DefaultSession implements Session
     /**
      * {@inheritDoc}
      *
+     * @return array Performance/Diagnostic metrics.
+     */
+    public function metrics() {}
+
+    /**
+     * {@inheritDoc}
+     *
      * @return Schema current schema.
      */
     public function schema() {}
