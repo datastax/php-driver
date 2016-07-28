@@ -1,3 +1,9 @@
+# 1.2.1
+
+Bug Fixes:
+
+* [PHP-113] pecl install of 1.2.0 fails because sourcecode is missing FutureRows.h
+
 # 1.2.0
 
 Features:

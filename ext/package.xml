@@ -14,11 +14,11 @@ protocol and Cassandra Query Language v3.
     <email>michael.penick@datastax.com</email>
     <active>yes</active>
   </lead>
-  <date>2016-07-18</date>
-  <time>11:29:26</time>
+  <date>2016-07-28</date>
+  <time>08:37:25</time>
   <version>
-    <release>1.2.0</release>
-    <api>1.2.0</api>
+    <release>1.2.1</release>
+    <api>1.2.1</api>
   </version>
   <stability>
     <release>stable</release>
@@ -26,21 +26,11 @@ protocol and Cassandra Query Language v3.
   </stability>
   <license uri="http://www.apache.org/licenses/LICENSE-2.0">Apache License 2.0</license>
   <notes>
-# 1.2.0
-
-Features:
-
-* Added support for `tinyint` and `smallint` types
-* Added support for `date` and `time` types
-* Added support for secondary index metadata
-* Added support for UDF/UDA metadata
-* Added support for materialized view metadata
-* Added blacklist and whitelist datacenter and host policies
+# 1.2.1
 
 Bug Fixes:
 
-* [PHP-100] Whitelist/Blacklist LB setting should update the cluster builder hash key
-* [PHP-101] Memory leak when paging results
+* [PHP-113] pecl install of 1.2.0 fails because sourcecode is missing FutureRows.h
   </notes>
   <contents>
     <dir name="/">
@@ -113,6 +103,7 @@ Bug Fixes:
       <file role="src" name="src/Cassandra/FutureClose.c" />
       <file role="src" name="src/Cassandra/FuturePreparedStatement.c" />
       <file role="src" name="src/Cassandra/FutureRows.c" />
+      <file role="src" name="src/Cassandra/FutureRows.h" />
       <file role="src" name="src/Cassandra/FutureSession.c" />
       <file role="src" name="src/Cassandra/FutureValue.c" />
       <file role="src" name="src/Cassandra/Index.c" />
