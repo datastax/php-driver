@@ -273,7 +273,8 @@ static PHP_GINIT_FUNCTION(cassandra)
 {
   uv_once(&log_once, php_cassandra_log_initialize);
 
-  cassandra_globals->uuid_gen            = cass_uuid_gen_new();
+  cassandra_globals->uuid_gen            = NULL;
+  cassandra_globals->uuid_gen_pid        = 0;
   cassandra_globals->persistent_clusters = 0;
   cassandra_globals->persistent_sessions = 0;
   PHP5TO7_ZVAL_UNDEF(cassandra_globals->type_varchar);
@@ -297,7 +298,9 @@ static PHP_GINIT_FUNCTION(cassandra)
 
 static PHP_GSHUTDOWN_FUNCTION(cassandra)
 {
-  cass_uuid_gen_free(cassandra_globals->uuid_gen);
+  if (cassandra_globals->uuid_gen) {
+    cass_uuid_gen_free(cassandra_globals->uuid_gen);
+  }
   php_cassandra_log_cleanup();
 }
 
