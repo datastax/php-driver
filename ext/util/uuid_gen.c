@@ -20,7 +20,7 @@
 
 ZEND_EXTERN_MODULE_GLOBALS(cassandra)
 
-static CassUuidGen* get_uuid_gen() {
+static CassUuidGen* get_uuid_gen(TSRMLS_D) {
   /* Create a new uuid generator if our PID has changed. This prevents the same
    * UUIDs from being generated in forked processes.
    */
@@ -37,7 +37,7 @@ static CassUuidGen* get_uuid_gen() {
 void
 php_cassandra_uuid_generate_random(CassUuid *out TSRMLS_DC)
 {
-  CassUuidGen* uuid_gen = get_uuid_gen(); 
+  CassUuidGen* uuid_gen = get_uuid_gen(TSRMLS_C);
   if (!uuid_gen) return;
   cass_uuid_gen_random(uuid_gen, out);
 }
@@ -45,7 +45,7 @@ php_cassandra_uuid_generate_random(CassUuid *out TSRMLS_DC)
 void
 php_cassandra_uuid_generate_time(CassUuid *out TSRMLS_DC)
 {
-  CassUuidGen* uuid_gen = get_uuid_gen(); 
+  CassUuidGen* uuid_gen = get_uuid_gen(TSRMLS_C);
   if (!uuid_gen) return;
   cass_uuid_gen_time(uuid_gen, out);
 }
@@ -53,7 +53,7 @@ php_cassandra_uuid_generate_time(CassUuid *out TSRMLS_DC)
 void
 php_cassandra_uuid_generate_from_time(long timestamp, CassUuid *out TSRMLS_DC)
 {
-  CassUuidGen* uuid_gen = get_uuid_gen(); 
+  CassUuidGen* uuid_gen = get_uuid_gen(TSRMLS_C);
   if (!uuid_gen) return;
   cass_uuid_gen_from_time(uuid_gen, (cass_uint64_t) timestamp, out);
 }
