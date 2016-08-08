@@ -132,7 +132,9 @@ php_cassandra_future_rows_free(php5to7_zend_object_free *object TSRMLS_DC)
   php_cassandra_del_ref(&self->statement);
   php_cassandra_del_ref(&self->result);
 
-  cass_future_free(self->future);
+  if (self->future) {
+    cass_future_free(self->future);
+  }
 
   zend_object_std_dtor(&self->zval TSRMLS_CC);
   PHP5TO7_MAYBE_EFREE(self);

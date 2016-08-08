@@ -664,8 +664,7 @@ PHP_METHOD(DefaultSession, executeAsync)
   CassStatement *single = NULL;
   CassBatch *batch  = NULL;
 
-  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "O|z", &statement,
-                           cassandra_statement_ce, &options) == FAILURE) {
+  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z|z", &statement, &options) == FAILURE) {
     return;
   }
 
