@@ -111,12 +111,13 @@ foreach (\$children as \$pid) {
 }
 ?>
 EOF;
+            $numProcesses = 64;
 
             // Execute the PHP script passing in the filename for the UUIDs to be stored
             $uuidsFilename = tempnam(sys_get_temp_dir(), "uuid");
             $scriptFilename = tempnam(sys_get_temp_dir(), "uuid");
             file_put_contents($scriptFilename, $script, FILE_APPEND);
-            exec(PHP_BINARY . " {$scriptFilename} {$uuidsFilename} 1024");
+            exec(PHP_BINARY . " {$scriptFilename} {$uuidsFilename} $numProcesses");
             unlink($scriptFilename);
 
             // Get the contents of the file
@@ -124,7 +125,7 @@ EOF;
             unlink($uuidsFilename);
 
             // Ensure all the UUIDs are unique
-            $this->assertEquals(1024, count(array_unique($uuids)));
+            $this->assertEquals($numProcesses, count(array_unique($uuids)));
         }
     }
 }

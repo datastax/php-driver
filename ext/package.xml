@@ -14,11 +14,11 @@ protocol and Cassandra Query Language v3.
     <email>michael.penick@datastax.com</email>
     <active>yes</active>
   </lead>
-  <date>2016-07-28</date>
-  <time>08:37:25</time>
+  <date>2016-08-08</date>
+  <time>11:25:32</time>
   <version>
-    <release>1.2.1</release>
-    <api>1.2.1</api>
+    <release>1.2.2</release>
+    <api>1.2.2</api>
   </version>
   <stability>
     <release>stable</release>
@@ -26,11 +26,13 @@ protocol and Cassandra Query Language v3.
   </stability>
   <license uri="http://www.apache.org/licenses/LICENSE-2.0">Apache License 2.0</license>
   <notes>
-# 1.2.1
+# 1.2.2
 
 Bug Fixes:
 
-* [PHP-113] pecl install of 1.2.0 fails because sourcecode is missing FutureRows.h
+* [PHP-88] \Cassandra\Timestamp::toDateTime segfault with PHP7
+* [PHP-112] Freeing a null future as result of a failure in \Cassandra\DefaultSession::executeAsync()
+* [PHP-115] \Cassandra\UUID returning duplicate UUIDs
   </notes>
   <contents>
     <dir name="/">
