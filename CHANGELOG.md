@@ -1,3 +1,11 @@
+# 1.2.2
+
+Bug Fixes:
+
+* [PHP-88] \Cassandra\Timestamp::toDateTime segfault with PHP7
+* [PHP-112] Freeing a null future as result of a failure in \Cassandra\DefaultSession::executeAsync()
+* [PHP-115] \Cassandra\UUID returning duplicate UUIDs
+
 # 1.2.1
 
 Bug Fixes:

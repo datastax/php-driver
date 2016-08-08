@@ -38,6 +38,19 @@
 #include <Zend/zend_exceptions.h>
 #include <Zend/zend_interfaces.h>
 
+#ifdef HAVE_SYS_TYPES_H
+#include <sys/types.h>
+#endif
+
+#ifdef HAVE_UNISTD_H
+#include <unistd.h>
+#endif
+
+#ifdef PHP_WIN32
+typedef int pid_t;
+#include <process.h>
+#endif
+
 #if PHP_VERSION_ID < 50304
 #  error PHP 5.3.4 or later is required in order to build the driver
 #endif
@@ -478,6 +491,7 @@ PHP_MINFO_FUNCTION(cassandra);
 
 ZEND_BEGIN_MODULE_GLOBALS(cassandra)
   CassUuidGen          *uuid_gen;
+  pid_t                 uuid_gen_pid;
   unsigned int          persistent_clusters;
   unsigned int          persistent_sessions;
   php5to7_zval          type_varchar;
