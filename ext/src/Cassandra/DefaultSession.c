@@ -841,6 +841,98 @@ PHP_METHOD(DefaultSession, closeAsync)
   future->future = cass_session_close(self->session);
 }
 
+PHP_METHOD(DefaultSession, metrics)
+{
+  CassMetrics metrics;
+  php5to7_zval requests;
+  php5to7_zval stats;
+  php5to7_zval errors;
+  cassandra_session *self = PHP_CASSANDRA_GET_SESSION(getThis());
+
+  if (zend_parse_parameters_none() == FAILURE)
+    return;
+
+  cass_session_get_metrics(self->session, &metrics);
+
+  PHP5TO7_ZVAL_MAYBE_MAKE(requests);
+  array_init(PHP5TO7_ZVAL_MAYBE_P(requests));
+  add_assoc_long(PHP5TO7_ZVAL_MAYBE_P(requests),
+                 "min",
+                 metrics.requests.min);
+  add_assoc_long(PHP5TO7_ZVAL_MAYBE_P(requests),
+                 "max",
+                 metrics.requests.max);
+  add_assoc_long(PHP5TO7_ZVAL_MAYBE_P(requests),
+                 "mean",
+                 metrics.requests.mean);
+  add_assoc_long(PHP5TO7_ZVAL_MAYBE_P(requests),
+                 "stddev",
+                 metrics.requests.stddev);
+  add_assoc_long(PHP5TO7_ZVAL_MAYBE_P(requests),
+                 "median",
+                 metrics.requests.median);
+  add_assoc_long(PHP5TO7_ZVAL_MAYBE_P(requests),
+                 "p75",
+                 metrics.requests.percentile_75th);
+  add_assoc_long(PHP5TO7_ZVAL_MAYBE_P(requests),
+                 "p95",
+                 metrics.requests.percentile_95th);
+  add_assoc_long(PHP5TO7_ZVAL_MAYBE_P(requests),
+                 "p98",
+                 metrics.requests.percentile_98th);
+  add_assoc_long(PHP5TO7_ZVAL_MAYBE_P(requests),
+                 "p99",
+                 metrics.requests.percentile_99th);
+  add_assoc_long(PHP5TO7_ZVAL_MAYBE_P(requests),
+                 "p999",
+                 metrics.requests.percentile_999th);
+  add_assoc_double(PHP5TO7_ZVAL_MAYBE_P(requests),
+                   "mean_rate",
+                   metrics.requests.mean_rate);
+  add_assoc_double(PHP5TO7_ZVAL_MAYBE_P(requests),
+                   "m1_rate",
+                   metrics.requests.one_minute_rate);
+  add_assoc_double(PHP5TO7_ZVAL_MAYBE_P(requests),
+                   "m5_rate",
+                   metrics.requests.five_minute_rate);
+  add_assoc_double(PHP5TO7_ZVAL_MAYBE_P(requests),
+                   "m15_rate",
+                   metrics.requests.fifteen_minute_rate);
+
+  PHP5TO7_ZVAL_MAYBE_MAKE(stats);
+  array_init(PHP5TO7_ZVAL_MAYBE_P(stats));
+  add_assoc_long(PHP5TO7_ZVAL_MAYBE_P(stats),
+                 "total_connections",
+                 metrics.stats.total_connections);
+  add_assoc_long(PHP5TO7_ZVAL_MAYBE_P(stats),
+                "available_connections",
+                metrics.stats.available_connections);
+  add_assoc_long(PHP5TO7_ZVAL_MAYBE_P(stats),
+                 "exceeded_pending_requests_water_mark",
+                 metrics.stats.exceeded_pending_requests_water_mark);
+  add_assoc_long(PHP5TO7_ZVAL_MAYBE_P(stats),
+                 "exceeded_write_bytes_water_mark",
+                 metrics.stats.exceeded_write_bytes_water_mark);
+
+  PHP5TO7_ZVAL_MAYBE_MAKE(errors);
+  array_init(PHP5TO7_ZVAL_MAYBE_P(errors));
+  add_assoc_long(PHP5TO7_ZVAL_MAYBE_P(errors),
+                 "connection_timeouts",
+                 metrics.errors.connection_timeouts);
+  add_assoc_long(PHP5TO7_ZVAL_MAYBE_P(errors),
+                 "pending_request_timeouts",
+                 metrics.errors.pending_request_timeouts);
+  add_assoc_long(PHP5TO7_ZVAL_MAYBE_P(errors),
+                 "request_timeouts",
+                 metrics.errors.request_timeouts);
+
+  array_init(return_value);
+  add_assoc_zval(return_value, "stats", PHP5TO7_ZVAL_MAYBE_P(stats));
+  add_assoc_zval(return_value, "requests", PHP5TO7_ZVAL_MAYBE_P(requests));
+  add_assoc_zval(return_value, "errors", PHP5TO7_ZVAL_MAYBE_P(errors));
+}
+
+
 static void
 free_schema(void *schema)
 {
@@ -886,6 +978,7 @@ static zend_function_entry cassandra_default_session_methods[] = {
   PHP_ME(DefaultSession, prepareAsync, arginfo_prepare, ZEND_ACC_PUBLIC)
   PHP_ME(DefaultSession, close, arginfo_timeout, ZEND_ACC_PUBLIC)
   PHP_ME(DefaultSession, closeAsync, arginfo_none, ZEND_ACC_PUBLIC)
+  PHP_ME(DefaultSession, metrics, arginfo_none, ZEND_ACC_PUBLIC)
   PHP_ME(DefaultSession, schema, arginfo_none, ZEND_ACC_PUBLIC)
   PHP_FE_END
 };

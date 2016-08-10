@@ -26,6 +26,13 @@ namespace Cassandra;
 interface Session
 {
     /**
+     * Returns current performance/diagnostic metrics.
+     *
+     * @return array Performance/Diagnostic metrics.
+     */
+    public function metrics();
+
+    /**
      * Returns current schema.
      *
      * NOTE: the returned Schema instance will not be updated as the actual
