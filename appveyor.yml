@@ -1,4 +1,23 @@
 version: 1.x.{build}-{branch}
+skip_commits:
+  files:
+    - '**/*.bat'
+    - '**/*.md'
+    - '**/*.ini'
+    - '**/*.sh'
+    - '**/*.xml'
+    - '**/.gitignore'
+    - '**/LICENSE'
+    - ext/doc/*
+    - ext/CREDITS
+    - ext/debug.php
+    - .clang-format
+    - .travis.yml
+    - docs.yaml
+    - doxyfile
+    - doxygen.rb
+    - Rakefile
+    - Vagrantfile
 branches:
   except:
     - gh-pages
