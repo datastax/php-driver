@@ -729,6 +729,7 @@ PHP_METHOD(DefaultSession, executeAsync)
         return;
 
       future_rows->future = cass_session_execute_batch(self->session, batch);
+      cass_batch_free(batch);
       break;
     default:
       INVALID_ARGUMENT(statement,
