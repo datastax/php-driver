@@ -22,7 +22,7 @@
 #else
 #include <ext/standard/php_smart_str.h>
 #endif
-#include "src/Cassandra/Set.h"
+#include "src/Set.h"
 
 zend_class_entry *php_driver_type_set_ce = NULL;
 

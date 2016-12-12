@@ -23,21 +23,21 @@
 #else
 #include <ext/standard/php_smart_str.h>
 #endif
-#include "src/Cassandra/Bigint.h"
-#include "src/Cassandra/Smallint.h"
-#include "src/Cassandra/Tinyint.h"
-#include "src/Cassandra/Blob.h"
-#include "src/Cassandra/Decimal.h"
-#include "src/Cassandra/Float.h"
-#include "src/Cassandra/Inet.h"
-#include "src/Cassandra/Timestamp.h"
-#include "src/Cassandra/Date.h"
-#include "src/Cassandra/Time.h"
-#include "src/Cassandra/Timeuuid.h"
-#include "src/Cassandra/Uuid.h"
-#include "src/Cassandra/Varint.h"
-#include "src/Cassandra/Type/Tuple.h"
-#include "src/Cassandra/Type/UserType.h"
+#include "src/Bigint.h"
+#include "src/Smallint.h"
+#include "src/Tinyint.h"
+#include "src/Blob.h"
+#include "src/Decimal.h"
+#include "src/Float.h"
+#include "src/Inet.h"
+#include "src/Timestamp.h"
+#include "src/Date.h"
+#include "src/Time.h"
+#include "src/Timeuuid.h"
+#include "src/Uuid.h"
+#include "src/Varint.h"
+#include "src/Type/Tuple.h"
+#include "src/Type/UserType.h"
 
 struct node_s {
   struct node_s *parent;

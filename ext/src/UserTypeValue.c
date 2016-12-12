@@ -20,8 +20,8 @@
 #include "util/hash.h"
 #include "util/types.h"
 
-#include "src/Cassandra/Type/UserType.h"
-#include "src/Cassandra/UserTypeValue.h"
+#include "src/Type/UserType.h"
+#include "src/UserTypeValue.h"
 
 zend_class_entry *php_driver_user_type_value_ce = NULL;
 

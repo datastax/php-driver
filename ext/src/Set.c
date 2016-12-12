@@ -19,7 +19,7 @@
 #include "util/collections.h"
 #include "util/hash.h"
 #include "util/types.h"
-#include "src/Cassandra/Set.h"
+#include "src/Set.h"
 
 zend_class_entry *php_driver_set_ce = NULL;
 

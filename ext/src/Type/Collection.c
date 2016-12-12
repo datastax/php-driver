@@ -17,7 +17,7 @@
 #include "php_driver.h"
 #include "php_driver_types.h"
 #include "util/types.h"
-#include "src/Cassandra/Collection.h"
+#include "src/Collection.h"
 #include "util/collections.h"
 
 #if PHP_MAJOR_VERSION >= 7

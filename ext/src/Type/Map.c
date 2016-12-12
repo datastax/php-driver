@@ -23,7 +23,7 @@
 #else
 #include <ext/standard/php_smart_str.h>
 #endif
-#include "src/Cassandra/Map.h"
+#include "src/Map.h"
 
 zend_class_entry *php_driver_type_map_ce = NULL;
 

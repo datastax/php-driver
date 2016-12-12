@@ -20,8 +20,8 @@
 #include "util/hash.h"
 #include "util/types.h"
 
-#include "src/Cassandra/Type/Tuple.h"
-#include "src/Cassandra/Tuple.h"
+#include "src/Type/Tuple.h"
+#include "src/Tuple.h"
 
 #include <zend_hash.h>
 

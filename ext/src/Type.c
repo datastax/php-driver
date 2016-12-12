@@ -18,8 +18,8 @@
 #include "php_driver_types.h"
 #include "util/types.h"
 
-#include "src/Cassandra/Type/Tuple.h"
-#include "src/Cassandra/Type/UserType.h"
+#include "src/Type/Tuple.h"
+#include "src/Type/UserType.h"
 
 zend_class_entry *php_driver_type_ce = NULL;
 

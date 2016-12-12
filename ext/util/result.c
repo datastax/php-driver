@@ -20,11 +20,11 @@
 #include "math.h"
 #include "collections.h"
 #include "types.h"
-#include "src/Cassandra/Collection.h"
-#include "src/Cassandra/Map.h"
-#include "src/Cassandra/Set.h"
-#include "src/Cassandra/Tuple.h"
-#include "src/Cassandra/UserTypeValue.h"
+#include "src/Collection.h"
+#include "src/Map.h"
+#include "src/Set.h"
+#include "src/Tuple.h"
+#include "src/UserTypeValue.h"
 
 int
 php_driver_value(const CassValue* value, const CassDataType* data_type, php5to7_zval *out TSRMLS_DC)
