@@ -30,8 +30,10 @@
 #else
 #pragma message("syslog will be disabled on Windows")
 #endif
+
 #include <ext/standard/info.h>
 #include <fcntl.h>
+#include <time.h>
 #include <uv.h>
 
 /* Resources */
@@ -404,33 +406,33 @@ static PHP_GINIT_FUNCTION(php_driver)
 {
   uv_once(&log_once, php_driver_log_initialize);
 
-  PHP_DRIVER_G(uuid_gen)            = NULL;
-  PHP_DRIVER_G(uuid_gen_pid)        = 0;
-  PHP_DRIVER_G(persistent_clusters) = 0;
-  PHP_DRIVER_G(persistent_sessions) = 0;
-  PHP5TO7_ZVAL_UNDEF(PHP_DRIVER_G(type_varchar));
-  PHP5TO7_ZVAL_UNDEF(PHP_DRIVER_G(type_text));
-  PHP5TO7_ZVAL_UNDEF(PHP_DRIVER_G(type_blob));
-  PHP5TO7_ZVAL_UNDEF(PHP_DRIVER_G(type_ascii));
-  PHP5TO7_ZVAL_UNDEF(PHP_DRIVER_G(type_bigint));
-  PHP5TO7_ZVAL_UNDEF(PHP_DRIVER_G(type_smallint));
-  PHP5TO7_ZVAL_UNDEF(PHP_DRIVER_G(type_counter));
-  PHP5TO7_ZVAL_UNDEF(PHP_DRIVER_G(type_int));
-  PHP5TO7_ZVAL_UNDEF(PHP_DRIVER_G(type_varint));
-  PHP5TO7_ZVAL_UNDEF(PHP_DRIVER_G(type_boolean));
-  PHP5TO7_ZVAL_UNDEF(PHP_DRIVER_G(type_decimal));
-  PHP5TO7_ZVAL_UNDEF(PHP_DRIVER_G(type_double));
-  PHP5TO7_ZVAL_UNDEF(PHP_DRIVER_G(type_float));
-  PHP5TO7_ZVAL_UNDEF(PHP_DRIVER_G(type_inet));
-  PHP5TO7_ZVAL_UNDEF(PHP_DRIVER_G(type_timestamp));
-  PHP5TO7_ZVAL_UNDEF(PHP_DRIVER_G(type_uuid));
-  PHP5TO7_ZVAL_UNDEF(PHP_DRIVER_G(type_timeuuid));
+  php_driver_globals->uuid_gen            = NULL;
+  php_driver_globals->uuid_gen_pid        = 0;
+  php_driver_globals->persistent_clusters = 0;
+  php_driver_globals->persistent_sessions = 0;
+  PHP5TO7_ZVAL_UNDEF(php_driver_globals->type_varchar);
+  PHP5TO7_ZVAL_UNDEF(php_driver_globals->type_text);
+  PHP5TO7_ZVAL_UNDEF(php_driver_globals->type_blob);
+  PHP5TO7_ZVAL_UNDEF(php_driver_globals->type_ascii);
+  PHP5TO7_ZVAL_UNDEF(php_driver_globals->type_bigint);
+  PHP5TO7_ZVAL_UNDEF(php_driver_globals->type_smallint);
+  PHP5TO7_ZVAL_UNDEF(php_driver_globals->type_counter);
+  PHP5TO7_ZVAL_UNDEF(php_driver_globals->type_int);
+  PHP5TO7_ZVAL_UNDEF(php_driver_globals->type_varint);
+  PHP5TO7_ZVAL_UNDEF(php_driver_globals->type_boolean);
+  PHP5TO7_ZVAL_UNDEF(php_driver_globals->type_decimal);
+  PHP5TO7_ZVAL_UNDEF(php_driver_globals->type_double);
+  PHP5TO7_ZVAL_UNDEF(php_driver_globals->type_float);
+  PHP5TO7_ZVAL_UNDEF(php_driver_globals->type_inet);
+  PHP5TO7_ZVAL_UNDEF(php_driver_globals->type_timestamp);
+  PHP5TO7_ZVAL_UNDEF(php_driver_globals->type_uuid);
+  PHP5TO7_ZVAL_UNDEF(php_driver_globals->type_timeuuid);
 }
 
 static PHP_GSHUTDOWN_FUNCTION(php_driver)
 {
-  if (PHP_DRIVER_G(uuid_gen)) {
-    cass_uuid_gen_free(PHP_DRIVER_G(uuid_gen));
+  if (php_driver_globals->uuid_gen) {
+    cass_uuid_gen_free(php_driver_globals->uuid_gen);
   }
   php_driver_log_cleanup();
 }

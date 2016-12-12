@@ -82,8 +82,6 @@ if (PHP_CASSANDRA != "no") {
           EXTENSION("cassandra", "php_driver.c");
 
           ADD_SOURCES(configure_module_dirname + "/src",
-              "Cassandra.c", "cassandra");
-          ADD_SOURCES(configure_module_dirname + "/src/Cassandra",
               "Aggregate.c " +
               "BatchStatement.c " +
               "Bigint.c " +
@@ -91,6 +89,7 @@ if (PHP_CASSANDRA != "no") {
               "Cluster.c " +
               "Collection.c " +
               "Column.c " +
+              "Core.c " +
               "Custom.c " +
               "Date.c " +
               "Decimal.c " +
@@ -143,9 +142,9 @@ if (PHP_CASSANDRA != "no") {
               "UuidInterface.c " +
               "Value.c " +
               "Varint.c", "cassandra");
-          ADD_SOURCES(configure_module_dirname + "/src/Cassandra/Cluster",
+          ADD_SOURCES(configure_module_dirname + "/src/Cluster",
               "Builder.c", "cassandra");
-          ADD_SOURCES(configure_module_dirname + "/src/Cassandra/Exception",
+          ADD_SOURCES(configure_module_dirname + "/src/Exception",
               "AlreadyExistsException.c " +
               "AuthenticationException.c " +
               "ConfigurationException.c " +
@@ -170,17 +169,17 @@ if (PHP_CASSANDRA != "no") {
               "UnpreparedException.c " +
               "ValidationException.c " +
               "WriteTimeoutException.c", "cassandra");
-          ADD_SOURCES(configure_module_dirname + "/src/Cassandra/RetryPolicy",
+          ADD_SOURCES(configure_module_dirname + "/src/RetryPolicy",
               "DefaultPolicy.c " +
               "DowngradingConsistency.c " +
               "Fallthrough.c " +
-              "Logging.c ", "cassandra");
-          ADD_SOURCES(configure_module_dirname + "/src/Cassandra/SSLOptions",
+              "Logging.c", "cassandra");
+          ADD_SOURCES(configure_module_dirname + "/src/SSLOptions",
               "Builder.c", "cassandra");
-          ADD_SOURCES(configure_module_dirname + "/src/Cassandra/TimestampGenerator",
+          ADD_SOURCES(configure_module_dirname + "/src/TimestampGenerator",
               "Monotonic.c " +
               "ServerSide.c", "cassandra");
-          ADD_SOURCES(configure_module_dirname + "/src/Cassandra/Type",
+          ADD_SOURCES(configure_module_dirname + "/src/Type",
               "Collection.c " +
               "Custom.c " +
               "Map.c " +
@@ -212,7 +211,6 @@ if (PHP_CASSANDRA != "no") {
               "/I " + configure_module_dirname + " " +
               "/I " + PHP_CASSANDRA_CPP_DRIVER + "/include " +
               "/I " + PHP_LIBUV + "/include " +
-              "/I " + configure_module_dirname + "/src " +
               "/DCASS_STATIC " +
               "/wd4267");
 

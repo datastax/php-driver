@@ -43,7 +43,7 @@ PHP_METHOD(Logging, __construct)
 }
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo__construct, 0, ZEND_RETURN_VALUE, 1)
-  ZEND_ARG_OBJ_INFO(0, childPolicy, PHP_DRIVER_NAMESPACE_ARG\\RetryPolicy, 0)
+  PHP_DRIVER_NAMESPACE_ZEND_ARG_OBJ_INFO(0, childPolicy, RetryPolicy, 0)
 ZEND_END_ARG_INFO()
 
 static zend_function_entry php_driver_retry_policy_logging_methods[] = {

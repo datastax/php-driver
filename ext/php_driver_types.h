@@ -555,7 +555,7 @@ void php_driver_define_Varint(TSRMLS_D);
 void php_driver_define_Custom(TSRMLS_D);
 
 /* Classes */
-extern PHP_DRIVER_API zend_class_entry *php_driver_ce;
+extern PHP_DRIVER_API zend_class_entry *php_driver_core_ce;
 extern PHP_DRIVER_API zend_class_entry *php_driver_cluster_ce;
 extern PHP_DRIVER_API zend_class_entry *php_driver_default_cluster_ce;
 extern PHP_DRIVER_API zend_class_entry *php_driver_cluster_builder_ce;

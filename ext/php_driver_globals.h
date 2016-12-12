@@ -1,8 +1,6 @@
 #ifndef PHP_DRIVER_GLOBALS_H
 #define PHP_DRIVER_GLOBALS_H
 
-#include "php_driver.h"
-
 ZEND_BEGIN_MODULE_GLOBALS(php_driver)
   CassUuidGen  *uuid_gen;
   pid_t         uuid_gen_pid;

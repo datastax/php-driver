@@ -6,6 +6,7 @@
 #endif
 
 #include <gmp.h>
+#include <cassandra.h>
 
 /* Ensure Visual Studio 2010 does not load MSVC++ stdint definitions */
 #ifdef _WIN32
@@ -17,13 +18,9 @@
 #  endif
 #endif
 
-#include <cassandra.h>
-
 #include <php.h>
 #include <Zend/zend_exceptions.h>
 #include <Zend/zend_interfaces.h>
-
-#include "version.h"
 
 #ifdef HAVE_SYS_TYPES_H
 #include <sys/types.h>
@@ -49,6 +46,8 @@ typedef int pid_t;
 #  error SPL must be enabled in order to build the driver
 #endif
 
+#include "version.h"
+
 #ifdef PHP_WIN32
 #  define PHP_DRIVER_API __declspec(dllexport)
 #elif defined(__GNUC__) && __GNUC__ >= 4
@@ -58,7 +57,15 @@ typedef int pid_t;
 #endif
 
 #define PHP_DRIVER_NAMESPACE "Cassandra"
-#define PHP_DRIVER_NAMESPACE_ARG Cassandra
+
+#define PHP_DRIVER_NAMESPACE_ZEND_ARG_OBJ_INFO(pass_by_ref, name, classname, allow_null) \
+  ZEND_ARG_OBJ_INFO(pass_by_ref, name, Cassandra\\classname, allow_null)
+
+#define PHP_DRIVER_CORE_METHOD(name) \
+  PHP_METHOD(Cassandra, name)
+
+#define PHP_DRIVER_CORE_ME(name, arg_info, flags) \
+  PHP_ME(Cassandra, name, arg_info, flags)
 
 #ifndef ZEND_MOD_END
 #  define ZEND_MOD_END {NULL, NULL, NULL}

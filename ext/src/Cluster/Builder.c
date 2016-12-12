@@ -147,7 +147,9 @@ PHP_METHOD(ClusterBuilder, build)
 #if PHP_MAJOR_VERSION >= 7
     ZVAL_NEW_PERSISTENT_RES(&resource, 0, cluster->cluster, php_le_php_driver_cluster());
 
-    if (PHP5TO7_ZEND_HASH_UPDATE(&EG(persistent_list), hash_key, hash_key_len + 1, &resource, sizeof(php5to7_zend_resource_le))) {
+    if (PHP5TO7_ZEND_HASH_UPDATE(&EG(persistent_list),
+                                 cluster->hash_key, cluster->hash_key_len + 1,
+                                 &resource, sizeof(php5to7_zend_resource_le))) {
       PHP_DRIVER_G(persistent_clusters)++;
     }
 #else
@@ -983,7 +985,7 @@ ZEND_BEGIN_ARG_INFO_EX(arginfo_timeout, 0, ZEND_RETURN_VALUE, 1)
 ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_ssl, 0, ZEND_RETURN_VALUE, 1)
-  ZEND_ARG_OBJ_INFO(0, options, PHP_DRIVER_NAMESPACE_ARG\\SSLOptions, 0)
+  PHP_DRIVER_NAMESPACE_ZEND_ARG_OBJ_INFO(0, options, SSLOptions, 0)
 ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_version, 0, ZEND_RETURN_VALUE, 1)
@@ -1008,11 +1010,11 @@ ZEND_BEGIN_ARG_INFO_EX(arginfo_delay, 0, ZEND_RETURN_VALUE, 1)
 ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_retry_policy, 0, ZEND_RETURN_VALUE, 1)
-  ZEND_ARG_OBJ_INFO(0, policy, PHP_DRIVER_NAMESPACE_ARG\\RetryPolicy, 0)
+  PHP_DRIVER_NAMESPACE_ZEND_ARG_OBJ_INFO(0, policy, RetryPolicy, 0)
 ZEND_END_ARG_INFO()
 
-  ZEND_BEGIN_ARG_INFO_EX(arginfo_timestamp_gen, 0, ZEND_RETURN_VALUE, 1)
-  ZEND_ARG_OBJ_INFO(0, generator, PHP_DRIVER_NAMESPACE_ARG\\TimestampGenerator, 0)
+ZEND_BEGIN_ARG_INFO_EX(arginfo_timestamp_gen, 0, ZEND_RETURN_VALUE, 1)
+  PHP_DRIVER_NAMESPACE_ZEND_ARG_OBJ_INFO(0, generator, TimestampGenerator, 0)
 ZEND_END_ARG_INFO()
 
 static zend_function_entry php_driver_cluster_builder_methods[] = {
