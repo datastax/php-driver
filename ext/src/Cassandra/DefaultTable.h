@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-#ifndef PHP_CASSANDRA_DEFAULT_TABLE_H
-#define PHP_CASSANDRA_DEFAULT_TABLE_H
+#ifndef PHP_DRIVER_DEFAULT_TABLE_H
+#define PHP_DRIVER_DEFAULT_TABLE_H
 
 #include "php_driver.h"
 
 php5to7_zval
-php_cassandra_create_table(cassandra_ref* schema,
+php_driver_create_table(php_driver_ref* schema,
                            const CassTableMeta *meta TSRMLS_DC);
 
-#endif /* PHP_CASSANDRA_DEFAULT_TABLE_H */
+#endif /* PHP_DRIVER_DEFAULT_TABLE_H */

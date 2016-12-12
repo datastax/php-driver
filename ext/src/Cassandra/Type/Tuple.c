@@ -25,12 +25,12 @@
 #include <ext/standard/php_smart_str.h>
 #endif
 
-zend_class_entry *cassandra_type_tuple_ce = NULL;
+zend_class_entry *php_driver_type_tuple_ce = NULL;
 
-int php_cassandra_type_tuple_add(cassandra_type *type,
+int php_driver_type_tuple_add(php_driver_type *type,
                                  zval *zsub_type TSRMLS_DC)
 {
-  cassandra_type *sub_type = PHP_CASSANDRA_GET_TYPE(zsub_type);
+  php_driver_type *sub_type = PHP_DRIVER_GET_TYPE(zsub_type);
   if (cass_data_type_add_sub_type(type->data_type,
                                   sub_type->data_type) != CASS_OK) {
     return 0;
@@ -42,8 +42,8 @@ int php_cassandra_type_tuple_add(cassandra_type *type,
 
 PHP_METHOD(TypeTuple, __construct)
 {
-  zend_throw_exception_ex(cassandra_logic_exception_ce, 0 TSRMLS_CC,
-    "Instantiation of a Cassandra\\Type\\Tuple type is not supported."
+  zend_throw_exception_ex(php_driver_logic_exception_ce, 0 TSRMLS_CC,
+    "Instantiation of a " PHP_DRIVER_NAMESPACE "\\Type\\Tuple type is not supported."
   );
   return;
 }
@@ -59,13 +59,13 @@ PHP_METHOD(TypeTuple, name)
 
 PHP_METHOD(TypeTuple, types)
 {
-  cassandra_type *self;
+  php_driver_type *self;
 
   if (zend_parse_parameters_none() == FAILURE) {
     return;
   }
 
-  self = PHP_CASSANDRA_GET_TYPE(getThis());
+  self = PHP_DRIVER_GET_TYPE(getThis());
 
   array_init(return_value);
   PHP5TO7_ZEND_HASH_ZVAL_COPY(Z_ARRVAL_P(return_value), &self->types);
@@ -73,16 +73,16 @@ PHP_METHOD(TypeTuple, types)
 
 PHP_METHOD(TypeTuple, __toString)
 {
-  cassandra_type *self;
+  php_driver_type *self;
   smart_str string = PHP5TO7_SMART_STR_INIT;
 
   if (zend_parse_parameters_none() == FAILURE) {
     return;
   }
 
-  self = PHP_CASSANDRA_GET_TYPE(getThis());
+  self = PHP_DRIVER_GET_TYPE(getThis());
 
-  php_cassandra_type_string(self, &string TSRMLS_CC);
+  php_driver_type_string(self, &string TSRMLS_CC);
   smart_str_0(&string);
 
   PHP5TO7_RETVAL_STRING(PHP5TO7_SMART_STR_VAL(string));
@@ -91,8 +91,8 @@ PHP_METHOD(TypeTuple, __toString)
 
 PHP_METHOD(TypeTuple, create)
 {
-  cassandra_type *self;
-  cassandra_tuple *tuple;
+  php_driver_type *self;
+  php_driver_tuple *tuple;
   php5to7_zval_args args = NULL;
   int argc = 0, i, num_types;
 
@@ -101,10 +101,10 @@ PHP_METHOD(TypeTuple, create)
     return;
   }
 
-  self = PHP_CASSANDRA_GET_TYPE(getThis());
+  self = PHP_DRIVER_GET_TYPE(getThis());
 
-  object_init_ex(return_value, cassandra_tuple_ce);
-  tuple = PHP_CASSANDRA_GET_TUPLE(return_value);
+  object_init_ex(return_value, php_driver_tuple_ce);
+  tuple = PHP_DRIVER_GET_TUPLE(return_value);
 
   PHP5TO7_ZVAL_COPY(PHP5TO7_ZVAL_MAYBE_P(tuple->type), getThis());
 
@@ -112,7 +112,7 @@ PHP_METHOD(TypeTuple, create)
 
   if (argc > 0) {
     if (argc != num_types) {
-      zend_throw_exception_ex(cassandra_invalid_argument_exception_ce,
+      zend_throw_exception_ex(php_driver_invalid_argument_exception_ce,
                               0 TSRMLS_CC,
                               "Invalid number of elements given. Expected %d arguments.",
                               zend_hash_num_elements(&self->types));
@@ -123,13 +123,13 @@ PHP_METHOD(TypeTuple, create)
     for (i = 0; i < argc; i++) {
       php5to7_zval *sub_type;
       PHP5TO7_ZEND_HASH_INDEX_FIND(&self->types, i, sub_type);
-      if (!php_cassandra_validate_object(PHP5TO7_ZVAL_ARG(args[i]),
+      if (!php_driver_validate_object(PHP5TO7_ZVAL_ARG(args[i]),
                                          PHP5TO7_ZVAL_MAYBE_DEREF(sub_type) TSRMLS_CC)) {
         PHP5TO7_MAYBE_EFREE(args);
         return;
       }
 
-      if (!php_cassandra_tuple_set(tuple, i, PHP5TO7_ZVAL_ARG(args[i]) TSRMLS_CC)) {
+      if (!php_driver_tuple_set(tuple, i, PHP5TO7_ZVAL_ARG(args[i]) TSRMLS_CC)) {
         PHP5TO7_MAYBE_EFREE(args);
         return;
       }
@@ -146,7 +146,7 @@ ZEND_BEGIN_ARG_INFO_EX(arginfo_values, 0, ZEND_RETURN_VALUE, 0)
   ZEND_ARG_INFO(0, values)
 ZEND_END_ARG_INFO()
 
-static zend_function_entry cassandra_type_tuple_methods[] = {
+static zend_function_entry php_driver_type_tuple_methods[] = {
   PHP_ME(TypeTuple, __construct, arginfo_none,   ZEND_ACC_PUBLIC)
   PHP_ME(TypeTuple, name,        arginfo_none,   ZEND_ACC_PUBLIC)
   PHP_ME(TypeTuple, __toString,  arginfo_none,   ZEND_ACC_PUBLIC)
@@ -155,10 +155,10 @@ static zend_function_entry cassandra_type_tuple_methods[] = {
   PHP_FE_END
 };
 
-static zend_object_handlers cassandra_type_tuple_handlers;
+static zend_object_handlers php_driver_type_tuple_handlers;
 
 static HashTable *
-php_cassandra_type_tuple_gc(zval *object, php5to7_zval_gc table, int *n TSRMLS_DC)
+php_driver_type_tuple_gc(zval *object, php5to7_zval_gc table, int *n TSRMLS_DC)
 {
   *table = NULL;
   *n = 0;
@@ -166,11 +166,11 @@ php_cassandra_type_tuple_gc(zval *object, php5to7_zval_gc table, int *n TSRMLS_D
 }
 
 static HashTable *
-php_cassandra_type_tuple_properties(zval *object TSRMLS_DC)
+php_driver_type_tuple_properties(zval *object TSRMLS_DC)
 {
   php5to7_zval types;
 
-  cassandra_type *self  = PHP_CASSANDRA_GET_TYPE(object);
+  php_driver_type *self  = PHP_DRIVER_GET_TYPE(object);
   HashTable      *props = zend_std_get_properties(object TSRMLS_CC);
 
   PHP5TO7_ZVAL_MAYBE_MAKE(types);
@@ -184,18 +184,18 @@ php_cassandra_type_tuple_properties(zval *object TSRMLS_DC)
 }
 
 static int
-php_cassandra_type_tuple_compare(zval *obj1, zval *obj2 TSRMLS_DC)
+php_driver_type_tuple_compare(zval *obj1, zval *obj2 TSRMLS_DC)
 {
-  cassandra_type* type1 = PHP_CASSANDRA_GET_TYPE(obj1);
-  cassandra_type* type2 = PHP_CASSANDRA_GET_TYPE(obj2);
+  php_driver_type* type1 = PHP_DRIVER_GET_TYPE(obj1);
+  php_driver_type* type2 = PHP_DRIVER_GET_TYPE(obj2);
 
-  return php_cassandra_type_compare(type1, type2 TSRMLS_CC);
+  return php_driver_type_compare(type1, type2 TSRMLS_CC);
 }
 
 static void
-php_cassandra_type_tuple_free(php5to7_zend_object_free *object TSRMLS_DC)
+php_driver_type_tuple_free(php5to7_zend_object_free *object TSRMLS_DC)
 {
-  cassandra_type *self = PHP5TO7_ZEND_OBJECT_GET(type, object);
+  php_driver_type *self = PHP5TO7_ZEND_OBJECT_GET(type, object);
 
   if (self->data_type) cass_data_type_free(self->data_type);
   zend_hash_destroy(&self->types);
@@ -205,9 +205,9 @@ php_cassandra_type_tuple_free(php5to7_zend_object_free *object TSRMLS_DC)
 }
 
 static php5to7_zend_object
-php_cassandra_type_tuple_new(zend_class_entry *ce TSRMLS_DC)
+php_driver_type_tuple_new(zend_class_entry *ce TSRMLS_DC)
 {
-  cassandra_type *self = PHP5TO7_ZEND_OBJECT_ECALLOC(type, ce);
+  php_driver_type *self = PHP5TO7_ZEND_OBJECT_ECALLOC(type, ce);
 
   self->type = CASS_VALUE_TYPE_TUPLE;
   self->data_type = cass_data_type_new(self->type);
@@ -216,18 +216,18 @@ php_cassandra_type_tuple_new(zend_class_entry *ce TSRMLS_DC)
   PHP5TO7_ZEND_OBJECT_INIT_EX(type, type_tuple, self, ce);
 }
 
-void cassandra_define_TypeTuple(TSRMLS_D)
+void php_driver_define_TypeTuple(TSRMLS_D)
 {
   zend_class_entry ce;
 
-  INIT_CLASS_ENTRY(ce, "Cassandra\\Type\\Tuple", cassandra_type_tuple_methods);
-  cassandra_type_tuple_ce = php5to7_zend_register_internal_class_ex(&ce, cassandra_type_ce);
-  memcpy(&cassandra_type_tuple_handlers, zend_get_std_object_handlers(), sizeof(zend_object_handlers));
-  cassandra_type_tuple_handlers.get_properties  = php_cassandra_type_tuple_properties;
+  INIT_CLASS_ENTRY(ce, PHP_DRIVER_NAMESPACE "\\Type\\Tuple", php_driver_type_tuple_methods);
+  php_driver_type_tuple_ce = php5to7_zend_register_internal_class_ex(&ce, php_driver_type_ce);
+  memcpy(&php_driver_type_tuple_handlers, zend_get_std_object_handlers(), sizeof(zend_object_handlers));
+  php_driver_type_tuple_handlers.get_properties  = php_driver_type_tuple_properties;
 #if PHP_VERSION_ID >= 50400
-  cassandra_type_tuple_handlers.get_gc          = php_cassandra_type_tuple_gc;
+  php_driver_type_tuple_handlers.get_gc          = php_driver_type_tuple_gc;
 #endif
-  cassandra_type_tuple_handlers.compare_objects = php_cassandra_type_tuple_compare;
-  cassandra_type_tuple_ce->ce_flags     |= PHP5TO7_ZEND_ACC_FINAL;
-  cassandra_type_tuple_ce->create_object = php_cassandra_type_tuple_new;
+  php_driver_type_tuple_handlers.compare_objects = php_driver_type_tuple_compare;
+  php_driver_type_tuple_ce->ce_flags     |= PHP5TO7_ZEND_ACC_FINAL;
+  php_driver_type_tuple_ce->create_object = php_driver_type_tuple_new;
 }

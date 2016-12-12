@@ -34,7 +34,7 @@ static CassUuidGen* get_uuid_gen(TSRMLS_D) {
 }
 
 void
-php_cassandra_uuid_generate_random(CassUuid *out TSRMLS_DC)
+php_driver_uuid_generate_random(CassUuid *out TSRMLS_DC)
 {
   CassUuidGen* uuid_gen = get_uuid_gen(TSRMLS_C);
   if (!uuid_gen) return;
@@ -42,7 +42,7 @@ php_cassandra_uuid_generate_random(CassUuid *out TSRMLS_DC)
 }
 
 void
-php_cassandra_uuid_generate_time(CassUuid *out TSRMLS_DC)
+php_driver_uuid_generate_time(CassUuid *out TSRMLS_DC)
 {
   CassUuidGen* uuid_gen = get_uuid_gen(TSRMLS_C);
   if (!uuid_gen) return;
@@ -50,7 +50,7 @@ php_cassandra_uuid_generate_time(CassUuid *out TSRMLS_DC)
 }
 
 void
-php_cassandra_uuid_generate_from_time(long timestamp, CassUuid *out TSRMLS_DC)
+php_driver_uuid_generate_from_time(long timestamp, CassUuid *out TSRMLS_DC)
 {
   CassUuidGen* uuid_gen = get_uuid_gen(TSRMLS_C);
   if (!uuid_gen) return;

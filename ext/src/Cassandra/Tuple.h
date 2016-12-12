@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-#ifndef PHP_CASSANDRA_TUPLE_H
-#define PHP_CASSANDRA_TUPLE_H
+#ifndef PHP_DRIVER_TUPLE_H
+#define PHP_DRIVER_TUPLE_H
 
-int php_cassandra_tuple_set(cassandra_tuple *tuple, ulong index, zval *object TSRMLS_DC);
+int php_driver_tuple_set(php_driver_tuple *tuple, ulong index, zval *object TSRMLS_DC);
 
-#endif /* PHP_CASSANDRA_TUPLE_H */
+#endif /* PHP_DRIVER_TUPLE_H */

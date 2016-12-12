@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-#ifndef PHP_CASSANDRA_FLOAT_H
-#define PHP_CASSANDRA_FLOAT_H
+#ifndef PHP_DRIVER_FLOAT_H
+#define PHP_DRIVER_FLOAT_H
 
-void php_cassandra_float_init(INTERNAL_FUNCTION_PARAMETERS);
+void php_driver_float_init(INTERNAL_FUNCTION_PARAMETERS);
 
-#endif /* PHP_CASSANDRA_FLOAT_H */
+#endif /* PHP_DRIVER_FLOAT_H */

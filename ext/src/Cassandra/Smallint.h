@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-#ifndef PHP_CASSANDRA_SMALLINT_H
-#define PHP_CASSANDRA_SMALLINT_H
+#ifndef PHP_DRIVER_SMALLINT_H
+#define PHP_DRIVER_SMALLINT_H
 
-void php_cassandra_smallint_init(INTERNAL_FUNCTION_PARAMETERS);
+void php_driver_smallint_init(INTERNAL_FUNCTION_PARAMETERS);
 
-#endif /* PHP_CASSANDRA_SMALLINT_H */
+#endif /* PHP_DRIVER_SMALLINT_H */

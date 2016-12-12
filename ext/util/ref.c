@@ -18,10 +18,10 @@
 #include "php_driver_types.h"
 #include "util/math.h"
 
-cassandra_ref*
-php_cassandra_new_peref(void *data, cassandra_free_function destructor, int persistent)
+php_driver_ref*
+php_driver_new_peref(void *data, php_driver_free_function destructor, int persistent)
 {
-  cassandra_ref *ref = (cassandra_ref*) pemalloc(sizeof(cassandra_ref), persistent);
+  php_driver_ref *ref = (php_driver_ref*) pemalloc(sizeof(php_driver_ref), persistent);
 
   ref->data     = data;
   ref->destruct = destructor;
@@ -31,9 +31,9 @@ php_cassandra_new_peref(void *data, cassandra_free_function destructor, int pers
 }
 
 void
-php_cassandra_del_peref(cassandra_ref **ref_ptr, int persistent)
+php_driver_del_peref(php_driver_ref **ref_ptr, int persistent)
 {
-  cassandra_ref *ref = *ref_ptr;
+  php_driver_ref *ref = *ref_ptr;
   if (ref) {
     ref->count--;
 

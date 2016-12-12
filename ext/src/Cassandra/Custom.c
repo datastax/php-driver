@@ -17,19 +17,19 @@
 #include "php_driver.h"
 #include "php_driver_types.h"
 
-zend_class_entry* cassandra_custom_ce = NULL;
+zend_class_entry* php_driver_custom_ce = NULL;
 
-static zend_function_entry cassandra_custom_methods[] = {
+static zend_function_entry php_driver_custom_methods[] = {
   PHP_FE_END
 };
 
 void
-cassandra_define_Custom(TSRMLS_D)
+php_driver_define_Custom(TSRMLS_D)
 {
   zend_class_entry ce;
 
-  INIT_CLASS_ENTRY(ce, "Cassandra\\Custom", cassandra_custom_methods);
-  cassandra_custom_ce = zend_register_internal_class(&ce TSRMLS_CC);
-  zend_class_implements(cassandra_custom_ce TSRMLS_CC, 1, cassandra_value_ce);
-  cassandra_custom_ce->ce_flags |= ZEND_ACC_INTERFACE;
+  INIT_CLASS_ENTRY(ce, PHP_DRIVER_NAMESPACE "\\Custom", php_driver_custom_methods);
+  php_driver_custom_ce = zend_register_internal_class(&ce TSRMLS_CC);
+  zend_class_implements(php_driver_custom_ce TSRMLS_CC, 1, php_driver_value_ce);
+  php_driver_custom_ce->ce_flags |= ZEND_ACC_INTERFACE;
 }

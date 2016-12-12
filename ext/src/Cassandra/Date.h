@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-#ifndef PHP_CASSANDRA_DATE_H
-#define PHP_CASSANDRA_DATE_H
+#ifndef PHP_DRIVER_DATE_H
+#define PHP_DRIVER_DATE_H
 
-void php_cassandra_date_init(INTERNAL_FUNCTION_PARAMETERS);
+void php_driver_date_init(INTERNAL_FUNCTION_PARAMETERS);
 
-#endif /* PHP_CASSANDRA_DATE_H */
+#endif /* PHP_DRIVER_DATE_H */

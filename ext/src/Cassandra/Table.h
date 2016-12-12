@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-#ifndef PHP_CASSANDRA_TABLE_H
-#define PHP_CASSANDRA_TABLE_H
+#ifndef PHP_DRIVER_TABLE_H
+#define PHP_DRIVER_TABLE_H
 
 #include "php_driver.h"
 
 php5to7_zval
-php_cassandra_table_build_options(CassIterator* iterator TSRMLS_DC);
+php_driver_table_build_options(CassIterator* iterator TSRMLS_DC);
 
-#endif /* PHP_CASSANDRA_TABLE_H */
+#endif /* PHP_DRIVER_TABLE_H */

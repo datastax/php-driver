@@ -19,12 +19,12 @@
 #include "util/bytes.h"
 #include "util/types.h"
 
-zend_class_entry *cassandra_blob_ce = NULL;
+zend_class_entry *php_driver_blob_ce = NULL;
 
 void
-php_cassandra_blob_init(INTERNAL_FUNCTION_PARAMETERS)
+php_driver_blob_init(INTERNAL_FUNCTION_PARAMETERS)
 {
-  cassandra_blob *self;
+  php_driver_blob *self;
   char *string;
   php5to7_size string_len;
 
@@ -32,11 +32,11 @@ php_cassandra_blob_init(INTERNAL_FUNCTION_PARAMETERS)
     return;
   }
 
-  if (getThis() && instanceof_function(Z_OBJCE_P(getThis()), cassandra_blob_ce TSRMLS_CC)) {
-    self = PHP_CASSANDRA_GET_BLOB(getThis());
+  if (getThis() && instanceof_function(Z_OBJCE_P(getThis()), php_driver_blob_ce TSRMLS_CC)) {
+    self = PHP_DRIVER_GET_BLOB(getThis());
   } else {
-    object_init_ex(return_value, cassandra_blob_ce);
-    self = PHP_CASSANDRA_GET_BLOB(return_value);
+    object_init_ex(return_value, php_driver_blob_ce);
+    self = PHP_DRIVER_GET_BLOB(return_value);
   }
 
   self->data = emalloc(string_len * sizeof(cass_byte_t));
@@ -44,51 +44,51 @@ php_cassandra_blob_init(INTERNAL_FUNCTION_PARAMETERS)
   memcpy(self->data, string, string_len);
 }
 
-/* {{{ Cassandra\Blob::__construct(string) */
+/* {{{ Blob::__construct(string) */
 PHP_METHOD(Blob, __construct)
 {
-  php_cassandra_blob_init(INTERNAL_FUNCTION_PARAM_PASSTHRU);
+  php_driver_blob_init(INTERNAL_FUNCTION_PARAM_PASSTHRU);
 }
 /* }}} */
 
-/* {{{ Cassandra\Blob::__toString() */
+/* {{{ Blob::__toString() */
 PHP_METHOD(Blob, __toString)
 {
-  cassandra_blob *self = PHP_CASSANDRA_GET_BLOB(getThis());
+  php_driver_blob *self = PHP_DRIVER_GET_BLOB(getThis());
   char *hex;
   int hex_len;
-  php_cassandra_bytes_to_hex((const char *) self->data, self->size, &hex, &hex_len);
+  php_driver_bytes_to_hex((const char *) self->data, self->size, &hex, &hex_len);
 
   PHP5TO7_RETVAL_STRINGL(hex, hex_len);
   efree(hex);
 }
 /* }}} */
 
-/* {{{ Cassandra\Blob::type() */
+/* {{{ Blob::type() */
 PHP_METHOD(Blob, type)
 {
-  php5to7_zval type = php_cassandra_type_scalar(CASS_VALUE_TYPE_BLOB TSRMLS_CC);
+  php5to7_zval type = php_driver_type_scalar(CASS_VALUE_TYPE_BLOB TSRMLS_CC);
   RETURN_ZVAL(PHP5TO7_ZVAL_MAYBE_P(type), 1, 1);
 }
 /* }}} */
 
-/* {{{ Cassandra\Blob::bytes() */
+/* {{{ Blob::bytes() */
 PHP_METHOD(Blob, bytes)
 {
-  cassandra_blob *self = PHP_CASSANDRA_GET_BLOB(getThis());
+  php_driver_blob *self = PHP_DRIVER_GET_BLOB(getThis());
   char *hex;
   int hex_len;
-  php_cassandra_bytes_to_hex((const char *) self->data, self->size, &hex, &hex_len);
+  php_driver_bytes_to_hex((const char *) self->data, self->size, &hex, &hex_len);
 
   PHP5TO7_RETVAL_STRINGL(hex, hex_len);
   efree(hex);
 }
 /* }}} */
 
-/* {{{ Cassandra\Blob::toBinaryString() */
+/* {{{ Blob::toBinaryString() */
 PHP_METHOD(Blob, toBinaryString)
 {
-  cassandra_blob *blob = PHP_CASSANDRA_GET_BLOB(getThis());
+  php_driver_blob *blob = PHP_DRIVER_GET_BLOB(getThis());
 
   PHP5TO7_RETVAL_STRINGL((const char *)blob->data, blob->size);
 }
@@ -101,7 +101,7 @@ ZEND_END_ARG_INFO()
 ZEND_BEGIN_ARG_INFO_EX(arginfo_none, 0, ZEND_RETURN_VALUE, 0)
 ZEND_END_ARG_INFO()
 
-static zend_function_entry cassandra_blob_methods[] = {
+static zend_function_entry php_driver_blob_methods[] = {
   PHP_ME(Blob, __construct, arginfo__construct, ZEND_ACC_CTOR|ZEND_ACC_PUBLIC)
   PHP_ME(Blob, __toString, arginfo_none, ZEND_ACC_PUBLIC)
   PHP_ME(Blob, type, arginfo_none, ZEND_ACC_PUBLIC)
@@ -110,10 +110,10 @@ static zend_function_entry cassandra_blob_methods[] = {
   PHP_FE_END
 };
 
-static php_cassandra_value_handlers cassandra_blob_handlers;
+static php_driver_value_handlers php_driver_blob_handlers;
 
 static HashTable *
-php_cassandra_blob_gc(zval *object, php5to7_zval_gc table, int *n TSRMLS_DC)
+php_driver_blob_gc(zval *object, php5to7_zval_gc table, int *n TSRMLS_DC)
 {
   *table = NULL;
   *n = 0;
@@ -121,20 +121,20 @@ php_cassandra_blob_gc(zval *object, php5to7_zval_gc table, int *n TSRMLS_DC)
 }
 
 static HashTable *
-php_cassandra_blob_properties(zval *object TSRMLS_DC)
+php_driver_blob_properties(zval *object TSRMLS_DC)
 {
   char *hex;
   int hex_len;
   php5to7_zval type;
   php5to7_zval bytes;
 
-  cassandra_blob *self = PHP_CASSANDRA_GET_BLOB(object);
+  php_driver_blob *self = PHP_DRIVER_GET_BLOB(object);
   HashTable      *props = zend_std_get_properties(object TSRMLS_CC);
 
-  type = php_cassandra_type_scalar(CASS_VALUE_TYPE_BLOB TSRMLS_CC);
+  type = php_driver_type_scalar(CASS_VALUE_TYPE_BLOB TSRMLS_CC);
   PHP5TO7_ZEND_HASH_UPDATE(props, "type", sizeof("type"), PHP5TO7_ZVAL_MAYBE_P(type), sizeof(zval));
 
-  php_cassandra_bytes_to_hex((const char *) self->data, self->size, &hex, &hex_len);
+  php_driver_bytes_to_hex((const char *) self->data, self->size, &hex, &hex_len);
   PHP5TO7_ZVAL_MAYBE_MAKE(bytes);
   PHP5TO7_ZVAL_STRINGL(PHP5TO7_ZVAL_MAYBE_P(bytes), hex, hex_len);
   efree(hex);
@@ -144,16 +144,16 @@ php_cassandra_blob_properties(zval *object TSRMLS_DC)
 }
 
 static int
-php_cassandra_blob_compare(zval *obj1, zval *obj2 TSRMLS_DC)
+php_driver_blob_compare(zval *obj1, zval *obj2 TSRMLS_DC)
 {
-  cassandra_blob *blob1 = NULL;
-  cassandra_blob *blob2 = NULL;
+  php_driver_blob *blob1 = NULL;
+  php_driver_blob *blob2 = NULL;
 
   if (Z_OBJCE_P(obj1) != Z_OBJCE_P(obj2))
     return 1; /* different classes */
 
-  blob1 = PHP_CASSANDRA_GET_BLOB(obj1);
-  blob2 = PHP_CASSANDRA_GET_BLOB(obj2);
+  blob1 = PHP_DRIVER_GET_BLOB(obj1);
+  blob2 = PHP_DRIVER_GET_BLOB(obj2);
 
   if (blob1->size == blob2->size) {
     return memcmp((const char *) blob1->data, (const char *) blob2->data, blob1->size);
@@ -165,16 +165,16 @@ php_cassandra_blob_compare(zval *obj1, zval *obj2 TSRMLS_DC)
 }
 
 static unsigned
-php_cassandra_blob_hash_value(zval *obj TSRMLS_DC)
+php_driver_blob_hash_value(zval *obj TSRMLS_DC)
 {
-  cassandra_blob *self = PHP_CASSANDRA_GET_BLOB(obj);
+  php_driver_blob *self = PHP_DRIVER_GET_BLOB(obj);
   return zend_inline_hash_func((const char *) self->data, self->size);
 }
 
 static void
-php_cassandra_blob_free(php5to7_zend_object_free *object TSRMLS_DC)
+php_driver_blob_free(php5to7_zend_object_free *object TSRMLS_DC)
 {
-  cassandra_blob *self = PHP5TO7_ZEND_OBJECT_GET(blob, object);
+  php_driver_blob *self = PHP5TO7_ZEND_OBJECT_GET(blob, object);
 
   if (self->data) {
     efree(self->data);
@@ -185,30 +185,30 @@ php_cassandra_blob_free(php5to7_zend_object_free *object TSRMLS_DC)
 }
 
 static php5to7_zend_object
-php_cassandra_blob_new(zend_class_entry *ce TSRMLS_DC)
+php_driver_blob_new(zend_class_entry *ce TSRMLS_DC)
 {
-  cassandra_blob *self =
+  php_driver_blob *self =
       PHP5TO7_ZEND_OBJECT_ECALLOC(blob, ce);
 
   PHP5TO7_ZEND_OBJECT_INIT(blob, self, ce);
 }
 
-void cassandra_define_Blob(TSRMLS_D)
+void php_driver_define_Blob(TSRMLS_D)
 {
   zend_class_entry ce;
 
-  INIT_CLASS_ENTRY(ce, "Cassandra\\Blob", cassandra_blob_methods);
-  cassandra_blob_ce = zend_register_internal_class(&ce TSRMLS_CC);
-  zend_class_implements(cassandra_blob_ce TSRMLS_CC, 1, cassandra_value_ce);
-  memcpy(&cassandra_blob_handlers, zend_get_std_object_handlers(), sizeof(zend_object_handlers));
-  cassandra_blob_handlers.std.get_properties  = php_cassandra_blob_properties;
+  INIT_CLASS_ENTRY(ce, PHP_DRIVER_NAMESPACE "\\Blob", php_driver_blob_methods);
+  php_driver_blob_ce = zend_register_internal_class(&ce TSRMLS_CC);
+  zend_class_implements(php_driver_blob_ce TSRMLS_CC, 1, php_driver_value_ce);
+  memcpy(&php_driver_blob_handlers, zend_get_std_object_handlers(), sizeof(zend_object_handlers));
+  php_driver_blob_handlers.std.get_properties  = php_driver_blob_properties;
 #if PHP_VERSION_ID >= 50400
-  cassandra_blob_handlers.std.get_gc          = php_cassandra_blob_gc;
+  php_driver_blob_handlers.std.get_gc          = php_driver_blob_gc;
 #endif
-  cassandra_blob_handlers.std.compare_objects = php_cassandra_blob_compare;
-  cassandra_blob_ce->ce_flags |= PHP5TO7_ZEND_ACC_FINAL;
-  cassandra_blob_ce->create_object = php_cassandra_blob_new;
+  php_driver_blob_handlers.std.compare_objects = php_driver_blob_compare;
+  php_driver_blob_ce->ce_flags |= PHP5TO7_ZEND_ACC_FINAL;
+  php_driver_blob_ce->create_object = php_driver_blob_new;
 
-  cassandra_blob_handlers.hash_value = php_cassandra_blob_hash_value;
-  cassandra_blob_handlers.std.clone_obj = NULL;
+  php_driver_blob_handlers.hash_value = php_driver_blob_hash_value;
+  php_driver_blob_handlers.std.clone_obj = NULL;
 }

@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-#ifndef PHP_CASSANDRA_DEFAULT_FUNCTION_H
-#define PHP_CASSANDRA_DEFAULT_FUNCTION_H
+#ifndef PHP_DRIVER_DEFAULT_FUNCTION_H
+#define PHP_DRIVER_DEFAULT_FUNCTION_H
 
 php5to7_zval
-php_cassandra_create_function(cassandra_ref* schema,
+php_driver_create_function(php_driver_ref* schema,
                               const CassFunctionMeta *meta TSRMLS_DC);
 
-#endif /* PHP_CASSANDRA_DEFAULT_FUNCTION_H */
+#endif /* PHP_DRIVER_DEFAULT_FUNCTION_H */

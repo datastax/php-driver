@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-#ifndef PHP_CASSANDRA_MAP_H
-#define PHP_CASSANDRA_MAP_H
+#ifndef PHP_DRIVER_MAP_H
+#define PHP_DRIVER_MAP_H
 
-int php_cassandra_map_set(cassandra_map* map, zval* zkey, zval* zvalue TSRMLS_DC);
+int php_driver_map_set(php_driver_map* map, zval* zkey, zval* zvalue TSRMLS_DC);
 
-#endif /* PHP_CASSANDRA_MAP_H */
+#endif /* PHP_DRIVER_MAP_H */

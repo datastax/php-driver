@@ -31,10 +31,10 @@
 #  endif
 #endif
 
-extern zend_class_entry *cassandra_invalid_argument_exception_ce;
+extern zend_class_entry *php_driver_invalid_argument_exception_ce;
 
 int
-php_cassandra_parse_float(char *in, int in_len, cass_float_t *number TSRMLS_DC)
+php_driver_parse_float(char *in, int in_len, cass_float_t *number TSRMLS_DC)
 {
   char *end;
   errno = 0;
@@ -42,17 +42,17 @@ php_cassandra_parse_float(char *in, int in_len, cass_float_t *number TSRMLS_DC)
   *number = (cass_float_t) strtof(in, &end);
 
   if (errno == ERANGE) {
-    zend_throw_exception_ex(cassandra_range_exception_ce, 0 TSRMLS_CC, "Value is too small or too big for float: '%s'", in);
+    zend_throw_exception_ex(php_driver_range_exception_ce, 0 TSRMLS_CC, "Value is too small or too big for float: '%s'", in);
     return 0;
   }
 
   if (errno || end == in) {
-    zend_throw_exception_ex(cassandra_invalid_argument_exception_ce, 0 TSRMLS_CC, "Invalid float value: '%s'", in);
+    zend_throw_exception_ex(php_driver_invalid_argument_exception_ce, 0 TSRMLS_CC, "Invalid float value: '%s'", in);
     return 0;
   }
 
   if (end != &in[in_len]) {
-    zend_throw_exception_ex(cassandra_invalid_argument_exception_ce, 0 TSRMLS_CC, "Invalid characters were found in value: '%s'", in);
+    zend_throw_exception_ex(php_driver_invalid_argument_exception_ce, 0 TSRMLS_CC, "Invalid characters were found in value: '%s'", in);
     return 0;
   }
 
@@ -60,7 +60,7 @@ php_cassandra_parse_float(char *in, int in_len, cass_float_t *number TSRMLS_DC)
 }
 
 int
-php_cassandra_parse_double(char* in, int in_len, cass_double_t* number TSRMLS_DC)
+php_driver_parse_double(char* in, int in_len, cass_double_t* number TSRMLS_DC)
 {
   char* end;
   errno = 0;
@@ -68,17 +68,17 @@ php_cassandra_parse_double(char* in, int in_len, cass_double_t* number TSRMLS_DC
   *number = (cass_double_t) strtod(in, &end);
 
   if (errno == ERANGE) {
-    zend_throw_exception_ex(cassandra_range_exception_ce, 0 TSRMLS_CC, "Value is too small or too big for double: '%s'", in);
+    zend_throw_exception_ex(php_driver_range_exception_ce, 0 TSRMLS_CC, "Value is too small or too big for double: '%s'", in);
     return 0;
   }
 
   if (errno || end == in) {
-    zend_throw_exception_ex(cassandra_invalid_argument_exception_ce, 0 TSRMLS_CC, "Invalid double value: '%s'", in);
+    zend_throw_exception_ex(php_driver_invalid_argument_exception_ce, 0 TSRMLS_CC, "Invalid double value: '%s'", in);
     return 0;
   }
 
   if (end != &in[in_len]) {
-    zend_throw_exception_ex(cassandra_invalid_argument_exception_ce, 0 TSRMLS_CC, "Invalid characters were found in value: '%s'", in);
+    zend_throw_exception_ex(php_driver_invalid_argument_exception_ce, 0 TSRMLS_CC, "Invalid characters were found in value: '%s'", in);
     return 0;
   }
 
@@ -86,7 +86,7 @@ php_cassandra_parse_double(char* in, int in_len, cass_double_t* number TSRMLS_DC
 }
 
 int
-php_cassandra_parse_int(char* in, int in_len, cass_int32_t* number TSRMLS_DC)
+php_driver_parse_int(char* in, int in_len, cass_int32_t* number TSRMLS_DC)
 {
   char* end = NULL;
 
@@ -126,17 +126,17 @@ php_cassandra_parse_int(char* in, int in_len, cass_int32_t* number TSRMLS_DC)
     *number = *number * -1;
 
   if (errno == ERANGE) {
-    zend_throw_exception_ex(cassandra_range_exception_ce, 0 TSRMLS_CC, "Value is too small or too big for int: '%s'", in);
+    zend_throw_exception_ex(php_driver_range_exception_ce, 0 TSRMLS_CC, "Value is too small or too big for int: '%s'", in);
     return 0;
   }
 
   if (errno || end == &in[point]) {
-    zend_throw_exception_ex(cassandra_invalid_argument_exception_ce, 0 TSRMLS_CC, "Invalid integer value: '%s'", in);
+    zend_throw_exception_ex(php_driver_invalid_argument_exception_ce, 0 TSRMLS_CC, "Invalid integer value: '%s'", in);
     return 0;
   }
 
   if (end != &in[in_len]) {
-    zend_throw_exception_ex(cassandra_invalid_argument_exception_ce, 0 TSRMLS_CC, "Invalid characters were found in value: '%s'", in);
+    zend_throw_exception_ex(php_driver_invalid_argument_exception_ce, 0 TSRMLS_CC, "Invalid characters were found in value: '%s'", in);
     return 0;
   }
 
@@ -144,7 +144,7 @@ php_cassandra_parse_int(char* in, int in_len, cass_int32_t* number TSRMLS_DC)
 }
 
 int
-php_cassandra_parse_bigint(char *in, int in_len, cass_int64_t *number TSRMLS_DC)
+php_driver_parse_bigint(char *in, int in_len, cass_int64_t *number TSRMLS_DC)
 {
   char *end = NULL;
 
@@ -184,17 +184,17 @@ php_cassandra_parse_bigint(char *in, int in_len, cass_int64_t *number TSRMLS_DC)
     *number = *number * -1;
 
   if (errno == ERANGE) {
-    zend_throw_exception_ex(cassandra_range_exception_ce, 0 TSRMLS_CC, "Value is too small or too big for bigint: '%s'", in);
+    zend_throw_exception_ex(php_driver_range_exception_ce, 0 TSRMLS_CC, "Value is too small or too big for bigint: '%s'", in);
     return 0;
   }
 
   if (errno || end == &in[point]) {
-    zend_throw_exception_ex(cassandra_invalid_argument_exception_ce, 0 TSRMLS_CC, "Invalid integer value: '%s'", in);
+    zend_throw_exception_ex(php_driver_invalid_argument_exception_ce, 0 TSRMLS_CC, "Invalid integer value: '%s'", in);
     return 0;
   }
 
   if (end != &in[in_len]) {
-    zend_throw_exception_ex(cassandra_invalid_argument_exception_ce, 0 TSRMLS_CC, "Invalid characters were found in value: '%s'", in);
+    zend_throw_exception_ex(php_driver_invalid_argument_exception_ce, 0 TSRMLS_CC, "Invalid characters were found in value: '%s'", in);
     return 0;
   }
 
@@ -202,7 +202,7 @@ php_cassandra_parse_bigint(char *in, int in_len, cass_int64_t *number TSRMLS_DC)
 }
 
 int
-php_cassandra_parse_varint(char *in, int in_len, mpz_t *number TSRMLS_DC)
+php_driver_parse_varint(char *in, int in_len, mpz_t *number TSRMLS_DC)
 {
   int point = 0;
   int base = 10;
@@ -233,7 +233,7 @@ php_cassandra_parse_varint(char *in, int in_len, mpz_t *number TSRMLS_DC)
   }
 
   if (mpz_set_str(*number, &in[point], base) == -1) {
-    zend_throw_exception_ex(cassandra_invalid_argument_exception_ce, 0 TSRMLS_CC, "Invalid integer value: '%s', base: %d", in, base);
+    zend_throw_exception_ex(php_driver_invalid_argument_exception_ce, 0 TSRMLS_CC, "Invalid integer value: '%s', base: %d", in, base);
     return 0;
   }
 
@@ -244,7 +244,7 @@ php_cassandra_parse_varint(char *in, int in_len, mpz_t *number TSRMLS_DC)
 }
 
 int
-php_cassandra_parse_decimal(char *in, int in_len, mpz_t *number, long *scale TSRMLS_DC)
+php_driver_parse_decimal(char *in, int in_len, mpz_t *number, long *scale TSRMLS_DC)
 {
   /*  start is the index into the char array where the significand starts */
   int start = 0;
@@ -311,7 +311,7 @@ php_cassandra_parse_decimal(char *in, int in_len, mpz_t *number, long *scale TSR
   /* Hex or binary */
   if (maybe_octal && (in[point + 1] == 'b' || in[point + 1] == 'x')) {
     *scale = 0;
-    return php_cassandra_parse_varint(in, in_len, number TSRMLS_CC);
+    return php_driver_parse_varint(in, in_len, number TSRMLS_CC);
   }
 
   /*
@@ -324,7 +324,7 @@ php_cassandra_parse_decimal(char *in, int in_len, mpz_t *number, long *scale TSR
     if (c == '.') {
       /* If dot != -1 then we've seen more than one decimal point. */
       if (dot != -1) {
-        zend_throw_exception_ex(cassandra_invalid_argument_exception_ce, 0 TSRMLS_CC, "Multiple '.' (dots) in the number '%s'", in);
+        zend_throw_exception_ex(php_driver_invalid_argument_exception_ce, 0 TSRMLS_CC, "Multiple '.' (dots) in the number '%s'", in);
         return 0;
       }
 
@@ -338,7 +338,7 @@ php_cassandra_parse_decimal(char *in, int in_len, mpz_t *number, long *scale TSR
      * exponent and is not a hexadecimal digit.
      */
     else if (!isxdigit(c)) {
-      zend_throw_exception_ex(cassandra_invalid_argument_exception_ce, 0 TSRMLS_CC, "Unrecognized character '%c' at position %d", c, point);
+      zend_throw_exception_ex(php_driver_invalid_argument_exception_ce, 0 TSRMLS_CC, "Unrecognized character '%c' at position %d", c, point);
       return 0;
     }
 
@@ -348,7 +348,7 @@ php_cassandra_parse_decimal(char *in, int in_len, mpz_t *number, long *scale TSR
   /* Octal number */
   if (maybe_octal && dot == -1) {
     *scale = 0;
-    return php_cassandra_parse_varint(in, in_len, number TSRMLS_CC);
+    return php_driver_parse_varint(in, in_len, number TSRMLS_CC);
   }
 
   /* Prepend a negative sign if necessary. */
@@ -376,12 +376,12 @@ php_cassandra_parse_decimal(char *in, int in_len, mpz_t *number, long *scale TSR
   }
 
   if (out_len == 0) {
-    zend_throw_exception_ex(cassandra_invalid_argument_exception_ce, 0 TSRMLS_CC, "No digits seen in value: '%s'", in);
+    zend_throw_exception_ex(php_driver_invalid_argument_exception_ce, 0 TSRMLS_CC, "No digits seen in value: '%s'", in);
     return 0;
   }
 
   if (mpz_set_str(*number, out, 10) == -1) {
-    zend_throw_exception_ex(cassandra_invalid_argument_exception_ce, 0 TSRMLS_CC, "Unable to extract integer part of decimal value: '%s', %s", in, out);
+    zend_throw_exception_ex(php_driver_invalid_argument_exception_ce, 0 TSRMLS_CC, "Unable to extract integer part of decimal value: '%s', %s", in, out);
     efree(out);
     return 0;
   }
@@ -406,12 +406,12 @@ php_cassandra_parse_decimal(char *in, int in_len, mpz_t *number, long *scale TSR
      * or 'E'.
      */
     if (point >= in_len) {
-      zend_throw_exception_ex(cassandra_invalid_argument_exception_ce, 0 TSRMLS_CC, "No exponent following e or E in value: '%s'", in);
+      zend_throw_exception_ex(php_driver_invalid_argument_exception_ce, 0 TSRMLS_CC, "No exponent following e or E in value: '%s'", in);
       return 0;
     }
 
     if (!sscanf(&in[point], "%d", &diff)) {
-      zend_throw_exception_ex(cassandra_invalid_argument_exception_ce, 0 TSRMLS_CC, "Malformed exponent in value: '%s'", in);
+      zend_throw_exception_ex(php_driver_invalid_argument_exception_ce, 0 TSRMLS_CC, "Malformed exponent in value: '%s'", in);
       return 0;
     }
 
@@ -422,7 +422,7 @@ php_cassandra_parse_decimal(char *in, int in_len, mpz_t *number, long *scale TSR
 }
 
 void
-php_cassandra_format_integer(mpz_t number, char **out, int *out_len)
+php_driver_format_integer(mpz_t number, char **out, int *out_len)
 {
   size_t len;
   char *tmp;
@@ -446,7 +446,7 @@ php_cassandra_format_integer(mpz_t number, char **out, int *out_len)
 
 
 void
-php_cassandra_format_decimal(mpz_t number, long scale, char **out, int *out_len)
+php_driver_format_decimal(mpz_t number, long scale, char **out, int *out_len)
 {
   char *tmp = NULL;
   size_t total = 0;
@@ -455,7 +455,7 @@ php_cassandra_format_decimal(mpz_t number, long scale, char **out, int *out_len)
   int point = -1;
 
   if (scale == 0) {
-    php_cassandra_format_integer(number, out, out_len);
+    php_driver_format_integer(number, out, out_len);
     return;
   }
 

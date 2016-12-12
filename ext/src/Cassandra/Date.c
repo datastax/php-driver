@@ -21,23 +21,23 @@
 #include <time.h>
 #include <ext/date/php_date.h>
 
-zend_class_entry *cassandra_date_ce = NULL;
+zend_class_entry *php_driver_date_ce = NULL;
 
 void
-php_cassandra_date_init(INTERNAL_FUNCTION_PARAMETERS)
+php_driver_date_init(INTERNAL_FUNCTION_PARAMETERS)
 {
   zval *seconds = NULL;
-  cassandra_date *self;
+  php_driver_date *self;
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "|z", &seconds) == FAILURE) {
     return;
   }
 
-  if (getThis() && instanceof_function(Z_OBJCE_P(getThis()), cassandra_date_ce TSRMLS_CC)) {
-    self = PHP_CASSANDRA_GET_DATE(getThis());
+  if (getThis() && instanceof_function(Z_OBJCE_P(getThis()), php_driver_date_ce TSRMLS_CC)) {
+    self = PHP_DRIVER_GET_DATE(getThis());
   } else {
-    object_init_ex(return_value, cassandra_date_ce);
-    self = PHP_CASSANDRA_GET_DATE(return_value);
+    object_init_ex(return_value, php_driver_date_ce);
+    self = PHP_DRIVER_GET_DATE(return_value);
   }
 
   if (seconds == NULL) {
@@ -50,36 +50,36 @@ php_cassandra_date_init(INTERNAL_FUNCTION_PARAMETERS)
   }
 }
 
-/* {{{ Cassandra\Date::__construct(string) */
+/* {{{ Date::__construct(string) */
 PHP_METHOD(Date, __construct)
 {
-  php_cassandra_date_init(INTERNAL_FUNCTION_PARAM_PASSTHRU);
+  php_driver_date_init(INTERNAL_FUNCTION_PARAM_PASSTHRU);
 }
 /* }}} */
 
-/* {{{ Cassandra\Date::type() */
+/* {{{ Date::type() */
 PHP_METHOD(Date, type)
 {
-  php5to7_zval type = php_cassandra_type_scalar(CASS_VALUE_TYPE_DATE TSRMLS_CC);
+  php5to7_zval type = php_driver_type_scalar(CASS_VALUE_TYPE_DATE TSRMLS_CC);
   RETURN_ZVAL(PHP5TO7_ZVAL_MAYBE_P(type), 1, 1);
 }
 /* }}} */
 
-/* {{{ Cassandra\Date::seconds() */
+/* {{{ Date::seconds() */
 PHP_METHOD(Date, seconds)
 {
-  cassandra_date *self = PHP_CASSANDRA_GET_DATE(getThis());
+  php_driver_date *self = PHP_DRIVER_GET_DATE(getThis());
 
   RETURN_LONG(cass_date_time_to_epoch(self->date, 0));
 }
 /* }}} */
 
-/* {{{ Cassandra\Date::toDateTime() */
+/* {{{ Date::toDateTime() */
 PHP_METHOD(Date, toDateTime)
 {
-  cassandra_date *self;
+  php_driver_date *self;
   zval *ztime = NULL;
-  cassandra_time* time_obj = NULL;
+  php_driver_time* time_obj = NULL;
   php5to7_zval datetime;
   php_date_obj *datetime_obj = NULL;
   char *str;
@@ -90,9 +90,9 @@ PHP_METHOD(Date, toDateTime)
   }
 
   if (ztime != NULL) {
-    time_obj = PHP_CASSANDRA_GET_TIME(ztime);
+    time_obj = PHP_DRIVER_GET_TIME(ztime);
   }
-  self = PHP_CASSANDRA_GET_DATE(getThis());
+  self = PHP_DRIVER_GET_DATE(getThis());
 
   PHP5TO7_ZVAL_MAYBE_MAKE(datetime);
   php_date_instantiate(php_date_get_date_ce(), PHP5TO7_ZVAL_MAYBE_P(datetime) TSRMLS_CC);
@@ -113,10 +113,10 @@ PHP_METHOD(Date, toDateTime)
 }
 /* }}} */
 
-/* {{{ Cassandra\Date::fromDateTime() */
+/* {{{ Date::fromDateTime() */
 PHP_METHOD(Date, fromDateTime)
 {
-  cassandra_date *self;
+  php_driver_date *self;
   zval *zdatetime;
   php5to7_zval retval;
 
@@ -132,8 +132,8 @@ PHP_METHOD(Date, fromDateTime)
 
   if (!PHP5TO7_ZVAL_IS_UNDEF(retval) &&
       Z_TYPE_P(PHP5TO7_ZVAL_MAYBE_P(retval)) == IS_LONG) {
-    object_init_ex(return_value, cassandra_date_ce);
-    self = PHP_CASSANDRA_GET_DATE(return_value);
+    object_init_ex(return_value, php_driver_date_ce);
+    self = PHP_DRIVER_GET_DATE(return_value);
     self->date = cass_date_from_epoch(PHP5TO7_Z_LVAL_MAYBE_P(retval));
     zval_ptr_dtor(&retval);
     return;
@@ -142,19 +142,19 @@ PHP_METHOD(Date, fromDateTime)
 /* }}} */
 
 
-/* {{{ Cassandra\Date::__toString() */
+/* {{{ Date::__toString() */
 PHP_METHOD(Date, __toString)
 {
-  cassandra_date *self;
+  php_driver_date *self;
   char *ret = NULL;
 
   if (zend_parse_parameters_none() == FAILURE) {
     return;
   }
 
-  self = PHP_CASSANDRA_GET_DATE(getThis());
+  self = PHP_DRIVER_GET_DATE(getThis());
 
-  spprintf(&ret, 0, "Cassandra\\Date(seconds=%lld)", cass_date_time_to_epoch(self->date, 0));
+  spprintf(&ret, 0, PHP_DRIVER_NAMESPACE "\\Date(seconds=%lld)", cass_date_time_to_epoch(self->date, 0));
   PHP5TO7_RETVAL_STRING(ret);
   efree(ret);
 }
@@ -165,7 +165,7 @@ ZEND_BEGIN_ARG_INFO_EX(arginfo__construct, 0, ZEND_RETURN_VALUE, 0)
 ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_time, 0, ZEND_RETURN_VALUE, 0)
-  ZEND_ARG_OBJ_INFO(0, time, Cassandra\\Time, 0)
+  ZEND_ARG_OBJ_INFO(0, time, PHP_DRIVER_NAMESPACE_ARG\\Time, 0)
 ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_datetime, 0, ZEND_RETURN_VALUE, 1)
@@ -175,7 +175,7 @@ ZEND_END_ARG_INFO()
 ZEND_BEGIN_ARG_INFO_EX(arginfo_none, 0, ZEND_RETURN_VALUE, 0)
 ZEND_END_ARG_INFO()
 
-static zend_function_entry cassandra_date_methods[] = {
+static zend_function_entry php_driver_date_methods[] = {
   PHP_ME(Date, __construct, arginfo__construct, ZEND_ACC_CTOR|ZEND_ACC_PUBLIC)
   PHP_ME(Date, type, arginfo_none, ZEND_ACC_PUBLIC)
   PHP_ME(Date, seconds, arginfo_none, ZEND_ACC_PUBLIC)
@@ -185,10 +185,10 @@ static zend_function_entry cassandra_date_methods[] = {
   PHP_FE_END
 };
 
-static php_cassandra_value_handlers cassandra_date_handlers;
+static php_driver_value_handlers php_driver_date_handlers;
 
 static HashTable *
-php_cassandra_date_gc(zval *object, php5to7_zval_gc table, int *n TSRMLS_DC)
+php_driver_date_gc(zval *object, php5to7_zval_gc table, int *n TSRMLS_DC)
 {
   *table = NULL;
   *n = 0;
@@ -196,15 +196,15 @@ php_cassandra_date_gc(zval *object, php5to7_zval_gc table, int *n TSRMLS_DC)
 }
 
 static HashTable *
-php_cassandra_date_properties(zval *object TSRMLS_DC)
+php_driver_date_properties(zval *object TSRMLS_DC)
 {
   php5to7_zval type;
   php5to7_zval seconds;
 
-  cassandra_date *self = PHP_CASSANDRA_GET_DATE(object);
+  php_driver_date *self = PHP_DRIVER_GET_DATE(object);
   HashTable *props = zend_std_get_properties(object TSRMLS_CC);
 
-  type = php_cassandra_type_scalar(CASS_VALUE_TYPE_DATE TSRMLS_CC);
+  type = php_driver_type_scalar(CASS_VALUE_TYPE_DATE TSRMLS_CC);
   PHP5TO7_ZEND_HASH_UPDATE(props, "type", sizeof("type"), PHP5TO7_ZVAL_MAYBE_P(type), sizeof(zval));
 
   PHP5TO7_ZVAL_MAYBE_MAKE(seconds);
@@ -215,39 +215,39 @@ php_cassandra_date_properties(zval *object TSRMLS_DC)
 }
 
 static int
-php_cassandra_date_compare(zval *obj1, zval *obj2 TSRMLS_DC)
+php_driver_date_compare(zval *obj1, zval *obj2 TSRMLS_DC)
 {
-  cassandra_date *date1 = NULL;
-  cassandra_date *date2 = NULL;
+  php_driver_date *date1 = NULL;
+  php_driver_date *date2 = NULL;
   if (Z_OBJCE_P(obj1) != Z_OBJCE_P(obj2))
     return 1; /* different classes */
 
-  date1 = PHP_CASSANDRA_GET_DATE(obj1);
-  date2 = PHP_CASSANDRA_GET_DATE(obj2);
+  date1 = PHP_DRIVER_GET_DATE(obj1);
+  date2 = PHP_DRIVER_GET_DATE(obj2);
 
-  return PHP_CASSANDRA_COMPARE(date1->date, date2->date);
+  return PHP_DRIVER_COMPARE(date1->date, date2->date);
 }
 
 static unsigned
-php_cassandra_date_hash_value(zval *obj TSRMLS_DC)
+php_driver_date_hash_value(zval *obj TSRMLS_DC)
 {
-  cassandra_date *self = PHP_CASSANDRA_GET_DATE(obj);
+  php_driver_date *self = PHP_DRIVER_GET_DATE(obj);
   return 31 * 17 + self->date;
 }
 
 static void
-php_cassandra_date_free(php5to7_zend_object_free *object TSRMLS_DC)
+php_driver_date_free(php5to7_zend_object_free *object TSRMLS_DC)
 {
-  cassandra_date *self = PHP5TO7_ZEND_OBJECT_GET(date, object);
+  php_driver_date *self = PHP5TO7_ZEND_OBJECT_GET(date, object);
 
   zend_object_std_dtor(&self->zval TSRMLS_CC);
   PHP5TO7_MAYBE_EFREE(self);
 }
 
 static php5to7_zend_object
-php_cassandra_date_new(zend_class_entry *ce TSRMLS_DC)
+php_driver_date_new(zend_class_entry *ce TSRMLS_DC)
 {
-  cassandra_date *self =
+  php_driver_date *self =
       PHP5TO7_ZEND_OBJECT_ECALLOC(date, ce);
 
   self->date = 0;
@@ -255,21 +255,21 @@ php_cassandra_date_new(zend_class_entry *ce TSRMLS_DC)
   PHP5TO7_ZEND_OBJECT_INIT(date, self, ce);
 }
 
-void cassandra_define_Date(TSRMLS_D)
+void php_driver_define_Date(TSRMLS_D)
 {
   zend_class_entry ce;
 
-  INIT_CLASS_ENTRY(ce, "Cassandra\\Date", cassandra_date_methods);
-  cassandra_date_ce = zend_register_internal_class(&ce TSRMLS_CC);
-  zend_class_implements(cassandra_date_ce TSRMLS_CC, 1, cassandra_value_ce);
-  memcpy(&cassandra_date_handlers, zend_get_std_object_handlers(), sizeof(zend_object_handlers));
-  cassandra_date_handlers.std.get_properties  = php_cassandra_date_properties;
+  INIT_CLASS_ENTRY(ce, PHP_DRIVER_NAMESPACE "\\Date", php_driver_date_methods);
+  php_driver_date_ce = zend_register_internal_class(&ce TSRMLS_CC);
+  zend_class_implements(php_driver_date_ce TSRMLS_CC, 1, php_driver_value_ce);
+  memcpy(&php_driver_date_handlers, zend_get_std_object_handlers(), sizeof(zend_object_handlers));
+  php_driver_date_handlers.std.get_properties  = php_driver_date_properties;
 #if PHP_VERSION_ID >= 50400
-  cassandra_date_handlers.std.get_gc          = php_cassandra_date_gc;
+  php_driver_date_handlers.std.get_gc          = php_driver_date_gc;
 #endif
-  cassandra_date_handlers.std.compare_objects = php_cassandra_date_compare;
-  cassandra_date_ce->ce_flags |= PHP5TO7_ZEND_ACC_FINAL;
-  cassandra_date_ce->create_object = php_cassandra_date_new;
+  php_driver_date_handlers.std.compare_objects = php_driver_date_compare;
+  php_driver_date_ce->ce_flags |= PHP5TO7_ZEND_ACC_FINAL;
+  php_driver_date_ce->create_object = php_driver_date_new;
 
-  cassandra_date_handlers.hash_value = php_cassandra_date_hash_value;
+  php_driver_date_handlers.hash_value = php_driver_date_hash_value;
 }

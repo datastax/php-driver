@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-#ifndef PHP_CASSANDRA_TIMEUUID_H
-#define PHP_CASSANDRA_TIMEUUID_H
+#ifndef PHP_DRIVER_TIMEUUID_H
+#define PHP_DRIVER_TIMEUUID_H
 
-void php_cassandra_timeuuid_init(INTERNAL_FUNCTION_PARAMETERS);
+void php_driver_timeuuid_init(INTERNAL_FUNCTION_PARAMETERS);
 
-#endif /* PHP_CASSANDRA_TIMEUUID_H */
+#endif /* PHP_DRIVER_TIMEUUID_H */

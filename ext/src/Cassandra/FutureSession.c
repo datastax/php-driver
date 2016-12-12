@@ -20,29 +20,29 @@
 #include "util/future.h"
 #include "util/ref.h"
 
-zend_class_entry *cassandra_future_session_ce = NULL;
+zend_class_entry *php_driver_future_session_ce = NULL;
 
 PHP_METHOD(FutureSession, get)
 {
   zval *timeout = NULL;
   CassError rc = CASS_OK;
-  cassandra_session *session = NULL;
-  cassandra_future_session *self = NULL;
+  php_driver_session *session = NULL;
+  php_driver_future_session *self = NULL;
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "|z", &timeout) == FAILURE) {
     return;
   }
 
-  self = PHP_CASSANDRA_GET_FUTURE_SESSION(getThis());
+  self = PHP_DRIVER_GET_FUTURE_SESSION(getThis());
 
   if (!PHP5TO7_ZVAL_IS_UNDEF(self->default_session)) {
     RETURN_ZVAL(PHP5TO7_ZVAL_MAYBE_P(self->default_session), 1, 0);
   }
 
-  object_init_ex(return_value, cassandra_default_session_ce);
-  session = PHP_CASSANDRA_GET_SESSION(return_value);
+  object_init_ex(return_value, php_driver_default_session_ce);
+  session = PHP_DRIVER_GET_SESSION(return_value);
 
-  session->session = php_cassandra_add_ref(self->session);
+  session->session = php_driver_add_ref(self->session);
   session->persist = self->persist;
 
   if (self->exception_message) {
@@ -51,7 +51,7 @@ PHP_METHOD(FutureSession, get)
     return;
   }
 
-  if (php_cassandra_future_wait_timed(self->future, timeout TSRMLS_CC) == FAILURE) {
+  if (php_driver_future_wait_timed(self->future, timeout TSRMLS_CC) == FAILURE) {
     return;
   }
 
@@ -68,7 +68,7 @@ PHP_METHOD(FutureSession, get)
 
       if (PHP5TO7_ZEND_HASH_DEL(&EG(persistent_list), self->hash_key, self->hash_key_len + 1)) {
         // TODO: Is this right?
-        php_cassandra_del_peref(&self->session, 1);
+        php_driver_del_peref(&self->session, 1);
         self->future  = NULL;
       }
 
@@ -89,15 +89,15 @@ ZEND_BEGIN_ARG_INFO_EX(arginfo_timeout, 0, ZEND_RETURN_VALUE, 0)
   ZEND_ARG_INFO(0, timeout)
 ZEND_END_ARG_INFO()
 
-static zend_function_entry cassandra_future_session_methods[] = {
+static zend_function_entry php_driver_future_session_methods[] = {
   PHP_ME(FutureSession, get, arginfo_timeout, ZEND_ACC_PUBLIC)
   PHP_FE_END
 };
 
-static zend_object_handlers cassandra_future_session_handlers;
+static zend_object_handlers php_driver_future_session_handlers;
 
 static HashTable *
-php_cassandra_future_session_properties(zval *object TSRMLS_DC)
+php_driver_future_session_properties(zval *object TSRMLS_DC)
 {
   HashTable *props = zend_std_get_properties(object TSRMLS_CC);
 
@@ -105,7 +105,7 @@ php_cassandra_future_session_properties(zval *object TSRMLS_DC)
 }
 
 static int
-php_cassandra_future_session_compare(zval *obj1, zval *obj2 TSRMLS_DC)
+php_driver_future_session_compare(zval *obj1, zval *obj2 TSRMLS_DC)
 {
   if (Z_OBJCE_P(obj1) != Z_OBJCE_P(obj2))
     return 1; /* different classes */
@@ -114,9 +114,9 @@ php_cassandra_future_session_compare(zval *obj1, zval *obj2 TSRMLS_DC)
 }
 
 static void
-php_cassandra_future_session_free(php5to7_zend_object_free *object TSRMLS_DC)
+php_driver_future_session_free(php5to7_zend_object_free *object TSRMLS_DC)
 {
-  cassandra_future_session *self =
+  php_driver_future_session *self =
       PHP5TO7_ZEND_OBJECT_GET(future_session, object);
 
   if (self->persist) {
@@ -127,7 +127,7 @@ php_cassandra_future_session_free(php5to7_zend_object_free *object TSRMLS_DC)
     }
   }
 
-  php_cassandra_del_peref(&self->session, 1);
+  php_driver_del_peref(&self->session, 1);
 
   if (self->exception_message) {
     efree(self->exception_message);
@@ -138,9 +138,9 @@ php_cassandra_future_session_free(php5to7_zend_object_free *object TSRMLS_DC)
 }
 
 static php5to7_zend_object
-php_cassandra_future_session_new(zend_class_entry *ce TSRMLS_DC)
+php_driver_future_session_new(zend_class_entry *ce TSRMLS_DC)
 {
-  cassandra_future_session *self
+  php_driver_future_session *self
       = PHP5TO7_ZEND_OBJECT_ECALLOC(future_session, ce);
 
   self->session           = NULL;
@@ -152,18 +152,18 @@ php_cassandra_future_session_new(zend_class_entry *ce TSRMLS_DC)
   PHP5TO7_ZEND_OBJECT_INIT(future_session, self, ce);
 }
 
-void cassandra_define_FutureSession(TSRMLS_D)
+void php_driver_define_FutureSession(TSRMLS_D)
 {
   zend_class_entry ce;
 
-  INIT_CLASS_ENTRY(ce, "Cassandra\\FutureSession", cassandra_future_session_methods);
-  cassandra_future_session_ce = zend_register_internal_class(&ce TSRMLS_CC);
-  zend_class_implements(cassandra_future_session_ce TSRMLS_CC, 1, cassandra_future_ce);
-  cassandra_future_session_ce->ce_flags     |= PHP5TO7_ZEND_ACC_FINAL;
-  cassandra_future_session_ce->create_object = php_cassandra_future_session_new;
+  INIT_CLASS_ENTRY(ce, PHP_DRIVER_NAMESPACE "\\FutureSession", php_driver_future_session_methods);
+  php_driver_future_session_ce = zend_register_internal_class(&ce TSRMLS_CC);
+  zend_class_implements(php_driver_future_session_ce TSRMLS_CC, 1, php_driver_future_ce);
+  php_driver_future_session_ce->ce_flags     |= PHP5TO7_ZEND_ACC_FINAL;
+  php_driver_future_session_ce->create_object = php_driver_future_session_new;
 
-  memcpy(&cassandra_future_session_handlers, zend_get_std_object_handlers(), sizeof(zend_object_handlers));
-  cassandra_future_session_handlers.get_properties  = php_cassandra_future_session_properties;
-  cassandra_future_session_handlers.compare_objects = php_cassandra_future_session_compare;
-  cassandra_future_session_handlers.clone_obj = NULL;
+  memcpy(&php_driver_future_session_handlers, zend_get_std_object_handlers(), sizeof(zend_object_handlers));
+  php_driver_future_session_handlers.get_properties  = php_driver_future_session_properties;
+  php_driver_future_session_handlers.compare_objects = php_driver_future_session_compare;
+  php_driver_future_session_handlers.clone_obj = NULL;
 }

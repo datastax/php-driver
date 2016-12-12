@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-#ifndef PHP_CASSANDRA_TIMESTAMP_H
-#define PHP_CASSANDRA_TIMESTAMP_H
+#ifndef PHP_DRIVER_TIMESTAMP_H
+#define PHP_DRIVER_TIMESTAMP_H
 
-void php_cassandra_timestamp_init(INTERNAL_FUNCTION_PARAMETERS);
+void php_driver_timestamp_init(INTERNAL_FUNCTION_PARAMETERS);
 
-#endif /* PHP_CASSANDRA_TIMESTAMP_H */
+#endif /* PHP_DRIVER_TIMESTAMP_H */

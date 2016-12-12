@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-#ifndef PHP_CASSANDRA_UUID_H
-#define PHP_CASSANDRA_UUID_H
+#ifndef PHP_DRIVER_UUID_H
+#define PHP_DRIVER_UUID_H
 
-void php_cassandra_uuid_init(INTERNAL_FUNCTION_PARAMETERS);
+void php_driver_uuid_init(INTERNAL_FUNCTION_PARAMETERS);
 
-#endif /* PHP_CASSANDRA_UUID_H */
+#endif /* PHP_DRIVER_UUID_H */

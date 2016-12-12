@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-#ifndef PHP_CASSANDRA_REF_H
-#define PHP_CASSANDRA_REF_H
+#ifndef PHP_DRIVER_REF_H
+#define PHP_DRIVER_REF_H
 
-cassandra_ref *php_cassandra_new_peref(void *data, cassandra_free_function destructor, int persistent);
-void php_cassandra_del_peref(cassandra_ref **ref_ptr, int persistent);
+php_driver_ref *php_driver_new_peref(void *data, php_driver_free_function destructor, int persistent);
+void php_driver_del_peref(php_driver_ref **ref_ptr, int persistent);
 
-#define php_cassandra_new_ref(data, destructor) php_cassandra_new_peref(data, destructor, 0)
-#define php_cassandra_del_ref(ref) php_cassandra_del_peref(ref, 0)
-#define php_cassandra_add_ref(ref) (++ref->count, ref)
+#define php_driver_new_ref(data, destructor) php_driver_new_peref(data, destructor, 0)
+#define php_driver_del_ref(ref) php_driver_del_peref(ref, 0)
+#define php_driver_add_ref(ref) (++ref->count, ref)
 
-#endif /* PHP_CASSANDRA_REF_H */
+#endif /* PHP_DRIVER_REF_H */

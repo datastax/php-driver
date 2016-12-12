@@ -16,7 +16,7 @@
 
 #include "php_driver.h"
 
-zend_class_entry *cassandra_index_ce = NULL;
+zend_class_entry *php_driver_index_ce = NULL;
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_name, 0, ZEND_RETURN_VALUE, 1)
   ZEND_ARG_INFO(0, name)
@@ -25,7 +25,7 @@ ZEND_END_ARG_INFO()
 ZEND_BEGIN_ARG_INFO_EX(arginfo_none, 0, ZEND_RETURN_VALUE, 0)
 ZEND_END_ARG_INFO()
 
-static zend_function_entry cassandra_index_methods[] = {
+static zend_function_entry php_driver_index_methods[] = {
   PHP_ABSTRACT_ME(Index, name, arginfo_none)
   PHP_ABSTRACT_ME(Index, kind, arginfo_none)
   PHP_ABSTRACT_ME(Index, target, arginfo_none)
@@ -36,11 +36,11 @@ static zend_function_entry cassandra_index_methods[] = {
   PHP_FE_END
 };
 
-void cassandra_define_Index(TSRMLS_D)
+void php_driver_define_Index(TSRMLS_D)
 {
   zend_class_entry ce;
 
-  INIT_CLASS_ENTRY(ce, "Cassandra\\Index", cassandra_index_methods);
-  cassandra_index_ce = zend_register_internal_class(&ce TSRMLS_CC);
-  cassandra_index_ce->ce_flags |= ZEND_ACC_INTERFACE;
+  INIT_CLASS_ENTRY(ce, PHP_DRIVER_NAMESPACE "\\Index", php_driver_index_methods);
+  php_driver_index_ce = zend_register_internal_class(&ce TSRMLS_CC);
+  php_driver_index_ce->ce_flags |= ZEND_ACC_INTERFACE;
 }

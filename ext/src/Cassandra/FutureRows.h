@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-#ifndef PHP_CASSANDRA_FUTURE_ROWS_H
-#define PHP_CASSANDRA_FUTURE_ROWS_H
+#ifndef PHP_DRIVER_FUTURE_ROWS_H
+#define PHP_DRIVER_FUTURE_ROWS_H
 
 int
-php_cassandra_future_rows_get_result(cassandra_future_rows *future_rows, zval *timeout TSRMLS_DC);
+php_driver_future_rows_get_result(php_driver_future_rows *future_rows, zval *timeout TSRMLS_DC);
 
-#endif /* PHP_CASSANDRA_FUTURE_ROWS_H */
+#endif /* PHP_DRIVER_FUTURE_ROWS_H */

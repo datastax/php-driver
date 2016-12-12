@@ -17,16 +17,16 @@
 #include "php_driver.h"
 #include "php_driver_types.h"
 
-zend_class_entry *cassandra_truncate_exception_ce = NULL;
+zend_class_entry *php_driver_truncate_exception_ce = NULL;
 
 static zend_function_entry TruncateException_methods[] = {
   PHP_FE_END
 };
 
-void cassandra_define_TruncateException(TSRMLS_D)
+void php_driver_define_TruncateException(TSRMLS_D)
 {
   zend_class_entry ce;
 
-  INIT_CLASS_ENTRY(ce, "Cassandra\\Exception\\TruncateException", TruncateException_methods);
-  cassandra_truncate_exception_ce = php5to7_zend_register_internal_class_ex(&ce, cassandra_execution_exception_ce);
+  INIT_CLASS_ENTRY(ce, PHP_DRIVER_NAMESPACE "\\Exception\\TruncateException", TruncateException_methods);
+  php_driver_truncate_exception_ce = php5to7_zend_register_internal_class_ex(&ce, php_driver_execution_exception_ce);
 }

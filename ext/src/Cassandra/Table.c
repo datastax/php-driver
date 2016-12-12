@@ -18,10 +18,10 @@
 
 #include "util/result.h"
 
-zend_class_entry *cassandra_table_ce = NULL;
+zend_class_entry *php_driver_table_ce = NULL;
 
 php5to7_zval
-php_cassandra_table_build_options(CassIterator* iterator TSRMLS_DC) {
+php_driver_table_build_options(CassIterator* iterator TSRMLS_DC) {
   const char *name;
   size_t name_length;
   php5to7_zval zoptions;
@@ -42,7 +42,7 @@ php_cassandra_table_build_options(CassIterator* iterator TSRMLS_DC) {
         if (data_type) {
           php5to7_zval zvalue;
           PHP5TO7_ZVAL_UNDEF(zvalue);
-          if (php_cassandra_value(value,
+          if (php_driver_value(value,
                                   data_type,
                                   &zvalue TSRMLS_CC) == SUCCESS) {
             PHP5TO7_ADD_ASSOC_ZVAL_EX(PHP5TO7_ZVAL_MAYBE_P(zoptions),
@@ -64,7 +64,7 @@ ZEND_END_ARG_INFO()
 ZEND_BEGIN_ARG_INFO_EX(arginfo_none, 0, ZEND_RETURN_VALUE, 0)
 ZEND_END_ARG_INFO()
 
-static zend_function_entry cassandra_table_methods[] = {
+static zend_function_entry php_driver_table_methods[] = {
   PHP_ABSTRACT_ME(Table, name, arginfo_none)
   PHP_ABSTRACT_ME(Table, option, arginfo_name)
   PHP_ABSTRACT_ME(Table, options, arginfo_none)
@@ -94,11 +94,11 @@ static zend_function_entry cassandra_table_methods[] = {
   PHP_FE_END
 };
 
-void cassandra_define_Table(TSRMLS_D)
+void php_driver_define_Table(TSRMLS_D)
 {
   zend_class_entry ce;
 
-  INIT_CLASS_ENTRY(ce, "Cassandra\\Table", cassandra_table_methods);
-  cassandra_table_ce = zend_register_internal_class(&ce TSRMLS_CC);
-  cassandra_table_ce->ce_flags |= ZEND_ACC_INTERFACE;
+  INIT_CLASS_ENTRY(ce, PHP_DRIVER_NAMESPACE "\\Table", php_driver_table_methods);
+  php_driver_table_ce = zend_register_internal_class(&ce TSRMLS_CC);
+  php_driver_table_ce->ce_flags |= ZEND_ACC_INTERFACE;
 }

@@ -1,13 +1,13 @@
-#ifndef PHP_CASSANDRA_VERSION_H
-#define PHP_CASSANDRA_VERSION_H
+#ifndef PHP_DRIVER_VERSION_H
+#define PHP_DRIVER_VERSION_H
 
 /* Define Extension and Version Properties */
-#define PHP_CASSANDRA_NAME         "cassandra"
-#define PHP_CASSANDRA_MAJOR        1
-#define PHP_CASSANDRA_MINOR        2
-#define PHP_CASSANDRA_RELEASE      2
-#define PHP_CASSANDRA_STABILITY    "devel"
-#define PHP_CASSANDRA_VERSION      "1.2.3"
-#define PHP_CASSANDRA_VERSION_FULL "1.2.3"
+#define PHP_DRIVER_NAME         "cassandra"
+#define PHP_DRIVER_MAJOR        1
+#define PHP_DRIVER_MINOR        2
+#define PHP_DRIVER_RELEASE      2
+#define PHP_DRIVER_STABILITY    "devel"
+#define PHP_DRIVER_VERSION      "1.2.3"
+#define PHP_DRIVER_VERSION_FULL "1.2.3"
 
-#endif /* PHP_CASSANDRA_VERSION_H */
+#endif /* PHP_DRIVER_VERSION_H */

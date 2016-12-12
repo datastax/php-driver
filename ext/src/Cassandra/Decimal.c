@@ -25,10 +25,10 @@
 #include <math.h>
 #include <ext/spl/spl_exceptions.h>
 
-zend_class_entry *cassandra_decimal_ce = NULL;
+zend_class_entry *php_driver_decimal_ce = NULL;
 
 static void
-to_mpf(mpf_t result, cassandra_numeric *decimal)
+to_mpf(mpf_t result, php_driver_numeric *decimal)
 {
   mpf_t scale_factor;
   long scale;
@@ -64,7 +64,7 @@ to_mpf(mpf_t result, cassandra_numeric *decimal)
 #define DOUBLE_EXPONENT_MASK (cass_int64_t) ((1LL << DOUBLE_EXPONENT_BITS) - 1)
 
 static void
-from_double(cassandra_numeric *result, double value)
+from_double(php_driver_numeric *result, double value)
 {
   cass_int64_t raw = (cass_int64_t) value;
   cass_int64_t mantissa = raw & DOUBLE_MANITSSA_MASK;
@@ -140,20 +140,20 @@ from_double(cassandra_numeric *result, double value)
 }
 
 static int
-to_double(zval* result, cassandra_numeric *decimal TSRMLS_DC)
+to_double(zval* result, php_driver_numeric *decimal TSRMLS_DC)
 {
   mpf_t value;
   mpf_init(value);
   to_mpf(value, decimal);
 
   if (mpf_cmp_d(value, -DBL_MAX) < 0) {
-    zend_throw_exception_ex(cassandra_range_exception_ce, 0 TSRMLS_CC, "Value is too small");
+    zend_throw_exception_ex(php_driver_range_exception_ce, 0 TSRMLS_CC, "Value is too small");
     mpf_clear(value);
     return FAILURE;
   }
 
   if (mpf_cmp_d(value, DBL_MAX) > 0) {
-    zend_throw_exception_ex(cassandra_range_exception_ce, 0 TSRMLS_CC, "Value is too big");
+    zend_throw_exception_ex(php_driver_range_exception_ce, 0 TSRMLS_CC, "Value is too big");
     mpf_clear(value);
     return FAILURE;
   }
@@ -164,20 +164,20 @@ to_double(zval* result, cassandra_numeric *decimal TSRMLS_DC)
 }
 
 static int
-to_long(zval* result, cassandra_numeric *decimal TSRMLS_DC)
+to_long(zval* result, php_driver_numeric *decimal TSRMLS_DC)
 {
   mpf_t value;
   mpf_init(value);
   to_mpf(value, decimal);
 
   if (mpf_cmp_si(value, LONG_MIN) < 0) {
-    zend_throw_exception_ex(cassandra_range_exception_ce, 0 TSRMLS_CC, "Value is too small");
+    zend_throw_exception_ex(php_driver_range_exception_ce, 0 TSRMLS_CC, "Value is too small");
     mpf_clear(value);
     return FAILURE;
   }
 
   if (mpf_cmp_si(value, LONG_MAX) > 0) {
-    zend_throw_exception_ex(cassandra_range_exception_ce, 0 TSRMLS_CC, "Value is too big");
+    zend_throw_exception_ex(php_driver_range_exception_ce, 0 TSRMLS_CC, "Value is too big");
     mpf_clear(value);
     return FAILURE;
   }
@@ -188,11 +188,11 @@ to_long(zval* result, cassandra_numeric *decimal TSRMLS_DC)
 }
 
 static int
-to_string(zval* result, cassandra_numeric *decimal TSRMLS_DC)
+to_string(zval* result, php_driver_numeric *decimal TSRMLS_DC)
 {
   char* string;
   int string_len;
-  php_cassandra_format_decimal(decimal->decimal_value, decimal->decimal_scale, &string, &string_len);
+  php_driver_format_decimal(decimal->decimal_value, decimal->decimal_scale, &string, &string_len);
 
   PHP5TO7_ZVAL_STRINGL(result, string, string_len);
   efree(string);
@@ -201,7 +201,7 @@ to_string(zval* result, cassandra_numeric *decimal TSRMLS_DC)
 }
 
 static void
-align_decimals(cassandra_numeric *lhs, cassandra_numeric *rhs)
+align_decimals(php_driver_numeric *lhs, php_driver_numeric *rhs)
 {
   mpz_t pow_10;
   mpz_init(pow_10);
@@ -216,20 +216,20 @@ align_decimals(cassandra_numeric *lhs, cassandra_numeric *rhs)
 }
 
 void
-php_cassandra_decimal_init(INTERNAL_FUNCTION_PARAMETERS)
+php_driver_decimal_init(INTERNAL_FUNCTION_PARAMETERS)
 {
-  cassandra_numeric *self;
+  php_driver_numeric *self;
   zval* value;
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z", &value) == FAILURE) {
     return;
   }
 
-  if (getThis() && instanceof_function(Z_OBJCE_P(getThis()), cassandra_decimal_ce TSRMLS_CC)) {
-    self = PHP_CASSANDRA_GET_NUMERIC(getThis());
+  if (getThis() && instanceof_function(Z_OBJCE_P(getThis()), php_driver_decimal_ce TSRMLS_CC)) {
+    self = PHP_DRIVER_GET_NUMERIC(getThis());
   } else {
-    object_init_ex(return_value, cassandra_decimal_ce);
-    self = PHP_CASSANDRA_GET_NUMERIC(return_value);
+    object_init_ex(return_value, php_driver_decimal_ce);
+    self = PHP_DRIVER_GET_NUMERIC(return_value);
   }
 
   if (Z_TYPE_P(value) == IS_LONG) {
@@ -238,59 +238,59 @@ php_cassandra_decimal_init(INTERNAL_FUNCTION_PARAMETERS)
   } else if (Z_TYPE_P(value) == IS_DOUBLE) {
     double val = Z_DVAL_P(value);
     if (zend_isnan(val) || zend_isinf(val)) {
-      zend_throw_exception_ex(cassandra_invalid_argument_exception_ce, 0 TSRMLS_CC,
+      zend_throw_exception_ex(php_driver_invalid_argument_exception_ce, 0 TSRMLS_CC,
                               "Value of NaN or +/- infinity is not supported");
       return;
     }
     from_double(self, val);
   } else if (Z_TYPE_P(value) == IS_STRING) {
-    if (!php_cassandra_parse_decimal(Z_STRVAL_P(value), Z_STRLEN_P(value),
+    if (!php_driver_parse_decimal(Z_STRVAL_P(value), Z_STRLEN_P(value),
                                      &self->decimal_value, &self->decimal_scale TSRMLS_CC)) {
       return;
     }
   } else if (Z_TYPE_P(value) == IS_OBJECT &&
-             instanceof_function(Z_OBJCE_P(value), cassandra_decimal_ce TSRMLS_CC)) {
-    cassandra_numeric *decimal = PHP_CASSANDRA_GET_NUMERIC(value);
+             instanceof_function(Z_OBJCE_P(value), php_driver_decimal_ce TSRMLS_CC)) {
+    php_driver_numeric *decimal = PHP_DRIVER_GET_NUMERIC(value);
     mpz_set(self->decimal_value, decimal->decimal_value);
     self->decimal_scale = decimal->decimal_scale;
   } else {
     INVALID_ARGUMENT(value, "a long, a double, a numeric string or a " \
-                            "Cassandra\\Decimal");
+                            PHP_DRIVER_NAMESPACE "\\Decimal");
   }
 }
 
-/* {{{ Cassandra\Decimal::__construct(string) */
+/* {{{ Decimal::__construct(string) */
 PHP_METHOD(Decimal, __construct)
 {
-  php_cassandra_decimal_init(INTERNAL_FUNCTION_PARAM_PASSTHRU);
+  php_driver_decimal_init(INTERNAL_FUNCTION_PARAM_PASSTHRU);
 }
 /* }}} */
 
-/* {{{ Cassandra\Decimal::__toString() */
+/* {{{ Decimal::__toString() */
 PHP_METHOD(Decimal, __toString)
 {
-  cassandra_numeric *self = PHP_CASSANDRA_GET_NUMERIC(getThis());
+  php_driver_numeric *self = PHP_DRIVER_GET_NUMERIC(getThis());
 
   to_string(return_value, self TSRMLS_CC);
 }
 /* }}} */
 
-/* {{{ Cassandra\Decimal::type() */
+/* {{{ Decimal::type() */
 PHP_METHOD(Decimal, type)
 {
-  php5to7_zval type = php_cassandra_type_scalar(CASS_VALUE_TYPE_DECIMAL TSRMLS_CC);
+  php5to7_zval type = php_driver_type_scalar(CASS_VALUE_TYPE_DECIMAL TSRMLS_CC);
   RETURN_ZVAL(PHP5TO7_ZVAL_MAYBE_P(type), 1, 1);
 }
 /* }}} */
 
-/* {{{ Cassandra\Decimal::value() */
+/* {{{ Decimal::value() */
 PHP_METHOD(Decimal, value)
 {
-  cassandra_numeric *self = PHP_CASSANDRA_GET_NUMERIC(getThis());
+  php_driver_numeric *self = PHP_DRIVER_GET_NUMERIC(getThis());
 
   char* string;
   int string_len;
-  php_cassandra_format_integer(self->decimal_value, &string, &string_len);
+  php_driver_format_integer(self->decimal_value, &string, &string_len);
 
   PHP5TO7_RETVAL_STRINGL(string, string_len);
   efree(string);
@@ -299,140 +299,140 @@ PHP_METHOD(Decimal, value)
 
 PHP_METHOD(Decimal, scale)
 {
-  cassandra_numeric *self = PHP_CASSANDRA_GET_NUMERIC(getThis());
+  php_driver_numeric *self = PHP_DRIVER_GET_NUMERIC(getThis());
 
   RETURN_LONG(self->decimal_scale);
 }
 
-/* {{{ Cassandra\Decimal::add() */
+/* {{{ Decimal::add() */
 PHP_METHOD(Decimal, add)
 {
   zval* num;
-  cassandra_numeric *result = NULL;
+  php_driver_numeric *result = NULL;
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z", &num) == FAILURE) {
     return;
   }
 
   if (Z_TYPE_P(num) == IS_OBJECT &&
-      instanceof_function(Z_OBJCE_P(num), cassandra_decimal_ce TSRMLS_CC)) {
-    cassandra_numeric *self = PHP_CASSANDRA_GET_NUMERIC(getThis());
-    cassandra_numeric *decimal = PHP_CASSANDRA_GET_NUMERIC(num);
+      instanceof_function(Z_OBJCE_P(num), php_driver_decimal_ce TSRMLS_CC)) {
+    php_driver_numeric *self = PHP_DRIVER_GET_NUMERIC(getThis());
+    php_driver_numeric *decimal = PHP_DRIVER_GET_NUMERIC(num);
 
-    object_init_ex(return_value, cassandra_decimal_ce);
-    result = PHP_CASSANDRA_GET_NUMERIC(return_value);
+    object_init_ex(return_value, php_driver_decimal_ce);
+    result = PHP_DRIVER_GET_NUMERIC(return_value);
 
     align_decimals(self, decimal);
     mpz_add(result->decimal_value, self->decimal_value, decimal->decimal_value);
     result->decimal_scale = MAX(self->decimal_scale, decimal->decimal_scale);
   } else {
-    INVALID_ARGUMENT(num, "a Cassandra\\Decimal");
+    INVALID_ARGUMENT(num, "a " PHP_DRIVER_NAMESPACE "\\Decimal");
   }
 }
 /* }}} */
 
-/* {{{ Cassandra\Decimal::sub() */
+/* {{{ Decimal::sub() */
 PHP_METHOD(Decimal, sub)
 {
   zval* num;
-  cassandra_numeric *result = NULL;
+  php_driver_numeric *result = NULL;
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z", &num) == FAILURE) {
     return;
   }
 
   if (Z_TYPE_P(num) == IS_OBJECT &&
-      instanceof_function(Z_OBJCE_P(num), cassandra_decimal_ce TSRMLS_CC)) {
-    cassandra_numeric *self = PHP_CASSANDRA_GET_NUMERIC(getThis());
-    cassandra_numeric *decimal = PHP_CASSANDRA_GET_NUMERIC(num);
+      instanceof_function(Z_OBJCE_P(num), php_driver_decimal_ce TSRMLS_CC)) {
+    php_driver_numeric *self = PHP_DRIVER_GET_NUMERIC(getThis());
+    php_driver_numeric *decimal = PHP_DRIVER_GET_NUMERIC(num);
 
-    object_init_ex(return_value, cassandra_decimal_ce);
-    result = PHP_CASSANDRA_GET_NUMERIC(return_value);
+    object_init_ex(return_value, php_driver_decimal_ce);
+    result = PHP_DRIVER_GET_NUMERIC(return_value);
 
     align_decimals(self, decimal);
     mpz_sub(result->decimal_value, self->decimal_value, decimal->decimal_value);
     result->decimal_scale = MAX(self->decimal_scale, decimal->decimal_scale);
   } else {
-    INVALID_ARGUMENT(num, "a Cassandra\\Decimal");
+    INVALID_ARGUMENT(num, "a " PHP_DRIVER_NAMESPACE "\\Decimal");
   }
 }
 /* }}} */
 
-/* {{{ Cassandra\Decimal::mul() */
+/* {{{ Decimal::mul() */
 PHP_METHOD(Decimal, mul)
 {
   zval* num;
-  cassandra_numeric *result = NULL;
+  php_driver_numeric *result = NULL;
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z", &num) == FAILURE) {
     return;
   }
 
   if (Z_TYPE_P(num) == IS_OBJECT &&
-      instanceof_function(Z_OBJCE_P(num), cassandra_decimal_ce TSRMLS_CC)) {
-    cassandra_numeric *self = PHP_CASSANDRA_GET_NUMERIC(getThis());
-    cassandra_numeric *decimal = PHP_CASSANDRA_GET_NUMERIC(num);
+      instanceof_function(Z_OBJCE_P(num), php_driver_decimal_ce TSRMLS_CC)) {
+    php_driver_numeric *self = PHP_DRIVER_GET_NUMERIC(getThis());
+    php_driver_numeric *decimal = PHP_DRIVER_GET_NUMERIC(num);
 
-    object_init_ex(return_value, cassandra_decimal_ce);
-    result = PHP_CASSANDRA_GET_NUMERIC(return_value);
+    object_init_ex(return_value, php_driver_decimal_ce);
+    result = PHP_DRIVER_GET_NUMERIC(return_value);
 
     mpz_mul(result->decimal_value, self->decimal_value, decimal->decimal_value);
     result->decimal_scale = self->decimal_scale + decimal->decimal_scale;
   } else {
-    INVALID_ARGUMENT(num, "a Cassandra\\Decimal");
+    INVALID_ARGUMENT(num, "a " PHP_DRIVER_NAMESPACE "\\Decimal");
   }
 }
 /* }}} */
 
-/* {{{ Cassandra\Decimal::div() */
+/* {{{ Decimal::div() */
 PHP_METHOD(Decimal, div)
 {
   /* TODO: Implementation of this a bit more difficult than anticipated. */
-  zend_throw_exception_ex(cassandra_runtime_exception_ce, 0 TSRMLS_CC, "Not implemented");
+  zend_throw_exception_ex(php_driver_runtime_exception_ce, 0 TSRMLS_CC, "Not implemented");
 }
 /* }}} */
 
-/* {{{ Cassandra\Decimal::mod() */
+/* {{{ Decimal::mod() */
 PHP_METHOD(Decimal, mod)
 {
   /* TODO: We could implement a remainder method */
-  zend_throw_exception_ex(cassandra_runtime_exception_ce, 0 TSRMLS_CC, "Not implemented");
+  zend_throw_exception_ex(php_driver_runtime_exception_ce, 0 TSRMLS_CC, "Not implemented");
 }
 
-/* {{{ Cassandra\Decimal::abs() */
+/* {{{ Decimal::abs() */
 PHP_METHOD(Decimal, abs)
 {
-  cassandra_numeric *result = NULL;
-  cassandra_numeric *self = PHP_CASSANDRA_GET_NUMERIC(getThis());
+  php_driver_numeric *result = NULL;
+  php_driver_numeric *self = PHP_DRIVER_GET_NUMERIC(getThis());
 
-  object_init_ex(return_value, cassandra_decimal_ce);
-  result = PHP_CASSANDRA_GET_NUMERIC(return_value);
+  object_init_ex(return_value, php_driver_decimal_ce);
+  result = PHP_DRIVER_GET_NUMERIC(return_value);
 
   mpz_abs(result->decimal_value, self->decimal_value);
   result->decimal_scale = self->decimal_scale;
 }
 /* }}} */
 
-/* {{{ Cassandra\Decimal::neg() */
+/* {{{ Decimal::neg() */
 PHP_METHOD(Decimal, neg)
 {
-  cassandra_numeric *result = NULL;
-  cassandra_numeric *self = PHP_CASSANDRA_GET_NUMERIC(getThis());
+  php_driver_numeric *result = NULL;
+  php_driver_numeric *self = PHP_DRIVER_GET_NUMERIC(getThis());
 
-  object_init_ex(return_value, cassandra_decimal_ce);
-  result = PHP_CASSANDRA_GET_NUMERIC(return_value);
+  object_init_ex(return_value, php_driver_decimal_ce);
+  result = PHP_DRIVER_GET_NUMERIC(return_value);
 
   mpz_neg(result->decimal_value, self->decimal_value);
   result->decimal_scale = self->decimal_scale;
 }
 /* }}} */
 
-/* {{{ Cassandra\Decimal::sqrt() */
+/* {{{ Decimal::sqrt() */
 PHP_METHOD(Decimal, sqrt)
 {
-  zend_throw_exception_ex(cassandra_runtime_exception_ce, 0 TSRMLS_CC, "Not implemented");
+  zend_throw_exception_ex(php_driver_runtime_exception_ce, 0 TSRMLS_CC, "Not implemented");
 #if 0
-  cassandra_numeric *self = PHP_CASSANDRA_GET_NUMERIC(getThis());
+  php_driver_numeric *self = PHP_DRIVER_GET_NUMERIC(getThis());
 
   mpf_t value;
   mpf_init(value);
@@ -443,8 +443,8 @@ PHP_METHOD(Decimal, sqrt)
   mp_exp_t exponent;
   char* mantissa = mpf_get_str(NULL, &exponent, 10, 0, value);
 
-  object_init_ex(return_value, cassandra_decimal_ce);
-  cassandra_numeric *result = PHP_CASSANDRA_GET_NUMERIC(return_value);
+  object_init_ex(return_value, php_driver_decimal_ce);
+  php_driver_numeric *result = PHP_DRIVER_GET_NUMERIC(return_value);
 
   mpz_set_str(result->decimal_value, mantissa, 10);
   mp_bitcnt_t prec = mpf_get_prec(value);
@@ -457,19 +457,19 @@ PHP_METHOD(Decimal, sqrt)
 }
 /* }}} */
 
-/* {{{ Cassandra\Decimal::toInt() */
+/* {{{ Decimal::toInt() */
 PHP_METHOD(Decimal, toInt)
 {
-  cassandra_numeric *self = PHP_CASSANDRA_GET_NUMERIC(getThis());
+  php_driver_numeric *self = PHP_DRIVER_GET_NUMERIC(getThis());
 
   to_long(return_value, self TSRMLS_CC);
 }
 /* }}} */
 
-/* {{{ Cassandra\Decimal::toDouble() */
+/* {{{ Decimal::toDouble() */
 PHP_METHOD(Decimal, toDouble)
 {
-  cassandra_numeric *self = PHP_CASSANDRA_GET_NUMERIC(getThis());
+  php_driver_numeric *self = PHP_DRIVER_GET_NUMERIC(getThis());
 
   to_double(return_value, self TSRMLS_CC);
 }
@@ -486,7 +486,7 @@ ZEND_BEGIN_ARG_INFO_EX(arginfo_num, 0, ZEND_RETURN_VALUE, 1)
   ZEND_ARG_INFO(0, num)
 ZEND_END_ARG_INFO()
 
-static zend_function_entry cassandra_decimal_methods[] = {
+static zend_function_entry php_driver_decimal_methods[] = {
   PHP_ME(Decimal, __construct, arginfo__construct, ZEND_ACC_CTOR|ZEND_ACC_PUBLIC)
   PHP_ME(Decimal, __toString, arginfo_none, ZEND_ACC_PUBLIC)
   PHP_ME(Decimal, type, arginfo_none, ZEND_ACC_PUBLIC)
@@ -505,10 +505,10 @@ static zend_function_entry cassandra_decimal_methods[] = {
   PHP_FE_END
 };
 
-static php_cassandra_value_handlers cassandra_decimal_handlers;
+static php_driver_value_handlers php_driver_decimal_handlers;
 
 static HashTable*
-php_cassandra_decimal_gc(zval *object, php5to7_zval_gc table, int *n TSRMLS_DC)
+php_driver_decimal_gc(zval *object, php5to7_zval_gc table, int *n TSRMLS_DC)
 {
   *table = NULL;
   *n = 0;
@@ -516,7 +516,7 @@ php_cassandra_decimal_gc(zval *object, php5to7_zval_gc table, int *n TSRMLS_DC)
 }
 
 static HashTable*
-php_cassandra_decimal_properties(zval *object TSRMLS_DC)
+php_driver_decimal_properties(zval *object TSRMLS_DC)
 {
   char* string;
   int string_len;
@@ -524,13 +524,13 @@ php_cassandra_decimal_properties(zval *object TSRMLS_DC)
   php5to7_zval value;
   php5to7_zval scale;
 
-  cassandra_numeric *self = PHP_CASSANDRA_GET_NUMERIC(object);
+  php_driver_numeric *self = PHP_DRIVER_GET_NUMERIC(object);
   HashTable         *props = zend_std_get_properties(object TSRMLS_CC);
 
-  type = php_cassandra_type_scalar(CASS_VALUE_TYPE_DECIMAL TSRMLS_CC);
+  type = php_driver_type_scalar(CASS_VALUE_TYPE_DECIMAL TSRMLS_CC);
   PHP5TO7_ZEND_HASH_UPDATE(props, "type", sizeof("type"), PHP5TO7_ZVAL_MAYBE_P(type), sizeof(zval));
 
-  php_cassandra_format_integer(self->decimal_value, &string, &string_len);
+  php_driver_format_integer(self->decimal_value, &string, &string_len);
   PHP5TO7_ZVAL_MAYBE_MAKE(PHP5TO7_ZVAL_MAYBE_P(value));
   PHP5TO7_ZVAL_STRINGL(PHP5TO7_ZVAL_MAYBE_P(value), string, string_len);
   efree(string);
@@ -544,16 +544,16 @@ php_cassandra_decimal_properties(zval *object TSRMLS_DC)
 }
 
 static int
-php_cassandra_decimal_compare(zval *obj1, zval *obj2 TSRMLS_DC)
+php_driver_decimal_compare(zval *obj1, zval *obj2 TSRMLS_DC)
 {
-  cassandra_numeric *decimal1 = NULL;
-  cassandra_numeric *decimal2 = NULL;
+  php_driver_numeric *decimal1 = NULL;
+  php_driver_numeric *decimal2 = NULL;
 
   if (Z_OBJCE_P(obj1) != Z_OBJCE_P(obj2))
     return 1; /* different classes */
 
-  decimal1 = PHP_CASSANDRA_GET_NUMERIC(obj1);
-  decimal2 = PHP_CASSANDRA_GET_NUMERIC(obj2);
+  decimal1 = PHP_DRIVER_GET_NUMERIC(obj1);
+  decimal2 = PHP_DRIVER_GET_NUMERIC(obj2);
 
   if (decimal1->decimal_scale == decimal2->decimal_scale) {
     return mpz_cmp(decimal1->decimal_value, decimal2->decimal_value);
@@ -565,16 +565,16 @@ php_cassandra_decimal_compare(zval *obj1, zval *obj2 TSRMLS_DC)
 }
 
 static unsigned
-php_cassandra_decimal_hash_value(zval *obj TSRMLS_DC)
+php_driver_decimal_hash_value(zval *obj TSRMLS_DC)
 {
-  cassandra_numeric *self = PHP_CASSANDRA_GET_NUMERIC(obj);
-  return php_cassandra_mpz_hash((unsigned)self->decimal_scale, self->decimal_value);
+  php_driver_numeric *self = PHP_DRIVER_GET_NUMERIC(obj);
+  return php_driver_mpz_hash((unsigned)self->decimal_scale, self->decimal_value);
 }
 
 static int
-php_cassandra_decimal_cast(zval *object, zval *retval, int type TSRMLS_DC)
+php_driver_decimal_cast(zval *object, zval *retval, int type TSRMLS_DC)
 {
-  cassandra_numeric *self = PHP_CASSANDRA_GET_NUMERIC(object);
+  php_driver_numeric *self = PHP_DRIVER_GET_NUMERIC(object);
 
   switch (type) {
   case IS_LONG:
@@ -591,9 +591,9 @@ php_cassandra_decimal_cast(zval *object, zval *retval, int type TSRMLS_DC)
 }
 
 static void
-php_cassandra_decimal_free(php5to7_zend_object_free *object TSRMLS_DC)
+php_driver_decimal_free(php5to7_zend_object_free *object TSRMLS_DC)
 {
-  cassandra_numeric *self = PHP5TO7_ZEND_OBJECT_GET(numeric, object);
+  php_driver_numeric *self = PHP5TO7_ZEND_OBJECT_GET(numeric, object);
 
   mpz_clear(self->decimal_value);
 
@@ -602,36 +602,36 @@ php_cassandra_decimal_free(php5to7_zend_object_free *object TSRMLS_DC)
 }
 
 static php5to7_zend_object
-php_cassandra_decimal_new(zend_class_entry *ce TSRMLS_DC)
+php_driver_decimal_new(zend_class_entry *ce TSRMLS_DC)
 {
-  cassandra_numeric *self =
+  php_driver_numeric *self =
       PHP5TO7_ZEND_OBJECT_ECALLOC(numeric, ce);
 
-  self->type = CASSANDRA_DECIMAL;
+  self->type = PHP_DRIVER_DECIMAL;
   self->decimal_scale = 0;
   mpz_init(self->decimal_value);
 
   PHP5TO7_ZEND_OBJECT_INIT_EX(numeric, decimal, self, ce);
 }
 
-void cassandra_define_Decimal(TSRMLS_D)
+void php_driver_define_Decimal(TSRMLS_D)
 {
   zend_class_entry ce;
 
-  INIT_CLASS_ENTRY(ce, "Cassandra\\Decimal", cassandra_decimal_methods);
-  cassandra_decimal_ce = zend_register_internal_class(&ce TSRMLS_CC);
-  zend_class_implements(cassandra_decimal_ce TSRMLS_CC, 2, cassandra_value_ce, cassandra_numeric_ce);
-  cassandra_decimal_ce->ce_flags     |= PHP5TO7_ZEND_ACC_FINAL;
-  cassandra_decimal_ce->create_object = php_cassandra_decimal_new;
+  INIT_CLASS_ENTRY(ce, PHP_DRIVER_NAMESPACE "\\Decimal", php_driver_decimal_methods);
+  php_driver_decimal_ce = zend_register_internal_class(&ce TSRMLS_CC);
+  zend_class_implements(php_driver_decimal_ce TSRMLS_CC, 2, php_driver_value_ce, php_driver_numeric_ce);
+  php_driver_decimal_ce->ce_flags     |= PHP5TO7_ZEND_ACC_FINAL;
+  php_driver_decimal_ce->create_object = php_driver_decimal_new;
 
-  memcpy(&cassandra_decimal_handlers, zend_get_std_object_handlers(), sizeof(zend_object_handlers));
-  cassandra_decimal_handlers.std.get_properties  = php_cassandra_decimal_properties;
+  memcpy(&php_driver_decimal_handlers, zend_get_std_object_handlers(), sizeof(zend_object_handlers));
+  php_driver_decimal_handlers.std.get_properties  = php_driver_decimal_properties;
 #if PHP_VERSION_ID >= 50400
-  cassandra_decimal_handlers.std.get_gc          = php_cassandra_decimal_gc;
+  php_driver_decimal_handlers.std.get_gc          = php_driver_decimal_gc;
 #endif
-  cassandra_decimal_handlers.std.compare_objects = php_cassandra_decimal_compare;
-  cassandra_decimal_handlers.std.cast_object     = php_cassandra_decimal_cast;
+  php_driver_decimal_handlers.std.compare_objects = php_driver_decimal_compare;
+  php_driver_decimal_handlers.std.cast_object     = php_driver_decimal_cast;
 
-  cassandra_decimal_handlers.hash_value = php_cassandra_decimal_hash_value;
-  cassandra_decimal_handlers.std.clone_obj = NULL;
+  php_driver_decimal_handlers.hash_value = php_driver_decimal_hash_value;
+  php_driver_decimal_handlers.std.clone_obj = NULL;
 }

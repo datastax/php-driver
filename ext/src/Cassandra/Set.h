@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-#ifndef PHP_CASSANDRA_SET_H
-#define PHP_CASSANDRA_SET_H
+#ifndef PHP_DRIVER_SET_H
+#define PHP_DRIVER_SET_H
 
-int php_cassandra_set_add(cassandra_set* set, zval* object TSRMLS_DC);
+int php_driver_set_add(php_driver_set* set, zval* object TSRMLS_DC);
 
-#endif /* PHP_CASSANDRA_SET_H */
+#endif /* PHP_DRIVER_SET_H */

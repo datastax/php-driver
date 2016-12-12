@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-#ifndef PHP_CASSANDRA_VARINT_H
-#define PHP_CASSANDRA_VARINT_H
+#ifndef PHP_DRIVER_VARINT_H
+#define PHP_DRIVER_VARINT_H
 
-void php_cassandra_varint_init(INTERNAL_FUNCTION_PARAMETERS);
+void php_driver_varint_init(INTERNAL_FUNCTION_PARAMETERS);
 
-#endif /* PHP_CASSANDRA_VARINT_H */
+#endif /* PHP_DRIVER_VARINT_H */

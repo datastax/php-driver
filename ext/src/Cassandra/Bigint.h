@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-#ifndef PHP_CASSANDRA_BIGINT_H
-#define PHP_CASSANDRA_BIGINT_H
+#ifndef PHP_DRIVER_BIGINT_H
+#define PHP_DRIVER_BIGINT_H
 
-void php_cassandra_bigint_init(INTERNAL_FUNCTION_PARAMETERS);
+void php_driver_bigint_init(INTERNAL_FUNCTION_PARAMETERS);
 
-#endif /* PHP_CASSANDRA_BIGINT_H */
+#endif /* PHP_DRIVER_BIGINT_H */

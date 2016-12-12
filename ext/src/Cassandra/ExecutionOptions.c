@@ -19,12 +19,12 @@
 #include "util/consistency.h"
 #include "util/math.h"
 
-zend_class_entry *cassandra_execution_options_ce = NULL;
+zend_class_entry *php_driver_execution_options_ce = NULL;
 
 PHP_METHOD(ExecutionOptions, __construct)
 {
   zval *options = NULL;
-  cassandra_execution_options *self = NULL;
+  php_driver_execution_options *self = NULL;
   php5to7_zval *consistency = NULL;
   php5to7_zval *serial_consistency = NULL;
   php5to7_zval *page_size = NULL;
@@ -44,16 +44,16 @@ PHP_METHOD(ExecutionOptions, __construct)
     INVALID_ARGUMENT(options, "an array");
   }
 
-  self = PHP_CASSANDRA_GET_EXECUTION_OPTIONS(getThis());
+  self = PHP_DRIVER_GET_EXECUTION_OPTIONS(getThis());
 
   if (PHP5TO7_ZEND_HASH_FIND(Z_ARRVAL_P(options), "consistency", sizeof("consistency"), consistency)) {
-    if (php_cassandra_get_consistency(PHP5TO7_ZVAL_MAYBE_DEREF(consistency), &self->consistency TSRMLS_CC) == FAILURE) {
+    if (php_driver_get_consistency(PHP5TO7_ZVAL_MAYBE_DEREF(consistency), &self->consistency TSRMLS_CC) == FAILURE) {
       return;
     }
   }
 
   if (PHP5TO7_ZEND_HASH_FIND(Z_ARRVAL_P(options), "serial_consistency", sizeof("serial_consistency"), serial_consistency)) {
-    if (php_cassandra_get_serial_consistency(PHP5TO7_ZVAL_MAYBE_DEREF(serial_consistency), &self->serial_consistency TSRMLS_CC) == FAILURE) {
+    if (php_driver_get_serial_consistency(PHP5TO7_ZVAL_MAYBE_DEREF(serial_consistency), &self->serial_consistency TSRMLS_CC) == FAILURE) {
       return;
     }
   }
@@ -98,10 +98,10 @@ PHP_METHOD(ExecutionOptions, __construct)
   if (PHP5TO7_ZEND_HASH_FIND(Z_ARRVAL_P(options), "retry_policy", sizeof("retry_policy"), retry_policy)) {
     if (Z_TYPE_P(PHP5TO7_ZVAL_MAYBE_DEREF(retry_policy)) != IS_OBJECT &&
         !instanceof_function(Z_OBJCE_P(PHP5TO7_ZVAL_MAYBE_DEREF(retry_policy)),
-                                       cassandra_retry_policy_ce TSRMLS_CC)) {
+                                       php_driver_retry_policy_ce TSRMLS_CC)) {
       throw_invalid_argument(PHP5TO7_ZVAL_MAYBE_DEREF(retry_policy),
                              "retry_policy",
-                             "an instance of Cassandra\\RetryPolicy" TSRMLS_CC);
+                             "an instance of " PHP_DRIVER_NAMESPACE "\\RetryPolicy" TSRMLS_CC);
       return;
     }
     PHP5TO7_ZVAL_COPY(PHP5TO7_ZVAL_MAYBE_P(self->retry_policy), PHP5TO7_ZVAL_MAYBE_DEREF(retry_policy));
@@ -111,7 +111,7 @@ PHP_METHOD(ExecutionOptions, __construct)
     if (Z_TYPE_P(PHP5TO7_ZVAL_MAYBE_DEREF(timestamp)) == IS_LONG) {
       self->timestamp = Z_LVAL_P(PHP5TO7_ZVAL_MAYBE_DEREF(timestamp));
     } else if (Z_TYPE_P(PHP5TO7_ZVAL_MAYBE_DEREF(timestamp)) == IS_STRING) {
-      if (!php_cassandra_parse_bigint(Z_STRVAL_P(PHP5TO7_ZVAL_MAYBE_DEREF(timestamp)),
+      if (!php_driver_parse_bigint(Z_STRVAL_P(PHP5TO7_ZVAL_MAYBE_DEREF(timestamp)),
                                       Z_STRLEN_P(PHP5TO7_ZVAL_MAYBE_DEREF(timestamp)),
                                       &self->timestamp TSRMLS_CC)) {
         return;
@@ -128,13 +128,13 @@ PHP_METHOD(ExecutionOptions, __get)
   char *name;
   php5to7_size name_len;
 
-  cassandra_execution_options *self = NULL;
+  php_driver_execution_options *self = NULL;
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &name, &name_len) == FAILURE) {
     return;
   }
 
-  self = PHP_CASSANDRA_GET_EXECUTION_OPTIONS(getThis());
+  self = PHP_DRIVER_GET_EXECUTION_OPTIONS(getThis());
 
   if (name_len == 11 && strncmp("consistency", name, name_len) == 0) {
     if (self->consistency == -1) {
@@ -195,16 +195,16 @@ ZEND_BEGIN_ARG_INFO_EX(arginfo___get, 0, ZEND_RETURN_VALUE, 1)
   ZEND_ARG_INFO(0, name)
 ZEND_END_ARG_INFO()
 
-static zend_function_entry cassandra_execution_options_methods[] = {
+static zend_function_entry php_driver_execution_options_methods[] = {
   PHP_ME(ExecutionOptions, __construct, arginfo__construct, ZEND_ACC_PUBLIC | ZEND_ACC_CTOR)
   PHP_ME(ExecutionOptions, __get, arginfo___get, ZEND_ACC_PUBLIC)
   PHP_FE_END
 };
 
-static zend_object_handlers cassandra_execution_options_handlers;
+static zend_object_handlers php_driver_execution_options_handlers;
 
 static HashTable *
-php_cassandra_execution_options_properties(zval *object TSRMLS_DC)
+php_driver_execution_options_properties(zval *object TSRMLS_DC)
 {
   HashTable *props = zend_std_get_properties(object TSRMLS_CC);
 
@@ -212,7 +212,7 @@ php_cassandra_execution_options_properties(zval *object TSRMLS_DC)
 }
 
 static int
-php_cassandra_execution_options_compare(zval *obj1, zval *obj2 TSRMLS_DC)
+php_driver_execution_options_compare(zval *obj1, zval *obj2 TSRMLS_DC)
 {
   if (Z_OBJCE_P(obj1) != Z_OBJCE_P(obj2))
     return 1; /* different classes */
@@ -221,9 +221,9 @@ php_cassandra_execution_options_compare(zval *obj1, zval *obj2 TSRMLS_DC)
 }
 
 static void
-php_cassandra_execution_options_free(php5to7_zend_object_free *object TSRMLS_DC)
+php_driver_execution_options_free(php5to7_zend_object_free *object TSRMLS_DC)
 {
-  cassandra_execution_options *self =
+  php_driver_execution_options *self =
       PHP5TO7_ZEND_OBJECT_GET(execution_options, object);
 
   if (self->paging_state_token) {
@@ -238,9 +238,9 @@ php_cassandra_execution_options_free(php5to7_zend_object_free *object TSRMLS_DC)
 }
 
 static php5to7_zend_object
-php_cassandra_execution_options_new(zend_class_entry *ce TSRMLS_DC)
+php_driver_execution_options_new(zend_class_entry *ce TSRMLS_DC)
 {
-  cassandra_execution_options *self =
+  php_driver_execution_options *self =
       PHP5TO7_ZEND_OBJECT_ECALLOC(execution_options, ce);
 
   self->consistency = -1;
@@ -257,17 +257,17 @@ php_cassandra_execution_options_new(zend_class_entry *ce TSRMLS_DC)
 
 }
 
-void cassandra_define_ExecutionOptions(TSRMLS_D)
+void php_driver_define_ExecutionOptions(TSRMLS_D)
 {
   zend_class_entry ce;
 
-  INIT_CLASS_ENTRY(ce, "Cassandra\\ExecutionOptions", cassandra_execution_options_methods);
-  cassandra_execution_options_ce = zend_register_internal_class(&ce TSRMLS_CC);
-  cassandra_execution_options_ce->ce_flags     |= PHP5TO7_ZEND_ACC_FINAL;
-  cassandra_execution_options_ce->create_object = php_cassandra_execution_options_new;
+  INIT_CLASS_ENTRY(ce, PHP_DRIVER_NAMESPACE "\\ExecutionOptions", php_driver_execution_options_methods);
+  php_driver_execution_options_ce = zend_register_internal_class(&ce TSRMLS_CC);
+  php_driver_execution_options_ce->ce_flags     |= PHP5TO7_ZEND_ACC_FINAL;
+  php_driver_execution_options_ce->create_object = php_driver_execution_options_new;
 
-  memcpy(&cassandra_execution_options_handlers, zend_get_std_object_handlers(), sizeof(zend_object_handlers));
-  cassandra_execution_options_handlers.get_properties  = php_cassandra_execution_options_properties;
-  cassandra_execution_options_handlers.compare_objects = php_cassandra_execution_options_compare;
-  cassandra_execution_options_handlers.clone_obj = NULL;
+  memcpy(&php_driver_execution_options_handlers, zend_get_std_object_handlers(), sizeof(zend_object_handlers));
+  php_driver_execution_options_handlers.get_properties  = php_driver_execution_options_properties;
+  php_driver_execution_options_handlers.compare_objects = php_driver_execution_options_compare;
+  php_driver_execution_options_handlers.clone_obj = NULL;
 }

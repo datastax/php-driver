@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-#ifndef PHP_CASSANDRA_USER_TYPE_VALUE_H
-#define PHP_CASSANDRA_USER_TYPE_VALUE_H
+#ifndef PHP_DRIVER_USER_TYPE_VALUE_H
+#define PHP_DRIVER_USER_TYPE_VALUE_H
 
-int php_cassandra_user_type_value_set(cassandra_user_type_value *user_type_value,
+int php_driver_user_type_value_set(php_driver_user_type_value *user_type_value,
                                       const char *name, size_t name_length,
                                       zval *object TSRMLS_DC);
 
 
-#endif /* PHP_CASSANDRA_USER_TYPE_VALUE_H */
+#endif /* PHP_DRIVER_USER_TYPE_VALUE_H */

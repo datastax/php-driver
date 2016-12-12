@@ -16,7 +16,7 @@
 
 #include "php_driver.h"
 
-int php_cassandra_get_consistency(zval *consistency, long *result TSRMLS_DC)
+int php_driver_get_consistency(zval *consistency, long *result TSRMLS_DC)
 {
   if (consistency && Z_TYPE_P(consistency) == IS_LONG) {
     switch (Z_LVAL_P(consistency)) {
@@ -34,15 +34,15 @@ int php_cassandra_get_consistency(zval *consistency, long *result TSRMLS_DC)
       *result = Z_LVAL_P(consistency);
       break;
     default:
-      INVALID_ARGUMENT_VALUE(consistency, "one of Cassandra::CONSISTENCY_*", FAILURE);
+      INVALID_ARGUMENT_VALUE(consistency, "one of " PHP_DRIVER_NAMESPACE "::CONSISTENCY_*", FAILURE);
     }
   } else {
-    INVALID_ARGUMENT_VALUE(consistency, "one of Cassandra::CONSISTENCY_*", FAILURE);
+    INVALID_ARGUMENT_VALUE(consistency, "one of " PHP_DRIVER_NAMESPACE "::CONSISTENCY_*", FAILURE);
   }
   return SUCCESS;
 }
 
-int php_cassandra_get_serial_consistency(zval *serial_consistency, long *result TSRMLS_DC)
+int php_driver_get_serial_consistency(zval *serial_consistency, long *result TSRMLS_DC)
 {
   if (serial_consistency && Z_TYPE_P(serial_consistency) == IS_LONG) {
     switch (Z_LVAL_P(serial_consistency)) {
@@ -51,10 +51,10 @@ int php_cassandra_get_serial_consistency(zval *serial_consistency, long *result 
       *result = Z_LVAL_P(serial_consistency);
       break;
     default:
-      INVALID_ARGUMENT_VALUE(serial_consistency, "either Cassandra::CONSISTENCY_SERIAL or Cassanra::CASS_CONSISTENCY_LOCAL_SERIAL", FAILURE);
+      INVALID_ARGUMENT_VALUE(serial_consistency, "either " PHP_DRIVER_NAMESPACE "::CONSISTENCY_SERIAL or Cassanra::CASS_CONSISTENCY_LOCAL_SERIAL", FAILURE);
     }
   } else {
-    INVALID_ARGUMENT_VALUE(serial_consistency, "either Cassandra::CONSISTENCY_SERIAL or Cassanra::CASS_CONSISTENCY_LOCAL_SERIAL", FAILURE);
+    INVALID_ARGUMENT_VALUE(serial_consistency, "either " PHP_DRIVER_NAMESPACE "::CONSISTENCY_SERIAL or Cassanra::CASS_CONSISTENCY_LOCAL_SERIAL", FAILURE);
   }
   return SUCCESS;
 }

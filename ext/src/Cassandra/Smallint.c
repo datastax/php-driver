@@ -25,24 +25,24 @@
 #  define INT16_MIN (-INT16_MAX-1)
 #endif
 
-zend_class_entry *cassandra_smallint_ce = NULL;
+zend_class_entry *php_driver_smallint_ce = NULL;
 
 static int
-to_double(zval *result, cassandra_numeric *smallint TSRMLS_DC)
+to_double(zval *result, php_driver_numeric *smallint TSRMLS_DC)
 {
   ZVAL_DOUBLE(result, (double) smallint->smallint_value);
   return SUCCESS;
 }
 
 static int
-to_long(zval *result, cassandra_numeric *smallint TSRMLS_DC)
+to_long(zval *result, php_driver_numeric *smallint TSRMLS_DC)
 {
   ZVAL_LONG(result, (long) smallint->smallint_value);
   return SUCCESS;
 }
 
 static int
-to_string(zval *result, cassandra_numeric *smallint TSRMLS_DC)
+to_string(zval *result, php_driver_numeric *smallint TSRMLS_DC)
 {
   char *string;
   spprintf(&string, 0, "%d", smallint->smallint_value);
@@ -52,9 +52,9 @@ to_string(zval *result, cassandra_numeric *smallint TSRMLS_DC)
 }
 
 void
-php_cassandra_smallint_init(INTERNAL_FUNCTION_PARAMETERS)
+php_driver_smallint_init(INTERNAL_FUNCTION_PARAMETERS)
 {
-  cassandra_numeric *self;
+  php_driver_numeric *self;
   zval *value;
   cass_int32_t number;
 
@@ -62,16 +62,16 @@ php_cassandra_smallint_init(INTERNAL_FUNCTION_PARAMETERS)
     return;
   }
 
-  if (getThis() && instanceof_function(Z_OBJCE_P(getThis()), cassandra_smallint_ce TSRMLS_CC)) {
-    self = PHP_CASSANDRA_GET_NUMERIC(getThis());
+  if (getThis() && instanceof_function(Z_OBJCE_P(getThis()), php_driver_smallint_ce TSRMLS_CC)) {
+    self = PHP_DRIVER_GET_NUMERIC(getThis());
   } else {
-    object_init_ex(return_value, cassandra_smallint_ce);
-    self = PHP_CASSANDRA_GET_NUMERIC(return_value);
+    object_init_ex(return_value, php_driver_smallint_ce);
+    self = PHP_DRIVER_GET_NUMERIC(return_value);
   }
 
   if (Z_TYPE_P(value) == IS_OBJECT &&
-           instanceof_function(Z_OBJCE_P(value), cassandra_smallint_ce TSRMLS_CC)) {
-    cassandra_numeric *other = PHP_CASSANDRA_GET_NUMERIC(value);
+           instanceof_function(Z_OBJCE_P(value), php_driver_smallint_ce TSRMLS_CC)) {
+    php_driver_numeric *other = PHP_DRIVER_GET_NUMERIC(value);
     self->smallint_value = other->smallint_value;
   } else {
     if (Z_TYPE_P(value) == IS_LONG) {
@@ -79,13 +79,13 @@ php_cassandra_smallint_init(INTERNAL_FUNCTION_PARAMETERS)
     } else if (Z_TYPE_P(value) == IS_DOUBLE) {
       number = (cass_int32_t) Z_DVAL_P(value);
     } else if (Z_TYPE_P(value) == IS_STRING) {
-      if (!php_cassandra_parse_int(Z_STRVAL_P(value), Z_STRLEN_P(value),
+      if (!php_driver_parse_int(Z_STRVAL_P(value), Z_STRLEN_P(value),
                                         &number TSRMLS_CC)) {
         return;
       }
     } else {
       INVALID_ARGUMENT(value, "a long, a double, a numeric string or a " \
-                              "Cassandra\\Smallint");
+                              PHP_DRIVER_NAMESPACE "\\Smallint");
     }
     if (number < INT16_MIN || number > INT16_MAX) {
       INVALID_ARGUMENT(value, ("between -32768 and 32767"));
@@ -95,278 +95,278 @@ php_cassandra_smallint_init(INTERNAL_FUNCTION_PARAMETERS)
 }
 
 
-/* {{{ Cassandra\Smallint::__construct(string) */
+/* {{{ Smallint::__construct(string) */
 PHP_METHOD(Smallint, __construct)
 {
-  php_cassandra_smallint_init(INTERNAL_FUNCTION_PARAM_PASSTHRU);
+  php_driver_smallint_init(INTERNAL_FUNCTION_PARAM_PASSTHRU);
 }
 /* }}} */
 
-/* {{{ Cassandra\Smallint::__toString() */
+/* {{{ Smallint::__toString() */
 PHP_METHOD(Smallint, __toString)
 {
-  cassandra_numeric *self = PHP_CASSANDRA_GET_NUMERIC(getThis());
+  php_driver_numeric *self = PHP_DRIVER_GET_NUMERIC(getThis());
 
   to_string(return_value, self TSRMLS_CC);
 }
 /* }}} */
 
-/* {{{ Cassandra\Smallint::type() */
+/* {{{ Smallint::type() */
 PHP_METHOD(Smallint, type)
 {
-  php5to7_zval type = php_cassandra_type_scalar(CASS_VALUE_TYPE_SMALL_INT TSRMLS_CC);
+  php5to7_zval type = php_driver_type_scalar(CASS_VALUE_TYPE_SMALL_INT TSRMLS_CC);
   RETURN_ZVAL(PHP5TO7_ZVAL_MAYBE_P(type), 1, 1);
 }
 /* }}} */
 
-/* {{{ Cassandra\Smallint::value() */
+/* {{{ Smallint::value() */
 PHP_METHOD(Smallint, value)
 {
-  cassandra_numeric *self = PHP_CASSANDRA_GET_NUMERIC(getThis());
+  php_driver_numeric *self = PHP_DRIVER_GET_NUMERIC(getThis());
 
   to_long(return_value, self TSRMLS_CC);
 }
 /* }}} */
 
-/* {{{ Cassandra\Smallint::add() */
+/* {{{ Smallint::add() */
 PHP_METHOD(Smallint, add)
 {
   zval *addend;
-  cassandra_numeric *self;
-  cassandra_numeric *smallint;
-  cassandra_numeric *result;
+  php_driver_numeric *self;
+  php_driver_numeric *smallint;
+  php_driver_numeric *result;
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z", &addend) == FAILURE) {
     return;
   }
 
   if (Z_TYPE_P(addend) == IS_OBJECT &&
-      instanceof_function(Z_OBJCE_P(addend), cassandra_smallint_ce TSRMLS_CC)) {
-    self = PHP_CASSANDRA_GET_NUMERIC(getThis());
-    smallint = PHP_CASSANDRA_GET_NUMERIC(addend);
+      instanceof_function(Z_OBJCE_P(addend), php_driver_smallint_ce TSRMLS_CC)) {
+    self = PHP_DRIVER_GET_NUMERIC(getThis());
+    smallint = PHP_DRIVER_GET_NUMERIC(addend);
 
-    object_init_ex(return_value, cassandra_smallint_ce);
-    result = PHP_CASSANDRA_GET_NUMERIC(return_value);
+    object_init_ex(return_value, php_driver_smallint_ce);
+    result = PHP_DRIVER_GET_NUMERIC(return_value);
 
     result->smallint_value = self->smallint_value + smallint->smallint_value;
     if (result->smallint_value - smallint->smallint_value != self->smallint_value) {
-      zend_throw_exception_ex(cassandra_range_exception_ce, 0 TSRMLS_CC, "Sum is out of range");
+      zend_throw_exception_ex(php_driver_range_exception_ce, 0 TSRMLS_CC, "Sum is out of range");
       return;
     }
   } else {
-    INVALID_ARGUMENT(addend, "a Cassandra\\Smallint");
+    INVALID_ARGUMENT(addend, "a " PHP_DRIVER_NAMESPACE "\\Smallint");
   }
 }
 /* }}} */
 
-/* {{{ Cassandra\Smallint::sub() */
+/* {{{ Smallint::sub() */
 PHP_METHOD(Smallint, sub)
 {
   zval *difference;
-  cassandra_numeric *result = NULL;
+  php_driver_numeric *result = NULL;
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z", &difference) == FAILURE) {
     return;
   }
 
   if (Z_TYPE_P(difference) == IS_OBJECT &&
-      instanceof_function(Z_OBJCE_P(difference), cassandra_smallint_ce TSRMLS_CC)) {
-    cassandra_numeric *self = PHP_CASSANDRA_GET_NUMERIC(getThis());
-    cassandra_numeric *smallint = PHP_CASSANDRA_GET_NUMERIC(difference);
+      instanceof_function(Z_OBJCE_P(difference), php_driver_smallint_ce TSRMLS_CC)) {
+    php_driver_numeric *self = PHP_DRIVER_GET_NUMERIC(getThis());
+    php_driver_numeric *smallint = PHP_DRIVER_GET_NUMERIC(difference);
 
-    object_init_ex(return_value, cassandra_smallint_ce);
-    result = PHP_CASSANDRA_GET_NUMERIC(return_value);
+    object_init_ex(return_value, php_driver_smallint_ce);
+    result = PHP_DRIVER_GET_NUMERIC(return_value);
 
     result->smallint_value = self->smallint_value - smallint->smallint_value;
     if (result->smallint_value + smallint->smallint_value != self->smallint_value) {
-      zend_throw_exception_ex(cassandra_range_exception_ce, 0 TSRMLS_CC, "Difference is out of range");
+      zend_throw_exception_ex(php_driver_range_exception_ce, 0 TSRMLS_CC, "Difference is out of range");
       return;
     }
   } else {
-    INVALID_ARGUMENT(difference, "a Cassandra\\Smallint");
+    INVALID_ARGUMENT(difference, "a " PHP_DRIVER_NAMESPACE "\\Smallint");
   }
 }
 /* }}} */
 
-/* {{{ Cassandra\Smallint::mul() */
+/* {{{ Smallint::mul() */
 PHP_METHOD(Smallint, mul)
 {
   zval *multiplier;
-  cassandra_numeric *result = NULL;
+  php_driver_numeric *result = NULL;
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z", &multiplier) == FAILURE) {
     return;
   }
 
   if (Z_TYPE_P(multiplier) == IS_OBJECT &&
-      instanceof_function(Z_OBJCE_P(multiplier), cassandra_smallint_ce TSRMLS_CC)) {
-    cassandra_numeric *self = PHP_CASSANDRA_GET_NUMERIC(getThis());
-    cassandra_numeric *smallint = PHP_CASSANDRA_GET_NUMERIC(multiplier);
+      instanceof_function(Z_OBJCE_P(multiplier), php_driver_smallint_ce TSRMLS_CC)) {
+    php_driver_numeric *self = PHP_DRIVER_GET_NUMERIC(getThis());
+    php_driver_numeric *smallint = PHP_DRIVER_GET_NUMERIC(multiplier);
 
-    object_init_ex(return_value, cassandra_smallint_ce);
-    result = PHP_CASSANDRA_GET_NUMERIC(return_value);
+    object_init_ex(return_value, php_driver_smallint_ce);
+    result = PHP_DRIVER_GET_NUMERIC(return_value);
 
     result->smallint_value = self->smallint_value * smallint->smallint_value;
     if (smallint->smallint_value != 0 &&
         result->smallint_value / smallint->smallint_value != self->smallint_value) {
-      zend_throw_exception_ex(cassandra_range_exception_ce, 0 TSRMLS_CC, "Product is out of range");
+      zend_throw_exception_ex(php_driver_range_exception_ce, 0 TSRMLS_CC, "Product is out of range");
       return;
     }
   } else {
-    INVALID_ARGUMENT(multiplier, "a Cassandra\\Smallint");
+    INVALID_ARGUMENT(multiplier, "a " PHP_DRIVER_NAMESPACE "\\Smallint");
   }
 }
 /* }}} */
 
-/* {{{ Cassandra\Smallint::div() */
+/* {{{ Smallint::div() */
 PHP_METHOD(Smallint, div)
 {
   zval *divisor;
-  cassandra_numeric *result = NULL;
+  php_driver_numeric *result = NULL;
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z", &divisor) == FAILURE) {
     return;
   }
 
   if (Z_TYPE_P(divisor) == IS_OBJECT &&
-      instanceof_function(Z_OBJCE_P(divisor), cassandra_smallint_ce TSRMLS_CC)) {
-    cassandra_numeric *self = PHP_CASSANDRA_GET_NUMERIC(getThis());
-    cassandra_numeric *smallint = PHP_CASSANDRA_GET_NUMERIC(divisor);
+      instanceof_function(Z_OBJCE_P(divisor), php_driver_smallint_ce TSRMLS_CC)) {
+    php_driver_numeric *self = PHP_DRIVER_GET_NUMERIC(getThis());
+    php_driver_numeric *smallint = PHP_DRIVER_GET_NUMERIC(divisor);
 
-    object_init_ex(return_value, cassandra_smallint_ce);
-    result = PHP_CASSANDRA_GET_NUMERIC(return_value);
+    object_init_ex(return_value, php_driver_smallint_ce);
+    result = PHP_DRIVER_GET_NUMERIC(return_value);
 
     if (smallint->smallint_value == 0) {
-      zend_throw_exception_ex(cassandra_divide_by_zero_exception_ce, 0 TSRMLS_CC, "Cannot divide by zero");
+      zend_throw_exception_ex(php_driver_divide_by_zero_exception_ce, 0 TSRMLS_CC, "Cannot divide by zero");
       return;
     }
 
     result->smallint_value = self->smallint_value / smallint->smallint_value;
     if (result->smallint_value * smallint->smallint_value != self->smallint_value) {
-      zend_throw_exception_ex(cassandra_range_exception_ce, 0 TSRMLS_CC, "Quotient is out of range");
+      zend_throw_exception_ex(php_driver_range_exception_ce, 0 TSRMLS_CC, "Quotient is out of range");
       return;
     }
   } else {
-    INVALID_ARGUMENT(divisor, "a Cassandra\\Smallint");
+    INVALID_ARGUMENT(divisor, "a " PHP_DRIVER_NAMESPACE "\\Smallint");
   }
 }
 /* }}} */
 
-/* {{{ Cassandra\Smallint::mod() */
+/* {{{ Smallint::mod() */
 PHP_METHOD(Smallint, mod)
 {
   zval *divisor;
-  cassandra_numeric *result = NULL;
+  php_driver_numeric *result = NULL;
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z", &divisor) == FAILURE) {
     return;
   }
 
   if (Z_TYPE_P(divisor) == IS_OBJECT &&
-      instanceof_function(Z_OBJCE_P(divisor), cassandra_smallint_ce TSRMLS_CC)) {
-    cassandra_numeric *self = PHP_CASSANDRA_GET_NUMERIC(getThis());
-    cassandra_numeric *smallint = PHP_CASSANDRA_GET_NUMERIC(divisor);
+      instanceof_function(Z_OBJCE_P(divisor), php_driver_smallint_ce TSRMLS_CC)) {
+    php_driver_numeric *self = PHP_DRIVER_GET_NUMERIC(getThis());
+    php_driver_numeric *smallint = PHP_DRIVER_GET_NUMERIC(divisor);
 
-    object_init_ex(return_value, cassandra_smallint_ce);
-    result = PHP_CASSANDRA_GET_NUMERIC(return_value);
+    object_init_ex(return_value, php_driver_smallint_ce);
+    result = PHP_DRIVER_GET_NUMERIC(return_value);
 
     if (smallint->smallint_value == 0) {
-      zend_throw_exception_ex(cassandra_divide_by_zero_exception_ce, 0 TSRMLS_CC, "Cannot modulo by zero");
+      zend_throw_exception_ex(php_driver_divide_by_zero_exception_ce, 0 TSRMLS_CC, "Cannot modulo by zero");
       return;
     }
 
     result->smallint_value = self->smallint_value % smallint->smallint_value;
   } else {
-    INVALID_ARGUMENT(divisor, "a Cassandra\\Smallint");
+    INVALID_ARGUMENT(divisor, "a " PHP_DRIVER_NAMESPACE "\\Smallint");
   }
 }
 /* }}} */
 
-/* {{{ Cassandra\Smallint::abs() */
+/* {{{ Smallint::abs() */
 PHP_METHOD(Smallint, abs)
 {
-  cassandra_numeric *result = NULL;
-  cassandra_numeric *self = PHP_CASSANDRA_GET_NUMERIC(getThis());
+  php_driver_numeric *result = NULL;
+  php_driver_numeric *self = PHP_DRIVER_GET_NUMERIC(getThis());
 
   if (self->smallint_value == INT16_MIN) {
-    zend_throw_exception_ex(cassandra_range_exception_ce, 0 TSRMLS_CC, "Value doesn't exist");
+    zend_throw_exception_ex(php_driver_range_exception_ce, 0 TSRMLS_CC, "Value doesn't exist");
     return;
   }
 
-  object_init_ex(return_value, cassandra_smallint_ce);
-  result = PHP_CASSANDRA_GET_NUMERIC(return_value);
+  object_init_ex(return_value, php_driver_smallint_ce);
+  result = PHP_DRIVER_GET_NUMERIC(return_value);
   result->smallint_value = self->smallint_value < 0 ? -self->smallint_value : self->smallint_value;
 }
 /* }}} */
 
-/* {{{ Cassandra\Smallint::neg() */
+/* {{{ Smallint::neg() */
 PHP_METHOD(Smallint, neg)
 {
-  cassandra_numeric *result = NULL;
-  cassandra_numeric *self = PHP_CASSANDRA_GET_NUMERIC(getThis());
+  php_driver_numeric *result = NULL;
+  php_driver_numeric *self = PHP_DRIVER_GET_NUMERIC(getThis());
 
   if (self->smallint_value == INT16_MIN) {
-    zend_throw_exception_ex(cassandra_range_exception_ce, 0 TSRMLS_CC, "Value doesn't exist");
+    zend_throw_exception_ex(php_driver_range_exception_ce, 0 TSRMLS_CC, "Value doesn't exist");
     return;
   }
 
-  object_init_ex(return_value, cassandra_smallint_ce);
-  result = PHP_CASSANDRA_GET_NUMERIC(return_value);
+  object_init_ex(return_value, php_driver_smallint_ce);
+  result = PHP_DRIVER_GET_NUMERIC(return_value);
   result->smallint_value = -self->smallint_value;
 }
 /* }}} */
 
-/* {{{ Cassandra\Smallint::sqrt() */
+/* {{{ Smallint::sqrt() */
 PHP_METHOD(Smallint, sqrt)
 {
-  cassandra_numeric *result = NULL;
-  cassandra_numeric *self = PHP_CASSANDRA_GET_NUMERIC(getThis());
+  php_driver_numeric *result = NULL;
+  php_driver_numeric *self = PHP_DRIVER_GET_NUMERIC(getThis());
 
   if (self->smallint_value < 0) {
-    zend_throw_exception_ex(cassandra_range_exception_ce, 0 TSRMLS_CC,
+    zend_throw_exception_ex(php_driver_range_exception_ce, 0 TSRMLS_CC,
                             "Cannot take a square root of a negative number");
   }
 
-  object_init_ex(return_value, cassandra_smallint_ce);
-  result = PHP_CASSANDRA_GET_NUMERIC(return_value);
+  object_init_ex(return_value, php_driver_smallint_ce);
+  result = PHP_DRIVER_GET_NUMERIC(return_value);
   result->smallint_value = (cass_int16_t) sqrt((long double) self->smallint_value);
 }
 /* }}} */
 
-/* {{{ Cassandra\Smallint::toInt() */
+/* {{{ Smallint::toInt() */
 PHP_METHOD(Smallint, toInt)
 {
-  cassandra_numeric *self = PHP_CASSANDRA_GET_NUMERIC(getThis());
+  php_driver_numeric *self = PHP_DRIVER_GET_NUMERIC(getThis());
 
   to_long(return_value, self TSRMLS_CC);
 }
 /* }}} */
 
-/* {{{ Cassandra\Smallint::toDouble() */
+/* {{{ Smallint::toDouble() */
 PHP_METHOD(Smallint, toDouble)
 {
-  cassandra_numeric *self = PHP_CASSANDRA_GET_NUMERIC(getThis());
+  php_driver_numeric *self = PHP_DRIVER_GET_NUMERIC(getThis());
 
   to_double(return_value, self TSRMLS_CC);
 }
 /* }}} */
 
-/* {{{ Cassandra\Smallint::min() */
+/* {{{ Smallint::min() */
 PHP_METHOD(Smallint, min)
 {
-  cassandra_numeric *smallint = NULL;
-  object_init_ex(return_value, cassandra_smallint_ce);
-  smallint = PHP_CASSANDRA_GET_NUMERIC(return_value);
+  php_driver_numeric *smallint = NULL;
+  object_init_ex(return_value, php_driver_smallint_ce);
+  smallint = PHP_DRIVER_GET_NUMERIC(return_value);
   smallint->smallint_value = INT16_MIN;
 }
 /* }}} */
 
-/* {{{ Cassandra\Smallint::max() */
+/* {{{ Smallint::max() */
 PHP_METHOD(Smallint, max)
 {
-  cassandra_numeric *smallint = NULL;
-  object_init_ex(return_value, cassandra_smallint_ce);
-  smallint = PHP_CASSANDRA_GET_NUMERIC(return_value);
+  php_driver_numeric *smallint = NULL;
+  object_init_ex(return_value, php_driver_smallint_ce);
+  smallint = PHP_DRIVER_GET_NUMERIC(return_value);
   smallint->smallint_value = INT16_MAX;
 }
 /* }}} */
@@ -382,7 +382,7 @@ ZEND_BEGIN_ARG_INFO_EX(arginfo_num, 0, ZEND_RETURN_VALUE, 1)
   ZEND_ARG_INFO(0, num)
 ZEND_END_ARG_INFO()
 
-static zend_function_entry cassandra_smallint_methods[] = {
+static zend_function_entry php_driver_smallint_methods[] = {
   PHP_ME(Smallint, __construct, arginfo__construct, ZEND_ACC_CTOR|ZEND_ACC_PUBLIC)
   PHP_ME(Smallint, __toString, arginfo_none, ZEND_ACC_PUBLIC)
   PHP_ME(Smallint, type, arginfo_none, ZEND_ACC_PUBLIC)
@@ -402,10 +402,10 @@ static zend_function_entry cassandra_smallint_methods[] = {
   PHP_FE_END
 };
 
-static php_cassandra_value_handlers cassandra_smallint_handlers;
+static php_driver_value_handlers php_driver_smallint_handlers;
 
 static HashTable *
-php_cassandra_smallint_gc(zval *object, php5to7_zval_gc table, int *n TSRMLS_DC)
+php_driver_smallint_gc(zval *object, php5to7_zval_gc table, int *n TSRMLS_DC)
 {
   *table = NULL;
   *n = 0;
@@ -413,15 +413,15 @@ php_cassandra_smallint_gc(zval *object, php5to7_zval_gc table, int *n TSRMLS_DC)
 }
 
 static HashTable *
-php_cassandra_smallint_properties(zval *object TSRMLS_DC)
+php_driver_smallint_properties(zval *object TSRMLS_DC)
 {
   php5to7_zval type;
   php5to7_zval value;
 
-  cassandra_numeric *self = PHP_CASSANDRA_GET_NUMERIC(object);
+  php_driver_numeric *self = PHP_DRIVER_GET_NUMERIC(object);
   HashTable         *props = zend_std_get_properties(object TSRMLS_CC);
 
-  type = php_cassandra_type_scalar(CASS_VALUE_TYPE_SMALL_INT TSRMLS_CC);
+  type = php_driver_type_scalar(CASS_VALUE_TYPE_SMALL_INT TSRMLS_CC);
   PHP5TO7_ZEND_HASH_UPDATE(props, "type", sizeof("type"), PHP5TO7_ZVAL_MAYBE_P(type), sizeof(zval));
 
   PHP5TO7_ZVAL_MAYBE_MAKE(value);
@@ -432,16 +432,16 @@ php_cassandra_smallint_properties(zval *object TSRMLS_DC)
 }
 
 static int
-php_cassandra_smallint_compare(zval *obj1, zval *obj2 TSRMLS_DC)
+php_driver_smallint_compare(zval *obj1, zval *obj2 TSRMLS_DC)
 {
-  cassandra_numeric *smallint1 = NULL;
-  cassandra_numeric *smallint2 = NULL;
+  php_driver_numeric *smallint1 = NULL;
+  php_driver_numeric *smallint2 = NULL;
 
   if (Z_OBJCE_P(obj1) != Z_OBJCE_P(obj2))
     return 1; /* different classes */
 
-  smallint1 = PHP_CASSANDRA_GET_NUMERIC(obj1);
-  smallint2 = PHP_CASSANDRA_GET_NUMERIC(obj2);
+  smallint1 = PHP_DRIVER_GET_NUMERIC(obj1);
+  smallint2 = PHP_DRIVER_GET_NUMERIC(obj2);
 
   if (smallint1->smallint_value == smallint2->smallint_value)
     return 0;
@@ -452,16 +452,16 @@ php_cassandra_smallint_compare(zval *obj1, zval *obj2 TSRMLS_DC)
 }
 
 static unsigned
-php_cassandra_smallint_hash_value(zval *obj TSRMLS_DC)
+php_driver_smallint_hash_value(zval *obj TSRMLS_DC)
 {
-  cassandra_numeric *self = PHP_CASSANDRA_GET_NUMERIC(obj);
+  php_driver_numeric *self = PHP_DRIVER_GET_NUMERIC(obj);
   return 31 * 17 + self->smallint_value;
 }
 
 static int
-php_cassandra_smallint_cast(zval *object, zval *retval, int type TSRMLS_DC)
+php_driver_smallint_cast(zval *object, zval *retval, int type TSRMLS_DC)
 {
-  cassandra_numeric *self = PHP_CASSANDRA_GET_NUMERIC(object);
+  php_driver_numeric *self = PHP_DRIVER_GET_NUMERIC(object);
 
   switch (type) {
   case IS_LONG:
@@ -478,42 +478,42 @@ php_cassandra_smallint_cast(zval *object, zval *retval, int type TSRMLS_DC)
 }
 
 static void
-php_cassandra_smallint_free(php5to7_zend_object_free *object TSRMLS_DC)
+php_driver_smallint_free(php5to7_zend_object_free *object TSRMLS_DC)
 {
-  cassandra_numeric *self = PHP5TO7_ZEND_OBJECT_GET(numeric, object);
+  php_driver_numeric *self = PHP5TO7_ZEND_OBJECT_GET(numeric, object);
 
   zend_object_std_dtor(&self->zval TSRMLS_CC);
   PHP5TO7_MAYBE_EFREE(self);
 }
 
 static php5to7_zend_object
-php_cassandra_smallint_new(zend_class_entry *ce TSRMLS_DC)
+php_driver_smallint_new(zend_class_entry *ce TSRMLS_DC)
 {
-  cassandra_numeric *self =
+  php_driver_numeric *self =
       PHP5TO7_ZEND_OBJECT_ECALLOC(numeric, ce);
 
-  self->type = CASSANDRA_SMALLINT;
+  self->type = PHP_DRIVER_SMALLINT;
 
   PHP5TO7_ZEND_OBJECT_INIT_EX(numeric, smallint, self, ce);
 }
 
-void cassandra_define_Smallint(TSRMLS_D)
+void php_driver_define_Smallint(TSRMLS_D)
 {
   zend_class_entry ce;
 
-  INIT_CLASS_ENTRY(ce, "Cassandra\\Smallint", cassandra_smallint_methods);
-  cassandra_smallint_ce = zend_register_internal_class(&ce TSRMLS_CC);
-  zend_class_implements(cassandra_smallint_ce TSRMLS_CC, 2, cassandra_value_ce, cassandra_numeric_ce);
-  cassandra_smallint_ce->ce_flags     |= PHP5TO7_ZEND_ACC_FINAL;
-  cassandra_smallint_ce->create_object = php_cassandra_smallint_new;
+  INIT_CLASS_ENTRY(ce, PHP_DRIVER_NAMESPACE "\\Smallint", php_driver_smallint_methods);
+  php_driver_smallint_ce = zend_register_internal_class(&ce TSRMLS_CC);
+  zend_class_implements(php_driver_smallint_ce TSRMLS_CC, 2, php_driver_value_ce, php_driver_numeric_ce);
+  php_driver_smallint_ce->ce_flags     |= PHP5TO7_ZEND_ACC_FINAL;
+  php_driver_smallint_ce->create_object = php_driver_smallint_new;
 
-  memcpy(&cassandra_smallint_handlers, zend_get_std_object_handlers(), sizeof(zend_object_handlers));
-  cassandra_smallint_handlers.std.get_properties  = php_cassandra_smallint_properties;
+  memcpy(&php_driver_smallint_handlers, zend_get_std_object_handlers(), sizeof(zend_object_handlers));
+  php_driver_smallint_handlers.std.get_properties  = php_driver_smallint_properties;
 #if PHP_VERSION_ID >= 50400
-  cassandra_smallint_handlers.std.get_gc          = php_cassandra_smallint_gc;
+  php_driver_smallint_handlers.std.get_gc          = php_driver_smallint_gc;
 #endif
-  cassandra_smallint_handlers.std.compare_objects = php_cassandra_smallint_compare;
-  cassandra_smallint_handlers.std.cast_object     = php_cassandra_smallint_cast;
+  php_driver_smallint_handlers.std.compare_objects = php_driver_smallint_compare;
+  php_driver_smallint_handlers.std.cast_object     = php_driver_smallint_cast;
 
-  cassandra_smallint_handlers.hash_value = php_cassandra_smallint_hash_value;
+  php_driver_smallint_handlers.hash_value = php_driver_smallint_hash_value;
 }

@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-#ifndef PHP_CASSANDRA_COLLECTION_H
-#define PHP_CASSANDRA_COLLECTION_H
+#ifndef PHP_DRIVER_COLLECTION_H
+#define PHP_DRIVER_COLLECTION_H
 
-int php_cassandra_collection_add(cassandra_collection* collection, zval* object TSRMLS_DC);
+int php_driver_collection_add(php_driver_collection* collection, zval* object TSRMLS_DC);
 
-#endif /* PHP_CASSANDRA_COLLECTION_H */
+#endif /* PHP_DRIVER_COLLECTION_H */

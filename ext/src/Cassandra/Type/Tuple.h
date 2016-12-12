@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-#ifndef PHP_CASSANDRA_TYPE_TUPLE_H
-#define PHP_CASSANDRA_TYPE_TUPLE_H
+#ifndef PHP_DRIVER_TYPE_TUPLE_H
+#define PHP_DRIVER_TYPE_TUPLE_H
 
-int php_cassandra_type_tuple_add(cassandra_type *type,
+int php_driver_type_tuple_add(php_driver_type *type,
                                  zval *zsub_type TSRMLS_DC);
 
-#endif /* PHP_CASSANDRA_TYPE_TUPLE_H */
+#endif /* PHP_DRIVER_TYPE_TUPLE_H */
 

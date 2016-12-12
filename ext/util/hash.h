@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-#ifndef PHP_CASSANDRA_HASH_H
-#define PHP_CASSANDRA_HASH_H
+#ifndef PHP_DRIVER_HASH_H
+#define PHP_DRIVER_HASH_H
 
 #define uthash_malloc(sz) emalloc(sz)
 #define uthash_free(ptr,sz) efree(ptr)
 
 #define HASH_FUNCTION(key,keylen,num_bkts,hashv,bkt)                \
-  hashv = php_cassandra_value_hash((zval*)key TSRMLS_CC); \
+  hashv = php_driver_value_hash((zval*)key TSRMLS_CC); \
   bkt = (hashv) & (num_bkts - 1U)
 #define HASH_KEYCOMPARE(a, b, len) \
-  php_cassandra_value_compare((zval*)a, (zval*)b TSRMLS_CC)
+  php_driver_value_compare((zval*)a, (zval*)b TSRMLS_CC)
 
 #undef HASH_ADD /* Previously defined in Zend/zend_hash.h */
 
@@ -36,31 +36,31 @@
 #define HASH_ADD_ZVAL(head, fieldname, add) \
    HASH_ADD_KEYPTR(hh, head, PHP5TO7_ZVAL_MAYBE_P(((add)->fieldname)), 0, add)
 
-struct cassandra_map_entry_ {
+struct php_driver_map_entry_ {
   php5to7_zval key;
   php5to7_zval value;
   UT_hash_handle hh;
 };
 
-struct cassandra_set_entry_ {
+struct php_driver_set_entry_ {
   php5to7_zval value;
   UT_hash_handle hh;
 };
 
-#define PHP_CASSANDRA_COMPARE(a, b) ((a) < (b) ? -1 : (a) > (b))
+#define PHP_DRIVER_COMPARE(a, b) ((a) < (b) ? -1 : (a) > (b))
 
-unsigned php_cassandra_value_hash(zval* zvalue TSRMLS_DC);
-int php_cassandra_value_compare(zval* zvalue1, zval* zvalue2 TSRMLS_DC);
-int php_cassandra_data_compare(const void* a, const void* b TSRMLS_DC);
+unsigned php_driver_value_hash(zval* zvalue TSRMLS_DC);
+int php_driver_value_compare(zval* zvalue1, zval* zvalue2 TSRMLS_DC);
+int php_driver_data_compare(const void* a, const void* b TSRMLS_DC);
 
-unsigned php_cassandra_mpz_hash(unsigned seed, mpz_t n);
+unsigned php_driver_mpz_hash(unsigned seed, mpz_t n);
 
-static inline unsigned php_cassandra_bigint_hash(cass_int64_t value) {
+static inline unsigned php_driver_bigint_hash(cass_int64_t value) {
   return (unsigned)(value ^ (value >> 32));
 }
 
-static inline unsigned php_cassandra_combine_hash(unsigned seed, unsigned  hashv) {
+static inline unsigned php_driver_combine_hash(unsigned seed, unsigned  hashv) {
   return seed ^ (hashv + 0x9e3779b9 + (seed << 6) + (seed >> 2));
 }
 
-#endif /* PHP_CASSANDRA_HASH_H */
+#endif /* PHP_DRIVER_HASH_H */

@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-#ifndef PHP_CASSANDRA_DECIMAL_H
-#define PHP_CASSANDRA_DECIMAL_H
+#ifndef PHP_DRIVER_DECIMAL_H
+#define PHP_DRIVER_DECIMAL_H
 
-void php_cassandra_decimal_init(INTERNAL_FUNCTION_PARAMETERS);
+void php_driver_decimal_init(INTERNAL_FUNCTION_PARAMETERS);
 
-#endif /* PHP_CASSANDRA_DECIMAL_H */
+#endif /* PHP_DRIVER_DECIMAL_H */

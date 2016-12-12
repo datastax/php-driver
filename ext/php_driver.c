@@ -35,8 +35,8 @@
 #include <uv.h>
 
 /* Resources */
-#define PHP_CASSANDRA_CLUSTER_RES_NAME "Cassandra Cluster"
-#define PHP_CASSANDRA_SESSION_RES_NAME "Cassandra Session"
+#define PHP_DRIVER_CLUSTER_RES_NAME PHP_DRIVER_NAMESPACE " Cluster"
+#define PHP_DRIVER_SESSION_RES_NAME PHP_DRIVER_NAMESPACE " Session"
 
 static uv_once_t log_once = UV_ONCE_INIT;
 static char *log_location = NULL;
@@ -68,7 +68,7 @@ zend_module_entry php_driver_module_entry = {
 #elif ZEND_MODULE_API_NO >= 20010901
   STANDARD_MODULE_HEADER,
 #endif
-  PHP_CASSANDRA_NAME,
+  PHP_DRIVER_NAME,
   php_driver_functions,      /* Functions */
   PHP_MINIT(php_driver),     /* MINIT */
   PHP_MSHUTDOWN(php_driver), /* MSHUTDOWN */
@@ -76,7 +76,7 @@ zend_module_entry php_driver_module_entry = {
   PHP_RSHUTDOWN(php_driver), /* RSHUTDOWN */
   PHP_MINFO(php_driver),     /* MINFO */
 #if ZEND_MODULE_API_NO >= 20010901
-  PHP_CASSANDRA_VERSION,
+  PHP_DRIVER_VERSION,
 #endif
   PHP_MODULE_GLOBALS(php_driver),
   PHP_GINIT(php_driver),
@@ -90,18 +90,18 @@ ZEND_GET_MODULE(php_driver)
 #endif
 
 PHP_INI_BEGIN()
-  PHP_CASSANDRA_INI_ENTRY_LOG
-  PHP_CASSANDRA_INI_ENTRY_LOG_LEVEL
+  PHP_DRIVER_INI_ENTRY_LOG
+  PHP_DRIVER_INI_ENTRY_LOG_LEVEL
 PHP_INI_END()
 
-static int le_cassandra_cluster_res;
+static int le_php_driver_cluster_res;
 int
-php_le_cassandra_cluster()
+php_le_php_driver_cluster()
 {
-  return le_cassandra_cluster_res;
+  return le_php_driver_cluster_res;
 }
 static void
-php_cassandra_cluster_dtor(php5to7_zend_resource rsrc TSRMLS_DC)
+php_driver_cluster_dtor(php5to7_zend_resource rsrc TSRMLS_DC)
 {
   CassCluster *cluster = (CassCluster*) rsrc->ptr;
 
@@ -112,20 +112,20 @@ php_cassandra_cluster_dtor(php5to7_zend_resource rsrc TSRMLS_DC)
   }
 }
 
-static int le_cassandra_session_res;
+static int le_php_driver_session_res;
 int
-php_le_cassandra_session()
+php_le_php_driver_session()
 {
-  return le_cassandra_session_res;
+  return le_php_driver_session_res;
 }
 static void
-php_cassandra_session_dtor(php5to7_zend_resource rsrc TSRMLS_DC)
+php_driver_session_dtor(php5to7_zend_resource rsrc TSRMLS_DC)
 {
-  cassandra_psession *psession = (cassandra_psession*) rsrc->ptr;
+  php_driver_psession *psession = (php_driver_psession*) rsrc->ptr;
 
   if (psession) {
     cass_future_free(psession->future);
-    php_cassandra_del_peref(&psession->session, 1);
+    php_driver_del_peref(&psession->session, 1);
     pefree(psession, 1);
     PHP_DRIVER_G(persistent_sessions)--;
     rsrc->ptr = NULL;
@@ -133,10 +133,10 @@ php_cassandra_session_dtor(php5to7_zend_resource rsrc TSRMLS_DC)
 }
 
 static void
-php_cassandra_log(const CassLogMessage *message, void *data);
+php_driver_log(const CassLogMessage *message, void *data);
 
 static void
-php_cassandra_log_cleanup()
+php_driver_log_cleanup()
 {
   cass_log_cleanup();
   uv_rwlock_destroy(&log_lock);
@@ -147,15 +147,15 @@ php_cassandra_log_cleanup()
 }
 
 static void
-php_cassandra_log_initialize()
+php_driver_log_initialize()
 {
   uv_rwlock_init(&log_lock);
   cass_log_set_level(CASS_LOG_ERROR);
-  cass_log_set_callback(php_cassandra_log, NULL);
+  cass_log_set_callback(php_driver_log, NULL);
 }
 
 static void
-php_cassandra_log(const CassLogMessage *message, void *data)
+php_driver_log(const CassLogMessage *message, void *data)
 {
   char log[MAXPATHLEN + 1];
   uint log_length = 0;
@@ -174,7 +174,7 @@ php_cassandra_log(const CassLogMessage *message, void *data)
     FILE *fd = NULL;
 #ifndef _WIN32
     if (!strcmp(log, "syslog")) {
-      php_syslog(LOG_NOTICE, "cassandra | [%s] %s (%s:%d)",
+      php_syslog(LOG_NOTICE, PHP_DRIVER_NAME " | [%s] %s (%s:%d)",
                  cass_log_level_string(message->severity), message->message,
                  message->file, message->line);
       return;
@@ -218,7 +218,7 @@ php_cassandra_log(const CassLogMessage *message, void *data)
    * logging function are thread-safe.
    */
 
-  fprintf(stderr, "cassandra | [%s] %s (%s:%d)%s",
+  fprintf(stderr, PHP_DRIVER_NAME " | [%s] %s (%s:%d)%s",
           cass_log_level_string(message->severity), message->message,
           message->file, message->line,
           PHP_EOL);
@@ -240,7 +240,7 @@ exception_class(CassError rc)
   case CASS_ERROR_SSL_NO_PEER_CERT:
   case CASS_ERROR_SSL_INVALID_PEER_CERT:
   case CASS_ERROR_SSL_IDENTITY_MISMATCH:
-    return cassandra_invalid_argument_exception_ce;
+    return php_driver_invalid_argument_exception_ce;
   case CASS_ERROR_LIB_NO_STREAMS:
   case CASS_ERROR_LIB_UNABLE_TO_INIT:
   case CASS_ERROR_LIB_MESSAGE_ENCODE:
@@ -254,44 +254,44 @@ exception_class(CassError rc)
   case CASS_ERROR_LIB_UNABLE_TO_DETERMINE_PROTOCOL:
   case CASS_ERROR_LIB_UNABLE_TO_CONNECT:
   case CASS_ERROR_LIB_UNABLE_TO_CLOSE:
-    return cassandra_runtime_exception_ce;
+    return php_driver_runtime_exception_ce;
   case CASS_ERROR_LIB_REQUEST_TIMED_OUT:
-    return cassandra_timeout_exception_ce;
+    return php_driver_timeout_exception_ce;
   case CASS_ERROR_LIB_CALLBACK_ALREADY_SET:
   case CASS_ERROR_LIB_NOT_IMPLEMENTED:
-    return cassandra_logic_exception_ce;
+    return php_driver_logic_exception_ce;
   case CASS_ERROR_SERVER_SERVER_ERROR:
-    return cassandra_server_exception_ce;
+    return php_driver_server_exception_ce;
   case CASS_ERROR_SERVER_PROTOCOL_ERROR:
-    return cassandra_protocol_exception_ce;
+    return php_driver_protocol_exception_ce;
   case CASS_ERROR_SERVER_BAD_CREDENTIALS:
-    return cassandra_authentication_exception_ce;
+    return php_driver_authentication_exception_ce;
   case CASS_ERROR_SERVER_UNAVAILABLE:
-    return cassandra_unavailable_exception_ce;
+    return php_driver_unavailable_exception_ce;
   case CASS_ERROR_SERVER_OVERLOADED:
-    return cassandra_overloaded_exception_ce;
+    return php_driver_overloaded_exception_ce;
   case CASS_ERROR_SERVER_IS_BOOTSTRAPPING:
-    return cassandra_is_bootstrapping_exception_ce;
+    return php_driver_is_bootstrapping_exception_ce;
   case CASS_ERROR_SERVER_TRUNCATE_ERROR:
-    return cassandra_truncate_exception_ce;
+    return php_driver_truncate_exception_ce;
   case CASS_ERROR_SERVER_WRITE_TIMEOUT:
-    return cassandra_write_timeout_exception_ce;
+    return php_driver_write_timeout_exception_ce;
   case CASS_ERROR_SERVER_READ_TIMEOUT:
-    return cassandra_read_timeout_exception_ce;
+    return php_driver_read_timeout_exception_ce;
   case CASS_ERROR_SERVER_SYNTAX_ERROR:
-    return cassandra_invalid_syntax_exception_ce;
+    return php_driver_invalid_syntax_exception_ce;
   case CASS_ERROR_SERVER_UNAUTHORIZED:
-    return cassandra_unauthorized_exception_ce;
+    return php_driver_unauthorized_exception_ce;
   case CASS_ERROR_SERVER_INVALID_QUERY:
-    return cassandra_invalid_query_exception_ce;
+    return php_driver_invalid_query_exception_ce;
   case CASS_ERROR_SERVER_CONFIG_ERROR:
-    return cassandra_configuration_exception_ce;
+    return php_driver_configuration_exception_ce;
   case CASS_ERROR_SERVER_ALREADY_EXISTS:
-    return cassandra_already_exists_exception_ce;
+    return php_driver_already_exists_exception_ce;
   case CASS_ERROR_SERVER_UNPREPARED:
-    return cassandra_unprepared_exception_ce;
+    return php_driver_unprepared_exception_ce;
   default:
-    return cassandra_runtime_exception_ce;
+    return php_driver_runtime_exception_ce;
   }
 }
 
@@ -321,7 +321,7 @@ throw_invalid_argument(zval *object,
     Z_OBJ_HANDLER_P(object, get_class_name)(object, &cls_name, &cls_len, 0 TSRMLS_CC);
 #endif
     if (cls_name) {
-      zend_throw_exception_ex(cassandra_invalid_argument_exception_ce, 0 TSRMLS_CC,
+      zend_throw_exception_ex(php_driver_invalid_argument_exception_ce, 0 TSRMLS_CC,
                               "%s must be %s, an instance of %.*s given",
                               object_name, expected_type, cls_len, cls_name);
 #if PHP_MAJOR_VERSION >= 7
@@ -330,16 +330,16 @@ throw_invalid_argument(zval *object,
       efree((void*) cls_name);
 #endif
     } else {
-      zend_throw_exception_ex(cassandra_invalid_argument_exception_ce, 0 TSRMLS_CC,
+      zend_throw_exception_ex(php_driver_invalid_argument_exception_ce, 0 TSRMLS_CC,
                               "%s must be %s, an instance of Unknown Class given",
                               object_name, expected_type);
     }
   } else if (Z_TYPE_P(object) == IS_STRING) {
-    zend_throw_exception_ex(cassandra_invalid_argument_exception_ce, 0 TSRMLS_CC,
+    zend_throw_exception_ex(php_driver_invalid_argument_exception_ce, 0 TSRMLS_CC,
                             "%s must be %s, '%Z' given",
                             object_name, expected_type, object);
   } else {
-    zend_throw_exception_ex(cassandra_invalid_argument_exception_ce, 0 TSRMLS_CC,
+    zend_throw_exception_ex(php_driver_invalid_argument_exception_ce, 0 TSRMLS_CC,
                             "%s must be %s, %Z given",
                             object_name, expected_type, object);
   }
@@ -364,7 +364,7 @@ PHP_INI_MH(OnUpdateLogLevel)
       cass_log_set_level(CASS_LOG_TRACE);
     } else {
       php_error_docref(NULL TSRMLS_CC, E_NOTICE,
-                       "cassandra | Unknown log level '%s', using 'ERROR'",
+                       PHP_DRIVER_NAME " | Unknown log level '%s', using 'ERROR'",
                        new_value);
       cass_log_set_level(CASS_LOG_ERROR);
     }
@@ -402,7 +402,7 @@ PHP_INI_MH(OnUpdateLog)
 
 static PHP_GINIT_FUNCTION(php_driver)
 {
-  uv_once(&log_once, php_cassandra_log_initialize);
+  uv_once(&log_once, php_driver_log_initialize);
 
   PHP_DRIVER_G(uuid_gen)            = NULL;
   PHP_DRIVER_G(uuid_gen_pid)        = 0;
@@ -432,128 +432,128 @@ static PHP_GSHUTDOWN_FUNCTION(php_driver)
   if (PHP_DRIVER_G(uuid_gen)) {
     cass_uuid_gen_free(PHP_DRIVER_G(uuid_gen));
   }
-  php_cassandra_log_cleanup();
+  php_driver_log_cleanup();
 }
 
 PHP_MINIT_FUNCTION(php_driver)
 {
   REGISTER_INI_ENTRIES();
 
-  le_cassandra_cluster_res =
-  zend_register_list_destructors_ex(NULL, php_cassandra_cluster_dtor,
-                                    PHP_CASSANDRA_CLUSTER_RES_NAME,
+  le_php_driver_cluster_res =
+  zend_register_list_destructors_ex(NULL, php_driver_cluster_dtor,
+                                    PHP_DRIVER_CLUSTER_RES_NAME,
                                     module_number);
-  le_cassandra_session_res =
-  zend_register_list_destructors_ex(NULL, php_cassandra_session_dtor,
-                                    PHP_CASSANDRA_SESSION_RES_NAME,
+  le_php_driver_session_res =
+  zend_register_list_destructors_ex(NULL, php_driver_session_dtor,
+                                    PHP_DRIVER_SESSION_RES_NAME,
                                     module_number);
 
-  cassandra_define_Exception(TSRMLS_C);
-  cassandra_define_InvalidArgumentException(TSRMLS_C);
-  cassandra_define_DomainException(TSRMLS_C);
-  cassandra_define_RuntimeException(TSRMLS_C);
-  cassandra_define_TimeoutException(TSRMLS_C);
-  cassandra_define_LogicException(TSRMLS_C);
-  cassandra_define_ExecutionException(TSRMLS_C);
-  cassandra_define_ReadTimeoutException(TSRMLS_C);
-  cassandra_define_WriteTimeoutException(TSRMLS_C);
-  cassandra_define_UnavailableException(TSRMLS_C);
-  cassandra_define_TruncateException(TSRMLS_C);
-  cassandra_define_ValidationException(TSRMLS_C);
-  cassandra_define_InvalidQueryException(TSRMLS_C);
-  cassandra_define_InvalidSyntaxException(TSRMLS_C);
-  cassandra_define_UnauthorizedException(TSRMLS_C);
-  cassandra_define_UnpreparedException(TSRMLS_C);
-  cassandra_define_ConfigurationException(TSRMLS_C);
-  cassandra_define_AlreadyExistsException(TSRMLS_C);
-  cassandra_define_AuthenticationException(TSRMLS_C);
-  cassandra_define_ProtocolException(TSRMLS_C);
-  cassandra_define_ServerException(TSRMLS_C);
-  cassandra_define_IsBootstrappingException(TSRMLS_C);
-  cassandra_define_OverloadedException(TSRMLS_C);
-  cassandra_define_RangeException(TSRMLS_C);
-  cassandra_define_DivideByZeroException(TSRMLS_C);
+  php_driver_define_Exception(TSRMLS_C);
+  php_driver_define_InvalidArgumentException(TSRMLS_C);
+  php_driver_define_DomainException(TSRMLS_C);
+  php_driver_define_RuntimeException(TSRMLS_C);
+  php_driver_define_TimeoutException(TSRMLS_C);
+  php_driver_define_LogicException(TSRMLS_C);
+  php_driver_define_ExecutionException(TSRMLS_C);
+  php_driver_define_ReadTimeoutException(TSRMLS_C);
+  php_driver_define_WriteTimeoutException(TSRMLS_C);
+  php_driver_define_UnavailableException(TSRMLS_C);
+  php_driver_define_TruncateException(TSRMLS_C);
+  php_driver_define_ValidationException(TSRMLS_C);
+  php_driver_define_InvalidQueryException(TSRMLS_C);
+  php_driver_define_InvalidSyntaxException(TSRMLS_C);
+  php_driver_define_UnauthorizedException(TSRMLS_C);
+  php_driver_define_UnpreparedException(TSRMLS_C);
+  php_driver_define_ConfigurationException(TSRMLS_C);
+  php_driver_define_AlreadyExistsException(TSRMLS_C);
+  php_driver_define_AuthenticationException(TSRMLS_C);
+  php_driver_define_ProtocolException(TSRMLS_C);
+  php_driver_define_ServerException(TSRMLS_C);
+  php_driver_define_IsBootstrappingException(TSRMLS_C);
+  php_driver_define_OverloadedException(TSRMLS_C);
+  php_driver_define_RangeException(TSRMLS_C);
+  php_driver_define_DivideByZeroException(TSRMLS_C);
 
-  cassandra_define_Value(TSRMLS_C);
-  cassandra_define_Numeric(TSRMLS_C);
-  cassandra_define_Bigint(TSRMLS_C);
-  cassandra_define_Smallint(TSRMLS_C);
-  cassandra_define_Tinyint(TSRMLS_C);
-  cassandra_define_Blob(TSRMLS_C);
-  cassandra_define_Decimal(TSRMLS_C);
-  cassandra_define_Float(TSRMLS_C);
-  cassandra_define_Inet(TSRMLS_C);
-  cassandra_define_Timestamp(TSRMLS_C);
-  cassandra_define_Date(TSRMLS_C);
-  cassandra_define_Time(TSRMLS_C);
-  cassandra_define_UuidInterface(TSRMLS_C);
-  cassandra_define_Timeuuid(TSRMLS_C);
-  cassandra_define_Uuid(TSRMLS_C);
-  cassandra_define_Varint(TSRMLS_C);
-  cassandra_define_Custom(TSRMLS_C);
+  php_driver_define_Value(TSRMLS_C);
+  php_driver_define_Numeric(TSRMLS_C);
+  php_driver_define_Bigint(TSRMLS_C);
+  php_driver_define_Smallint(TSRMLS_C);
+  php_driver_define_Tinyint(TSRMLS_C);
+  php_driver_define_Blob(TSRMLS_C);
+  php_driver_define_Decimal(TSRMLS_C);
+  php_driver_define_Float(TSRMLS_C);
+  php_driver_define_Inet(TSRMLS_C);
+  php_driver_define_Timestamp(TSRMLS_C);
+  php_driver_define_Date(TSRMLS_C);
+  php_driver_define_Time(TSRMLS_C);
+  php_driver_define_UuidInterface(TSRMLS_C);
+  php_driver_define_Timeuuid(TSRMLS_C);
+  php_driver_define_Uuid(TSRMLS_C);
+  php_driver_define_Varint(TSRMLS_C);
+  php_driver_define_Custom(TSRMLS_C);
 
-  cassandra_define_Set(TSRMLS_C);
-  cassandra_define_Map(TSRMLS_C);
-  cassandra_define_Collection(TSRMLS_C);
-  cassandra_define_Tuple(TSRMLS_C);
-  cassandra_define_UserTypeValue(TSRMLS_C);
+  php_driver_define_Set(TSRMLS_C);
+  php_driver_define_Map(TSRMLS_C);
+  php_driver_define_Collection(TSRMLS_C);
+  php_driver_define_Tuple(TSRMLS_C);
+  php_driver_define_UserTypeValue(TSRMLS_C);
 
-  cassandra_define_Cassandra(TSRMLS_C);
-  cassandra_define_Cluster(TSRMLS_C);
-  cassandra_define_DefaultCluster(TSRMLS_C);
-  cassandra_define_ClusterBuilder(TSRMLS_C);
-  cassandra_define_Future(TSRMLS_C);
-  cassandra_define_FuturePreparedStatement(TSRMLS_C);
-  cassandra_define_FutureRows(TSRMLS_C);
-  cassandra_define_FutureSession(TSRMLS_C);
-  cassandra_define_FutureValue(TSRMLS_C);
-  cassandra_define_FutureClose(TSRMLS_C);
-  cassandra_define_Session(TSRMLS_C);
-  cassandra_define_DefaultSession(TSRMLS_C);
-  cassandra_define_SSLOptions(TSRMLS_C);
-  cassandra_define_SSLOptionsBuilder(TSRMLS_C);
-  cassandra_define_Statement(TSRMLS_C);
-  cassandra_define_SimpleStatement(TSRMLS_C);
-  cassandra_define_PreparedStatement(TSRMLS_C);
-  cassandra_define_BatchStatement(TSRMLS_C);
-  cassandra_define_ExecutionOptions(TSRMLS_C);
-  cassandra_define_Rows(TSRMLS_C);
+  php_driver_define_Core(TSRMLS_C);
+  php_driver_define_Cluster(TSRMLS_C);
+  php_driver_define_DefaultCluster(TSRMLS_C);
+  php_driver_define_ClusterBuilder(TSRMLS_C);
+  php_driver_define_Future(TSRMLS_C);
+  php_driver_define_FuturePreparedStatement(TSRMLS_C);
+  php_driver_define_FutureRows(TSRMLS_C);
+  php_driver_define_FutureSession(TSRMLS_C);
+  php_driver_define_FutureValue(TSRMLS_C);
+  php_driver_define_FutureClose(TSRMLS_C);
+  php_driver_define_Session(TSRMLS_C);
+  php_driver_define_DefaultSession(TSRMLS_C);
+  php_driver_define_SSLOptions(TSRMLS_C);
+  php_driver_define_SSLOptionsBuilder(TSRMLS_C);
+  php_driver_define_Statement(TSRMLS_C);
+  php_driver_define_SimpleStatement(TSRMLS_C);
+  php_driver_define_PreparedStatement(TSRMLS_C);
+  php_driver_define_BatchStatement(TSRMLS_C);
+  php_driver_define_ExecutionOptions(TSRMLS_C);
+  php_driver_define_Rows(TSRMLS_C);
 
-  cassandra_define_Schema(TSRMLS_C);
-  cassandra_define_DefaultSchema(TSRMLS_C);
-  cassandra_define_Keyspace(TSRMLS_C);
-  cassandra_define_DefaultKeyspace(TSRMLS_C);
-  cassandra_define_Table(TSRMLS_C);
-  cassandra_define_DefaultTable(TSRMLS_C);
-  cassandra_define_Column(TSRMLS_C);
-  cassandra_define_DefaultColumn(TSRMLS_C);
-  cassandra_define_Index(TSRMLS_C);
-  cassandra_define_DefaultIndex(TSRMLS_C);
-  cassandra_define_MaterializedView(TSRMLS_C);
-  cassandra_define_DefaultMaterializedView(TSRMLS_C);
-  cassandra_define_Function(TSRMLS_C);
-  cassandra_define_DefaultFunction(TSRMLS_C);
-  cassandra_define_Aggregate(TSRMLS_C);
-  cassandra_define_DefaultAggregate(TSRMLS_C);
+  php_driver_define_Schema(TSRMLS_C);
+  php_driver_define_DefaultSchema(TSRMLS_C);
+  php_driver_define_Keyspace(TSRMLS_C);
+  php_driver_define_DefaultKeyspace(TSRMLS_C);
+  php_driver_define_Table(TSRMLS_C);
+  php_driver_define_DefaultTable(TSRMLS_C);
+  php_driver_define_Column(TSRMLS_C);
+  php_driver_define_DefaultColumn(TSRMLS_C);
+  php_driver_define_Index(TSRMLS_C);
+  php_driver_define_DefaultIndex(TSRMLS_C);
+  php_driver_define_MaterializedView(TSRMLS_C);
+  php_driver_define_DefaultMaterializedView(TSRMLS_C);
+  php_driver_define_Function(TSRMLS_C);
+  php_driver_define_DefaultFunction(TSRMLS_C);
+  php_driver_define_Aggregate(TSRMLS_C);
+  php_driver_define_DefaultAggregate(TSRMLS_C);
 
-  cassandra_define_Type(TSRMLS_C);
-  cassandra_define_TypeScalar(TSRMLS_C);
-  cassandra_define_TypeCollection(TSRMLS_C);
-  cassandra_define_TypeSet(TSRMLS_C);
-  cassandra_define_TypeMap(TSRMLS_C);
-  cassandra_define_TypeTuple(TSRMLS_C);
-  cassandra_define_TypeUserType(TSRMLS_C);
-  cassandra_define_TypeCustom(TSRMLS_C);
+  php_driver_define_Type(TSRMLS_C);
+  php_driver_define_TypeScalar(TSRMLS_C);
+  php_driver_define_TypeCollection(TSRMLS_C);
+  php_driver_define_TypeSet(TSRMLS_C);
+  php_driver_define_TypeMap(TSRMLS_C);
+  php_driver_define_TypeTuple(TSRMLS_C);
+  php_driver_define_TypeUserType(TSRMLS_C);
+  php_driver_define_TypeCustom(TSRMLS_C);
 
-  cassandra_define_RetryPolicy(TSRMLS_C);
-  cassandra_define_RetryPolicyDefault(TSRMLS_C);
-  cassandra_define_RetryPolicyDowngradingConsistency(TSRMLS_C);
-  cassandra_define_RetryPolicyFallthrough(TSRMLS_C);
-  cassandra_define_RetryPolicyLogging(TSRMLS_C);
+  php_driver_define_RetryPolicy(TSRMLS_C);
+  php_driver_define_RetryPolicyDefault(TSRMLS_C);
+  php_driver_define_RetryPolicyDowngradingConsistency(TSRMLS_C);
+  php_driver_define_RetryPolicyFallthrough(TSRMLS_C);
+  php_driver_define_RetryPolicyLogging(TSRMLS_C);
 
-  cassandra_define_TimestampGenerator(TSRMLS_C);
-  cassandra_define_TimestampGeneratorMonotonic(TSRMLS_C);
-  cassandra_define_TimestampGeneratorServerSide(TSRMLS_C);
+  php_driver_define_TimestampGenerator(TSRMLS_C);
+  php_driver_define_TimestampGeneratorMonotonic(TSRMLS_C);
+  php_driver_define_TimestampGeneratorServerSide(TSRMLS_C);
 
   return SUCCESS;
 }
@@ -570,7 +570,7 @@ PHP_RINIT_FUNCTION(php_driver)
 #define XX_SCALAR(name, value) \
   PHP5TO7_ZVAL_UNDEF(PHP_DRIVER_G(type_##name));
 
-  PHP_CASSANDRA_SCALAR_TYPES_MAP(XX_SCALAR)
+  PHP_DRIVER_SCALAR_TYPES_MAP(XX_SCALAR)
 #undef XX_SCALAR
 
   return SUCCESS;
@@ -581,7 +581,7 @@ PHP_RSHUTDOWN_FUNCTION(php_driver)
 #define XX_SCALAR(name, value) \
   PHP5TO7_ZVAL_MAYBE_DESTROY(PHP_DRIVER_G(type_##name));
 
-  PHP_CASSANDRA_SCALAR_TYPES_MAP(XX_SCALAR)
+  PHP_DRIVER_SCALAR_TYPES_MAP(XX_SCALAR)
 #undef XX_SCALAR
 
   return SUCCESS;
@@ -591,7 +591,7 @@ PHP_MINFO_FUNCTION(php_driver)
 {
   char buf[256];
   php_info_print_table_start();
-  php_info_print_table_header(2, "Cassandra support", "enabled");
+  php_info_print_table_header(2, PHP_DRIVER_NAMESPACE " support", "enabled");
 
   snprintf(buf, sizeof(buf), "%d.%d.%d%s",
            CASS_VERSION_MAJOR, CASS_VERSION_MINOR, CASS_VERSION_PATCH,

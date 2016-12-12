@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-#ifndef PHP_CASSANDRA_TINYINT_H
-#define PHP_CASSANDRA_TINYINT_H
+#ifndef PHP_DRIVER_TINYINT_H
+#define PHP_DRIVER_TINYINT_H
 
-void php_cassandra_tinyint_init(INTERNAL_FUNCTION_PARAMETERS);
+void php_driver_tinyint_init(INTERNAL_FUNCTION_PARAMETERS);
 
-#endif /* PHP_CASSANDRA_TINYINT_H */
+#endif /* PHP_DRIVER_TINYINT_H */

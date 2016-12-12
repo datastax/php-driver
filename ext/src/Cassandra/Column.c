@@ -16,12 +16,12 @@
 
 #include "php_driver.h"
 
-zend_class_entry *cassandra_column_ce = NULL;
+zend_class_entry *php_driver_column_ce = NULL;
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_none, 0, ZEND_RETURN_VALUE, 0)
 ZEND_END_ARG_INFO()
 
-static zend_function_entry cassandra_column_methods[] = {
+static zend_function_entry php_driver_column_methods[] = {
   PHP_ABSTRACT_ME(Column, name, arginfo_none)
   PHP_ABSTRACT_ME(Column, type, arginfo_none)
   PHP_ABSTRACT_ME(Column, isReversed, arginfo_none)
@@ -32,11 +32,11 @@ static zend_function_entry cassandra_column_methods[] = {
   PHP_FE_END
 };
 
-void cassandra_define_Column(TSRMLS_D)
+void php_driver_define_Column(TSRMLS_D)
 {
   zend_class_entry ce;
 
-  INIT_CLASS_ENTRY(ce, "Cassandra\\Column", cassandra_column_methods);
-  cassandra_column_ce = zend_register_internal_class(&ce TSRMLS_CC);
-  cassandra_column_ce->ce_flags |= ZEND_ACC_INTERFACE;
+  INIT_CLASS_ENTRY(ce, PHP_DRIVER_NAMESPACE "\\Column", php_driver_column_methods);
+  php_driver_column_ce = zend_register_internal_class(&ce TSRMLS_CC);
+  php_driver_column_ce->ce_flags |= ZEND_ACC_INTERFACE;
 }
