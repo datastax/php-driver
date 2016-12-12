@@ -14,7 +14,9 @@
  * limitations under the License.
  */
 
-#include "php_cassandra.h"
+#include "php_driver.h"
+#include "php_driver_types.h"
+
 #include <ext/spl/spl_exceptions.h>
 
 zend_class_entry *cassandra_range_exception_ce = NULL;

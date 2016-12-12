@@ -4,8 +4,8 @@ ARG_ENABLE("cassandra", "Enable DataStax PHP Cassandra extension", "no");
 
 // Establish the minimum Cassandra C/C++ driver version
 var minimum_major = 2;
-var minimum_minor = 4;
-var minimum_patch = 2;
+var minimum_minor = 5;
+var minimum_patch = 0;
 var minimum_version = minimum_major + "." + minimum_minor + "." + minimum_patch;
 
 function compare_minimum_version(major, minor, patch) {
@@ -79,7 +79,7 @@ if (PHP_CASSANDRA != "no") {
       if (CHECK_LIB("mpir_a.lib", "cassandra") &&
         CHECK_HEADER_ADD_INCLUDE("gmp.h", "CFLAGS_CASSANDRA", PHP_GMP +  ";" + PHP_PHP_BUILD + "/include/mpir")) {
         if (ADD_EXTENSION_DEP("cassandra", "spl")) {
-          EXTENSION("cassandra", "php_cassandra.c");
+          EXTENSION("cassandra", "php_driver.c");
 
           ADD_SOURCES(configure_module_dirname + "/src",
               "Cassandra.c", "cassandra");
@@ -91,6 +91,7 @@ if (PHP_CASSANDRA != "no") {
               "Cluster.c " +
               "Collection.c " +
               "Column.c " +
+              "Custom.c " +
               "Date.c " +
               "Decimal.c " +
               "DefaultAggregate.c " +

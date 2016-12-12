@@ -14,10 +14,12 @@
  * limitations under the License.
  */
 
-#include "php_cassandra.h"
+#include "php_driver.h"
+#include "php_driver_types.h"
 #include "util/collections.h"
 #include "util/hash.h"
 #include "util/types.h"
+
 #include "src/Cassandra/Type/UserType.h"
 #include "src/Cassandra/UserTypeValue.h"
 

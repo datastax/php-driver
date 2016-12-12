@@ -14,24 +14,23 @@
  * limitations under the License.
  */
 
-#include "php_cassandra.h"
+#include "php_driver.h"
+#include "php_driver_globals.h"
 #include <stdlib.h>
 #include "util/uuid_gen.h"
-
-ZEND_EXTERN_MODULE_GLOBALS(cassandra)
 
 static CassUuidGen* get_uuid_gen(TSRMLS_D) {
   /* Create a new uuid generator if our PID has changed. This prevents the same
    * UUIDs from being generated in forked processes.
    */
-  if (CASSANDRA_G(uuid_gen_pid) != getpid()) {
-    if (CASSANDRA_G(uuid_gen)) {
-      cass_uuid_gen_free(CASSANDRA_G(uuid_gen));
+  if (PHP_DRIVER_G(uuid_gen_pid) != getpid()) {
+    if (PHP_DRIVER_G(uuid_gen)) {
+      cass_uuid_gen_free(PHP_DRIVER_G(uuid_gen));
     }
-    CASSANDRA_G(uuid_gen) = cass_uuid_gen_new();
-    CASSANDRA_G(uuid_gen_pid) = getpid();
+    PHP_DRIVER_G(uuid_gen) = cass_uuid_gen_new();
+    PHP_DRIVER_G(uuid_gen_pid) = getpid();
   }
-  return CASSANDRA_G(uuid_gen);
+  return PHP_DRIVER_G(uuid_gen);
 }
 
 void

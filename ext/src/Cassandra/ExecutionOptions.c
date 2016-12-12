@@ -14,13 +14,12 @@
  * limitations under the License.
  */
 
-#include "php_cassandra.h"
+#include "php_driver.h"
+#include "php_driver_types.h"
 #include "util/consistency.h"
 #include "util/math.h"
 
 zend_class_entry *cassandra_execution_options_ce = NULL;
-
-ZEND_EXTERN_MODULE_GLOBALS(cassandra)
 
 PHP_METHOD(ExecutionOptions, __construct)
 {

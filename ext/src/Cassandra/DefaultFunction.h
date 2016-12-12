@@ -17,8 +17,6 @@
 #ifndef PHP_CASSANDRA_DEFAULT_FUNCTION_H
 #define PHP_CASSANDRA_DEFAULT_FUNCTION_H
 
-#include "php_cassandra.h"
-
 php5to7_zval
 php_cassandra_create_function(cassandra_ref* schema,
                               const CassFunctionMeta *meta TSRMLS_DC);

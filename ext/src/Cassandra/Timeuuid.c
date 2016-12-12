@@ -14,10 +14,12 @@
  * limitations under the License.
  */
 
-#include "php_cassandra.h"
+#include "php_driver.h"
+#include "php_driver_types.h"
 #include "util/hash.h"
 #include "util/types.h"
 #include "util/uuid_gen.h"
+
 #include <ext/date/php_date.h>
 
 zend_class_entry *cassandra_timeuuid_ce = NULL;

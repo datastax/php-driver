@@ -14,10 +14,12 @@
  * limitations under the License.
  */
 
-#include "php_cassandra.h"
+#include "php_driver.h"
+#include "php_driver_types.h"
 #include "util/types.h"
 #include "src/Cassandra/UserTypeValue.h"
 #include "util/collections.h"
+
 #if PHP_MAJOR_VERSION >= 7
 #include <zend_smart_str.h>
 #else

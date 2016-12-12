@@ -14,11 +14,13 @@
  * limitations under the License.
  */
 
-#include "DefaultFunction.h"
-
+#include "php_driver.h"
+#include "php_driver_types.h"
 #include "util/result.h"
 #include "util/ref.h"
 #include "util/types.h"
+
+#include "DefaultFunction.h"
 
 zend_class_entry *cassandra_default_function_ce = NULL;
 

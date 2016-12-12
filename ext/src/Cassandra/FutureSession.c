@@ -14,72 +14,75 @@
  * limitations under the License.
  */
 
-#include "php_cassandra.h"
-
+#include "php_driver.h"
+#include "php_driver_globals.h"
+#include "php_driver_types.h"
 #include "util/future.h"
+#include "util/ref.h"
 
 zend_class_entry *cassandra_future_session_ce = NULL;
-
-ZEND_EXTERN_MODULE_GLOBALS(cassandra)
 
 PHP_METHOD(FutureSession, get)
 {
   zval *timeout = NULL;
-  cassandra_session *session = NULL;
   CassError rc = CASS_OK;
-
-  cassandra_future_session *future = PHP_CASSANDRA_GET_FUTURE_SESSION(getThis());
-
-  if (!PHP5TO7_ZVAL_IS_UNDEF(future->default_session)) {
-    RETURN_ZVAL(PHP5TO7_ZVAL_MAYBE_P(future->default_session), 1, 0);
-  }
-
-  if (future->exception_message) {
-    zend_throw_exception_ex(exception_class(future->exception_code),
-      future->exception_code TSRMLS_CC, future->exception_message);
-    return;
-  }
+  cassandra_session *session = NULL;
+  cassandra_future_session *self = NULL;
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "|z", &timeout) == FAILURE) {
     return;
   }
 
-  if (php_cassandra_future_wait_timed(future->future, timeout TSRMLS_CC) == FAILURE) {
+  self = PHP_CASSANDRA_GET_FUTURE_SESSION(getThis());
+
+  if (!PHP5TO7_ZVAL_IS_UNDEF(self->default_session)) {
+    RETURN_ZVAL(PHP5TO7_ZVAL_MAYBE_P(self->default_session), 1, 0);
+  }
+
+  object_init_ex(return_value, cassandra_default_session_ce);
+  session = PHP_CASSANDRA_GET_SESSION(return_value);
+
+  session->session = php_cassandra_add_ref(self->session);
+  session->persist = self->persist;
+
+  if (self->exception_message) {
+    zend_throw_exception_ex(exception_class(self->exception_code),
+                            self->exception_code TSRMLS_CC, self->exception_message);
     return;
   }
 
-  rc = cass_future_error_code(future->future);
+  if (php_cassandra_future_wait_timed(self->future, timeout TSRMLS_CC) == FAILURE) {
+    return;
+  }
+
+  rc = cass_future_error_code(self->future);
 
   if (rc != CASS_OK) {
     const char *message;
     size_t message_len;
-    cass_future_error_message(future->future, &message, &message_len);
+    cass_future_error_message(self->future, &message, &message_len);
 
-    if (future->persist) {
-      future->exception_message = estrndup(message, message_len);
-      future->exception_code    = rc;
+    if (self->persist) {
+      self->exception_message = estrndup(message, message_len);
+      self->exception_code    = rc;
 
-      if (PHP5TO7_ZEND_HASH_DEL(&EG(persistent_list), future->hash_key, future->hash_key_len + 1)) {
-        future->session = NULL;
-        future->future  = NULL;
+      if (PHP5TO7_ZEND_HASH_DEL(&EG(persistent_list), self->hash_key, self->hash_key_len + 1)) {
+        // TODO: Is this right?
+        php_cassandra_del_peref(&self->session, 1);
+        self->future  = NULL;
       }
 
-      zend_throw_exception_ex(exception_class(future->exception_code),
-        future->exception_code TSRMLS_CC, future->exception_message);
+      zend_throw_exception_ex(exception_class(self->exception_code),
+                              self->exception_code TSRMLS_CC, self->exception_message);
       return;
     }
 
     zend_throw_exception_ex(exception_class(rc), rc TSRMLS_CC,
-      "%.*s", (int) message_len, message);
+                            "%.*s", (int) message_len, message);
     return;
   }
 
-  object_init_ex(return_value, cassandra_default_session_ce);
-
-  PHP5TO7_ZVAL_COPY(PHP5TO7_ZVAL_MAYBE_P(future->default_session), return_value);
-  session = PHP_CASSANDRA_GET_SESSION(return_value);
-  session->session = future->session;
-  session->persist = future->persist;
+  PHP5TO7_ZVAL_COPY(PHP5TO7_ZVAL_MAYBE_P(self->default_session), return_value);
 }
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_timeout, 0, ZEND_RETURN_VALUE, 0)
@@ -122,13 +125,13 @@ php_cassandra_future_session_free(php5to7_zend_object_free *object TSRMLS_DC)
     if (self->future) {
       cass_future_free(self->future);
     }
-    if (self->session) {
-      cass_session_free(self->session);
-    }
   }
 
-  if (self->exception_message)
+  php_cassandra_del_peref(&self->session, 1);
+
+  if (self->exception_message) {
     efree(self->exception_message);
+  }
 
   zend_object_std_dtor(&self->zval TSRMLS_CC);
   PHP5TO7_MAYBE_EFREE(self);

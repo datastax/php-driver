@@ -17,7 +17,7 @@
 #ifndef PHP_CASSANDRA_TABLE_H
 #define PHP_CASSANDRA_TABLE_H
 
-#include "php_cassandra.h"
+#include "php_driver.h"
 
 php5to7_zval
 php_cassandra_table_build_options(CassIterator* iterator TSRMLS_DC);

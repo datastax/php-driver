@@ -14,53 +14,61 @@
  * limitations under the License.
  */
 
-#include "php_cassandra.h"
+#include "php_driver.h"
+#include "php_driver_globals.h"
+#include "php_driver_types.h"
 #include "util/future.h"
+#include "util/ref.h"
 
 zend_class_entry *cassandra_default_cluster_ce = NULL;
 
-ZEND_EXTERN_MODULE_GLOBALS(cassandra)
+static void
+free_session(void *session)
+{
+  cass_session_free((CassSession*) session);
+}
 
 PHP_METHOD(DefaultCluster, connect)
 {
-  CassFuture *future = NULL;
-  char *hash_key;
-  php5to7_size hash_key_len = 0;
   char *keyspace = NULL;
   php5to7_size keyspace_len;
   zval *timeout = NULL;
-  cassandra_psession *psession;
-  cassandra_cluster *cluster = NULL;
+  cassandra_cluster *self = NULL;
   cassandra_session *session = NULL;
+  CassFuture *future = NULL;
+  char *hash_key;
+  php5to7_size hash_key_len = 0;
+  cassandra_psession *psession;
+
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "|sz", &keyspace, &keyspace_len, &timeout) == FAILURE) {
     return;
   }
 
-  cluster = PHP_CASSANDRA_GET_CLUSTER(getThis());
+  self = PHP_CASSANDRA_GET_CLUSTER(getThis());
 
   object_init_ex(return_value, cassandra_default_session_ce);
   session = PHP_CASSANDRA_GET_SESSION(return_value);
 
-  session->default_consistency = cluster->default_consistency;
-  session->default_page_size   = cluster->default_page_size;
-  session->persist             = cluster->persist;
+  session->default_consistency = self->default_consistency;
+  session->default_page_size   = self->default_page_size;
+  session->persist             = self->persist;
 
   if (!PHP5TO7_ZVAL_IS_UNDEF(session->default_timeout)) {
     PHP5TO7_ZVAL_COPY(PHP5TO7_ZVAL_MAYBE_P(session->default_timeout),
-                      PHP5TO7_ZVAL_MAYBE_P(cluster->default_timeout));
+                      PHP5TO7_ZVAL_MAYBE_P(self->default_timeout));
   }
 
   if (session->persist) {
     php5to7_zend_resource_le *le;
 
     hash_key_len = spprintf(&hash_key, 0, "%s:session:%s",
-                            cluster->hash_key, SAFE_STR(keyspace));
+                            self->hash_key, SAFE_STR(keyspace));
 
     if (PHP5TO7_ZEND_HASH_FIND(&EG(persistent_list), hash_key, hash_key_len + 1, le) &&
         Z_RES_P(le)->type == php_le_cassandra_session()) {
       psession = (cassandra_psession *) Z_RES_P(le)->ptr;
-      session->session = psession->session;
+      session->session = php_cassandra_add_ref(psession->session);
       future = psession->future;
     }
   }
@@ -68,28 +76,31 @@ PHP_METHOD(DefaultCluster, connect)
   if (future == NULL) {
     php5to7_zend_resource_le resource;
 
-    session->session = cass_session_new();
+    session->session = php_cassandra_new_peref(cass_session_new(), free_session, 1);
 
     if (keyspace) {
-      future = cass_session_connect_keyspace(session->session, cluster->cluster, keyspace);
+      future = cass_session_connect_keyspace((CassSession *) session->session->data,
+                                             self->cluster,
+                                             keyspace);
     } else {
-      future = cass_session_connect(session->session, cluster->cluster);
+      future = cass_session_connect((CassSession *) session->session->data,
+                                    self->cluster);
     }
 
     if (session->persist) {
       psession = (cassandra_psession *) pecalloc(1, sizeof(cassandra_psession), 1);
-      psession->session = session->session;
+      psession->session = php_cassandra_add_ref(session->session);
       psession->future  = future;
 
 #if PHP_MAJOR_VERSION >= 7
       ZVAL_NEW_PERSISTENT_RES(&resource, 0, psession, php_le_cassandra_session());
       PHP5TO7_ZEND_HASH_UPDATE(&EG(persistent_list), hash_key, hash_key_len + 1, &resource, sizeof(php5to7_zend_resource_le));
-      CASSANDRA_G(persistent_sessions)++;
+      PHP_DRIVER_G(persistent_sessions)++;
 #else
       resource.type = php_le_cassandra_session();
       resource.ptr = psession;
       PHP5TO7_ZEND_HASH_UPDATE(&EG(persistent_list), hash_key, hash_key_len + 1, resource, sizeof(php5to7_zend_resource_le));
-      CASSANDRA_G(persistent_sessions)++;
+      PHP_DRIVER_G(persistent_sessions)++;
 #endif
     }
   }
@@ -107,7 +118,8 @@ PHP_METHOD(DefaultCluster, connect)
   if (php_cassandra_future_is_error(future TSRMLS_CC) == FAILURE) {
     if (session->persist) {
       if (PHP5TO7_ZEND_HASH_DEL(&EG(persistent_list), hash_key, hash_key_len + 1)) {
-        session->session = NULL;
+        // TODO: Is this correct?
+        php_cassandra_del_peref(&session->session, 1);
       }
 
       efree(hash_key);
@@ -124,67 +136,71 @@ PHP_METHOD(DefaultCluster, connect)
 
 PHP_METHOD(DefaultCluster, connectAsync)
 {
-  char *hash_key;
+  char *hash_key = NULL;
   php5to7_size hash_key_len = 0;
   char *keyspace = NULL;
   php5to7_size keyspace_len;
-  cassandra_cluster *cluster = NULL;
+  cassandra_cluster *self = NULL;
   cassandra_future_session *future = NULL;
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "|s", &keyspace, &keyspace_len) == FAILURE) {
     return;
   }
 
-  cluster = PHP_CASSANDRA_GET_CLUSTER(getThis());
+  self = PHP_CASSANDRA_GET_CLUSTER(getThis());
 
   object_init_ex(return_value, cassandra_future_session_ce);
   future = PHP_CASSANDRA_GET_FUTURE_SESSION(return_value);
 
-  future->persist = cluster->persist;
+  future->persist = self->persist;
+  future->hash_key = estrdup(self->hash_key);
+  future->hash_key_len = self->hash_key_len;
 
-  if (cluster->persist) {
+  if (self->persist) {
     php5to7_zend_resource_le *le;
 
-    hash_key_len = spprintf(&hash_key, 0,
-      "%s:session:%s", cluster->hash_key, SAFE_STR(keyspace));
+    hash_key_len = spprintf(&hash_key, 0, "%s:session:%s",
+                            self->hash_key, SAFE_STR(keyspace));
 
     future->hash_key     = hash_key;
     future->hash_key_len = hash_key_len;
 
-    if (PHP5TO7_ZEND_HASH_FIND(&EG(persistent_list), hash_key, hash_key_len + 1, le)) {
-      if (Z_TYPE_P(le) == php_le_cassandra_session()) {
-        cassandra_psession *psession = (cassandra_psession *) Z_RES_P(le)->ptr;
-        future->session = psession->session;
-        future->future  = psession->future;
-        return;
-      }
+    if (PHP5TO7_ZEND_HASH_FIND(&EG(persistent_list), hash_key, hash_key_len + 1, le) &&
+        Z_RES_P(le)->type == php_le_cassandra_session()) {
+      cassandra_psession *psession = (cassandra_psession *) Z_RES_P(le)->ptr;
+      future->session = php_cassandra_add_ref(psession->session);
+      future->future  = psession->future;
+      return;
     }
   }
 
-  future->session = cass_session_new();
+  future->session = php_cassandra_new_peref(cass_session_new(), free_session, 1);
 
   if (keyspace) {
-    future->future = cass_session_connect_keyspace(future->session, cluster->cluster, keyspace);
+    future->future = cass_session_connect_keyspace((CassSession *) future->session->data,
+                                                   self->cluster,
+                                                   keyspace);
   } else {
-    future->future = cass_session_connect(future->session, cluster->cluster);
+    future->future = cass_session_connect((CassSession *) future->session->data,
+                                          self->cluster);
   }
 
-  if (cluster->persist) {
+  if (self->persist) {
     php5to7_zend_resource_le resource;
     cassandra_psession *psession =
       (cassandra_psession *) pecalloc(1, sizeof(cassandra_psession), 1);
-    psession->session = future->session;
+    psession->session = php_cassandra_add_ref(future->session);
     psession->future  = future->future;
 
 #if PHP_MAJOR_VERSION >= 7
     ZVAL_NEW_PERSISTENT_RES(&resource, 0, psession, php_le_cassandra_session());
     PHP5TO7_ZEND_HASH_UPDATE(&EG(persistent_list), hash_key, hash_key_len + 1, &resource, sizeof(php5to7_zend_resource_le));
-    CASSANDRA_G(persistent_sessions)++;
+    PHP_DRIVER_G(persistent_sessions)++;
 #else
       resource.type = php_le_cassandra_session();
       resource.ptr = psession;
       PHP5TO7_ZEND_HASH_UPDATE(&EG(persistent_list), hash_key, hash_key_len + 1, resource, sizeof(php5to7_zend_resource_le));
-      CASSANDRA_G(persistent_sessions)++;
+      PHP_DRIVER_G(persistent_sessions)++;
 #endif
 
   }
@@ -236,6 +252,8 @@ php_cassandra_default_cluster_free(php5to7_zend_object_free *object TSRMLS_DC)
       cass_cluster_free(self->cluster);
     }
   }
+
+  PHP5TO7_ZVAL_MAYBE_DESTROY(self->default_timeout);
 
   zend_object_std_dtor(&self->zval TSRMLS_CC);
   PHP5TO7_MAYBE_EFREE(self);

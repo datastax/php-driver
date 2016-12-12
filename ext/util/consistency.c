@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include "php_cassandra.h"
+#include "php_driver.h"
 
 int php_cassandra_get_consistency(zval *consistency, long *result TSRMLS_DC)
 {

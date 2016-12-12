@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
-#include "php_cassandra.h"
+#include "php_driver.h"
+#include "php_driver_types.h"
 
 zend_class_entry *cassandra_simple_statement_ce = NULL;
-
-ZEND_EXTERN_MODULE_GLOBALS(cassandra)
 
 PHP_METHOD(SimpleStatement, __construct)
 {

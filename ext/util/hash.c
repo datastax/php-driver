@@ -14,7 +14,8 @@
  * limitations under the License.
  */
 
-#include "php_cassandra.h"
+#include "php_driver.h"
+#include "php_driver_types.h"
 #include "util/hash.h"
 
 static inline cass_int64_t

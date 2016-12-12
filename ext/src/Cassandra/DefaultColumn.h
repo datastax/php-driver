@@ -17,7 +17,7 @@
 #ifndef PHP_CASSANDRA_DEFAULT_COLUMN_H
 #define PHP_CASSANDRA_DEFAULT_COLUMN_H
 
-#include "php_cassandra.h"
+#include "php_driver.h"
 
 php5to7_zval
 php_cassandra_create_column(cassandra_ref* schema,

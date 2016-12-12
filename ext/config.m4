@@ -31,6 +31,7 @@ if test "$PHP_CASSANDRA" != "no"; then
     src/Cassandra/Cluster/Builder.c \
     src/Cassandra/Collection.c \
     src/Cassandra/Column.c \
+    src/Cassandra/Custom.c \
     src/Cassandra/Date.c \
     src/Cassandra/Decimal.c \
     src/Cassandra/DefaultAggregate.c \
@@ -155,7 +156,7 @@ if test "$PHP_CASSANDRA" != "no"; then
   esac
 
   PHP_NEW_EXTENSION(cassandra,
-    php_cassandra.c \
+    php_driver.c \
     $CASSANDRA_CLASSES \
     $CASSANDRA_EXCEPTIONS \
     $CASSANDRA_RETRY_POLICIES \
@@ -269,8 +270,8 @@ if test "$PHP_CASSANDRA" != "no"; then
   AC_MSG_CHECKING([for supported DataStax C/C++ driver version])
   PHP_CASSANDRA_FOUND_CASSANDRA_VERSION=`$AWK '/CASS_VERSION_MAJOR/ {printf $3"."} /CASS_VERSION_MINOR/ {printf $3"."} /CASS_VERSION_PATCH/ {printf $3}' $CPP_DRIVER_DIR/include/cassandra.h`
   PHP_CASSANDRA_FOUND_CASSANDRA_VERSION_NUMBER=`echo "${PHP_CASSANDRA_FOUND_CASSANDRA_VERSION}" | $AWK 'BEGIN { FS = "."; } { printf "%d", ([$]1 * 100 + [$]2) * 100 + [$]3;}'`
-  if test "$PHP_CASSANDRA_FOUND_CASSANDRA_VERSION_NUMBER" -lt "20402"; then
-  AC_MSG_ERROR([not supported. Driver version 2.4.2+ required (found $PHP_CASSANDRA_FOUND_CASSANDRA_VERSION)])
+  if test "$PHP_CASSANDRA_FOUND_CASSANDRA_VERSION_NUMBER" -lt "20500"; then
+  AC_MSG_ERROR([not supported. Driver version 2.5.0+ required (found $PHP_CASSANDRA_FOUND_CASSANDRA_VERSION)])
   else
     AC_MSG_RESULT([supported ($PHP_CASSANDRA_FOUND_CASSANDRA_VERSION)])
   fi

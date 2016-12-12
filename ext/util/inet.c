@@ -14,9 +14,11 @@
  * limitations under the License.
  */
 
-#include "php_cassandra.h"
-#include <stdlib.h>
+#include "php_driver.h"
+#include "php_driver_types.h"
 #include "util/inet.h"
+
+#include <stdlib.h>
 
 #define IPV4             1
 #define IPV6             2

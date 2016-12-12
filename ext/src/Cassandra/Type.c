@@ -14,10 +14,12 @@
  * limitations under the License.
  */
 
-#include "php_cassandra.h"
+#include "php_driver.h"
+#include "php_driver_types.h"
+#include "util/types.h"
+
 #include "src/Cassandra/Type/Tuple.h"
 #include "src/Cassandra/Type/UserType.h"
-#include "util/types.h"
 
 zend_class_entry *cassandra_type_ce = NULL;
 

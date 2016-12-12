@@ -14,10 +14,12 @@
  * limitations under the License.
  */
 
-#include "php_cassandra.h"
+#include "php_driver.h"
+#include "php_driver_types.h"
 #include "util/hash.h"
 #include "util/math.h"
 #include "util/types.h"
+
 #include <float.h>
 
 zend_class_entry *cassandra_varint_ce = NULL;

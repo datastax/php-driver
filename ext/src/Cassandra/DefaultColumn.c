@@ -14,12 +14,13 @@
  * limitations under the License.
  */
 
-#include "DefaultColumn.h"
-
-#include "php_cassandra.h"
+#include "php_driver.h"
+#include "php_driver_types.h"
 #include "util/result.h"
 #include "util/types.h"
 #include "util/ref.h"
+
+#include "DefaultColumn.h"
 
 zend_class_entry *cassandra_default_column_ce = NULL;
 

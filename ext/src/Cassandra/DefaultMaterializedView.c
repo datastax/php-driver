@@ -14,15 +14,16 @@
  * limitations under the License.
  */
 
+#include "php_driver.h"
+#include "php_driver_types.h"
+#include "util/result.h"
+#include "util/ref.h"
+#include "util/types.h"
+
 #include "DefaultColumn.h"
 #include "DefaultIndex.h"
 #include "DefaultTable.h"
 #include "Table.h"
-
-#include "php_cassandra.h"
-#include "util/result.h"
-#include "util/ref.h"
-#include "util/types.h"
 
 zend_class_entry *cassandra_default_materialized_view_ce = NULL;
 

@@ -273,4 +273,44 @@ final class Builder
      */
     public function withSchemaMetadata($enable = true) {}
 
+    /**
+     * Enables/disables Hostname Resolution.
+     *
+     * If enabled the driver will resolve hostnames for IP addresses using
+     * reverse IP lookup. This is useful for authentication (Kerberos) or
+     * encryption SSL services that require a valid hostname for verification.
+     *
+     * @param bool $enable whether the driver uses hostname resolution.
+     *
+     * @return Builder self
+     */
+    public function withHostnameResolution($enable = true) {}
+
+    /**
+     * Enables/disables Randomized Contact Points.
+     *
+     * If enabled this allows the driver randomly use contact points in order
+     * to evenly spread the load across the cluster and prevent
+     * hotspots/load spikes during notifications (e.g. massive schema change).
+     *
+     * Note: This setting should only be disabled for debugging and testing.
+     *
+     * @param bool $enable whether the driver uses randomized contact points.
+     *
+     * @return Builder self
+     */
+    public function withRandomizedContactPoints($enable = true) {}
+
+    /**
+     * Specify interval in seconds that the driver should wait before attempting
+     * to send heartbeat messages and control the amount of time the connection
+     * must be idle before sending heartbeat messages. This is useful for
+     * preventing intermediate network devices from dropping connections.
+     *
+     * @param float $interval interval in seconds (0 to disable heartbeat).
+     *
+     * @return Builder self
+     */
+    public function withConnectionHeartbeatInterval($interval) {}
+
 }

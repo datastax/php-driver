@@ -14,13 +14,11 @@
  * limitations under the License.
  */
 
-#include "php_cassandra.h"
-
+#include "php_driver.h"
+#include "php_driver_types.h"
 #include "util/future.h"
 
 zend_class_entry *cassandra_future_prepared_statement_ce = NULL;
-
-ZEND_EXTERN_MODULE_GLOBALS(cassandra)
 
 PHP_METHOD(FuturePreparedStatement, get)
 {

@@ -14,8 +14,17 @@
  * limitations under the License.
  */
 
-#include "php_cassandra.h"
+#include "php_driver.h"
+#include "php_driver_globals.h"
+#include "php_driver_types.h"
+#include "version.h"
+
+#include "util/types.h"
+#include "util/ref.h"
+
 #include <php_ini.h>
+#include <ext/standard/info.h>
+
 #ifndef _WIN32
 #include <php_syslog.h>
 #else
@@ -25,65 +34,108 @@
 #include <fcntl.h>
 #include <uv.h>
 
-#include "util/types.h"
-
-#define PHP_CASSANDRA_DEFAULT_LOG       "cassandra.log"
-#define PHP_CASSANDRA_DEFAULT_LOG_LEVEL "ERROR"
-
-#if CURRENT_CPP_DRIVER_VERSION < CPP_DRIVER_VERSION(2, 3, 0)
-#error C/C++ driver version 2.3.0 or greater required
-#endif
+/* Resources */
+#define PHP_CASSANDRA_CLUSTER_RES_NAME "Cassandra Cluster"
+#define PHP_CASSANDRA_SESSION_RES_NAME "Cassandra Session"
 
 static uv_once_t log_once = UV_ONCE_INIT;
 static char *log_location = NULL;
 static uv_rwlock_t log_lock;
 
-ZEND_DECLARE_MODULE_GLOBALS(cassandra)
-static PHP_GINIT_FUNCTION(cassandra);
-static PHP_GSHUTDOWN_FUNCTION(cassandra);
+#if CURRENT_CPP_DRIVER_VERSION < CPP_DRIVER_VERSION(2, 5, 0)
+#error C/C++ driver version 2.5.0 or greater required
+#endif
 
-const zend_function_entry cassandra_functions[] = {
-  PHP_FE_END /* Must be the last line in cassandra_functions[] */
+ZEND_DECLARE_MODULE_GLOBALS(php_driver)
+
+static PHP_GINIT_FUNCTION(php_driver);
+static PHP_GSHUTDOWN_FUNCTION(php_driver);
+
+const zend_function_entry php_driver_functions[] = {
+  PHP_FE_END /* Must be the last line in php_driver_functions[] */
 };
 
 #if ZEND_MODULE_API_NO >= 20050617
-static zend_module_dep php_cassandra_deps[] = {
+static zend_module_dep php_driver_deps[] = {
   ZEND_MOD_REQUIRED("spl")
   ZEND_MOD_END
 };
 #endif
 
-zend_module_entry cassandra_module_entry = {
+zend_module_entry php_driver_module_entry = {
 #if ZEND_MODULE_API_NO >= 20050617
-  STANDARD_MODULE_HEADER_EX, NULL, php_cassandra_deps,
+  STANDARD_MODULE_HEADER_EX, NULL, php_driver_deps,
 #elif ZEND_MODULE_API_NO >= 20010901
   STANDARD_MODULE_HEADER,
 #endif
   PHP_CASSANDRA_NAME,
-  cassandra_functions,      /* Functions */
-  PHP_MINIT(cassandra),     /* MINIT */
-  PHP_MSHUTDOWN(cassandra), /* MSHUTDOWN */
-  PHP_RINIT(cassandra),     /* RINIT */
-  PHP_RSHUTDOWN(cassandra), /* RSHUTDOWN */
-  PHP_MINFO(cassandra),     /* MINFO */
+  php_driver_functions,      /* Functions */
+  PHP_MINIT(php_driver),     /* MINIT */
+  PHP_MSHUTDOWN(php_driver), /* MSHUTDOWN */
+  PHP_RINIT(php_driver),     /* RINIT */
+  PHP_RSHUTDOWN(php_driver), /* RSHUTDOWN */
+  PHP_MINFO(php_driver),     /* MINFO */
 #if ZEND_MODULE_API_NO >= 20010901
   PHP_CASSANDRA_VERSION,
 #endif
-  PHP_MODULE_GLOBALS(cassandra),
-  PHP_GINIT(cassandra),
-  PHP_GSHUTDOWN(cassandra),
+  PHP_MODULE_GLOBALS(php_driver),
+  PHP_GINIT(php_driver),
+  PHP_GSHUTDOWN(php_driver),
   NULL,
   STANDARD_MODULE_PROPERTIES_EX
 };
 
 #ifdef COMPILE_DL_CASSANDRA
-ZEND_GET_MODULE(cassandra)
+ZEND_GET_MODULE(php_driver)
 #endif
+
+PHP_INI_BEGIN()
+  PHP_CASSANDRA_INI_ENTRY_LOG
+  PHP_CASSANDRA_INI_ENTRY_LOG_LEVEL
+PHP_INI_END()
+
+static int le_cassandra_cluster_res;
+int
+php_le_cassandra_cluster()
+{
+  return le_cassandra_cluster_res;
+}
+static void
+php_cassandra_cluster_dtor(php5to7_zend_resource rsrc TSRMLS_DC)
+{
+  CassCluster *cluster = (CassCluster*) rsrc->ptr;
+
+  if (cluster) {
+    cass_cluster_free(cluster);
+    PHP_DRIVER_G(persistent_clusters)--;
+    rsrc->ptr = NULL;
+  }
+}
+
+static int le_cassandra_session_res;
+int
+php_le_cassandra_session()
+{
+  return le_cassandra_session_res;
+}
+static void
+php_cassandra_session_dtor(php5to7_zend_resource rsrc TSRMLS_DC)
+{
+  cassandra_psession *psession = (cassandra_psession*) rsrc->ptr;
+
+  if (psession) {
+    cass_future_free(psession->future);
+    php_cassandra_del_peref(&psession->session, 1);
+    pefree(psession, 1);
+    PHP_DRIVER_G(persistent_sessions)--;
+    rsrc->ptr = NULL;
+  }
+}
 
 static void
 php_cassandra_log(const CassLogMessage *message, void *data);
 
-void
+static void
 php_cassandra_log_cleanup()
 {
   cass_log_cleanup();
@@ -170,311 +222,6 @@ php_cassandra_log(const CassLogMessage *message, void *data)
           cass_log_level_string(message->severity), message->message,
           message->file, message->line,
           PHP_EOL);
-}
-
-static int le_cassandra_cluster_res;
-int
-php_le_cassandra_cluster()
-{
-  return le_cassandra_cluster_res;
-}
-static void
-php_cassandra_cluster_dtor(php5to7_zend_resource rsrc TSRMLS_DC)
-{
-  CassCluster *cluster = (CassCluster*) rsrc->ptr;
-
-  if (cluster) {
-    cass_cluster_free(cluster);
-    CASSANDRA_G(persistent_clusters)--;
-    rsrc->ptr = NULL;
-  }
-}
-
-static int le_cassandra_session_res;
-int
-php_le_cassandra_session()
-{
-  return le_cassandra_session_res;
-}
-static void
-php_cassandra_session_dtor(php5to7_zend_resource rsrc TSRMLS_DC)
-{
-  cassandra_psession *psession = (cassandra_psession*) rsrc->ptr;
-
-  if (psession) {
-    cass_future_free(psession->future);
-    cass_session_free(psession->session);
-    pefree(psession, 1);
-    CASSANDRA_G(persistent_sessions)--;
-    rsrc->ptr = NULL;
-  }
-}
-
-static PHP_INI_MH(OnUpdateLogLevel)
-{
-  /* If TSRM is enabled then the last thread to update this wins */
-
-  if (new_value) {
-    if (PHP5TO7_STRCMP(new_value, "CRITICAL") == 0) {
-      cass_log_set_level(CASS_LOG_DISABLED);
-    } else if (PHP5TO7_STRCMP(new_value, "ERROR") == 0) {
-      cass_log_set_level(CASS_LOG_ERROR);
-    } else if (PHP5TO7_STRCMP(new_value, "WARN") == 0) {
-      cass_log_set_level(CASS_LOG_WARN);
-    } else if (PHP5TO7_STRCMP(new_value, "INFO") == 0) {
-      cass_log_set_level(CASS_LOG_INFO);
-    } else if (PHP5TO7_STRCMP(new_value, "DEBUG") == 0) {
-      cass_log_set_level(CASS_LOG_DEBUG);
-    } else if (PHP5TO7_STRCMP(new_value, "TRACE") == 0) {
-      cass_log_set_level(CASS_LOG_TRACE);
-    } else {
-      php_error_docref(NULL TSRMLS_CC, E_NOTICE,
-                       "cassandra | Unknown log level '%s', using 'ERROR'",
-                       new_value);
-      cass_log_set_level(CASS_LOG_ERROR);
-    }
-  }
-
-  return SUCCESS;
-}
-
-static PHP_INI_MH(OnUpdateLog)
-{
-  /* If TSRM is enabled then the last thread to update this wins */
-
-  uv_rwlock_wrlock(&log_lock);
-  if (log_location) {
-    free(log_location);
-    log_location = NULL;
-  }
-  if (new_value) {
-    if (PHP5TO7_STRCMP(new_value, "syslog") != 0) {
-      char realpath[MAXPATHLEN + 1];
-      if (VCWD_REALPATH(PHP5TO7_STRVAL(new_value), realpath)) {
-        log_location = strdup(realpath);
-      } else {
-        log_location = strdup(PHP5TO7_STRVAL(new_value));
-      }
-    } else {
-      log_location = strdup(PHP5TO7_STRVAL(new_value));
-    }
-  }
-  uv_rwlock_wrunlock(&log_lock);
-
-  return SUCCESS;
-}
-
-PHP_INI_BEGIN()
-PHP_INI_ENTRY("cassandra.log",       PHP_CASSANDRA_DEFAULT_LOG,       PHP_INI_ALL, OnUpdateLog)
-PHP_INI_ENTRY("cassandra.log_level", PHP_CASSANDRA_DEFAULT_LOG_LEVEL, PHP_INI_ALL, OnUpdateLogLevel)
-PHP_INI_END()
-
-static PHP_GINIT_FUNCTION(cassandra)
-{
-  uv_once(&log_once, php_cassandra_log_initialize);
-
-  cassandra_globals->uuid_gen            = NULL;
-  cassandra_globals->uuid_gen_pid        = 0;
-  cassandra_globals->persistent_clusters = 0;
-  cassandra_globals->persistent_sessions = 0;
-  PHP5TO7_ZVAL_UNDEF(cassandra_globals->type_varchar);
-  PHP5TO7_ZVAL_UNDEF(cassandra_globals->type_text);
-  PHP5TO7_ZVAL_UNDEF(cassandra_globals->type_blob);
-  PHP5TO7_ZVAL_UNDEF(cassandra_globals->type_ascii);
-  PHP5TO7_ZVAL_UNDEF(cassandra_globals->type_bigint);
-  PHP5TO7_ZVAL_UNDEF(cassandra_globals->type_smallint);
-  PHP5TO7_ZVAL_UNDEF(cassandra_globals->type_counter);
-  PHP5TO7_ZVAL_UNDEF(cassandra_globals->type_int);
-  PHP5TO7_ZVAL_UNDEF(cassandra_globals->type_varint);
-  PHP5TO7_ZVAL_UNDEF(cassandra_globals->type_boolean);
-  PHP5TO7_ZVAL_UNDEF(cassandra_globals->type_decimal);
-  PHP5TO7_ZVAL_UNDEF(cassandra_globals->type_double);
-  PHP5TO7_ZVAL_UNDEF(cassandra_globals->type_float);
-  PHP5TO7_ZVAL_UNDEF(cassandra_globals->type_inet);
-  PHP5TO7_ZVAL_UNDEF(cassandra_globals->type_timestamp);
-  PHP5TO7_ZVAL_UNDEF(cassandra_globals->type_uuid);
-  PHP5TO7_ZVAL_UNDEF(cassandra_globals->type_timeuuid);
-}
-
-static PHP_GSHUTDOWN_FUNCTION(cassandra)
-{
-  if (cassandra_globals->uuid_gen) {
-    cass_uuid_gen_free(cassandra_globals->uuid_gen);
-  }
-  php_cassandra_log_cleanup();
-}
-
-PHP_MINIT_FUNCTION(cassandra)
-{
-  REGISTER_INI_ENTRIES();
-
-  le_cassandra_cluster_res =
-  zend_register_list_destructors_ex(NULL, php_cassandra_cluster_dtor,
-                                    PHP_CASSANDRA_CLUSTER_RES_NAME,
-                                    module_number);
-  le_cassandra_session_res =
-  zend_register_list_destructors_ex(NULL, php_cassandra_session_dtor,
-                                    PHP_CASSANDRA_SESSION_RES_NAME,
-                                    module_number);
-
-  cassandra_define_Exception(TSRMLS_C);
-  cassandra_define_InvalidArgumentException(TSRMLS_C);
-  cassandra_define_DomainException(TSRMLS_C);
-  cassandra_define_RuntimeException(TSRMLS_C);
-  cassandra_define_TimeoutException(TSRMLS_C);
-  cassandra_define_LogicException(TSRMLS_C);
-  cassandra_define_ExecutionException(TSRMLS_C);
-  cassandra_define_ReadTimeoutException(TSRMLS_C);
-  cassandra_define_WriteTimeoutException(TSRMLS_C);
-  cassandra_define_UnavailableException(TSRMLS_C);
-  cassandra_define_TruncateException(TSRMLS_C);
-  cassandra_define_ValidationException(TSRMLS_C);
-  cassandra_define_InvalidQueryException(TSRMLS_C);
-  cassandra_define_InvalidSyntaxException(TSRMLS_C);
-  cassandra_define_UnauthorizedException(TSRMLS_C);
-  cassandra_define_UnpreparedException(TSRMLS_C);
-  cassandra_define_ConfigurationException(TSRMLS_C);
-  cassandra_define_AlreadyExistsException(TSRMLS_C);
-  cassandra_define_AuthenticationException(TSRMLS_C);
-  cassandra_define_ProtocolException(TSRMLS_C);
-  cassandra_define_ServerException(TSRMLS_C);
-  cassandra_define_IsBootstrappingException(TSRMLS_C);
-  cassandra_define_OverloadedException(TSRMLS_C);
-  cassandra_define_RangeException(TSRMLS_C);
-  cassandra_define_DivideByZeroException(TSRMLS_C);
-
-  cassandra_define_Value(TSRMLS_C);
-  cassandra_define_Numeric(TSRMLS_C);
-  cassandra_define_Bigint(TSRMLS_C);
-  cassandra_define_Smallint(TSRMLS_C);
-  cassandra_define_Tinyint(TSRMLS_C);
-  cassandra_define_Blob(TSRMLS_C);
-  cassandra_define_Decimal(TSRMLS_C);
-  cassandra_define_Float(TSRMLS_C);
-  cassandra_define_Inet(TSRMLS_C);
-  cassandra_define_Timestamp(TSRMLS_C);
-  cassandra_define_Date(TSRMLS_C);
-  cassandra_define_Time(TSRMLS_C);
-  cassandra_define_UuidInterface(TSRMLS_C);
-  cassandra_define_Timeuuid(TSRMLS_C);
-  cassandra_define_Uuid(TSRMLS_C);
-  cassandra_define_Varint(TSRMLS_C);
-
-  cassandra_define_Set(TSRMLS_C);
-  cassandra_define_Map(TSRMLS_C);
-  cassandra_define_Collection(TSRMLS_C);
-  cassandra_define_Tuple(TSRMLS_C);
-  cassandra_define_UserTypeValue(TSRMLS_C);
-
-  cassandra_define_Cassandra(TSRMLS_C);
-  cassandra_define_Cluster(TSRMLS_C);
-  cassandra_define_ClusterBuilder(TSRMLS_C);
-  cassandra_define_DefaultCluster(TSRMLS_C);
-  cassandra_define_Future(TSRMLS_C);
-  cassandra_define_FuturePreparedStatement(TSRMLS_C);
-  cassandra_define_FutureRows(TSRMLS_C);
-  cassandra_define_FutureSession(TSRMLS_C);
-  cassandra_define_FutureValue(TSRMLS_C);
-  cassandra_define_FutureClose(TSRMLS_C);
-  cassandra_define_Session(TSRMLS_C);
-  cassandra_define_DefaultSession(TSRMLS_C);
-  cassandra_define_SSLOptions(TSRMLS_C);
-  cassandra_define_SSLOptionsBuilder(TSRMLS_C);
-  cassandra_define_Statement(TSRMLS_C);
-  cassandra_define_SimpleStatement(TSRMLS_C);
-  cassandra_define_PreparedStatement(TSRMLS_C);
-  cassandra_define_BatchStatement(TSRMLS_C);
-  cassandra_define_ExecutionOptions(TSRMLS_C);
-  cassandra_define_Rows(TSRMLS_C);
-
-  cassandra_define_Schema(TSRMLS_C);
-  cassandra_define_DefaultSchema(TSRMLS_C);
-  cassandra_define_Keyspace(TSRMLS_C);
-  cassandra_define_DefaultKeyspace(TSRMLS_C);
-  cassandra_define_Table(TSRMLS_C);
-  cassandra_define_DefaultTable(TSRMLS_C);
-  cassandra_define_Column(TSRMLS_C);
-  cassandra_define_DefaultColumn(TSRMLS_C);
-  cassandra_define_Index(TSRMLS_C);
-  cassandra_define_DefaultIndex(TSRMLS_C);
-  cassandra_define_MaterializedView(TSRMLS_C);
-  cassandra_define_DefaultMaterializedView(TSRMLS_C);
-  cassandra_define_Function(TSRMLS_C);
-  cassandra_define_DefaultFunction(TSRMLS_C);
-  cassandra_define_Aggregate(TSRMLS_C);
-  cassandra_define_DefaultAggregate(TSRMLS_C);
-
-  cassandra_define_Type(TSRMLS_C);
-  cassandra_define_TypeScalar(TSRMLS_C);
-  cassandra_define_TypeCollection(TSRMLS_C);
-  cassandra_define_TypeSet(TSRMLS_C);
-  cassandra_define_TypeMap(TSRMLS_C);
-  cassandra_define_TypeTuple(TSRMLS_C);
-  cassandra_define_TypeUserType(TSRMLS_C);
-  cassandra_define_TypeCustom(TSRMLS_C);
-
-  cassandra_define_RetryPolicy(TSRMLS_C);
-  cassandra_define_RetryPolicyDefault(TSRMLS_C);
-  cassandra_define_RetryPolicyDowngradingConsistency(TSRMLS_C);
-  cassandra_define_RetryPolicyFallthrough(TSRMLS_C);
-  cassandra_define_RetryPolicyLogging(TSRMLS_C);
-
-  cassandra_define_TimestampGenerator(TSRMLS_C);
-  cassandra_define_TimestampGeneratorMonotonic(TSRMLS_C);
-  cassandra_define_TimestampGeneratorServerSide(TSRMLS_C);
-
-  return SUCCESS;
-}
-
-PHP_MSHUTDOWN_FUNCTION(cassandra)
-{
-  /* UNREGISTER_INI_ENTRIES(); */
-
-  return SUCCESS;
-}
-
-PHP_RINIT_FUNCTION(cassandra)
-{
-#define XX_SCALAR(name, value) \
-  PHP5TO7_ZVAL_UNDEF(CASSANDRA_G(type_##name));
-
-  PHP_CASSANDRA_SCALAR_TYPES_MAP(XX_SCALAR)
-#undef XX_SCALAR
-
-  return SUCCESS;
-}
-
-PHP_RSHUTDOWN_FUNCTION(cassandra)
-{
-#define XX_SCALAR(name, value) \
-  PHP5TO7_ZVAL_MAYBE_DESTROY(CASSANDRA_G(type_##name));
-
-  PHP_CASSANDRA_SCALAR_TYPES_MAP(XX_SCALAR)
-#undef XX_SCALAR
-
-  return SUCCESS;
-}
-
-PHP_MINFO_FUNCTION(cassandra)
-{
-  char buf[256];
-  php_info_print_table_start();
-  php_info_print_table_header(2, "Cassandra support", "enabled");
-
-  snprintf(buf, sizeof(buf), "%d.%d.%d%s",
-           CASS_VERSION_MAJOR, CASS_VERSION_MINOR, CASS_VERSION_PATCH,
-           strlen(CASS_VERSION_SUFFIX) > 0 ? "-" CASS_VERSION_SUFFIX : "");
-  php_info_print_table_row(2, "C/C++ driver version", buf);
-
-  snprintf(buf, sizeof(buf), "%d", CASSANDRA_G(persistent_clusters));
-  php_info_print_table_row(2, "Persistent Clusters", buf);
-
-  snprintf(buf, sizeof(buf), "%d", CASSANDRA_G(persistent_sessions));
-  php_info_print_table_row(2, "Persistent Sessions", buf);
-
-  php_info_print_table_end();
-
-  DISPLAY_INI_ENTRIES();
 }
 
 zend_class_entry*
@@ -596,4 +343,268 @@ throw_invalid_argument(zval *object,
                             "%s must be %s, %Z given",
                             object_name, expected_type, object);
   }
+}
+
+PHP_INI_MH(OnUpdateLogLevel)
+{
+  /* If TSRM is enabled then the last thread to update this wins */
+
+  if (new_value) {
+    if (PHP5TO7_STRCMP(new_value, "CRITICAL") == 0) {
+      cass_log_set_level(CASS_LOG_DISABLED);
+    } else if (PHP5TO7_STRCMP(new_value, "ERROR") == 0) {
+      cass_log_set_level(CASS_LOG_ERROR);
+    } else if (PHP5TO7_STRCMP(new_value, "WARN") == 0) {
+      cass_log_set_level(CASS_LOG_WARN);
+    } else if (PHP5TO7_STRCMP(new_value, "INFO") == 0) {
+      cass_log_set_level(CASS_LOG_INFO);
+    } else if (PHP5TO7_STRCMP(new_value, "DEBUG") == 0) {
+      cass_log_set_level(CASS_LOG_DEBUG);
+    } else if (PHP5TO7_STRCMP(new_value, "TRACE") == 0) {
+      cass_log_set_level(CASS_LOG_TRACE);
+    } else {
+      php_error_docref(NULL TSRMLS_CC, E_NOTICE,
+                       "cassandra | Unknown log level '%s', using 'ERROR'",
+                       new_value);
+      cass_log_set_level(CASS_LOG_ERROR);
+    }
+  }
+
+  return SUCCESS;
+}
+
+PHP_INI_MH(OnUpdateLog)
+{
+  /* If TSRM is enabled then the last thread to update this wins */
+
+  uv_rwlock_wrlock(&log_lock);
+  if (log_location) {
+    free(log_location);
+    log_location = NULL;
+  }
+  if (new_value) {
+    if (PHP5TO7_STRCMP(new_value, "syslog") != 0) {
+      char realpath[MAXPATHLEN + 1];
+      if (VCWD_REALPATH(PHP5TO7_STRVAL(new_value), realpath)) {
+        log_location = strdup(realpath);
+      } else {
+        log_location = strdup(PHP5TO7_STRVAL(new_value));
+      }
+    } else {
+      log_location = strdup(PHP5TO7_STRVAL(new_value));
+    }
+  }
+  uv_rwlock_wrunlock(&log_lock);
+
+  return SUCCESS;
+}
+
+
+static PHP_GINIT_FUNCTION(php_driver)
+{
+  uv_once(&log_once, php_cassandra_log_initialize);
+
+  PHP_DRIVER_G(uuid_gen)            = NULL;
+  PHP_DRIVER_G(uuid_gen_pid)        = 0;
+  PHP_DRIVER_G(persistent_clusters) = 0;
+  PHP_DRIVER_G(persistent_sessions) = 0;
+  PHP5TO7_ZVAL_UNDEF(PHP_DRIVER_G(type_varchar));
+  PHP5TO7_ZVAL_UNDEF(PHP_DRIVER_G(type_text));
+  PHP5TO7_ZVAL_UNDEF(PHP_DRIVER_G(type_blob));
+  PHP5TO7_ZVAL_UNDEF(PHP_DRIVER_G(type_ascii));
+  PHP5TO7_ZVAL_UNDEF(PHP_DRIVER_G(type_bigint));
+  PHP5TO7_ZVAL_UNDEF(PHP_DRIVER_G(type_smallint));
+  PHP5TO7_ZVAL_UNDEF(PHP_DRIVER_G(type_counter));
+  PHP5TO7_ZVAL_UNDEF(PHP_DRIVER_G(type_int));
+  PHP5TO7_ZVAL_UNDEF(PHP_DRIVER_G(type_varint));
+  PHP5TO7_ZVAL_UNDEF(PHP_DRIVER_G(type_boolean));
+  PHP5TO7_ZVAL_UNDEF(PHP_DRIVER_G(type_decimal));
+  PHP5TO7_ZVAL_UNDEF(PHP_DRIVER_G(type_double));
+  PHP5TO7_ZVAL_UNDEF(PHP_DRIVER_G(type_float));
+  PHP5TO7_ZVAL_UNDEF(PHP_DRIVER_G(type_inet));
+  PHP5TO7_ZVAL_UNDEF(PHP_DRIVER_G(type_timestamp));
+  PHP5TO7_ZVAL_UNDEF(PHP_DRIVER_G(type_uuid));
+  PHP5TO7_ZVAL_UNDEF(PHP_DRIVER_G(type_timeuuid));
+}
+
+static PHP_GSHUTDOWN_FUNCTION(php_driver)
+{
+  if (PHP_DRIVER_G(uuid_gen)) {
+    cass_uuid_gen_free(PHP_DRIVER_G(uuid_gen));
+  }
+  php_cassandra_log_cleanup();
+}
+
+PHP_MINIT_FUNCTION(php_driver)
+{
+  REGISTER_INI_ENTRIES();
+
+  le_cassandra_cluster_res =
+  zend_register_list_destructors_ex(NULL, php_cassandra_cluster_dtor,
+                                    PHP_CASSANDRA_CLUSTER_RES_NAME,
+                                    module_number);
+  le_cassandra_session_res =
+  zend_register_list_destructors_ex(NULL, php_cassandra_session_dtor,
+                                    PHP_CASSANDRA_SESSION_RES_NAME,
+                                    module_number);
+
+  cassandra_define_Exception(TSRMLS_C);
+  cassandra_define_InvalidArgumentException(TSRMLS_C);
+  cassandra_define_DomainException(TSRMLS_C);
+  cassandra_define_RuntimeException(TSRMLS_C);
+  cassandra_define_TimeoutException(TSRMLS_C);
+  cassandra_define_LogicException(TSRMLS_C);
+  cassandra_define_ExecutionException(TSRMLS_C);
+  cassandra_define_ReadTimeoutException(TSRMLS_C);
+  cassandra_define_WriteTimeoutException(TSRMLS_C);
+  cassandra_define_UnavailableException(TSRMLS_C);
+  cassandra_define_TruncateException(TSRMLS_C);
+  cassandra_define_ValidationException(TSRMLS_C);
+  cassandra_define_InvalidQueryException(TSRMLS_C);
+  cassandra_define_InvalidSyntaxException(TSRMLS_C);
+  cassandra_define_UnauthorizedException(TSRMLS_C);
+  cassandra_define_UnpreparedException(TSRMLS_C);
+  cassandra_define_ConfigurationException(TSRMLS_C);
+  cassandra_define_AlreadyExistsException(TSRMLS_C);
+  cassandra_define_AuthenticationException(TSRMLS_C);
+  cassandra_define_ProtocolException(TSRMLS_C);
+  cassandra_define_ServerException(TSRMLS_C);
+  cassandra_define_IsBootstrappingException(TSRMLS_C);
+  cassandra_define_OverloadedException(TSRMLS_C);
+  cassandra_define_RangeException(TSRMLS_C);
+  cassandra_define_DivideByZeroException(TSRMLS_C);
+
+  cassandra_define_Value(TSRMLS_C);
+  cassandra_define_Numeric(TSRMLS_C);
+  cassandra_define_Bigint(TSRMLS_C);
+  cassandra_define_Smallint(TSRMLS_C);
+  cassandra_define_Tinyint(TSRMLS_C);
+  cassandra_define_Blob(TSRMLS_C);
+  cassandra_define_Decimal(TSRMLS_C);
+  cassandra_define_Float(TSRMLS_C);
+  cassandra_define_Inet(TSRMLS_C);
+  cassandra_define_Timestamp(TSRMLS_C);
+  cassandra_define_Date(TSRMLS_C);
+  cassandra_define_Time(TSRMLS_C);
+  cassandra_define_UuidInterface(TSRMLS_C);
+  cassandra_define_Timeuuid(TSRMLS_C);
+  cassandra_define_Uuid(TSRMLS_C);
+  cassandra_define_Varint(TSRMLS_C);
+  cassandra_define_Custom(TSRMLS_C);
+
+  cassandra_define_Set(TSRMLS_C);
+  cassandra_define_Map(TSRMLS_C);
+  cassandra_define_Collection(TSRMLS_C);
+  cassandra_define_Tuple(TSRMLS_C);
+  cassandra_define_UserTypeValue(TSRMLS_C);
+
+  cassandra_define_Cassandra(TSRMLS_C);
+  cassandra_define_Cluster(TSRMLS_C);
+  cassandra_define_DefaultCluster(TSRMLS_C);
+  cassandra_define_ClusterBuilder(TSRMLS_C);
+  cassandra_define_Future(TSRMLS_C);
+  cassandra_define_FuturePreparedStatement(TSRMLS_C);
+  cassandra_define_FutureRows(TSRMLS_C);
+  cassandra_define_FutureSession(TSRMLS_C);
+  cassandra_define_FutureValue(TSRMLS_C);
+  cassandra_define_FutureClose(TSRMLS_C);
+  cassandra_define_Session(TSRMLS_C);
+  cassandra_define_DefaultSession(TSRMLS_C);
+  cassandra_define_SSLOptions(TSRMLS_C);
+  cassandra_define_SSLOptionsBuilder(TSRMLS_C);
+  cassandra_define_Statement(TSRMLS_C);
+  cassandra_define_SimpleStatement(TSRMLS_C);
+  cassandra_define_PreparedStatement(TSRMLS_C);
+  cassandra_define_BatchStatement(TSRMLS_C);
+  cassandra_define_ExecutionOptions(TSRMLS_C);
+  cassandra_define_Rows(TSRMLS_C);
+
+  cassandra_define_Schema(TSRMLS_C);
+  cassandra_define_DefaultSchema(TSRMLS_C);
+  cassandra_define_Keyspace(TSRMLS_C);
+  cassandra_define_DefaultKeyspace(TSRMLS_C);
+  cassandra_define_Table(TSRMLS_C);
+  cassandra_define_DefaultTable(TSRMLS_C);
+  cassandra_define_Column(TSRMLS_C);
+  cassandra_define_DefaultColumn(TSRMLS_C);
+  cassandra_define_Index(TSRMLS_C);
+  cassandra_define_DefaultIndex(TSRMLS_C);
+  cassandra_define_MaterializedView(TSRMLS_C);
+  cassandra_define_DefaultMaterializedView(TSRMLS_C);
+  cassandra_define_Function(TSRMLS_C);
+  cassandra_define_DefaultFunction(TSRMLS_C);
+  cassandra_define_Aggregate(TSRMLS_C);
+  cassandra_define_DefaultAggregate(TSRMLS_C);
+
+  cassandra_define_Type(TSRMLS_C);
+  cassandra_define_TypeScalar(TSRMLS_C);
+  cassandra_define_TypeCollection(TSRMLS_C);
+  cassandra_define_TypeSet(TSRMLS_C);
+  cassandra_define_TypeMap(TSRMLS_C);
+  cassandra_define_TypeTuple(TSRMLS_C);
+  cassandra_define_TypeUserType(TSRMLS_C);
+  cassandra_define_TypeCustom(TSRMLS_C);
+
+  cassandra_define_RetryPolicy(TSRMLS_C);
+  cassandra_define_RetryPolicyDefault(TSRMLS_C);
+  cassandra_define_RetryPolicyDowngradingConsistency(TSRMLS_C);
+  cassandra_define_RetryPolicyFallthrough(TSRMLS_C);
+  cassandra_define_RetryPolicyLogging(TSRMLS_C);
+
+  cassandra_define_TimestampGenerator(TSRMLS_C);
+  cassandra_define_TimestampGeneratorMonotonic(TSRMLS_C);
+  cassandra_define_TimestampGeneratorServerSide(TSRMLS_C);
+
+  return SUCCESS;
+}
+
+PHP_MSHUTDOWN_FUNCTION(php_driver)
+{
+  /* UNREGISTER_INI_ENTRIES(); */
+
+  return SUCCESS;
+}
+
+PHP_RINIT_FUNCTION(php_driver)
+{
+#define XX_SCALAR(name, value) \
+  PHP5TO7_ZVAL_UNDEF(PHP_DRIVER_G(type_##name));
+
+  PHP_CASSANDRA_SCALAR_TYPES_MAP(XX_SCALAR)
+#undef XX_SCALAR
+
+  return SUCCESS;
+}
+
+PHP_RSHUTDOWN_FUNCTION(php_driver)
+{
+#define XX_SCALAR(name, value) \
+  PHP5TO7_ZVAL_MAYBE_DESTROY(PHP_DRIVER_G(type_##name));
+
+  PHP_CASSANDRA_SCALAR_TYPES_MAP(XX_SCALAR)
+#undef XX_SCALAR
+
+  return SUCCESS;
+}
+
+PHP_MINFO_FUNCTION(php_driver)
+{
+  char buf[256];
+  php_info_print_table_start();
+  php_info_print_table_header(2, "Cassandra support", "enabled");
+
+  snprintf(buf, sizeof(buf), "%d.%d.%d%s",
+           CASS_VERSION_MAJOR, CASS_VERSION_MINOR, CASS_VERSION_PATCH,
+           strlen(CASS_VERSION_SUFFIX) > 0 ? "-" CASS_VERSION_SUFFIX : "");
+  php_info_print_table_row(2, "C/C++ driver version", buf);
+
+  snprintf(buf, sizeof(buf), "%d", PHP_DRIVER_G(persistent_clusters));
+  php_info_print_table_row(2, "Persistent Clusters", buf);
+
+  snprintf(buf, sizeof(buf), "%d", PHP_DRIVER_G(persistent_sessions));
+  php_info_print_table_row(2, "Persistent Sessions", buf);
+
+  php_info_print_table_end();
+
+  DISPLAY_INI_ENTRIES();
 }

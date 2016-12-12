@@ -14,13 +14,15 @@
  * limitations under the License.
  */
 
-#include "php_cassandra.h"
-#include <stdlib.h>
+#include "php_driver.h"
+#include "php_driver_types.h"
 #include "util/bytes.h"
 #include "util/collections.h"
 #include "util/hash.h"
 #include "util/math.h"
 #include "util/types.h"
+
+#include <stdlib.h>
 
 #define EXPECTING_VALUE(expected) \
 { \

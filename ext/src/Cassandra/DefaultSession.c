@@ -14,7 +14,8 @@
  * limitations under the License.
  */
 
-#include "php_cassandra.h"
+#include "php_driver.h"
+#include "php_driver_types.h"
 #include "util/bytes.h"
 #include "util/future.h"
 #include "util/result.h"
@@ -34,6 +35,18 @@ static void
 free_result(void *result)
 {
   cass_result_free((CassResult *) result);
+}
+
+static void
+free_statement(void *statement)
+{
+  cass_statement_free((CassStatement *) statement);
+}
+
+static void
+free_schema(void *schema)
+{
+  cass_schema_meta_free((CassSchemaMeta *) schema);
 }
 
 static int
@@ -503,12 +516,6 @@ create_single(cassandra_statement *statement, HashTable *arguments,
   return stmt;
 }
 
-static void
-free_statement(void *statement)
-{
-  cass_statement_free((CassStatement *) statement);
-}
-
 PHP_METHOD(DefaultSession, execute)
 {
   zval *statement = NULL;
@@ -534,7 +541,6 @@ PHP_METHOD(DefaultSession, execute)
   }
 
   self = PHP_CASSANDRA_GET_SESSION(getThis());
-
   stmt = PHP_CASSANDRA_GET_STATEMENT(statement);
 
   consistency = self->default_consistency;
@@ -585,7 +591,7 @@ PHP_METHOD(DefaultSession, execute)
       if (!single)
         return;
 
-      future = cass_session_execute(self->session, single);
+      future = cass_session_execute((CassSession *) self->session->data, single);
       break;
     case CASSANDRA_BATCH_STATEMENT:
       batch = create_batch(stmt, consistency, retry_policy, timestamp TSRMLS_CC);
@@ -593,7 +599,7 @@ PHP_METHOD(DefaultSession, execute)
       if (!batch)
         return;
 
-      future = cass_session_execute_batch(self->session, batch);
+      future = cass_session_execute_batch((CassSession *) self->session->data, batch);
       break;
     default:
       INVALID_ARGUMENT(statement,
@@ -631,7 +637,7 @@ PHP_METHOD(DefaultSession, execute)
     if (single && cass_result_has_more_pages(result)) {
       rows->statement = php_cassandra_new_ref(single, free_statement);
       rows->result    = php_cassandra_new_ref((void *)result, free_result);
-      PHP5TO7_ZVAL_COPY(PHP5TO7_ZVAL_MAYBE_P(rows->session), getThis());
+      rows->session   = php_cassandra_add_ref(self->session);
       return;
     }
 
@@ -719,8 +725,8 @@ PHP_METHOD(DefaultSession, executeAsync)
         return;
 
       future_rows->statement = php_cassandra_new_ref(single, free_statement);
-      PHP5TO7_ZVAL_COPY(PHP5TO7_ZVAL_MAYBE_P(future_rows->session), getThis());
-      future_rows->future    = cass_session_execute(self->session, single);
+      future_rows->future    = cass_session_execute((CassSession *) self->session->data, single);
+      future_rows->session   = php_cassandra_add_ref(self->session);
       break;
     case CASSANDRA_BATCH_STATEMENT:
       batch = create_batch(stmt, consistency, retry_policy, timestamp TSRMLS_CC);
@@ -728,7 +734,7 @@ PHP_METHOD(DefaultSession, executeAsync)
       if (!batch)
         return;
 
-      future_rows->future = cass_session_execute_batch(self->session, batch);
+      future_rows->future = cass_session_execute_batch((CassSession *) self->session->data, batch);
       cass_batch_free(batch);
       break;
     default:
@@ -765,7 +771,8 @@ PHP_METHOD(DefaultSession, prepare)
     timeout = PHP5TO7_ZVAL_MAYBE_P(opts->timeout);
   }
 
-  future = cass_session_prepare_n(self->session, Z_STRVAL_P(cql), Z_STRLEN_P(cql));
+  future = cass_session_prepare_n((CassSession *)self->session->data,
+                                  Z_STRVAL_P(cql), Z_STRLEN_P(cql));
 
   if (php_cassandra_future_wait_timed(future, timeout TSRMLS_CC) == SUCCESS &&
       php_cassandra_future_is_error(future TSRMLS_CC) == SUCCESS) {
@@ -785,13 +792,15 @@ PHP_METHOD(DefaultSession, prepareAsync)
   CassFuture *future = NULL;
   cassandra_future_prepared_statement *future_prepared = NULL;
 
+
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z|z", &cql, &options) == FAILURE) {
     return;
   }
 
   self = PHP_CASSANDRA_GET_SESSION(getThis());
 
-  future = cass_session_prepare_n(self->session, Z_STRVAL_P(cql), Z_STRLEN_P(cql));
+  future = cass_session_prepare_n((CassSession *)self->session->data,
+                                  Z_STRVAL_P(cql), Z_STRLEN_P(cql));
 
   object_init_ex(return_value, cassandra_future_prepared_statement_ce);
   future_prepared = PHP_CASSANDRA_GET_FUTURE_PREPARED_STATEMENT(return_value);
@@ -803,17 +812,19 @@ PHP_METHOD(DefaultSession, close)
 {
   zval *timeout = NULL;
   CassFuture *future = NULL;
-
-  cassandra_session *self = PHP_CASSANDRA_GET_SESSION(getThis());
+  cassandra_session *self;
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "|z", &timeout) == FAILURE) {
     return;
   }
 
+  self = PHP_CASSANDRA_GET_SESSION(getThis());
+
+
   if (self->persist)
     return;
 
-  future = cass_session_close(self->session);
+  future = cass_session_close((CassSession *) self->session->data);
 
   if (php_cassandra_future_wait_timed(future, timeout TSRMLS_CC) == SUCCESS)
     php_cassandra_future_is_error(future TSRMLS_CC);
@@ -823,23 +834,24 @@ PHP_METHOD(DefaultSession, close)
 
 PHP_METHOD(DefaultSession, closeAsync)
 {
+  cassandra_session *self;
   cassandra_future_close *future = NULL;
 
-  cassandra_session *self = PHP_CASSANDRA_GET_SESSION(getThis());
+  if (zend_parse_parameters_none() == FAILURE) {
+    return;
+  }
+
+  self = PHP_CASSANDRA_GET_SESSION(getThis());
 
   if (self->persist) {
     object_init_ex(return_value, cassandra_future_value_ce);
     return;
   }
 
-  if (zend_parse_parameters_none() == FAILURE)
-    return;
-
-
   object_init_ex(return_value, cassandra_future_close_ce);
   future = PHP_CASSANDRA_GET_FUTURE_CLOSE(return_value);
 
-  future->future = cass_session_close(self->session);
+  future->future = cass_session_close((CassSession *) self->session->data);
 }
 
 PHP_METHOD(DefaultSession, metrics)
@@ -942,17 +954,20 @@ free_schema(void *schema)
 
 PHP_METHOD(DefaultSession, schema)
 {
+  cassandra_session *self;
   cassandra_schema *schema;
-  cassandra_session *self = PHP_CASSANDRA_GET_SESSION(getThis());
 
   if (zend_parse_parameters_none() == FAILURE)
     return;
 
+  self = PHP_CASSANDRA_GET_SESSION(getThis());
+
   object_init_ex(return_value, cassandra_default_schema_ce);
   schema = PHP_CASSANDRA_GET_SCHEMA(return_value);
 
-  schema->schema = php_cassandra_new_ref((void *) cass_session_get_schema_meta(self->session),
-                                         free_schema);
+  schema->schema = php_cassandra_new_ref(
+                     (void *) cass_session_get_schema_meta((CassSession *) self->session->data),
+                     free_schema);
 }
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_execute, 0, ZEND_RETURN_VALUE, 1)
@@ -1008,9 +1023,8 @@ php_cassandra_default_session_free(php5to7_zend_object_free *object TSRMLS_DC)
 {
   cassandra_session *self = PHP5TO7_ZEND_OBJECT_GET(session, object);
 
-  if (!self->persist && self->session) {
-    cass_session_free(self->session);
-  }
+  php_cassandra_del_peref(&self->session, 1);
+  PHP5TO7_ZVAL_MAYBE_DESTROY(self->default_timeout);
 
   zend_object_std_dtor(&self->zval TSRMLS_CC);
   PHP5TO7_MAYBE_EFREE(self);

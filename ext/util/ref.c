@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
-#include "php_cassandra.h"
+#include "php_driver.h"
+#include "php_driver_types.h"
 #include "util/math.h"
 
 cassandra_ref*
-php_cassandra_new_ref(void *data, cassandra_free_function destructor)
+php_cassandra_new_peref(void *data, cassandra_free_function destructor, int persistent)
 {
-  cassandra_ref *ref = (cassandra_ref*) emalloc(sizeof(cassandra_ref));
+  cassandra_ref *ref = (cassandra_ref*) pemalloc(sizeof(cassandra_ref), persistent);
 
   ref->data     = data;
   ref->destruct = destructor;
@@ -29,15 +30,8 @@ php_cassandra_new_ref(void *data, cassandra_free_function destructor)
   return ref;
 }
 
-cassandra_ref*
-php_cassandra_add_ref(cassandra_ref *ref)
-{
-  ref->count++;
-  return ref;
-}
-
 void
-php_cassandra_del_ref(cassandra_ref **ref_ptr)
+php_cassandra_del_peref(cassandra_ref **ref_ptr, int persistent)
 {
   cassandra_ref *ref = *ref_ptr;
   if (ref) {
@@ -46,7 +40,7 @@ php_cassandra_del_ref(cassandra_ref **ref_ptr)
     if (ref->count <= 0) {
       ref->destruct(ref->data);
       ref->data = NULL;
-      efree(ref);
+      pefree(ref, persistent);
       *ref_ptr = NULL;
     }
   }

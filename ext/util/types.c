@@ -14,7 +14,9 @@
  * limitations under the License.
  */
 
-#include "php_cassandra.h"
+#include "php_driver.h"
+#include "php_driver_globals.h"
+#include "php_driver_types.h"
 #include "util/types.h"
 #if PHP_MAJOR_VERSION >= 7
 #include <zend_smart_str.h>
@@ -36,8 +38,6 @@
 #include "src/Cassandra/Varint.h"
 #include "src/Cassandra/Type/Tuple.h"
 #include "src/Cassandra/Type/UserType.h"
-
-ZEND_EXTERN_MODULE_GLOBALS(cassandra)
 
 struct node_s {
   struct node_s *parent;
@@ -634,11 +634,11 @@ php_cassandra_type_scalar(CassValueType type TSRMLS_DC)
 
 #define XX_SCALAR(name, value) \
   if (value == type) { \
-    if (PHP5TO7_ZVAL_IS_UNDEF(CASSANDRA_G(TYPE_CODE(name)))) { \
-      CASSANDRA_G(TYPE_CODE(name)) = php_cassandra_type_scalar_new(type TSRMLS_CC); \
+    if (PHP5TO7_ZVAL_IS_UNDEF(PHP_DRIVER_G(TYPE_CODE(name)))) { \
+      PHP_DRIVER_G(TYPE_CODE(name)) = php_cassandra_type_scalar_new(type TSRMLS_CC); \
     } \
-    Z_ADDREF_P(PHP5TO7_ZVAL_MAYBE_P(CASSANDRA_G(TYPE_CODE(name)))); \
-    return CASSANDRA_G(TYPE_CODE(name)); \
+    Z_ADDREF_P(PHP5TO7_ZVAL_MAYBE_P(PHP_DRIVER_G(TYPE_CODE(name)))); \
+    return PHP_DRIVER_G(TYPE_CODE(name)); \
   }
   PHP_CASSANDRA_SCALAR_TYPES_MAP(XX_SCALAR)
 #undef XX_SCALAR
@@ -824,7 +824,7 @@ php_cassandra_type_custom(char *name TSRMLS_DC)
   PHP5TO7_ZVAL_MAYBE_MAKE(ztype);
   object_init_ex(PHP5TO7_ZVAL_MAYBE_P(ztype), cassandra_type_custom_ce);
   custom = PHP_CASSANDRA_GET_TYPE(PHP5TO7_ZVAL_MAYBE_P(ztype));
-  custom->name = name;
+  custom->name = estrdup(name);
 
   return ztype;
 }

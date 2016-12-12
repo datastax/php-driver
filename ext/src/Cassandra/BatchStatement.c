@@ -14,7 +14,8 @@
  * limitations under the License.
  */
 
-#include "php_cassandra.h"
+#include "php_driver.h"
+#include "php_driver_types.h"
 
 zend_class_entry *cassandra_batch_statement_ce = NULL;
 
@@ -31,8 +32,6 @@ void cassandra_batch_statement_entry_dtor(php5to7_dtor dest)
 
   efree(batch_statement_entry);
 }
-
-ZEND_EXTERN_MODULE_GLOBALS(cassandra)
 
 PHP_METHOD(BatchStatement, __construct)
 {

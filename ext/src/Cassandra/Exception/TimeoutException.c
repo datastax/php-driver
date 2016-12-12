@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include "php_cassandra.h"
+#include "php_driver.h"
 
 extern zend_class_entry* cassandra_runtime_exception_ce;
 

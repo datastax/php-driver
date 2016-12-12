@@ -1,28 +1,11 @@
-/**
- * Copyright 2015-2016 DataStax, Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
-#ifndef PHP_CASSANDRA_H
-#define PHP_CASSANDRA_H
+#ifndef PHP_DRIVER_H
+#define PHP_DRIVER_H
 
 #ifdef HAVE_CONFIG_H
 #  include "config.h"
 #endif
 
 #include <gmp.h>
-#include <cassandra.h>
 
 /* Ensure Visual Studio 2010 does not load MSVC++ stdint definitions */
 #ifdef _WIN32
@@ -34,9 +17,13 @@
 #  endif
 #endif
 
+#include <cassandra.h>
+
 #include <php.h>
 #include <Zend/zend_exceptions.h>
 #include <Zend/zend_interfaces.h>
+
+#include "version.h"
 
 #ifdef HAVE_SYS_TYPES_H
 #include <sys/types.h>
@@ -62,21 +49,12 @@ typedef int pid_t;
 #  error SPL must be enabled in order to build the driver
 #endif
 
-#include "version.h"
-
-/* Resources */
-#define PHP_CASSANDRA_CLUSTER_RES_NAME    "Cassandra Cluster"
-#define PHP_CASSANDRA_SESSION_RES_NAME    "Cassandra Session"
-
-extern zend_module_entry cassandra_module_entry;
-#define phpext_cassandra_ptr &cassandra_module_entry
-
 #ifdef PHP_WIN32
-#  define PHP_CASSANDRA_API __declspec(dllexport)
+#  define PHP_DRIVER_API __declspec(dllexport)
 #elif defined(__GNUC__) && __GNUC__ >= 4
-#  define PHP_CASSANDRA_API __attribute__ ((visibility("default")))
+#  define PHP_DRIVER_API __attribute__ ((visibility("default")))
 #else
-#  define PHP_CASSANDRA_API
+#  define PHP_DRIVER_API
 #endif
 
 #ifndef ZEND_MOD_END
@@ -98,7 +76,17 @@ extern zend_module_entry cassandra_module_entry;
 #  include "TSRM.h"
 #endif
 
-#define PHP_CASSANDRA_DEFAULT_CONSISTENCY CASS_CONSISTENCY_LOCAL_ONE
+#ifdef ZTS
+#  define PHP_DRIVER_G(v) TSRMG(php_driver_globals_id, zend_php_driver_globals *, v)
+#else
+#  define PHP_DRIVER_G(v) (php_driver_globals.v)
+#endif
+
+#define CPP_DRIVER_VERSION(major, minor, patch) \
+  (((major) << 16) + ((minor) << 8) + (patch))
+
+#define CURRENT_CPP_DRIVER_VERSION \
+  CPP_DRIVER_VERSION(CASS_VERSION_MAJOR, CASS_VERSION_MINOR, CASS_VERSION_PATCH)
 
 #if PHP_MAJOR_VERSION >= 7
 #define php5to7_zend_register_internal_class_ex(ce, parent_ce) zend_register_internal_class_ex((ce), (parent_ce) TSRMLS_CC);
@@ -137,8 +125,8 @@ php5to7_string_compare(php5to7_string s1, php5to7_string s2)
 
 #define PHP5TO7_ZEND_ACC_FINAL ZEND_ACC_FINAL
 
-#define PHP5TO7_ZEND_OBJECT_ECALLOC(type_name, ce) (cassandra_##type_name *) \
-  ecalloc(1, sizeof(cassandra_##type_name) + zend_object_properties_size(ce))
+#define PHP5TO7_ZEND_OBJECT_ECALLOC(type_name, ce) \
+  (cassandra_##type_name *) ecalloc(1, sizeof(cassandra_##type_name) + zend_object_properties_size(ce))
 
 #define PHP5TO7_ZEND_OBJECT_INIT(type_name, self, ce) \
   PHP5TO7_ZEND_OBJECT_INIT_EX(type_name, type_name, self, ce)
@@ -441,8 +429,15 @@ php5to7_string_compare(php5to7_string s1, php5to7_string s2)
 #define PHP5TO7_Z_STRVAL_MAYBE_P(zv) Z_STRVAL_P(zv)
 #define PHP5TO7_Z_STRLEN_MAYBE_P(zv) Z_STRLEN_P(zv)
 
-#endif
+#endif /* PHP_MAJOR_VERSION >= 7 */
 
+extern zend_module_entry php_driver_module_entry;
+
+PHP_MINIT_FUNCTION(php_driver);
+PHP_MSHUTDOWN_FUNCTION(php_driver);
+PHP_RINIT_FUNCTION(php_driver);
+PHP_RSHUTDOWN_FUNCTION(php_driver);
+PHP_MINFO_FUNCTION(php_driver);
 
 zend_class_entry *exception_class(CassError rc);
 
@@ -475,51 +470,18 @@ void throw_invalid_argument(zval *object,
 
 #define ASSERT_SUCCESS_VALUE(rc, value) ASSERT_SUCCESS_BLOCK(rc, return value;)
 
-#define CPP_DRIVER_VERSION(major, minor, patch) \
-  (((major) << 16) + ((minor) << 8) + (patch))
+#define PHP_CASSANDRA_DEFAULT_CONSISTENCY CASS_CONSISTENCY_LOCAL_ONE
 
-#define CURRENT_CPP_DRIVER_VERSION \
-  CPP_DRIVER_VERSION(CASS_VERSION_MAJOR, CASS_VERSION_MINOR, CASS_VERSION_PATCH)
+#define PHP_CASSANDRA_DEFAULT_LOG       "cassandra.log"
+#define PHP_CASSANDRA_DEFAULT_LOG_LEVEL "ERROR"
 
-#include "php_cassandra_types.h"
+#define PHP_CASSANDRA_INI_ENTRY_LOG \
+  PHP_INI_ENTRY("cassandra.log", PHP_CASSANDRA_DEFAULT_LOG, PHP_INI_ALL, OnUpdateLog)
 
-PHP_MINIT_FUNCTION(cassandra);
-PHP_MSHUTDOWN_FUNCTION(cassandra);
-PHP_RINIT_FUNCTION(cassandra);
-PHP_RSHUTDOWN_FUNCTION(cassandra);
-PHP_MINFO_FUNCTION(cassandra);
+#define PHP_CASSANDRA_INI_ENTRY_LOG_LEVEL \
+  PHP_INI_ENTRY("cassandra.log_level", PHP_CASSANDRA_DEFAULT_LOG_LEVEL, PHP_INI_ALL, OnUpdateLogLevel)
 
-ZEND_BEGIN_MODULE_GLOBALS(cassandra)
-  CassUuidGen          *uuid_gen;
-  pid_t                 uuid_gen_pid;
-  unsigned int          persistent_clusters;
-  unsigned int          persistent_sessions;
-  php5to7_zval          type_varchar;
-  php5to7_zval          type_text;
-  php5to7_zval          type_blob;
-  php5to7_zval          type_ascii;
-  php5to7_zval          type_bigint;
-  php5to7_zval          type_counter;
-  php5to7_zval          type_int;
-  php5to7_zval          type_varint;
-  php5to7_zval          type_boolean;
-  php5to7_zval          type_decimal;
-  php5to7_zval          type_double;
-  php5to7_zval          type_float;
-  php5to7_zval          type_inet;
-  php5to7_zval          type_timestamp;
-  php5to7_zval          type_date;
-  php5to7_zval          type_time;
-  php5to7_zval          type_uuid;
-  php5to7_zval          type_timeuuid;
-  php5to7_zval          type_smallint;
-  php5to7_zval          type_tinyint;
-ZEND_END_MODULE_GLOBALS(cassandra)
+PHP_INI_MH(OnUpdateLogLevel);
+PHP_INI_MH(OnUpdateLog);
 
-#ifdef ZTS
-#  define CASSANDRA_G(v) TSRMG(cassandra_globals_id, zend_cassandra_globals *, v)
-#else
-#  define CASSANDRA_G(v) (cassandra_globals.v)
-#endif
-
-#endif /* PHP_CASSANDRA_H */
+#endif /* PHP_DRIVER_H */

@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#ifndef PHP_CASSANDRA_TYPES_H
-#define PHP_CASSANDRA_TYPES_H
+#ifndef PHP_DRIVER_TYPES_H
+#define PHP_DRIVER_TYPES_H
 
 #if PHP_MAJOR_VERSION >= 7
 #define PHP_CASSANDRA_BEGIN_OBJECT_TYPE(type_name) \
@@ -74,42 +74,42 @@
   #define PHP_CASSANDRA_GET_RETRY_POLICY(obj) php_cassandra_retry_policy_object_fetch(Z_OBJ_P(obj))
   #define PHP_CASSANDRA_GET_TIMESTAMP_GEN(obj) php_cassandra_timestamp_gen_object_fetch(Z_OBJ_P(obj))
 #else
-  #define PHP_CASSANDRA_GET_NUMERIC(obj) (cassandra_numeric *)zend_object_store_get_object((obj) TSRMLS_CC)
-  #define PHP_CASSANDRA_GET_BLOB(obj) (cassandra_blob *)zend_object_store_get_object((obj) TSRMLS_CC)
-  #define PHP_CASSANDRA_GET_TIMESTAMP(obj) (cassandra_timestamp *)zend_object_store_get_object((obj) TSRMLS_CC)
-  #define PHP_CASSANDRA_GET_DATE(obj) (cassandra_date *)zend_object_store_get_object((obj) TSRMLS_CC)
-  #define PHP_CASSANDRA_GET_TIME(obj) (cassandra_time *)zend_object_store_get_object((obj) TSRMLS_CC)
-  #define PHP_CASSANDRA_GET_UUID(obj) (cassandra_uuid *)zend_object_store_get_object((obj) TSRMLS_CC)
-  #define PHP_CASSANDRA_GET_INET(obj) (cassandra_inet *)zend_object_store_get_object((obj) TSRMLS_CC)
-  #define PHP_CASSANDRA_GET_COLLECTION(obj) (cassandra_collection *)zend_object_store_get_object((obj) TSRMLS_CC)
-  #define PHP_CASSANDRA_GET_MAP(obj) (cassandra_map *)zend_object_store_get_object((obj) TSRMLS_CC)
-  #define PHP_CASSANDRA_GET_SET(obj) (cassandra_set *)zend_object_store_get_object((obj) TSRMLS_CC)
-  #define PHP_CASSANDRA_GET_TUPLE(obj) (cassandra_tuple *)zend_object_store_get_object((obj) TSRMLS_CC)
-  #define PHP_CASSANDRA_GET_USER_TYPE_VALUE(obj) (cassandra_user_type_value *)zend_object_store_get_object((obj) TSRMLS_CC)
-  #define PHP_CASSANDRA_GET_CLUSTER(obj) (cassandra_cluster *)zend_object_store_get_object((obj) TSRMLS_CC)
-  #define PHP_CASSANDRA_GET_STATEMENT(obj) (cassandra_statement *)zend_object_store_get_object((obj) TSRMLS_CC)
-  #define PHP_CASSANDRA_GET_EXECUTION_OPTIONS(obj) (cassandra_execution_options *)zend_object_store_get_object((obj) TSRMLS_CC)
-  #define PHP_CASSANDRA_GET_ROWS(obj) (cassandra_rows *)zend_object_store_get_object((obj) TSRMLS_CC)
-  #define PHP_CASSANDRA_GET_FUTURE_ROWS(obj) (cassandra_future_rows *)zend_object_store_get_object((obj) TSRMLS_CC)
-  #define PHP_CASSANDRA_GET_CLUSTER_BUILDER(obj) (cassandra_cluster_builder *)zend_object_store_get_object((obj) TSRMLS_CC)
-  #define PHP_CASSANDRA_GET_FUTURE_PREPARED_STATEMENT(obj) (cassandra_future_prepared_statement *)zend_object_store_get_object((obj) TSRMLS_CC)
-  #define PHP_CASSANDRA_GET_FUTURE_VALUE(obj) (cassandra_future_value *)zend_object_store_get_object((obj) TSRMLS_CC)
-  #define PHP_CASSANDRA_GET_FUTURE_CLOSE(obj) (cassandra_future_close *)zend_object_store_get_object((obj) TSRMLS_CC)
-  #define PHP_CASSANDRA_GET_FUTURE_SESSION(obj) (cassandra_future_session *)zend_object_store_get_object((obj) TSRMLS_CC)
-  #define PHP_CASSANDRA_GET_SESSION(obj) (cassandra_session *)zend_object_store_get_object((obj) TSRMLS_CC)
-  #define PHP_CASSANDRA_GET_SSL(obj) (cassandra_ssl *)zend_object_store_get_object((obj) TSRMLS_CC)
-  #define PHP_CASSANDRA_GET_SSL_BUILDER(obj) (cassandra_ssl_builder *)zend_object_store_get_object((obj) TSRMLS_CC)
-  #define PHP_CASSANDRA_GET_SCHEMA(obj) (cassandra_schema *)zend_object_store_get_object((obj) TSRMLS_CC)
-  #define PHP_CASSANDRA_GET_KEYSPACE(obj) (cassandra_keyspace *)zend_object_store_get_object((obj) TSRMLS_CC)
-  #define PHP_CASSANDRA_GET_TABLE(obj) (cassandra_table *)zend_object_store_get_object((obj) TSRMLS_CC)
-  #define PHP_CASSANDRA_GET_COLUMN(obj) (cassandra_column *)zend_object_store_get_object((obj) TSRMLS_CC)
-  #define PHP_CASSANDRA_GET_INDEX(obj) (cassandra_index *)zend_object_store_get_object((obj) TSRMLS_CC)
-  #define PHP_CASSANDRA_GET_MATERIALIZED_VIEW(obj) (cassandra_materialized_view *)zend_object_store_get_object((obj) TSRMLS_CC)
-  #define PHP_CASSANDRA_GET_FUNCTION(obj) (cassandra_function *)zend_object_store_get_object((obj) TSRMLS_CC)
-  #define PHP_CASSANDRA_GET_AGGREGATE(obj) (cassandra_aggregate *)zend_object_store_get_object((obj) TSRMLS_CC)
-  #define PHP_CASSANDRA_GET_TYPE(obj) (cassandra_type *)zend_object_store_get_object((obj) TSRMLS_CC)
-  #define PHP_CASSANDRA_GET_RETRY_POLICY(obj) (cassandra_retry_policy *)zend_object_store_get_object((obj) TSRMLS_CC)
-  #define PHP_CASSANDRA_GET_TIMESTAMP_GEN(obj) (cassandra_timestamp_gen *)zend_object_store_get_object((obj) TSRMLS_CC)
+  #define PHP_CASSANDRA_GET_NUMERIC(obj) ((cassandra_numeric *)zend_object_store_get_object((obj) TSRMLS_CC))
+  #define PHP_CASSANDRA_GET_BLOB(obj) ((cassandra_blob *)zend_object_store_get_object((obj) TSRMLS_CC))
+  #define PHP_CASSANDRA_GET_TIMESTAMP(obj) ((cassandra_timestamp *)zend_object_store_get_object((obj) TSRMLS_CC))
+  #define PHP_CASSANDRA_GET_DATE(obj) ((cassandra_date *)zend_object_store_get_object((obj) TSRMLS_CC))
+  #define PHP_CASSANDRA_GET_TIME(obj) ((cassandra_time *)zend_object_store_get_object((obj) TSRMLS_CC))
+  #define PHP_CASSANDRA_GET_UUID(obj) ((cassandra_uuid *)zend_object_store_get_object((obj) TSRMLS_CC))
+  #define PHP_CASSANDRA_GET_INET(obj) ((cassandra_inet *)zend_object_store_get_object((obj) TSRMLS_CC))
+  #define PHP_CASSANDRA_GET_COLLECTION(obj) ((cassandra_collection *)zend_object_store_get_object((obj) TSRMLS_CC))
+  #define PHP_CASSANDRA_GET_MAP(obj) ((cassandra_map *)zend_object_store_get_object((obj) TSRMLS_CC))
+  #define PHP_CASSANDRA_GET_SET(obj) ((cassandra_set *)zend_object_store_get_object((obj) TSRMLS_CC))
+  #define PHP_CASSANDRA_GET_TUPLE(obj) ((cassandra_tuple *)zend_object_store_get_object((obj) TSRMLS_CC))
+  #define PHP_CASSANDRA_GET_USER_TYPE_VALUE(obj) ((cassandra_user_type_value *)zend_object_store_get_object((obj) TSRMLS_CC))
+  #define PHP_CASSANDRA_GET_CLUSTER(obj) ((cassandra_cluster *)zend_object_store_get_object((obj) TSRMLS_CC))
+  #define PHP_CASSANDRA_GET_STATEMENT(obj) ((cassandra_statement *)zend_object_store_get_object((obj) TSRMLS_CC))
+  #define PHP_CASSANDRA_GET_EXECUTION_OPTIONS(obj) ((cassandra_execution_options *)zend_object_store_get_object((obj) TSRMLS_CC))
+  #define PHP_CASSANDRA_GET_ROWS(obj) ((cassandra_rows *)zend_object_store_get_object((obj) TSRMLS_CC))
+  #define PHP_CASSANDRA_GET_FUTURE_ROWS(obj) ((cassandra_future_rows *)zend_object_store_get_object((obj) TSRMLS_CC))
+  #define PHP_CASSANDRA_GET_CLUSTER_BUILDER(obj) ((cassandra_cluster_builder *)zend_object_store_get_object((obj) TSRMLS_CC))
+  #define PHP_CASSANDRA_GET_FUTURE_PREPARED_STATEMENT(obj) ((cassandra_future_prepared_statement *)zend_object_store_get_object((obj) TSRMLS_CC))
+  #define PHP_CASSANDRA_GET_FUTURE_VALUE(obj) ((cassandra_future_value *)zend_object_store_get_object((obj) TSRMLS_CC))
+  #define PHP_CASSANDRA_GET_FUTURE_CLOSE(obj) ((cassandra_future_close *)zend_object_store_get_object((obj) TSRMLS_CC))
+  #define PHP_CASSANDRA_GET_FUTURE_SESSION(obj) ((cassandra_future_session *)zend_object_store_get_object((obj) TSRMLS_CC))
+  #define PHP_CASSANDRA_GET_SESSION(obj) ((cassandra_session *)zend_object_store_get_object((obj) TSRMLS_CC))
+  #define PHP_CASSANDRA_GET_SSL(obj) ((cassandra_ssl *)zend_object_store_get_object((obj) TSRMLS_CC))
+  #define PHP_CASSANDRA_GET_SSL_BUILDER(obj) ((cassandra_ssl_builder *)zend_object_store_get_object((obj) TSRMLS_CC))
+  #define PHP_CASSANDRA_GET_SCHEMA(obj) ((cassandra_schema *)zend_object_store_get_object((obj) TSRMLS_CC))
+  #define PHP_CASSANDRA_GET_KEYSPACE(obj) ((cassandra_keyspace *)zend_object_store_get_object((obj) TSRMLS_CC))
+  #define PHP_CASSANDRA_GET_TABLE(obj) ((cassandra_table *)zend_object_store_get_object((obj) TSRMLS_CC))
+  #define PHP_CASSANDRA_GET_COLUMN(obj) ((cassandra_column *)zend_object_store_get_object((obj) TSRMLS_CC))
+  #define PHP_CASSANDRA_GET_INDEX(obj) ((cassandra_index *)zend_object_store_get_object((obj) TSRMLS_CC))
+  #define PHP_CASSANDRA_GET_MATERIALIZED_VIEW(obj) ((cassandra_materialized_view *)zend_object_store_get_object((obj) TSRMLS_CC))
+  #define PHP_CASSANDRA_GET_FUNCTION(obj) ((cassandra_function *)zend_object_store_get_object((obj) TSRMLS_CC))
+  #define PHP_CASSANDRA_GET_AGGREGATE(obj) ((cassandra_aggregate *)zend_object_store_get_object((obj) TSRMLS_CC))
+  #define PHP_CASSANDRA_GET_TYPE(obj) ((cassandra_type *)zend_object_store_get_object((obj) TSRMLS_CC))
+  #define PHP_CASSANDRA_GET_RETRY_POLICY(obj) ((cassandra_retry_policy *)zend_object_store_get_object((obj) TSRMLS_CC))
+  #define PHP_CASSANDRA_GET_TIMESTAMP_GEN(obj) ((cassandra_timestamp_gen *)zend_object_store_get_object((obj) TSRMLS_CC))
 #endif
 
 typedef enum {
@@ -269,7 +269,7 @@ typedef struct {
 
 PHP_CASSANDRA_BEGIN_OBJECT_TYPE(rows)
   cassandra_ref *statement;
-  php5to7_zval session;
+  cassandra_ref *session;
   php5to7_zval rows;
   php5to7_zval next_rows;
   cassandra_ref *result;
@@ -279,7 +279,7 @@ PHP_CASSANDRA_END_OBJECT_TYPE(rows)
 
 PHP_CASSANDRA_BEGIN_OBJECT_TYPE(future_rows)
   cassandra_ref *statement;
-  php5to7_zval session;
+  cassandra_ref *session;
   php5to7_zval rows;
   cassandra_ref *result;
   CassFuture *future;
@@ -318,6 +318,9 @@ PHP_CASSANDRA_BEGIN_OBJECT_TYPE(cluster_builder)
   char *whitelist_hosts;
   char *blacklist_dcs;
   char *whitelist_dcs;
+  cass_bool_t enable_hostname_resolution;
+  cass_bool_t enable_randomized_contact_points;
+  unsigned int connection_heartbeat_interval;
 PHP_CASSANDRA_END_OBJECT_TYPE(cluster_builder)
 
 PHP_CASSANDRA_BEGIN_OBJECT_TYPE(future_prepared_statement)
@@ -335,7 +338,7 @@ PHP_CASSANDRA_END_OBJECT_TYPE(future_close)
 
 PHP_CASSANDRA_BEGIN_OBJECT_TYPE(future_session)
   CassFuture *future;
-  CassSession *session;
+  cassandra_ref *session;
   php5to7_zval default_session;
   cass_bool_t persist;
   char *hash_key;
@@ -346,11 +349,11 @@ PHP_CASSANDRA_END_OBJECT_TYPE(future_session)
 
 typedef struct {
   CassFuture *future;
-  CassSession *session;
+  cassandra_ref *session;
 } cassandra_psession;
 
 PHP_CASSANDRA_BEGIN_OBJECT_TYPE(session)
-  CassSession *session;
+  cassandra_ref *session;
   long default_consistency;
   int default_page_size;
   php5to7_zval default_timeout;
@@ -476,28 +479,29 @@ typedef struct {
   php_cassandra_value_hash_t hash_value;
 } php_cassandra_value_handlers;
 
-extern PHP_CASSANDRA_API zend_class_entry *cassandra_value_ce;
-extern PHP_CASSANDRA_API zend_class_entry *cassandra_numeric_ce;
-extern PHP_CASSANDRA_API zend_class_entry *cassandra_bigint_ce;
-extern PHP_CASSANDRA_API zend_class_entry *cassandra_smallint_ce;
-extern PHP_CASSANDRA_API zend_class_entry *cassandra_tinyint_ce;
-extern PHP_CASSANDRA_API zend_class_entry *cassandra_blob_ce;
-extern PHP_CASSANDRA_API zend_class_entry *cassandra_decimal_ce;
-extern PHP_CASSANDRA_API zend_class_entry *cassandra_float_ce;
-extern PHP_CASSANDRA_API zend_class_entry *cassandra_inet_ce;
-extern PHP_CASSANDRA_API zend_class_entry *cassandra_timestamp_ce;
-extern PHP_CASSANDRA_API zend_class_entry *cassandra_date_ce;
-extern PHP_CASSANDRA_API zend_class_entry *cassandra_time_ce;
-extern PHP_CASSANDRA_API zend_class_entry *cassandra_uuid_interface_ce;
-extern PHP_CASSANDRA_API zend_class_entry *cassandra_uuid_ce;
-extern PHP_CASSANDRA_API zend_class_entry *cassandra_timeuuid_ce;
-extern PHP_CASSANDRA_API zend_class_entry *cassandra_varint_ce;
+extern PHP_DRIVER_API zend_class_entry *cassandra_value_ce;
+extern PHP_DRIVER_API zend_class_entry *cassandra_numeric_ce;
+extern PHP_DRIVER_API zend_class_entry *cassandra_bigint_ce;
+extern PHP_DRIVER_API zend_class_entry *cassandra_smallint_ce;
+extern PHP_DRIVER_API zend_class_entry *cassandra_tinyint_ce;
+extern PHP_DRIVER_API zend_class_entry *cassandra_blob_ce;
+extern PHP_DRIVER_API zend_class_entry *cassandra_decimal_ce;
+extern PHP_DRIVER_API zend_class_entry *cassandra_float_ce;
+extern PHP_DRIVER_API zend_class_entry *cassandra_inet_ce;
+extern PHP_DRIVER_API zend_class_entry *cassandra_timestamp_ce;
+extern PHP_DRIVER_API zend_class_entry *cassandra_date_ce;
+extern PHP_DRIVER_API zend_class_entry *cassandra_time_ce;
+extern PHP_DRIVER_API zend_class_entry *cassandra_uuid_interface_ce;
+extern PHP_DRIVER_API zend_class_entry *cassandra_uuid_ce;
+extern PHP_DRIVER_API zend_class_entry *cassandra_timeuuid_ce;
+extern PHP_DRIVER_API zend_class_entry *cassandra_varint_ce;
+extern PHP_DRIVER_API zend_class_entry *cassandra_custom_ce;
 
-extern PHP_CASSANDRA_API zend_class_entry *cassandra_set_ce;
-extern PHP_CASSANDRA_API zend_class_entry *cassandra_map_ce;
-extern PHP_CASSANDRA_API zend_class_entry *cassandra_collection_ce;
-extern PHP_CASSANDRA_API zend_class_entry *cassandra_tuple_ce;
-extern PHP_CASSANDRA_API zend_class_entry *cassandra_user_type_value_ce;
+extern PHP_DRIVER_API zend_class_entry *cassandra_set_ce;
+extern PHP_DRIVER_API zend_class_entry *cassandra_map_ce;
+extern PHP_DRIVER_API zend_class_entry *cassandra_collection_ce;
+extern PHP_DRIVER_API zend_class_entry *cassandra_tuple_ce;
+extern PHP_DRIVER_API zend_class_entry *cassandra_user_type_value_ce;
 
 /* Exceptions */
 void cassandra_define_Exception(TSRMLS_D);
@@ -548,55 +552,57 @@ void cassandra_define_UuidInterface(TSRMLS_D);
 void cassandra_define_Uuid(TSRMLS_D);
 void cassandra_define_Timeuuid(TSRMLS_D);
 void cassandra_define_Varint(TSRMLS_D);
+void cassandra_define_Custom(TSRMLS_D);
 
 /* Classes */
-extern PHP_CASSANDRA_API zend_class_entry *cassandra_ce;
-extern PHP_CASSANDRA_API zend_class_entry *cassandra_cluster_ce;
-extern PHP_CASSANDRA_API zend_class_entry *cassandra_default_cluster_ce;
-extern PHP_CASSANDRA_API zend_class_entry *cassandra_cluster_builder_ce;
-extern PHP_CASSANDRA_API zend_class_entry *cassandra_ssl_ce;
-extern PHP_CASSANDRA_API zend_class_entry *cassandra_ssl_builder_ce;
-extern PHP_CASSANDRA_API zend_class_entry *cassandra_future_ce;
-extern PHP_CASSANDRA_API zend_class_entry *cassandra_future_prepared_statement_ce;
-extern PHP_CASSANDRA_API zend_class_entry *cassandra_future_rows_ce;
-extern PHP_CASSANDRA_API zend_class_entry *cassandra_future_session_ce;
-extern PHP_CASSANDRA_API zend_class_entry *cassandra_future_value_ce;
-extern PHP_CASSANDRA_API zend_class_entry *cassandra_future_close_ce;
-extern PHP_CASSANDRA_API zend_class_entry *cassandra_session_ce;
-extern PHP_CASSANDRA_API zend_class_entry *cassandra_default_session_ce;
-extern PHP_CASSANDRA_API zend_class_entry *cassandra_exception_ce;
-extern PHP_CASSANDRA_API zend_class_entry *cassandra_runtime_exception_ce;
-extern PHP_CASSANDRA_API zend_class_entry *cassandra_timeout_exception_ce;
-extern PHP_CASSANDRA_API zend_class_entry *cassandra_logic_exception_ce;
-extern PHP_CASSANDRA_API zend_class_entry *cassandra_domain_exception_ce;
-extern PHP_CASSANDRA_API zend_class_entry *cassandra_invalid_argument_exception_ce;
-extern PHP_CASSANDRA_API zend_class_entry *cassandra_server_exception_ce;
-extern PHP_CASSANDRA_API zend_class_entry *cassandra_overloaded_exception_ce;
-extern PHP_CASSANDRA_API zend_class_entry *cassandra_is_bootstrapping_exception_ce;
-extern PHP_CASSANDRA_API zend_class_entry *cassandra_execution_exception_ce;
-extern PHP_CASSANDRA_API zend_class_entry *cassandra_truncate_exception_ce;
-extern PHP_CASSANDRA_API zend_class_entry *cassandra_write_timeout_exception_ce;
-extern PHP_CASSANDRA_API zend_class_entry *cassandra_read_timeout_exception_ce;
-extern PHP_CASSANDRA_API zend_class_entry *cassandra_truncate_exception_ce;
-extern PHP_CASSANDRA_API zend_class_entry *cassandra_unavailable_exception_ce;
-extern PHP_CASSANDRA_API zend_class_entry *cassandra_validation_exception_ce;
-extern PHP_CASSANDRA_API zend_class_entry *cassandra_invalid_syntax_exception_ce;
-extern PHP_CASSANDRA_API zend_class_entry *cassandra_unauthorized_exception_ce;
-extern PHP_CASSANDRA_API zend_class_entry *cassandra_invalid_query_exception_ce;
-extern PHP_CASSANDRA_API zend_class_entry *cassandra_configuration_exception_ce;
-extern PHP_CASSANDRA_API zend_class_entry *cassandra_already_exists_exception_ce;
-extern PHP_CASSANDRA_API zend_class_entry *cassandra_unprepared_exception_ce;
-extern PHP_CASSANDRA_API zend_class_entry *cassandra_protocol_exception_ce;
-extern PHP_CASSANDRA_API zend_class_entry *cassandra_authentication_exception_ce;
-extern PHP_CASSANDRA_API zend_class_entry *cassandra_divide_by_zero_exception_ce;
-extern PHP_CASSANDRA_API zend_class_entry *cassandra_range_exception_ce;
+extern PHP_DRIVER_API zend_class_entry *cassandra_ce;
+extern PHP_DRIVER_API zend_class_entry *cassandra_cluster_ce;
+extern PHP_DRIVER_API zend_class_entry *cassandra_default_cluster_ce;
+extern PHP_DRIVER_API zend_class_entry *cassandra_cluster_builder_ce;
+extern PHP_DRIVER_API zend_class_entry *cassandra_default_cluster_builder_ce;
+extern PHP_DRIVER_API zend_class_entry *cassandra_ssl_ce;
+extern PHP_DRIVER_API zend_class_entry *cassandra_ssl_builder_ce;
+extern PHP_DRIVER_API zend_class_entry *cassandra_future_ce;
+extern PHP_DRIVER_API zend_class_entry *cassandra_future_prepared_statement_ce;
+extern PHP_DRIVER_API zend_class_entry *cassandra_future_rows_ce;
+extern PHP_DRIVER_API zend_class_entry *cassandra_future_session_ce;
+extern PHP_DRIVER_API zend_class_entry *cassandra_future_value_ce;
+extern PHP_DRIVER_API zend_class_entry *cassandra_future_close_ce;
+extern PHP_DRIVER_API zend_class_entry *cassandra_session_ce;
+extern PHP_DRIVER_API zend_class_entry *cassandra_default_session_ce;
+extern PHP_DRIVER_API zend_class_entry *cassandra_exception_ce;
+extern PHP_DRIVER_API zend_class_entry *cassandra_runtime_exception_ce;
+extern PHP_DRIVER_API zend_class_entry *cassandra_timeout_exception_ce;
+extern PHP_DRIVER_API zend_class_entry *cassandra_logic_exception_ce;
+extern PHP_DRIVER_API zend_class_entry *cassandra_domain_exception_ce;
+extern PHP_DRIVER_API zend_class_entry *cassandra_invalid_argument_exception_ce;
+extern PHP_DRIVER_API zend_class_entry *cassandra_server_exception_ce;
+extern PHP_DRIVER_API zend_class_entry *cassandra_overloaded_exception_ce;
+extern PHP_DRIVER_API zend_class_entry *cassandra_is_bootstrapping_exception_ce;
+extern PHP_DRIVER_API zend_class_entry *cassandra_execution_exception_ce;
+extern PHP_DRIVER_API zend_class_entry *cassandra_truncate_exception_ce;
+extern PHP_DRIVER_API zend_class_entry *cassandra_write_timeout_exception_ce;
+extern PHP_DRIVER_API zend_class_entry *cassandra_read_timeout_exception_ce;
+extern PHP_DRIVER_API zend_class_entry *cassandra_truncate_exception_ce;
+extern PHP_DRIVER_API zend_class_entry *cassandra_unavailable_exception_ce;
+extern PHP_DRIVER_API zend_class_entry *cassandra_validation_exception_ce;
+extern PHP_DRIVER_API zend_class_entry *cassandra_invalid_syntax_exception_ce;
+extern PHP_DRIVER_API zend_class_entry *cassandra_unauthorized_exception_ce;
+extern PHP_DRIVER_API zend_class_entry *cassandra_invalid_query_exception_ce;
+extern PHP_DRIVER_API zend_class_entry *cassandra_configuration_exception_ce;
+extern PHP_DRIVER_API zend_class_entry *cassandra_already_exists_exception_ce;
+extern PHP_DRIVER_API zend_class_entry *cassandra_unprepared_exception_ce;
+extern PHP_DRIVER_API zend_class_entry *cassandra_protocol_exception_ce;
+extern PHP_DRIVER_API zend_class_entry *cassandra_authentication_exception_ce;
+extern PHP_DRIVER_API zend_class_entry *cassandra_divide_by_zero_exception_ce;
+extern PHP_DRIVER_API zend_class_entry *cassandra_range_exception_ce;
 
-extern PHP_CASSANDRA_API zend_class_entry *cassandra_statement_ce;
-extern PHP_CASSANDRA_API zend_class_entry *cassandra_simple_statement_ce;
-extern PHP_CASSANDRA_API zend_class_entry *cassandra_prepared_statement_ce;
-extern PHP_CASSANDRA_API zend_class_entry *cassandra_batch_statement_ce;
-extern PHP_CASSANDRA_API zend_class_entry *cassandra_execution_options_ce;
-extern PHP_CASSANDRA_API zend_class_entry *cassandra_rows_ce;
+extern PHP_DRIVER_API zend_class_entry *cassandra_statement_ce;
+extern PHP_DRIVER_API zend_class_entry *cassandra_simple_statement_ce;
+extern PHP_DRIVER_API zend_class_entry *cassandra_prepared_statement_ce;
+extern PHP_DRIVER_API zend_class_entry *cassandra_batch_statement_ce;
+extern PHP_DRIVER_API zend_class_entry *cassandra_execution_options_ce;
+extern PHP_DRIVER_API zend_class_entry *cassandra_rows_ce;
 
 void cassandra_define_Cassandra(TSRMLS_D);
 void cassandra_define_Cluster(TSRMLS_D);
@@ -619,22 +625,22 @@ void cassandra_define_BatchStatement(TSRMLS_D);
 void cassandra_define_ExecutionOptions(TSRMLS_D);
 void cassandra_define_Rows(TSRMLS_D);
 
-extern PHP_CASSANDRA_API zend_class_entry *cassandra_schema_ce;
-extern PHP_CASSANDRA_API zend_class_entry *cassandra_default_schema_ce;
-extern PHP_CASSANDRA_API zend_class_entry *cassandra_keyspace_ce;
-extern PHP_CASSANDRA_API zend_class_entry *cassandra_default_keyspace_ce;
-extern PHP_CASSANDRA_API zend_class_entry *cassandra_table_ce;
-extern PHP_CASSANDRA_API zend_class_entry *cassandra_default_table_ce;
-extern PHP_CASSANDRA_API zend_class_entry *cassandra_column_ce;
-extern PHP_CASSANDRA_API zend_class_entry *cassandra_default_column_ce;
-extern PHP_CASSANDRA_API zend_class_entry *cassandra_index_ce;
-extern PHP_CASSANDRA_API zend_class_entry *cassandra_default_index_ce;
-extern PHP_CASSANDRA_API zend_class_entry *cassandra_materialized_view_ce;
-extern PHP_CASSANDRA_API zend_class_entry *cassandra_default_materialized_view_ce;
-extern PHP_CASSANDRA_API zend_class_entry *cassandra_function_ce;
-extern PHP_CASSANDRA_API zend_class_entry *cassandra_default_function_ce;
-extern PHP_CASSANDRA_API zend_class_entry *cassandra_aggregate_ce;
-extern PHP_CASSANDRA_API zend_class_entry *cassandra_default_aggregate_ce;
+extern PHP_DRIVER_API zend_class_entry *cassandra_schema_ce;
+extern PHP_DRIVER_API zend_class_entry *cassandra_default_schema_ce;
+extern PHP_DRIVER_API zend_class_entry *cassandra_keyspace_ce;
+extern PHP_DRIVER_API zend_class_entry *cassandra_default_keyspace_ce;
+extern PHP_DRIVER_API zend_class_entry *cassandra_table_ce;
+extern PHP_DRIVER_API zend_class_entry *cassandra_default_table_ce;
+extern PHP_DRIVER_API zend_class_entry *cassandra_column_ce;
+extern PHP_DRIVER_API zend_class_entry *cassandra_default_column_ce;
+extern PHP_DRIVER_API zend_class_entry *cassandra_index_ce;
+extern PHP_DRIVER_API zend_class_entry *cassandra_default_index_ce;
+extern PHP_DRIVER_API zend_class_entry *cassandra_materialized_view_ce;
+extern PHP_DRIVER_API zend_class_entry *cassandra_default_materialized_view_ce;
+extern PHP_DRIVER_API zend_class_entry *cassandra_function_ce;
+extern PHP_DRIVER_API zend_class_entry *cassandra_default_function_ce;
+extern PHP_DRIVER_API zend_class_entry *cassandra_aggregate_ce;
+extern PHP_DRIVER_API zend_class_entry *cassandra_default_aggregate_ce;
 
 void cassandra_define_Schema(TSRMLS_D);
 void cassandra_define_DefaultSchema(TSRMLS_D);
@@ -653,14 +659,14 @@ void cassandra_define_DefaultFunction(TSRMLS_D);
 void cassandra_define_Aggregate(TSRMLS_D);
 void cassandra_define_DefaultAggregate(TSRMLS_D);
 
-extern PHP_CASSANDRA_API zend_class_entry *cassandra_type_ce;
-extern PHP_CASSANDRA_API zend_class_entry *cassandra_type_scalar_ce;
-extern PHP_CASSANDRA_API zend_class_entry *cassandra_type_collection_ce;
-extern PHP_CASSANDRA_API zend_class_entry *cassandra_type_set_ce;
-extern PHP_CASSANDRA_API zend_class_entry *cassandra_type_map_ce;
-extern PHP_CASSANDRA_API zend_class_entry *cassandra_type_tuple_ce;
-extern PHP_CASSANDRA_API zend_class_entry *cassandra_type_user_type_ce;
-extern PHP_CASSANDRA_API zend_class_entry *cassandra_type_custom_ce;
+extern PHP_DRIVER_API zend_class_entry *cassandra_type_ce;
+extern PHP_DRIVER_API zend_class_entry *cassandra_type_scalar_ce;
+extern PHP_DRIVER_API zend_class_entry *cassandra_type_collection_ce;
+extern PHP_DRIVER_API zend_class_entry *cassandra_type_set_ce;
+extern PHP_DRIVER_API zend_class_entry *cassandra_type_map_ce;
+extern PHP_DRIVER_API zend_class_entry *cassandra_type_tuple_ce;
+extern PHP_DRIVER_API zend_class_entry *cassandra_type_user_type_ce;
+extern PHP_DRIVER_API zend_class_entry *cassandra_type_custom_ce;
 
 void cassandra_define_Type(TSRMLS_D);
 void cassandra_define_TypeScalar(TSRMLS_D);
@@ -671,11 +677,11 @@ void cassandra_define_TypeTuple(TSRMLS_D);
 void cassandra_define_TypeUserType(TSRMLS_D);
 void cassandra_define_TypeCustom(TSRMLS_D);
 
-extern PHP_CASSANDRA_API zend_class_entry *cassandra_retry_policy_ce;
-extern PHP_CASSANDRA_API zend_class_entry *cassandra_retry_policy_default_ce;
-extern PHP_CASSANDRA_API zend_class_entry *cassandra_retry_policy_downgrading_consistency_ce;
-extern PHP_CASSANDRA_API zend_class_entry *cassandra_retry_policy_fallthrough_ce;
-extern PHP_CASSANDRA_API zend_class_entry *cassandra_retry_policy_logging_ce;
+extern PHP_DRIVER_API zend_class_entry *cassandra_retry_policy_ce;
+extern PHP_DRIVER_API zend_class_entry *cassandra_retry_policy_default_ce;
+extern PHP_DRIVER_API zend_class_entry *cassandra_retry_policy_downgrading_consistency_ce;
+extern PHP_DRIVER_API zend_class_entry *cassandra_retry_policy_fallthrough_ce;
+extern PHP_DRIVER_API zend_class_entry *cassandra_retry_policy_logging_ce;
 
 void cassandra_define_RetryPolicy(TSRMLS_D);
 void cassandra_define_RetryPolicyDefault(TSRMLS_D);
@@ -683,9 +689,9 @@ void cassandra_define_RetryPolicyDowngradingConsistency(TSRMLS_D);
 void cassandra_define_RetryPolicyFallthrough(TSRMLS_D);
 void cassandra_define_RetryPolicyLogging(TSRMLS_D);
 
-extern PHP_CASSANDRA_API zend_class_entry *cassandra_timestamp_gen_ce;
-extern PHP_CASSANDRA_API zend_class_entry *cassandra_timestamp_gen_monotonic_ce;
-extern PHP_CASSANDRA_API zend_class_entry *cassandra_timestamp_gen_server_side_ce;
+extern PHP_DRIVER_API zend_class_entry *cassandra_timestamp_gen_ce;
+extern PHP_DRIVER_API zend_class_entry *cassandra_timestamp_gen_monotonic_ce;
+extern PHP_DRIVER_API zend_class_entry *cassandra_timestamp_gen_server_side_ce;
 
 void cassandra_define_TimestampGenerator(TSRMLS_D);
 void cassandra_define_TimestampGeneratorMonotonic(TSRMLS_D);
@@ -694,4 +700,4 @@ void cassandra_define_TimestampGeneratorServerSide(TSRMLS_D);
 extern int php_le_cassandra_cluster();
 extern int php_le_cassandra_session();
 
-#endif /* PHP_CASSANDRA_TYPES_H */
+#endif /* PHP_DRIVER_TYPES_H */

@@ -14,7 +14,9 @@
  * limitations under the License.
  */
 
-#include "php_cassandra.h"
+#include "php_driver.h"
+#include "php_driver_types.h"
+
 #include <ext/standard/php_filestat.h>
 
 zend_class_entry *cassandra_ssl_builder_ce = NULL;

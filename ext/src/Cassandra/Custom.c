@@ -17,16 +17,19 @@
 #include "php_driver.h"
 #include "php_driver_types.h"
 
-zend_class_entry *cassandra_is_bootstrapping_exception_ce = NULL;
+zend_class_entry* cassandra_custom_ce = NULL;
 
-static zend_function_entry IsBootstrappingException_methods[] = {
+static zend_function_entry cassandra_custom_methods[] = {
   PHP_FE_END
 };
 
-void cassandra_define_IsBootstrappingException(TSRMLS_D)
+void
+cassandra_define_Custom(TSRMLS_D)
 {
   zend_class_entry ce;
 
-  INIT_CLASS_ENTRY(ce, "Cassandra\\Exception\\IsBootstrappingException", IsBootstrappingException_methods);
-  cassandra_is_bootstrapping_exception_ce = php5to7_zend_register_internal_class_ex(&ce, cassandra_server_exception_ce);
+  INIT_CLASS_ENTRY(ce, "Cassandra\\Custom", cassandra_custom_methods);
+  cassandra_custom_ce = zend_register_internal_class(&ce TSRMLS_CC);
+  zend_class_implements(cassandra_custom_ce TSRMLS_CC, 1, cassandra_value_ce);
+  cassandra_custom_ce->ce_flags |= ZEND_ACC_INTERFACE;
 }
