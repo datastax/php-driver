@@ -115,8 +115,8 @@ PHP_METHOD(TypeMap, create)
   if (argc > 0) {
     for (i = 0; i < argc; i += 2) {
       if (!php_driver_map_set(map,
-                                 PHP5TO7_ZVAL_ARG(args[i]),
-                                 PHP5TO7_ZVAL_ARG(args[i + 1]) TSRMLS_CC)) {
+                              PHP5TO7_ZVAL_ARG(args[i]),
+                              PHP5TO7_ZVAL_ARG(args[i + 1]) TSRMLS_CC)) {
         PHP5TO7_MAYBE_EFREE(args);
         return;
       }
@@ -158,17 +158,15 @@ php_driver_type_map_properties(zval *object TSRMLS_DC)
   php_driver_type *self  = PHP_DRIVER_GET_TYPE(object);
   HashTable      *props = zend_std_get_properties(object TSRMLS_CC);
 
-  if (PHP5TO7_ZEND_HASH_UPDATE(props,
+  PHP5TO7_ZEND_HASH_UPDATE(props,
                                "keyType", sizeof("keyType"),
-                               PHP5TO7_ZVAL_MAYBE_P(self->data.map.key_type), sizeof(zval))) {
-    Z_ADDREF_P(PHP5TO7_ZVAL_MAYBE_P(self->data.map.key_type));
-  }
+                               PHP5TO7_ZVAL_MAYBE_P(self->data.map.key_type), sizeof(zval));
+  Z_ADDREF_P(PHP5TO7_ZVAL_MAYBE_P(self->data.map.key_type));
 
-  if (PHP5TO7_ZEND_HASH_UPDATE(props,
-                               "valueType", sizeof("valueType"),
-                               PHP5TO7_ZVAL_MAYBE_P(self->data.map.value_type), sizeof(zval))) {
-    Z_ADDREF_P(PHP5TO7_ZVAL_MAYBE_P(self->data.map.value_type));
-  }
+  PHP5TO7_ZEND_HASH_UPDATE(props,
+                           "valueType", sizeof("valueType"),
+                           PHP5TO7_ZVAL_MAYBE_P(self->data.map.value_type), sizeof(zval));
+  Z_ADDREF_P(PHP5TO7_ZVAL_MAYBE_P(self->data.map.value_type));
 
   return props;
 }

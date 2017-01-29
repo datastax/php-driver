@@ -56,7 +56,7 @@ to_string(zval *result, php_driver_numeric *bigint TSRMLS_DC)
 {
   char *string;
 #ifdef WIN32
-  spprintf(&string, 0, "%I64d", (long long int) bigint->value.bigint_value);
+  spprintf(&string, 0, "%I64d", (long long int) bigint->data.bigint.value);
 #else
   spprintf(&string, 0, "%lld", (long long int) bigint->data.bigint.value);
 #endif

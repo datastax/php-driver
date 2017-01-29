@@ -122,17 +122,15 @@ PHP_METHOD(TypeTuple, create)
 
     for (i = 0; i < argc; i++) {
       php5to7_zval *sub_type;
-      PHP5TO7_ZEND_HASH_INDEX_FIND(&self->data.tuple.types, i, sub_type);
-      if (!php_driver_validate_object(PHP5TO7_ZVAL_ARG(args[i]),
-                                         PHP5TO7_ZVAL_MAYBE_DEREF(sub_type) TSRMLS_CC)) {
+
+      if (!PHP5TO7_ZEND_HASH_INDEX_FIND(&self->data.tuple.types, i, sub_type) ||
+          !php_driver_validate_object(PHP5TO7_ZVAL_ARG(args[i]),
+          PHP5TO7_ZVAL_MAYBE_DEREF(sub_type) TSRMLS_CC)) {
         PHP5TO7_MAYBE_EFREE(args);
         return;
       }
 
-      if (!php_driver_tuple_set(tuple, i, PHP5TO7_ZVAL_ARG(args[i]) TSRMLS_CC)) {
-        PHP5TO7_MAYBE_EFREE(args);
-        return;
-      }
+      php_driver_tuple_set(tuple, i, PHP5TO7_ZVAL_ARG(args[i]) TSRMLS_CC);
     }
 
     PHP5TO7_MAYBE_EFREE(args);

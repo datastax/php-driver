@@ -23,15 +23,12 @@
 
 zend_class_entry *php_driver_collection_ce = NULL;
 
-int
+void
 php_driver_collection_add(php_driver_collection *collection, zval *object TSRMLS_DC)
 {
-  if (PHP5TO7_ZEND_HASH_NEXT_INDEX_INSERT(&collection->values, object, sizeof(zval *))) {
-    Z_TRY_ADDREF_P(object);
-    collection->dirty = 1;
-    return 1;
-  }
-  return 0;
+  PHP5TO7_ZEND_HASH_NEXT_INDEX_INSERT(&collection->values, object, sizeof(zval *));
+  Z_TRY_ADDREF_P(object);
+  collection->dirty = 1;
 }
 
 static int
@@ -154,7 +151,7 @@ PHP_METHOD(Collection, add)
     }
 
     if (!php_driver_validate_object(PHP5TO7_ZVAL_ARG(args[i]),
-                                       PHP5TO7_ZVAL_MAYBE_P(type->data.collection.value_type) TSRMLS_CC)) {
+                                    PHP5TO7_ZVAL_MAYBE_P(type->data.collection.value_type) TSRMLS_CC)) {
       PHP5TO7_MAYBE_EFREE(args);
       RETURN_FALSE;
     }
@@ -330,11 +327,10 @@ php_driver_collection_properties(zval *object TSRMLS_DC)
   php_driver_collection  *self = PHP_DRIVER_GET_COLLECTION(object);
   HashTable             *props = zend_std_get_properties(object TSRMLS_CC);
 
-  if (PHP5TO7_ZEND_HASH_UPDATE(props,
-                               "type", sizeof("type"),
-                               PHP5TO7_ZVAL_MAYBE_P(self->type), sizeof(zval))) {
-    Z_ADDREF_P(PHP5TO7_ZVAL_MAYBE_P(self->type));
-  }
+  PHP5TO7_ZEND_HASH_UPDATE(props,
+                           "type", sizeof("type"),
+                           PHP5TO7_ZVAL_MAYBE_P(self->type), sizeof(zval));
+  Z_ADDREF_P(PHP5TO7_ZVAL_MAYBE_P(self->type));
 
   PHP5TO7_ZVAL_MAYBE_MAKE(values);
   array_init(PHP5TO7_ZVAL_MAYBE_P(values));

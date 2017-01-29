@@ -17,6 +17,6 @@
 #ifndef PHP_DRIVER_TUPLE_H
 #define PHP_DRIVER_TUPLE_H
 
-int php_driver_tuple_set(php_driver_tuple *tuple, ulong index, zval *object TSRMLS_DC);
+void php_driver_tuple_set(php_driver_tuple *tuple, ulong index, zval *object TSRMLS_DC);
 
 #endif /* PHP_DRIVER_TUPLE_H */

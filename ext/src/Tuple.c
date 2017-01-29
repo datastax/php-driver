@@ -27,15 +27,12 @@
 
 zend_class_entry *php_driver_tuple_ce = NULL;
 
-int
+void
 php_driver_tuple_set(php_driver_tuple *tuple, ulong index, zval *object TSRMLS_DC)
 {
-  if (PHP5TO7_ZEND_HASH_INDEX_UPDATE(&tuple->values, index, object, sizeof(zval *))) {
-    Z_TRY_ADDREF_P(object);
-    tuple->dirty = 1;
-    return 1;
-  }
-  return 0;
+  PHP5TO7_ZEND_HASH_INDEX_UPDATE(&tuple->values, index, object, sizeof(zval *));
+  Z_TRY_ADDREF_P(object);
+  tuple->dirty = 1;
 }
 
 static void
@@ -53,6 +50,7 @@ php_driver_tuple_populate(php_driver_tuple *tuple, zval *array TSRMLS_DC)
 
   PHP5TO7_ZEND_HASH_FOREACH_NUM_KEY_VAL(&type->data.tuple.types, index, current) {
     php5to7_zval *value = NULL;
+    (void) current;
     if (PHP5TO7_ZEND_HASH_INDEX_FIND(&tuple->values, index, value)) {
       if (add_next_index_zval(array, PHP5TO7_ZVAL_MAYBE_DEREF(value)) == SUCCESS)
         Z_TRY_ADDREF_P(PHP5TO7_ZVAL_MAYBE_DEREF(value));
@@ -158,10 +156,9 @@ PHP_METHOD(Tuple, set)
     return;
   }
 
-  PHP5TO7_ZEND_HASH_INDEX_FIND(&type->data.tuple.types, index, sub_type);
-
-  if (!php_driver_validate_object(value,
-                                     PHP5TO7_ZVAL_MAYBE_DEREF(sub_type) TSRMLS_CC)) {
+  if (!PHP5TO7_ZEND_HASH_INDEX_FIND(&type->data.tuple.types, index, sub_type) ||
+      !php_driver_validate_object(value,
+                                  PHP5TO7_ZVAL_MAYBE_DEREF(sub_type) TSRMLS_CC)) {
     return;
   }
 
@@ -309,11 +306,10 @@ php_driver_tuple_properties(zval *object TSRMLS_DC)
   php_driver_tuple  *self = PHP_DRIVER_GET_TUPLE(object);
   HashTable             *props = zend_std_get_properties(object TSRMLS_CC);
 
-  if (PHP5TO7_ZEND_HASH_UPDATE(props,
-                               "type", sizeof("type"),
-                               PHP5TO7_ZVAL_MAYBE_P(self->type), sizeof(zval))) {
-    Z_ADDREF_P(PHP5TO7_ZVAL_MAYBE_P(self->type));
-  }
+  PHP5TO7_ZEND_HASH_UPDATE(props,
+                           "type", sizeof("type"),
+                           PHP5TO7_ZVAL_MAYBE_P(self->type), sizeof(zval));
+  Z_ADDREF_P(PHP5TO7_ZVAL_MAYBE_P(self->type));
 
   PHP5TO7_ZVAL_MAYBE_MAKE(values);
   array_init(PHP5TO7_ZVAL_MAYBE_P(values));

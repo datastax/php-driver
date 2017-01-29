@@ -75,7 +75,6 @@ PHP_METHOD(TypeSet, __toString)
 
 PHP_METHOD(TypeSet, create)
 {
-  php_driver_type *self;
   php_driver_set *set;
   php5to7_zval_args args = NULL;
   int argc = 0, i;
@@ -84,8 +83,6 @@ PHP_METHOD(TypeSet, create)
                             &args, &argc) == FAILURE) {
     return;
   }
-
-  self = PHP_DRIVER_GET_TYPE(getThis());
 
   object_init_ex(return_value, php_driver_set_ce);
   set = PHP_DRIVER_GET_SET(return_value);
@@ -136,11 +133,10 @@ php_driver_type_set_properties(zval *object TSRMLS_DC)
   php_driver_type *self  = PHP_DRIVER_GET_TYPE(object);
   HashTable      *props = zend_std_get_properties(object TSRMLS_CC);
 
-  if (PHP5TO7_ZEND_HASH_UPDATE(props,
+  PHP5TO7_ZEND_HASH_UPDATE(props,
                                "valueType", sizeof("valueType"),
-                               PHP5TO7_ZVAL_MAYBE_P(self->data.set.value_type), sizeof(zval))) {
-    Z_ADDREF_P(PHP5TO7_ZVAL_MAYBE_P(self->data.set.value_type));
-  }
+                               PHP5TO7_ZVAL_MAYBE_P(self->data.set.value_type), sizeof(zval));
+  Z_ADDREF_P(PHP5TO7_ZVAL_MAYBE_P(self->data.set.value_type));
 
   return props;
 }

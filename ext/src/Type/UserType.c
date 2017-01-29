@@ -218,16 +218,13 @@ PHP_METHOD(TypeUserType, create)
         return;
       }
       if (!php_driver_validate_object(value,
-                                         PHP5TO7_ZVAL_MAYBE_DEREF(sub_type) TSRMLS_CC)) {
+                                      PHP5TO7_ZVAL_MAYBE_DEREF(sub_type) TSRMLS_CC)) {
         PHP5TO7_MAYBE_EFREE(args);
         return;
       }
-      if (!php_driver_user_type_value_set(user_type_value,
-                                        Z_STRVAL_P(name), Z_STRLEN_P(name),
-                                        value TSRMLS_CC)) {
-        PHP5TO7_MAYBE_EFREE(args);
-        return;
-      }
+      php_driver_user_type_value_set(user_type_value,
+                                     Z_STRVAL_P(name), Z_STRLEN_P(name),
+                                     value TSRMLS_CC);
     }
 
     PHP5TO7_MAYBE_EFREE(args);

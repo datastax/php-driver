@@ -147,20 +147,18 @@ PHP_METHOD(ClusterBuilder, build)
 #if PHP_MAJOR_VERSION >= 7
     ZVAL_NEW_PERSISTENT_RES(&resource, 0, cluster->cluster, php_le_php_driver_cluster());
 
-    if (PHP5TO7_ZEND_HASH_UPDATE(&EG(persistent_list),
-                                 cluster->hash_key, cluster->hash_key_len + 1,
-                                 &resource, sizeof(php5to7_zend_resource_le))) {
-      PHP_DRIVER_G(persistent_clusters)++;
-    }
+    PHP5TO7_ZEND_HASH_UPDATE(&EG(persistent_list),
+                             cluster->hash_key, cluster->hash_key_len + 1,
+                             &resource, sizeof(php5to7_zend_resource_le));
+    PHP_DRIVER_G(persistent_clusters)++;
 #else
     resource.type = php_le_php_driver_cluster();
     resource.ptr = cluster->cluster;
 
-    if (PHP5TO7_ZEND_HASH_UPDATE(&EG(persistent_list),
-                                 cluster->hash_key, cluster->hash_key_len + 1,
-                                 resource, sizeof(php5to7_zend_resource_le))) {
-      PHP_DRIVER_G(persistent_clusters)++;
-    }
+    PHP5TO7_ZEND_HASH_UPDATE(&EG(persistent_list),
+                             cluster->hash_key, cluster->hash_key_len + 1,
+                             resource, sizeof(php5to7_zend_resource_le));
+    PHP_DRIVER_G(persistent_clusters)++;
 #endif
   }
 }

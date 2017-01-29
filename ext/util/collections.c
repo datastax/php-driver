@@ -811,9 +811,9 @@ php_driver_tuple_from_tuple(php_driver_tuple *tuple, CassTuple **output TSRMLS_D
   PHP5TO7_ZEND_HASH_FOREACH_NUM_KEY_VAL(&tuple->values, num_key, current) {
     php5to7_zval *zsub_type;
     php_driver_type *sub_type;
-    PHP5TO7_ZEND_HASH_INDEX_FIND(&type->data.tuple.types, num_key, zsub_type);
-    if (!php_driver_validate_object(PHP5TO7_ZVAL_MAYBE_DEREF(current),
-                                       PHP5TO7_ZVAL_MAYBE_DEREF(zsub_type) TSRMLS_CC)) {
+    if (!PHP5TO7_ZEND_HASH_INDEX_FIND(&type->data.tuple.types, num_key, zsub_type) ||
+        !php_driver_validate_object(PHP5TO7_ZVAL_MAYBE_DEREF(current),
+                                    PHP5TO7_ZVAL_MAYBE_DEREF(zsub_type) TSRMLS_CC)) {
       result = 0;
       break;
     }

@@ -25,19 +25,16 @@
 
 zend_class_entry *php_driver_user_type_value_ce = NULL;
 
-int
+void
 php_driver_user_type_value_set(php_driver_user_type_value *user_type_value,
                                   const char *name, size_t name_length,
                                   zval *object TSRMLS_DC)
 {
-  if (PHP5TO7_ZEND_HASH_UPDATE(&user_type_value->values,
-                               name, name_length + 1,
-                               object, sizeof(zval *))) {
-    Z_TRY_ADDREF_P(object);
-    user_type_value->dirty = 1;
-    return 1;
-  }
-  return 0;
+  PHP5TO7_ZEND_HASH_UPDATE(&user_type_value->values,
+                           name, name_length + 1,
+                           object, sizeof(zval *));
+  Z_TRY_ADDREF_P(object);
+  user_type_value->dirty = 1;
 }
 
 static void
@@ -56,6 +53,7 @@ php_driver_user_type_value_populate(php_driver_user_type_value *user_type_value,
   PHP5TO7_ZEND_HASH_FOREACH_STR_KEY_VAL(&type->data.udt.types, name, current) {
     php5to7_zval *value = NULL;
     size_t name_len = strlen(name);
+    (void) current;
     if (PHP5TO7_ZEND_HASH_FIND(&user_type_value->values, name, name_len + 1, value)) {
       if (PHP5TO7_ADD_ASSOC_ZVAL_EX(array, name, name_len + 1, PHP5TO7_ZVAL_MAYBE_DEREF(value)) == SUCCESS) {
         Z_TRY_ADDREF_P(PHP5TO7_ZVAL_MAYBE_DEREF(value));
@@ -355,11 +353,10 @@ php_driver_user_type_value_properties(zval *object TSRMLS_DC)
   php_driver_user_type_value *self = PHP_DRIVER_GET_USER_TYPE_VALUE(object);
   HashTable                 *props = zend_std_get_properties(object TSRMLS_CC);
 
-  if (PHP5TO7_ZEND_HASH_UPDATE(props,
+  PHP5TO7_ZEND_HASH_UPDATE(props,
                                "type", sizeof("type"),
-                               PHP5TO7_ZVAL_MAYBE_P(self->type), sizeof(zval))) {
-    Z_ADDREF_P(PHP5TO7_ZVAL_MAYBE_P(self->type));
-  }
+                               PHP5TO7_ZVAL_MAYBE_P(self->type), sizeof(zval));
+  Z_ADDREF_P(PHP5TO7_ZVAL_MAYBE_P(self->type));
 
   PHP5TO7_ZVAL_MAYBE_MAKE(values);
   array_init(PHP5TO7_ZVAL_MAYBE_P(values));
