@@ -860,12 +860,12 @@ PHP_METHOD(DefaultSession, metrics)
   php5to7_zval requests;
   php5to7_zval stats;
   php5to7_zval errors;
-  cassandra_session *self = PHP_CASSANDRA_GET_SESSION(getThis());
+  php_driver_session *self = PHP_DRIVER_GET_SESSION(getThis());
 
   if (zend_parse_parameters_none() == FAILURE)
     return;
 
-  cass_session_get_metrics(self->session, &metrics);
+  cass_session_get_metrics((CassSession *)self->session->data, &metrics);
 
   PHP5TO7_ZVAL_MAYBE_MAKE(requests);
   array_init(PHP5TO7_ZVAL_MAYBE_P(requests));
@@ -943,13 +943,6 @@ PHP_METHOD(DefaultSession, metrics)
   add_assoc_zval(return_value, "stats", PHP5TO7_ZVAL_MAYBE_P(stats));
   add_assoc_zval(return_value, "requests", PHP5TO7_ZVAL_MAYBE_P(requests));
   add_assoc_zval(return_value, "errors", PHP5TO7_ZVAL_MAYBE_P(errors));
-}
-
-
-static void
-free_schema(void *schema)
-{
-  cass_schema_meta_free((CassSchemaMeta *) schema);
 }
 
 PHP_METHOD(DefaultSession, schema)
