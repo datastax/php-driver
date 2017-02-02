@@ -4,8 +4,8 @@ PHP_ARG_WITH(cassandra, Enable Cassandra extension,
 AC_MSG_CHECKING([for supported PHP version])
 PHP_CASSANDRA_FOUND_PHP_VERSION=`${PHP_CONFIG} --version`
 PHP_CASSANDRA_FOUND_PHP_VERSION_NUMBER=`echo "${PHP_CASSANDRA_FOUND_PHP_VERSION}" | $AWK 'BEGIN { FS = "."; } { printf "%d", ([$]1 * 100 + [$]2) * 100 + [$]3;}'`
-if test "$PHP_CASSANDRA_FOUND_PHP_VERSION_NUMBER" -lt "50500"; then
-  AC_MSG_ERROR([not supported. PHP version 5.5.0+ required (found $PHP_CASSANDRA_FOUND_PHP_VERSION)])
+if test "$PHP_CASSANDRA_FOUND_PHP_VERSION_NUMBER" -lt "50600"; then
+  AC_MSG_ERROR([not supported. PHP version 5.6.0+ required (found $PHP_CASSANDRA_FOUND_PHP_VERSION)])
 else
   AC_MSG_RESULT([supported ($PHP_CASSANDRA_FOUND_PHP_VERSION)])
 fi
@@ -269,8 +269,8 @@ if test "$PHP_CASSANDRA" != "no"; then
   AC_MSG_CHECKING([for supported DataStax C/C++ driver version])
   PHP_CASSANDRA_FOUND_CASSANDRA_VERSION=`$AWK '/CASS_VERSION_MAJOR/ {printf $3"."} /CASS_VERSION_MINOR/ {printf $3"."} /CASS_VERSION_PATCH/ {printf $3}' $CPP_DRIVER_DIR/include/cassandra.h`
   PHP_CASSANDRA_FOUND_CASSANDRA_VERSION_NUMBER=`echo "${PHP_CASSANDRA_FOUND_CASSANDRA_VERSION}" | $AWK 'BEGIN { FS = "."; } { printf "%d", ([$]1 * 100 + [$]2) * 100 + [$]3;}'`
-  if test "$PHP_CASSANDRA_FOUND_CASSANDRA_VERSION_NUMBER" -lt "20500"; then
-  AC_MSG_ERROR([not supported. Driver version 2.5.0+ required (found $PHP_CASSANDRA_FOUND_CASSANDRA_VERSION)])
+  if test "$PHP_CASSANDRA_FOUND_CASSANDRA_VERSION_NUMBER" -lt "20600"; then
+  AC_MSG_ERROR([not supported. Driver version 2.6.0+ required (found $PHP_CASSANDRA_FOUND_CASSANDRA_VERSION)])
   else
     AC_MSG_RESULT([supported ($PHP_CASSANDRA_FOUND_CASSANDRA_VERSION)])
   fi

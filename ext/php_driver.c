@@ -44,8 +44,8 @@ static uv_once_t log_once = UV_ONCE_INIT;
 static char *log_location = NULL;
 static uv_rwlock_t log_lock;
 
-#if CURRENT_CPP_DRIVER_VERSION < CPP_DRIVER_VERSION(2, 5, 0)
-#error C/C++ driver version 2.5.0 or greater required
+#if CURRENT_CPP_DRIVER_VERSION < CPP_DRIVER_VERSION(2, 6, 0)
+#error C/C++ driver version 2.6.0 or greater required
 #endif
 
 ZEND_DECLARE_MODULE_GLOBALS(php_driver)

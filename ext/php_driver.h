@@ -35,8 +35,8 @@ typedef int pid_t;
 #include <process.h>
 #endif
 
-#if PHP_VERSION_ID < 50304
-#  error PHP 5.3.4 or later is required in order to build the driver
+#if PHP_VERSION_ID < 50600
+#  error PHP 5.6.0 or later is required in order to build the driver
 #endif
 
 #if HAVE_SPL
