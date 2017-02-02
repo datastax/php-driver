@@ -1,5 +1,5 @@
 @ECHO OFF
-REM Copyright 2015-2016 DataStax
+REM Copyright 2015-2017 DataStax
 REM
 REM Licensed under the Apache License, Version 2.0 (the "License");
 REM you may not use this file except in compliance with the License.
@@ -117,12 +117,11 @@ SET MPIR_BRANCH_TAG_VERSION=2.7.2
 SET MPIR_SHA_CHANGESET=67d98ac
 SET PHP_REPOSITORY_URL=https://github.com/php/php-src.git
 SET PHP_DIRECTORY=php
-SET PHP_5_5_BRANCH_TAG_VERSION=php-5.5.38
-SET PHP_5_6_BRANCH_TAG_VERSION=php-5.6.25
-SET PHP_7_0_BRANCH_TAG_VERSION=php-7.0.10
-SET "SUPPORTED_PHP_VERSIONS=5_5 5_6 7_0"
-SET "SUPPORTED_PHP_DISPLAY_VERSIONS=5.5 5.6 7.0"
-SET "SUPPORTED_PHP_VISUAL_STUDIO_VERSIONS=2012 2012 2015"
+SET PHP_5_6_BRANCH_TAG_VERSION=php-5.6.30
+SET PHP_7_0_BRANCH_TAG_VERSION=php-7.0.15
+SET "SUPPORTED_PHP_VERSIONS=5_6 7_0"
+SET "SUPPORTED_PHP_DISPLAY_VERSIONS=5.6 7.0"
+SET "SUPPORTED_PHP_VISUAL_STUDIO_VERSIONS=2012 2015"
 SET LIBICONV_REPOSITORY_URL=https://github.com/winlibs/libiconv.git
 SET LIBICONV_DIRECTORY=libiconv
 REM libiconv v1.14 with solutions for Visual Studio 2012 and 2015
@@ -214,7 +213,7 @@ IF NOT [%1] == [] (
     )
   )
 
-  REM PHP version (5.5, 5.6, and 7.0)
+  REM PHP version (5.6, and 7.0)
   IF "!ARGUMENT!" == "!ARGUMENT_PHP_VERSION!" (
     REM Make sure the version information exists
     IF [%2] == [] (
@@ -222,19 +221,14 @@ IF NOT [%1] == [] (
       EXIT /B !EXIT_CODE_INVALID_VERSION!
     ) ELSE (
       REM Ensure the PHP version is valid
-      IF NOT "%2" == "5.5" (
-        IF NOT "%2" == "5.6" (
-          IF NOT "%2" == "7.0" (
-            ECHO Invalid Version: Version not within range [5.5, 5.6, 7.0]
-            EXIT /B !EXIT_CODE_INVALID_VERSION!
-          )
+      IF NOT "%2" == "5.6" (
+         IF NOT "%2" == "7.0" (
+          ECHO Invalid Version: Version not within range [5.6, 7.0]
+          EXIT /B !EXIT_CODE_INVALID_VERSION!
         )
       )
 
       REM Get the version information and format for branch/tag variable use
-      IF "%2" == "5.5" (
-        SET PHP_VERSION=5_5
-      )
       IF "%2" == "5.6" (
         SET PHP_VERSION=5_6
       )
@@ -895,9 +889,9 @@ REM Display the help message and exit with error code
   ECHO     !ARGUMENT_BUILD_TYPE_RELEASE!                     Enable release build ^(default^)
   ECHO     !ARGUMENT_DISABLE_CLEAN_BUILD!               Disable clean build
   ECHO     !ARGUMENT_DISABLE_THREAD_SAFETY!       Disable thread safety
-  ECHO     !ARGUMENT_ENABLE_BUILD_PACKAGES! [version]   Enable package generation ^(5.5, 5.6, 7.0^) ^(*^)
+  ECHO     !ARGUMENT_ENABLE_BUILD_PACKAGES! [version]   Enable package generation ^(5.6, 7.0^) ^(*^)
   ECHO     !ARGUMENT_ENABLE_TEST_CONFIGURATION!   Enable test configuration build
-  ECHO     !ARGUMENT_PHP_VERSION! [version]       PHP version 5.5, 5.6, 7.0
+  ECHO     !ARGUMENT_PHP_VERSION! [version]       PHP version 5.6, 7.0
   IF !SYSTEM_ARCHITECTURE! EQU !ARCHITECTURE_32BIT! (
     ECHO     !ARGUMENT_TARGET_ARCHITECTURE_32BIT!                         Target 32-bit build ^(default^)
     ECHO     !ARGUMENT_TARGET_ARCHITECTURE_64BIT!                         Target 64-bit build
