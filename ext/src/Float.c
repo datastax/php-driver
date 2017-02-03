@@ -26,7 +26,7 @@ static int
 to_string(zval *result, php_driver_numeric *flt TSRMLS_DC)
 {
   char *string;
-  spprintf(&string, 0, "%.*F", (int) EG(precision), flt->float_value);
+  spprintf(&string, 0, "%.*F", (int) EG(precision), flt->data.floating.value);
   PHP5TO7_ZVAL_STRING(result, string);
   efree(string);
   return SUCCESS;
@@ -50,18 +50,18 @@ php_driver_float_init(INTERNAL_FUNCTION_PARAMETERS)
   }
 
   if (Z_TYPE_P(value) == IS_LONG) {
-    self->float_value = (cass_float_t) Z_LVAL_P(value);
+    self->data.floating.value = (cass_float_t) Z_LVAL_P(value);
   } else if (Z_TYPE_P(value) == IS_DOUBLE) {
-    self->float_value = (cass_float_t) Z_DVAL_P(value);
+    self->data.floating.value = (cass_float_t) Z_DVAL_P(value);
   } else if (Z_TYPE_P(value) == IS_STRING) {
     if (!php_driver_parse_float(Z_STRVAL_P(value), Z_STRLEN_P(value),
-                                   &self->float_value TSRMLS_CC)) {
+                                   &self->data.floating.value TSRMLS_CC)) {
       return;
     }
   } else if (Z_TYPE_P(value) == IS_OBJECT &&
              instanceof_function(Z_OBJCE_P(value), php_driver_float_ce TSRMLS_CC)) {
     php_driver_numeric *flt = PHP_DRIVER_GET_NUMERIC(return_value);
-    self->float_value = flt->float_value;
+    self->data.floating.value = flt->data.floating.value;
   } else {
     INVALID_ARGUMENT(value, "a long, double, numeric string or a " \
                             PHP_DRIVER_NAMESPACE "\\Float instance");
@@ -96,7 +96,7 @@ PHP_METHOD(Float, type)
 PHP_METHOD(Float, value)
 {
   php_driver_numeric *self = PHP_DRIVER_GET_NUMERIC(getThis());
-  RETURN_DOUBLE((double) self->float_value);
+  RETURN_DOUBLE((double) self->data.floating.value);
 }
 /* }}} */
 
@@ -104,7 +104,7 @@ PHP_METHOD(Float, value)
 PHP_METHOD(Float, isInfinite)
 {
   php_driver_numeric *self = PHP_DRIVER_GET_NUMERIC(getThis());
-  RETURN_BOOL(zend_isinf(self->float_value));
+  RETURN_BOOL(zend_isinf(self->data.floating.value));
 }
 /* }}} */
 
@@ -112,7 +112,7 @@ PHP_METHOD(Float, isInfinite)
 PHP_METHOD(Float, isFinite)
 {
   php_driver_numeric *self = PHP_DRIVER_GET_NUMERIC(getThis());
-  RETURN_BOOL(zend_finite(self->float_value));
+  RETURN_BOOL(zend_finite(self->data.floating.value));
 }
 /* }}} */
 
@@ -120,7 +120,7 @@ PHP_METHOD(Float, isFinite)
 PHP_METHOD(Float, isNaN)
 {
   php_driver_numeric *self = PHP_DRIVER_GET_NUMERIC(getThis());
-  RETURN_BOOL(zend_isnan(self->float_value));
+  RETURN_BOOL(zend_isnan(self->data.floating.value));
 }
 /* }}} */
 
@@ -142,7 +142,7 @@ PHP_METHOD(Float, add)
     object_init_ex(return_value, php_driver_float_ce);
     result = PHP_DRIVER_GET_NUMERIC(return_value);
 
-    result->float_value = self->float_value + flt->float_value;
+    result->data.floating.value = self->data.floating.value + flt->data.floating.value;
   } else {
     INVALID_ARGUMENT(num, "an instance of " PHP_DRIVER_NAMESPACE "\\Float");
   }
@@ -167,7 +167,7 @@ PHP_METHOD(Float, sub)
     object_init_ex(return_value, php_driver_float_ce);
     result = PHP_DRIVER_GET_NUMERIC(return_value);
 
-    result->float_value = self->float_value - flt->float_value;
+    result->data.floating.value = self->data.floating.value - flt->data.floating.value;
   } else {
     INVALID_ARGUMENT(num, "an instance of " PHP_DRIVER_NAMESPACE "\\Float");
   }
@@ -192,7 +192,7 @@ PHP_METHOD(Float, mul)
     object_init_ex(return_value, php_driver_float_ce);
     result = PHP_DRIVER_GET_NUMERIC(return_value);
 
-    result->float_value = self->float_value * flt->float_value;
+    result->data.floating.value = self->data.floating.value * flt->data.floating.value;
   } else {
     INVALID_ARGUMENT(num, "an instance of " PHP_DRIVER_NAMESPACE "\\Float");
   }
@@ -217,12 +217,12 @@ PHP_METHOD(Float, div)
     object_init_ex(return_value, php_driver_float_ce);
     result = PHP_DRIVER_GET_NUMERIC(return_value);
 
-    if (flt->float_value == 0) {
+    if (flt->data.floating.value == 0) {
       zend_throw_exception_ex(php_driver_divide_by_zero_exception_ce, 0 TSRMLS_CC, "Cannot divide by zero");
       return;
     }
 
-    result->float_value = self->float_value / flt->float_value;
+    result->data.floating.value = self->data.floating.value / flt->data.floating.value;
   } else {
     INVALID_ARGUMENT(num, "an instance of " PHP_DRIVER_NAMESPACE "\\Float");
   }
@@ -247,12 +247,12 @@ PHP_METHOD(Float, mod)
     object_init_ex(return_value, php_driver_float_ce);
     result = PHP_DRIVER_GET_NUMERIC(return_value);
 
-    if (flt->float_value == 0) {
+    if (flt->data.floating.value == 0) {
       zend_throw_exception_ex(php_driver_divide_by_zero_exception_ce, 0 TSRMLS_CC, "Cannot divide by zero");
       return;
     }
 
-    result->float_value = fmod(self->float_value, flt->float_value);
+    result->data.floating.value = fmod(self->data.floating.value, flt->data.floating.value);
   } else {
     INVALID_ARGUMENT(num, "an instance of " PHP_DRIVER_NAMESPACE "\\Float");
   }
@@ -265,7 +265,7 @@ PHP_METHOD(Float, abs)
   php_driver_numeric *self = PHP_DRIVER_GET_NUMERIC(getThis());
   object_init_ex(return_value, php_driver_float_ce);
   result = PHP_DRIVER_GET_NUMERIC(return_value);
-  result->float_value = fabsf(self->float_value);
+  result->data.floating.value = fabsf(self->data.floating.value);
 }
 /* }}} */
 
@@ -276,7 +276,7 @@ PHP_METHOD(Float, neg)
   php_driver_numeric *self = PHP_DRIVER_GET_NUMERIC(getThis());
   object_init_ex(return_value, php_driver_float_ce);
   result = PHP_DRIVER_GET_NUMERIC(return_value);
-  result->float_value = -self->float_value;
+  result->data.floating.value = -self->data.floating.value;
 }
 /* }}} */
 
@@ -286,14 +286,14 @@ PHP_METHOD(Float, sqrt)
   php_driver_numeric *result = NULL;
   php_driver_numeric *self = PHP_DRIVER_GET_NUMERIC(getThis());
 
-  if (self->float_value < 0) {
+  if (self->data.floating.value < 0) {
     zend_throw_exception_ex(php_driver_range_exception_ce, 0 TSRMLS_CC,
                             "Cannot take a square root of a negative number");
   }
 
   object_init_ex(return_value, php_driver_float_ce);
   result = PHP_DRIVER_GET_NUMERIC(return_value);
-  result->float_value = sqrtf(self->float_value);
+  result->data.floating.value = sqrtf(self->data.floating.value);
 }
 /* }}} */
 
@@ -302,7 +302,7 @@ PHP_METHOD(Float, toInt)
 {
   php_driver_numeric *self = PHP_DRIVER_GET_NUMERIC(getThis());
 
-  RETURN_LONG((long) self->float_value);
+  RETURN_LONG((long) self->data.floating.value);
 }
 /* }}} */
 
@@ -311,7 +311,7 @@ PHP_METHOD(Float, toDouble)
 {
   php_driver_numeric *self = PHP_DRIVER_GET_NUMERIC(getThis());
 
-  RETURN_DOUBLE((double) self->float_value);
+  RETURN_DOUBLE((double) self->data.floating.value);
 }
 /* }}} */
 
@@ -321,7 +321,7 @@ PHP_METHOD(Float, min)
   php_driver_numeric *flt = NULL;
   object_init_ex(return_value, php_driver_float_ce);
   flt = PHP_DRIVER_GET_NUMERIC(return_value);
-  flt->float_value = FLT_MIN;
+  flt->data.floating.value = FLT_MIN;
 }
 /* }}} */
 
@@ -331,7 +331,7 @@ PHP_METHOD(Float, max)
   php_driver_numeric *flt = NULL;
   object_init_ex(return_value, php_driver_float_ce);
   flt = PHP_DRIVER_GET_NUMERIC(return_value);
-  flt->float_value = FLT_MAX;
+  flt->data.floating.value = FLT_MAX;
 }
 /* }}} */
 
@@ -419,11 +419,11 @@ php_driver_float_compare(zval *obj1, zval *obj2 TSRMLS_DC)
   flt1 = PHP_DRIVER_GET_NUMERIC(obj1);
   flt2 = PHP_DRIVER_GET_NUMERIC(obj2);
 
-  if (flt1->float_value < flt2->float_value) return -1;
-  if (flt1->float_value > flt2->float_value) return  1;
+  if (flt1->data.floating.value < flt2->data.floating.value) return -1;
+  if (flt1->data.floating.value > flt2->data.floating.value) return  1;
 
-  bits1 = float_to_bits(flt1->float_value);
-  bits2 = float_to_bits(flt2->float_value);
+  bits1 = float_to_bits(flt1->data.floating.value);
+  bits2 = float_to_bits(flt2->data.floating.value);
 
   /* Handle NaNs and negative and positive 0.0 */
   return bits1 < bits2 ? -1 : bits1 > bits2;
@@ -433,7 +433,7 @@ static unsigned
 php_driver_float_hash_value(zval *obj TSRMLS_DC)
 {
   php_driver_numeric *self = PHP_DRIVER_GET_NUMERIC(obj);
-  return float_to_bits(self->float_value);
+  return float_to_bits(self->data.floating.value);
 }
 
 static int
@@ -443,10 +443,10 @@ php_driver_float_cast(zval *object, zval *retval, int type TSRMLS_DC)
 
   switch (type) {
   case IS_LONG:
-      ZVAL_LONG(retval, (long) self->float_value);
+      ZVAL_LONG(retval, (long) self->data.floating.value);
       return SUCCESS;
   case IS_DOUBLE:
-      ZVAL_DOUBLE(retval, (double) self->float_value);
+      ZVAL_DOUBLE(retval, (double) self->data.floating.value);
       return SUCCESS;
   case IS_STRING:
       return to_string(retval, self TSRMLS_CC);

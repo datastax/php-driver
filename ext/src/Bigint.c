@@ -30,24 +30,24 @@ zend_class_entry *php_driver_bigint_ce = NULL;
 static int
 to_double(zval *result, php_driver_numeric *bigint TSRMLS_DC)
 {
-  ZVAL_DOUBLE(result, (double) bigint->bigint_value);
+  ZVAL_DOUBLE(result, (double) bigint->data.bigint.value);
   return SUCCESS;
 }
 
 static int
 to_long(zval *result, php_driver_numeric *bigint TSRMLS_DC)
 {
-  if (bigint->bigint_value < (cass_int64_t) LONG_MIN) {
+  if (bigint->data.bigint.value < (cass_int64_t) LONG_MIN) {
     zend_throw_exception_ex(php_driver_range_exception_ce, 0 TSRMLS_CC, "Value is too small");
     return FAILURE;
   }
 
-  if (bigint->bigint_value > (cass_int64_t) LONG_MAX) {
+  if (bigint->data.bigint.value > (cass_int64_t) LONG_MAX) {
     zend_throw_exception_ex(php_driver_range_exception_ce, 0 TSRMLS_CC, "Value is too big");
     return FAILURE;
   }
 
-  ZVAL_LONG(result, (long) bigint->bigint_value);
+  ZVAL_LONG(result, (long) bigint->data.bigint.value);
   return SUCCESS;
 }
 
@@ -56,9 +56,9 @@ to_string(zval *result, php_driver_numeric *bigint TSRMLS_DC)
 {
   char *string;
 #ifdef WIN32
-  spprintf(&string, 0, "%I64d", (long long int) bigint->bigint_value);
+  spprintf(&string, 0, "%I64d", (long long int) bigint->value.bigint_value);
 #else
-  spprintf(&string, 0, "%lld", (long long int) bigint->bigint_value);
+  spprintf(&string, 0, "%lld", (long long int) bigint->data.bigint.value);
 #endif
   PHP5TO7_ZVAL_STRING(result, string);
   efree(string);
@@ -83,18 +83,18 @@ php_driver_bigint_init(INTERNAL_FUNCTION_PARAMETERS)
   }
 
   if (Z_TYPE_P(value) == IS_LONG) {
-    self->bigint_value = (cass_int64_t) Z_LVAL_P(value);
+    self->data.bigint.value = (cass_int64_t) Z_LVAL_P(value);
   } else if (Z_TYPE_P(value) == IS_DOUBLE) {
-    self->bigint_value = (cass_int64_t) Z_DVAL_P(value);
+    self->data.bigint.value = (cass_int64_t) Z_DVAL_P(value);
   } else if (Z_TYPE_P(value) == IS_STRING) {
     if (!php_driver_parse_bigint(Z_STRVAL_P(value), Z_STRLEN_P(value),
-                                    &self->bigint_value TSRMLS_CC)) {
+                                    &self->data.bigint.value TSRMLS_CC)) {
       return;
     }
   } else if (Z_TYPE_P(value) == IS_OBJECT &&
              instanceof_function(Z_OBJCE_P(value), php_driver_bigint_ce TSRMLS_CC)) {
     php_driver_numeric *bigint = PHP_DRIVER_GET_NUMERIC(value);
-    self->bigint_value = bigint->bigint_value;
+    self->data.bigint.value = bigint->data.bigint.value;
   } else {
     INVALID_ARGUMENT(value, "a long, a double, a numeric string or a " \
                             PHP_DRIVER_NAMESPACE "\\Bigint");
@@ -154,7 +154,7 @@ PHP_METHOD(Bigint, add)
     object_init_ex(return_value, php_driver_bigint_ce);
     result = PHP_DRIVER_GET_NUMERIC(return_value);
 
-    result->bigint_value = self->bigint_value + bigint->bigint_value;
+    result->data.bigint.value = self->data.bigint.value + bigint->data.bigint.value;
   } else {
     INVALID_ARGUMENT(num, "a " PHP_DRIVER_NAMESPACE "\\Bigint");
   }
@@ -179,7 +179,7 @@ PHP_METHOD(Bigint, sub)
     object_init_ex(return_value, php_driver_bigint_ce);
     result = PHP_DRIVER_GET_NUMERIC(return_value);
 
-    result->bigint_value = self->bigint_value - bigint->bigint_value;
+    result->data.bigint.value = self->data.bigint.value - bigint->data.bigint.value;
   } else {
     INVALID_ARGUMENT(num, "a " PHP_DRIVER_NAMESPACE "\\Bigint");
   }
@@ -204,7 +204,7 @@ PHP_METHOD(Bigint, mul)
     object_init_ex(return_value, php_driver_bigint_ce);
     result = PHP_DRIVER_GET_NUMERIC(return_value);
 
-    result->bigint_value = self->bigint_value * bigint->bigint_value;
+    result->data.bigint.value = self->data.bigint.value * bigint->data.bigint.value;
   } else {
     INVALID_ARGUMENT(num, "a " PHP_DRIVER_NAMESPACE "\\Bigint");
   }
@@ -229,12 +229,12 @@ PHP_METHOD(Bigint, div)
     object_init_ex(return_value, php_driver_bigint_ce);
     result = PHP_DRIVER_GET_NUMERIC(return_value);
 
-    if (bigint->bigint_value == 0) {
+    if (bigint->data.bigint.value == 0) {
       zend_throw_exception_ex(php_driver_divide_by_zero_exception_ce, 0 TSRMLS_CC, "Cannot divide by zero");
       return;
     }
 
-    result->bigint_value = self->bigint_value / bigint->bigint_value;
+    result->data.bigint.value = self->data.bigint.value / bigint->data.bigint.value;
   } else {
     INVALID_ARGUMENT(num, "a " PHP_DRIVER_NAMESPACE "\\Bigint");
   }
@@ -259,12 +259,12 @@ PHP_METHOD(Bigint, mod)
     object_init_ex(return_value, php_driver_bigint_ce);
     result = PHP_DRIVER_GET_NUMERIC(return_value);
 
-    if (bigint->bigint_value == 0) {
+    if (bigint->data.bigint.value == 0) {
       zend_throw_exception_ex(php_driver_divide_by_zero_exception_ce, 0 TSRMLS_CC, "Cannot modulo by zero");
       return;
     }
 
-    result->bigint_value = self->bigint_value % bigint->bigint_value;
+    result->data.bigint.value = self->data.bigint.value % bigint->data.bigint.value;
   } else {
     INVALID_ARGUMENT(num, "a " PHP_DRIVER_NAMESPACE "\\Bigint");
   }
@@ -277,14 +277,14 @@ PHP_METHOD(Bigint, abs)
   php_driver_numeric *result = NULL;
   php_driver_numeric *self = PHP_DRIVER_GET_NUMERIC(getThis());
 
-  if (self->bigint_value == INT64_MIN) {
+  if (self->data.bigint.value == INT64_MIN) {
     zend_throw_exception_ex(php_driver_range_exception_ce, 0 TSRMLS_CC, "Value doesn't exist");
     return;
   }
 
   object_init_ex(return_value, php_driver_bigint_ce);
   result = PHP_DRIVER_GET_NUMERIC(return_value);
-  result->bigint_value = self->bigint_value < 0 ? -self->bigint_value : self->bigint_value;
+  result->data.bigint.value = self->data.bigint.value < 0 ? -self->data.bigint.value : self->data.bigint.value;
 }
 /* }}} */
 
@@ -296,7 +296,7 @@ PHP_METHOD(Bigint, neg)
 
   object_init_ex(return_value, php_driver_bigint_ce);
   result = PHP_DRIVER_GET_NUMERIC(return_value);
-  result->bigint_value = -self->bigint_value;
+  result->data.bigint.value = -self->data.bigint.value;
 }
 /* }}} */
 
@@ -306,14 +306,14 @@ PHP_METHOD(Bigint, sqrt)
   php_driver_numeric *result = NULL;
   php_driver_numeric *self = PHP_DRIVER_GET_NUMERIC(getThis());
 
-  if (self->bigint_value < 0) {
+  if (self->data.bigint.value < 0) {
     zend_throw_exception_ex(php_driver_range_exception_ce, 0 TSRMLS_CC,
                             "Cannot take a square root of a negative number");
   }
 
   object_init_ex(return_value, php_driver_bigint_ce);
   result = PHP_DRIVER_GET_NUMERIC(return_value);
-  result->bigint_value = (cass_int64_t) sqrt((long double) self->bigint_value);
+  result->data.bigint.value = (cass_int64_t) sqrt((long double) self->data.bigint.value);
 }
 /* }}} */
 
@@ -341,7 +341,7 @@ PHP_METHOD(Bigint, min)
   php_driver_numeric *bigint = NULL;
   object_init_ex(return_value, php_driver_bigint_ce);
   bigint = PHP_DRIVER_GET_NUMERIC(return_value);
-  bigint->bigint_value = INT64_MIN;
+  bigint->data.bigint.value = INT64_MIN;
 }
 /* }}} */
 
@@ -351,7 +351,7 @@ PHP_METHOD(Bigint, max)
   php_driver_numeric *bigint = NULL;
   object_init_ex(return_value, php_driver_bigint_ce);
   bigint = PHP_DRIVER_GET_NUMERIC(return_value);
-  bigint->bigint_value = INT64_MAX;
+  bigint->data.bigint.value = INT64_MAX;
 }
 /* }}} */
 
@@ -427,9 +427,9 @@ php_driver_bigint_compare(zval *obj1, zval *obj2 TSRMLS_DC)
   bigint1 = PHP_DRIVER_GET_NUMERIC(obj1);
   bigint2 = PHP_DRIVER_GET_NUMERIC(obj2);
 
-  if (bigint1->bigint_value == bigint2->bigint_value)
+  if (bigint1->data.bigint.value == bigint2->data.bigint.value)
     return 0;
-  else if (bigint1->bigint_value < bigint2->bigint_value)
+  else if (bigint1->data.bigint.value < bigint2->data.bigint.value)
     return -1;
   else
     return 1;
@@ -439,7 +439,7 @@ static unsigned
 php_driver_bigint_hash_value(zval *obj TSRMLS_DC)
 {
   php_driver_numeric *self = PHP_DRIVER_GET_NUMERIC(obj);
-  return (unsigned)(self->bigint_value ^ (self->bigint_value >> 32));
+  return (unsigned)(self->data.bigint.value ^ (self->data.bigint.value >> 32));
 }
 
 static int

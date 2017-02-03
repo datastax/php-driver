@@ -124,16 +124,26 @@ typedef enum {
 PHP_DRIVER_BEGIN_OBJECT_TYPE(numeric)
   php_driver_numeric_type type;
   union {
-    cass_int8_t tinyint_value;
-    cass_int16_t smallint_value;
-    cass_int64_t bigint_value;
-    cass_float_t float_value;
-    mpz_t varint_value;
     struct {
-      mpz_t decimal_value;
-      long decimal_scale;
-    };
-  };
+      cass_int8_t value;
+    } tinyint;
+    struct {
+      cass_int16_t value;
+    } smallint;
+    struct {
+      cass_int64_t value;
+    } bigint;
+    struct {
+      cass_float_t value;
+    } floating;
+    struct {
+      mpz_t value;
+    } varint;
+    struct {
+      mpz_t value;
+      long scale;
+    } decimal;
+  } data;
 PHP_DRIVER_END_OBJECT_TYPE(numeric)
 
 PHP_DRIVER_BEGIN_OBJECT_TYPE(timestamp)
@@ -227,13 +237,17 @@ typedef enum {
 PHP_DRIVER_BEGIN_OBJECT_TYPE(statement)
   php_driver_statement_type type;
   union {
-    char *cql;
-    const CassPrepared *prepared;
     struct {
-      CassBatchType batch_type;
+      char *cql;
+    } simple;
+    struct {
+      const CassPrepared *prepared;
+    } prepared;
+    struct {
+      CassBatchType type;
       HashTable statements;
-    };
-  };
+    } batch;
+  } data;
 PHP_DRIVER_END_OBJECT_TYPE(statement)
 
 typedef struct {
@@ -452,16 +466,27 @@ PHP_DRIVER_BEGIN_OBJECT_TYPE(type)
   CassDataType *data_type;
   union {
     struct {
+      php5to7_zval value_type;
+    } collection;
+    struct {
+      php5to7_zval value_type;
+    } set;
+    struct {
       php5to7_zval key_type;
       php5to7_zval value_type;
-    };
-    char *name;
+    } map;
+    struct {
+      char *class_name;
+    } custom;
     struct {
       char *keyspace;
       char *type_name;
       HashTable types;
-    };
-  };
+    } udt;
+    struct {
+      HashTable types;
+    } tuple;
+  } data;
 PHP_DRIVER_END_OBJECT_TYPE(type)
 
 PHP_DRIVER_BEGIN_OBJECT_TYPE(retry_policy)

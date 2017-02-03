@@ -154,7 +154,7 @@ PHP_METHOD(Collection, add)
     }
 
     if (!php_driver_validate_object(PHP5TO7_ZVAL_ARG(args[i]),
-                                       PHP5TO7_ZVAL_MAYBE_P(type->value_type) TSRMLS_CC)) {
+                                       PHP5TO7_ZVAL_MAYBE_P(type->data.collection.value_type) TSRMLS_CC)) {
       PHP5TO7_MAYBE_EFREE(args);
       RETURN_FALSE;
     }

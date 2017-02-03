@@ -37,7 +37,7 @@ php_driver_set_add(php_driver_set *set, zval *object TSRMLS_DC)
 
   type = PHP_DRIVER_GET_TYPE(PHP5TO7_ZVAL_MAYBE_P(set->type));
 
-  if (!php_driver_validate_object(object, PHP5TO7_ZVAL_MAYBE_P(type->value_type) TSRMLS_CC)) {
+  if (!php_driver_validate_object(object, PHP5TO7_ZVAL_MAYBE_P(type->data.set.value_type) TSRMLS_CC)) {
     return 0;
   }
 
@@ -61,7 +61,7 @@ php_driver_set_del(php_driver_set *set, zval *object TSRMLS_DC)
 
   type = PHP_DRIVER_GET_TYPE(PHP5TO7_ZVAL_MAYBE_P(set->type));
 
-  if (!php_driver_validate_object(object, PHP5TO7_ZVAL_MAYBE_P(type->value_type) TSRMLS_CC)) {
+  if (!php_driver_validate_object(object, PHP5TO7_ZVAL_MAYBE_P(type->data.set.value_type) TSRMLS_CC)) {
     return 0;
   }
 
@@ -89,7 +89,7 @@ php_driver_set_has(php_driver_set *set, zval *object TSRMLS_DC)
 
   type = PHP_DRIVER_GET_TYPE(PHP5TO7_ZVAL_MAYBE_P(set->type));
 
-  if (!php_driver_validate_object(object, PHP5TO7_ZVAL_MAYBE_P(type->value_type) TSRMLS_CC)) {
+  if (!php_driver_validate_object(object, PHP5TO7_ZVAL_MAYBE_P(type->data.set.value_type) TSRMLS_CC)) {
     return 0;
   }
 
