@@ -38,7 +38,7 @@ int php_driver_type_user_type_add(php_driver_type *type,
                                             sub_type->data_type) != CASS_OK) {
     return 0;
   }
-  PHP5TO7_ZEND_HASH_ADD(&type->types,
+  PHP5TO7_ZEND_HASH_ADD(&type->data.udt.types,
                         name, name_length + 1,
                         zsub_type, sizeof(zval *));
   return 1;
@@ -69,13 +69,13 @@ PHP_METHOD(TypeUserType, withName)
   user_type = PHP_DRIVER_GET_TYPE(return_value);
   user_type->data_type = cass_data_type_new_from_existing(self->data_type);
 
-  user_type->type_name = estrndup(name, name_len);
+  user_type->data.udt.type_name = estrndup(name, name_len);
 
-  if (self->keyspace) {
-    user_type->keyspace = estrdup(self->keyspace);
+  if (self->data.udt.keyspace) {
+    user_type->data.udt.keyspace = estrdup(self->data.udt.keyspace);
   }
 
-  PHP5TO7_ZEND_HASH_ZVAL_COPY(&user_type->types, &self->types);
+  PHP5TO7_ZEND_HASH_ZVAL_COPY(&user_type->data.udt.types, &self->data.udt.types);
 }
 
 PHP_METHOD(TypeUserType, name)
@@ -88,10 +88,10 @@ PHP_METHOD(TypeUserType, name)
 
   self = PHP_DRIVER_GET_TYPE(getThis());
 
-  if (!self->type_name)
+  if (!self->data.udt.type_name)
     RETURN_NULL();
 
-  PHP5TO7_RETVAL_STRING(self->type_name);
+  PHP5TO7_RETVAL_STRING(self->data.udt.type_name);
 }
 
 PHP_METHOD(TypeUserType, withKeyspace)
@@ -111,13 +111,13 @@ PHP_METHOD(TypeUserType, withKeyspace)
   user_type = PHP_DRIVER_GET_TYPE(return_value);
   user_type->data_type = cass_data_type_new_from_existing(self->data_type);
 
-  if (self->type_name) {
-    user_type->type_name = estrdup(self->type_name);
+  if (self->data.udt.type_name) {
+    user_type->data.udt.type_name = estrdup(self->data.udt.type_name);
   }
 
-  user_type->keyspace = estrndup(keyspace, keyspace_len);
+  user_type->data.udt.keyspace = estrndup(keyspace, keyspace_len);
 
-  PHP5TO7_ZEND_HASH_ZVAL_COPY(&user_type->types, &self->types);
+  PHP5TO7_ZEND_HASH_ZVAL_COPY(&user_type->data.udt.types, &self->data.udt.types);
 }
 
 PHP_METHOD(TypeUserType, keyspace)
@@ -130,10 +130,10 @@ PHP_METHOD(TypeUserType, keyspace)
 
   self = PHP_DRIVER_GET_TYPE(getThis());
 
-  if (!self->keyspace)
+  if (!self->data.udt.keyspace)
     RETURN_NULL();
 
-  PHP5TO7_RETVAL_STRING(self->keyspace);
+  PHP5TO7_RETVAL_STRING(self->data.udt.keyspace);
 }
 
 PHP_METHOD(TypeUserType, types)
@@ -147,7 +147,7 @@ PHP_METHOD(TypeUserType, types)
   self = PHP_DRIVER_GET_TYPE(getThis());
 
   array_init(return_value);
-  PHP5TO7_ZEND_HASH_ZVAL_COPY(Z_ARRVAL_P(return_value), &self->types);
+  PHP5TO7_ZEND_HASH_ZVAL_COPY(Z_ARRVAL_P(return_value), &self->data.udt.types);
 }
 
 PHP_METHOD(TypeUserType, __toString)
@@ -208,7 +208,7 @@ PHP_METHOD(TypeUserType, create)
         PHP5TO7_MAYBE_EFREE(args);
         return;
       }
-      if (!PHP5TO7_ZEND_HASH_FIND(&self->types,
+      if (!PHP5TO7_ZEND_HASH_FIND(&self->data.udt.types,
                                   Z_STRVAL_P(name), Z_STRLEN_P(name) + 1,
                                   sub_type)) {
         zend_throw_exception_ex(php_driver_invalid_argument_exception_ce,
@@ -218,16 +218,13 @@ PHP_METHOD(TypeUserType, create)
         return;
       }
       if (!php_driver_validate_object(value,
-                                         PHP5TO7_ZVAL_MAYBE_DEREF(sub_type) TSRMLS_CC)) {
+                                      PHP5TO7_ZVAL_MAYBE_DEREF(sub_type) TSRMLS_CC)) {
         PHP5TO7_MAYBE_EFREE(args);
         return;
       }
-      if (!php_driver_user_type_value_set(user_type_value,
-                                        Z_STRVAL_P(name), Z_STRLEN_P(name),
-                                        value TSRMLS_CC)) {
-        PHP5TO7_MAYBE_EFREE(args);
-        return;
-      }
+      php_driver_user_type_value_set(user_type_value,
+                                     Z_STRVAL_P(name), Z_STRLEN_P(name),
+                                     value TSRMLS_CC);
     }
 
     PHP5TO7_MAYBE_EFREE(args);
@@ -281,7 +278,7 @@ php_driver_type_user_type_properties(zval *object TSRMLS_DC)
 
   PHP5TO7_ZVAL_MAYBE_MAKE(types);
   array_init(PHP5TO7_ZVAL_MAYBE_P(types));
-  PHP5TO7_ZEND_HASH_ZVAL_COPY(PHP5TO7_Z_ARRVAL_MAYBE_P(types), &self->types);
+  PHP5TO7_ZEND_HASH_ZVAL_COPY(PHP5TO7_Z_ARRVAL_MAYBE_P(types), &self->data.udt.types);
   PHP5TO7_ZEND_HASH_UPDATE(props,
                            "types", sizeof("types"),
                            PHP5TO7_ZVAL_MAYBE_P(types), sizeof(zval));
@@ -304,9 +301,9 @@ php_driver_type_user_type_free(php5to7_zend_object_free *object TSRMLS_DC)
   php_driver_type *self = PHP5TO7_ZEND_OBJECT_GET(type, object);
 
   if (self->data_type) cass_data_type_free(self->data_type);
-  if (self->keyspace) efree(self->keyspace);
-  if (self->type_name) efree(self->type_name);
-  zend_hash_destroy(&self->types);
+  if (self->data.udt.keyspace) efree(self->data.udt.keyspace);
+  if (self->data.udt.type_name) efree(self->data.udt.type_name);
+  zend_hash_destroy(&self->data.udt.types);
 
   zend_object_std_dtor(&self->zval TSRMLS_CC);
   PHP5TO7_MAYBE_EFREE(self);
@@ -319,8 +316,8 @@ php_driver_type_user_type_new(zend_class_entry *ce TSRMLS_DC)
 
   self->type = CASS_VALUE_TYPE_UDT;
   self->data_type = NULL;
-  self->keyspace = self->type_name = NULL;
-  zend_hash_init(&self->types, 0, NULL, ZVAL_PTR_DTOR, 0);
+  self->data.udt.keyspace = self->data.udt.type_name = NULL;
+  zend_hash_init(&self->data.udt.types, 0, NULL, ZVAL_PTR_DTOR, 0);
 
   PHP5TO7_ZEND_OBJECT_INIT_EX(type, type_user_type, self, ce);
 }

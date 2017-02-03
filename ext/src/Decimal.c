@@ -33,9 +33,9 @@ to_mpf(mpf_t result, php_driver_numeric *decimal)
   mpf_t scale_factor;
   long scale;
   /* result = unscaled * pow(10, -scale) */
-  mpf_set_z(result, decimal->decimal_value);
+  mpf_set_z(result, decimal->data.decimal.value);
 
-  scale = decimal->decimal_scale;
+  scale = decimal->data.decimal.scale;
   mpf_init_set_si(scale_factor, 10);
   mpf_pow_ui(scale_factor, scale_factor, scale < 0 ? -scale : scale);
 
@@ -114,11 +114,11 @@ from_double(php_driver_numeric *result, double value)
 #else
   sprintf(mantissa_str, "%lld", mantissa);
 #endif
-  mpz_set_str(result->decimal_value, mantissa_str, 10);
+  mpz_set_str(result->data.decimal.value, mantissa_str, 10);
 
   /* Change the sign if negative */
   if (raw < 0) {
-    mpz_neg(result->decimal_value, result->decimal_value);
+    mpz_neg(result->data.decimal.value, result->data.decimal.value);
   }
 
   if (exponent < 0) {
@@ -130,12 +130,12 @@ from_double(php_driver_numeric *result, double value)
     mpz_t pow_5;
     mpz_init(pow_5);
     mpz_ui_pow_ui(pow_5, 5, -exponent);
-    mpz_mul(result->decimal_value, result->decimal_value, pow_5);
+    mpz_mul(result->data.decimal.value, result->data.decimal.value, pow_5);
     mpz_clear(pow_5);
-    result->decimal_scale = -exponent;
+    result->data.decimal.scale = -exponent;
   } else {
-    mpz_mul_2exp(result->decimal_value, result->decimal_value, exponent);
-    result->decimal_scale = 0;
+    mpz_mul_2exp(result->data.decimal.value, result->data.decimal.value, exponent);
+    result->data.decimal.scale = 0;
   }
 }
 
@@ -192,7 +192,7 @@ to_string(zval* result, php_driver_numeric *decimal TSRMLS_DC)
 {
   char* string;
   int string_len;
-  php_driver_format_decimal(decimal->decimal_value, decimal->decimal_scale, &string, &string_len);
+  php_driver_format_decimal(decimal->data.decimal.value, decimal->data.decimal.scale, &string, &string_len);
 
   PHP5TO7_ZVAL_STRINGL(result, string, string_len);
   efree(string);
@@ -205,12 +205,12 @@ align_decimals(php_driver_numeric *lhs, php_driver_numeric *rhs)
 {
   mpz_t pow_10;
   mpz_init(pow_10);
-  if (lhs->decimal_scale < rhs->decimal_scale) {
-    mpz_ui_pow_ui(pow_10, 10, rhs->decimal_scale - lhs->decimal_scale);
-    mpz_mul(lhs->decimal_value, lhs->decimal_value, pow_10);
-  } else if (lhs->decimal_scale > rhs->decimal_scale) {
-    mpz_ui_pow_ui(pow_10, 10, lhs->decimal_scale - rhs->decimal_scale);
-    mpz_mul(rhs->decimal_value, rhs->decimal_value, pow_10);
+  if (lhs->data.decimal.scale < rhs->data.decimal.scale) {
+    mpz_ui_pow_ui(pow_10, 10, rhs->data.decimal.scale - lhs->data.decimal.scale);
+    mpz_mul(lhs->data.decimal.value, lhs->data.decimal.value, pow_10);
+  } else if (lhs->data.decimal.scale > rhs->data.decimal.scale) {
+    mpz_ui_pow_ui(pow_10, 10, lhs->data.decimal.scale - rhs->data.decimal.scale);
+    mpz_mul(rhs->data.decimal.value, rhs->data.decimal.value, pow_10);
   }
   mpz_clear(pow_10);
 }
@@ -233,8 +233,8 @@ php_driver_decimal_init(INTERNAL_FUNCTION_PARAMETERS)
   }
 
   if (Z_TYPE_P(value) == IS_LONG) {
-    mpz_set_si(self->decimal_value, Z_LVAL_P(value));
-    self->decimal_scale = 0;
+    mpz_set_si(self->data.decimal.value, Z_LVAL_P(value));
+    self->data.decimal.scale = 0;
   } else if (Z_TYPE_P(value) == IS_DOUBLE) {
     double val = Z_DVAL_P(value);
     if (zend_isnan(val) || zend_isinf(val)) {
@@ -245,14 +245,14 @@ php_driver_decimal_init(INTERNAL_FUNCTION_PARAMETERS)
     from_double(self, val);
   } else if (Z_TYPE_P(value) == IS_STRING) {
     if (!php_driver_parse_decimal(Z_STRVAL_P(value), Z_STRLEN_P(value),
-                                     &self->decimal_value, &self->decimal_scale TSRMLS_CC)) {
+                                     &self->data.decimal.value, &self->data.decimal.scale TSRMLS_CC)) {
       return;
     }
   } else if (Z_TYPE_P(value) == IS_OBJECT &&
              instanceof_function(Z_OBJCE_P(value), php_driver_decimal_ce TSRMLS_CC)) {
     php_driver_numeric *decimal = PHP_DRIVER_GET_NUMERIC(value);
-    mpz_set(self->decimal_value, decimal->decimal_value);
-    self->decimal_scale = decimal->decimal_scale;
+    mpz_set(self->data.decimal.value, decimal->data.decimal.value);
+    self->data.decimal.scale = decimal->data.decimal.scale;
   } else {
     INVALID_ARGUMENT(value, "a long, a double, a numeric string or a " \
                             PHP_DRIVER_NAMESPACE "\\Decimal");
@@ -290,7 +290,7 @@ PHP_METHOD(Decimal, value)
 
   char* string;
   int string_len;
-  php_driver_format_integer(self->decimal_value, &string, &string_len);
+  php_driver_format_integer(self->data.decimal.value, &string, &string_len);
 
   PHP5TO7_RETVAL_STRINGL(string, string_len);
   efree(string);
@@ -301,7 +301,7 @@ PHP_METHOD(Decimal, scale)
 {
   php_driver_numeric *self = PHP_DRIVER_GET_NUMERIC(getThis());
 
-  RETURN_LONG(self->decimal_scale);
+  RETURN_LONG(self->data.decimal.scale);
 }
 
 /* {{{ Decimal::add() */
@@ -323,8 +323,8 @@ PHP_METHOD(Decimal, add)
     result = PHP_DRIVER_GET_NUMERIC(return_value);
 
     align_decimals(self, decimal);
-    mpz_add(result->decimal_value, self->decimal_value, decimal->decimal_value);
-    result->decimal_scale = MAX(self->decimal_scale, decimal->decimal_scale);
+    mpz_add(result->data.decimal.value, self->data.decimal.value, decimal->data.decimal.value);
+    result->data.decimal.scale = MAX(self->data.decimal.scale, decimal->data.decimal.scale);
   } else {
     INVALID_ARGUMENT(num, "a " PHP_DRIVER_NAMESPACE "\\Decimal");
   }
@@ -350,8 +350,8 @@ PHP_METHOD(Decimal, sub)
     result = PHP_DRIVER_GET_NUMERIC(return_value);
 
     align_decimals(self, decimal);
-    mpz_sub(result->decimal_value, self->decimal_value, decimal->decimal_value);
-    result->decimal_scale = MAX(self->decimal_scale, decimal->decimal_scale);
+    mpz_sub(result->data.decimal.value, self->data.decimal.value, decimal->data.decimal.value);
+    result->data.decimal.scale = MAX(self->data.decimal.scale, decimal->data.decimal.scale);
   } else {
     INVALID_ARGUMENT(num, "a " PHP_DRIVER_NAMESPACE "\\Decimal");
   }
@@ -376,8 +376,8 @@ PHP_METHOD(Decimal, mul)
     object_init_ex(return_value, php_driver_decimal_ce);
     result = PHP_DRIVER_GET_NUMERIC(return_value);
 
-    mpz_mul(result->decimal_value, self->decimal_value, decimal->decimal_value);
-    result->decimal_scale = self->decimal_scale + decimal->decimal_scale;
+    mpz_mul(result->data.decimal.value, self->data.decimal.value, decimal->data.decimal.value);
+    result->data.decimal.scale = self->data.decimal.scale + decimal->data.decimal.scale;
   } else {
     INVALID_ARGUMENT(num, "a " PHP_DRIVER_NAMESPACE "\\Decimal");
   }
@@ -408,8 +408,8 @@ PHP_METHOD(Decimal, abs)
   object_init_ex(return_value, php_driver_decimal_ce);
   result = PHP_DRIVER_GET_NUMERIC(return_value);
 
-  mpz_abs(result->decimal_value, self->decimal_value);
-  result->decimal_scale = self->decimal_scale;
+  mpz_abs(result->data.decimal.value, self->data.decimal.value);
+  result->data.decimal.scale = self->data.decimal.scale;
 }
 /* }}} */
 
@@ -422,8 +422,8 @@ PHP_METHOD(Decimal, neg)
   object_init_ex(return_value, php_driver_decimal_ce);
   result = PHP_DRIVER_GET_NUMERIC(return_value);
 
-  mpz_neg(result->decimal_value, self->decimal_value);
-  result->decimal_scale = self->decimal_scale;
+  mpz_neg(result->data.decimal.value, self->data.decimal.value);
+  result->data.decimal.scale = self->data.decimal.scale;
 }
 /* }}} */
 
@@ -446,10 +446,10 @@ PHP_METHOD(Decimal, sqrt)
   object_init_ex(return_value, php_driver_decimal_ce);
   php_driver_numeric *result = PHP_DRIVER_GET_NUMERIC(return_value);
 
-  mpz_set_str(result->decimal_value, mantissa, 10);
+  mpz_set_str(result->value.decimal_value, mantissa, 10);
   mp_bitcnt_t prec = mpf_get_prec(value);
   exponent -= prec;
-  result->decimal_scale = -exponent;
+  result->value.decimal_scale = -exponent;
 
   free(mantissa);
   mpf_clear(value);
@@ -530,14 +530,14 @@ php_driver_decimal_properties(zval *object TSRMLS_DC)
   type = php_driver_type_scalar(CASS_VALUE_TYPE_DECIMAL TSRMLS_CC);
   PHP5TO7_ZEND_HASH_UPDATE(props, "type", sizeof("type"), PHP5TO7_ZVAL_MAYBE_P(type), sizeof(zval));
 
-  php_driver_format_integer(self->decimal_value, &string, &string_len);
+  php_driver_format_integer(self->data.decimal.value, &string, &string_len);
   PHP5TO7_ZVAL_MAYBE_MAKE(PHP5TO7_ZVAL_MAYBE_P(value));
   PHP5TO7_ZVAL_STRINGL(PHP5TO7_ZVAL_MAYBE_P(value), string, string_len);
   efree(string);
   PHP5TO7_ZEND_HASH_UPDATE(props, "value", sizeof("value"), PHP5TO7_ZVAL_MAYBE_P(value), sizeof(zval));
 
   PHP5TO7_ZVAL_MAYBE_MAKE(scale);
-  ZVAL_LONG(PHP5TO7_ZVAL_MAYBE_P(scale), self->decimal_scale);
+  ZVAL_LONG(PHP5TO7_ZVAL_MAYBE_P(scale), self->data.decimal.scale);
   PHP5TO7_ZEND_HASH_UPDATE(props, "scale", sizeof("scale"), PHP5TO7_ZVAL_MAYBE_P(scale), sizeof(zval));
 
   return props;
@@ -555,9 +555,9 @@ php_driver_decimal_compare(zval *obj1, zval *obj2 TSRMLS_DC)
   decimal1 = PHP_DRIVER_GET_NUMERIC(obj1);
   decimal2 = PHP_DRIVER_GET_NUMERIC(obj2);
 
-  if (decimal1->decimal_scale == decimal2->decimal_scale) {
-    return mpz_cmp(decimal1->decimal_value, decimal2->decimal_value);
-  } else if (decimal1->decimal_scale < decimal2->decimal_scale) {
+  if (decimal1->data.decimal.scale == decimal2->data.decimal.scale) {
+    return mpz_cmp(decimal1->data.decimal.value, decimal2->data.decimal.value);
+  } else if (decimal1->data.decimal.scale < decimal2->data.decimal.scale) {
     return -1;
   } else {
     return 1;
@@ -568,7 +568,7 @@ static unsigned
 php_driver_decimal_hash_value(zval *obj TSRMLS_DC)
 {
   php_driver_numeric *self = PHP_DRIVER_GET_NUMERIC(obj);
-  return php_driver_mpz_hash((unsigned)self->decimal_scale, self->decimal_value);
+  return php_driver_mpz_hash((unsigned)self->data.decimal.scale, self->data.decimal.value);
 }
 
 static int
@@ -595,7 +595,7 @@ php_driver_decimal_free(php5to7_zend_object_free *object TSRMLS_DC)
 {
   php_driver_numeric *self = PHP5TO7_ZEND_OBJECT_GET(numeric, object);
 
-  mpz_clear(self->decimal_value);
+  mpz_clear(self->data.decimal.value);
 
   zend_object_std_dtor(&self->zval TSRMLS_CC);
   PHP5TO7_MAYBE_EFREE(self);
@@ -608,8 +608,8 @@ php_driver_decimal_new(zend_class_entry *ce TSRMLS_DC)
       PHP5TO7_ZEND_OBJECT_ECALLOC(numeric, ce);
 
   self->type = PHP_DRIVER_DECIMAL;
-  self->decimal_scale = 0;
-  mpz_init(self->decimal_value);
+  self->data.decimal.scale = 0;
+  mpz_init(self->data.decimal.value);
 
   PHP5TO7_ZEND_OBJECT_INIT_EX(numeric, decimal, self, ce);
 }

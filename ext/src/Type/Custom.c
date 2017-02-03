@@ -38,7 +38,7 @@ PHP_METHOD(TypeCustom, name)
 
   custom = PHP_DRIVER_GET_TYPE(getThis());
 
-  PHP5TO7_RETVAL_STRING(custom->name);
+  PHP5TO7_RETVAL_STRING(custom->data.custom.class_name);
 }
 
 PHP_METHOD(TypeCustom, __toString)
@@ -51,7 +51,7 @@ PHP_METHOD(TypeCustom, __toString)
 
   custom = PHP_DRIVER_GET_TYPE(getThis());
 
-  PHP5TO7_RETVAL_STRING(custom->name);
+  PHP5TO7_RETVAL_STRING(custom->data.custom.class_name);
 }
 
 PHP_METHOD(TypeCustom, create)
@@ -96,7 +96,7 @@ php_driver_type_custom_properties(zval *object TSRMLS_DC)
   HashTable      *props = zend_std_get_properties(object TSRMLS_CC);
 
   PHP5TO7_ZVAL_MAYBE_MAKE(name);
-  PHP5TO7_ZVAL_STRING(PHP5TO7_ZVAL_MAYBE_P(name), self->name);
+  PHP5TO7_ZVAL_STRING(PHP5TO7_ZVAL_MAYBE_P(name), self->data.custom.class_name);
 
   PHP5TO7_ZEND_HASH_UPDATE(props,
                            "name", sizeof("name"),
@@ -119,9 +119,9 @@ php_driver_type_custom_free(php5to7_zend_object_free *object TSRMLS_DC)
   php_driver_type *self = PHP5TO7_ZEND_OBJECT_GET(type, object);
 
   if (self->data_type) cass_data_type_free(self->data_type);
-  if (self->name) {
-    efree(self->name);
-    self->name = NULL;
+  if (self->data.custom.class_name) {
+    efree(self->data.custom.class_name);
+    self->data.custom.class_name = NULL;
   }
 
   zend_object_std_dtor(&self->zval TSRMLS_CC);
@@ -135,7 +135,7 @@ php_driver_type_custom_new(zend_class_entry *ce TSRMLS_DC)
 
   self->type = CASS_VALUE_TYPE_CUSTOM;
   self->data_type = cass_data_type_new(self->type);
-  self->name = NULL;
+  self->data.custom.class_name = NULL;
 
   PHP5TO7_ZEND_OBJECT_INIT_EX(type, type_custom, self, ce);
 }

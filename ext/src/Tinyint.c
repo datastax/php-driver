@@ -30,14 +30,14 @@ zend_class_entry *php_driver_tinyint_ce = NULL;
 static int
 to_double(zval *result, php_driver_numeric *tinyint TSRMLS_DC)
 {
-  ZVAL_DOUBLE(result, (double) tinyint->tinyint_value);
+  ZVAL_DOUBLE(result, (double) tinyint->data.tinyint.value);
   return SUCCESS;
 }
 
 static int
 to_long(zval *result, php_driver_numeric *tinyint TSRMLS_DC)
 {
-  ZVAL_LONG(result, (long) tinyint->tinyint_value);
+  ZVAL_LONG(result, (long) tinyint->data.tinyint.value);
   return SUCCESS;
 }
 
@@ -45,7 +45,7 @@ static int
 to_string(zval *result, php_driver_numeric *tinyint TSRMLS_DC)
 {
   char *string;
-  spprintf(&string, 0, "%d", tinyint->tinyint_value);
+  spprintf(&string, 0, "%d", tinyint->data.tinyint.value);
   PHP5TO7_ZVAL_STRING(result, string);
   efree(string);
   return SUCCESS;
@@ -72,7 +72,7 @@ php_driver_tinyint_init(INTERNAL_FUNCTION_PARAMETERS)
   if (Z_TYPE_P(value) == IS_OBJECT &&
            instanceof_function(Z_OBJCE_P(value), php_driver_tinyint_ce TSRMLS_CC)) {
     php_driver_numeric *other = PHP_DRIVER_GET_NUMERIC(value);
-    self->tinyint_value = other->tinyint_value;
+    self->data.tinyint.value = other->data.tinyint.value;
   } else {
     if (Z_TYPE_P(value) == IS_LONG) {
       number = (cass_int32_t) Z_LVAL_P(value);
@@ -90,7 +90,7 @@ php_driver_tinyint_init(INTERNAL_FUNCTION_PARAMETERS)
     if (number < INT8_MIN || number > INT8_MAX) {
       INVALID_ARGUMENT(value, ("between -65 and 64"));
     }
-    self->tinyint_value = (cass_int8_t) number;
+    self->data.tinyint.value = (cass_int8_t) number;
   }
 }
 
@@ -147,8 +147,8 @@ PHP_METHOD(Tinyint, add)
     object_init_ex(return_value, php_driver_tinyint_ce);
     result = PHP_DRIVER_GET_NUMERIC(return_value);
 
-    result->tinyint_value = self->tinyint_value + tinyint->tinyint_value;
-    if (result->tinyint_value - tinyint->tinyint_value != self->tinyint_value) {
+    result->data.tinyint.value = self->data.tinyint.value + tinyint->data.tinyint.value;
+    if (result->data.tinyint.value - tinyint->data.tinyint.value != self->data.tinyint.value) {
       zend_throw_exception_ex(php_driver_range_exception_ce, 0 TSRMLS_CC, "Sum is out of range");
       return;
     }
@@ -176,8 +176,8 @@ PHP_METHOD(Tinyint, sub)
     object_init_ex(return_value, php_driver_tinyint_ce);
     result = PHP_DRIVER_GET_NUMERIC(return_value);
 
-    result->tinyint_value = self->tinyint_value - tinyint->tinyint_value;
-    if (result->tinyint_value + tinyint->tinyint_value != self->tinyint_value) {
+    result->data.tinyint.value = self->data.tinyint.value - tinyint->data.tinyint.value;
+    if (result->data.tinyint.value + tinyint->data.tinyint.value != self->data.tinyint.value) {
       zend_throw_exception_ex(php_driver_range_exception_ce, 0 TSRMLS_CC, "Difference is out of range");
       return;
     }
@@ -205,9 +205,9 @@ PHP_METHOD(Tinyint, mul)
     object_init_ex(return_value, php_driver_tinyint_ce);
     result = PHP_DRIVER_GET_NUMERIC(return_value);
 
-    result->tinyint_value = self->tinyint_value * tinyint->tinyint_value;
-    if (tinyint->tinyint_value != 0 &&
-        result->tinyint_value / tinyint->tinyint_value != self->tinyint_value) {
+    result->data.tinyint.value = self->data.tinyint.value * tinyint->data.tinyint.value;
+    if (tinyint->data.tinyint.value != 0 &&
+        result->data.tinyint.value / tinyint->data.tinyint.value != self->data.tinyint.value) {
       zend_throw_exception_ex(php_driver_range_exception_ce, 0 TSRMLS_CC, "Product is out of range");
       return;
     }
@@ -235,13 +235,13 @@ PHP_METHOD(Tinyint, div)
     object_init_ex(return_value, php_driver_tinyint_ce);
     result = PHP_DRIVER_GET_NUMERIC(return_value);
 
-    if (tinyint->tinyint_value == 0) {
+    if (tinyint->data.tinyint.value == 0) {
       zend_throw_exception_ex(php_driver_divide_by_zero_exception_ce, 0 TSRMLS_CC, "Cannot divide by zero");
       return;
     }
 
-    result->tinyint_value = self->tinyint_value / tinyint->tinyint_value;
-    if (result->tinyint_value * tinyint->tinyint_value != self->tinyint_value) {
+    result->data.tinyint.value = self->data.tinyint.value / tinyint->data.tinyint.value;
+    if (result->data.tinyint.value * tinyint->data.tinyint.value != self->data.tinyint.value) {
       zend_throw_exception_ex(php_driver_range_exception_ce, 0 TSRMLS_CC, "Quotient is out of range");
       return;
     }
@@ -269,12 +269,12 @@ PHP_METHOD(Tinyint, mod)
     object_init_ex(return_value, php_driver_tinyint_ce);
     result = PHP_DRIVER_GET_NUMERIC(return_value);
 
-    if (tinyint->tinyint_value == 0) {
+    if (tinyint->data.tinyint.value == 0) {
       zend_throw_exception_ex(php_driver_divide_by_zero_exception_ce, 0 TSRMLS_CC, "Cannot modulo by zero");
       return;
     }
 
-    result->tinyint_value = self->tinyint_value % tinyint->tinyint_value;
+    result->data.tinyint.value = self->data.tinyint.value % tinyint->data.tinyint.value;
   } else {
     INVALID_ARGUMENT(divisor, "a " PHP_DRIVER_NAMESPACE "\\Tinyint");
   }
@@ -287,14 +287,14 @@ PHP_METHOD(Tinyint, abs)
   php_driver_numeric *result = NULL;
   php_driver_numeric *self = PHP_DRIVER_GET_NUMERIC(getThis());
 
-  if (self->tinyint_value == INT8_MIN) {
+  if (self->data.tinyint.value == INT8_MIN) {
     zend_throw_exception_ex(php_driver_range_exception_ce, 0 TSRMLS_CC, "Value doesn't exist");
     return;
   }
 
   object_init_ex(return_value, php_driver_tinyint_ce);
   result = PHP_DRIVER_GET_NUMERIC(return_value);
-  result->tinyint_value = self->tinyint_value < 0 ? -self->tinyint_value : self->tinyint_value;
+  result->data.tinyint.value = self->data.tinyint.value < 0 ? -self->data.tinyint.value : self->data.tinyint.value;
 }
 /* }}} */
 
@@ -304,14 +304,14 @@ PHP_METHOD(Tinyint, neg)
   php_driver_numeric *result = NULL;
   php_driver_numeric *self = PHP_DRIVER_GET_NUMERIC(getThis());
 
-  if (self->tinyint_value == INT8_MIN) {
+  if (self->data.tinyint.value == INT8_MIN) {
     zend_throw_exception_ex(php_driver_range_exception_ce, 0 TSRMLS_CC, "Value doesn't exist");
     return;
   }
 
   object_init_ex(return_value, php_driver_tinyint_ce);
   result = PHP_DRIVER_GET_NUMERIC(return_value);
-  result->tinyint_value = -self->tinyint_value;
+  result->data.tinyint.value = -self->data.tinyint.value;
 }
 /* }}} */
 
@@ -321,7 +321,7 @@ PHP_METHOD(Tinyint, sqrt)
   php_driver_numeric *result = NULL;
   php_driver_numeric *self = PHP_DRIVER_GET_NUMERIC(getThis());
 
-  if (self->tinyint_value < 0) {
+  if (self->data.tinyint.value < 0) {
     zend_throw_exception_ex(php_driver_range_exception_ce, 0 TSRMLS_CC,
                             "Cannot take a square root of a negative number");
     return;
@@ -329,7 +329,7 @@ PHP_METHOD(Tinyint, sqrt)
 
   object_init_ex(return_value, php_driver_tinyint_ce);
   result = PHP_DRIVER_GET_NUMERIC(return_value);
-  result->tinyint_value = (cass_int8_t) sqrt((long double) self->tinyint_value);
+  result->data.tinyint.value = (cass_int8_t) sqrt((long double) self->data.tinyint.value);
 }
 /* }}} */
 
@@ -357,7 +357,7 @@ PHP_METHOD(Tinyint, min)
   php_driver_numeric *tinyint = NULL;
   object_init_ex(return_value, php_driver_tinyint_ce);
   tinyint = PHP_DRIVER_GET_NUMERIC(return_value);
-  tinyint->tinyint_value = INT8_MIN;
+  tinyint->data.tinyint.value = INT8_MIN;
 }
 /* }}} */
 
@@ -367,7 +367,7 @@ PHP_METHOD(Tinyint, max)
   php_driver_numeric *tinyint = NULL;
   object_init_ex(return_value, php_driver_tinyint_ce);
   tinyint = PHP_DRIVER_GET_NUMERIC(return_value);
-  tinyint->tinyint_value = INT8_MAX;
+  tinyint->data.tinyint.value = INT8_MAX;
 }
 /* }}} */
 
@@ -443,9 +443,9 @@ php_driver_tinyint_compare(zval *obj1, zval *obj2 TSRMLS_DC)
   tinyint1 = PHP_DRIVER_GET_NUMERIC(obj1);
   tinyint2 = PHP_DRIVER_GET_NUMERIC(obj2);
 
-  if (tinyint1->tinyint_value == tinyint2->tinyint_value)
+  if (tinyint1->data.tinyint.value == tinyint2->data.tinyint.value)
     return 0;
-  else if (tinyint1->tinyint_value < tinyint2->tinyint_value)
+  else if (tinyint1->data.tinyint.value < tinyint2->data.tinyint.value)
     return -1;
   else
     return 1;
@@ -455,7 +455,7 @@ static unsigned
 php_driver_tinyint_hash_value(zval *obj TSRMLS_DC)
 {
   php_driver_numeric *self = PHP_DRIVER_GET_NUMERIC(obj);
-  return 31 * 17 + self->tinyint_value;
+  return 31 * 17 + self->data.tinyint.value;
 }
 
 static int

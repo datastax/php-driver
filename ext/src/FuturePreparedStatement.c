@@ -48,7 +48,7 @@ PHP_METHOD(FuturePreparedStatement, get)
 
   prepared_statement = PHP_DRIVER_GET_STATEMENT(return_value);
 
-  prepared_statement->prepared = cass_future_get_prepared(self->future);
+  prepared_statement->data.prepared.prepared = cass_future_get_prepared(self->future);
 }
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_timeout, 0, ZEND_RETURN_VALUE, 0)

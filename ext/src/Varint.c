@@ -27,34 +27,34 @@ zend_class_entry *php_driver_varint_ce = NULL;
 static int
 to_double(zval *result, php_driver_numeric *varint TSRMLS_DC)
 {
-  if (mpz_cmp_d(varint->varint_value, -DBL_MAX) < 0) {
+  if (mpz_cmp_d(varint->data.varint.value, -DBL_MAX) < 0) {
     zend_throw_exception_ex(php_driver_range_exception_ce, 0 TSRMLS_CC, "Value is too small");
     return FAILURE;
   }
 
-  if (mpz_cmp_d(varint->varint_value, DBL_MAX) > 0) {
+  if (mpz_cmp_d(varint->data.varint.value, DBL_MAX) > 0) {
     zend_throw_exception_ex(php_driver_range_exception_ce, 0 TSRMLS_CC, "Value is too big");
     return FAILURE;
   }
 
-  ZVAL_DOUBLE(result, mpz_get_d(varint->varint_value));
+  ZVAL_DOUBLE(result, mpz_get_d(varint->data.varint.value));
   return SUCCESS;
 }
 
 static int
 to_long(zval *result, php_driver_numeric *varint TSRMLS_DC)
 {
-  if (mpz_cmp_si(varint->varint_value, LONG_MIN) < 0) {
+  if (mpz_cmp_si(varint->data.varint.value, LONG_MIN) < 0) {
     zend_throw_exception_ex(php_driver_range_exception_ce, 0 TSRMLS_CC, "Value is too small");
     return FAILURE;
   }
 
-  if (mpz_cmp_si(varint->varint_value, LONG_MAX) > 0) {
+  if (mpz_cmp_si(varint->data.varint.value, LONG_MAX) > 0) {
     zend_throw_exception_ex(php_driver_range_exception_ce, 0 TSRMLS_CC, "Value is too big");
     return FAILURE;
   }
 
-  ZVAL_LONG(result, mpz_get_si(varint->varint_value));
+  ZVAL_LONG(result, mpz_get_si(varint->data.varint.value));
   return SUCCESS;
 }
 
@@ -63,7 +63,7 @@ to_string(zval *result, php_driver_numeric *varint TSRMLS_DC)
 {
   char *string;
   int string_len;
-  php_driver_format_integer(varint->varint_value, &string, &string_len);
+  php_driver_format_integer(varint->data.varint.value, &string, &string_len);
 
   PHP5TO7_ZVAL_STRINGL(result, string, string_len);
   efree(string);
@@ -89,15 +89,15 @@ php_driver_varint_init(INTERNAL_FUNCTION_PARAMETERS)
   }
 
   if (Z_TYPE_P(num) == IS_LONG) {
-    mpz_set_si(self->varint_value, Z_LVAL_P(num));
+    mpz_set_si(self->data.varint.value, Z_LVAL_P(num));
   } else if (Z_TYPE_P(num) == IS_DOUBLE) {
-    mpz_set_d(self->varint_value, Z_DVAL_P(num));
+    mpz_set_d(self->data.varint.value, Z_DVAL_P(num));
   } else if (Z_TYPE_P(num) == IS_STRING) {
-    php_driver_parse_varint(Z_STRVAL_P(num), Z_STRLEN_P(num), &self->varint_value TSRMLS_CC);
+    php_driver_parse_varint(Z_STRVAL_P(num), Z_STRLEN_P(num), &self->data.varint.value TSRMLS_CC);
   } else if (Z_TYPE_P(num) == IS_OBJECT &&
              instanceof_function(Z_OBJCE_P(num), php_driver_varint_ce TSRMLS_CC)) {
     php_driver_numeric *varint = PHP_DRIVER_GET_NUMERIC(num);
-    mpz_set(self->varint_value, varint->varint_value);
+    mpz_set(self->data.varint.value, varint->data.varint.value);
   } else {
     INVALID_ARGUMENT(num, "a long, double, numeric string or a " PHP_DRIVER_NAMESPACE "\\Varint instance");
   }
@@ -134,7 +134,7 @@ PHP_METHOD(Varint, value)
 
   char *string;
   int string_len;
-  php_driver_format_integer(self->varint_value, &string, &string_len);
+  php_driver_format_integer(self->data.varint.value, &string, &string_len);
 
   PHP5TO7_RETVAL_STRINGL(string, string_len);
   efree(string);
@@ -159,7 +159,7 @@ PHP_METHOD(Varint, add)
     object_init_ex(return_value, php_driver_varint_ce);
     result = PHP_DRIVER_GET_NUMERIC(return_value);
 
-    mpz_add(result->varint_value, self->varint_value, varint->varint_value);
+    mpz_add(result->data.varint.value, self->data.varint.value, varint->data.varint.value);
   } else {
     INVALID_ARGUMENT(num, "an instance of " PHP_DRIVER_NAMESPACE "\\Varint");
   }
@@ -184,7 +184,7 @@ PHP_METHOD(Varint, sub)
     object_init_ex(return_value, php_driver_varint_ce);
     result = PHP_DRIVER_GET_NUMERIC(return_value);
 
-    mpz_sub(result->varint_value, self->varint_value, varint->varint_value);
+    mpz_sub(result->data.varint.value, self->data.varint.value, varint->data.varint.value);
   } else {
     INVALID_ARGUMENT(num, "an instance of " PHP_DRIVER_NAMESPACE "\\Varint");
   }
@@ -209,7 +209,7 @@ PHP_METHOD(Varint, mul)
     object_init_ex(return_value, php_driver_varint_ce);
     result = PHP_DRIVER_GET_NUMERIC(return_value);
 
-    mpz_mul(result->varint_value, self->varint_value, varint->varint_value);
+    mpz_mul(result->data.varint.value, self->data.varint.value, varint->data.varint.value);
   } else {
     INVALID_ARGUMENT(num, "an instance of " PHP_DRIVER_NAMESPACE "\\Varint");
   }
@@ -234,12 +234,12 @@ PHP_METHOD(Varint, div)
     object_init_ex(return_value, php_driver_varint_ce);
     result = PHP_DRIVER_GET_NUMERIC(return_value);
 
-    if (mpz_sgn(varint->varint_value) == 0) {
+    if (mpz_sgn(varint->data.varint.value) == 0) {
       zend_throw_exception_ex(php_driver_divide_by_zero_exception_ce, 0 TSRMLS_CC, "Cannot divide by zero");
       return;
     }
 
-    mpz_div(result->varint_value, self->varint_value, varint->varint_value);
+    mpz_div(result->data.varint.value, self->data.varint.value, varint->data.varint.value);
   } else {
     INVALID_ARGUMENT(num, "an instance of " PHP_DRIVER_NAMESPACE "\\Varint");
   }
@@ -264,12 +264,12 @@ PHP_METHOD(Varint, mod)
     object_init_ex(return_value, php_driver_varint_ce);
     result = PHP_DRIVER_GET_NUMERIC(return_value);
 
-    if (mpz_sgn(varint->varint_value) == 0) {
+    if (mpz_sgn(varint->data.varint.value) == 0) {
       zend_throw_exception_ex(php_driver_divide_by_zero_exception_ce, 0 TSRMLS_CC, "Cannot modulo by zero");
       return;
     }
 
-    mpz_mod(result->varint_value, self->varint_value, varint->varint_value);
+    mpz_mod(result->data.varint.value, self->data.varint.value, varint->data.varint.value);
   } else {
     INVALID_ARGUMENT(num, "an instance of " PHP_DRIVER_NAMESPACE "\\Varint");
   }
@@ -285,7 +285,7 @@ PHP_METHOD(Varint, abs)
   object_init_ex(return_value, php_driver_varint_ce);
   result = PHP_DRIVER_GET_NUMERIC(return_value);
 
-  mpz_abs(result->varint_value, self->varint_value);
+  mpz_abs(result->data.varint.value, self->data.varint.value);
 }
 /* }}} */
 
@@ -298,7 +298,7 @@ PHP_METHOD(Varint, neg)
   object_init_ex(return_value, php_driver_varint_ce);
   result = PHP_DRIVER_GET_NUMERIC(return_value);
 
-  mpz_neg(result->varint_value, self->varint_value);
+  mpz_neg(result->data.varint.value, self->data.varint.value);
 }
 /* }}} */
 
@@ -308,7 +308,7 @@ PHP_METHOD(Varint, sqrt)
   php_driver_numeric *result = NULL;
   php_driver_numeric *self = PHP_DRIVER_GET_NUMERIC(getThis());
 
-  if (mpz_sgn(self->varint_value) < 0) {
+  if (mpz_sgn(self->data.varint.value) < 0) {
     zend_throw_exception_ex(php_driver_range_exception_ce, 0 TSRMLS_CC,
                             "Cannot take a square root of a negative number");
     return;
@@ -317,7 +317,7 @@ PHP_METHOD(Varint, sqrt)
   object_init_ex(return_value, php_driver_varint_ce);
   result = PHP_DRIVER_GET_NUMERIC(return_value);
 
-  mpz_sqrt(result->varint_value, self->varint_value);
+  mpz_sqrt(result->data.varint.value, self->data.varint.value);
 }
 /* }}} */
 
@@ -389,7 +389,7 @@ php_driver_varint_properties(zval *object TSRMLS_DC)
   php_driver_numeric *self = PHP_DRIVER_GET_NUMERIC(object);
   HashTable         *props = zend_std_get_properties(object TSRMLS_CC);
 
-  php_driver_format_integer(self->varint_value, &string, &string_len);
+  php_driver_format_integer(self->data.varint.value, &string, &string_len);
 
   type = php_driver_type_scalar(CASS_VALUE_TYPE_VARINT TSRMLS_CC);
   PHP5TO7_ZEND_HASH_UPDATE(props, "type", sizeof("type"), PHP5TO7_ZVAL_MAYBE_P(type), sizeof(zval));
@@ -414,14 +414,14 @@ php_driver_varint_compare(zval *obj1, zval *obj2 TSRMLS_DC)
   varint1 = PHP_DRIVER_GET_NUMERIC(obj1);
   varint2 = PHP_DRIVER_GET_NUMERIC(obj2);
 
-  return mpz_cmp(varint1->varint_value, varint2->varint_value);
+  return mpz_cmp(varint1->data.varint.value, varint2->data.varint.value);
 }
 
 static unsigned
 php_driver_varint_hash_value(zval *obj TSRMLS_DC)
 {
   php_driver_numeric *self = PHP_DRIVER_GET_NUMERIC(obj);
-  return php_driver_mpz_hash(0, self->varint_value);
+  return php_driver_mpz_hash(0, self->data.varint.value);
 }
 
 static int
@@ -448,7 +448,7 @@ php_driver_varint_free(php5to7_zend_object_free *object TSRMLS_DC)
 {
   php_driver_numeric *self = PHP5TO7_ZEND_OBJECT_GET(numeric, object);
 
-  mpz_clear(self->varint_value);
+  mpz_clear(self->data.varint.value);
 
   zend_object_std_dtor(&self->zval TSRMLS_CC);
   PHP5TO7_MAYBE_EFREE(self);
@@ -460,7 +460,7 @@ php_driver_varint_new(zend_class_entry *ce TSRMLS_DC)
   php_driver_numeric *self =
       PHP5TO7_ZEND_OBJECT_ECALLOC(numeric, ce);
 
-  mpz_init(self->varint_value);
+  mpz_init(self->data.varint.value);
 
   PHP5TO7_ZEND_OBJECT_INIT_EX(numeric, varint, self, ce);
 }

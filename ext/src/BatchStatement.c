@@ -53,7 +53,7 @@ PHP_METHOD(BatchStatement, __construct)
     case CASS_BATCH_TYPE_LOGGED:
     case CASS_BATCH_TYPE_UNLOGGED:
     case CASS_BATCH_TYPE_COUNTER:
-      self->batch_type = (CassBatchType) Z_LVAL_P(type);
+      self->data.batch.type = (CassBatchType) Z_LVAL_P(type);
       break;
     default:
       INVALID_ARGUMENT(type, "one of " PHP_DRIVER_NAMESPACE "::BATCH_TYPE_*");
@@ -94,9 +94,9 @@ PHP_METHOD(BatchStatement, add)
 
 #if PHP_MAJOR_VERSION >= 7
   ZVAL_PTR(&entry, batch_statement_entry);
-  zend_hash_next_index_insert(&self->statements, &entry);
+  zend_hash_next_index_insert(&self->data.batch.statements, &entry);
 #else
-  zend_hash_next_index_insert(&self->statements,
+  zend_hash_next_index_insert(&self->data.batch.statements,
                               &batch_statement_entry, sizeof(php_driver_batch_statement_entry *),
                               NULL);
 #endif
@@ -141,7 +141,7 @@ php_driver_batch_statement_free(php5to7_zend_object_free *object TSRMLS_DC)
 {
   php_driver_statement *self = PHP5TO7_ZEND_OBJECT_GET(statement, object);
 
-  zend_hash_destroy(&self->statements);
+  zend_hash_destroy(&self->data.batch.statements);
 
   zend_object_std_dtor(&self->zval TSRMLS_CC);
   PHP5TO7_MAYBE_EFREE(self);
@@ -154,8 +154,8 @@ php_driver_batch_statement_new(zend_class_entry *ce TSRMLS_DC)
       PHP5TO7_ZEND_OBJECT_ECALLOC(statement, ce);
 
   self->type       = PHP_DRIVER_BATCH_STATEMENT;
-  self->batch_type = CASS_BATCH_TYPE_LOGGED;
-  zend_hash_init(&self->statements, 0, NULL, (dtor_func_t) php_driver_batch_statement_entry_dtor, 0);
+  self->data.batch.type = CASS_BATCH_TYPE_LOGGED;
+  zend_hash_init(&self->data.batch.statements, 0, NULL, (dtor_func_t) php_driver_batch_statement_entry_dtor, 0);
 
   PHP5TO7_ZEND_OBJECT_INIT_EX(statement, batch_statement, self, ce);
 }

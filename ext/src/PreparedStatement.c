@@ -52,8 +52,8 @@ php_driver_prepared_statement_free(php5to7_zend_object_free *object TSRMLS_DC)
 {
   php_driver_statement *self = PHP5TO7_ZEND_OBJECT_GET(statement, object);
 
-  if (self->prepared)
-    cass_prepared_free(self->prepared);
+  if (self->data.prepared.prepared)
+    cass_prepared_free(self->data.prepared.prepared);
 
   zend_object_std_dtor(&self->zval TSRMLS_CC);
   PHP5TO7_MAYBE_EFREE(self);
@@ -66,7 +66,7 @@ php_driver_prepared_statement_new(zend_class_entry *ce TSRMLS_DC)
       PHP5TO7_ZEND_OBJECT_ECALLOC(statement, ce);
 
   self->type = PHP_DRIVER_PREPARED_STATEMENT;
-  self->prepared = NULL;
+  self->data.prepared.prepared = NULL;
 
   PHP5TO7_ZEND_OBJECT_INIT_EX(statement, prepared_statement, self, ce);
 }

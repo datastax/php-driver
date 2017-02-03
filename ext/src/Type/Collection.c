@@ -54,7 +54,7 @@ PHP_METHOD(TypeCollection, valueType)
   }
 
   self = PHP_DRIVER_GET_TYPE(getThis());
-  RETURN_ZVAL(PHP5TO7_ZVAL_MAYBE_P(self->value_type), 1, 0);
+  RETURN_ZVAL(PHP5TO7_ZVAL_MAYBE_P(self->data.collection.value_type), 1, 0);
 }
 
 PHP_METHOD(TypeCollection, __toString)
@@ -97,15 +97,12 @@ PHP_METHOD(TypeCollection, create)
   if (argc > 0) {
     for (i = 0; i < argc; i++) {
       if (!php_driver_validate_object(PHP5TO7_ZVAL_ARG(args[i]),
-                                         PHP5TO7_ZVAL_MAYBE_P(self->value_type) TSRMLS_CC)) {
+                                      PHP5TO7_ZVAL_MAYBE_P(self->data.collection.value_type) TSRMLS_CC)) {
         PHP5TO7_MAYBE_EFREE(args);
         return;
       }
 
-      if (!php_driver_collection_add(collection, PHP5TO7_ZVAL_ARG(args[i]) TSRMLS_CC)) {
-        PHP5TO7_MAYBE_EFREE(args);
-        return;
-      }
+      php_driver_collection_add(collection, PHP5TO7_ZVAL_ARG(args[i]) TSRMLS_CC);
     }
 
     PHP5TO7_MAYBE_EFREE(args);
@@ -144,11 +141,10 @@ php_driver_type_collection_properties(zval *object TSRMLS_DC)
   php_driver_type *self  = PHP_DRIVER_GET_TYPE(object);
   HashTable      *props = zend_std_get_properties(object TSRMLS_CC);
 
-  if (PHP5TO7_ZEND_HASH_UPDATE(props,
-                               "valueType", sizeof("valueType"),
-                               PHP5TO7_ZVAL_MAYBE_P(self->value_type), sizeof(zval))) {
-    Z_ADDREF_P(PHP5TO7_ZVAL_MAYBE_P(self->value_type));
-  }
+  PHP5TO7_ZEND_HASH_UPDATE(props,
+                           "valueType", sizeof("valueType"),
+                           PHP5TO7_ZVAL_MAYBE_P(self->data.collection.value_type), sizeof(zval));
+  Z_ADDREF_P(PHP5TO7_ZVAL_MAYBE_P(self->data.collection.value_type));
 
   return props;
 }
@@ -168,7 +164,7 @@ php_driver_type_collection_free(php5to7_zend_object_free *object TSRMLS_DC)
   php_driver_type *self = PHP5TO7_ZEND_OBJECT_GET(type, object);
 
   if (self->data_type) cass_data_type_free(self->data_type);
-  PHP5TO7_ZVAL_MAYBE_DESTROY(self->value_type);
+  PHP5TO7_ZVAL_MAYBE_DESTROY(self->data.collection.value_type);
 
   zend_object_std_dtor(&self->zval TSRMLS_CC);
   PHP5TO7_MAYBE_EFREE(self);
@@ -181,7 +177,7 @@ php_driver_type_collection_new(zend_class_entry *ce TSRMLS_DC)
 
   self->type = CASS_VALUE_TYPE_LIST;
   self->data_type = cass_data_type_new(self->type);
-  PHP5TO7_ZVAL_UNDEF(self->value_type);
+  PHP5TO7_ZVAL_UNDEF(self->data.collection.value_type);
 
   PHP5TO7_ZEND_OBJECT_INIT_EX(type, type_collection, self, ce);
 }
