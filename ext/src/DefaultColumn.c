@@ -26,7 +26,7 @@ zend_class_entry *php_driver_default_column_ce = NULL;
 
 php5to7_zval
 php_driver_create_column(php_driver_ref *schema,
-                            const CassColumnMeta *meta TSRMLS_DC)
+                         const CassColumnMeta *meta TSRMLS_DC)
 {
   php5to7_zval result;
   php_driver_column *column;
@@ -127,6 +127,10 @@ PHP_METHOD(DefaultColumn, type)
   }
 
   self = PHP_DRIVER_GET_COLUMN(getThis());
+
+  if (PHP5TO7_ZVAL_IS_UNDEF(self->type)) {
+    RETURN_NULL();
+  }
 
   RETURN_ZVAL(PHP5TO7_ZVAL_MAYBE_P(self->type), 1, 0);
 }

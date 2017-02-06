@@ -63,19 +63,20 @@ php5to7_zval php_driver_type_collection_from_value_type(CassValueType type TSRML
 php5to7_zval php_driver_type_map(zval *key_type,
                                     zval *value_type TSRMLS_DC);
 php5to7_zval php_driver_type_map_from_value_types(CassValueType key_type,
-                                                     CassValueType value_type TSRMLS_DC);
+                                                  CassValueType value_type TSRMLS_DC);
 
 php5to7_zval php_driver_type_tuple(TSRMLS_D);
 
 php5to7_zval php_driver_type_user_type(TSRMLS_D);
 
-php5to7_zval php_driver_type_custom(char *name TSRMLS_DC);
+php5to7_zval php_driver_type_custom(const char *name,
+                                    size_t name_length TSRMLS_DC);
 
 int php_driver_parse_column_type(const char   *validator,
-                                    size_t        validator_len,
-                                    int          *reversed_out,
-                                    int          *frozen_out,
-                                    php5to7_zval *type_out TSRMLS_DC);
+                                 size_t        validator_len,
+                                 int          *reversed_out,
+                                 int          *frozen_out,
+                                 php5to7_zval *type_out TSRMLS_DC);
 
 void php_driver_scalar_init(INTERNAL_FUNCTION_PARAMETERS);
 

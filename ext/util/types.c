@@ -210,17 +210,24 @@ php_driver_type_from_data_type(const CassDataType *data_type TSRMLS_DC)
   php5to7_zval ztype;
   php5to7_zval key_type;
   php5to7_zval value_type;
+  const char *class_name;
+  size_t class_name_length;
   CassValueType type = cass_data_type_type(data_type);
 
   PHP5TO7_ZVAL_UNDEF(ztype);
 
   switch (type) {
-#define XX_SCALAR(name, value) \
-  case value: \
-      ztype = php_driver_type_scalar(value TSRMLS_CC); \
+#define XX_SCALAR(name, value)                       \
+  case value:                                        \
+    ztype = php_driver_type_scalar(value TSRMLS_CC); \
     break;
    PHP_DRIVER_SCALAR_TYPES_MAP(XX_SCALAR)
 #undef XX_SCALAR
+
+  case CASS_VALUE_TYPE_CUSTOM:
+     cass_data_type_class_name(data_type, &class_name, &class_name_length);
+     ztype = php_driver_type_custom(class_name, class_name_length TSRMLS_CC);
+     break;
 
   case CASS_VALUE_TYPE_LIST:
     value_type = php_driver_type_from_data_type(
@@ -234,7 +241,7 @@ php_driver_type_from_data_type(const CassDataType *data_type TSRMLS_DC)
     value_type = php_driver_type_from_data_type(
                    cass_data_type_sub_data_type(data_type, 1) TSRMLS_CC);
     ztype = php_driver_type_map(PHP5TO7_ZVAL_MAYBE_P(key_type),
-                                   PHP5TO7_ZVAL_MAYBE_P(value_type) TSRMLS_CC);
+                                PHP5TO7_ZVAL_MAYBE_P(value_type) TSRMLS_CC);
     break;
 
   case CASS_VALUE_TYPE_SET:
@@ -244,12 +251,12 @@ php_driver_type_from_data_type(const CassDataType *data_type TSRMLS_DC)
     break;
 
   case CASS_VALUE_TYPE_TUPLE:
-      ztype = php_driver_tuple_from_data_type(data_type TSRMLS_CC);
-      break;
+    ztype = php_driver_tuple_from_data_type(data_type TSRMLS_CC);
+    break;
 
   case CASS_VALUE_TYPE_UDT:
-      ztype = php_driver_user_type_from_data_type(data_type TSRMLS_CC);
-      break;
+    ztype = php_driver_user_type_from_data_type(data_type TSRMLS_CC);
+    break;
 
   default:
     break;
@@ -816,7 +823,7 @@ php_driver_type_user_type(TSRMLS_D)
 }
 
 php5to7_zval
-php_driver_type_custom(char *name TSRMLS_DC)
+php_driver_type_custom(const char *name, size_t name_length TSRMLS_DC)
 {
   php5to7_zval ztype;
   php_driver_type *custom;
@@ -824,7 +831,7 @@ php_driver_type_custom(char *name TSRMLS_DC)
   PHP5TO7_ZVAL_MAYBE_MAKE(ztype);
   object_init_ex(PHP5TO7_ZVAL_MAYBE_P(ztype), php_driver_type_custom_ce);
   custom = PHP_DRIVER_GET_TYPE(PHP5TO7_ZVAL_MAYBE_P(ztype));
-  custom->data.custom.class_name = estrdup(name);
+  custom->data.custom.class_name = estrndup(name, name_length);
 
   return ztype;
 }
@@ -1205,17 +1212,6 @@ php_driver_node_dump_to(struct node_s *node, smart_str *text)
   }
 }
 
-static char *
-php_driver_node_dump(struct node_s *node)
-{
-  smart_str text = PHP5TO7_SMART_STR_INIT;
-
-  php_driver_node_dump_to(node, &text);
-  smart_str_0(&text);
-
-  return PHP5TO7_SMART_STR_VAL(text);
-}
-
 static php5to7_zval
 php_driver_create_type(struct node_s *node TSRMLS_DC)
 {
@@ -1240,8 +1236,13 @@ php_driver_create_type(struct node_s *node TSRMLS_DC)
   }
 
   if (type == CASS_VALUE_TYPE_CUSTOM) {
-    return php_driver_type_custom(
-          php_driver_node_dump(node) TSRMLS_CC);
+    php5to7_zval ztype;
+    smart_str class_name = PHP5TO7_SMART_STR_INIT;
+    php_driver_node_dump_to(node, &class_name);
+    ztype =  php_driver_type_custom(PHP5TO7_SMART_STR_VAL(class_name),
+                                    PHP5TO7_SMART_STR_LEN(class_name) TSRMLS_CC);
+    smart_str_free(&class_name);
+    return ztype;
   } else if (type == CASS_VALUE_TYPE_MAP) {
     php5to7_zval key_type;
     php5to7_zval value_type;
