@@ -128,7 +128,7 @@ PHP_METHOD(DefaultColumn, type)
 
   self = PHP_DRIVER_GET_COLUMN(getThis());
 
-  if (PHP5TO7_ZVAL_IS_UNDEF_P(self->type)) {
+  if (PHP5TO7_ZVAL_IS_UNDEF(self->type)) {
     RETURN_NULL();
   }
 
