@@ -159,8 +159,8 @@ php_driver_type_map_properties(zval *object TSRMLS_DC)
   HashTable      *props = zend_std_get_properties(object TSRMLS_CC);
 
   PHP5TO7_ZEND_HASH_UPDATE(props,
-                               "keyType", sizeof("keyType"),
-                               PHP5TO7_ZVAL_MAYBE_P(self->data.map.key_type), sizeof(zval));
+                           "keyType", sizeof("keyType"),
+                           PHP5TO7_ZVAL_MAYBE_P(self->data.map.key_type), sizeof(zval));
   Z_ADDREF_P(PHP5TO7_ZVAL_MAYBE_P(self->data.map.key_type));
 
   PHP5TO7_ZEND_HASH_UPDATE(props,

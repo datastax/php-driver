@@ -354,8 +354,8 @@ php_driver_user_type_value_properties(zval *object TSRMLS_DC)
   HashTable                 *props = zend_std_get_properties(object TSRMLS_CC);
 
   PHP5TO7_ZEND_HASH_UPDATE(props,
-                               "type", sizeof("type"),
-                               PHP5TO7_ZVAL_MAYBE_P(self->type), sizeof(zval));
+                           "type", sizeof("type"),
+                           PHP5TO7_ZVAL_MAYBE_P(self->type), sizeof(zval));
   Z_ADDREF_P(PHP5TO7_ZVAL_MAYBE_P(self->type));
 
   PHP5TO7_ZVAL_MAYBE_MAKE(values);
