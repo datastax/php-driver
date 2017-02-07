@@ -48,7 +48,7 @@ interface Session
      *
      * @throws Exception
      *
-     * @param Statement        $statement statement to be executed
+     * @param string|Statement $statement string or statement to be executed
      * @param ExecutionOptions $options   execution options (optional)
      *
      * @return Rows execution result
@@ -61,7 +61,7 @@ interface Session
      * Note that this method ignores timeout specified in the ExecutionOptions,
      * you can provide one to Future::get() instead.
      *
-     * @param Statement             $statement statement to be executed
+     * @param string|Statement $statement string or statement to be executed
      * @param ExecutionOptions|null $options   execution options (optional)
      *
      * @return Future future result

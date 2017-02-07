@@ -76,9 +76,13 @@ PHP_METHOD(BatchStatement, add)
     return;
   }
 
-  if (!instanceof_function(Z_OBJCE_P(statement), php_driver_simple_statement_ce TSRMLS_CC) &&
-      !instanceof_function(Z_OBJCE_P(statement), php_driver_prepared_statement_ce TSRMLS_CC)) {
-    INVALID_ARGUMENT(statement, "an instance of " PHP_DRIVER_NAMESPACE "\\SimpleStatement or " PHP_DRIVER_NAMESPACE "\\PreparedStatement");
+  if (Z_TYPE_P(statement) != IS_STRING &&
+      (Z_TYPE_P(statement) != IS_OBJECT ||
+       (!instanceof_function(Z_OBJCE_P(statement), php_driver_simple_statement_ce TSRMLS_CC) &&
+        !instanceof_function(Z_OBJCE_P(statement), php_driver_prepared_statement_ce TSRMLS_CC)))) {
+    INVALID_ARGUMENT(statement, "a string, an instance of "
+                     PHP_DRIVER_NAMESPACE "\\SimpleStatement or an instance of "
+                     PHP_DRIVER_NAMESPACE "\\PreparedStatement");
   }
 
   self = PHP_DRIVER_GET_STATEMENT(getThis());
@@ -90,7 +94,6 @@ PHP_METHOD(BatchStatement, add)
   if (arguments) {
     PHP5TO7_ZVAL_COPY(PHP5TO7_ZVAL_MAYBE_P(batch_statement_entry->arguments), arguments);
   }
-
 
 #if PHP_MAJOR_VERSION >= 7
   ZVAL_PTR(&entry, batch_statement_entry);
@@ -107,7 +110,7 @@ ZEND_BEGIN_ARG_INFO_EX(arginfo__construct, 0, ZEND_RETURN_VALUE, 0)
 ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_add, 0, ZEND_RETURN_VALUE, 1)
-  PHP_DRIVER_NAMESPACE_ZEND_ARG_OBJ_INFO(0, statement, Statement, 0)
+  ZEND_ARG_INFO(0, statement)
   ZEND_ARG_ARRAY_INFO(0, arguments, 1)
 ZEND_END_ARG_INFO()
 

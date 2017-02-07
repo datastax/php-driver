@@ -19,7 +19,7 @@
 zend_class_entry *php_driver_session_ce = NULL;
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_execute, 0, ZEND_RETURN_VALUE, 1)
-  PHP_DRIVER_NAMESPACE_ZEND_ARG_OBJ_INFO(0, statement, Statement, 0)
+  ZEND_ARG_INFO(0, statement)
   PHP_DRIVER_NAMESPACE_ZEND_ARG_OBJ_INFO(0, options, ExecutionOptions, 0)
 ZEND_END_ARG_INFO()
 
