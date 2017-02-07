@@ -424,33 +424,11 @@ php_driver_parse_decimal(char *in, int in_len, mpz_t *number, long *scale TSRMLS
 void
 php_driver_format_integer(mpz_t number, char **out, int *out_len)
 {
-  size_t len;
-  char *tmp;
-
-  len = mpz_sizeinbase(number, 10);
-  if (mpz_sgn(number) < 0)
-    len++;
-
-  tmp = (char*) emalloc((len + 1) * sizeof(char));
-  mpz_get_str(tmp, 10, number);
-
-  // mpz_sizeinbase returns the length of the number, but it can be 1 more than the actual length.
-  // For example, for value 950, it returns 4. We want an accurate length, so we check the len-1
-  // byte to see if it is the null terminator; if it is, our real length is actually one less.
-  //
-  // If len is accurate to start with, tmp[len-1] is the last digit. Force tmp[len] to be the null-terminator.
-  // sandman suggests: This seems unnecessary. The if condition assumes that mpz_get_str returns a null-terminated
-  // string, so the else clause shouldn't be paranoid about this.
-  if (tmp[len - 1] == '\0') {
-    len--;
-  } else {
-    tmp[len] = '\0';
-  }
-
-  *out     = tmp;
-  *out_len = len;
+  /* Adding 2 ensures enough space for the null-terminator and negative sign */
+  *out = (char*) emalloc(mpz_sizeinbase(number, 10) + 2);
+  mpz_get_str(*out, 10, number);
+  *out_len = strlen(*out);
 }
-
 
 void
 php_driver_format_decimal(mpz_t number, long scale, char **out, int *out_len)
@@ -470,9 +448,7 @@ php_driver_format_decimal(mpz_t number, long scale, char **out, int *out_len)
     negative = 1;
 
   // mpz_sizeinbase returns the length of |number|, but it can be off by one (e.g. 950 has length 4).
-  // The only way to get the real length is to use mpz_get_str and check if index len-1 of the string is
-  // the null byte; if it is, it means len is too high by 1. *However*, if the number is negative,
-  // we want to look at index len, since the negative sign takes up a byte.
+  // The only way to get the real length is to use mpz_get_str and check the length of the string.
   //
   // Ultimately, we want to return a string representation of this decimal. So allocate
   // a buffer that could hold this decimal in the worst possible conservative case.
@@ -482,17 +458,16 @@ php_driver_format_decimal(mpz_t number, long scale, char **out, int *out_len)
   tmp = (char*) emalloc(len + negative + 1 + scale + 2);
   mpz_get_str(tmp, 10, number);
 
-  // Update len to be the true length of the string representation of |number|.
-  if (tmp[len - 1] == '\0' || (tmp[len] == '\0' && negative)) {
-    len--;
-  }
+  // Update len to be the true length of the string representation of |number|. NOTE: the
+  // length of the string includes the negative sign (if present); account for that.
+  len  = strlen(tmp) - negative;
 
   point = len - scale;
 
   if (scale >= 0 && (point - 1) >= -6) {
     if (point <= 0) {
       // e.g. -0.002 and 0.002
-      int shift_start = negative ? 1 : 0;
+      int shift_start = negative;
 
       // current position
       int i = 0;
