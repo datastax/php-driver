@@ -33,17 +33,20 @@ class DecimalTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @dataProvider validStrings
+     * @dataProvider validStringsAndNumbers
      */
-    public function testCorrectlyParsesStrings($number, $value, $scale, $string)
+    public function testCorrectlyParsesStringsAndNumbers($input, $value, $scale, $string)
     {
-        $number = new Decimal($number);
+        $number = new Decimal($input);
         $this->assertEquals($value, $number->value());
         $this->assertEquals($scale, $number->scale());
+        // Test to_string
         $this->assertEquals($string, (string) $number);
+        // Test to_double
+        $this->assertLessThanOrEqual(0.01, abs((float)$string - (float)$number));
     }
 
-    public function validStrings()
+    public function validStringsAndNumbers()
     {
         return array(
             array("123", "123", 0, "123"),
@@ -58,26 +61,21 @@ class DecimalTest extends \PHPUnit_Framework_TestCase
             array("123.1", "1231", 1, "123.1"),
             array("55.55", "5555", 2, "55.55"),
             array("-123.123", "-123123", 3, "-123.123"),
-            array("0.5", "5", 1, "0.5")
-        );
-    }
-
-    /**
-     * @dataProvider validNumbers
-     */
-    public function testFromNumbers($number)
-    {
-        //$decimal = new Decimal($number);
-        //$this->assertEquals((float)$number, (float)$decimal);
-        //$this->assertEquals((float)$number, (float)(string)$decimal);
-        //$this->assertEquals((int)$number, $decimal->toInt());
-    }
-
-    public function validNumbers()
-    {
-        return array(
-            array(0.123),
-            array(123),
+            array("0.5", "5", 1, "0.5"),
+            array(0.123, "1229999999999999982236431605997495353221893310546875", 52, "0.123"),
+            array(123, "123", 0, "123"),
+            array(123.5, "1235", 1, "123.5"),
+            array(-123, "-123", 0, "-123"),
+            array("9.5", "95", 1, "9.5"),
+            array("-9.5", "-95", 1, "-9.5"),
+            array("0.00001", "1", 5, "0.00001"),
+            array("-0.00001", "-1", 5, "-0.00001"),
+            array("0.00000001", "1", 8, "1E-8"),
+            array("-0.00000001", "-1", 8, "-1E-8"),
+            array("0.000000095", "95", 9, "9.5E-8"),
+            array("-0.000000095", "-95", 9, "-9.5E-8"),
+            array("0.000000015", "15", 9, "1.5E-8"),
+            array("-0.000000015", "-15", 9, "-1.5E-8"),
         );
     }
 

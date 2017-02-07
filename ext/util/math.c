@@ -424,26 +424,11 @@ php_driver_parse_decimal(char *in, int in_len, mpz_t *number, long *scale TSRMLS
 void
 php_driver_format_integer(mpz_t number, char **out, int *out_len)
 {
-  size_t len;
-  char *tmp;
-
-  len = mpz_sizeinbase(number, 10);
-  if (mpz_sgn(number) < 0)
-    len++;
-
-  tmp = (char*) emalloc((len + 1) * sizeof(char));
-  mpz_get_str(tmp, 10, number);
-
-  if (tmp[len - 1] == '\0') {
-    len--;
-  } else {
-    tmp[len] = '\0';
-  }
-
-  *out     = tmp;
-  *out_len = len;
+  /* Adding 2 ensures enough space for the null-terminator and negative sign */
+  *out = (char*) emalloc(mpz_sizeinbase(number, 10) + 2);
+  mpz_get_str(*out, 10, number);
+  *out_len = strlen(*out);
 }
-
 
 void
 php_driver_format_decimal(mpz_t number, long scale, char **out, int *out_len)
@@ -462,50 +447,61 @@ php_driver_format_decimal(mpz_t number, long scale, char **out, int *out_len)
   if (mpz_sgn(number) < 0)
     negative = 1;
 
+  // Ultimately, we want to return a string representation of this decimal. So allocate
+  // a buffer that could hold this decimal in the worst possible conservative case.
+
+  // absolute length + negative sign + point sign + scale (in case we end up with a number with leading 0s) +
+  // exponent modifier and sign.
+  tmp = (char*) emalloc(len + negative + 1 + scale + 2);
+  mpz_get_str(tmp, 10, number);
+
+  // Update len to be the true length of the string representation of |number|. mpz_sizeinbase
+  // can return a higher result than the actual length.
+  // NOTE: the length of the string includes the negative sign (if present); account for that.
+  len  = strlen(tmp) - negative;
+
   point = len - scale;
 
-  if (scale >= 0 && (point - 1) >= -6) {
-    if (point <= 0) {
-      /* current position */
-      int i = 0;
-      /* absolute length + negative sign + point sign + leading zeroes */
-      total = len + negative + 2 + (point * -1);
-      tmp   = (char*) emalloc((total + 1) * sizeof(char));
+  // We only support numbers with scale >= 0.
+  assert(scale >= 0);
 
+  if ((point - 1) >= -6) {
+    if (point <= 0) {
+      // e.g. -0.002 and 0.002
+      int shift_start = negative;
+
+      // current position
+      int i = 0;
+
+      // Move the numeric part (skip leading minus if needed) of tmp right by enough bytes to make room for
+      // 0.0000 (as many leading zeroes as necessary).
+      memmove(&(tmp[shift_start + 2 - point]), &(tmp[shift_start]), len);
+
+      // This is a (possibly negative) number with a 0 integer part.
       if (negative)
         tmp[i++] = '-';
 
       tmp[i++] = '0';
       tmp[i++] = '.';
 
+      // Add leading zeroes.
       while (point < 0) {
         tmp[i++] = '0';
         point++;
       }
 
-      mpz_get_str(&(tmp[i]), 10, number);
-
-      if (tmp[i + len + negative - 1] == '\0') {
-        len--;
-        total--;
-      }
-
-      if (negative)
-        memmove(&(tmp[i]), &(tmp[i + 1]), len);
-
+      total = i + len;
       tmp[total] = '\0';
     } else {
+      // e.g. 1.2, -1.2
       /* absolute length + negative sign + point sign */
       total = len + negative + 1;
-      point = point + negative;
-      tmp   = (char*) emalloc((total + 1) * sizeof(char));
 
-      mpz_get_str(tmp, 10, number);
+      // Insert the decimal point at the right location in the string.
 
-      if (tmp[len + negative - 1] == '\0') {
-        len--;
-        total--;
-      }
+      // point is the index at which to insert the decimal point, but it assumes we have a positive
+      // number. Move it to the right if we have a negative number.
+      point += negative;
 
       memmove(&(tmp[point + 1]), &(tmp[point]), total - point);
 
@@ -513,40 +509,34 @@ php_driver_format_decimal(mpz_t number, long scale, char **out, int *out_len)
       tmp[total] = '\0';
     }
   } else {
+    // Very small positive or negative number that we want to express in scientific notation:
+    // 0.000000004, -0.000000004
+
     int exponent = -1;
     int exponent_size = -1;
-    int i = 1;
 
-    /* absolute length + negative sign + exponent modifier and sign */
-    total = len + negative + 2;
-    /* (optional) point sign */
-    if (len > 1)
-      total++;
-
-    /* exponent value */
+    // Calculate the exponent value and its size.
     exponent      = point - 1;
     exponent_size = (int) ceil(log10(abs(exponent) + 2)) + 1;
 
-    total = total + exponent_size;
-    tmp   = (char*) emalloc((total + 1) * sizeof(char));
+    // If we only have one significant digit, we want to produce a string like
+    // 1E-9. If we have more significant digits, then 1.123E-9.
 
-    mpz_get_str(tmp, 10, number);
+    if (len == 1) {
+      // Simple case; tmp is already leading with our number as we want it. Append E(exp) to it
+      // and we're done.
+      sprintf(&(tmp[1 + negative]), "E%+d", exponent);
+      total = 1 + negative + 1 + exponent_size;
+    } else {
+      // We have a more complex number. Insert a decimal point after the first digit.
+      point = negative ? 2 : 1;
+      memmove(&(tmp[point + 1]), &(tmp[point]), len-1);
+      tmp[point] = '.';
 
-    if (tmp[len + negative - 1] == '\0') {
-      len--;
-      total--;
+      // Now append the exponent to the end and we're done.
+      sprintf(&(tmp[point + len]), "E%+d", exponent);
+      total = point + len + 1 + exponent_size;
     }
-
-    if (negative)
-      i++;
-
-    memmove(&(tmp[i + 1]), &(tmp[i]), len - i);
-    tmp[i] = '.';
-    tmp[len + i++] = 'E';
-
-    snprintf(&(tmp[len + i]), exponent_size, "%+d", exponent);
-
-    tmp[total] = '\0';
   }
 
   *out     = tmp;
