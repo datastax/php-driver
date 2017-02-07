@@ -462,7 +462,10 @@ php_driver_format_decimal(mpz_t number, long scale, char **out, int *out_len)
 
   point = len - scale;
 
-  if (scale >= 0 && (point - 1) >= -6) {
+  // We only support numbers with scale >= 0.
+  assert(scale >= 0);
+
+  if ((point - 1) >= -6) {
     if (point <= 0) {
       // e.g. -0.002 and 0.002
       int shift_start = negative;
