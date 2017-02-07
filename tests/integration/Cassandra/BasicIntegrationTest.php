@@ -64,6 +64,12 @@ abstract class BasicIntegrationTest extends \PHPUnit_Framework_TestCase {
      */
     protected $replicationFactor = -1;
     /**
+     * Established cluster configuration.
+     *
+     * @var \Cassandra\Cluster
+     */
+    protected $cluster;
+    /**
      * Connected database session.
      *
      * @var \Cassandra\Session
@@ -116,6 +122,7 @@ abstract class BasicIntegrationTest extends \PHPUnit_Framework_TestCase {
             $this->replicationFactor, $this->isClientAuthentication,
             $this->isSSL, $this->isUserDefinedAggregatesFunctions);
         $this->ccm = $this->integration->ccm;
+        $this->cluster = $this->integration->cluster;
         $this->session = $this->integration->session;
         $this->serverVersion = $this->integration->serverVersion;
 
