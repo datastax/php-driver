@@ -48,12 +48,12 @@ interface Session
      *
      * @throws Exception
      *
-     * @param Statement        $statement statement to be executed
+     * @param string|Statement $statement string or statement to be executed
      * @param ExecutionOptions $options   execution options (optional)
      *
      * @return Rows execution result
      */
-    public function execute(Statement $statement, ExecutionOptions $options = null);
+    public function execute($statement, ExecutionOptions $options = null);
 
     /**
      * Executes a given statement and returns a future result.
@@ -61,12 +61,12 @@ interface Session
      * Note that this method ignores timeout specified in the ExecutionOptions,
      * you can provide one to Future::get() instead.
      *
-     * @param Statement             $statement statement to be executed
+     * @param string|Statement $statement string or statement to be executed
      * @param ExecutionOptions|null $options   execution options (optional)
      *
      * @return Future future result
      */
-    public function executeAsync(Statement $statement, ExecutionOptions $options = null);
+    public function executeAsync($statement, ExecutionOptions $options = null);
 
     /**
      * Creates a prepared statement from a given CQL string.

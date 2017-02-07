@@ -447,18 +447,30 @@ create_batch(php_driver_statement *batch,
 
   php5to7_zval *current;
   PHP5TO7_ZEND_HASH_FOREACH_VAL(&batch->data.batch.statements, current) {
+    php_driver_statement *statement;
+    php_driver_statement simple_statement;
+    HashTable *arguments;
+    CassStatement *stmt;
+
 #if PHP_MAJOR_VERSION >= 7
     php_driver_batch_statement_entry *batch_statement_entry = (php_driver_batch_statement_entry *)Z_PTR_P(current);
 #else
     php_driver_batch_statement_entry *batch_statement_entry = *((php_driver_batch_statement_entry **)current);
 #endif
-    php_driver_statement *statement =
-        PHP_DRIVER_GET_STATEMENT(PHP5TO7_ZVAL_MAYBE_P(batch_statement_entry->statement));
-    HashTable *arguments
-        = !PHP5TO7_ZVAL_IS_UNDEF(batch_statement_entry->arguments)
-          ? Z_ARRVAL_P(PHP5TO7_ZVAL_MAYBE_P(batch_statement_entry->arguments))
-          : NULL;
-    CassStatement *stmt = create_statement(statement, arguments TSRMLS_CC);
+
+    if (PHP5TO7_Z_TYPE_MAYBE_P(batch_statement_entry->statement) == IS_STRING) {
+      simple_statement.type = PHP_DRIVER_SIMPLE_STATEMENT;
+      simple_statement.data.simple.cql = PHP5TO7_Z_STRVAL_MAYBE_P(batch_statement_entry->statement);
+      statement = &simple_statement;
+    } else {
+      statement = PHP_DRIVER_GET_STATEMENT(PHP5TO7_ZVAL_MAYBE_P(batch_statement_entry->statement));
+    }
+
+    arguments = !PHP5TO7_ZVAL_IS_UNDEF(batch_statement_entry->arguments)
+                ? Z_ARRVAL_P(PHP5TO7_ZVAL_MAYBE_P(batch_statement_entry->arguments))
+                : NULL;
+
+    stmt = create_statement(statement, arguments TSRMLS_CC);
     if (!stmt) {
       cass_batch_free(cass_batch);
       return NULL;
@@ -536,6 +548,7 @@ PHP_METHOD(DefaultSession, execute)
   zval *options = NULL;
   php_driver_session *self = NULL;
   php_driver_statement *stmt = NULL;
+  php_driver_statement simple_statement;
   HashTable *arguments = NULL;
   CassConsistency consistency = PHP_DRIVER_DEFAULT_CONSISTENCY;
   int page_size = -1;
@@ -555,7 +568,17 @@ PHP_METHOD(DefaultSession, execute)
   }
 
   self = PHP_DRIVER_GET_SESSION(getThis());
-  stmt = PHP_DRIVER_GET_STATEMENT(statement);
+
+  if (Z_TYPE_P(statement) == IS_STRING) {
+    simple_statement.type = PHP_DRIVER_SIMPLE_STATEMENT;
+    simple_statement.data.simple.cql = Z_STRVAL_P(statement);
+    stmt = &simple_statement;
+  } else if (Z_TYPE_P(statement) == IS_OBJECT &&
+             instanceof_function(Z_OBJCE_P(statement), php_driver_statement_ce TSRMLS_CC)) {
+    stmt = PHP_DRIVER_GET_STATEMENT(statement);
+  } else {
+    INVALID_ARGUMENT(statement, "a string or an instance of " PHP_DRIVER_NAMESPACE "\\Statement");
+  }
 
   consistency = self->default_consistency;
   page_size = self->default_page_size;
@@ -671,6 +694,7 @@ PHP_METHOD(DefaultSession, executeAsync)
   zval *options = NULL;
   php_driver_session *self = NULL;
   php_driver_statement *stmt = NULL;
+  php_driver_statement simple_statement;
   HashTable *arguments = NULL;
   CassConsistency consistency = PHP_DRIVER_DEFAULT_CONSISTENCY;
   int page_size = -1;
@@ -689,7 +713,17 @@ PHP_METHOD(DefaultSession, executeAsync)
   }
 
   self = PHP_DRIVER_GET_SESSION(getThis());
-  stmt = PHP_DRIVER_GET_STATEMENT(statement);
+
+  if (Z_TYPE_P(statement) == IS_STRING) {
+    simple_statement.type = PHP_DRIVER_SIMPLE_STATEMENT;
+    simple_statement.data.simple.cql = Z_STRVAL_P(statement);
+    stmt = &simple_statement;
+  } else if (Z_TYPE_P(statement) == IS_OBJECT &&
+             instanceof_function(Z_OBJCE_P(statement), php_driver_statement_ce TSRMLS_CC)) {
+    stmt = PHP_DRIVER_GET_STATEMENT(statement);
+  } else {
+    INVALID_ARGUMENT(statement, "a string or an instance of " PHP_DRIVER_NAMESPACE "\\Statement");
+  }
 
   consistency = self->default_consistency;
   page_size = self->default_page_size;
@@ -978,7 +1012,7 @@ PHP_METHOD(DefaultSession, schema)
 }
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_execute, 0, ZEND_RETURN_VALUE, 1)
-  PHP_DRIVER_NAMESPACE_ZEND_ARG_OBJ_INFO(0, statement, Statement, 0)
+  ZEND_ARG_INFO(0, statement)
   PHP_DRIVER_NAMESPACE_ZEND_ARG_OBJ_INFO(0, options, ExecutionOptions, 0)
 ZEND_END_ARG_INFO()
 

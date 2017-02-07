@@ -44,22 +44,22 @@ final class DefaultSession implements Session
      *
      * @throws Exception
      *
-     * @param Statement        $statement statement to be executed
+     * @param string|Statement $statement string or statement to be executed
      * @param ExecutionOptions $options   execution options (optional)
      *
      * @return Rows execution result
      */
-    public function execute(Statement $statement, ExecutionOptions $options = null) {}
+    public function execute($statement, ExecutionOptions $options = null) {}
 
     /**
      * {@inheritDoc}
      *
-     * @param Statement             $statement statement to be executed
+     * @param string|Statement      $statement string or statement to be executed
      * @param ExecutionOptions|null $options   execution options (optional)
      *
      * @return Future future result
      */
-    public function executeAsync(Statement $statement, ExecutionOptions $options = null) {}
+    public function executeAsync($statement, ExecutionOptions $options = null) {}
 
     /**
      * {@inheritDoc}
