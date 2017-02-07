@@ -143,9 +143,9 @@ php_driver_user_type_from_data_type(const CassDataType *data_type TSRMLS_DC)
   type = PHP_DRIVER_GET_TYPE(PHP5TO7_ZVAL_MAYBE_P(ztype));
 
   cass_data_type_type_name(data_type, &type_name, &type_name_len);
-  type->type_name = estrndup(type_name, type_name_len);
+  type->data.udt.type_name = estrndup(type_name, type_name_len);
   cass_data_type_keyspace(data_type, &keyspace, &keyspace_len);
-  type->keyspace = estrndup(keyspace, keyspace_len);
+  type->data.udt.keyspace = estrndup(keyspace, keyspace_len);
 
   for (i = 0; i < count; ++i) {
     const char *name;
@@ -174,13 +174,13 @@ php_driver_user_type_from_node(struct node_s *node TSRMLS_DC)
   type = PHP_DRIVER_GET_TYPE(PHP5TO7_ZVAL_MAYBE_P(ztype));
 
   if (current) {
-    type->keyspace = estrndup(current->name,
+    type->data.udt.keyspace = estrndup(current->name,
                               current->name_length);
     current = current->next_sibling;
   }
 
   if (current) {
-    type->type_name = php_driver_from_hex(current->name,
+    type->data.udt.type_name = php_driver_from_hex(current->name,
                                              current->name_length);
     current = current->next_sibling;
   }
@@ -210,17 +210,24 @@ php_driver_type_from_data_type(const CassDataType *data_type TSRMLS_DC)
   php5to7_zval ztype;
   php5to7_zval key_type;
   php5to7_zval value_type;
+  const char *class_name;
+  size_t class_name_length;
   CassValueType type = cass_data_type_type(data_type);
 
   PHP5TO7_ZVAL_UNDEF(ztype);
 
   switch (type) {
-#define XX_SCALAR(name, value) \
-  case value: \
-      ztype = php_driver_type_scalar(value TSRMLS_CC); \
+#define XX_SCALAR(name, value)                       \
+  case value:                                        \
+    ztype = php_driver_type_scalar(value TSRMLS_CC); \
     break;
    PHP_DRIVER_SCALAR_TYPES_MAP(XX_SCALAR)
 #undef XX_SCALAR
+
+  case CASS_VALUE_TYPE_CUSTOM:
+     cass_data_type_class_name(data_type, &class_name, &class_name_length);
+     ztype = php_driver_type_custom(class_name, class_name_length TSRMLS_CC);
+     break;
 
   case CASS_VALUE_TYPE_LIST:
     value_type = php_driver_type_from_data_type(
@@ -234,7 +241,7 @@ php_driver_type_from_data_type(const CassDataType *data_type TSRMLS_DC)
     value_type = php_driver_type_from_data_type(
                    cass_data_type_sub_data_type(data_type, 1) TSRMLS_CC);
     ztype = php_driver_type_map(PHP5TO7_ZVAL_MAYBE_P(key_type),
-                                   PHP5TO7_ZVAL_MAYBE_P(value_type) TSRMLS_CC);
+                                PHP5TO7_ZVAL_MAYBE_P(value_type) TSRMLS_CC);
     break;
 
   case CASS_VALUE_TYPE_SET:
@@ -244,12 +251,12 @@ php_driver_type_from_data_type(const CassDataType *data_type TSRMLS_DC)
     break;
 
   case CASS_VALUE_TYPE_TUPLE:
-      ztype = php_driver_tuple_from_data_type(data_type TSRMLS_CC);
-      break;
+    ztype = php_driver_tuple_from_data_type(data_type TSRMLS_CC);
+    break;
 
   case CASS_VALUE_TYPE_UDT:
-      ztype = php_driver_user_type_from_data_type(data_type TSRMLS_CC);
-      break;
+    ztype = php_driver_user_type_from_data_type(data_type TSRMLS_CC);
+    break;
 
   default:
     break;
@@ -275,19 +282,19 @@ int php_driver_type_validate(zval *object, const char *object_name TSRMLS_DC)
 static inline int
 collection_compare(php_driver_type *type1, php_driver_type *type2 TSRMLS_DC)
 {
-  return php_driver_type_compare(PHP_DRIVER_GET_TYPE(PHP5TO7_ZVAL_MAYBE_P(type1->value_type)),
-                                    PHP_DRIVER_GET_TYPE(PHP5TO7_ZVAL_MAYBE_P(type2->value_type)) TSRMLS_CC);
+  return php_driver_type_compare(PHP_DRIVER_GET_TYPE(PHP5TO7_ZVAL_MAYBE_P(type1->data.collection.value_type)),
+                                    PHP_DRIVER_GET_TYPE(PHP5TO7_ZVAL_MAYBE_P(type2->data.collection.value_type)) TSRMLS_CC);
 }
 
 static inline int
 map_compare(php_driver_type *type1, php_driver_type *type2 TSRMLS_DC)
 {
   int result;
-  result = php_driver_type_compare(PHP_DRIVER_GET_TYPE(PHP5TO7_ZVAL_MAYBE_P(type1->key_type)),
-                                       PHP_DRIVER_GET_TYPE(PHP5TO7_ZVAL_MAYBE_P(type2->key_type)) TSRMLS_CC);
+  result = php_driver_type_compare(PHP_DRIVER_GET_TYPE(PHP5TO7_ZVAL_MAYBE_P(type1->data.map.key_type)),
+                                       PHP_DRIVER_GET_TYPE(PHP5TO7_ZVAL_MAYBE_P(type2->data.map.key_type)) TSRMLS_CC);
   if (result != 0) return result;
-  result =  php_driver_type_compare(PHP_DRIVER_GET_TYPE(PHP5TO7_ZVAL_MAYBE_P(type1->value_type)),
-                                       PHP_DRIVER_GET_TYPE(PHP5TO7_ZVAL_MAYBE_P(type2->value_type)) TSRMLS_CC);
+  result =  php_driver_type_compare(PHP_DRIVER_GET_TYPE(PHP5TO7_ZVAL_MAYBE_P(type1->data.map.value_type)),
+                                       PHP_DRIVER_GET_TYPE(PHP5TO7_ZVAL_MAYBE_P(type2->data.map.value_type)) TSRMLS_CC);
   if (result != 0) return result;
   return 0;
 }
@@ -295,8 +302,8 @@ map_compare(php_driver_type *type1, php_driver_type *type2 TSRMLS_DC)
 static inline int
 set_compare(php_driver_type *type1, php_driver_type *type2 TSRMLS_DC)
 {
-  return php_driver_type_compare(PHP_DRIVER_GET_TYPE(PHP5TO7_ZVAL_MAYBE_P(type1->value_type)),
-                                    PHP_DRIVER_GET_TYPE(PHP5TO7_ZVAL_MAYBE_P(type2->value_type)) TSRMLS_CC);
+  return php_driver_type_compare(PHP_DRIVER_GET_TYPE(PHP5TO7_ZVAL_MAYBE_P(type1->data.set.value_type)),
+                                    PHP_DRIVER_GET_TYPE(PHP5TO7_ZVAL_MAYBE_P(type2->data.set.value_type)) TSRMLS_CC);
 }
 
 static inline int
@@ -306,23 +313,23 @@ tuple_compare(php_driver_type *type1, php_driver_type *type2 TSRMLS_DC) {
   php5to7_zval *current1;
   php5to7_zval *current2;
 
-  if (zend_hash_num_elements(&type1->types) != zend_hash_num_elements(&type2->types)) {
-    return zend_hash_num_elements(&type1->types) < zend_hash_num_elements(&type2->types) ? -1 : 1;
+  if (zend_hash_num_elements(&type1->data.tuple.types) != zend_hash_num_elements(&type2->data.tuple.types)) {
+    return zend_hash_num_elements(&type1->data.tuple.types) < zend_hash_num_elements(&type2->data.tuple.types) ? -1 : 1;
   }
 
-  zend_hash_internal_pointer_reset_ex(&type1->types, &pos1);
-  zend_hash_internal_pointer_reset_ex(&type2->types, &pos2);
+  zend_hash_internal_pointer_reset_ex(&type1->data.tuple.types, &pos1);
+  zend_hash_internal_pointer_reset_ex(&type2->data.tuple.types, &pos2);
 
-  while (PHP5TO7_ZEND_HASH_GET_CURRENT_DATA_EX(&type1->types, current1, &pos1) &&
-         PHP5TO7_ZEND_HASH_GET_CURRENT_DATA_EX(&type2->types, current2, &pos2)) {
+  while (PHP5TO7_ZEND_HASH_GET_CURRENT_DATA_EX(&type1->data.tuple.types, current1, &pos1) &&
+         PHP5TO7_ZEND_HASH_GET_CURRENT_DATA_EX(&type2->data.tuple.types, current2, &pos2)) {
     php_driver_type *sub_type1 =
         PHP_DRIVER_GET_TYPE(PHP5TO7_ZVAL_MAYBE_DEREF(current1));
     php_driver_type *sub_type2 =
         PHP_DRIVER_GET_TYPE(PHP5TO7_ZVAL_MAYBE_DEREF(current2));
     int result = php_driver_type_compare(sub_type1, sub_type2 TSRMLS_CC);
     if (result != 0) return result;
-    zend_hash_move_forward_ex(&type1->types, &pos1);
-    zend_hash_move_forward_ex(&type2->types, &pos2);
+    zend_hash_move_forward_ex(&type1->data.tuple.types, &pos1);
+    zend_hash_move_forward_ex(&type2->data.tuple.types, &pos2);
   }
 
   return 0;
@@ -338,17 +345,17 @@ user_type_compare(php_driver_type *type1, php_driver_type *type2 TSRMLS_DC)
   php5to7_zval *current1;
   php5to7_zval *current2;
 
-  if (zend_hash_num_elements(&type1->types) != zend_hash_num_elements(&type2->types)) {
-    return zend_hash_num_elements(&type1->types) < zend_hash_num_elements(&type2->types) ? -1 : 1;
+  if (zend_hash_num_elements(&type1->data.udt.types) != zend_hash_num_elements(&type2->data.udt.types)) {
+    return zend_hash_num_elements(&type1->data.udt.types) < zend_hash_num_elements(&type2->data.udt.types) ? -1 : 1;
   }
 
-  zend_hash_internal_pointer_reset_ex(&type1->types, &pos1);
-  zend_hash_internal_pointer_reset_ex(&type2->types, &pos2);
+  zend_hash_internal_pointer_reset_ex(&type1->data.udt.types, &pos1);
+  zend_hash_internal_pointer_reset_ex(&type2->data.udt.types, &pos2);
 
-  while (PHP5TO7_ZEND_HASH_GET_CURRENT_KEY_EX(&type1->types, &key1, NULL, &pos1) == HASH_KEY_IS_STRING &&
-         PHP5TO7_ZEND_HASH_GET_CURRENT_KEY_EX(&type2->types, &key2, NULL, &pos2) == HASH_KEY_IS_STRING &&
-         PHP5TO7_ZEND_HASH_GET_CURRENT_DATA_EX(&type1->types, current1, &pos1) &&
-         PHP5TO7_ZEND_HASH_GET_CURRENT_DATA_EX(&type2->types, current2, &pos2)) {
+  while (PHP5TO7_ZEND_HASH_GET_CURRENT_KEY_EX(&type1->data.udt.types, &key1, NULL, &pos1) == HASH_KEY_IS_STRING &&
+         PHP5TO7_ZEND_HASH_GET_CURRENT_KEY_EX(&type2->data.udt.types, &key2, NULL, &pos2) == HASH_KEY_IS_STRING &&
+         PHP5TO7_ZEND_HASH_GET_CURRENT_DATA_EX(&type1->data.udt.types, current1, &pos1) &&
+         PHP5TO7_ZEND_HASH_GET_CURRENT_DATA_EX(&type2->data.udt.types, current2, &pos2)) {
     int result;
     php_driver_type *sub_type1 =
         PHP_DRIVER_GET_TYPE(PHP5TO7_ZVAL_MAYBE_DEREF(current1));
@@ -358,8 +365,8 @@ user_type_compare(php_driver_type *type1, php_driver_type *type2 TSRMLS_DC)
     if (result != 0) return result;
     result = php_driver_type_compare(sub_type1, sub_type2 TSRMLS_CC);
     if (result != 0) return result;
-    zend_hash_move_forward_ex(&type1->types, &pos1);
-    zend_hash_move_forward_ex(&type2->types, &pos2);
+    zend_hash_move_forward_ex(&type1->data.udt.types, &pos1);
+    zend_hash_move_forward_ex(&type2->data.udt.types, &pos2);
   }
 
   return 0;
@@ -408,7 +415,7 @@ static inline void
 collection_string(php_driver_type *type, smart_str *string TSRMLS_DC)
 {
   smart_str_appendl(string, "list<", 5);
-  php_driver_type_string(PHP_DRIVER_GET_TYPE(PHP5TO7_ZVAL_MAYBE_P(type->value_type)), string TSRMLS_CC);
+  php_driver_type_string(PHP_DRIVER_GET_TYPE(PHP5TO7_ZVAL_MAYBE_P(type->data.collection.value_type)), string TSRMLS_CC);
   smart_str_appendl(string, ">", 1);
 }
 
@@ -416,9 +423,9 @@ static inline void
 map_string(php_driver_type *type, smart_str *string TSRMLS_DC)
 {
   smart_str_appendl(string, "map<", 4);
-  php_driver_type_string(PHP_DRIVER_GET_TYPE(PHP5TO7_ZVAL_MAYBE_P(type->key_type)), string TSRMLS_CC);
+  php_driver_type_string(PHP_DRIVER_GET_TYPE(PHP5TO7_ZVAL_MAYBE_P(type->data.map.key_type)), string TSRMLS_CC);
   smart_str_appendl(string, ", ", 2);
-  php_driver_type_string(PHP_DRIVER_GET_TYPE(PHP5TO7_ZVAL_MAYBE_P(type->value_type)), string TSRMLS_CC);
+  php_driver_type_string(PHP_DRIVER_GET_TYPE(PHP5TO7_ZVAL_MAYBE_P(type->data.map.value_type)), string TSRMLS_CC);
   smart_str_appendl(string, ">", 1);
 }
 
@@ -426,7 +433,7 @@ static inline void
 set_string(php_driver_type *type, smart_str *string TSRMLS_DC)
 {
   smart_str_appendl(string, "set<", 4);
-  php_driver_type_string(PHP_DRIVER_GET_TYPE(PHP5TO7_ZVAL_MAYBE_P(type->value_type)), string TSRMLS_CC);
+  php_driver_type_string(PHP_DRIVER_GET_TYPE(PHP5TO7_ZVAL_MAYBE_P(type->data.set.value_type)), string TSRMLS_CC);
   smart_str_appendl(string, ">", 1);
 }
 
@@ -436,13 +443,13 @@ tuple_string(php_driver_type *type, smart_str *string TSRMLS_DC) {
   int first = 1;
 
   smart_str_appendl(string, "tuple<", 6);
-  PHP5TO7_ZEND_HASH_FOREACH_VAL(&type->types, current) {
+  PHP5TO7_ZEND_HASH_FOREACH_VAL(&type->data.tuple.types, current) {
     php_driver_type *sub_type =
         PHP_DRIVER_GET_TYPE(PHP5TO7_ZVAL_MAYBE_DEREF(current));
     if (!first) smart_str_appendl(string, ", ", 2);
     first = 0;
     php_driver_type_string(sub_type, string TSRMLS_CC);
-  } PHP5TO7_ZEND_HASH_FOREACH_END(&type->types);
+  } PHP5TO7_ZEND_HASH_FOREACH_END(&type->data.tuple.types);
   smart_str_appendl(string, ">", 1);
 }
 
@@ -453,15 +460,15 @@ user_type_string(php_driver_type *type, smart_str *string TSRMLS_DC)
   php5to7_zval *current;
   int first = 1;
 
-  if (type->type_name) {
-    if (type->keyspace) {
-      smart_str_appendl(string, type->keyspace, strlen(type->keyspace));
+  if (type->data.udt.type_name) {
+    if (type->data.udt.keyspace) {
+      smart_str_appendl(string, type->data.udt.keyspace, strlen(type->data.udt.keyspace));
       smart_str_appendl(string, ".", 1);
     }
-    smart_str_appendl(string, type->type_name, strlen(type->type_name));
+    smart_str_appendl(string, type->data.udt.type_name, strlen(type->data.udt.type_name));
   } else {
     smart_str_appendl(string, "userType<", 9);
-    PHP5TO7_ZEND_HASH_FOREACH_STR_KEY_VAL(&type->types, name, current) {
+    PHP5TO7_ZEND_HASH_FOREACH_STR_KEY_VAL(&type->data.udt.types, name, current) {
       php_driver_type *sub_type =
           PHP_DRIVER_GET_TYPE(PHP5TO7_ZVAL_MAYBE_DEREF(current));
       if (!first) smart_str_appendl(string, ", ", 2);
@@ -469,7 +476,7 @@ user_type_string(php_driver_type *type, smart_str *string TSRMLS_DC)
       smart_str_appendl(string, name, strlen(name));
       smart_str_appendl(string, ":", 1);
       php_driver_type_string(sub_type, string TSRMLS_CC);
-    } PHP5TO7_ZEND_HASH_FOREACH_END(&type->types);
+    } PHP5TO7_ZEND_HASH_FOREACH_END(&type->data.udt.types);
     smart_str_appendl(string, ">", 1);
   }
 }
@@ -672,11 +679,11 @@ php_driver_type_map(zval *key_type,
   }
 
 #if PHP_MAJOR_VERSION >= 7
-  map->key_type = *key_type;
-  map->value_type = *value_type;
+  map->data.map.key_type = *key_type;
+  map->data.map.value_type = *value_type;
 #else
-  map->key_type = key_type;
-  map->value_type = value_type;
+  map->data.map.key_type = key_type;
+  map->data.map.value_type = value_type;
 #endif
 
   return ztype;
@@ -693,12 +700,12 @@ php_driver_type_map_from_value_types(CassValueType key_type,
   PHP5TO7_ZVAL_MAYBE_MAKE(ztype);
   object_init_ex(PHP5TO7_ZVAL_MAYBE_P(ztype), php_driver_type_map_ce);
   map = PHP_DRIVER_GET_TYPE(PHP5TO7_ZVAL_MAYBE_P(ztype));
-  map->key_type   = php_driver_type_scalar(key_type TSRMLS_CC);
-  map->value_type = php_driver_type_scalar(value_type TSRMLS_CC);
+  map->data.map.key_type   = php_driver_type_scalar(key_type TSRMLS_CC);
+  map->data.map.value_type = php_driver_type_scalar(value_type TSRMLS_CC);
 
-  sub_type = PHP_DRIVER_GET_TYPE(PHP5TO7_ZVAL_MAYBE_P(map->key_type));
+  sub_type = PHP_DRIVER_GET_TYPE(PHP5TO7_ZVAL_MAYBE_P(map->data.map.key_type));
   cass_data_type_add_sub_type(map->data_type, sub_type->data_type);
-  sub_type = PHP_DRIVER_GET_TYPE(PHP5TO7_ZVAL_MAYBE_P(map->value_type));
+  sub_type = PHP_DRIVER_GET_TYPE(PHP5TO7_ZVAL_MAYBE_P(map->data.map.value_type));
   cass_data_type_add_sub_type(map->data_type, sub_type->data_type);
 
   return ztype;
@@ -721,9 +728,9 @@ php_driver_type_set(zval *value_type TSRMLS_DC)
   }
 
 #if PHP_MAJOR_VERSION >= 7
-  set->value_type = *value_type;
+  set->data.set.value_type = *value_type;
 #else
-  set->value_type = value_type;
+  set->data.set.value_type = value_type;
 #endif
 
   return ztype;
@@ -739,9 +746,9 @@ php_driver_type_set_from_value_type(CassValueType type TSRMLS_DC)
   PHP5TO7_ZVAL_MAYBE_MAKE(ztype);
   object_init_ex(PHP5TO7_ZVAL_MAYBE_P(ztype), php_driver_type_set_ce);
   set = PHP_DRIVER_GET_TYPE(PHP5TO7_ZVAL_MAYBE_P(ztype));
-  set->value_type = php_driver_type_scalar(type TSRMLS_CC);
+  set->data.set.value_type = php_driver_type_scalar(type TSRMLS_CC);
 
-  sub_type = PHP_DRIVER_GET_TYPE(PHP5TO7_ZVAL_MAYBE_P(set->value_type));
+  sub_type = PHP_DRIVER_GET_TYPE(PHP5TO7_ZVAL_MAYBE_P(set->data.set.value_type));
   cass_data_type_add_sub_type(set->data_type, sub_type->data_type);
 
   return ztype;
@@ -764,9 +771,9 @@ php_driver_type_collection(zval *value_type TSRMLS_DC)
   }
 
 #if PHP_MAJOR_VERSION >= 7
-  collection->value_type = *value_type;
+  collection->data.collection.value_type = *value_type;
 #else
-  collection->value_type = value_type;
+  collection->data.collection.value_type = value_type;
 #endif
 
   return ztype;
@@ -782,9 +789,9 @@ php_driver_type_collection_from_value_type(CassValueType type TSRMLS_DC)
   PHP5TO7_ZVAL_MAYBE_MAKE(ztype);
   object_init_ex(PHP5TO7_ZVAL_MAYBE_P(ztype), php_driver_type_collection_ce);
   collection = PHP_DRIVER_GET_TYPE(PHP5TO7_ZVAL_MAYBE_P(ztype));
-  collection->value_type = php_driver_type_scalar(type TSRMLS_CC);
+  collection->data.collection.value_type = php_driver_type_scalar(type TSRMLS_CC);
 
-  sub_type = PHP_DRIVER_GET_TYPE(PHP5TO7_ZVAL_MAYBE_P(collection->value_type));
+  sub_type = PHP_DRIVER_GET_TYPE(PHP5TO7_ZVAL_MAYBE_P(collection->data.collection.value_type));
   cass_data_type_add_sub_type(collection->data_type, sub_type->data_type);
 
   return ztype;
@@ -816,7 +823,7 @@ php_driver_type_user_type(TSRMLS_D)
 }
 
 php5to7_zval
-php_driver_type_custom(char *name TSRMLS_DC)
+php_driver_type_custom(const char *name, size_t name_length TSRMLS_DC)
 {
   php5to7_zval ztype;
   php_driver_type *custom;
@@ -824,7 +831,7 @@ php_driver_type_custom(char *name TSRMLS_DC)
   PHP5TO7_ZVAL_MAYBE_MAKE(ztype);
   object_init_ex(PHP5TO7_ZVAL_MAYBE_P(ztype), php_driver_type_custom_ce);
   custom = PHP_DRIVER_GET_TYPE(PHP5TO7_ZVAL_MAYBE_P(ztype));
-  custom->name = estrdup(name);
+  custom->data.custom.class_name = estrndup(name, name_length);
 
   return ztype;
 }
@@ -1205,17 +1212,6 @@ php_driver_node_dump_to(struct node_s *node, smart_str *text)
   }
 }
 
-static char *
-php_driver_node_dump(struct node_s *node)
-{
-  smart_str text = PHP5TO7_SMART_STR_INIT;
-
-  php_driver_node_dump_to(node, &text);
-  smart_str_0(&text);
-
-  return PHP5TO7_SMART_STR_VAL(text);
-}
-
 static php5to7_zval
 php_driver_create_type(struct node_s *node TSRMLS_DC)
 {
@@ -1240,8 +1236,13 @@ php_driver_create_type(struct node_s *node TSRMLS_DC)
   }
 
   if (type == CASS_VALUE_TYPE_CUSTOM) {
-    return php_driver_type_custom(
-          php_driver_node_dump(node) TSRMLS_CC);
+    php5to7_zval ztype;
+    smart_str class_name = PHP5TO7_SMART_STR_INIT;
+    php_driver_node_dump_to(node, &class_name);
+    ztype =  php_driver_type_custom(PHP5TO7_SMART_STR_VAL(class_name),
+                                    PHP5TO7_SMART_STR_LEN(class_name) TSRMLS_CC);
+    smart_str_free(&class_name);
+    return ztype;
   } else if (type == CASS_VALUE_TYPE_MAP) {
     php5to7_zval key_type;
     php5to7_zval value_type;

@@ -86,7 +86,7 @@ php_driver_value(const CassValue* value, const CassDataType* data_type, php5to7_
   case CASS_VALUE_TYPE_BIGINT:
     object_init_ex(PHP5TO7_ZVAL_MAYBE_DEREF(out), php_driver_bigint_ce);
     numeric = PHP_DRIVER_GET_NUMERIC(PHP5TO7_ZVAL_MAYBE_DEREF(out));
-    ASSERT_SUCCESS_BLOCK(cass_value_get_int64(value, &numeric->bigint_value),
+    ASSERT_SUCCESS_BLOCK(cass_value_get_int64(value, &numeric->data.bigint.value),
       zval_ptr_dtor(out);
       return FAILURE;
     )
@@ -94,7 +94,7 @@ php_driver_value(const CassValue* value, const CassDataType* data_type, php5to7_
   case CASS_VALUE_TYPE_SMALL_INT:
     object_init_ex(PHP5TO7_ZVAL_MAYBE_DEREF(out), php_driver_smallint_ce);
     numeric = PHP_DRIVER_GET_NUMERIC(PHP5TO7_ZVAL_MAYBE_DEREF(out));
-    ASSERT_SUCCESS_BLOCK(cass_value_get_int16(value, &numeric->smallint_value),
+    ASSERT_SUCCESS_BLOCK(cass_value_get_int16(value, &numeric->data.smallint.value),
       zval_ptr_dtor(out);
       return FAILURE;
     )
@@ -102,7 +102,7 @@ php_driver_value(const CassValue* value, const CassDataType* data_type, php5to7_
   case CASS_VALUE_TYPE_TINY_INT:
     object_init_ex(PHP5TO7_ZVAL_MAYBE_DEREF(out), php_driver_tinyint_ce);
     numeric = PHP_DRIVER_GET_NUMERIC(PHP5TO7_ZVAL_MAYBE_DEREF(out));
-    ASSERT_SUCCESS_BLOCK(cass_value_get_int8(value, &numeric->tinyint_value),
+    ASSERT_SUCCESS_BLOCK(cass_value_get_int8(value, &numeric->data.tinyint.value),
       zval_ptr_dtor(out);
       return FAILURE;
     )
@@ -149,7 +149,7 @@ php_driver_value(const CassValue* value, const CassDataType* data_type, php5to7_
       zval_ptr_dtor(out);
       return FAILURE;
     );
-    import_twos_complement((cass_byte_t*) v_bytes, v_bytes_len, &numeric->varint_value);
+    import_twos_complement((cass_byte_t*) v_bytes, v_bytes_len, &numeric->data.varint.value);
     break;
   case CASS_VALUE_TYPE_UUID:
     object_init_ex(PHP5TO7_ZVAL_MAYBE_DEREF(out), php_driver_uuid_ce);
@@ -193,8 +193,8 @@ php_driver_value(const CassValue* value, const CassDataType* data_type, php5to7_
       zval_ptr_dtor(out);
       return FAILURE;
     );
-    import_twos_complement((cass_byte_t*) v_decimal, v_decimal_len, &numeric->decimal_value);
-    numeric->decimal_scale = v_decimal_scale;
+    import_twos_complement((cass_byte_t*) v_decimal, v_decimal_len, &numeric->data.decimal.value);
+    numeric->data.decimal.scale = v_decimal_scale;
     break;
   case CASS_VALUE_TYPE_DOUBLE:
     ASSERT_SUCCESS_BLOCK(cass_value_get_double(value, &v_double),
@@ -206,7 +206,7 @@ php_driver_value(const CassValue* value, const CassDataType* data_type, php5to7_
   case CASS_VALUE_TYPE_FLOAT:
     object_init_ex(PHP5TO7_ZVAL_MAYBE_DEREF(out), php_driver_float_ce);
     numeric = PHP_DRIVER_GET_NUMERIC(PHP5TO7_ZVAL_MAYBE_DEREF(out));
-    ASSERT_SUCCESS_BLOCK(cass_value_get_float(value, &numeric->float_value),
+    ASSERT_SUCCESS_BLOCK(cass_value_get_float(value, &numeric->data.floating.value),
       zval_ptr_dtor(out);
       return FAILURE;
     )

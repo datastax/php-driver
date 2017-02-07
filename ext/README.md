@@ -30,9 +30,9 @@ sudo apt-get install g++ make cmake libuv-dev libssl-dev libgmp-dev php5 php5-de
 ```bash
 sudo yum install automake cmake gcc gcc-c++ git libtool openssl-devel wget gmp gmp-devel boost php-devel pcre-devel git
 pushd /tmp
-wget http://dist.libuv.org/dist/v1.8.0/libuv-v1.8.0.tar.gz
-tar xzf libuv-v1.8.0.tar.gz
-pushd libuv-v1.8.0
+wget http://dist.libuv.org/dist/v1.11.0/libuv-v1.11.0.tar.gz
+tar xzf libuv-v1.11.0.tar.gz
+pushd libuv-v1.11.0
 sh autogen.sh
 ./configure
 sudo make install
@@ -49,7 +49,7 @@ installing any of its dependencies.
 #### Installing with pecl
 
 The PHP driver is published to the official PECL repository, in order to install it,
-you have to first [install the C/C++ driver v2.4.2+](http://datastax.github.io/cpp-driver/topics/building/)
+you have to first [install the C/C++ driver v2.6.0+](http://datastax.github.io/cpp-driver/topics/building/)
 and then run the following command.
 
 ```bash
@@ -130,9 +130,9 @@ Usage: VC_BUILD.BAT [OPTION...]
     --RELEASE                         Enable release build (default)
     --DISABLE-CLEAN                   Disable clean build
     --DISABLE-THREAD-SAFETY           Disable thread safety
-    --ENABLE-PACKAGES [version]       Enable package generation (5.5, 5.6, 7.0) (*)
+    --ENABLE-PACKAGES [version]       Enable package generation (5.6, 7.0) (*)
     --ENABLE-TEST-CONFIGURATION       Enable test configuration build
-    --PHP-VERSION [version]           PHP version 5.5, 5.6, 7.0 (**)
+    --PHP-VERSION [version]           PHP version 5.6, 7.0 (**)
     --X86                             Target 32-bit build (***)
     --X64                             Target 64-bit build (***)
 

@@ -2,13 +2,17 @@
 
 ARG_ENABLE("cassandra", "Enable DataStax PHP Cassandra extension", "no");
 
-// Establish the minimum Cassandra C/C++ driver version
-var minimum_major = 2;
-var minimum_minor = 5;
-var minimum_patch = 0;
-var minimum_version = minimum_major + "." + minimum_minor + "." + minimum_patch;
+// Establish the minimum Cassandra C/C++ driver and PHP version
+var driver_minimum_major = 2;
+var driver_minimum_minor = 6;
+var driver_minimum_patch = 0;
+var driver_minimum_version = driver_minimum_major + "." + driver_minimum_minor + "." + driver_minimum_patch;
+var php_minimum_major = 5;
+var php_minimum_minor = 6;
+var php_minimum_patch = 0;
+var php_minimum_version = php_minimum_major + "." + php_minimum_minor + "." + php_minimum_patch;
 
-function compare_minimum_version(major, minor, patch) {
+function compare_minimum_version(major, minor, patch, minimum_major, minimum_minor, minimum_patch) {
   // Validate major version
   if (major < minimum_major) return -1;
   if (major > minimum_major) return 1;
@@ -42,10 +46,20 @@ function check_cassandra_cpp_driver_version(header_filename) {
   var version = major + "." + minor + "." + patch;
 
   // Ensure the Cassandra C/C++ driver version is valid
-  if (compare_minimum_version(major, minor, patch) < 0) {
-    ERROR("Invalid Cassandra C/C++ Driver Version (v" + version + "): v" + minimum_version + "+ is required");
+  if (compare_minimum_version(major, minor, patch,
+                              driver_minimum_major, driver_minimum_minor, driver_minimum_patch) < 0) {
+    ERROR("Invalid Cassandra C/C++ Driver Version (v" + version + "): v" + driver_minimum_version + "+ is required");
   }
   MESSAGE("\tUsing Cassandra C/C++ driver v" + version);
+}
+
+function check_php_version() {
+  var version = PHP_VERSION + "." + PHP_MINOR_VERSION + "." + PHP_RELEASE_VERSION
+  if (compare_minimum_version(PHP_VERSION, PHP_MINOR_VERSION, PHP_RELEASE_VERSION,
+                              php_minimum_major, php_minimum_minor, php_minimum_patch) < 0) {
+    ERROR("Invalid PHP Version (v" + version + "): v" + php_minimum_version + "+ is required");
+  }
+  MESSAGE("\tUsing PHP v" + version);
 }
 
 if (PHP_CASSANDRA != "no") {
@@ -53,6 +67,7 @@ if (PHP_CASSANDRA != "no") {
   ARG_WITH("cassandra-cpp-driver", "Where to find DataStax C/C++ driver", "yes");
   ARG_WITH("libuv", "Where to find libuv libraries", "yes");
 
+  check_php_version();
   if (CHECK_LIB("cassandra_static.lib", "cassandra", PHP_CASSANDRA_CPP_DRIVER) &&
       (PHP_CASSANDRA_CPP_DRIVER_INCLUDE = CHECK_HEADER_ADD_INCLUDE("cassandra.h", "CFLAGS_CASSANDRA", PHP_CASSANDRA_CPP_DRIVER + "/include"))) {
     check_cassandra_cpp_driver_version(PHP_CASSANDRA_CPP_DRIVER_INCLUDE + "/cassandra.h");

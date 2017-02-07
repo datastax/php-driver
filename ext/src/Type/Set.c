@@ -52,7 +52,7 @@ PHP_METHOD(TypeSet, valueType)
   }
 
   self = PHP_DRIVER_GET_TYPE(getThis());
-  RETURN_ZVAL(PHP5TO7_ZVAL_MAYBE_P(self->value_type), 1, 0);
+  RETURN_ZVAL(PHP5TO7_ZVAL_MAYBE_P(self->data.set.value_type), 1, 0);
 }
 
 PHP_METHOD(TypeSet, __toString)
@@ -75,7 +75,6 @@ PHP_METHOD(TypeSet, __toString)
 
 PHP_METHOD(TypeSet, create)
 {
-  php_driver_type *self;
   php_driver_set *set;
   php5to7_zval_args args = NULL;
   int argc = 0, i;
@@ -84,8 +83,6 @@ PHP_METHOD(TypeSet, create)
                             &args, &argc) == FAILURE) {
     return;
   }
-
-  self = PHP_DRIVER_GET_TYPE(getThis());
 
   object_init_ex(return_value, php_driver_set_ce);
   set = PHP_DRIVER_GET_SET(return_value);
@@ -136,11 +133,10 @@ php_driver_type_set_properties(zval *object TSRMLS_DC)
   php_driver_type *self  = PHP_DRIVER_GET_TYPE(object);
   HashTable      *props = zend_std_get_properties(object TSRMLS_CC);
 
-  if (PHP5TO7_ZEND_HASH_UPDATE(props,
-                               "valueType", sizeof("valueType"),
-                               PHP5TO7_ZVAL_MAYBE_P(self->value_type), sizeof(zval))) {
-    Z_ADDREF_P(PHP5TO7_ZVAL_MAYBE_P(self->value_type));
-  }
+  PHP5TO7_ZEND_HASH_UPDATE(props,
+                           "valueType", sizeof("valueType"),
+                           PHP5TO7_ZVAL_MAYBE_P(self->data.set.value_type), sizeof(zval));
+  Z_ADDREF_P(PHP5TO7_ZVAL_MAYBE_P(self->data.set.value_type));
 
   return props;
 }
@@ -160,7 +156,7 @@ php_driver_type_set_free(php5to7_zend_object_free *object TSRMLS_DC)
   php_driver_type *self = PHP5TO7_ZEND_OBJECT_GET(type, object);
 
   if (self->data_type) cass_data_type_free(self->data_type);
-  PHP5TO7_ZVAL_MAYBE_DESTROY(self->value_type);
+  PHP5TO7_ZVAL_MAYBE_DESTROY(self->data.set.value_type);
 
   zend_object_std_dtor(&self->zval TSRMLS_CC);
   PHP5TO7_MAYBE_EFREE(self);
@@ -174,7 +170,7 @@ php_driver_type_set_new(zend_class_entry *ce TSRMLS_DC)
 
   self->type = CASS_VALUE_TYPE_SET;
   self->data_type = cass_data_type_new(self->type);
-  PHP5TO7_ZVAL_UNDEF(self->value_type);
+  PHP5TO7_ZVAL_UNDEF(self->data.set.value_type);
 
   PHP5TO7_ZEND_OBJECT_INIT_EX(type, type_set, self, ce);
 }

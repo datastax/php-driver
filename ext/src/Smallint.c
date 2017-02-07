@@ -30,14 +30,14 @@ zend_class_entry *php_driver_smallint_ce = NULL;
 static int
 to_double(zval *result, php_driver_numeric *smallint TSRMLS_DC)
 {
-  ZVAL_DOUBLE(result, (double) smallint->smallint_value);
+  ZVAL_DOUBLE(result, (double) smallint->data.smallint.value);
   return SUCCESS;
 }
 
 static int
 to_long(zval *result, php_driver_numeric *smallint TSRMLS_DC)
 {
-  ZVAL_LONG(result, (long) smallint->smallint_value);
+  ZVAL_LONG(result, (long) smallint->data.smallint.value);
   return SUCCESS;
 }
 
@@ -45,7 +45,7 @@ static int
 to_string(zval *result, php_driver_numeric *smallint TSRMLS_DC)
 {
   char *string;
-  spprintf(&string, 0, "%d", smallint->smallint_value);
+  spprintf(&string, 0, "%d", smallint->data.smallint.value);
   PHP5TO7_ZVAL_STRING(result, string);
   efree(string);
   return SUCCESS;
@@ -72,7 +72,7 @@ php_driver_smallint_init(INTERNAL_FUNCTION_PARAMETERS)
   if (Z_TYPE_P(value) == IS_OBJECT &&
            instanceof_function(Z_OBJCE_P(value), php_driver_smallint_ce TSRMLS_CC)) {
     php_driver_numeric *other = PHP_DRIVER_GET_NUMERIC(value);
-    self->smallint_value = other->smallint_value;
+    self->data.smallint.value = other->data.smallint.value;
   } else {
     if (Z_TYPE_P(value) == IS_LONG) {
       number = (cass_int32_t) Z_LVAL_P(value);
@@ -90,7 +90,7 @@ php_driver_smallint_init(INTERNAL_FUNCTION_PARAMETERS)
     if (number < INT16_MIN || number > INT16_MAX) {
       INVALID_ARGUMENT(value, ("between -32768 and 32767"));
     }
-    self->smallint_value = (cass_int16_t) number;
+    self->data.smallint.value = (cass_int16_t) number;
   }
 }
 
@@ -148,8 +148,8 @@ PHP_METHOD(Smallint, add)
     object_init_ex(return_value, php_driver_smallint_ce);
     result = PHP_DRIVER_GET_NUMERIC(return_value);
 
-    result->smallint_value = self->smallint_value + smallint->smallint_value;
-    if (result->smallint_value - smallint->smallint_value != self->smallint_value) {
+    result->data.smallint.value = self->data.smallint.value + smallint->data.smallint.value;
+    if (result->data.smallint.value - smallint->data.smallint.value != self->data.smallint.value) {
       zend_throw_exception_ex(php_driver_range_exception_ce, 0 TSRMLS_CC, "Sum is out of range");
       return;
     }
@@ -177,8 +177,8 @@ PHP_METHOD(Smallint, sub)
     object_init_ex(return_value, php_driver_smallint_ce);
     result = PHP_DRIVER_GET_NUMERIC(return_value);
 
-    result->smallint_value = self->smallint_value - smallint->smallint_value;
-    if (result->smallint_value + smallint->smallint_value != self->smallint_value) {
+    result->data.smallint.value = self->data.smallint.value - smallint->data.smallint.value;
+    if (result->data.smallint.value + smallint->data.smallint.value != self->data.smallint.value) {
       zend_throw_exception_ex(php_driver_range_exception_ce, 0 TSRMLS_CC, "Difference is out of range");
       return;
     }
@@ -206,9 +206,9 @@ PHP_METHOD(Smallint, mul)
     object_init_ex(return_value, php_driver_smallint_ce);
     result = PHP_DRIVER_GET_NUMERIC(return_value);
 
-    result->smallint_value = self->smallint_value * smallint->smallint_value;
-    if (smallint->smallint_value != 0 &&
-        result->smallint_value / smallint->smallint_value != self->smallint_value) {
+    result->data.smallint.value = self->data.smallint.value * smallint->data.smallint.value;
+    if (smallint->data.smallint.value != 0 &&
+        result->data.smallint.value / smallint->data.smallint.value != self->data.smallint.value) {
       zend_throw_exception_ex(php_driver_range_exception_ce, 0 TSRMLS_CC, "Product is out of range");
       return;
     }
@@ -236,13 +236,13 @@ PHP_METHOD(Smallint, div)
     object_init_ex(return_value, php_driver_smallint_ce);
     result = PHP_DRIVER_GET_NUMERIC(return_value);
 
-    if (smallint->smallint_value == 0) {
+    if (smallint->data.smallint.value == 0) {
       zend_throw_exception_ex(php_driver_divide_by_zero_exception_ce, 0 TSRMLS_CC, "Cannot divide by zero");
       return;
     }
 
-    result->smallint_value = self->smallint_value / smallint->smallint_value;
-    if (result->smallint_value * smallint->smallint_value != self->smallint_value) {
+    result->data.smallint.value = self->data.smallint.value / smallint->data.smallint.value;
+    if (result->data.smallint.value * smallint->data.smallint.value != self->data.smallint.value) {
       zend_throw_exception_ex(php_driver_range_exception_ce, 0 TSRMLS_CC, "Quotient is out of range");
       return;
     }
@@ -270,12 +270,12 @@ PHP_METHOD(Smallint, mod)
     object_init_ex(return_value, php_driver_smallint_ce);
     result = PHP_DRIVER_GET_NUMERIC(return_value);
 
-    if (smallint->smallint_value == 0) {
+    if (smallint->data.smallint.value == 0) {
       zend_throw_exception_ex(php_driver_divide_by_zero_exception_ce, 0 TSRMLS_CC, "Cannot modulo by zero");
       return;
     }
 
-    result->smallint_value = self->smallint_value % smallint->smallint_value;
+    result->data.smallint.value = self->data.smallint.value % smallint->data.smallint.value;
   } else {
     INVALID_ARGUMENT(divisor, "a " PHP_DRIVER_NAMESPACE "\\Smallint");
   }
@@ -288,14 +288,14 @@ PHP_METHOD(Smallint, abs)
   php_driver_numeric *result = NULL;
   php_driver_numeric *self = PHP_DRIVER_GET_NUMERIC(getThis());
 
-  if (self->smallint_value == INT16_MIN) {
+  if (self->data.smallint.value == INT16_MIN) {
     zend_throw_exception_ex(php_driver_range_exception_ce, 0 TSRMLS_CC, "Value doesn't exist");
     return;
   }
 
   object_init_ex(return_value, php_driver_smallint_ce);
   result = PHP_DRIVER_GET_NUMERIC(return_value);
-  result->smallint_value = self->smallint_value < 0 ? -self->smallint_value : self->smallint_value;
+  result->data.smallint.value = self->data.smallint.value < 0 ? -self->data.smallint.value : self->data.smallint.value;
 }
 /* }}} */
 
@@ -305,14 +305,14 @@ PHP_METHOD(Smallint, neg)
   php_driver_numeric *result = NULL;
   php_driver_numeric *self = PHP_DRIVER_GET_NUMERIC(getThis());
 
-  if (self->smallint_value == INT16_MIN) {
+  if (self->data.smallint.value == INT16_MIN) {
     zend_throw_exception_ex(php_driver_range_exception_ce, 0 TSRMLS_CC, "Value doesn't exist");
     return;
   }
 
   object_init_ex(return_value, php_driver_smallint_ce);
   result = PHP_DRIVER_GET_NUMERIC(return_value);
-  result->smallint_value = -self->smallint_value;
+  result->data.smallint.value = -self->data.smallint.value;
 }
 /* }}} */
 
@@ -322,14 +322,14 @@ PHP_METHOD(Smallint, sqrt)
   php_driver_numeric *result = NULL;
   php_driver_numeric *self = PHP_DRIVER_GET_NUMERIC(getThis());
 
-  if (self->smallint_value < 0) {
+  if (self->data.smallint.value < 0) {
     zend_throw_exception_ex(php_driver_range_exception_ce, 0 TSRMLS_CC,
                             "Cannot take a square root of a negative number");
   }
 
   object_init_ex(return_value, php_driver_smallint_ce);
   result = PHP_DRIVER_GET_NUMERIC(return_value);
-  result->smallint_value = (cass_int16_t) sqrt((long double) self->smallint_value);
+  result->data.smallint.value = (cass_int16_t) sqrt((long double) self->data.smallint.value);
 }
 /* }}} */
 
@@ -357,7 +357,7 @@ PHP_METHOD(Smallint, min)
   php_driver_numeric *smallint = NULL;
   object_init_ex(return_value, php_driver_smallint_ce);
   smallint = PHP_DRIVER_GET_NUMERIC(return_value);
-  smallint->smallint_value = INT16_MIN;
+  smallint->data.smallint.value = INT16_MIN;
 }
 /* }}} */
 
@@ -367,7 +367,7 @@ PHP_METHOD(Smallint, max)
   php_driver_numeric *smallint = NULL;
   object_init_ex(return_value, php_driver_smallint_ce);
   smallint = PHP_DRIVER_GET_NUMERIC(return_value);
-  smallint->smallint_value = INT16_MAX;
+  smallint->data.smallint.value = INT16_MAX;
 }
 /* }}} */
 
@@ -443,9 +443,9 @@ php_driver_smallint_compare(zval *obj1, zval *obj2 TSRMLS_DC)
   smallint1 = PHP_DRIVER_GET_NUMERIC(obj1);
   smallint2 = PHP_DRIVER_GET_NUMERIC(obj2);
 
-  if (smallint1->smallint_value == smallint2->smallint_value)
+  if (smallint1->data.smallint.value == smallint2->data.smallint.value)
     return 0;
-  else if (smallint1->smallint_value < smallint2->smallint_value)
+  else if (smallint1->data.smallint.value < smallint2->data.smallint.value)
     return -1;
   else
     return 1;
@@ -455,7 +455,7 @@ static unsigned
 php_driver_smallint_hash_value(zval *obj TSRMLS_DC)
 {
   php_driver_numeric *self = PHP_DRIVER_GET_NUMERIC(obj);
-  return 31 * 17 + self->smallint_value;
+  return 31 * 17 + self->data.smallint.value;
 }
 
 static int

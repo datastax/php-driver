@@ -73,22 +73,22 @@ bind_argument_by_index(CassStatement *statement, size_t index, zval *value TSRML
   if (Z_TYPE_P(value) == IS_OBJECT) {
     if (instanceof_function(Z_OBJCE_P(value), php_driver_float_ce TSRMLS_CC)) {
       php_driver_numeric *float_number = PHP_DRIVER_GET_NUMERIC(value);
-      CHECK_RESULT(cass_statement_bind_float(statement, index, float_number->float_value));
+      CHECK_RESULT(cass_statement_bind_float(statement, index, float_number->data.floating.value));
     }
 
     if (instanceof_function(Z_OBJCE_P(value), php_driver_bigint_ce TSRMLS_CC)) {
       php_driver_numeric *bigint = PHP_DRIVER_GET_NUMERIC(value);
-      CHECK_RESULT(cass_statement_bind_int64(statement, index, bigint->bigint_value));
+      CHECK_RESULT(cass_statement_bind_int64(statement, index, bigint->data.bigint.value));
     }
 
     if (instanceof_function(Z_OBJCE_P(value), php_driver_smallint_ce TSRMLS_CC)) {
       php_driver_numeric *smallint = PHP_DRIVER_GET_NUMERIC(value);
-      CHECK_RESULT(cass_statement_bind_int16(statement, index, smallint->smallint_value));
+      CHECK_RESULT(cass_statement_bind_int16(statement, index, smallint->data.smallint.value));
     }
 
     if (instanceof_function(Z_OBJCE_P(value), php_driver_tinyint_ce TSRMLS_CC)) {
       php_driver_numeric *tinyint = PHP_DRIVER_GET_NUMERIC(value);
-      CHECK_RESULT(cass_statement_bind_int8(statement, index, tinyint->tinyint_value));
+      CHECK_RESULT(cass_statement_bind_int8(statement, index, tinyint->data.tinyint.value));
     }
 
     if (instanceof_function(Z_OBJCE_P(value), php_driver_timestamp_ce TSRMLS_CC)) {
@@ -114,7 +114,7 @@ bind_argument_by_index(CassStatement *statement, size_t index, zval *value TSRML
     if (instanceof_function(Z_OBJCE_P(value), php_driver_varint_ce TSRMLS_CC)) {
       php_driver_numeric *varint = PHP_DRIVER_GET_NUMERIC(value);
       size_t size;
-      cass_byte_t *data = export_twos_complement(varint->varint_value, &size);
+      cass_byte_t *data = export_twos_complement(varint->data.varint.value, &size);
       CassError rc = cass_statement_bind_bytes(statement, index, data, size);
       free(data);
       CHECK_RESULT(rc);
@@ -123,8 +123,8 @@ bind_argument_by_index(CassStatement *statement, size_t index, zval *value TSRML
     if (instanceof_function(Z_OBJCE_P(value), php_driver_decimal_ce TSRMLS_CC)) {
       php_driver_numeric *decimal = PHP_DRIVER_GET_NUMERIC(value);
       size_t size;
-      cass_byte_t *data = (cass_byte_t *) export_twos_complement(decimal->decimal_value, &size);
-      CassError rc = cass_statement_bind_decimal(statement, index, data, size, decimal->decimal_scale);
+      cass_byte_t *data = (cass_byte_t *) export_twos_complement(decimal->data.decimal.value, &size);
+      CassError rc = cass_statement_bind_decimal(statement, index, data, size, decimal->data.decimal.scale);
       free(data);
       CHECK_RESULT(rc);
     }
@@ -229,22 +229,22 @@ bind_argument_by_name(CassStatement *statement, const char *name,
   if (Z_TYPE_P(value) == IS_OBJECT) {
     if (instanceof_function(Z_OBJCE_P(value), php_driver_float_ce TSRMLS_CC)) {
       php_driver_numeric *float_number = PHP_DRIVER_GET_NUMERIC(value);
-      CHECK_RESULT(cass_statement_bind_float_by_name(statement, name, float_number->float_value));
+      CHECK_RESULT(cass_statement_bind_float_by_name(statement, name, float_number->data.floating.value));
     }
 
     if (instanceof_function(Z_OBJCE_P(value), php_driver_bigint_ce TSRMLS_CC)) {
       php_driver_numeric *bigint = PHP_DRIVER_GET_NUMERIC(value);
-      CHECK_RESULT(cass_statement_bind_int64_by_name(statement, name, bigint->bigint_value));
+      CHECK_RESULT(cass_statement_bind_int64_by_name(statement, name, bigint->data.bigint.value));
     }
 
     if (instanceof_function(Z_OBJCE_P(value), php_driver_smallint_ce TSRMLS_CC)) {
       php_driver_numeric *smallint = PHP_DRIVER_GET_NUMERIC(value);
-      CHECK_RESULT(cass_statement_bind_int16_by_name(statement, name, smallint->smallint_value));
+      CHECK_RESULT(cass_statement_bind_int16_by_name(statement, name, smallint->data.smallint.value));
     }
 
     if (instanceof_function(Z_OBJCE_P(value), php_driver_tinyint_ce TSRMLS_CC)) {
       php_driver_numeric *tinyint = PHP_DRIVER_GET_NUMERIC(value);
-      CHECK_RESULT(cass_statement_bind_int8_by_name(statement, name, tinyint->tinyint_value));
+      CHECK_RESULT(cass_statement_bind_int8_by_name(statement, name, tinyint->data.tinyint.value));
     }
 
     if (instanceof_function(Z_OBJCE_P(value), php_driver_timestamp_ce TSRMLS_CC)) {
@@ -270,7 +270,7 @@ bind_argument_by_name(CassStatement *statement, const char *name,
     if (instanceof_function(Z_OBJCE_P(value), php_driver_varint_ce TSRMLS_CC)) {
       php_driver_numeric *varint = PHP_DRIVER_GET_NUMERIC(value);
       size_t size;
-      cass_byte_t *data = (cass_byte_t *) export_twos_complement(varint->varint_value, &size);
+      cass_byte_t *data = (cass_byte_t *) export_twos_complement(varint->data.varint.value, &size);
       CassError rc = cass_statement_bind_bytes_by_name(statement, name, data, size);
       free(data);
       CHECK_RESULT(rc);
@@ -279,8 +279,8 @@ bind_argument_by_name(CassStatement *statement, const char *name,
     if (instanceof_function(Z_OBJCE_P(value), php_driver_decimal_ce TSRMLS_CC)) {
       php_driver_numeric *decimal = PHP_DRIVER_GET_NUMERIC(value);
       size_t size;
-      cass_byte_t *data = (cass_byte_t *) export_twos_complement(decimal->decimal_value, &size);
-      CassError rc = cass_statement_bind_decimal_by_name(statement, name, data, size, decimal->decimal_scale);
+      cass_byte_t *data = (cass_byte_t *) export_twos_complement(decimal->data.decimal.value, &size);
+      CassError rc = cass_statement_bind_decimal_by_name(statement, name, data, size, decimal->data.decimal.scale);
       free(data);
       CHECK_RESULT(rc);
     }
@@ -403,10 +403,10 @@ create_statement(php_driver_statement *statement, HashTable *arguments TSRMLS_DC
     if (arguments)
       count = zend_hash_num_elements(arguments);
 
-    stmt = cass_statement_new(statement->cql, count);
+    stmt = cass_statement_new(statement->data.simple.cql, count);
     break;
   case PHP_DRIVER_PREPARED_STATEMENT:
-    stmt = cass_prepared_bind(statement->prepared);
+    stmt = cass_prepared_bind(statement->data.prepared.prepared);
     break;
   default:
     zend_throw_exception_ex(php_driver_runtime_exception_ce, 0 TSRMLS_CC,
@@ -428,11 +428,11 @@ create_batch(php_driver_statement *batch,
              CassRetryPolicy *retry_policy,
              cass_int64_t timestamp TSRMLS_DC)
 {
-  CassBatch *cass_batch = cass_batch_new(batch->batch_type);
+  CassBatch *cass_batch = cass_batch_new(batch->data.batch.type);
   CassError rc = CASS_OK;
 
   php5to7_zval *current;
-  PHP5TO7_ZEND_HASH_FOREACH_VAL(&batch->statements, current) {
+  PHP5TO7_ZEND_HASH_FOREACH_VAL(&batch->data.batch.statements, current) {
 #if PHP_MAJOR_VERSION >= 7
     php_driver_batch_statement_entry *batch_statement_entry = (php_driver_batch_statement_entry *)Z_PTR_P(current);
 #else
@@ -451,7 +451,7 @@ create_batch(php_driver_statement *batch,
     }
     cass_batch_add_statement(cass_batch, stmt);
     cass_statement_free(stmt);
-  } PHP5TO7_ZEND_HASH_FOREACH_END(&batch->statements);
+  } PHP5TO7_ZEND_HASH_FOREACH_END(&batch->data.batch.statements);
 
   rc = cass_batch_set_consistency(cass_batch, consistency);
   ASSERT_SUCCESS_BLOCK(rc,
@@ -778,7 +778,7 @@ PHP_METHOD(DefaultSession, prepare)
       php_driver_future_is_error(future TSRMLS_CC) == SUCCESS) {
     object_init_ex(return_value, php_driver_prepared_statement_ce);
     prepared_statement = PHP_DRIVER_GET_STATEMENT(return_value);
-    prepared_statement->prepared = cass_future_get_prepared(future);
+    prepared_statement->data.prepared.prepared = cass_future_get_prepared(future);
   }
 
   cass_future_free(future);

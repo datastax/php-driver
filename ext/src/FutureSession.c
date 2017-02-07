@@ -133,6 +133,8 @@ php_driver_future_session_free(php5to7_zend_object_free *object TSRMLS_DC)
     efree(self->exception_message);
   }
 
+  PHP5TO7_ZVAL_MAYBE_DESTROY(self->default_session);
+
   zend_object_std_dtor(&self->zval TSRMLS_CC);
   PHP5TO7_MAYBE_EFREE(self);
 }
@@ -148,6 +150,8 @@ php_driver_future_session_new(zend_class_entry *ce TSRMLS_DC)
   self->exception_message = NULL;
   self->hash_key          = NULL;
   self->persist           = 0;
+
+  PHP5TO7_ZVAL_UNDEF(self->default_session);
 
   PHP5TO7_ZEND_OBJECT_INIT(future_session, self, ce);
 }

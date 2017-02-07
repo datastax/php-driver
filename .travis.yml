@@ -10,7 +10,6 @@ cache:
   directories:
     - ${HOME}/dependencies
 php:
-  - 5.5
   - 5.6
   - 7.0
 
@@ -24,7 +23,7 @@ env:
     # Indicate the cached dependencies directory
     - CACHED_DEPENDENCIES_DIRECTORY=${HOME}/dependencies
     # Add libuv source build for container based TravisCI
-    - LIBUV_VERSION=1.8.0
+    - LIBUV_VERSION=1.11.0
     - LIBUV_ROOT_DIR=${CACHED_DEPENDENCIES_DIRECTORY}/libuv/${LIBUV_VERSION}
     - PHP_DRIVER_BUILD_DIRECTORY=/tmp/php-driver/build
     - CPP_DRIVER_SOURCE_DIRECTORY=${TRAVIS_BUILD_DIR}/lib/cpp-driver
@@ -83,7 +82,7 @@ before_script:
   - composer self-update
   - composer install -n
   # Use the BEHAT_EXTRA_OPTIONS to supply options to Behat runs
-  - BEHAT_EXTRA_OPTIONS=--profile=cassandra-version-2.2
+  - BEHAT_EXTRA_OPTIONS=
   # Use the BEHAT_SKIP_TAGS to skip tests on TravisCI
   - BEHAT_SKIP_TAGS=~@skip-ci
   - export BEHAT_EXTRA_OPTIONS BEHAT_SKIP_TAGS

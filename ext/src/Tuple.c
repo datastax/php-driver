@@ -27,15 +27,12 @@
 
 zend_class_entry *php_driver_tuple_ce = NULL;
 
-int
+void
 php_driver_tuple_set(php_driver_tuple *tuple, ulong index, zval *object TSRMLS_DC)
 {
-  if (PHP5TO7_ZEND_HASH_INDEX_UPDATE(&tuple->values, index, object, sizeof(zval *))) {
-    Z_TRY_ADDREF_P(object);
-    tuple->dirty = 1;
-    return 1;
-  }
-  return 0;
+  PHP5TO7_ZEND_HASH_INDEX_UPDATE(&tuple->values, index, object, sizeof(zval *));
+  Z_TRY_ADDREF_P(object);
+  tuple->dirty = 1;
 }
 
 static void
@@ -51,8 +48,9 @@ php_driver_tuple_populate(php_driver_tuple *tuple, zval *array TSRMLS_DC)
 
   type = PHP_DRIVER_GET_TYPE(PHP5TO7_ZVAL_MAYBE_P(tuple->type));
 
-  PHP5TO7_ZEND_HASH_FOREACH_NUM_KEY_VAL(&type->types, index, current) {
+  PHP5TO7_ZEND_HASH_FOREACH_NUM_KEY_VAL(&type->data.tuple.types, index, current) {
     php5to7_zval *value = NULL;
+    (void) current;
     if (PHP5TO7_ZEND_HASH_INDEX_FIND(&tuple->values, index, value)) {
       if (add_next_index_zval(array, PHP5TO7_ZVAL_MAYBE_DEREF(value)) == SUCCESS)
         Z_TRY_ADDREF_P(PHP5TO7_ZVAL_MAYBE_DEREF(value));
@@ -64,7 +62,7 @@ php_driver_tuple_populate(php_driver_tuple *tuple, zval *array TSRMLS_DC)
       else
         break;
     }
-  } PHP5TO7_ZEND_HASH_FOREACH_END(&type->types);
+  } PHP5TO7_ZEND_HASH_FOREACH_END(&type->data.tuple.types);
 
 #if PHP_MAJOR_VERSION < 7
   zval_ptr_dtor(&null);
@@ -152,16 +150,15 @@ PHP_METHOD(Tuple, set)
   self = PHP_DRIVER_GET_TUPLE(getThis());
   type = PHP_DRIVER_GET_TYPE(PHP5TO7_ZVAL_MAYBE_P(self->type));
 
-  if (index < 0 || index >= zend_hash_num_elements(&type->types)) {
+  if (index < 0 || index >= zend_hash_num_elements(&type->data.tuple.types)) {
     zend_throw_exception_ex(php_driver_invalid_argument_exception_ce, 0 TSRMLS_CC,
                             "Index out of bounds");
     return;
   }
 
-  PHP5TO7_ZEND_HASH_INDEX_FIND(&type->types, index, sub_type);
-
-  if (!php_driver_validate_object(value,
-                                     PHP5TO7_ZVAL_MAYBE_DEREF(sub_type) TSRMLS_CC)) {
+  if (!PHP5TO7_ZEND_HASH_INDEX_FIND(&type->data.tuple.types, index, sub_type) ||
+      !php_driver_validate_object(value,
+                                  PHP5TO7_ZVAL_MAYBE_DEREF(sub_type) TSRMLS_CC)) {
     return;
   }
 
@@ -183,7 +180,7 @@ PHP_METHOD(Tuple, get)
   self = PHP_DRIVER_GET_TUPLE(getThis());
   type = PHP_DRIVER_GET_TYPE(PHP5TO7_ZVAL_MAYBE_P(self->type));
 
-  if (index < 0 || index >= zend_hash_num_elements(&type->types)) {
+  if (index < 0 || index >= zend_hash_num_elements(&type->data.tuple.types)) {
     zend_throw_exception_ex(php_driver_invalid_argument_exception_ce, 0 TSRMLS_CC,
                             "Index out of bounds");
     return;
@@ -200,7 +197,7 @@ PHP_METHOD(Tuple, count)
 {
   php_driver_tuple *self = PHP_DRIVER_GET_TUPLE(getThis());
   php_driver_type *type = PHP_DRIVER_GET_TYPE(PHP5TO7_ZVAL_MAYBE_P(self->type));
-  RETURN_LONG(zend_hash_num_elements(&type->types));
+  RETURN_LONG(zend_hash_num_elements(&type->data.tuple.types));
 }
 /* }}} */
 
@@ -211,7 +208,7 @@ PHP_METHOD(Tuple, current)
   php_driver_tuple *self = PHP_DRIVER_GET_TUPLE(getThis());
   php_driver_type *type = PHP_DRIVER_GET_TYPE(PHP5TO7_ZVAL_MAYBE_P(self->type));
 
-  if (PHP5TO7_ZEND_HASH_GET_CURRENT_KEY_EX(&type->types, NULL, &index, &self->pos) == HASH_KEY_IS_LONG) {
+  if (PHP5TO7_ZEND_HASH_GET_CURRENT_KEY_EX(&type->data.tuple.types, NULL, &index, &self->pos) == HASH_KEY_IS_LONG) {
     php5to7_zval *value;
     if (PHP5TO7_ZEND_HASH_INDEX_FIND(&self->values, index, value)) {
       RETURN_ZVAL(PHP5TO7_ZVAL_MAYBE_DEREF(value), 1, 0);
@@ -226,7 +223,7 @@ PHP_METHOD(Tuple, key)
   php5to7_ulong index;
   php_driver_tuple *self = PHP_DRIVER_GET_TUPLE(getThis());
   php_driver_type *type = PHP_DRIVER_GET_TYPE(PHP5TO7_ZVAL_MAYBE_P(self->type));
-  if (PHP5TO7_ZEND_HASH_GET_CURRENT_KEY_EX(&type->types, NULL, &index, &self->pos) == HASH_KEY_IS_LONG) {
+  if (PHP5TO7_ZEND_HASH_GET_CURRENT_KEY_EX(&type->data.tuple.types, NULL, &index, &self->pos) == HASH_KEY_IS_LONG) {
     RETURN_LONG(index);
   }
 }
@@ -237,7 +234,7 @@ PHP_METHOD(Tuple, next)
 {
   php_driver_tuple *self = PHP_DRIVER_GET_TUPLE(getThis());
   php_driver_type *type = PHP_DRIVER_GET_TYPE(PHP5TO7_ZVAL_MAYBE_P(self->type));
-  zend_hash_move_forward_ex(&type->types, &self->pos);
+  zend_hash_move_forward_ex(&type->data.tuple.types, &self->pos);
 }
 /* }}} */
 
@@ -246,7 +243,7 @@ PHP_METHOD(Tuple, valid)
 {
   php_driver_tuple *self = PHP_DRIVER_GET_TUPLE(getThis());
   php_driver_type *type = PHP_DRIVER_GET_TYPE(PHP5TO7_ZVAL_MAYBE_P(self->type));
-  RETURN_BOOL(zend_hash_has_more_elements_ex(&type->types, &self->pos) == SUCCESS);
+  RETURN_BOOL(zend_hash_has_more_elements_ex(&type->data.tuple.types, &self->pos) == SUCCESS);
 }
 /* }}} */
 
@@ -255,7 +252,7 @@ PHP_METHOD(Tuple, rewind)
 {
   php_driver_tuple *self = PHP_DRIVER_GET_TUPLE(getThis());
   php_driver_type *type = PHP_DRIVER_GET_TYPE(PHP5TO7_ZVAL_MAYBE_P(self->type));
-  zend_hash_internal_pointer_reset_ex(&type->types, &self->pos);
+  zend_hash_internal_pointer_reset_ex(&type->data.tuple.types, &self->pos);
 }
 /* }}} */
 
@@ -309,11 +306,10 @@ php_driver_tuple_properties(zval *object TSRMLS_DC)
   php_driver_tuple  *self = PHP_DRIVER_GET_TUPLE(object);
   HashTable             *props = zend_std_get_properties(object TSRMLS_CC);
 
-  if (PHP5TO7_ZEND_HASH_UPDATE(props,
-                               "type", sizeof("type"),
-                               PHP5TO7_ZVAL_MAYBE_P(self->type), sizeof(zval))) {
-    Z_ADDREF_P(PHP5TO7_ZVAL_MAYBE_P(self->type));
-  }
+  PHP5TO7_ZEND_HASH_UPDATE(props,
+                           "type", sizeof("type"),
+                           PHP5TO7_ZVAL_MAYBE_P(self->type), sizeof(zval));
+  Z_ADDREF_P(PHP5TO7_ZVAL_MAYBE_P(self->type));
 
   PHP5TO7_ZVAL_MAYBE_MAKE(values);
   array_init(PHP5TO7_ZVAL_MAYBE_P(values));

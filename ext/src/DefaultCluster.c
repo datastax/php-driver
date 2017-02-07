@@ -153,8 +153,6 @@ PHP_METHOD(DefaultCluster, connectAsync)
   future = PHP_DRIVER_GET_FUTURE_SESSION(return_value);
 
   future->persist = self->persist;
-  future->hash_key = estrdup(self->hash_key);
-  future->hash_key_len = self->hash_key_len;
 
   if (self->persist) {
     php5to7_zend_resource_le *le;

@@ -35,8 +35,8 @@ typedef int pid_t;
 #include <process.h>
 #endif
 
-#if PHP_VERSION_ID < 50304
-#  error PHP 5.3.4 or later is required in order to build the driver
+#if PHP_VERSION_ID < 50600
+#  error PHP 5.6.0 or later is required in order to build the driver
 #endif
 
 #if HAVE_SPL
@@ -171,7 +171,9 @@ php5to7_string_compare(php5to7_string s1, php5to7_string s2)
 #define PHP5TO7_ZEND_HASH_FOREACH_STR_KEY_VAL(ht, _key, _val) \
   ZEND_HASH_FOREACH(ht, 0);                                   \
   if (_p->key) {                                              \
-    _key = _p->key->val;                                      \
+    (_key) = _p->key->val;                                    \
+  }  else {                                                   \
+    (_key) = NULL;                                            \
   }                                                           \
   _val = _z;
 
@@ -202,16 +204,16 @@ php5to7_string_compare(php5to7_string s1, php5to7_string s2)
   ((res = zend_hash_index_find((ht), (php5to7_ulong) (index))) != NULL)
 
 #define PHP5TO7_ZEND_HASH_NEXT_INDEX_INSERT(ht, val, val_size) \
-  (zend_hash_next_index_insert((ht), (val)) != NULL)
+  ((void) zend_hash_next_index_insert((ht), (val)))
 
 #define PHP5TO7_ZEND_HASH_UPDATE(ht, key, len, val, val_size) \
-  ((zend_hash_str_update((ht), (key), (size_t)(len - 1), (val))) != NULL)
+  ((void) zend_hash_str_update((ht), (key), (size_t)(len - 1), (val)))
 
 #define PHP5TO7_ZEND_HASH_INDEX_UPDATE(ht, index, val, val_size) \
-  ((zend_hash_index_update((ht), (index), (val))) != NULL)
+  ((void) zend_hash_index_update((ht), (index), (val)))
 
 #define PHP5TO7_ZEND_HASH_ADD(ht, key, len, val, val_size) \
-  (zend_hash_str_add((ht), (key), (size_t)(len - 1), (val)) != NULL)
+  ((void) zend_hash_str_add((ht), (key), (size_t)(len - 1), (val)))
 
 #define PHP5TO7_ZEND_HASH_DEL(ht, key, len) \
   ((zend_hash_str_del((ht), (key), (size_t)(len - 1))) == SUCCESS)
@@ -328,7 +330,7 @@ php5to7_string_compare(php5to7_string s1, php5to7_string s2)
 #define PHP5TO7_ZEND_HASH_FOREACH_VAL(ht, _val) do { \
   HashPosition _pos; \
   zend_hash_internal_pointer_reset_ex((ht), &_pos); \
-  while (zend_hash_get_current_data_ex((ht), (void **)&(_val), &_pos) == SUCCESS) { \
+  while (zend_hash_get_current_data_ex((ht), (void **)&(_val), &_pos) == SUCCESS) {
 
 #define PHP5TO7_ZEND_HASH_FOREACH_KEY_VAL(ht, _h, _key, _key_len, _val) \
   PHP5TO7_ZEND_HASH_FOREACH_VAL(ht, _val) \
@@ -374,16 +376,16 @@ php5to7_string_compare(php5to7_string s1, php5to7_string s2)
   (zend_hash_index_find((ht), (php5to7_ulong) (index), (void **) &res) == SUCCESS)
 
 #define PHP5TO7_ZEND_HASH_NEXT_INDEX_INSERT(ht, val, val_size) \
-  (zend_hash_next_index_insert((ht), (void*) &(val), (uint) (val_size), NULL) == SUCCESS)
+  ((void) zend_hash_next_index_insert((ht), (void*) &(val), (uint) (val_size), NULL))
 
 #define PHP5TO7_ZEND_HASH_UPDATE(ht, key, len, val, val_size) \
-  (zend_hash_update((ht), (key), (uint)(len), (void *) &(val), (uint)(val_size), NULL) == SUCCESS)
+  ((void) zend_hash_update((ht), (key), (uint)(len), (void *) &(val), (uint)(val_size), NULL))
 
 #define PHP5TO7_ZEND_HASH_INDEX_UPDATE(ht, index, val, val_size) \
-  ((zend_hash_index_update((ht), (index), (void *) &(val), (uint)(val_size), NULL)) == SUCCESS)
+  ((void) zend_hash_index_update((ht), (index), (void *) &(val), (uint)(val_size), NULL))
 
 #define PHP5TO7_ZEND_HASH_ADD(ht, key, len, val, val_size) \
-  (zend_hash_add((ht), (key), (len), (void *) &(val), (uint)(val_size), NULL) == SUCCESS)
+  ((void) zend_hash_add((ht), (key), (len), (void *) &(val), (uint)(val_size), NULL))
 
 #define PHP5TO7_ZEND_HASH_DEL(ht, key, len) \
   ((zend_hash_del((ht), (key), (uint)(len))) == SUCCESS)
