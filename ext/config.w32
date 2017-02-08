@@ -118,6 +118,7 @@ if (PHP_CASSANDRA != "no") {
               "DefaultSchema.c " +
               "DefaultSession.c " +
               "DefaultTable.c " +
+              "Duration.c " +
               "Exception.c " +
               "ExecutionOptions.c " +
               "Float.c " +

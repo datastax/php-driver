@@ -47,6 +47,7 @@ php_driver_value(const CassValue* value, const CassDataType* data_type, php5to7_
   php_driver_time *time = NULL;
   php_driver_blob *blob = NULL;
   php_driver_inet *inet = NULL;
+  php_driver_duration *duration = NULL;
   php_driver_collection *collection = NULL;
   php_driver_map *map = NULL;
   php_driver_set *set = NULL;
@@ -195,6 +196,14 @@ php_driver_value(const CassValue* value, const CassDataType* data_type, php5to7_
     );
     import_twos_complement((cass_byte_t*) v_decimal, v_decimal_len, &numeric->data.decimal.value);
     numeric->data.decimal.scale = v_decimal_scale;
+    break;
+  case CASS_VALUE_TYPE_DURATION:
+    object_init_ex(PHP5TO7_ZVAL_MAYBE_DEREF(out), php_driver_duration_ce);
+    duration = PHP_DRIVER_GET_DURATION(PHP5TO7_ZVAL_MAYBE_DEREF(out));
+    ASSERT_SUCCESS_BLOCK(cass_value_get_duration(value, &duration->months, &duration->days, &duration->nanos),
+      zval_ptr_dtor(out);
+      return FAILURE;
+    );
     break;
   case CASS_VALUE_TYPE_DOUBLE:
     ASSERT_SUCCESS_BLOCK(cass_value_get_double(value, &v_double),
