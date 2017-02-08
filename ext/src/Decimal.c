@@ -66,8 +66,9 @@ to_mpf(mpf_t result, php_driver_numeric *decimal)
 static void
 from_double(php_driver_numeric *result, double value)
 {
+  // Copy the bits of value into an int64 so that we can do bit manipulations on it.
   cass_int64_t raw;
-  memcpy(&raw, &value, 8);//= *((cass_int64_t*) &value);
+  memcpy(&raw, &value, 8);
 
   cass_int64_t mantissa = raw & DOUBLE_MANITSSA_MASK;
   cass_int64_t exponent = (raw >> DOUBLE_MANTISSA_BITS) & DOUBLE_EXPONENT_MASK;
