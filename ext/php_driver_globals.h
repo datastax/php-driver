@@ -26,6 +26,7 @@ ZEND_BEGIN_MODULE_GLOBALS(php_driver)
   php5to7_zval  type_timeuuid;
   php5to7_zval  type_smallint;
   php5to7_zval  type_tinyint;
+  php5to7_zval  type_duration;
 ZEND_END_MODULE_GLOBALS(php_driver)
 
 ZEND_EXTERN_MODULE_GLOBALS(php_driver)
