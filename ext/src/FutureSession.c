@@ -35,6 +35,12 @@ PHP_METHOD(FutureSession, get)
 
   self = PHP_DRIVER_GET_FUTURE_SESSION(getThis());
 
+  if (self->exception_message) {
+    zend_throw_exception_ex(exception_class(self->exception_code),
+                            self->exception_code TSRMLS_CC, self->exception_message);
+    return;
+  }
+
   if (!PHP5TO7_ZVAL_IS_UNDEF(self->default_session)) {
     RETURN_ZVAL(PHP5TO7_ZVAL_MAYBE_P(self->default_session), 1, 0);
   }
@@ -44,12 +50,6 @@ PHP_METHOD(FutureSession, get)
 
   session->session = php_driver_add_ref(self->session);
   session->persist = self->persist;
-
-  if (self->exception_message) {
-    zend_throw_exception_ex(exception_class(self->exception_code),
-                            self->exception_code TSRMLS_CC, self->exception_message);
-    return;
-  }
 
   if (php_driver_future_wait_timed(self->future, timeout TSRMLS_CC) == FAILURE) {
     return;
@@ -67,8 +67,6 @@ PHP_METHOD(FutureSession, get)
       self->exception_code    = rc;
 
       if (PHP5TO7_ZEND_HASH_DEL(&EG(persistent_list), self->hash_key, self->hash_key_len + 1)) {
-        // TODO: Is this right?
-        php_driver_del_peref(&self->session, 1);
         self->future  = NULL;
       }
 
