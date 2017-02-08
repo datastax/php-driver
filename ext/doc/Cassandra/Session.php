@@ -53,7 +53,7 @@ interface Session
      *
      * @return Rows execution result
      */
-    public function execute(Statement $statement, ExecutionOptions $options = null);
+    public function execute($statement, ExecutionOptions $options = null);
 
     /**
      * Executes a given statement and returns a future result.
@@ -66,7 +66,7 @@ interface Session
      *
      * @return Future future result
      */
-    public function executeAsync(Statement $statement, ExecutionOptions $options = null);
+    public function executeAsync($statement, ExecutionOptions $options = null);
 
     /**
      * Creates a prepared statement from a given CQL string.

@@ -37,11 +37,11 @@ Feature: Simple string queries
     Given the following example:
       """php
       <?php
-      $cluster   = Cassandra::cluster()
-                     ->withContactPoints('127.0.0.1')
-                     ->build();
-      $session   = $cluster->connect("simplex");
-      $result    = $session->execute("SELECT * FROM playlists");
+      $cluster = Cassandra::cluster()
+                   ->withContactPoints('127.0.0.1')
+                   ->build();
+      $session = $cluster->connect("simplex");
+      $result  = $session->execute("SELECT * FROM playlists");
 
       foreach ($result as $row) {
         echo $row['artist'] . ": " . $row['title'] . " / " . $row['album'] . PHP_EOL;
@@ -65,11 +65,11 @@ Feature: Simple string queries
     Given the following example:
       """php
       <?php
-      $cluster   = Cassandra::cluster()
-                     ->withContactPoints('127.0.0.1')
-                     ->build();
-      $session   = $cluster->connect("simplex");
-      $future    = $session->executeAsync("SELECT * FROM playlists");
+      $cluster = Cassandra::cluster()
+                   ->withContactPoints('127.0.0.1')
+                   ->build();
+      $session = $cluster->connect("simplex");
+      $future  = $session->executeAsync("SELECT * FROM playlists");
 
       echo "Doing something else..." . PHP_EOL;
 
@@ -95,4 +95,48 @@ Feature: Simple string queries
     And its output should contain:
       """
       Mick Jager: Memo From Turner / Performance
+      """
+
+  Scenario: Simple CQL strings can also be used in batch statements
+    Given the following example:
+      """php
+      <?php
+      $cluster = Cassandra::cluster()
+                     ->withContactPoints('127.0.0.1')
+                     ->build();
+      $session = $cluster->connect("simplex");
+      $future  = $session->executeAsync("SELECT * FROM playlists");
+
+      $batch = new Cassandra\BatchStatement(Cassandra::BATCH_UNLOGGED);
+
+      $batch->add("INSERT INTO playlists
+                   (id, song_id, artist, title, album) VALUES
+                   (3a55adfc-bbf6-43bd-9428-e714f109b977, 82a954c4-750a-4ada-8e02-6b15c9bf3140 , 'The Beatles', 'Come Together', 'Abbey Road')");
+      $batch->add("INSERT INTO playlists
+                   (id, song_id, artist, title, album) VALUES
+                   (3a55adfc-bbf6-43bd-9428-e714f109b977, 564e3c0d-bc3b-4d2d-8a34-679bb5247b71, 'Michael Jackson', 'Thriller', 'Thriller')");
+      $batch->add("INSERT INTO playlists
+                   (id, song_id, artist, title, album) VALUES
+                   (3a55adfc-bbf6-43bd-9428-e714f109b977, 326ead7f-4c54-43f4-9b1b-40f7ca84cd5e, 'Pink Floyd', 'Another Brick in the Wall (Part I)', 'The Wall')");
+
+      $session->execute($batch);
+
+      $result = $session->execute("SELECT * FROM playlists");
+
+      foreach ($result as $row) {
+        echo $row['artist'] . ": " . $row['title'] . " / " . $row['album'] . PHP_EOL;
+      }
+      """
+    When it is executed
+    Then its output should contain:
+      """
+      The Beatles: Come Together / Abbey Road
+      """
+    And its output should contain:
+      """
+      Michael Jackson: Thriller / Thriller
+      """
+    And its output should contain:
+      """
+      Pink Floyd: Another Brick in the Wall (Part I) / The Wall
       """

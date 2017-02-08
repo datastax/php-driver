@@ -49,12 +49,12 @@ final class BatchStatement implements Statement
     /**
      * Adds a statement to this batch.
      *
-     * @param Statement  $statement the statement to add
+     * @param string|Statement $statement string or statement to add
      * @param array|null $arguments positional or named arguments
      *
      * @throws Exception\InvalidArgumentException
      *
      * @return BatchStatement self
      */
-    public function add(Statement $statement, array $arguments = null) {}
+    public function add($statement, array $arguments = null) {}
 }
