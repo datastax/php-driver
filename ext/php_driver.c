@@ -493,6 +493,7 @@ PHP_MINIT_FUNCTION(php_driver)
   php_driver_define_Uuid(TSRMLS_C);
   php_driver_define_Varint(TSRMLS_C);
   php_driver_define_Custom(TSRMLS_C);
+  php_driver_define_Duration(TSRMLS_C);
 
   php_driver_define_Set(TSRMLS_C);
   php_driver_define_Map(TSRMLS_C);

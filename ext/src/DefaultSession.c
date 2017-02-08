@@ -139,6 +139,13 @@ bind_argument_by_index(CassStatement *statement, size_t index, zval *value TSRML
       CHECK_RESULT(cass_statement_bind_inet(statement, index, inet->inet));
     }
 
+    if (instanceof_function(Z_OBJCE_P(value), php_driver_duration_ce TSRMLS_CC)) {
+      php_driver_duration *duration = PHP_DRIVER_GET_DURATION(value);
+      CHECK_RESULT(cass_statement_bind_duration(statement,
+                                                index,
+                                                duration->months, duration->days, duration->nanos));
+    }
+
     if (instanceof_function(Z_OBJCE_P(value), php_driver_set_ce TSRMLS_CC)) {
       CassError rc;
       CassCollection *collection;
@@ -293,6 +300,13 @@ bind_argument_by_name(CassStatement *statement, const char *name,
     if (instanceof_function(Z_OBJCE_P(value), php_driver_inet_ce TSRMLS_CC)) {
       php_driver_inet *inet = PHP_DRIVER_GET_INET(value);
       CHECK_RESULT(cass_statement_bind_inet_by_name(statement, name, inet->inet));
+    }
+
+    if (instanceof_function(Z_OBJCE_P(value), php_driver_duration_ce TSRMLS_CC)) {
+      php_driver_duration *duration = PHP_DRIVER_GET_DURATION(value);
+      CHECK_RESULT(cass_statement_bind_duration_by_name(statement,
+                                                        name,
+                                                        duration->months, duration->days, duration->nanos));
     }
 
     if (instanceof_function(Z_OBJCE_P(value), php_driver_set_ce TSRMLS_CC)) {

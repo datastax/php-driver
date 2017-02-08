@@ -73,6 +73,7 @@
   #define PHP_DRIVER_GET_TYPE(obj) php_driver_type_object_fetch(Z_OBJ_P(obj))
   #define PHP_DRIVER_GET_RETRY_POLICY(obj) php_driver_retry_policy_object_fetch(Z_OBJ_P(obj))
   #define PHP_DRIVER_GET_TIMESTAMP_GEN(obj) php_driver_timestamp_gen_object_fetch(Z_OBJ_P(obj))
+  #define PHP_DRIVER_GET_DURATION(obj) php_driver_duration_object_fetch(Z_OBJ_P(obj))
 #else
   #define PHP_DRIVER_GET_NUMERIC(obj) ((php_driver_numeric *)zend_object_store_get_object((obj) TSRMLS_CC))
   #define PHP_DRIVER_GET_BLOB(obj) ((php_driver_blob *)zend_object_store_get_object((obj) TSRMLS_CC))
@@ -110,6 +111,7 @@
   #define PHP_DRIVER_GET_TYPE(obj) ((php_driver_type *)zend_object_store_get_object((obj) TSRMLS_CC))
   #define PHP_DRIVER_GET_RETRY_POLICY(obj) ((php_driver_retry_policy *)zend_object_store_get_object((obj) TSRMLS_CC))
   #define PHP_DRIVER_GET_TIMESTAMP_GEN(obj) ((php_driver_timestamp_gen *)zend_object_store_get_object((obj) TSRMLS_CC))
+  #define PHP_DRIVER_GET_DURATION(obj) ((php_driver_duration *)zend_object_store_get_object((obj) TSRMLS_CC))
 #endif
 
 typedef enum {
@@ -170,6 +172,12 @@ PHP_DRIVER_END_OBJECT_TYPE(uuid)
 PHP_DRIVER_BEGIN_OBJECT_TYPE(inet)
   CassInet inet;
 PHP_DRIVER_END_OBJECT_TYPE(inet)
+
+PHP_DRIVER_BEGIN_OBJECT_TYPE(duration)
+  cass_int64_t months;
+  cass_int64_t days;
+  cass_int64_t nanos;
+PHP_DRIVER_END_OBJECT_TYPE(duration)
 
 PHP_DRIVER_BEGIN_OBJECT_TYPE(collection)
   php5to7_zval type;
@@ -521,6 +529,7 @@ extern PHP_DRIVER_API zend_class_entry *php_driver_uuid_ce;
 extern PHP_DRIVER_API zend_class_entry *php_driver_timeuuid_ce;
 extern PHP_DRIVER_API zend_class_entry *php_driver_varint_ce;
 extern PHP_DRIVER_API zend_class_entry *php_driver_custom_ce;
+extern PHP_DRIVER_API zend_class_entry *php_driver_duration_ce;
 
 extern PHP_DRIVER_API zend_class_entry *php_driver_set_ce;
 extern PHP_DRIVER_API zend_class_entry *php_driver_map_ce;
@@ -578,6 +587,7 @@ void php_driver_define_Uuid(TSRMLS_D);
 void php_driver_define_Timeuuid(TSRMLS_D);
 void php_driver_define_Varint(TSRMLS_D);
 void php_driver_define_Custom(TSRMLS_D);
+void php_driver_define_Duration(TSRMLS_D);
 
 /* Classes */
 extern PHP_DRIVER_API zend_class_entry *php_driver_core_ce;

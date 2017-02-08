@@ -28,6 +28,7 @@
 #include "src/Tinyint.h"
 #include "src/Blob.h"
 #include "src/Decimal.h"
+#include "src/Duration.h"
 #include "src/Float.h"
 #include "src/Inet.h"
 #include "src/Timestamp.h"
@@ -1125,6 +1126,10 @@ php_driver_lookup_type(struct node_s *node TSRMLS_DC)
 
   if (strncmp("org.apache.cassandra.db.marshal.DecimalType", node->name, node->name_length) == 0) {
     return CASS_VALUE_TYPE_DECIMAL;
+  }
+
+  if (strncmp("org.apache.cassandra.db.marshal.DurationType", node->name, node->name_length) == 0) {
+    return CASS_VALUE_TYPE_DURATION;
   }
 
   if (strncmp("org.apache.cassandra.db.marshal.DoubleType", node->name, node->name_length) == 0) {
