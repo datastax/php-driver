@@ -1,5 +1,5 @@
 ---
-Dse\Duration:
+Cassandra\Duration:
   comment: A PHP representation of the CQL `duration` datatype
   methods:
     __construct:
@@ -7,18 +7,18 @@ Dse\Duration:
       params:
         months:
           comment: Months attribute of the duration.
-          type: long|double|string|Dse\Bigint
+          type: long|double|string|Bigint
         days:
           comment: Days attribute of the duration.
-          type: long|double|string|Dse\Bigint
+          type: long|double|string|Bigint
         nanos:
           comment: Nanos attribute of the duration.
-          type: long|double|string|Dse\Bigint
+          type: long|double|string|Bigint
     type:
       comment: ""
       return:
-        comment: the Cassandra custom type for Duration
-        type: Cassandra\Type\Custom
+        comment: the Cassandra type for Duration
+        type: Type
     months:
       comment: ""
       return:
