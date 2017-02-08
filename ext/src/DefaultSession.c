@@ -435,6 +435,8 @@ create_batch(php_driver_statement *batch,
   PHP5TO7_ZEND_HASH_FOREACH_VAL(&batch->data.batch.statements, current) {
     php_driver_statement *statement;
     php_driver_statement simple_statement;
+    HashTable *arguments;
+    CassStatement *stmt;
 
 #if PHP_MAJOR_VERSION >= 7
     php_driver_batch_statement_entry *batch_statement_entry = (php_driver_batch_statement_entry *)Z_PTR_P(current);
@@ -450,11 +452,11 @@ create_batch(php_driver_statement *batch,
       statement = PHP_DRIVER_GET_STATEMENT(PHP5TO7_ZVAL_MAYBE_P(batch_statement_entry->statement));
     }
 
-    HashTable *arguments
-        = !PHP5TO7_ZVAL_IS_UNDEF(batch_statement_entry->arguments)
-          ? Z_ARRVAL_P(PHP5TO7_ZVAL_MAYBE_P(batch_statement_entry->arguments))
-          : NULL;
-    CassStatement *stmt = create_statement(statement, arguments TSRMLS_CC);
+    arguments = !PHP5TO7_ZVAL_IS_UNDEF(batch_statement_entry->arguments)
+                ? Z_ARRVAL_P(PHP5TO7_ZVAL_MAYBE_P(batch_statement_entry->arguments))
+                : NULL;
+
+    stmt = create_statement(statement, arguments TSRMLS_CC);
     if (!stmt) {
       cass_batch_free(cass_batch);
       return NULL;
