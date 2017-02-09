@@ -21,6 +21,7 @@
 #include <php.h>
 #include <Zend/zend_exceptions.h>
 #include <Zend/zend_interfaces.h>
+#include <Zend/zend_types.h>
 
 #ifdef HAVE_SYS_TYPES_H
 #include <sys/types.h>
@@ -105,6 +106,7 @@ typedef zval php5to7_zval;
 typedef zval *php5to7_zval_args;
 typedef zval *php5to7_zval_arg;
 typedef zend_string *php5to7_string;
+typedef zend_long php5to7_long;
 typedef zend_ulong php5to7_ulong;
 typedef zval php5to7_zend_resource_le;
 typedef zend_resource* php5to7_zend_resource;
@@ -264,10 +266,14 @@ php5to7_string_compare(php5to7_string s1, php5to7_string s2)
 #define PHP5TO7_Z_STRVAL_MAYBE_P(zv) Z_STRVAL(zv)
 #define PHP5TO7_Z_STRLEN_MAYBE_P(zv) Z_STRLEN(zv)
 
+#define PHP5TO7_ZEND_LONG_MAX ZEND_LONG_MAX
+#define PHP5TO7_ZEND_LONG_MIN ZEND_LONG_MIN
+
 #else
 typedef zval *php5to7_zval;
 typedef zval ***php5to7_zval_args;
 typedef char *php5to7_string;
+typedef long php5to7_long;
 typedef ulong php5to7_ulong;
 typedef zend_rsrc_list_entry php5to7_zend_resource_le;
 typedef zend_rsrc_list_entry *php5to7_zend_resource;
@@ -440,6 +446,9 @@ php5to7_string_compare(php5to7_string s1, php5to7_string s2)
 #define PHP5TO7_Z_DVAL_MAYBE_P(zv) Z_DVAL_P(zv)
 #define PHP5TO7_Z_STRVAL_MAYBE_P(zv) Z_STRVAL_P(zv)
 #define PHP5TO7_Z_STRLEN_MAYBE_P(zv) Z_STRLEN_P(zv)
+
+#define PHP5TO7_ZEND_LONG_MAX LONG_MAX
+#define PHP5TO7_ZEND_LONG_MIN LONG_MIN
 
 #endif /* PHP_MAJOR_VERSION >= 7 */
 
