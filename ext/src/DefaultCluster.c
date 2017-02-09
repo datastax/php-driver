@@ -117,7 +117,7 @@ PHP_METHOD(DefaultCluster, connect)
 
   if (php_driver_future_is_error(future TSRMLS_CC) == FAILURE) {
     if (session->persist) {
-      PHP5TO7_ZEND_HASH_DEL(&EG(persistent_list), hash_key, hash_key_len + 1);
+      (void) PHP5TO7_ZEND_HASH_DEL(&EG(persistent_list), hash_key, hash_key_len + 1);
       efree(hash_key);
     } else {
       cass_future_free(future);
