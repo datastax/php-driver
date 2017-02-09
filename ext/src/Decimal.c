@@ -59,7 +59,7 @@ to_mpf(mpf_t result, php_driver_numeric *decimal)
  * M = mantissa
  */
 #define DOUBLE_MANTISSA_BITS 52
-#define DOUBLE_MANITSSA_MASK (cass_int64_t) ((1LL << DOUBLE_MANTISSA_BITS) - 1)
+#define DOUBLE_MANTISSA_MASK (cass_int64_t) ((1LL << DOUBLE_MANTISSA_BITS) - 1)
 #define DOUBLE_EXPONENT_BITS 11
 #define DOUBLE_EXPONENT_MASK (cass_int64_t) ((1LL << DOUBLE_EXPONENT_BITS) - 1)
 
@@ -67,10 +67,10 @@ static void
 from_double(php_driver_numeric *result, double value)
 {
   // Copy the bits of value into an int64 so that we can do bit manipulations on it.
-  cass_int64_t raw;
+  cass_int64_t raw = 0;
   memcpy(&raw, &value, 8);
 
-  cass_int64_t mantissa = raw & DOUBLE_MANITSSA_MASK;
+  cass_int64_t mantissa = raw & DOUBLE_MANTISSA_MASK;
   cass_int64_t exponent = (raw >> DOUBLE_MANTISSA_BITS) & DOUBLE_EXPONENT_MASK;
   char mantissa_str[32];
 
