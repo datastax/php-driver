@@ -66,18 +66,19 @@ to_mpf(mpf_t result, php_driver_numeric *decimal)
 static void
 from_double(php_driver_numeric *result, double value)
 {
+  int denormal;
+  char mantissa_str[32];
+  cass_int64_t raw, mantissa, exponent;
+
   // Copy the bits of value into an int64 so that we can do bit manipulations on it.
-  cass_int64_t raw = 0;
   memcpy(&raw, &value, 8);
 
-  cass_int64_t mantissa = raw & DOUBLE_MANTISSA_MASK;
-  cass_int64_t exponent = (raw >> DOUBLE_MANTISSA_BITS) & DOUBLE_EXPONENT_MASK;
-  char mantissa_str[32];
+  mantissa = raw & DOUBLE_MANTISSA_MASK;
+  exponent = (raw >> DOUBLE_MANTISSA_BITS) & DOUBLE_EXPONENT_MASK;
 
   /* This exponent is offset using 1023 unless it's a denormal value then its value
    * is the minimum value -1022
    */
-  int denormal;
   if (exponent == 0) {
     /* If the exponent is a zero then we have a denormal (subnormal) number. These are numbers
      * that represent small values around 0.0. The mantissa has the form of 0.xxxxxxxx...
