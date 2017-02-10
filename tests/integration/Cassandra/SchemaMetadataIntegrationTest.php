@@ -1165,4 +1165,74 @@ class SchemaMetadataIntegrationTest extends BasicIntegrationTest {
         // Ensure the version is not incremented (no changes occurred)
         $this->assertEquals($version + 1, $this->session->schema()->version());
     }
+
+    /**
+     * Ensure the column type can be retrieved properly
+     *
+     * This test ensure that the schema metadata properly retrieves the type
+     * for all supported versions of PHP.
+     *
+     * @jira_ticket PHP-119
+     * @test_category schema
+     * @since 1.3.0
+     * @expected_result Driver will not crash getting the column type from the
+     *                  the schema metadata
+     *
+     * @test
+     */
+    public function testRetrieveColumnType() {
+        // Get the schema from the session
+        $schema = $this->session->schema();
+
+        // Iterate over all the tables and ensure the column type can be retrieved
+        foreach ($schema->keyspaces() as $keyspace) {
+            foreach ($keyspace->tables() as $table) {
+                foreach($table->columns() as $column) {
+                    $type = $column->type();
+                    $this->assertNotNull($type);
+                }
+            }
+        }
+
+        // If the driver crashed then we will not hit this assertion
+        $this->assertTrue(true);
+    }
+
+    /**
+     * Ensure the column type can be retrieved properly when using single quote
+     * custom types
+     *
+     * This test ensure that the schema metadata properly retrieves the type
+     * for all supported versions of PHP when a column type has been defined
+     * using single quotes.
+     *
+     * @jira_ticket PHP-119
+     * @test_category schema
+     * @since 1.3.0
+     * @expected_result Driver will not crash getting the column type from the
+     *                  the schema metadata
+     * @cassandra-version-2.1
+     *
+     * @test
+     */
+    public function testSingleQuoteCustomValue() {
+        // Create a table using a single quoted custom value
+        $statement = new \Cassandra\SimpleStatement(
+            "CREATE TABLE {$this->keyspaceName}.{$this->tableNamePrefix} ("
+            . "key TEXT PRIMARY KEY,"
+            . "value 'org.apache.cassandra.db.marshal.LexicalUUIDType')"
+        );
+        $this->session->execute($statement);
+
+        // Get the schema from the session
+        $schema = $this->session->schema();
+        $keyspace = $schema->keyspace($this->keyspaceName);
+        $table = $keyspace->table($this->tableNamePrefix);
+        $column = $table->column("value");
+        $type = $column->type();
+
+        // Ensure the proper type is retrieved
+        $this->assertNotNull($type);
+        $this->assertEquals("org.apache.cassandra.db.marshal.LexicalUUIDType", $type->name());
+    }
 }
