@@ -21,6 +21,8 @@ namespace Cassandra;
 /**
  * Request execution options.
  *
+ * @deprecated Use an array of options instead of creating an instance of this class.
+ *
  * @see Session::execute()
  * @see Session::executeAsync()
  * @see Session::prepare()

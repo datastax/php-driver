@@ -22,6 +22,7 @@
 #include "util/ref.h"
 #include "util/math.h"
 #include "util/collections.h"
+#include "ExecutionOptions.h"
 
 zend_class_entry *php_driver_default_session_ce = NULL;
 
@@ -559,6 +560,7 @@ PHP_METHOD(DefaultSession, execute)
   CassRetryPolicy *retry_policy = NULL;
   cass_int64_t timestamp = INT64_MIN;
   php_driver_execution_options *opts = NULL;
+  php_driver_execution_options local_opts;
   CassFuture *future = NULL;
   CassStatement *single = NULL;
   CassBatch *batch  = NULL;
@@ -585,11 +587,20 @@ PHP_METHOD(DefaultSession, execute)
   timeout = PHP5TO7_ZVAL_MAYBE_P(self->default_timeout);
 
   if (options) {
-    if (!instanceof_function(Z_OBJCE_P(options), php_driver_execution_options_ce TSRMLS_CC)) {
-      INVALID_ARGUMENT(options, "an instance of " PHP_DRIVER_NAMESPACE "\\ExecutionOptions or null");
+    if (Z_TYPE_P(options) != IS_ARRAY &&
+        (Z_TYPE_P(options) != IS_OBJECT || !instanceof_function(Z_OBJCE_P(options), php_driver_execution_options_ce TSRMLS_CC))) {
+      INVALID_ARGUMENT(options, "an instance of " PHP_DRIVER_NAMESPACE "\\ExecutionOptions or an array or null");
     }
 
-    opts = PHP_DRIVER_GET_EXECUTION_OPTIONS(options);
+    if (Z_TYPE_P(options) == IS_OBJECT) {
+      opts = PHP_DRIVER_GET_EXECUTION_OPTIONS(options);
+    } else {
+      if (php_driver_execution_options_init_and_build_from_array(&local_opts, options) == FAILURE) {
+        php_driver_execution_options_destroy(&local_opts);
+        return;
+      }
+      opts = &local_opts;
+    }
 
     if (!PHP5TO7_ZVAL_IS_UNDEF(opts->arguments))
       arguments = PHP5TO7_Z_ARRVAL_MAYBE_P(opts->arguments);
@@ -625,17 +636,21 @@ PHP_METHOD(DefaultSession, execute)
                              paging_state_token, paging_state_token_size,
                              retry_policy, timestamp TSRMLS_CC);
 
-      if (!single)
+      if (!single) {
+        if (&local_opts == opts)
+          php_driver_execution_options_destroy(opts);
         return;
-
+      }
       future = cass_session_execute((CassSession *) self->session->data, single);
       break;
     case PHP_DRIVER_BATCH_STATEMENT:
       batch = create_batch(stmt, consistency, retry_policy, timestamp TSRMLS_CC);
 
-      if (!batch)
+      if (!batch) {
+        if (&local_opts == opts)
+          php_driver_execution_options_destroy(opts);
         return;
-
+      }
       future = cass_session_execute_batch((CassSession *) self->session->data, batch);
       break;
     default:
@@ -643,6 +658,8 @@ PHP_METHOD(DefaultSession, execute)
         "an instance of " PHP_DRIVER_NAMESPACE "\\SimpleStatement, " \
         PHP_DRIVER_NAMESPACE "\\PreparedStatement or " PHP_DRIVER_NAMESPACE "\\BatchStatement"
       );
+      if (&local_opts == opts)
+        php_driver_execution_options_destroy(opts);
       return;
   }
 
@@ -675,6 +692,9 @@ PHP_METHOD(DefaultSession, execute)
       rows->statement = php_driver_new_ref(single, free_statement);
       rows->result    = php_driver_new_ref((void *)result, free_result);
       rows->session   = php_driver_add_ref(self->session);
+
+      if (&local_opts == opts)
+        php_driver_execution_options_destroy(opts);
       return;
     }
 
@@ -686,6 +706,9 @@ PHP_METHOD(DefaultSession, execute)
 
   if (single)
     cass_statement_free(single);
+
+  if (&local_opts == opts)
+    php_driver_execution_options_destroy(opts);
 }
 
 PHP_METHOD(DefaultSession, executeAsync)
@@ -704,6 +727,7 @@ PHP_METHOD(DefaultSession, executeAsync)
   CassRetryPolicy *retry_policy = NULL;
   cass_int64_t timestamp = INT64_MIN;
   php_driver_execution_options *opts = NULL;
+  php_driver_execution_options local_opts;
   php_driver_future_rows *future_rows = NULL;
   CassStatement *single = NULL;
   CassBatch *batch  = NULL;
@@ -729,11 +753,20 @@ PHP_METHOD(DefaultSession, executeAsync)
   page_size = self->default_page_size;
 
   if (options) {
-    if (!instanceof_function(Z_OBJCE_P(options), php_driver_execution_options_ce TSRMLS_CC)) {
-      INVALID_ARGUMENT(options, "an instance of " PHP_DRIVER_NAMESPACE "\\ExecutionOptions or null");
+    if (Z_TYPE_P(options) != IS_ARRAY &&
+        (Z_TYPE_P(options) != IS_OBJECT || !instanceof_function(Z_OBJCE_P(options), php_driver_execution_options_ce TSRMLS_CC))) {
+      INVALID_ARGUMENT(options, "an instance of " PHP_DRIVER_NAMESPACE "\\ExecutionOptions or an array or null");
     }
 
-    opts = PHP_DRIVER_GET_EXECUTION_OPTIONS(options);
+    if (Z_TYPE_P(options) == IS_OBJECT) {
+      opts = PHP_DRIVER_GET_EXECUTION_OPTIONS(options);
+    } else {
+      if (php_driver_execution_options_init_and_build_from_array(&local_opts, options) == FAILURE) {
+        php_driver_execution_options_destroy(&local_opts);
+        return;
+      }
+      opts = &local_opts;
+    }
 
     if (!PHP5TO7_ZVAL_IS_UNDEF(opts->arguments))
       arguments = PHP5TO7_Z_ARRVAL_MAYBE_P(opts->arguments);
@@ -769,9 +802,11 @@ PHP_METHOD(DefaultSession, executeAsync)
                              paging_state_token, paging_state_token_size,
                              retry_policy, timestamp TSRMLS_CC);
 
-      if (!single)
+      if (!single) {
+        if (&local_opts == opts)
+          php_driver_execution_options_destroy(opts);
         return;
-
+      }
       future_rows->statement = php_driver_new_ref(single, free_statement);
       future_rows->future    = cass_session_execute((CassSession *) self->session->data, single);
       future_rows->session   = php_driver_add_ref(self->session);
@@ -779,9 +814,11 @@ PHP_METHOD(DefaultSession, executeAsync)
     case PHP_DRIVER_BATCH_STATEMENT:
       batch = create_batch(stmt, consistency, retry_policy, timestamp TSRMLS_CC);
 
-      if (!batch)
+      if (!batch) {
+        if (&local_opts == opts)
+          php_driver_execution_options_destroy(opts);
         return;
-
+      }
       future_rows->future = cass_session_execute_batch((CassSession *) self->session->data, batch);
       cass_batch_free(batch);
       break;
@@ -790,8 +827,10 @@ PHP_METHOD(DefaultSession, executeAsync)
         "an instance of " PHP_DRIVER_NAMESPACE "\\SimpleStatement, " \
         PHP_DRIVER_NAMESPACE "\\PreparedStatement or " PHP_DRIVER_NAMESPACE "\\BatchStatement"
       );
-      return;
   }
+
+  if (&local_opts == opts)
+    php_driver_execution_options_destroy(opts);
 }
 
 PHP_METHOD(DefaultSession, prepare)
@@ -800,6 +839,7 @@ PHP_METHOD(DefaultSession, prepare)
   zval *options = NULL;
   php_driver_session *self = NULL;
   php_driver_execution_options *opts = NULL;
+  php_driver_execution_options local_opts;
   CassFuture *future = NULL;
   zval *timeout = NULL;
   php_driver_statement *prepared_statement = NULL;
@@ -811,11 +851,20 @@ PHP_METHOD(DefaultSession, prepare)
   self = PHP_DRIVER_GET_SESSION(getThis());
 
   if (options) {
-    if (!instanceof_function(Z_OBJCE_P(options), php_driver_execution_options_ce TSRMLS_CC)) {
-      INVALID_ARGUMENT(options, "an instance of " PHP_DRIVER_NAMESPACE "\\ExecutionOptions or null");
+    if (Z_TYPE_P(options) != IS_ARRAY &&
+        (Z_TYPE_P(options) != IS_OBJECT || !instanceof_function(Z_OBJCE_P(options), php_driver_execution_options_ce TSRMLS_CC))) {
+      INVALID_ARGUMENT(options, "an instance of " PHP_DRIVER_NAMESPACE "\\ExecutionOptions or an array or null");
     }
 
-    opts    = PHP_DRIVER_GET_EXECUTION_OPTIONS(options);
+    if (Z_TYPE_P(options) == IS_OBJECT) {
+      opts = PHP_DRIVER_GET_EXECUTION_OPTIONS(options);
+    } else {
+      if (php_driver_execution_options_init_and_build_from_array(&local_opts, options) == FAILURE) {
+        php_driver_execution_options_destroy(&local_opts);
+        return;
+      }
+      opts = &local_opts;
+    }
     timeout = PHP5TO7_ZVAL_MAYBE_P(opts->timeout);
   }
 
@@ -830,6 +879,8 @@ PHP_METHOD(DefaultSession, prepare)
   }
 
   cass_future_free(future);
+  if (&local_opts == opts)
+    php_driver_execution_options_destroy(opts);
 }
 
 PHP_METHOD(DefaultSession, prepareAsync)
@@ -839,7 +890,6 @@ PHP_METHOD(DefaultSession, prepareAsync)
   php_driver_session *self = NULL;
   CassFuture *future = NULL;
   php_driver_future_prepared_statement *future_prepared = NULL;
-
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z|z", &cql, &options) == FAILURE) {
     return;
@@ -1013,12 +1063,12 @@ PHP_METHOD(DefaultSession, schema)
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_execute, 0, ZEND_RETURN_VALUE, 1)
   ZEND_ARG_INFO(0, statement)
-  PHP_DRIVER_NAMESPACE_ZEND_ARG_OBJ_INFO(0, options, ExecutionOptions, 0)
+  ZEND_ARG_INFO(0, options)
 ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_prepare, 0, ZEND_RETURN_VALUE, 1)
   ZEND_ARG_INFO(0, cql)
-  PHP_DRIVER_NAMESPACE_ZEND_ARG_OBJ_INFO(0, options, ExecutionOptions, 0)
+  ZEND_ARG_INFO(0, options)
 ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_timeout, 0, ZEND_RETURN_VALUE, 0)
