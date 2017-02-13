@@ -595,7 +595,7 @@ PHP_METHOD(DefaultSession, execute)
     if (Z_TYPE_P(options) == IS_OBJECT) {
       opts = PHP_DRIVER_GET_EXECUTION_OPTIONS(options);
     } else {
-      if (php_driver_execution_options_init_and_build_from_array(&local_opts, options) == FAILURE) {
+      if (php_driver_execution_options_init_and_build_from_array(&local_opts, options TSRMLS_CC) == FAILURE) {
         php_driver_execution_options_destroy(&local_opts);
         return;
       }
@@ -761,7 +761,7 @@ PHP_METHOD(DefaultSession, executeAsync)
     if (Z_TYPE_P(options) == IS_OBJECT) {
       opts = PHP_DRIVER_GET_EXECUTION_OPTIONS(options);
     } else {
-      if (php_driver_execution_options_init_and_build_from_array(&local_opts, options) == FAILURE) {
+      if (php_driver_execution_options_init_and_build_from_array(&local_opts, options TSRMLS_CC) == FAILURE) {
         php_driver_execution_options_destroy(&local_opts);
         return;
       }
@@ -859,7 +859,7 @@ PHP_METHOD(DefaultSession, prepare)
     if (Z_TYPE_P(options) == IS_OBJECT) {
       opts = PHP_DRIVER_GET_EXECUTION_OPTIONS(options);
     } else {
-      if (php_driver_execution_options_init_and_build_from_array(&local_opts, options) == FAILURE) {
+      if (php_driver_execution_options_init_and_build_from_array(&local_opts, options TSRMLS_CC) == FAILURE) {
         php_driver_execution_options_destroy(&local_opts);
         return;
       }
