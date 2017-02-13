@@ -113,13 +113,13 @@ class RetryPolicyIntegrationTest extends BasicIntegrationTest {
                         $statement = $simple;
                     }
                     $options["arguments"] = $values;
-                    $this->session->execute($statement, new ExecutionOptions($options));
+                    $this->session->execute($statement, $options);
                 }
             }
 
             // Execute the batched insert
             if ($statementType == self::BATCH_STATEMENT) {
-                $this->session->execute($batch,  new ExecutionOptions($options));
+                $this->session->execute($batch,  $options);
             }
         } catch (Exception\TimeoutException $te) {
             if (Integration::isDebug()) {
@@ -149,10 +149,10 @@ class RetryPolicyIntegrationTest extends BasicIntegrationTest {
             // Select the values
             $query = "SELECT value_int FROM {$this->tableNamePrefix} WHERE key = {$key}";
             $statement = new SimpleStatement($query);
-            $options = new ExecutionOptions(array(
+            $options = array(
                 "consistency" => $consistency,
                 "retry_policy" => $policy
-            ));
+            );
             $rows = $this->session->execute($statement, $options);
 
             // Assert the values

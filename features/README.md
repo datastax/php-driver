@@ -262,9 +262,9 @@ $futures   = array();
 
 // execute all statements in background
 foreach ($data as $arguments) {
-    $futures[]= $session->executeAsync($statement, new ExecutionOptions(array(
+    $futures[]= $session->executeAsync($statement, array(
                     'arguments' => $arguments
-                )));
+                ));
 }
 
 // wait for all statements to complete

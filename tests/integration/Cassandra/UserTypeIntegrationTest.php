@@ -178,7 +178,7 @@ class UserTypeIntegrationTest extends CollectionsIntegrationTest {
         // Insert the value into the table
         $query = "INSERT INTO {$this->tableNamePrefix}  (key, value) VALUES (?, ?)";
         $statement = new SimpleStatement($query);
-        $options = new ExecutionOptions(array("arguments" => $values));
+        $options = array("arguments" => $values);
         $this->session->execute($statement, $options);
 
         // Return the key for asserting the user type
@@ -195,7 +195,7 @@ class UserTypeIntegrationTest extends CollectionsIntegrationTest {
         // Select the user type
         $query = "SELECT value FROM {$this->tableNamePrefix}  WHERE key=?";
         $statement = new SimpleStatement($query);
-        $options = new ExecutionOptions(array("arguments" => array($key)));
+        $options = array("arguments" => array($key));
         $rows = $this->session->execute($statement, $options);
 
         // Ensure the user type is valid
@@ -520,7 +520,7 @@ class UserTypeIntegrationTest extends CollectionsIntegrationTest {
         );
         $query = "INSERT INTO invalidphone (key, value) VALUES (?, ?)";
         $statement = new SimpleStatement($query);
-        $options = new ExecutionOptions(array("arguments" => $values));
+        $options = array("arguments" => $values);
         $this->session->execute($statement, $options);
     }
 }
