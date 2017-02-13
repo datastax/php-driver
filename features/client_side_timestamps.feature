@@ -50,10 +50,10 @@ Feature: Client-side timestamps
           'album'   => 'Bye Bye Blackbird',
           'artist'  => 'Joséphine Baker'
       );
-      $options = new Cassandra\ExecutionOptions(array(
+      $options = array(
           'arguments' => $arguments,
           'timestamp' => 1234
-      ));
+      );
       $session->execute($simple, $options);
 
       $statement = new Cassandra\SimpleStatement(
@@ -105,7 +105,7 @@ Feature: Client-side timestamps
           'Mick Jager', 'Memo From Turner', 'Performance'
       ));
 
-      $options = new Cassandra\ExecutionOptions(array("timestamp" => 5678));
+      $options = array("timestamp" => 5678);
 
       $session->execute($batch, $options);
 
@@ -152,10 +152,10 @@ Feature: Client-side timestamps
               'album'   => 'Bye Bye Blackbird',
               'artist'  => 'Joséphine Baker'
           );
-          $options = new Cassandra\ExecutionOptions(array(
+          $options = array(
               'arguments' => $arguments,
               'timestamp' => 1234
-          ));
+          );
           $session->execute($simple, $options);
       }
 

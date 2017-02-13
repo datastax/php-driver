@@ -75,7 +75,7 @@ Feature: Simple Statements
       );
 
       foreach ($songs as $song) {
-          $options = new Cassandra\ExecutionOptions(array('arguments' => $song));
+          $options = array('arguments' => $song);
           $session->execute($statement, $options);
       }
 
@@ -136,7 +136,7 @@ Feature: Simple Statements
       );
 
       foreach ($songs as $song) {
-          $options = new Cassandra\ExecutionOptions(array('arguments' => $song));
+          $options = array('arguments' => $song);
           $session->execute($statement, $options);
       }
 
@@ -185,7 +185,7 @@ Feature: Simple Statements
       );
 
       foreach ($songs as $song) {
-          $options = new Cassandra\ExecutionOptions(array('arguments' => $song));
+          $options = array('arguments' => $song);
           $session->execute($statement, $options);
       }
 
@@ -194,15 +194,13 @@ Feature: Simple Statements
           "WHERE id = :id AND artist = :artist AND title = :title AND album = :album"
       );
 
-      $options = new Cassandra\ExecutionOptions(
-          array('arguments' =>
+      $options = array('arguments' =>
               array(
                   'id'     => new Cassandra\Uuid('62c36092-82a1-3a00-93d1-46196ee77204'),
                   'artist' => 'Joséphine Baker',
                   'title'  => 'La Petite Tonkinoise',
                   'album'  => 'Bye Bye Blackbird'
               )
-          )
       );
 
       $result = $session->execute($statement, $options);

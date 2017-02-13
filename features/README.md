@@ -221,9 +221,9 @@ foreach ($result as $row) {
 
 $session->execute(
     new Cassandra\SimpleStatement("UPDATE users SET age = ? WHERE user_name = ?"),
-    new Cassandra\ExecutionOptions(array(
+    array(
         'arguments' => array(41, 'Sam')
-    ))
+    )
 );
 ```
 
@@ -238,9 +238,9 @@ The driver supports prepared statements. Use [`Cassandra\Session::prepare()`](ht
 
 $statement = $session->prepare('INSERT INTO users (username, email) VALUES (?, ?)');
 
-$session->execute($statement, new Cassandra\ExecutionOptions(array(
-    'arguments' => array('avalanche123', 'bulat.shakirzyanov@datastax.com')
-)));
+$session->execute($statement, array(
+    'arguments' => array('user1', 'user1@mycompany.com')
+));
 ```
 
 A prepared statement can be run many times, but the CQL parsing will only be done once on each node. Use prepared statements for queries you run over and over again.
@@ -367,7 +367,7 @@ You can also override the page size on a per-execute basis by adding the `page_s
 <?php
 
 $statement = new Cassandra\SimpleStatement("SELECT * FROM large_table WHERE id = 'partition_with_lots_of_data'");
-$result    = $session->execute($statement, new Cassandra\ExecutionOptions(array('page_size' => 100)));
+$result    = $session->execute($statement, array('page_size' => 100));
 
 while ($result) {
     foreach ($result as $row) {
@@ -401,20 +401,20 @@ Consistency can also be passed via `Cassandra\ExecutionOptions`.
 
 $session->execute(
     new Cassandra\SimpleStatement('SELECT * FROM users'),
-    new Cassandra\ExecutionOptions(array('consistency' => Cassandra::CONSISTENCY_LOCAL_QUORUM))
+    array('consistency' => Cassandra::CONSISTENCY_LOCAL_QUORUM)
 );
 
 $statement = $session->prepare('SELECT * FROM users');
-$session->execute($statement, new Cassandra\ExecutionOptions(array(
+$session->execute($statement, array(
     'consistency' => Cassandra::CONSISTENCY_LOCAL_QUORUM
-)));
+));
 
 $batch = new Cassandra\BatchStatement();
 $batch->add(new Cassandra\SimpleStatement("UPDATE users SET email = 'sue@foobar.com' WHERE id = 'sue'"));
 $batch->add(new Cassandra\SimpleStatement("UPDATE users SET email = 'tom@foobar.com' WHERE id = 'tom'"));
-$session->execute($batch, new Cassandra\ExecutionOptions(array(
+$session->execute($batch, array(
     'consistency' => Cassandra::CONSISTENCY_LOCAL_QUORUM
-)));
+));
 ```
 
 [Read more about `Cassandra\ExecutionOptions`](http://datastax.github.io/php-driver/api/Cassandra/class.ExecutionOptions/)

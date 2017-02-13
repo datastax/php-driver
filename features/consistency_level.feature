@@ -26,6 +26,7 @@ Feature: Consistency Level
     And the following example:
       """php
       <?php
+
       $cluster     = Cassandra::cluster()
                        ->withContactPoints('127.0.0.1')
                        ->build();
@@ -38,8 +39,15 @@ Feature: Consistency Level
                          "'La Petite Tonkinoise', " .
                          "'Bye Bye Blackbird')";
       $statement   = new Cassandra\SimpleStatement($insertQuery);
+
+      // ExecutionOptions is deprecated, but still legal. Disable error reporting for it.
+      error_reporting(E_ALL ^ E_DEPRECATED);
+
       $options     = new Cassandra\ExecutionOptions(array('consistency' => Cassandra::CONSISTENCY_ALL));
       $session->execute($statement, $options);
+
+      // Restore error-reporting to normal.
+      error_reporting(E_ALL);
 
       // Below uses the system_traces.events table to verify consistency ALL is met
       $statement = new Cassandra\SimpleStatement("SELECT source from system_traces.events");
