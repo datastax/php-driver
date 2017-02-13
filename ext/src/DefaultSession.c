@@ -595,8 +595,7 @@ PHP_METHOD(DefaultSession, execute)
     if (Z_TYPE_P(options) == IS_OBJECT) {
       opts = PHP_DRIVER_GET_EXECUTION_OPTIONS(options);
     } else {
-      if (php_driver_execution_options_init_and_build_from_array(&local_opts, options TSRMLS_CC) == FAILURE) {
-        php_driver_execution_options_destroy(&local_opts);
+      if (php_driver_execution_options_build_local_from_array(&local_opts, options TSRMLS_CC) == FAILURE) {
         return;
       }
       opts = &local_opts;
@@ -636,21 +635,17 @@ PHP_METHOD(DefaultSession, execute)
                              paging_state_token, paging_state_token_size,
                              retry_policy, timestamp TSRMLS_CC);
 
-      if (!single) {
-        if (&local_opts == opts)
-          php_driver_execution_options_destroy(opts);
+      if (!single)
         return;
-      }
+
       future = cass_session_execute((CassSession *) self->session->data, single);
       break;
     case PHP_DRIVER_BATCH_STATEMENT:
       batch = create_batch(stmt, consistency, retry_policy, timestamp TSRMLS_CC);
 
-      if (!batch) {
-        if (&local_opts == opts)
-          php_driver_execution_options_destroy(opts);
+      if (!batch)
         return;
-      }
+
       future = cass_session_execute_batch((CassSession *) self->session->data, batch);
       break;
     default:
@@ -658,8 +653,6 @@ PHP_METHOD(DefaultSession, execute)
         "an instance of " PHP_DRIVER_NAMESPACE "\\SimpleStatement, " \
         PHP_DRIVER_NAMESPACE "\\PreparedStatement or " PHP_DRIVER_NAMESPACE "\\BatchStatement"
       );
-      if (&local_opts == opts)
-        php_driver_execution_options_destroy(opts);
       return;
   }
 
@@ -692,9 +685,6 @@ PHP_METHOD(DefaultSession, execute)
       rows->statement = php_driver_new_ref(single, free_statement);
       rows->result    = php_driver_new_ref((void *)result, free_result);
       rows->session   = php_driver_add_ref(self->session);
-
-      if (&local_opts == opts)
-        php_driver_execution_options_destroy(opts);
       return;
     }
 
@@ -706,9 +696,6 @@ PHP_METHOD(DefaultSession, execute)
 
   if (single)
     cass_statement_free(single);
-
-  if (&local_opts == opts)
-    php_driver_execution_options_destroy(opts);
 }
 
 PHP_METHOD(DefaultSession, executeAsync)
@@ -761,8 +748,7 @@ PHP_METHOD(DefaultSession, executeAsync)
     if (Z_TYPE_P(options) == IS_OBJECT) {
       opts = PHP_DRIVER_GET_EXECUTION_OPTIONS(options);
     } else {
-      if (php_driver_execution_options_init_and_build_from_array(&local_opts, options TSRMLS_CC) == FAILURE) {
-        php_driver_execution_options_destroy(&local_opts);
+      if (php_driver_execution_options_build_local_from_array(&local_opts, options TSRMLS_CC) == FAILURE) {
         return;
       }
       opts = &local_opts;
@@ -802,11 +788,9 @@ PHP_METHOD(DefaultSession, executeAsync)
                              paging_state_token, paging_state_token_size,
                              retry_policy, timestamp TSRMLS_CC);
 
-      if (!single) {
-        if (&local_opts == opts)
-          php_driver_execution_options_destroy(opts);
+      if (!single)
         return;
-      }
+
       future_rows->statement = php_driver_new_ref(single, free_statement);
       future_rows->future    = cass_session_execute((CassSession *) self->session->data, single);
       future_rows->session   = php_driver_add_ref(self->session);
@@ -814,11 +798,9 @@ PHP_METHOD(DefaultSession, executeAsync)
     case PHP_DRIVER_BATCH_STATEMENT:
       batch = create_batch(stmt, consistency, retry_policy, timestamp TSRMLS_CC);
 
-      if (!batch) {
-        if (&local_opts == opts)
-          php_driver_execution_options_destroy(opts);
+      if (!batch)
         return;
-      }
+
       future_rows->future = cass_session_execute_batch((CassSession *) self->session->data, batch);
       cass_batch_free(batch);
       break;
@@ -827,10 +809,8 @@ PHP_METHOD(DefaultSession, executeAsync)
         "an instance of " PHP_DRIVER_NAMESPACE "\\SimpleStatement, " \
         PHP_DRIVER_NAMESPACE "\\PreparedStatement or " PHP_DRIVER_NAMESPACE "\\BatchStatement"
       );
+      return;
   }
-
-  if (&local_opts == opts)
-    php_driver_execution_options_destroy(opts);
 }
 
 PHP_METHOD(DefaultSession, prepare)
@@ -859,8 +839,7 @@ PHP_METHOD(DefaultSession, prepare)
     if (Z_TYPE_P(options) == IS_OBJECT) {
       opts = PHP_DRIVER_GET_EXECUTION_OPTIONS(options);
     } else {
-      if (php_driver_execution_options_init_and_build_from_array(&local_opts, options TSRMLS_CC) == FAILURE) {
-        php_driver_execution_options_destroy(&local_opts);
+      if (php_driver_execution_options_build_local_from_array(&local_opts, options TSRMLS_CC) == FAILURE) {
         return;
       }
       opts = &local_opts;
@@ -879,8 +858,6 @@ PHP_METHOD(DefaultSession, prepare)
   }
 
   cass_future_free(future);
-  if (&local_opts == opts)
-    php_driver_execution_options_destroy(opts);
 }
 
 PHP_METHOD(DefaultSession, prepareAsync)

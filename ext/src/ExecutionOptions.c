@@ -34,7 +34,7 @@ static void init_execution_options(php_driver_execution_options *self)
   PHP5TO7_ZVAL_UNDEF(self->retry_policy);
 }
 
-static int build_from_array(php_driver_execution_options *self, zval *options TSRMLS_DC)
+static int build_from_array(php_driver_execution_options *self, zval *options, int copy TSRMLS_DC)
 {
   php5to7_zval *consistency = NULL;
   php5to7_zval *serial_consistency = NULL;
@@ -70,8 +70,12 @@ static int build_from_array(php_driver_execution_options *self, zval *options TS
       throw_invalid_argument(PHP5TO7_ZVAL_MAYBE_DEREF(paging_state_token), "paging_state_token", "a string" TSRMLS_CC);
       return FAILURE;
     }
-    self->paging_state_token = estrndup(Z_STRVAL_P(PHP5TO7_ZVAL_MAYBE_DEREF(paging_state_token)),
-                                        Z_STRLEN_P(PHP5TO7_ZVAL_MAYBE_DEREF(paging_state_token)));
+    if (copy) {
+      self->paging_state_token = estrndup(Z_STRVAL_P(PHP5TO7_ZVAL_MAYBE_DEREF(paging_state_token)),
+                                          Z_STRLEN_P(PHP5TO7_ZVAL_MAYBE_DEREF(paging_state_token)));
+    } else {
+      self->paging_state_token = Z_STRVAL_P(PHP5TO7_ZVAL_MAYBE_DEREF(paging_state_token));
+    }
     self->paging_state_token_size = Z_STRLEN_P(PHP5TO7_ZVAL_MAYBE_DEREF(paging_state_token));
   }
 
@@ -83,7 +87,11 @@ static int build_from_array(php_driver_execution_options *self, zval *options TS
       return FAILURE;
     }
 
-    PHP5TO7_ZVAL_COPY(PHP5TO7_ZVAL_MAYBE_P(self->timeout), PHP5TO7_ZVAL_MAYBE_DEREF(timeout));
+    if (copy) {
+      PHP5TO7_ZVAL_COPY(PHP5TO7_ZVAL_MAYBE_P(self->timeout), PHP5TO7_ZVAL_MAYBE_DEREF(timeout));
+    } else {
+      self->timeout = *timeout;
+    }
   }
 
   if (PHP5TO7_ZEND_HASH_FIND(Z_ARRVAL_P(options), "arguments", sizeof("arguments"), arguments)) {
@@ -91,7 +99,12 @@ static int build_from_array(php_driver_execution_options *self, zval *options TS
       throw_invalid_argument(PHP5TO7_ZVAL_MAYBE_DEREF(arguments), "arguments", "an array" TSRMLS_CC);
       return FAILURE;
     }
-    PHP5TO7_ZVAL_COPY(PHP5TO7_ZVAL_MAYBE_P(self->arguments), PHP5TO7_ZVAL_MAYBE_DEREF(arguments));
+
+    if (copy) {
+      PHP5TO7_ZVAL_COPY(PHP5TO7_ZVAL_MAYBE_P(self->arguments), PHP5TO7_ZVAL_MAYBE_DEREF(arguments));
+    } else {
+      self->arguments = *arguments;
+    }
   }
 
   if (PHP5TO7_ZEND_HASH_FIND(Z_ARRVAL_P(options), "retry_policy", sizeof("retry_policy"), retry_policy)) {
@@ -103,7 +116,12 @@ static int build_from_array(php_driver_execution_options *self, zval *options TS
                              "an instance of " PHP_DRIVER_NAMESPACE "\\RetryPolicy" TSRMLS_CC);
       return FAILURE;
     }
-    PHP5TO7_ZVAL_COPY(PHP5TO7_ZVAL_MAYBE_P(self->retry_policy), PHP5TO7_ZVAL_MAYBE_DEREF(retry_policy));
+
+    if (copy) {
+      PHP5TO7_ZVAL_COPY(PHP5TO7_ZVAL_MAYBE_P(self->retry_policy), PHP5TO7_ZVAL_MAYBE_DEREF(retry_policy));
+    } else {
+      self->retry_policy = *retry_policy;
+    }
   }
 
   if (PHP5TO7_ZEND_HASH_FIND(Z_ARRVAL_P(options), "timestamp", sizeof("timestamp"), timestamp)) {
@@ -123,20 +141,10 @@ static int build_from_array(php_driver_execution_options *self, zval *options TS
   return SUCCESS;
 }
 
-int php_driver_execution_options_init_and_build_from_array(php_driver_execution_options *self, zval *options TSRMLS_DC)
+int php_driver_execution_options_build_local_from_array(php_driver_execution_options *self, zval *options TSRMLS_DC)
 {
   init_execution_options(self);
-  return build_from_array(self, options TSRMLS_CC);
-}
-
-void php_driver_execution_options_destroy(php_driver_execution_options *self)
-{
-  if (self->paging_state_token) {
-    efree(self->paging_state_token);
-  }
-  PHP5TO7_ZVAL_MAYBE_DESTROY(self->arguments);
-  PHP5TO7_ZVAL_MAYBE_DESTROY(self->timeout);
-  PHP5TO7_ZVAL_MAYBE_DESTROY(self->retry_policy);
+  return build_from_array(self, options, 0 TSRMLS_CC);
 }
 
 PHP_METHOD(ExecutionOptions, __construct)
@@ -156,7 +164,7 @@ PHP_METHOD(ExecutionOptions, __construct)
 
   self = PHP_DRIVER_GET_EXECUTION_OPTIONS(getThis());
 
-  build_from_array(self, options TSRMLS_CC);
+  build_from_array(self, options, 1 TSRMLS_CC);
 }
 
 PHP_METHOD(ExecutionOptions, __get)
@@ -262,7 +270,12 @@ php_driver_execution_options_free(php5to7_zend_object_free *object TSRMLS_DC)
   php_driver_execution_options *self =
       PHP5TO7_ZEND_OBJECT_GET(execution_options, object);
 
-  php_driver_execution_options_destroy(self);
+  if (self->paging_state_token) {
+    efree(self->paging_state_token);
+  }
+  PHP5TO7_ZVAL_MAYBE_DESTROY(self->arguments);
+  PHP5TO7_ZVAL_MAYBE_DESTROY(self->timeout);
+  PHP5TO7_ZVAL_MAYBE_DESTROY(self->retry_policy);
 
   zend_object_std_dtor(&self->zval TSRMLS_CC);
   PHP5TO7_MAYBE_EFREE(self);
