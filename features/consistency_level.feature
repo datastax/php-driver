@@ -78,7 +78,8 @@ Feature: Consistency Level
                          "'La Petite Tonkinoise', " .
                          "'Bye Bye Blackbird')";
       $statement   = new Cassandra\SimpleStatement($insertQuery);
-      $session->execute($statement, array('consistency' => Cassandra::CONSISTENCY_ALL));
+      $options     = array('consistency' => Cassandra::CONSISTENCY_ALL);
+      $session->execute($statement, $options);
 
       // Below uses the system_traces.events table to verify consistency ALL is met
       $statement = new Cassandra\SimpleStatement("SELECT source from system_traces.events");
