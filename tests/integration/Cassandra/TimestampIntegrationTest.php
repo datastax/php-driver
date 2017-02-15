@@ -129,8 +129,7 @@ class TimestampIntegrationTest extends BasicIntegrationTest {
         }
 
         // Insert values into the table
-        $options = new ExecutionOptions($parameters);
-        $session->execute($statement, $options);
+        $session->execute($statement, $parameters);
     }
 
     /**
@@ -142,11 +141,11 @@ class TimestampIntegrationTest extends BasicIntegrationTest {
     private function getTimestamp($key) {
         // Select the timestamp from the table
         $statement = new SimpleStatement($this->selectQuery);
-        $options = new ExecutionOptions(array(
+        $options = array(
             "arguments" => array(
                 "key" => $key
             )
-        ));
+        );
         $rows = $this->session->execute($statement, $options);
         $row = $rows->first();
         $this->assertArrayHasKey("writetime(value_int)", $row);

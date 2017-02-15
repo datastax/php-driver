@@ -23,6 +23,16 @@ namespace Cassandra;
  */
 class ExecutionOptionsTest extends \PHPUnit_Framework_TestCase
 {
+    public function setUp()
+    {
+        error_reporting(E_ALL ^ E_DEPRECATED);
+    }
+
+    public function tearDown()
+    {
+        error_reporting(E_ALL);
+    }
+
     public function testAllowsRetrievingSettingsByName()
     {
         $options = new ExecutionOptions(array(

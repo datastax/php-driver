@@ -48,7 +48,7 @@ Feature: Result paging
                      ->build();
       $session   = $cluster->connect("simplex");
       $statement = new Cassandra\SimpleStatement("SELECT * FROM paging_entries");
-      $options   = new Cassandra\ExecutionOptions(array('page_size' => 5));
+      $options   = array('page_size' => 5);
       $rows      = $session->execute($statement, $options);
 
       while (true) {
@@ -95,7 +95,7 @@ Feature: Result paging
                      ->build();
       $session   = $cluster->connect("simplex");
       $statement = new Cassandra\SimpleStatement("SELECT * FROM paging_entries");
-      $options   = new Cassandra\ExecutionOptions(array('page_size' => 10));
+      $options   = array('page_size' => 10);
       $rows      = $session->execute($statement, $options);
 
       $firstPageRows = $session->execute($statement, $options);
@@ -129,7 +129,7 @@ Feature: Result paging
       $session   = $cluster->connect("simplex");
       $statement = new Cassandra\SimpleStatement("SELECT * FROM paging_entries");
       $options = array('page_size' => 2);
-      $result = $session->execute($statement, new Cassandra\ExecutionOptions($options));
+      $result = $session->execute($statement, $options);
 
       foreach ($result as $row) {
         printf("key: '%s' value: %d\n", $row['key'], $row['value']);
@@ -141,7 +141,7 @@ Feature: Result paging
               'paging_state_token' => $result->pagingStateToken()
           );
 
-          $result = $session->execute($statement, new Cassandra\ExecutionOptions($options));
+          $result = $session->execute($statement, $options);
 
           foreach ($result as $row) {
             printf("key: '%s' value: %d\n", $row['key'], $row['value']);

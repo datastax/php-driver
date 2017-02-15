@@ -32,9 +32,9 @@ class PagingIntegrationTest extends BasicIntegrationTest {
         );
 
         for ($i = 0; $i < 10; $i++) {
-            $options = new ExecutionOptions(array(
+            $options = array(
                 "arguments" => array($i, $i)
-            ));
+            );
             $this->session->execute($statement, $options);
         }
     }
@@ -136,7 +136,7 @@ class PagingIntegrationTest extends BasicIntegrationTest {
             if (isset($result)) {
                 $options["paging_state_token"] = $result->pagingStateToken();
             }
-            $result = $this->session->execute($statement, new ExecutionOptions($options));
+            $result = $this->session->execute($statement, $options);
             $this->assertEquals(1, count($result));
 
             $row = $result->first();
@@ -164,9 +164,9 @@ class PagingIntegrationTest extends BasicIntegrationTest {
             "SELECT * FROM {$this->tableNamePrefix}"
         );
 
-        $options = new ExecutionOptions(array(
+        $options = array(
             "paging_state_token" => "invalid"
-        ));
+        );
 
         $result = $this->session->execute($statement, $options);
     }
@@ -188,9 +188,9 @@ class PagingIntegrationTest extends BasicIntegrationTest {
             "SELECT * FROM {$this->tableNamePrefix}"
         );
 
-        $options = new ExecutionOptions(array(
+        $options = array(
             "paging_state_token" => null
-        ));
+        );
 
         $result = $this->session->execute($statement, $options);
     }
@@ -211,7 +211,7 @@ class PagingIntegrationTest extends BasicIntegrationTest {
         );
 
         // Get first page
-        $rows = $this->session->execute($statement, new ExecutionOptions($options));
+        $rows = $this->session->execute($statement, $options);
         $this->assertEquals($rows->count(), $pageSize);
         $values = self::convertRowsToArray($rows, "value");
 
@@ -256,7 +256,7 @@ class PagingIntegrationTest extends BasicIntegrationTest {
         );
 
         // Get first page
-        $rows = $this->session->execute($statement, new ExecutionOptions($options));
+        $rows = $this->session->execute($statement, $options);
         $this->assertEquals($rows->count(), $pageSize);
         $values = self::convertRowsToArray($rows, "value");
 
@@ -338,13 +338,13 @@ class PagingIntegrationTest extends BasicIntegrationTest {
                 $this->randomString()
             );
 
-            $options = new ExecutionOptions(array("arguments" => $values));
+            $options = array("arguments" => $values);
             $this->session->execute($statement, $options);
         }
 
         // Select all the rows in the table using paging
         $statement = new SimpleStatement("SELECT * FROM {$this->tableNamePrefix}");
-        $options = new ExecutionOptions(array("page_size" => 2));
+        $options = array("page_size" => 2);
         $rows = $this->session->execute($statement, $options);
 
 

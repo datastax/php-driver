@@ -82,13 +82,13 @@ class DatatypeIntegrationTest extends DatatypeIntegrationTests {
             // Insert the value into the table
             $query = "INSERT INTO {$this->tableNamePrefix} (key, value_decimal, value_varint) VALUES (?, ?, ?)";
             $statement = new SimpleStatement($query);
-            $options = new ExecutionOptions(array("arguments" => $values));
+            $options = array("arguments" => $values);
             $this->session->execute($statement, $options);
 
             // Select the decimal and varint
             $query = "SELECT value_decimal, value_varint FROM {$this->tableNamePrefix} WHERE key=?";
             $statement = new SimpleStatement($query);
-            $options = new ExecutionOptions(array("arguments" => array($key)));
+            $options = array("arguments" => array($key));
             $rows = $this->session->execute($statement, $options);
 
             // Ensure the decimal and varint are valid

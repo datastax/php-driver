@@ -52,7 +52,7 @@ Feature: Tuples
       );
 
       foreach ($users as $user) {
-        $options = new Cassandra\ExecutionOptions(array('arguments' => $user));
+        $options = array('arguments' => $user);
         $session->execute($statement, $options);
       }
 

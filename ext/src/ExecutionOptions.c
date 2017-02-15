@@ -21,10 +21,21 @@
 
 zend_class_entry *php_driver_execution_options_ce = NULL;
 
-PHP_METHOD(ExecutionOptions, __construct)
+static void init_execution_options(php_driver_execution_options *self)
 {
-  zval *options = NULL;
-  php_driver_execution_options *self = NULL;
+  self->consistency = -1;
+  self->serial_consistency = -1;
+  self->page_size = -1;
+  self->paging_state_token = NULL;
+  self->paging_state_token_size = 0;
+  self->timestamp = INT64_MIN;
+  PHP5TO7_ZVAL_UNDEF(self->arguments);
+  PHP5TO7_ZVAL_UNDEF(self->timeout);
+  PHP5TO7_ZVAL_UNDEF(self->retry_policy);
+}
+
+static int build_from_array(php_driver_execution_options *self, zval *options, int copy TSRMLS_DC)
+{
   php5to7_zval *consistency = NULL;
   php5to7_zval *serial_consistency = NULL;
   php5to7_zval *page_size = NULL;
@@ -33,6 +44,113 @@ PHP_METHOD(ExecutionOptions, __construct)
   php5to7_zval *arguments = NULL;
   php5to7_zval *retry_policy = NULL;
   php5to7_zval *timestamp = NULL;
+
+  if (PHP5TO7_ZEND_HASH_FIND(Z_ARRVAL_P(options), "consistency", sizeof("consistency"), consistency)) {
+    if (php_driver_get_consistency(PHP5TO7_ZVAL_MAYBE_DEREF(consistency), &self->consistency TSRMLS_CC) == FAILURE) {
+      return FAILURE;
+    }
+  }
+
+  if (PHP5TO7_ZEND_HASH_FIND(Z_ARRVAL_P(options), "serial_consistency", sizeof("serial_consistency"), serial_consistency)) {
+    if (php_driver_get_serial_consistency(PHP5TO7_ZVAL_MAYBE_DEREF(serial_consistency), &self->serial_consistency TSRMLS_CC) == FAILURE) {
+      return FAILURE;
+    }
+  }
+
+  if (PHP5TO7_ZEND_HASH_FIND(Z_ARRVAL_P(options), "page_size", sizeof("page_size"), page_size)) {
+    if (Z_TYPE_P(PHP5TO7_ZVAL_MAYBE_DEREF(page_size)) != IS_LONG || Z_LVAL_P(PHP5TO7_ZVAL_MAYBE_DEREF(page_size)) <= 0) {
+      throw_invalid_argument(PHP5TO7_ZVAL_MAYBE_DEREF(page_size), "page_size", "greater than zero" TSRMLS_CC);
+      return FAILURE;
+    }
+    self->page_size = Z_LVAL_P(PHP5TO7_ZVAL_MAYBE_DEREF(page_size));
+  }
+
+  if (PHP5TO7_ZEND_HASH_FIND(Z_ARRVAL_P(options), "paging_state_token", sizeof("paging_state_token"), paging_state_token)) {
+    if (Z_TYPE_P(PHP5TO7_ZVAL_MAYBE_DEREF(paging_state_token)) != IS_STRING) {
+      throw_invalid_argument(PHP5TO7_ZVAL_MAYBE_DEREF(paging_state_token), "paging_state_token", "a string" TSRMLS_CC);
+      return FAILURE;
+    }
+    if (copy) {
+      self->paging_state_token = estrndup(Z_STRVAL_P(PHP5TO7_ZVAL_MAYBE_DEREF(paging_state_token)),
+                                          Z_STRLEN_P(PHP5TO7_ZVAL_MAYBE_DEREF(paging_state_token)));
+    } else {
+      self->paging_state_token = Z_STRVAL_P(PHP5TO7_ZVAL_MAYBE_DEREF(paging_state_token));
+    }
+    self->paging_state_token_size = Z_STRLEN_P(PHP5TO7_ZVAL_MAYBE_DEREF(paging_state_token));
+  }
+
+  if (PHP5TO7_ZEND_HASH_FIND(Z_ARRVAL_P(options), "timeout", sizeof("timeout"), timeout)) {
+    if (!(Z_TYPE_P(PHP5TO7_ZVAL_MAYBE_DEREF(timeout)) == IS_LONG   && Z_LVAL_P(PHP5TO7_ZVAL_MAYBE_DEREF(timeout)) > 0) &&
+        !(Z_TYPE_P(PHP5TO7_ZVAL_MAYBE_DEREF(timeout)) == IS_DOUBLE && Z_DVAL_P(PHP5TO7_ZVAL_MAYBE_DEREF(timeout)) > 0) &&
+        !(Z_TYPE_P(PHP5TO7_ZVAL_MAYBE_DEREF(timeout)) == IS_NULL)) {
+      throw_invalid_argument(PHP5TO7_ZVAL_MAYBE_DEREF(timeout), "timeout", "a number of seconds greater than zero or null" TSRMLS_CC);
+      return FAILURE;
+    }
+
+    if (copy) {
+      PHP5TO7_ZVAL_COPY(PHP5TO7_ZVAL_MAYBE_P(self->timeout), PHP5TO7_ZVAL_MAYBE_DEREF(timeout));
+    } else {
+      self->timeout = *timeout;
+    }
+  }
+
+  if (PHP5TO7_ZEND_HASH_FIND(Z_ARRVAL_P(options), "arguments", sizeof("arguments"), arguments)) {
+    if (Z_TYPE_P(PHP5TO7_ZVAL_MAYBE_DEREF(arguments)) != IS_ARRAY) {
+      throw_invalid_argument(PHP5TO7_ZVAL_MAYBE_DEREF(arguments), "arguments", "an array" TSRMLS_CC);
+      return FAILURE;
+    }
+
+    if (copy) {
+      PHP5TO7_ZVAL_COPY(PHP5TO7_ZVAL_MAYBE_P(self->arguments), PHP5TO7_ZVAL_MAYBE_DEREF(arguments));
+    } else {
+      self->arguments = *arguments;
+    }
+  }
+
+  if (PHP5TO7_ZEND_HASH_FIND(Z_ARRVAL_P(options), "retry_policy", sizeof("retry_policy"), retry_policy)) {
+    if (Z_TYPE_P(PHP5TO7_ZVAL_MAYBE_DEREF(retry_policy)) != IS_OBJECT &&
+        !instanceof_function(Z_OBJCE_P(PHP5TO7_ZVAL_MAYBE_DEREF(retry_policy)),
+                             php_driver_retry_policy_ce TSRMLS_CC)) {
+      throw_invalid_argument(PHP5TO7_ZVAL_MAYBE_DEREF(retry_policy),
+                             "retry_policy",
+                             "an instance of " PHP_DRIVER_NAMESPACE "\\RetryPolicy" TSRMLS_CC);
+      return FAILURE;
+    }
+
+    if (copy) {
+      PHP5TO7_ZVAL_COPY(PHP5TO7_ZVAL_MAYBE_P(self->retry_policy), PHP5TO7_ZVAL_MAYBE_DEREF(retry_policy));
+    } else {
+      self->retry_policy = *retry_policy;
+    }
+  }
+
+  if (PHP5TO7_ZEND_HASH_FIND(Z_ARRVAL_P(options), "timestamp", sizeof("timestamp"), timestamp)) {
+    if (Z_TYPE_P(PHP5TO7_ZVAL_MAYBE_DEREF(timestamp)) == IS_LONG) {
+      self->timestamp = Z_LVAL_P(PHP5TO7_ZVAL_MAYBE_DEREF(timestamp));
+    } else if (Z_TYPE_P(PHP5TO7_ZVAL_MAYBE_DEREF(timestamp)) == IS_STRING) {
+      if (!php_driver_parse_bigint(Z_STRVAL_P(PHP5TO7_ZVAL_MAYBE_DEREF(timestamp)),
+                                   Z_STRLEN_P(PHP5TO7_ZVAL_MAYBE_DEREF(timestamp)),
+                                   &self->timestamp TSRMLS_CC)) {
+        return FAILURE;
+      }
+    } else {
+      throw_invalid_argument(PHP5TO7_ZVAL_MAYBE_DEREF(timestamp), "timestamp", "an integer or integer string" TSRMLS_CC);
+      return FAILURE;
+    }
+  }
+  return SUCCESS;
+}
+
+int php_driver_execution_options_build_local_from_array(php_driver_execution_options *self, zval *options TSRMLS_DC)
+{
+  init_execution_options(self);
+  return build_from_array(self, options, 0 TSRMLS_CC);
+}
+
+PHP_METHOD(ExecutionOptions, __construct)
+{
+  zval *options = NULL;
+  php_driver_execution_options *self = NULL;
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z", &options) == FAILURE) {
     return;
@@ -46,81 +164,7 @@ PHP_METHOD(ExecutionOptions, __construct)
 
   self = PHP_DRIVER_GET_EXECUTION_OPTIONS(getThis());
 
-  if (PHP5TO7_ZEND_HASH_FIND(Z_ARRVAL_P(options), "consistency", sizeof("consistency"), consistency)) {
-    if (php_driver_get_consistency(PHP5TO7_ZVAL_MAYBE_DEREF(consistency), &self->consistency TSRMLS_CC) == FAILURE) {
-      return;
-    }
-  }
-
-  if (PHP5TO7_ZEND_HASH_FIND(Z_ARRVAL_P(options), "serial_consistency", sizeof("serial_consistency"), serial_consistency)) {
-    if (php_driver_get_serial_consistency(PHP5TO7_ZVAL_MAYBE_DEREF(serial_consistency), &self->serial_consistency TSRMLS_CC) == FAILURE) {
-      return;
-    }
-  }
-
-  if (PHP5TO7_ZEND_HASH_FIND(Z_ARRVAL_P(options), "page_size", sizeof("page_size"), page_size)) {
-    if (Z_TYPE_P(PHP5TO7_ZVAL_MAYBE_DEREF(page_size)) != IS_LONG || Z_LVAL_P(PHP5TO7_ZVAL_MAYBE_DEREF(page_size)) <= 0) {
-      throw_invalid_argument(PHP5TO7_ZVAL_MAYBE_DEREF(page_size), "page_size", "greater than zero" TSRMLS_CC);
-      return;
-    }
-    self->page_size = Z_LVAL_P(PHP5TO7_ZVAL_MAYBE_DEREF(page_size));
-  }
-
-  if (PHP5TO7_ZEND_HASH_FIND(Z_ARRVAL_P(options), "paging_state_token", sizeof("paging_state_token"), paging_state_token)) {
-    if (Z_TYPE_P(PHP5TO7_ZVAL_MAYBE_DEREF(paging_state_token)) != IS_STRING) {
-      throw_invalid_argument(PHP5TO7_ZVAL_MAYBE_DEREF(paging_state_token), "paging_state_token", "a string" TSRMLS_CC);
-      return;
-    }
-    self->paging_state_token = estrndup(Z_STRVAL_P(PHP5TO7_ZVAL_MAYBE_DEREF(paging_state_token)),
-                                        Z_STRLEN_P(PHP5TO7_ZVAL_MAYBE_DEREF(paging_state_token)));
-    self->paging_state_token_size = Z_STRLEN_P(PHP5TO7_ZVAL_MAYBE_DEREF(paging_state_token));
-  }
-
-  if (PHP5TO7_ZEND_HASH_FIND(Z_ARRVAL_P(options), "timeout", sizeof("timeout"), timeout)) {
-    if (!(Z_TYPE_P(PHP5TO7_ZVAL_MAYBE_DEREF(timeout)) == IS_LONG   && Z_LVAL_P(PHP5TO7_ZVAL_MAYBE_DEREF(timeout)) > 0) &&
-        !(Z_TYPE_P(PHP5TO7_ZVAL_MAYBE_DEREF(timeout)) == IS_DOUBLE && Z_DVAL_P(PHP5TO7_ZVAL_MAYBE_DEREF(timeout)) > 0) &&
-        !(Z_TYPE_P(PHP5TO7_ZVAL_MAYBE_DEREF(timeout)) == IS_NULL)) {
-      throw_invalid_argument(PHP5TO7_ZVAL_MAYBE_DEREF(timeout), "timeout", "a number of seconds greater than zero or null" TSRMLS_CC);
-      return;
-    }
-
-    PHP5TO7_ZVAL_COPY(PHP5TO7_ZVAL_MAYBE_P(self->timeout), PHP5TO7_ZVAL_MAYBE_DEREF(timeout));
-  }
-
-  if (PHP5TO7_ZEND_HASH_FIND(Z_ARRVAL_P(options), "arguments", sizeof("arguments"), arguments)) {
-    if (Z_TYPE_P(PHP5TO7_ZVAL_MAYBE_DEREF(arguments)) != IS_ARRAY) {
-      throw_invalid_argument(PHP5TO7_ZVAL_MAYBE_DEREF(arguments), "arguments", "an array" TSRMLS_CC);
-      return;
-    }
-    PHP5TO7_ZVAL_COPY(PHP5TO7_ZVAL_MAYBE_P(self->arguments), PHP5TO7_ZVAL_MAYBE_DEREF(arguments));
-  }
-
-  if (PHP5TO7_ZEND_HASH_FIND(Z_ARRVAL_P(options), "retry_policy", sizeof("retry_policy"), retry_policy)) {
-    if (Z_TYPE_P(PHP5TO7_ZVAL_MAYBE_DEREF(retry_policy)) != IS_OBJECT &&
-        !instanceof_function(Z_OBJCE_P(PHP5TO7_ZVAL_MAYBE_DEREF(retry_policy)),
-                                       php_driver_retry_policy_ce TSRMLS_CC)) {
-      throw_invalid_argument(PHP5TO7_ZVAL_MAYBE_DEREF(retry_policy),
-                             "retry_policy",
-                             "an instance of " PHP_DRIVER_NAMESPACE "\\RetryPolicy" TSRMLS_CC);
-      return;
-    }
-    PHP5TO7_ZVAL_COPY(PHP5TO7_ZVAL_MAYBE_P(self->retry_policy), PHP5TO7_ZVAL_MAYBE_DEREF(retry_policy));
-  }
-
-  if (PHP5TO7_ZEND_HASH_FIND(Z_ARRVAL_P(options), "timestamp", sizeof("timestamp"), timestamp)) {
-    if (Z_TYPE_P(PHP5TO7_ZVAL_MAYBE_DEREF(timestamp)) == IS_LONG) {
-      self->timestamp = Z_LVAL_P(PHP5TO7_ZVAL_MAYBE_DEREF(timestamp));
-    } else if (Z_TYPE_P(PHP5TO7_ZVAL_MAYBE_DEREF(timestamp)) == IS_STRING) {
-      if (!php_driver_parse_bigint(Z_STRVAL_P(PHP5TO7_ZVAL_MAYBE_DEREF(timestamp)),
-                                      Z_STRLEN_P(PHP5TO7_ZVAL_MAYBE_DEREF(timestamp)),
-                                      &self->timestamp TSRMLS_CC)) {
-        return;
-      }
-    } else {
-      throw_invalid_argument(PHP5TO7_ZVAL_MAYBE_DEREF(timestamp), "timestamp", "an integer or integer string" TSRMLS_CC);
-      return;
-    }
-  }
+  build_from_array(self, options, 1 TSRMLS_CC);
 }
 
 PHP_METHOD(ExecutionOptions, __get)
@@ -196,7 +240,7 @@ ZEND_BEGIN_ARG_INFO_EX(arginfo___get, 0, ZEND_RETURN_VALUE, 1)
 ZEND_END_ARG_INFO()
 
 static zend_function_entry php_driver_execution_options_methods[] = {
-  PHP_ME(ExecutionOptions, __construct, arginfo__construct, ZEND_ACC_PUBLIC | ZEND_ACC_CTOR)
+  PHP_ME(ExecutionOptions, __construct, arginfo__construct, ZEND_ACC_PUBLIC | ZEND_ACC_CTOR | ZEND_ACC_DEPRECATED)
   PHP_ME(ExecutionOptions, __get, arginfo___get, ZEND_ACC_PUBLIC)
   PHP_FE_END
 };
@@ -243,18 +287,9 @@ php_driver_execution_options_new(zend_class_entry *ce TSRMLS_DC)
   php_driver_execution_options *self =
       PHP5TO7_ZEND_OBJECT_ECALLOC(execution_options, ce);
 
-  self->consistency = -1;
-  self->serial_consistency = -1;
-  self->page_size = -1;
-  self->paging_state_token = NULL;
-  self->paging_state_token_size = 0;
-  self->timestamp = INT64_MIN;
-  PHP5TO7_ZVAL_UNDEF(self->arguments);
-  PHP5TO7_ZVAL_UNDEF(self->timeout);
-  PHP5TO7_ZVAL_UNDEF(self->retry_policy);
+  init_execution_options(self);
 
   PHP5TO7_ZEND_OBJECT_INIT(execution_options, self, ce);
-
 }
 
 void php_driver_define_ExecutionOptions(TSRMLS_D)

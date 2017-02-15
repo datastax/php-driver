@@ -44,10 +44,10 @@ Feature: Retry Policies
                           'La Petite Tonkinoise',
                           'Bye Bye Blackbird'
                           );
-      $options     = new Cassandra\ExecutionOptions(array(
+      $options     = array(
                           'consistency' => Cassandra::CONSISTENCY_QUORUM,
                           'arguments' => $arguments
-                          ));
+                          );
       $session->execute($statement, $options);
 
       $statement = new Cassandra\SimpleStatement("SELECT * FROM simplex.playlists");
@@ -83,11 +83,11 @@ Feature: Retry Policies
                           'La Petite Tonkinoise',
                           'Bye Bye Blackbird'
                           );
-      $options     = new Cassandra\ExecutionOptions(array(
+      $options     = array(
                           'consistency' => Cassandra::CONSISTENCY_QUORUM,
                           'arguments' => $arguments,
                           'retry_policy' => new Cassandra\RetryPolicy\Logging($retry_policy)
-                          ));
+                          );
       $session->execute($statement, $options);
 
       $statement = new Cassandra\SimpleStatement("SELECT * FROM simplex.playlists");
@@ -130,10 +130,10 @@ Feature: Retry Policies
                    );
       $batch     = new Cassandra\BatchStatement(Cassandra::BATCH_UNLOGGED);
 
-      $options    = new Cassandra\ExecutionOptions(array(
+      $options    = array(
                          'consistency' => Cassandra::CONSISTENCY_QUORUM,
                          'retry_policy' => new Cassandra\RetryPolicy\Logging($retry_policy)
-                    ));
+                    );
 
       $batch->add($prepared, array(
           'song_id' => new Cassandra\Uuid('756716f7-2e54-4715-9f00-91dcbea6cf50'),
