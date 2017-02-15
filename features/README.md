@@ -489,7 +489,7 @@ The PHP driver for Apache Cassandra supports [a variety of datatypes](http://dat
 
 You can also use the rich type metadata API to define and inspect types, as well as validate data objects.
 
-The example below defines and creates a [`Cassandra\Map`](http://datastax.github.io/php-driver/api/Cassandra/class.Map/) using [`Cassandra\Type`](http://datastax.github.io/php-driver/api/Cassandra/interface.Type/) interface.
+The example below defines and creates a [`Cassandra\Map`](http://datastax.github.io/php-driver/api/Cassandra/class.Map/) using [`Cassandra\Type`](http://datastax.github.io/php-driver/api/Cassandra/class.Type/) interface.
 
 ```php
 <?php
