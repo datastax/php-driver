@@ -57,7 +57,7 @@ Feature: Prepared Statements
       );
 
       foreach ($songs as $song) {
-          $options = new Cassandra\ExecutionOptions(array('arguments' => $song));
+          $options = array('arguments' => $song);
           $session->execute($insert, $options);
       }
 

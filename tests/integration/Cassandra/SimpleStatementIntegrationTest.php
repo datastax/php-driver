@@ -67,7 +67,7 @@ class SimpleStatementIntegrationTest extends BasicIntegrationTest {
         );
         $statement = new SimpleStatement($query);
         foreach ($values as $value) {
-            $options = new ExecutionOptions(array("arguments" => $value));
+            $options = array("arguments" => $value);
             $this->session->execute($statement, $options);
         }
 
@@ -147,7 +147,7 @@ class SimpleStatementIntegrationTest extends BasicIntegrationTest {
         );
         $statement = new SimpleStatement($query);
         foreach ($values as $value) {
-            $options = new ExecutionOptions(array("arguments" => $value));
+            $options = array("arguments" => $value);
             $this->session->execute($statement, $options);
         }
 
@@ -191,7 +191,7 @@ class SimpleStatementIntegrationTest extends BasicIntegrationTest {
             "wrong_name" => 1
         );
         $statement = new SimpleStatement($query);
-        $options = new ExecutionOptions(array("arguments" => $values));
+        $options = array("arguments" => $values);
         $this->session->execute($statement, $options);
     }
 
@@ -228,7 +228,7 @@ class SimpleStatementIntegrationTest extends BasicIntegrationTest {
             "value_text" => "Exception will be thrown; case-sensitive"
         );
         $statement = new SimpleStatement($query);
-        $options = new ExecutionOptions(array("arguments" => $values));
+        $options = array("arguments" => $values);
         $this->session->execute($statement, $options);
     }
 
@@ -257,7 +257,7 @@ class SimpleStatementIntegrationTest extends BasicIntegrationTest {
             "value_text" => "Null values should exist for value_int and value_boolean"
         );
         $statement = new SimpleStatement($query);
-        $options = new ExecutionOptions(array("arguments" => $values));
+        $options = array("arguments" => $values);
         $this->session->execute($statement, $options);
 
         // Select and assert the values

@@ -179,9 +179,9 @@ Bigint: Cassandra\Bigint::__set_state(array(
       $session   = $cluster->connect("simplex");
 
       $statement = new Cassandra\SimpleStatement("INSERT INTO values (id, tinyint_value, smallint_value) VALUES (?, ?, ?)");
-      $options   = new Cassandra\ExecutionOptions(array('arguments' =>
+      $options   = array('arguments' =>
         array(1, new Cassandra\Tinyint(127), new Cassandra\Smallint(32767))
-      ));
+      );
       $session->execute($statement, $options);
 
       $statement = new Cassandra\SimpleStatement("SELECT * FROM values");
@@ -222,7 +222,7 @@ Bigint: Cassandra\Bigint::__set_state(array(
       $session   = $cluster->connect("simplex");
 
       $statement = new Cassandra\SimpleStatement("INSERT INTO date_values (id, date_value) VALUES (?, ?)");
-      $options   = new Cassandra\ExecutionOptions(array('arguments' => array(1, new Cassandra\Date(0))));
+      $options   = array('arguments' => array(1, new Cassandra\Date(0)));
       $session->execute($statement, $options);
 
       $statement = new Cassandra\SimpleStatement("SELECT * FROM date_values");
@@ -262,7 +262,7 @@ Bigint: Cassandra\Bigint::__set_state(array(
 
       $statement = new Cassandra\SimpleStatement("INSERT INTO time_values (id, time_value) VALUES (?, ?)");
       $datetime = new \DateTime("1970-01-01T00:00:01+0000");
-      $options   = new Cassandra\ExecutionOptions(array('arguments' => array(1, Cassandra\Time::fromDateTime($datetime))));
+      $options   = array('arguments' => array(1, Cassandra\Time::fromDateTime($datetime)));
       $session->execute($statement, $options);
 
       $statement = new Cassandra\SimpleStatement("SELECT * FROM time_values");

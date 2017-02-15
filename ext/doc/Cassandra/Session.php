@@ -49,7 +49,7 @@ interface Session
      * @throws Exception
      *
      * @param string|Statement $statement string or statement to be executed
-     * @param ExecutionOptions $options   execution options (optional)
+     * @param array|ExecutionOptions|null $options   execution options (optional)
      *
      * @return Rows execution result
      */
@@ -62,7 +62,7 @@ interface Session
      * you can provide one to Future::get() instead.
      *
      * @param string|Statement $statement string or statement to be executed
-     * @param ExecutionOptions|null $options   execution options (optional)
+     * @param array|ExecutionOptions|null $options   execution options (optional)
      *
      * @return Future future result
      */
@@ -77,7 +77,7 @@ interface Session
      * @throws Exception
      *
      * @param string                $cql     CQL statement string
-     * @param ExecutionOptions|null $options execution options (optional)
+     * @param array|ExecutionOptions|null $options execution options (optional)
      *
      * @return PreparedStatement prepared statement
      */
@@ -89,7 +89,7 @@ interface Session
      * Note that all options passed to this method will be ignored.
      *
      * @param string                $cql     CQL string to be prepared
-     * @param ExecutionOptions|null $options preparation options
+     * @param array|ExecutionOptions|null $options preparation options
      *
      * @return Future statement
      */

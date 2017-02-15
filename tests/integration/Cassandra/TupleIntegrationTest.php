@@ -220,8 +220,8 @@ class TupleIntegrationTest extends CollectionsIntegrationTest {
 
         $tableName = $this->createTable($validType);
 
-        $options = new ExecutionOptions(array(
-            'arguments' => array("key", $invalidType->create("value")))
+        $options = array(
+            'arguments' => array("key", $invalidType->create("value"))
         );
 
         $this->insertValue($tableName, $options);
@@ -263,13 +263,13 @@ class TupleIntegrationTest extends CollectionsIntegrationTest {
         // Insert the value into the table
         $query = "INSERT INTO " . $this->tableNamePrefix . " (key, value) VALUES (?, ?)";
         $statement = new SimpleStatement($query);
-        $options = new ExecutionOptions(array("arguments" => $values));
+        $options = array("arguments" => $values);
         $this->session->execute($statement, $options);
 
         // Select the tuple
         $query = "SELECT value FROM " . $this->tableNamePrefix . " WHERE key=?";
         $statement = new SimpleStatement($query);
-        $options = new ExecutionOptions(array("arguments" => array($key)));
+        $options = array("arguments" => array($key));
         $rows = $this->session->execute($statement, $options);
 
         // Ensure the tuple collection is valid
