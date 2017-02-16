@@ -24,7 +24,7 @@
 
 #ifdef _WIN32
 #  if defined(DISABLE_MSVC_STDINT) || _MSC_VER <= 1700
-#    define strtoll _strtoi64
+#    define strtoull _strtoui64
        float strtof(const char *str, char **endptr) {
          return (float) strtod(str, endptr);
        }
@@ -32,6 +32,36 @@
 #endif
 
 extern zend_class_entry *php_driver_invalid_argument_exception_ce;
+
+static int
+prepare_string_conversion(char *in, int *pos, int *negative)
+{
+  int base = 0;
+  int point = 0;
+
+  /* Advance the pointer; ignore sign */
+  if (in[point] == '+') {
+    point++;
+  } else if (in[point] == '-') {
+    point++;
+    if (negative) {
+      *negative = 1;
+    }
+  }
+
+  /* Handle special case for binary e.g. "0b0100" */
+  if (in[point] == '0' && in[point + 1] == 'b') {
+    base = 2;
+    point += 2; /* Skip over "0b" */
+  }
+
+  /* Assign the position */
+  if (pos) {
+    *pos = point;
+  }
+
+  return base;
+}
 
 int
 php_driver_parse_float(char *in, int in_len, cass_float_t *number TSRMLS_DC)
@@ -89,48 +119,43 @@ int
 php_driver_parse_int(char* in, int in_len, cass_int32_t* number TSRMLS_DC)
 {
   char* end = NULL;
-
-  int point = 0;
-  int base = 10;
-
-  /*  Determine the sign of the number. */
+  int pos = 0;
   int negative = 0;
-  if (in[point] == '+') {
-    point++;
-  } else if (in[point] == '-') {
-    point++;
-    negative = 1;
-  }
+  cass_uint32_t temp = 0;
+  int base = 0;
 
-  if (in[point] == '0') {
-    switch(in[point + 1]) {
-    case 'b':
-      point += 2;
-      base = 2;
-      break;
-    case 'x':
-      point += 2;
-      base = 16;
-      break;
-    default:
-      base = 8;
-      break;
+  base = prepare_string_conversion(in, &pos, &negative);
+  errno = 0;
+  temp = (cass_uint32_t) strtoul(in + pos, &end, base);
+
+  if (negative) {
+    if (temp > (cass_uint32_t) INT_MAX + 1) {
+      errno = ERANGE;
+      *number = INT_MIN;
+    } else if (temp == (cass_uint32_t) INT_MAX + 1) {
+      *number = INT_MIN;
+    } else {
+      *number = -((cass_int32_t) temp);
+    }
+  } else {
+    if (temp > (cass_uint32_t) INT_MAX) {
+      errno = ERANGE;
+      *number = INT_MAX;
+    } else {
+      *number = temp;
     }
   }
 
-  errno = 0;
-
-  *number = (cass_int32_t) strtol(&(in[point]), &end, base);
-
-  if (negative)
-    *number = *number * -1;
-
   if (errno == ERANGE) {
-    zend_throw_exception_ex(php_driver_range_exception_ce, 0 TSRMLS_CC, "Value is too small or too big for int: '%s'", in);
+    if (*number == INT_MAX) {
+      zend_throw_exception_ex(php_driver_range_exception_ce, 0 TSRMLS_CC, "Value is too big for int: '%s'", in);
+    } else {
+      zend_throw_exception_ex(php_driver_range_exception_ce, 0 TSRMLS_CC, "Value is too small for int: '%s'", in);
+    }
     return 0;
   }
 
-  if (errno || end == &in[point]) {
+  if (errno || end == &in[pos]) {
     zend_throw_exception_ex(php_driver_invalid_argument_exception_ce, 0 TSRMLS_CC, "Invalid integer value: '%s'", in);
     return 0;
   }
@@ -146,49 +171,44 @@ php_driver_parse_int(char* in, int in_len, cass_int32_t* number TSRMLS_DC)
 int
 php_driver_parse_bigint(char *in, int in_len, cass_int64_t *number TSRMLS_DC)
 {
-  char *end = NULL;
-
-  int point = 0;
-  int base = 10;
-
-  /*  Determine the sign of the number. */
+  char* end = NULL;
+  int pos = 0;
   int negative = 0;
-  if (in[point] == '+') {
-    point++;
-  } else if (in[point] == '-') {
-    point++;
-    negative = 1;
-  }
+  cass_uint64_t temp = 0;
+  int base = 0;
 
-  if (in[point] == '0') {
-    switch(in[point + 1]) {
-    case 'b':
-      point += 2;
-      base = 2;
-      break;
-    case 'x':
-      point += 2;
-      base = 16;
-      break;
-    default:
-      base = 8;
-      break;
+  base = prepare_string_conversion(in, &pos, &negative);
+  errno = 0;
+  temp = (cass_uint64_t) strtoull(in + pos, &end, base);
+
+  if (negative) {
+    if (temp > (cass_uint64_t) INT64_MAX + 1) {
+      errno = ERANGE;
+      *number = INT64_MIN;
+    } else if (temp == (cass_uint64_t) INT64_MAX + 1) {
+      *number = INT64_MIN;
+    } else {
+      *number = -((cass_int64_t) temp);
+    }
+  } else {
+    if (temp > (cass_uint64_t) INT64_MAX) {
+      errno = ERANGE;
+      *number = INT64_MAX;
+    } else {
+      *number = temp;
     }
   }
 
-  errno = 0;
-
-  *number = (cass_int64_t) strtoll(&(in[point]), &end, base);
-
-  if (negative)
-    *number = *number * -1;
-
   if (errno == ERANGE) {
-    zend_throw_exception_ex(php_driver_range_exception_ce, 0 TSRMLS_CC, "Value is too small or too big for bigint: '%s'", in);
+    if (*number == INT64_MAX) {
+      zend_throw_exception_ex(php_driver_range_exception_ce, 0 TSRMLS_CC, "Value is too big for bigint: '%s'", in);
+    } else {
+      zend_throw_exception_ex(php_driver_range_exception_ce, 0 TSRMLS_CC, "Value is too small for bigint: '%s'", in);
+    }
     return 0;
   }
 
-  if (errno || end == &in[point]) {
+  if (errno || end == &in[pos]) {
     zend_throw_exception_ex(php_driver_invalid_argument_exception_ce, 0 TSRMLS_CC, "Invalid integer value: '%s'", in);
     return 0;
   }
@@ -204,36 +224,14 @@ php_driver_parse_bigint(char *in, int in_len, cass_int64_t *number TSRMLS_DC)
 int
 php_driver_parse_varint(char *in, int in_len, mpz_t *number TSRMLS_DC)
 {
-  int point = 0;
-  int base = 10;
-
-  /*  Determine the sign of the number. */
+  int pos = 0;
   int negative = 0;
-  if (in[point] == '+') {
-    point++;
-  } else if (in[point] == '-') {
-    point++;
-    negative = 1;
-  }
+  int base = 0;
 
-  if (in[point] == '0') {
-    switch(in[point + 1]) {
-    case 'b':
-      point += 2;
-      base = 2;
-      break;
-    case 'x':
-      point += 2;
-      base = 16;
-      break;
-    default:
-      base = 8;
-      break;
-    }
-  }
+  base = prepare_string_conversion(in, &pos, &negative);
 
-  if (mpz_set_str(*number, &in[point], base) == -1) {
-    zend_throw_exception_ex(php_driver_invalid_argument_exception_ce, 0 TSRMLS_CC, "Invalid integer value: '%s', base: %d", in, base);
+  if (mpz_set_str(*number, &in[pos], base) == -1) {
+    zend_throw_exception_ex(php_driver_invalid_argument_exception_ce, 0 TSRMLS_CC, "Invalid integer value: '%s'", in);
     return 0;
   }
 

@@ -21,7 +21,7 @@
 #include "util/types.h"
 
 #if !defined(HAVE_STDINT_H) && !defined(_MSC_STDINT_H_)
-#  define INT8_MAX 64
+#  define INT8_MAX 127
 #  define INT8_MIN (-INT8_MAX-1)
 #endif
 
@@ -37,7 +37,7 @@ to_double(zval *result, php_driver_numeric *tinyint TSRMLS_DC)
 static int
 to_long(zval *result, php_driver_numeric *tinyint TSRMLS_DC)
 {
-  ZVAL_LONG(result, (long) tinyint->data.tinyint.value);
+  ZVAL_LONG(result, (php5to7_long) tinyint->data.tinyint.value);
   return SUCCESS;
 }
 
@@ -88,7 +88,7 @@ php_driver_tinyint_init(INTERNAL_FUNCTION_PARAMETERS)
                               PHP_DRIVER_NAMESPACE "\\Tinyint");
     }
     if (number < INT8_MIN || number > INT8_MAX) {
-      INVALID_ARGUMENT(value, ("between -65 and 64"));
+      INVALID_ARGUMENT(value, ("between -128 and 127"));
     }
     self->data.tinyint.value = (cass_int8_t) number;
   }
@@ -241,10 +241,6 @@ PHP_METHOD(Tinyint, div)
     }
 
     result->data.tinyint.value = self->data.tinyint.value / tinyint->data.tinyint.value;
-    if (result->data.tinyint.value * tinyint->data.tinyint.value != self->data.tinyint.value) {
-      zend_throw_exception_ex(php_driver_range_exception_ce, 0 TSRMLS_CC, "Quotient is out of range");
-      return;
-    }
   } else {
     INVALID_ARGUMENT(divisor, "a " PHP_DRIVER_NAMESPACE "\\Tinyint");
   }
