@@ -9,34 +9,31 @@
 
 zend_class_entry *php_driver_duration_ce = NULL;
 
-static void to_string(zval *result, cass_int64_t value)
+static void to_string(zval *result, cass_int32_t value)
 {
-  // Adapted from Bigint to_string function.
   char *string;
-#ifdef WIN32
-  spprintf(&string, 0, "%I64d", (long long int) value);
-#else
-  spprintf(&string, 0, "%lld", (long long int) value);
-#endif
+  spprintf(&string, 0, "%d", value);
   PHP5TO7_ZVAL_STRING(result, string);
   efree(string);
 }
 
-static int get_int64(zval* value, cass_int64_t* destination, const char* param_name TSRMLS_DC)
+static int get_int32(zval* value, cass_int32_t* destination, const char* param_name TSRMLS_DC)
 {
   // Adapted from Bigint __construct method.
   if (Z_TYPE_P(value) == IS_LONG) {
-    *destination = (cass_int64_t) Z_LVAL_P(value);
+    *destination = Z_LVAL_P(value);
   } else if (Z_TYPE_P(value) == IS_DOUBLE) {
-    *destination = (cass_int64_t) Z_DVAL_P(value);
+    *destination = (cass_int32_t) Z_DVAL_P(value);
   } else if (Z_TYPE_P(value) == IS_STRING) {
-    if (!php_driver_parse_bigint(Z_STRVAL_P(value), Z_STRLEN_P(value), destination TSRMLS_CC)) {
+    cass_int64_t parsed_big_int;
+    if (!php_driver_parse_bigint(Z_STRVAL_P(value), Z_STRLEN_P(value), &parsed_big_int TSRMLS_CC)) {
       return 0;
     }
+    *destination = (cass_int32_t) parsed_big_int;
   } else if (Z_TYPE_P(value) == IS_OBJECT &&
              instanceof_function(Z_OBJCE_P(value), php_driver_bigint_ce TSRMLS_CC)) {
     php_driver_numeric *bigint = PHP_DRIVER_GET_NUMERIC(value);
-    *destination = bigint->data.bigint.value;
+    *destination = (cass_int32_t) bigint->data.bigint.value;
   } else {
     throw_invalid_argument(value, param_name, "a long, a double, a numeric string or a " \
                             PHP_DRIVER_NAMESPACE "\\Bigint" TSRMLS_CC);
@@ -53,9 +50,9 @@ char *php_driver_duration_to_string(php_driver_duration *duration)
 
   char* rep;
   int is_negative = 0;
-  cass_int64_t final_months = duration->months;
-  cass_int64_t final_days = duration->days;
-  cass_int64_t final_nanos = duration->nanos;
+  cass_int32_t final_months = duration->months;
+  cass_int32_t final_days = duration->days;
+  cass_int32_t final_nanos = duration->nanos;
   
   is_negative = final_months < 0 || final_days < 0 || final_nanos < 0;
   if (final_months < 0)
@@ -65,15 +62,7 @@ char *php_driver_duration_to_string(php_driver_duration *duration)
   if (final_nanos < 0)
     final_nanos = -final_nanos;
   
-#ifdef WIN32
-  #define LL_FORMAT "%I64d"
-#else
-  #define LL_FORMAT "%lld"
-#endif
-  spprintf(&rep, 0, "%s" LL_FORMAT "mo" LL_FORMAT "d" LL_FORMAT "ns",
-    is_negative ? "-" : "",
-    final_months, final_days, final_nanos);
-#undef LL_FORMAT
+  spprintf(&rep, 0, "%s%dmo%dd%dns", is_negative ? "-" : "", final_months, final_days, final_nanos);
   return rep;
 }
 
@@ -89,16 +78,16 @@ php_driver_duration_init(INTERNAL_FUNCTION_PARAMETERS)
 
   self = PHP_DRIVER_GET_DURATION(getThis());
 
-  if (!get_int64(months, &self->months, "months" TSRMLS_CC)) {
+  if (!get_int32(months, &self->months, "months" TSRMLS_CC)) {
     return;
   }
-  if (!get_int64(days, &self->days, "days" TSRMLS_CC)) {
+  if (!get_int32(days, &self->days, "days" TSRMLS_CC)) {
     return;
   }
 
   // No need to check the result of nanos parsing; get_int64 sets the exception if there's
   // a failure, and we have no more work to do anyway.
-  get_int64(nanos, &self->nanos, "nanos" TSRMLS_CC);
+  get_int32(nanos, &self->nanos, "nanos" TSRMLS_CC);
 
   // Verify that all three attributes are non-negative or non-positive.
   if (!(self->months <= 0 && self->days <= 0 && self->nanos <=0) &&
