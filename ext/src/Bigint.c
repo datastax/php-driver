@@ -37,17 +37,17 @@ to_double(zval *result, php_driver_numeric *bigint TSRMLS_DC)
 static int
 to_long(zval *result, php_driver_numeric *bigint TSRMLS_DC)
 {
-  if (bigint->data.bigint.value < (cass_int64_t) LONG_MIN) {
+  if (bigint->data.bigint.value < (cass_int64_t) PHP5TO7_ZEND_LONG_MIN) {
     zend_throw_exception_ex(php_driver_range_exception_ce, 0 TSRMLS_CC, "Value is too small");
     return FAILURE;
   }
 
-  if (bigint->data.bigint.value > (cass_int64_t) LONG_MAX) {
+  if (bigint->data.bigint.value > (cass_int64_t) PHP5TO7_ZEND_LONG_MAX) {
     zend_throw_exception_ex(php_driver_range_exception_ce, 0 TSRMLS_CC, "Value is too big");
     return FAILURE;
   }
 
-  ZVAL_LONG(result, (long) bigint->data.bigint.value);
+  ZVAL_LONG(result, (php5to7_long) bigint->data.bigint.value);
   return SUCCESS;
 }
 

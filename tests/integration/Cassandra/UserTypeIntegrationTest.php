@@ -456,8 +456,7 @@ class UserTypeIntegrationTest extends CollectionsIntegrationTest {
      * @test
      * @ticket PHP-57
      * @expectedException \Cassandra\Exception\InvalidQueryException
-     * @expectedExceptionMessage Non-frozen User-Defined types are not
-     *                           supported, please use frozen<>
+     * @expectedExceptionMessageRegExp /Non-frozen User-Defined types are not supported, please use frozen<>|A user type cannot contain non-frozen UDTs/
      * @cassandra-version-less-3
      */
     public function testFrozenRequired() {
@@ -490,6 +489,7 @@ class UserTypeIntegrationTest extends CollectionsIntegrationTest {
      * @test
      * @ticket PHP-57
      * @expectedException \Cassandra\Exception\InvalidQueryException
+     * @cassandra-version-less-3.6
      */
     public function testInvalidAddressUserTypeAssignedValue() {
         $invalidValue = $this->getPhoneUserType();

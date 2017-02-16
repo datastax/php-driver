@@ -21,187 +21,73 @@ namespace Cassandra;
 /**
  * @requires extension cassandra
  */
-class VarintTest extends \PHPUnit_Framework_TestCase
-{
-    /**
-     * @expectedException         InvalidArgumentException
-     * @expectedExceptionMessage  Invalid integer value: '123.123', base: 10
-     */
-    public function testThrowsWhenCreatingNotAnInteger()
-    {
-        new Varint("123.123");
-    }
-
-    /**
-     * @dataProvider validStrings
-     */
-    public function testCorrectlyParsesStrings($number, $expected)
-    {
-        $number = new Varint($number);
-        $this->assertEquals($expected, $number->value());
-        $this->assertEquals($expected, (string) $number);
-    }
-
-    public function validStrings()
-    {
-        return array(
-            array("123", "123"),
-            array("0123", "83"),
-            array("0x123", "291"),
-            array("0b1010101", "85"),
-            array("-123", "-123"),
-            array("-0123", "-83"),
-            array("-0x123", "-291") ,
-            array("-0b1010101", "-85")
-        );
-    }
-
-    /**
-     * @dataProvider validNumbers
-     */
-    public function testFromNumbers($number)
-    {
-        $varint = new Varint($number);
-        $this->assertEquals((int)$number, $varint->toInt());
-        $this->assertEquals((float)(int)$number, $varint->toDouble());
-        $this->assertEquals((string)(int)$number, (string)$varint);
-    }
-
-    public function validNumbers()
-    {
-        return array(
-            array(0.123),
-            array(123),
-            array(123.123),
-        );
-    }
-
-    /**
-     * @expectedException         RangeException
-     * @expectedExceptionMessage  Value is too big
-     */
-    public function testOverflowTooBig()
-    {
-        // This is too big on both 32-bit and 64-bit
-        $varint = new Varint("9223372036854775808");
-        $i = $varint->toInt();
-    }
-
-    /**
-     * @expectedException         RangeException
-     * @expectedExceptionMessage  Value is too small
-     */
-    public function testOverflowTooSmall()
-    {
-        // This is too small on both 32-bit and 64-bit
-        $varint = new Varint("-9223372036854775809");
-        $i = $varint->toInt();
-    }
-
-    public function testAdd()
+class VarintTest extends \PHPUnit_Framework_TestCase {
+    public function testAddLarge()
     {
         $varint1 = new Varint("9223372036854775807");
         $varint2 = new Varint("1");
         $this->assertEquals("9223372036854775808", (string)$varint1->add($varint2));
     }
 
-    public function testSub()
+    public function testSubLarge()
     {
         $varint1 = new Varint("-9223372036854775808");
         $varint2 = new Varint("1");
         $this->assertEquals("-9223372036854775809", (string)$varint1->sub($varint2));
     }
 
-    public function testMul()
+    public function testMulLarge()
     {
         $varint1 = new Varint("9223372036854775807");
         $varint2 = new Varint("2");
         $this->assertEquals("18446744073709551614", (string)$varint1->mul($varint2));
     }
 
-    public function testDiv()
+    public function testDivLarge()
     {
         $varint1 = new Varint("18446744073709551614");
         $varint2 = new Varint("9223372036854775807");
         $this->assertEquals(2, (int)$varint1->div($varint2));
     }
 
-    /**
-     * @expectedException Cassandra\Exception\DivideByZeroException
-     */
-    public function testDivByZero()
-    {
-        $varint1 = new Varint("1");
-        $varint2 = new Varint("0");
-        $varint1->div($varint2);
-    }
-
-    public function testMod()
+    public function testModLarge()
     {
         $varint1 = new Varint("1");
         $varint2 = new Varint("18446744073709551614");
         $this->assertEquals(1, (int)$varint1->mod($varint2));
     }
 
-    /**
-     * @expectedException Cassandra\Exception\DivideByZeroException
-     */
-    public function testModByZero()
-    {
-        $varint1 = new Varint("1");
-        $varint2 = new Varint("0");
-        $varint1->mod($varint2);
-    }
-
-    public function testAbs()
+    public function testAbsLarge()
     {
         $varint1 = new Varint("-18446744073709551614");
         $this->assertEquals("18446744073709551614", (string)$varint1->abs());
     }
 
-    public function testNeg()
+    public function testNegLarge()
     {
         $varint1 = new Varint("18446744073709551614");
         $this->assertEquals("-18446744073709551614", (string)$varint1->neg());
     }
 
-    public function testSqrt()
+    public function testSqrtLarge()
     {
         $varint1 = new Varint("340282366920938463389587631136930004996");
         $this->assertEquals("18446744073709551614", (string)$varint1->sqrt());
     }
 
-    /**
-     * @dataProvider equalTypes
-     */
-    public function testCompareEquals($value1, $value2)
+    public function testCompareEqualsLarge()
     {
+        $value1 = new Varint('123456789123456789123456789');
+        $value2 = new Varint('123456789123456789123456789');
         $this->assertEquals($value1, $value2);
         $this->assertTrue($value1 == $value2);
     }
 
-    public function equalTypes()
+    public function testCompareNotEqualsLarge()
     {
-        return array(
-            array(new Varint('123456789123456789123456789'), new Varint('123456789123456789123456789')),
-            array(new Varint(99), new Varint(99))
-        );
-    }
-
-    /**
-     * @dataProvider notEqualTypes
-     */
-    public function testCompareNotEquals($value1, $value2)
-    {
+        $value1 = new Varint('123456789123456789123456789');
+        $value2 = new Varint('999999999999999999999999999');
         $this->assertNotEquals($value1, $value2);
         $this->assertFalse($value1 == $value2);
-    }
-
-    public function notEqualTypes()
-    {
-        return array(
-            array(new Varint('123456789123456789123456789'), new Varint('999999999999999999999999999')),
-            array(new Varint(99), new Varint(999))
-        );
     }
 }
