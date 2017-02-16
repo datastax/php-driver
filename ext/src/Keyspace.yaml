@@ -1,0 +1,101 @@
+---
+Cassandra\Keyspace:
+  comment: A PHP representation of a keyspace
+  methods:
+    name:
+      comment: Returns keyspace name
+      return:
+        comment: Name
+        type: string
+    replicationClassName:
+      comment: Returns replication class name
+      return:
+        comment: Replication class
+        type: string
+    replicationOptions:
+      comment: Returns replication options
+      return:
+        comment: Replication options
+        type: Cassandra\Map
+    hasDurableWrites:
+      comment: Returns whether the keyspace has durable writes enabled
+      return:
+        comment: Whether durable writes are enabled
+        type: string
+    table:
+      comment: Returns a table by name
+      params:
+        name:
+          comment: Table name
+          type: string
+      return:
+        comment: '      Table instance or null'
+        type: Cassandra\Table|null
+    tables:
+      comment: Returns all tables defined in this keyspace
+      return:
+        comment: An array of `Cassandra\Table` instances
+        type: array
+    userType:
+      comment: ""
+      params:
+        name:
+          comment: ""
+          type: mixed
+      return:
+        comment: ""
+        type: mixed
+    userTypes:
+      comment: ""
+      return:
+        comment: ""
+        type: mixed
+    materializedView:
+      comment: ""
+      params:
+        name:
+          comment: ""
+          type: mixed
+      return:
+        comment: ""
+        type: mixed
+    materializedViews:
+      comment: ""
+      return:
+        comment: ""
+        type: mixed
+    function:
+      comment: ""
+      params:
+        name:
+          comment: ""
+          type: mixed
+        '...':
+          comment: ""
+          type: mixed
+      return:
+        comment: ""
+        type: mixed
+    functions:
+      comment: ""
+      return:
+        comment: ""
+        type: mixed
+    aggregate:
+      comment: ""
+      params:
+        name:
+          comment: ""
+          type: mixed
+        '...':
+          comment: ""
+          type: mixed
+      return:
+        comment: ""
+        type: mixed
+    aggregates:
+      comment: ""
+      return:
+        comment: ""
+        type: mixed
+...

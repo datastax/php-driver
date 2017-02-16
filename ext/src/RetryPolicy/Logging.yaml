@@ -1,0 +1,14 @@
+---
+Cassandra\RetryPolicy\Logging:
+  comment: A retry policy that logs the decisions of its child policy.
+  methods:
+    __construct:
+      comment: |-
+        Creates a new Logging retry policy.
+
+                                                  Cassandra\Logging
+      params:
+        childPolicy:
+          comment: Any retry policy other than
+          type: Cassandra\RetryPolicy
+...

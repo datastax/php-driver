@@ -1,0 +1,21 @@
+---
+Cassandra\FutureRows:
+  comment: |-
+    This future results is resolved with `Cassandra\Rows`.
+
+    @see Session::executeAsync()
+  methods:
+    get:
+      comment: |
+        {@inheritDoc}
+
+        @throws Exception\InvalidArgumentException
+        @throws Exception\TimeoutException
+      params:
+        timeout:
+          comment: ""
+          type: float|null
+      return:
+        comment: a value that the future has been resolved with
+        type: mixed
+...

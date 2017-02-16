@@ -34,5 +34,5 @@ void php_driver_define_MaterializedView(TSRMLS_D)
   INIT_CLASS_ENTRY(ce, PHP_DRIVER_NAMESPACE "\\MaterializedView", php_driver_materialized_view_methods);
   php_driver_materialized_view_ce = zend_register_internal_class(&ce TSRMLS_CC);
   zend_class_implements(php_driver_materialized_view_ce TSRMLS_CC, 1, php_driver_table_ce);
-  php_driver_materialized_view_ce->ce_flags |= ZEND_ACC_INTERFACE;
+  php_driver_materialized_view_ce->ce_flags |= ZEND_ACC_ABSTRACT;
 }

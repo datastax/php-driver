@@ -37,6 +37,7 @@ Cassandra\Duration:
     __toString:
       comment: ""
       return:
-        comment: string representation of this Duration; may be used as a literal parameter in CQL queries.
+        comment: string representation of this Duration; may be used as a literal
+          parameter in CQL queries.
         type: string
 ...

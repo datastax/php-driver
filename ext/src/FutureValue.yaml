@@ -1,0 +1,18 @@
+---
+Cassandra\FutureValue:
+  comment: A future that always resolves in a value.
+  methods:
+    get:
+      comment: |
+        {@inheritDoc}
+
+        @throws Exception\InvalidArgumentException
+        @throws Exception\TimeoutException
+      params:
+        timeout:
+          comment: ""
+          type: float|null
+      return:
+        comment: a value that the future has been resolved with
+        type: mixed
+...

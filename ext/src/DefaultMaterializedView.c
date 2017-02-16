@@ -650,8 +650,7 @@ void php_driver_define_DefaultMaterializedView(TSRMLS_D)
   zend_class_entry ce;
 
   INIT_CLASS_ENTRY(ce, PHP_DRIVER_NAMESPACE "\\DefaultMaterializedView", php_driver_default_materialized_view_methods);
-  php_driver_default_materialized_view_ce = zend_register_internal_class(&ce TSRMLS_CC);
-  zend_class_implements(php_driver_default_materialized_view_ce TSRMLS_CC, 1, php_driver_materialized_view_ce);
+  php_driver_default_materialized_view_ce = php5to7_zend_register_internal_class_ex(&ce, php_driver_materialized_view_ce);
   php_driver_default_materialized_view_ce->ce_flags     |= PHP5TO7_ZEND_ACC_FINAL;
   php_driver_default_materialized_view_ce->create_object = php_driver_default_materialized_view_new;
 

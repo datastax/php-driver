@@ -1,0 +1,10 @@
+---
+Cassandra\Custom:
+  comment: An interface for representing custom values.
+  methods:
+    type:
+      comment: The type of this value.
+      return:
+        comment: ""
+        type: Type\Custom
+...

@@ -31,5 +31,5 @@ php_driver_define_Custom(TSRMLS_D)
   INIT_CLASS_ENTRY(ce, PHP_DRIVER_NAMESPACE "\\Custom", php_driver_custom_methods);
   php_driver_custom_ce = zend_register_internal_class(&ce TSRMLS_CC);
   zend_class_implements(php_driver_custom_ce TSRMLS_CC, 1, php_driver_value_ce);
-  php_driver_custom_ce->ce_flags |= ZEND_ACC_INTERFACE;
+  php_driver_custom_ce->ce_flags |= ZEND_ACC_ABSTRACT;
 }

@@ -117,7 +117,7 @@ ZEND_BEGIN_ARG_INFO_EX(arginfo_value, 0, ZEND_RETURN_VALUE, 0)
 ZEND_END_ARG_INFO()
 
 static zend_function_entry php_driver_type_collection_methods[] = {
-  PHP_ME(TypeCollection, __construct, arginfo_none,  ZEND_ACC_PUBLIC)
+  PHP_ME(TypeCollection, __construct, arginfo_none,  ZEND_ACC_PRIVATE)
   PHP_ME(TypeCollection, name,        arginfo_none,  ZEND_ACC_PUBLIC)
   PHP_ME(TypeCollection, valueType,   arginfo_none,  ZEND_ACC_PUBLIC)
   PHP_ME(TypeCollection, __toString,  arginfo_none,  ZEND_ACC_PUBLIC)

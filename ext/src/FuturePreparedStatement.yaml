@@ -1,0 +1,22 @@
+---
+Cassandra\FuturePreparedStatement:
+  comment: |-
+    A future returned from `Cassandra\Session::prepareAsync()`
+    This future will resolve with a `Cassandra\PreparedStatement` or an exception.
+
+    @see Session::prepareAsync()
+  methods:
+    get:
+      comment: |
+        {@inheritDoc}
+
+        @throws Exception\InvalidArgumentException
+        @throws Exception\TimeoutException
+      params:
+        timeout:
+          comment: ""
+          type: float|null
+      return:
+        comment: a value that the future has been resolved with
+        type: mixed
+...

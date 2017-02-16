@@ -1,0 +1,77 @@
+---
+Cassandra\DefaultSession:
+  comment: '{@inheritDoc}'
+  methods:
+    schema:
+      comment: '{@inheritDoc}'
+      return:
+        comment: '{@inheritDoc}'
+        type: mixed
+    execute:
+      comment: '{@inheritDoc}'
+      return:
+        comment: '{@inheritDoc}'
+        type: mixed
+      params:
+        statement:
+          comment: '{@inheritDoc}'
+          type: mixed
+        options:
+          comment: '{@inheritDoc}'
+          type: mixed
+    executeAsync:
+      comment: '{@inheritDoc}'
+      params:
+        statement:
+          comment: '{@inheritDoc}'
+          type: mixed
+        options:
+          comment: '{@inheritDoc}'
+          type: mixed
+      return:
+        comment: '{@inheritDoc}'
+        type: mixed
+    prepare:
+      comment: '{@inheritDoc}'
+      params:
+        cql:
+          comment: '{@inheritDoc}'
+          type: mixed
+        options:
+          comment: '{@inheritDoc}'
+          type: mixed
+      return:
+        comment: '{@inheritDoc}'
+        type: mixed
+    prepareAsync:
+      comment: '{@inheritDoc}'
+      params:
+        cql:
+          comment: '{@inheritDoc}'
+          type: mixed
+        options:
+          comment: '{@inheritDoc}'
+          type: mixed
+      return:
+        comment: '{@inheritDoc}'
+        type: mixed
+    close:
+      comment: '{@inheritDoc}'
+      params:
+        timeout:
+          comment: '{@inheritDoc}'
+          type: mixed
+      return:
+        comment: '{@inheritDoc}'
+        type: mixed
+    closeAsync:
+      comment: '{@inheritDoc}'
+      return:
+        comment: '{@inheritDoc}'
+        type: mixed
+    metrics:
+      comment: '{@inheritDoc}'
+      return:
+        comment: '{@inheritDoc}'
+        type: mixed
+...

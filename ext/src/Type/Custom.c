@@ -70,7 +70,7 @@ ZEND_BEGIN_ARG_INFO_EX(arginfo_value, 0, ZEND_RETURN_VALUE, 0)
 ZEND_END_ARG_INFO()
 
 static zend_function_entry php_driver_type_custom_methods[] = {
-  PHP_ME(TypeCustom, __construct, arginfo_none,  ZEND_ACC_PUBLIC)
+  PHP_ME(TypeCustom, __construct, arginfo_none,  ZEND_ACC_PRIVATE)
   PHP_ME(TypeCustom, name,        arginfo_none,  ZEND_ACC_PUBLIC)
   PHP_ME(TypeCustom, __toString,  arginfo_none,  ZEND_ACC_PUBLIC)
   PHP_ME(TypeCustom, create,      arginfo_value, ZEND_ACC_PUBLIC)
