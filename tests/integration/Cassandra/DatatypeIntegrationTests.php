@@ -34,6 +34,12 @@ abstract class DatatypeIntegrationTests extends BasicIntegrationTest {
             array(Type::date(), array(new Date(), new Date(0), new Date(-86400), new Date(86400))),
             array(Type::decimal(), array(new Decimal(1.1), new Decimal(2.2), new Decimal(3.3))),
             array(Type::double(), array(1.1, 2.2, 3.3, 4.4)),
+            array(Type::duration(), array(new Duration(0, 0, 0),
+                                          new Duration(1, 2, 3),
+                                          new Duration(1, 0, (2 ** 31) - 1), // see CASSANDRA-13218 for 32-bit value usage
+                                          new Duration(-1, 0, -(2 ** 31)),
+                                          new Duration((2 ** 31) - 1, 1, 0),
+                                          new Duration(-(2 ** 31), -1, 0))),
             array(Type::float(), array(new Float(1.0), new Float(2.2), new Float(2.2))),
             array(Type::inet(), array(new Inet("127.0.0.1"), new Inet("127.0.0.2"), new Inet("127.0.0.3"))),
             array(Type::smallint(), array(Smallint::min(), Smallint::max(), new Smallint(0), new Smallint(74))),
