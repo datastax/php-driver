@@ -49,6 +49,78 @@ class DurationTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @expectedException InvalidArgumentException
+     * @expectedExceptionMessage nanos must be between -2147483648 and 2147483647, 8589934592 given
+     */
+    public function testStringArgOverflowError()
+    {
+        new Duration(1, 2, "8589934592");
+    }
+
+    /**
+     * @expectedException InvalidArgumentException
+     * @expectedExceptionMessage nanos must be between -2147483648 and 2147483647, -8589934592 given
+     */
+    public function testStringArgUnderflowError()
+    {
+        new Duration(1, 2, "-8589934592");
+    }
+
+    /**
+     * @expectedException InvalidArgumentException
+     * @expectedExceptionMessage nanos must be between -2147483648 and 2147483647, 8589934592 given
+     */
+    public function testBigintArgOverflowError()
+    {
+        new Duration(1, 2, new Bigint("8589934592"));
+    }
+
+    /**
+     * @expectedException InvalidArgumentException
+     * @expectedExceptionMessage nanos must be between -2147483648 and 2147483647, -8589934592 given
+     */
+    public function testBigintArgUnderflowError()
+    {
+        new Duration(1, 2, new Bigint("-8589934592"));
+    }
+
+    /**
+     * @expectedException InvalidArgumentException
+     * @expectedExceptionMessageRegExp /days must be between -2147483648 and 2147483647, 8\.?58993.* given/
+     */
+    public function testLongArgOverflowError()
+    {
+        new Duration(1, 8589934592, 2);
+    }
+
+    /**
+     * @expectedException InvalidArgumentException
+     * @expectedExceptionMessageRegExp /days must be between -2147483648 and 2147483647, -8\.?58993.* given/
+     */
+    public function testLongArgUnderflowError()
+    {
+        new Duration(1, -8589934592, 2);
+    }
+
+    /**
+     * @expectedException InvalidArgumentException
+     * @expectedExceptionMessage months must be between -2147483648 and 2147483647, 8.58993e+9 given
+     */
+    public function testDoubleArgOverflowError()
+    {
+        new Duration(8589934592.5, 1, 2);
+    }
+
+    /**
+     * @expectedException InvalidArgumentException
+     * @expectedExceptionMessage months must be between -2147483648 and 2147483647, -8.58993e+9 given
+     */
+    public function testDoubleArgUnderflowError()
+    {
+        new Duration(-8589934592.5, 1, 2);
+    }
+
+    /**
      * @expectedException BadFunctionCallException
      * @expectedExceptionMessage A duration must have all non-negative or non-positive attributes
      * @dataProvider mixedSigns
@@ -109,7 +181,11 @@ class DurationTest extends \PHPUnit_Framework_TestCase
             array(0, 1, 3),
             array(0, -1, -3),
             array(-1, 0, -3),
-            array(-1, -1, 0)
+            array(-1, -1, 0),
+            array(2147483647, 2147483647.0, new Bigint(2147483647)),
+            array(-2147483648, -2147483648.0, new Bigint(-2147483648)),
+            array("2147483647", 0, 0),
+            array("-2147483648", 0, 0)
         );
     }
 
