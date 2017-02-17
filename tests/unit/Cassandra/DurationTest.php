@@ -86,7 +86,7 @@ class DurationTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @expectedException InvalidArgumentException
-     * @expectedExceptionMessage days must be between -2147483648 and 2147483647, 8589934592 given
+     * @expectedExceptionMessageRegExp /days must be between -2147483648 and 2147483647, 8\.?58993.* given/
      */
     public function testLongArgOverflowError()
     {
@@ -95,7 +95,7 @@ class DurationTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @expectedException InvalidArgumentException
-     * @expectedExceptionMessage days must be between -2147483648 and 2147483647, -8589934592 given
+     * @expectedExceptionMessageRegExp /days must be between -2147483648 and 2147483647, -8\.?58993.* given/
      */
     public function testLongArgUnderflowError()
     {
@@ -104,7 +104,7 @@ class DurationTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @expectedException InvalidArgumentException
-     * @expectedExceptionMessageRegExp /months must be between -2147483648 and 2147483647, 8\.?58993.* given/
+     * @expectedExceptionMessage months must be between -2147483648 and 2147483647, 8.58993e+9 given
      */
     public function testDoubleArgOverflowError()
     {
@@ -113,7 +113,7 @@ class DurationTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @expectedException InvalidArgumentException
-     * @expectedExceptionMessageRegExp /months must be between -2147483648 and 2147483647, -8\.?58993.* given/
+     * @expectedExceptionMessage months must be between -2147483648 and 2147483647, -8.58993e+9 given
      */
     public function testDoubleArgUnderflowError()
     {
