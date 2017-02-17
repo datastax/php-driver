@@ -7,8 +7,10 @@
 
 #include "Duration.h"
 
-#define CASS_INT32_MAX 2147483647L
-#define CASS_INT32_MIN (-CASS_INT32_MAX - 1)
+#if !defined(HAVE_STDINT_H) && !defined(_MSC_STDINT_H_)
+#  define INT32_MAX 2147483647L
+#  define INT32_MIN (-INT32_MAX-1)
+#endif
 
 zend_class_entry *php_driver_duration_ce = NULL;
 
@@ -26,10 +28,10 @@ static int get_int32(zval* value, cass_int32_t* destination, const char* param_n
   if (Z_TYPE_P(value) == IS_LONG) {
     cass_int64_t long_value = Z_LVAL_P(value);
 
-    if (long_value > CASS_INT32_MAX || long_value < CASS_INT32_MIN) {
+    if (long_value > INT32_MAX || long_value < INT32_MIN) {
       zend_throw_exception_ex(php_driver_invalid_argument_exception_ce, 0 TSRMLS_CC,
-        "%s must be between %ld and %ld, %lld given",
-        param_name, CASS_INT32_MIN, CASS_INT32_MAX, long_value);
+        "%s must be between %d and %d, %lld given",
+        param_name, INT32_MIN, INT32_MAX, long_value);
       return 0;
     }
 
@@ -37,10 +39,10 @@ static int get_int32(zval* value, cass_int32_t* destination, const char* param_n
   } else if (Z_TYPE_P(value) == IS_DOUBLE) {
     double double_value = Z_DVAL_P(value);
 
-    if (double_value > CASS_INT32_MAX || double_value < CASS_INT32_MIN) {
+    if (double_value > INT32_MAX || double_value < INT32_MIN) {
       zend_throw_exception_ex(php_driver_invalid_argument_exception_ce, 0 TSRMLS_CC,
-        "%s must be between %ld and %ld, %g given",
-        param_name, CASS_INT32_MIN, CASS_INT32_MAX, double_value);
+        "%s must be between %d and %d, %g given",
+        param_name, INT32_MIN, INT32_MAX, double_value);
       return 0;
     }
     *destination = (cass_int32_t) double_value;
@@ -50,10 +52,10 @@ static int get_int32(zval* value, cass_int32_t* destination, const char* param_n
       return 0;
     }
 
-    if (parsed_big_int > CASS_INT32_MAX || parsed_big_int < CASS_INT32_MIN) {
+    if (parsed_big_int > INT32_MAX || parsed_big_int < INT32_MIN) {
       zend_throw_exception_ex(php_driver_invalid_argument_exception_ce, 0 TSRMLS_CC,
-        "%s must be between %ld and %ld, %lld given",
-        param_name, CASS_INT32_MIN, CASS_INT32_MAX, parsed_big_int);
+        "%s must be between %d and %d, %lld given",
+        param_name, INT32_MIN, INT32_MAX, parsed_big_int);
       return 0;
     }
     *destination = (cass_int32_t) parsed_big_int;
@@ -62,10 +64,10 @@ static int get_int32(zval* value, cass_int32_t* destination, const char* param_n
     php_driver_numeric *bigint = PHP_DRIVER_GET_NUMERIC(value);
     cass_int64_t bigint_value = bigint->data.bigint.value;
 
-    if (bigint_value > CASS_INT32_MAX || bigint_value < CASS_INT32_MIN) {
+    if (bigint_value > INT32_MAX || bigint_value < INT32_MIN) {
       zend_throw_exception_ex(php_driver_invalid_argument_exception_ce, 0 TSRMLS_CC,
-        "%s must be between %ld and %ld, %lld given",
-        param_name, CASS_INT32_MIN, CASS_INT32_MAX, bigint_value);
+        "%s must be between %d and %d, %lld given",
+        param_name, INT32_MIN, INT32_MAX, bigint_value);
       return 0;
     }
 
