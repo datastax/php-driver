@@ -63,7 +63,7 @@ class NumberTest extends \PHPUnit_Framework_TestCase {
     /**
      * Data provider to use for valid number test cases
      *
-     * @return array Class names to test against
+     * @return array Class name and values to test against
      *     [
      *         [0] => Class name for the number type
      *         [1] => Valid value (also expected value)
@@ -436,10 +436,10 @@ class NumberTest extends \PHPUnit_Framework_TestCase {
     /**
      * @dataProvider numberClasses
      * @expectedException Cassandra\Exception\InvalidArgumentException
-     * @expectedExceptionMessage Invalid integer value: 'invalid'
+     * @expectedExceptionMessage Invalid integer value: 'invalid123'
      */
     public function testInvalidString($class) {
-        new $class("invalid");
+        new $class("invalid123");
     }
 
     /**
