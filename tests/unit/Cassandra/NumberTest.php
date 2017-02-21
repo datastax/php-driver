@@ -25,7 +25,7 @@ class NumberTest extends \PHPUnit_Framework_TestCase {
     /**
      * Minimum value for integer
      */
-    const PHP_INT_MIN = -(PHP_INT_MAX - 1);
+    const PHP_INT_MIN = -PHP_INT_MAX - 1;
     /**
      * Maximum value for tinyint
      */
@@ -42,6 +42,21 @@ class NumberTest extends \PHPUnit_Framework_TestCase {
      * Minimum value for smallint
      */
     const PHP_SMALLINT_MIN = -(2 ** 15);
+
+    const LIMITS = array(
+      "Cassandra\\Tinyint" => array (
+        "min" => self::PHP_TINYINT_MIN,
+        "max" => self::PHP_TINYINT_MAX
+      ),
+      "Cassandra\\Smallint" => array (
+        "min" => self::PHP_SMALLINT_MIN,
+        "max" => self::PHP_SMALLINT_MAX
+      ),
+      "Cassandra\\Bigint" => array (
+        "min" => self::PHP_INT_MIN,
+        "max" => PHP_INT_MAX
+      )
+    );
 
     /**
      * Data provider to use for most tests involving number data types
@@ -165,103 +180,144 @@ class NumberTest extends \PHPUnit_Framework_TestCase {
      */
     public function maximumValues()
     {
-        return array(
+        $provider = array();
+        foreach (self::LIMITS as $class => $limits) {
+            $max = $limits["max"];
+
             // Integer values
-            array(
-                "Cassandra\\Tinyint",
-                self::PHP_TINYINT_MAX
-            ),
-            array(
-                "Cassandra\\Smallint",
-                self::PHP_SMALLINT_MAX
-            ),
-            array(
-                "Cassandra\\Bigint",
-                PHP_INT_MAX
-            ),
+            $provider[] = array($class, $max);
 
             // Double values
-            array(
-                "Cassandra\\Tinyint",
-                (double) self::PHP_TINYINT_MAX
-            ),
-            array(
-                "Cassandra\\Smallint",
-                (double) self::PHP_SMALLINT_MAX
-            ),
-            array(
-                "Cassandra\\Bigint",
-                (double) PHP_INT_MAX
-            ),
+            $provider[] = array($class, (double) $max);
 
-            // String values (base 2)
-            array(
-                "Cassandra\\Tinyint",
-                "0b" . base_convert((string) self::PHP_TINYINT_MAX, 10, 2),
-                self::PHP_TINYINT_MAX
-            ),
-            array(
-                "Cassandra\\Smallint",
-                "0b" . base_convert((string) self::PHP_SMALLINT_MAX, 10, 2),
-                self::PHP_SMALLINT_MAX
-            ),
-            array(
-                "Cassandra\\Bigint",
-                "0b" . base_convert((string) PHP_INT_MAX, 10, 2),
-                PHP_INT_MAX
-            ),
+            // String values (in base 2, 8, 10, 16)
+            foreach (array(2 => "0b", 8 => "0", 10 => "", 16 => "0x") as $base => $prefix) {
+                $provider[] = array(
+                    $class,
+                    $prefix . base_convert((string) $max, 10, $base),
+                    $max
+                );
+            }
+        }
+        return $provider;
+    }
 
-            // String values (base 8)
-            array(
-                "Cassandra\\Tinyint",
-                "0" . base_convert((string) self::PHP_TINYINT_MAX, 10, 8),
-                self::PHP_TINYINT_MAX
-            ),
-            array(
-                "Cassandra\\Smallint",
-                "0" . base_convert((string) self::PHP_SMALLINT_MAX, 10, 8),
-                self::PHP_SMALLINT_MAX
-            ),
-            array(
-                "Cassandra\\Bigint",
-                "0" . base_convert((string) PHP_INT_MAX, 10, 8),
-                PHP_INT_MAX
-            ),
+    /**
+     * Data provider to use for high overflow values of a number data type
+     *
+     * @return array 1 + Maximum values for number types to use in data provider
+     *     [
+     *         [
+     *             [0] => Class name for the number type
+     *             [1] => Value to use for instantiating type/expected value
+     *         ]
+     *     ]
+     */
+    public function highOverflowValues()
+    {
+        $provider = array();
+        foreach(self::LIMITS as $class => $limits) {
+            $max = $limits["max"];
 
-            // String values (base 10)
-            array(
-                "Cassandra\\Tinyint",
-                (string) self::PHP_TINYINT_MAX,
-                self::PHP_TINYINT_MAX
-            ),
-            array(
-                "Cassandra\\Smallint",
-                (string) self::PHP_SMALLINT_MAX,
-                self::PHP_SMALLINT_MAX
-            ),
-            array(
-                "Cassandra\\Bigint",
-                (string) PHP_INT_MAX,
-                PHP_INT_MAX
-            ),
+            // Integer values
+            if ($class != "Cassandra\\Bigint") {
+                $provider[] = array($class, $max + 1);
+            }
 
-            // String values (base 16)
-            array(
-                "Cassandra\\Tinyint",
-                "0x" . base_convert((string) self::PHP_TINYINT_MAX, 10, 16),
-                self::PHP_TINYINT_MAX
-            ),
-            array(
-                "Cassandra\\Smallint",
-                "0x" . base_convert((string) self::PHP_SMALLINT_MAX, 10, 16),
-                self::PHP_SMALLINT_MAX
-            ),
-            array(
-                "Cassandra\\Bigint",
-                "0x" . base_convert((string) PHP_INT_MAX, 10, 16),
-                PHP_INT_MAX
-            )
-        );
+            // Double values
+            // Bigint is special because the double representation + 1 loses precision, so there's no overflow.
+            // So instead, we multiply the double by 10 to make a significant difference.
+
+            if ($class == "Cassandra\\Bigint") {
+                $provider[] = array($class, ((double) $max) * 10);
+            } else {
+                $provider[] = array($class, (double) $max + 1);
+            }
+
+            // String values (in base 2, 8, 10, 16)
+            foreach (array(2 => "0b", 8 => "0", 10 => "", 16 => "0x") as $base => $prefix) {
+                // Bigint is special because adding 1 to its max would overflow the 64-bit int.
+                // Instead, we create a string rep of the max and add a 0 afterwards to effectively multiply
+                // by 10.
+
+                $val = ($class == "Cassandra\\Bigint") ?
+                    $prefix . base_convert((string) $max, 10, $base) . "0" :
+                    $prefix . base_convert((string) ($max + 1), 10, $base);
+                $provider[] = array(
+                    $class,
+                    $val
+                );
+            }
+        }
+
+        // For Tinyint and Smallint, also test that supplying a value larger than a 32-bit value will
+        // produce an error message complaining about the appropriate type's range, not the range of
+        // a 32-bit int. This is because the parsing function for these types actually parses 32-bit
+        // string representations of numbers.
+
+        $provider[] = array("Cassandra\Tinyint", "2147483648");
+        $provider[] = array("Cassandra\Smallint", "2147483648");
+
+        return $provider;
+    }
+
+    /**
+     * Data provider to use for low overflow values of a number data type
+     *
+     * @return array Minimum values - 1 for number types to use in data provider
+     *     [
+     *         [
+     *             [0] => Class name for the number type
+     *             [1] => Value to use for instantiating type/expected value
+     *         ]
+     *     ]
+     */
+    public function lowOverflowValues()
+    {
+        $provider = array();
+        foreach(self::LIMITS as $class => $limits) {
+            $min = $limits["min"];
+
+            // Integer values
+            if ($class != "Cassandra\\Bigint") {
+                $provider[] = array($class, $min - 1);
+            }
+
+            // Double values
+            // Bigint is special because the double representation - 1 loses precision, so there's no overflow.
+            // So instead, we multiply the double by 10 to make a significant difference.
+
+            if ($class == "Cassandra\\Bigint") {
+                $provider[] = array($class, ((double) $min) * 10);
+            } else {
+                $provider[] = array($class, (double) $min - 1);
+            }
+
+            // String values (in base 2, 8, 10, 16)
+            foreach (array(2 => "-0b", 8 => "-0", 10 => "-", 16 => "-0x") as $base => $prefix) {
+                // Bigint is special because subtracting 1 from its min would overflow the 64-bit int.
+                // Instead, we create a string rep of the min and add a 0 afterwards to effectively multiply
+                // by 10.
+
+                $val = ($class == "Cassandra\\Bigint") ?
+                    $prefix . base_convert((string) $min, 10, $base) . "0":
+                    $prefix . base_convert((string) ($min - 1), 10, $base);
+                $provider[] = array(
+                    $class,
+                    $val
+                );
+            }
+        }
+
+        // For Tinyint and Smallint, also test that supplying a value smaller than the min 32-bit value will
+        // produce an error message complaining about the appropriate type's range, not the range of
+        // a 32-bit int. This is because the parsing function for these types actually parses 32-bit
+        // string representations of numbers.
+
+        $provider[] = array("Cassandra\Tinyint", "-2147483649");
+        $provider[] = array("Cassandra\Smallint", "-2147483649");
+
+        return $provider;
     }
 
     /**
@@ -278,103 +334,32 @@ class NumberTest extends \PHPUnit_Framework_TestCase {
      */
     public function minimumValues()
     {
-        return array(
+        $provider = array();
+        foreach (self::LIMITS as $class => $limits) {
+            $min = $limits["min"];
+
             // Integer values
-            array(
-                "Cassandra\\Tinyint",
-                self::PHP_TINYINT_MIN
-            ),
-            array(
-                "Cassandra\\Smallint",
-                self::PHP_SMALLINT_MIN
-            ),
-            array(
-                "Cassandra\\Bigint",
-                self::PHP_INT_MIN
-            ),
+            $provider[] = array($class, $min);
 
             // Double values
-            array(
-                "Cassandra\\Tinyint",
-                (double) self::PHP_TINYINT_MIN
-            ),
-            array(
-                "Cassandra\\Smallint",
-                (double) self::PHP_SMALLINT_MIN
-            ),
-            array(
-                "Cassandra\\Bigint",
-                (double) self::PHP_INT_MIN
-            ),
+            $provider[] = array($class, (double) $min);
 
-            // String values (base 2)
-            array(
-                "Cassandra\\Tinyint",
-                "-0b" . base_convert((string) self::PHP_TINYINT_MIN, 10, 2),
-                self::PHP_TINYINT_MIN
-            ),
-            array(
-                "Cassandra\\Smallint",
-                "-0b" . base_convert((string) self::PHP_SMALLINT_MIN, 10, 2),
-                self::PHP_SMALLINT_MIN
-            ),
-            array(
-                "Cassandra\\Bigint",
-                "-0b" . base_convert((string) self::PHP_INT_MIN, 10, 2),
-                self::PHP_INT_MIN
-            ),
+            // String values (in base 2, 8, 10, 16)
+            foreach (array(2 => "-0b", 8 => "-0", 10 => "", 16 => "-0x") as $base => $prefix) {
+                // For the 'max' cases, we did a base_convert even for base10, and it was fine.
+                // However, for min (PHP_INT_MIN to be specific), base_convert trashes the value.
+                // Since we don't need base conversion for base 10 and we have to special case something,
+                // we just don't do base_convert for any of the base 10 tests.
 
-            // String values (base 8)
-            array(
-                "Cassandra\\Tinyint",
-                "-0" . base_convert((string) self::PHP_TINYINT_MIN, 10, 8),
-                self::PHP_TINYINT_MIN
-            ),
-            array(
-                "Cassandra\\Smallint",
-                "-0" . base_convert((string) self::PHP_SMALLINT_MIN, 10, 8),
-                self::PHP_SMALLINT_MIN
-            ),
-            array(
-                "Cassandra\\Bigint",
-                "-0" . base_convert((string) self::PHP_INT_MIN, 10, 8),
-                self::PHP_INT_MIN
-            ),
-
-            // String values (base 10)
-            array(
-                "Cassandra\\Tinyint",
-                (string) self::PHP_TINYINT_MIN,
-                self::PHP_TINYINT_MIN
-            ),
-            array(
-                "Cassandra\\Smallint",
-                (string) self::PHP_SMALLINT_MIN,
-                self::PHP_SMALLINT_MIN
-            ),
-            array(
-                "Cassandra\\Bigint",
-                (string) self::PHP_INT_MIN,
-                self::PHP_INT_MIN
-            ),
-
-            // String values (base 16)
-            array(
-                "Cassandra\\Tinyint",
-                "-0x" . base_convert((string) self::PHP_TINYINT_MIN, 10, 16),
-                self::PHP_TINYINT_MIN
-            ),
-            array(
-                "Cassandra\\Smallint",
-                "-0x" . base_convert((string) self::PHP_SMALLINT_MIN, 10, 16),
-                self::PHP_SMALLINT_MIN
-            ),
-            array(
-                "Cassandra\\Bigint",
-                "-0x" . base_convert((string) self::PHP_INT_MIN, 10, 16),
-                self::PHP_INT_MIN
-            )
-        );
+                $val = ($base == 10) ? (string) $min : $prefix . base_convert((string) $min, 10, $base);
+                $provider[] = array(
+                    $class,
+                    $val,
+                    $min
+                );
+            }
+        }
+        return $provider;
     }
 
     /**
@@ -679,5 +664,37 @@ class NumberTest extends \PHPUnit_Framework_TestCase {
     public function testBigintToIntTooLarge() {
         $number = new Bigint("9223372036854775807");
         $number->toInt();
+    }
+
+    /**
+     * @dataProvider highOverflowValues
+     **/
+    public function testOverflowTooBig($class, $value)
+    {
+        if (is_double($value)) {
+            $this->setExpectedException('RangeException',
+                "value must be between " . self::LIMITS[$class]["min"] . " and " . self::LIMITS[$class]["max"]);
+        } else {
+            $this->setExpectedException('RangeException',
+                "value must be between " . self::LIMITS[$class]["min"] . " and " . self::LIMITS[$class]["max"] . ", " .
+                $value . " given");
+        }
+        new $class($value);
+    }
+
+    /**
+     * @dataProvider lowOverflowValues
+     **/
+    public function testOverflowTooSmall($class, $value)
+    {
+        if (is_double($value)) {
+            $this->setExpectedException('RangeException',
+                "value must be between " . self::LIMITS[$class]["min"] . " and " . self::LIMITS[$class]["max"]);
+        } else {
+            $this->setExpectedException('RangeException',
+                "value must be between " . self::LIMITS[$class]["min"] . " and " . self::LIMITS[$class]["max"] . ", " .
+                $value . " given");
+        }
+        new $class($value);
     }
 }
