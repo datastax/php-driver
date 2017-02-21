@@ -34,7 +34,7 @@ Cassandra\Time:
       comment: ""
       return:
         comment: ""
-        type: mixed
+        type: int
     fromDateTime:
       comment: ""
       params:
@@ -43,5 +43,5 @@ Cassandra\Time:
           type: DateTime
       return:
         comment: ""
-        type: mixed
+        type: Time
 ...

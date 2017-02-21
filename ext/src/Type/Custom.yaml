@@ -13,15 +13,12 @@ Cassandra\Type\Custom:
         comment: String representation of this type
         type: string
     create:
-      comment: |-
-        Creation of custom type instances is not supported
-
-        @throws Cassandra\Exception\LogicException
+      comment: ""
       params:
         value:
-          comment: The value
+          comment: ""
           type: mixed
       return:
         comment: ""
-        type: "null"
+        type: mixed
 ...

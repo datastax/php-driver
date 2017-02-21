@@ -13,11 +13,11 @@ Cassandra\Tinyint:
         comment: maximum value
         type: Tinyint
     __construct:
-      comment: Creates a new 8bit integer.
+      comment: Creates a new 8-bit signed integer.
       params:
         value:
-          comment: integer value as a string
-          type: string
+          comment: The value as an integer, double or string
+          type: int|double|string
     add:
       comment: ""
       params:
@@ -102,5 +102,5 @@ Cassandra\Tinyint:
       comment: ""
       return:
         comment: ""
-        type: mixed
+        type: string
 ...

@@ -13,11 +13,11 @@ Cassandra\Smallint:
         comment: maximum value
         type: Smallint
     __construct:
-      comment: Creates a new 16bit integer.
+      comment: Creates a new 16-bit signed integer.
       params:
         value:
-          comment: integer value as a string
-          type: string
+          comment: The value as an integer, double or string
+          type: int|double|string
     add:
       comment: ""
       params:
@@ -102,5 +102,5 @@ Cassandra\Smallint:
       comment: ""
       return:
         comment: ""
-        type: mixed
+        type: string
 ...

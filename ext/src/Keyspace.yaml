@@ -29,7 +29,7 @@ Cassandra\Keyspace:
           comment: Table name
           type: string
       return:
-        comment: '      Table instance or null'
+        comment: Table instance or null
         type: Cassandra\Table|null
     tables:
       comment: Returns all tables defined in this keyspace
@@ -37,65 +37,65 @@ Cassandra\Keyspace:
         comment: An array of `Cassandra\Table` instances
         type: array
     userType:
-      comment: ""
+      comment: Get user type by name
       params:
         name:
-          comment: ""
-          type: mixed
+          comment: User type name
+          type: string
       return:
-        comment: ""
-        type: mixed
+        comment: A user type or null
+        type: Type\UserType|null
     userTypes:
-      comment: ""
+      comment: Get all user types
       return:
-        comment: ""
-        type: mixed
+        comment: An array of user types
+        type: array
     materializedView:
-      comment: ""
+      comment: Get materialized view by name
       params:
         name:
-          comment: ""
-          type: mixed
+          comment: Materialized view name
+          type: string
       return:
-        comment: ""
-        type: mixed
+        comment: A materialized view or null
+        type: MaterizedView|null
     materializedViews:
-      comment: ""
+      comment: Gets all materialized views
       return:
-        comment: ""
-        type: mixed
+        comment: An array of materialized views
+        type: array
     function:
-      comment: ""
+      comment: Get a function by name and signature
       params:
         name:
-          comment: ""
-          type: mixed
+          comment: Function name
+          type: string
         '...':
-          comment: ""
-          type: mixed
+          comment: Function arguments
+          type: string|Type
       return:
-        comment: ""
-        type: mixed
+        comment: A function or null
+        type: Function|null
     functions:
-      comment: ""
+      comment: Get all functions
       return:
-        comment: ""
-        type: mixed
+        comment: An array of functions
+        type: array
     aggregate:
-      comment: ""
+      comment: Get an aggregate by name and signature
       params:
         name:
-          comment: ""
-          type: mixed
+          comment: Aggregate name
+          type: string
         '...':
-          comment: ""
-          type: mixed
+          comment: Aggregate arguments
+          type: string|Type
       return:
-        comment: ""
-        type: mixed
+        comment: An aggregate or null
+        type: Aggregate|null
     aggregates:
-      comment: ""
+      comment: Get all aggregates
       return:
-        comment: ""
-        type: mixed
+        comment: An array of aggregates
+        type: array
 ...

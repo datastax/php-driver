@@ -37,65 +37,65 @@ Cassandra\DefaultKeyspace:
         comment: An array of `Cassandra\Table` instances
         type: array
     userType:
-      comment: ""
+      comment: '{@inheritDoc}'
       params:
         name:
           comment: ""
-          type: mixed
+          type: Type\UserType
       return:
-        comment: ""
-        type: mixed
+        comment: '{@inheritDoc}'
+        type: Type\UserType|null
     userTypes:
-      comment: ""
+      comment: '{@inheritDoc}'
       return:
-        comment: ""
-        type: mixed
+        comment: '{@inheritDoc}'
+        type: array
     materializedView:
-      comment: ""
+      comment: '{@inheritDoc}'
       params:
         name:
-          comment: ""
-          type: mixed
+          comment: '{@inheritDoc}'
+          type: string
       return:
-        comment: ""
-        type: mixed
+        comment: '{@inheritDoc}'
+        type: MaterizedView|null
     materializedViews:
-      comment: ""
+      comment: '{@inheritDoc}'
       return:
-        comment: ""
-        type: mixed
+        comment: '{@inheritDoc}'
+        type: array
     function:
-      comment: ""
+      comment: '{@inheritDoc}'
       params:
         name:
-          comment: ""
-          type: mixed
+          comment: '{@inheritDoc}'
+          type: string
         '...':
-          comment: ""
-          type: mixed
+          comment: '{@inheritDoc}'
+          type: string|Type
       return:
-        comment: ""
-        type: mixed
+        comment: '{@inheritDoc}'
+        type: Function|null
     functions:
-      comment: ""
+      comment: '{@inheritDoc}'
       return:
-        comment: ""
-        type: mixed
+        comment: '{@inheritDoc}'
+        type: array
     aggregate:
-      comment: ""
+      comment: '{@inheritDoc}'
       params:
         name:
-          comment: ""
-          type: mixed
+          comment: '{@inheritDoc}'
+          type: string
         '...':
-          comment: ""
-          type: mixed
+          comment: '{@inheritDoc}'
+          type: string|Type
       return:
-        comment: ""
-        type: mixed
+        comment: '{@inheritDoc}'
+        type: Aggregate|null
     aggregates:
-      comment: ""
+      comment: '{@inheritDoc}'
       return:
-        comment: ""
-        type: mixed
+        comment: '{@inheritDoc}'
+        type: array
 ...

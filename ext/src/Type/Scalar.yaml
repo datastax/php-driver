@@ -3,15 +3,15 @@ Cassandra\Type\Scalar:
   comment: A class that represents a primitive type (e.g. `varchar` or `bigint`)
   methods:
     name:
-      comment: ""
+      comment: '{@inheritDoc}'
       return:
-        comment: ""
-        type: mixed
+        comment: '{@inheritDoc}'
+        type: string
     __toString:
-      comment: ""
+      comment: '{@inheritDoc}'
       return:
-        comment: ""
-        type: mixed
+        comment: '{@inheritDoc}'
+        type: string
     create:
       comment: ""
       params:

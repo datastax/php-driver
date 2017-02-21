@@ -165,8 +165,8 @@ Cassandra\Type:
           comment: The types of values
           type: Cassandra\Type
       return:
-        comment: ""
-        type: mixed
+        comment: The set type
+        type: Type
     tuple:
       comment: |-
         Initialize a tuple type
@@ -215,17 +215,4 @@ Cassandra\Type:
       return:
         comment: String representation of this type
         type: string
-    create:
-      comment: |-
-        Instantiate a value of this type from provided value(s).
-
-        @throws Exception\InvalidArgumentException when values given cannot be
-                                                   represented by this type.
-      params:
-        values:
-          comment: ',... one or more values to coerce into this type'
-          type: mixed
-      return:
-        comment: '           a value of this type'
-        type: mixed
 ...

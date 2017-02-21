@@ -16,8 +16,8 @@ Cassandra\MaterializedView:
       comment: Return a table's option by name
       params:
         name:
-          comment: ""
-          type: mixed
+          comment: The name of the option
+          type: string
       return:
         comment: Value of an option by name
         type: Cassandra\Value

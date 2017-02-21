@@ -8,9 +8,6 @@ Cassandra\Tuple:
         types:
           comment: Array of types
           type: array
-        type:
-          comment: ""
-          type: mixed
     type:
       comment: The type of this tuple.
       return:
@@ -29,7 +26,7 @@ Cassandra\Tuple:
           comment: Index
           type: int
         value:
-          comment: Value or null
+          comment: A value or null
           type: mixed
       return:
         comment: ""
@@ -41,7 +38,7 @@ Cassandra\Tuple:
           comment: Index
           type: int
       return:
-        comment: '        Value or null'
+        comment: A value or null
         type: mixed
     count:
       comment: Total number of elements in this tuple

@@ -8,9 +8,6 @@ Cassandra\UserTypeValue:
         types:
           comment: Array of types
           type: array
-        type:
-          comment: ""
-          type: mixed
     type:
       comment: The type of this user type value.
       return:
@@ -29,7 +26,7 @@ Cassandra\UserTypeValue:
           comment: String of the field name
           type: sting
         value:
-          comment: Value or null
+          comment: A value or null
           type: mixed
       return:
         comment: ""
@@ -40,12 +37,9 @@ Cassandra\UserTypeValue:
       params:
         name:
           comment: String of the field name
-          type: sting
-        index:
-          comment: ""
-          type: mixed
+          type: string
       return:
-        comment: '        Value or null'
+        comment: A value or null
         type: mixed
     count:
       comment: Total number of elements in this user type value.
@@ -55,7 +49,7 @@ Cassandra\UserTypeValue:
     current:
       comment: Current element for iteration
       return:
-        comment: current element
+        comment: The current element
         type: mixed
     key:
       comment: Current key for iteration

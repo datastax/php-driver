@@ -7,18 +7,12 @@ Cassandra\Timestamp:
         Creates a new timestamp from either unix timestamp and microseconds or
         from the current time by default.
       params:
-        time:
-          comment: Unix timestamp
-          type: int
-        usec:
-          comment: Microseconds
-          type: int
         seconds:
-          comment: ""
-          type: mixed
+          comment: The number of seconds
+          type: int
         microseconds:
-          comment: ""
-          type: mixed
+          comment: The number of microseconds
+          type: int
     type:
       comment: The type of this timestamp.
       return:

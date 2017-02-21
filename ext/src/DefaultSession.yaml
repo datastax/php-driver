@@ -6,72 +6,72 @@ Cassandra\DefaultSession:
       comment: '{@inheritDoc}'
       return:
         comment: '{@inheritDoc}'
-        type: mixed
+        type: Schema
     execute:
       comment: '{@inheritDoc}'
       return:
         comment: '{@inheritDoc}'
-        type: mixed
+        type: Rows
       params:
         statement:
           comment: '{@inheritDoc}'
-          type: mixed
+          type: string|Statement
         options:
           comment: '{@inheritDoc}'
-          type: mixed
+          type: array|ExecutionOptions|null
     executeAsync:
       comment: '{@inheritDoc}'
       params:
         statement:
           comment: '{@inheritDoc}'
-          type: mixed
+          type: string|Statement
         options:
           comment: '{@inheritDoc}'
-          type: mixed
+          type: array|ExecutionOptions|null
       return:
         comment: '{@inheritDoc}'
-        type: mixed
+        type: FutureRows
     prepare:
       comment: '{@inheritDoc}'
       params:
         cql:
           comment: '{@inheritDoc}'
-          type: mixed
+          type: string
         options:
           comment: '{@inheritDoc}'
-          type: mixed
+          type: Cassandra\ExecutionOptions
       return:
         comment: '{@inheritDoc}'
-        type: mixed
+        type: PreparedStatement
     prepareAsync:
       comment: '{@inheritDoc}'
       params:
         cql:
           comment: '{@inheritDoc}'
-          type: mixed
+          type: string
         options:
           comment: '{@inheritDoc}'
-          type: mixed
+          type: Cassandra\ExecutionOptions
       return:
         comment: '{@inheritDoc}'
-        type: mixed
+        type: FuturePreparedStatement
     close:
       comment: '{@inheritDoc}'
       params:
         timeout:
           comment: '{@inheritDoc}'
-          type: mixed
+          type: double
       return:
         comment: '{@inheritDoc}'
-        type: mixed
+        type: "null"
     closeAsync:
       comment: '{@inheritDoc}'
       return:
         comment: '{@inheritDoc}'
-        type: mixed
+        type: FutureClose
     metrics:
       comment: '{@inheritDoc}'
       return:
         comment: '{@inheritDoc}'
-        type: mixed
+        type: array
 ...

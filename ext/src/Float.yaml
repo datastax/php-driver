@@ -16,8 +16,8 @@ Cassandra\Float:
       comment: Creates a new float.
       params:
         value:
-          comment: float value as a string, number or Cassandra\Float
-          type: mixed
+          comment: A float value as a string, number or Cassandra\Float
+          type: double|int|string|Float
     type:
       comment: The type of this float.
       return:
@@ -107,15 +107,15 @@ Cassandra\Float:
       comment: ""
       return:
         comment: ""
-        type: mixed
+        type: bool
     isFinite:
       comment: ""
       return:
         comment: ""
-        type: mixed
+        type: bool
     isNaN:
       comment: ""
       return:
         comment: ""
-        type: mixed
+        type: bool
 ...

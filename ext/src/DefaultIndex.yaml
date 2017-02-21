@@ -21,8 +21,8 @@ Cassandra\DefaultIndex:
       comment: '{@inheritDoc}'
       params:
         name:
-          comment: ""
-          type: mixed
+          comment: '{@inheritDoc}'
+          type: string
       return:
         comment: Value of an option by name
         type: Value
