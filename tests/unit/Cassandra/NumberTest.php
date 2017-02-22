@@ -226,10 +226,13 @@ class NumberTest extends \PHPUnit_Framework_TestCase {
 
             // Double values
             // Bigint is special because the double representation + 1 loses precision, so there's no overflow.
-            // So instead, we multiply the double by 10 to make a significant difference.
+            // So instead, we multiply the double by 10 to make a significant difference. Also, on
+            // 32-bit platforms, it's not possible to overflow, so don't try.
 
             if ($class == "Cassandra\\Bigint") {
-                $provider[] = array($class, ((double) $max) * 10);
+                if (PHP_INT_MAX != (2 ** 31) - 1) {
+                    $provider[] = array($class, ((double) $max) * 10);
+                }
             } else {
                 $provider[] = array($class, (double) $max + 1);
             }
@@ -238,7 +241,11 @@ class NumberTest extends \PHPUnit_Framework_TestCase {
             foreach (array(2 => "0b", 8 => "0", 10 => "", 16 => "0x") as $base => $prefix) {
                 // Bigint is special because adding 1 to its max would overflow the 64-bit int.
                 // Instead, we create a string rep of the max and add a 0 afterwards to effectively multiply
-                // by 10.
+                // by 10. Again, if we're on a 32-bit platform, it's not possible to overflow Bigint.
+
+                if ($class == "Cassandra\\Bigint" && PHP_INT_MAX == (2 ** 31) - 1) {
+                    continue;
+                }
 
                 $val = ($class == "Cassandra\\Bigint") ?
                     $prefix . base_convert((string) $max, 10, $base) . "0" :
@@ -252,8 +259,8 @@ class NumberTest extends \PHPUnit_Framework_TestCase {
 
         // For Tinyint and Smallint, also test that supplying a value larger than a 32-bit value will
         // produce an error message complaining about the appropriate type's range, not the range of
-        // a 32-bit int. This is because the parsing function for these types actually parses 32-bit
-        // string representations of numbers.
+        // a 32-bit int. This is relevant because the parsing function for these types actually parses
+        // 32-bit string representations of numbers.
 
         $provider[] = array("Cassandra\Tinyint", "2147483648");
         $provider[] = array("Cassandra\Smallint", "2147483648");
@@ -285,10 +292,14 @@ class NumberTest extends \PHPUnit_Framework_TestCase {
 
             // Double values
             // Bigint is special because the double representation - 1 loses precision, so there's no overflow.
-            // So instead, we multiply the double by 10 to make a significant difference.
+            // So instead, we multiply the double by 10 to make a significant difference. Also, on
+            // 32-bit platforms, it's not possible to overflow, so don't try.
+
 
             if ($class == "Cassandra\\Bigint") {
-                $provider[] = array($class, ((double) $min) * 10);
+                if (PHP_INT_MAX != (2 ** 31) - 1) {
+                    $provider[] = array($class, ((double) $min) * 10);
+                }
             } else {
                 $provider[] = array($class, (double) $min - 1);
             }
@@ -297,7 +308,11 @@ class NumberTest extends \PHPUnit_Framework_TestCase {
             foreach (array(2 => "-0b", 8 => "-0", 10 => "-", 16 => "-0x") as $base => $prefix) {
                 // Bigint is special because subtracting 1 from its min would overflow the 64-bit int.
                 // Instead, we create a string rep of the min and add a 0 afterwards to effectively multiply
-                // by 10.
+                // by 10. Again, if we're on a 32-bit platform, it's not possible to overflow Bigint.
+
+                if ($class == "Cassandra\\Bigint" && PHP_INT_MAX == (2 ** 31) - 1) {
+                    continue;
+                }
 
                 $val = ($class == "Cassandra\\Bigint") ?
                     $prefix . base_convert((string) $min, 10, $base) . "0":
@@ -311,8 +326,8 @@ class NumberTest extends \PHPUnit_Framework_TestCase {
 
         // For Tinyint and Smallint, also test that supplying a value smaller than the min 32-bit value will
         // produce an error message complaining about the appropriate type's range, not the range of
-        // a 32-bit int. This is because the parsing function for these types actually parses 32-bit
-        // string representations of numbers.
+        // a 32-bit int. This is relevant because the parsing function for these types actually parses
+        // 32-bit string representations of numbers.
 
         $provider[] = array("Cassandra\Tinyint", "-2147483649");
         $provider[] = array("Cassandra\Smallint", "-2147483649");
