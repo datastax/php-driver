@@ -18,11 +18,9 @@
 
 namespace Cassandra\RetryPolicy;
 
-use Cassandra\RetryPolicy;
-
 /**
  * A retry policy that never retries and allows all errors to fallthrough.
  */
-final class Fallthrough implements RetryPolicy
-{
+final class Fallthrough implements RetryPolicy {
+
 }

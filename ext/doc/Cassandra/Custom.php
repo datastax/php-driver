@@ -16,28 +16,17 @@
  * limitations under the License.
  */
 
-namespace Cassandra\Exception;
+namespace Cassandra;
 
 /**
- * OverloadedException is raised when a node is overloaded.
+ * An interface for representing custom values.
  */
-class OverloadedException extends ServerException  {
+abstract class Custom implements Value {
 
     /**
-     * @param mixed $message
-     * @param mixed $code
-     * @param mixed $previous
+     * The type of this value.
+     * @return Type\Custom
      */
-    public function __construct($message, $code, $previous) { }
-
-    /**
-     * @return mixed
-     */
-    public function __wakeup() { }
-
-    /**
-     * @return mixed
-     */
-    public function __toString() { }
+    public abstract function type();
 
 }

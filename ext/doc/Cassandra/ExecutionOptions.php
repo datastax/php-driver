@@ -21,15 +21,13 @@ namespace Cassandra;
 /**
  * Request execution options.
  *
- * @deprecated Use an array of options instead of creating an instance of this class.
- *
  * @see Session::execute()
  * @see Session::executeAsync()
  * @see Session::prepare()
  * @see Session::prepareAsync()
  */
-final class ExecutionOptions
-{
+final class ExecutionOptions {
+
     /**
      * Creates a new options object for execution.
      *
@@ -44,8 +42,14 @@ final class ExecutionOptions
      *                                                      of microseconds since the epoch.
      *
      * @throws Exception\InvalidArgumentException
-     *
      * @param array $options various execution options
      */
-    public function __construct(array $options = null) {}
+    public function __construct($options) { }
+
+    /**
+     * @param mixed $name
+     * @return mixed
+     */
+    public function __get($name) { }
+
 }

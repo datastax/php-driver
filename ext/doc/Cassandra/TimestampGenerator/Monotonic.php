@@ -18,8 +18,6 @@
 
 namespace Cassandra\TimestampGenerator;
 
-use Cassandra\TimestampGenerator;
-
 /**
  * A timestamp generator that generates monotonically increasing timestamps
  * client-side. The timestamps generated have a microsecond granularity with
@@ -29,6 +27,6 @@ use Cassandra\TimestampGenerator;
  * exceeded then a warning is logged and timestamps stop incrementing until
  * the next clock tick.
  */
-final class Monotonic implements TimestampGenerator
-{
+final class Monotonic implements TimestampGenerator {
+
 }

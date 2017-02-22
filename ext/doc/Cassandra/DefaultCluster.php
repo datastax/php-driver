@@ -18,29 +18,28 @@
 
 namespace Cassandra;
 
-
 /**
  * Default cluster implementation.
  *
  * @see Cassandra\Cluster
  */
-final class DefaultCluster implements Cluster
-{
-    /**
-     * {@inheritDoc}
-     *
-     * @param string $keyspace Optional keyspace name
-     *
-     * @return Session Session instance
-     */
-    public function connect($keyspace = null) {}
+final class DefaultCluster implements Cluster {
 
     /**
      * {@inheritDoc}
      *
      * @param string $keyspace Optional keyspace name
+     * @param int $timeout Optional timeout
+     * @return Session Session instance
+     */
+    public function connect($keyspace, $timeout) { }
+
+    /**
+     * {@inheritDoc}
      *
+     * @param string $keyspace Optional keyspace name
      * @return Future A Future Session instance
      */
-    public function connectAsync($keyspace = null) {}
+    public function connectAsync($keyspace) { }
+
 }

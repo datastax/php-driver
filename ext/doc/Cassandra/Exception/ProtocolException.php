@@ -19,8 +19,27 @@
 namespace Cassandra\Exception;
 
 /**
- * ProtocolException is raised when a client did not follow Apache Cassandra
- * protocol, e.g. sending a QUERY message before STARTUP. Seeing this error can
- * be considered a bug.
+ * ProtocolException is raised when a client did not follow server's protocol,
+ * e.g. sending a QUERY message before STARTUP. Seeing this error can be
+ * considered a bug.
  */
-class ProtocolException extends RuntimeException {}
+class ProtocolException extends RuntimeException  {
+
+    /**
+     * @param mixed $message
+     * @param mixed $code
+     * @param mixed $previous
+     */
+    public function __construct($message, $code, $previous) { }
+
+    /**
+     * @return mixed
+     */
+    public function __wakeup() { }
+
+    /**
+     * @return mixed
+     */
+    public function __toString() { }
+
+}

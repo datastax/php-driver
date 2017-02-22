@@ -19,6 +19,25 @@
 namespace Cassandra\Exception;
 
 /**
- * Cassandra-specific domain exception.
+ * Cassandra domain exception.
  */
-class DivideByZeroException extends RangeException {}
+class DivideByZeroException extends RangeException  {
+
+    /**
+     * @param mixed $message
+     * @param mixed $code
+     * @param mixed $previous
+     */
+    public function __construct($message, $code, $previous) { }
+
+    /**
+     * @return mixed
+     */
+    public function __wakeup() { }
+
+    /**
+     * @return mixed
+     */
+    public function __toString() { }
+
+}

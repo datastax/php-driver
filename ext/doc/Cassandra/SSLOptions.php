@@ -23,6 +23,6 @@ namespace Cassandra;
  *
  * @see SSLOptions\Builder
  */
-final class SSLOptions
-{
+final class SSLOptions {
+
 }

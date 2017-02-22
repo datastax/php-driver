@@ -28,6 +28,8 @@ namespace Cassandra;
  *
  * @see Session::prepare()
  */
-final class PreparedStatement implements Statement
-{
+final class PreparedStatement implements Statement {
+
+    private function __construct() { }
+
 }

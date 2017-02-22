@@ -20,7 +20,26 @@ namespace Cassandra\Exception;
 
 /**
  * ServerException is raised when something unexpected happened on the server.
- * This exception is most likely due to an Apache Cassandra bug.
+ * This exception is most likely due to a server-side bug.
  * **NOTE** This exception and all its children are generated on the server.
  */
-class ServerException extends RuntimeException {}
+class ServerException extends RuntimeException  {
+
+    /**
+     * @param mixed $message
+     * @param mixed $code
+     * @param mixed $previous
+     */
+    public function __construct($message, $code, $previous) { }
+
+    /**
+     * @return mixed
+     */
+    public function __wakeup() { }
+
+    /**
+     * @return mixed
+     */
+    public function __toString() { }
+
+}

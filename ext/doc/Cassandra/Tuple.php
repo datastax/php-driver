@@ -21,86 +21,75 @@ namespace Cassandra;
 /**
  * A PHP representation of the CQL `tuple` datatype
  */
-final class Tuple implements Value, \Countable, \Iterator
-{
+final class Tuple implements Value, \Countable, \Iterator {
+
     /**
      * Creates a new tuple with the given types.
-     *
      * @param array $types Array of types
      */
-    public function __construct($types) {}
+    public function __construct($types) { }
 
     /**
      * The type of this tuple.
-     *
      * @return Type
      */
-    public function type() {}
+    public function type() { }
 
     /**
      * Array of values in this tuple.
-     *
      * @return array values
      */
-    public function values() {}
+    public function values() { }
 
     /**
      * Sets the value at index in this tuple .
      *
-     * @param int   $index Index
-     * @param mixed $value Value or null
-     *
+     * @param mixed $value A value or null
      * @return void
      */
-    public function set($index, $value) {}
+    public function set($value) { }
 
     /**
      * Retrieves the value at a given index.
-     *
-     * @param   int   $index  Index
-     * @return  mixed         Value or null
+     * @param int $index Index
+     * @return mixed A value or null
      */
-    public function get($index) {}
+    public function get($index) { }
 
     /**
      * Total number of elements in this tuple
-     *
      * @return int count
      */
-    public function count() {}
+    public function count() { }
 
     /**
      * Current element for iteration
-     *
      * @return mixed current element
      */
-    public function current() {}
+    public function current() { }
 
     /**
      * Current key for iteration
-     *
      * @return int current key
      */
-    public function key() {}
+    public function key() { }
 
     /**
      * Move internal iterator forward
-     *
      * @return void
      */
-    public function next() {}
+    public function next() { }
 
     /**
      * Check whether a current value exists
-     *
      * @return bool
      */
-    public function valid() {}
+    public function valid() { }
 
     /**
      * Rewind internal iterator
-     *
      * @return void
      */
-    public function rewind() {}
+    public function rewind() { }
+
 }

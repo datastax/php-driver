@@ -21,103 +21,145 @@ namespace Cassandra;
 /**
  * Cluster object is used to create Sessions.
  */
-abstract class Type
-{
-    /**
-     * Get representation of cassandra varchar type
-     * @return Cassandra\Type varchar type
-     */
-    final static function varchar() {}
+abstract class Type {
 
     /**
-     * Get representation of cassandra text type
-     * @return Cassandra\Type text type
+     * Returns the name of this type as string.
+     * @return string Name of this type
      */
-    final static function text() {}
+    public abstract function name();
 
     /**
-     * Get representation of cassandra blob type
+     * Returns string representation of this type.
+     * @return string String representation of this type
+     */
+    public abstract function __toString();
+
+    /**
+     * Get representation of ascii type
+     * @return Cassandra\Type ascii type
+     */
+    public static final function ascii() { }
+
+    /**
+     * Get representation of bigint type
+     * @return Cassandra\Type bigint type
+     */
+    public static final function bigint() { }
+
+    /**
+     * Get representation of smallint type
+     * @return Cassandra\Type smallint type
+     */
+    public static final function smallint() { }
+
+    /**
+     * Get representation of tinyint type
+     * @return Cassandra\Type tinyint type
+     */
+    public static final function tinyint() { }
+
+    /**
+     * Get representation of blob type
      * @return Cassandra\Type blob type
      */
-    final static function blob() {}
+    public static final function blob() { }
 
-      /**
-       * Get representation of cassandra ascii type
-       * @return Cassandra\Type ascii type
-       */
-    final static function ascii() {}
+    /**
+     * Get representation of boolean type
+     * @return Cassandra\Type boolean type
+     */
+    public static final function boolean() { }
 
-      /**
-       * Get representation of cassandra bigint type
-       * @return Cassandra\Type bigint type
-       */
-    final static function bigint() {}
+    /**
+     * Get representation of counter type
+     * @return Cassandra\Type counter type
+     */
+    public static final function counter() { }
 
-      /**
-       * Get representation of cassandra counter type
-       * @return Cassandra\Type counter type
-       */
-    final static function counter() {}
+    /**
+     * Get representation of decimal type
+     * @return Cassandra\Type decimal type
+     */
+    public static final function decimal() { }
 
-      /**
-       * Get representation of cassandra int type
-       * @return Cassandra\Type int type
-       */
-    final static function int() {}
+    /**
+     * Get representation of double type
+     * @return Cassandra\Type double type
+     */
+    public static final function double() { }
 
-      /**
-       * Get representation of cassandra varint type
-       * @return Cassandra\Type varint type
-       */
-    final static function varint() {}
+    /**
+     * Get representation of duration type
+     * @return Cassandra\Type duration type
+     */
+    public static final function duration() { }
 
-      /**
-       * Get representation of cassandra boolean type
-       * @return Cassandra\Type boolean type
-       */
-    final static function boolean() {}
+    /**
+     * Get representation of float type
+     * @return Cassandra\Type float type
+     */
+    public static final function float() { }
 
-      /**
-       * Get representation of cassandra decimal type
-       * @return Cassandra\Type decimal type
-       */
-    final static function decimal() {}
+    /**
+     * Get representation of int type
+     * @return Cassandra\Type int type
+     */
+    public static final function int() { }
 
-      /**
-       * Get representation of cassandra double type
-       * @return Cassandra\Type double type
-       */
-    final static function double() {}
+    /**
+     * Get representation of text type
+     * @return Cassandra\Type text type
+     */
+    public static final function text() { }
 
-      /**
-       * Get representation of cassandra float type
-       * @return Cassandra\Type float type
-       */
-    final static function float() {}
+    /**
+     * Get representation of timestamp type
+     * @return Cassandra\Type timestamp type
+     */
+    public static final function timestamp() { }
 
-      /**
-       * Get representation of cassandra inet type
-       * @return Cassandra\Type inet type
-       */
-    final static function inet() {}
+    /**
+     * Get representation of date type
+     * @return Cassandra\Type date type
+     */
+    public static final function date() { }
 
-      /**
-       * Get representation of cassandra timestamp type
-       * @return Cassandra\Type timestamp type
-       */
-    final static function timestamp() {}
+    /**
+     * Get representation of time type
+     * @return Cassandra\Type time type
+     */
+    public static final function time() { }
 
-      /**
-       * Get representation of cassandra uuid type
-       * @return Cassandra\Type uuid type
-       */
-    final static function uuid() {}
+    /**
+     * Get representation of uuid type
+     * @return Cassandra\Type uuid type
+     */
+    public static final function uuid() { }
 
-      /**
-       * Get representation of cassandra timeuuid type
-       * @return Cassandra\Type timeuuid type
-       */
-    final static function timeuuid() {}
+    /**
+     * Get representation of varchar type
+     * @return Cassandra\Type varchar type
+     */
+    public static final function varchar() { }
+
+    /**
+     * Get representation of varint type
+     * @return Cassandra\Type varint type
+     */
+    public static final function varint() { }
+
+    /**
+     * Get representation of timeuuid type
+     * @return Cassandra\Type timeuuid type
+     */
+    public static final function timeuuid() { }
+
+    /**
+     * Get representation of inet type
+     * @return Cassandra\Type inet type
+     */
+    public static final function inet() { }
 
     /**
      * Initialize a Collection type
@@ -130,10 +172,26 @@ abstract class Type
      *
      * var_dump($collection);
      * @endcode
-     * @param  Type $type The type of values
-     * @return Type       The collection type
+     * @param Cassandra\Type $type The type of values
+     * @return Type The collection type
      */
-    final static function collection(Type $type) {}
+    public static final function collection($type) { }
+
+    /**
+     * Initialize a set type
+     * @code{.php}
+     * <?php
+     * use Cassandra\Type;
+     *
+     * $set = Type::set(Type::varchar())
+     *            ->create("a", "b", "c", "d", "e", "f", "g", "h", "i", "j");
+     *
+     * var_dump($set);
+     * @endcode
+     * @param Cassandra\Type $type The types of values
+     * @return Type The set type
+     */
+    public static final function set($type) { }
 
     /**
      * Initialize a map type
@@ -146,47 +204,42 @@ abstract class Type
      *
      * var_dump($map);
      * @endcode
-     * @param  Type $key_type   The type of keys
-     * @param  Type $value_type The type of values
-     * @return Type             The map type
+     * @param Cassandra\Type $keyType The type of keys
+     * @param Cassandra\Type $valueType The type of values
+     * @return Cassandra\Type The map type
      */
-    final static function map(Type $key_type, Type $value_type) {}
+    public static final function map($keyType, $valueType) { }
 
     /**
-     * Initialize a set type
+     * Initialize a tuple type
      * @code{.php}
      * <?php
      * use Cassandra\Type;
      *
-     * $set = Type::set(Type::varchar)
-     *            ->create("a", "b", "c", "d", "e", "f", "g", "h", "i", "j");
+     * $tuple = Type::tuple(Type::varchar(), Type::int())
+     *            ->create("a", 123);
      *
-     * var_dump($set);
+     * var_dump($tuple);
      * @endcode
-     * @param Type $type [description]
+     * @param Cassandra\Type $types A variadic list of types
+     * @return Cassandra\Type The tuple type
      */
-    final static function set(Type $type) {}
+    public static final function tuple($types) { }
 
     /**
-     * Returns the name of this type as string.
-     * @return string Name of this type
-     */
-    function name() {}
-
-    /**
-     * Returns string representation of this type.
-     * @return string String representation of this type
-     */
-    function __toString() {}
-
-    /**
-     * Instantiate a value of this type from provided value(s).
+     * Initialize a user type
+     * @code{.php}
+     * <?php
+     * use Cassandra\Type;
      *
-     * @throws Exception\InvalidArgumentException when values given cannot be
-     *                                            represented by this type.
+     * $userType = Type::userTupe("a", Type::varchar(), "b", Type::int())
+     *                 ->create("a", "abc", "b", 123);
      *
-     * @param  mixed $value,... one or more values to coerce into this type
-     * @return mixed            a value of this type
+     * var_dump($userType);
+     * @endcode
+     * @param Cassandra\Type $types A variadic list of name/type pairs
+     * @return Cassandra\Type The user type
      */
-    function create($value = null) {}
+    public static final function userType($types) { }
+
 }

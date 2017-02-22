@@ -18,9 +18,26 @@
 
 namespace Cassandra\Exception;
 
-use Cassandra\Exception;
-
 /**
- * Cassandra-specific logic exception.
+ * Cassandra logic exception.
  */
-class LogicException extends \LogicException implements Exception {}
+class LogicException extends \LogicException implements Exception {
+
+    /**
+     * @param mixed $message
+     * @param mixed $code
+     * @param mixed $previous
+     */
+    public function __construct($message, $code, $previous) { }
+
+    /**
+     * @return mixed
+     */
+    public function __wakeup() { }
+
+    /**
+     * @return mixed
+     */
+    public function __toString() { }
+
+}

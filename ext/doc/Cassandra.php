@@ -22,8 +22,8 @@
  * Use Cassandra::cluster() to build a cluster instance.
  * Use Cassandra::ssl() to build SSL options instance.
  */
-final class Cassandra
-{
+final class Cassandra {
+
     /**
      * Consistency level ANY means the request is fulfilled as soon as the data
      * has been written on the Coordinator. Requests with this consistency level
@@ -41,13 +41,6 @@ final class Cassandra
      */
     const CONSISTENCY_ONE = 1;
 
-    /**
-     * Same as `CONSISTENCY_ONE`, but confined to the local data center. This
-     * consistency level works only with `NetworkTopologyStrategy` replication.
-     *
-     * @see Cassandra\ExecutionOptions::__construct()
-     */
-    const CONSISTENCY_LOCAL_ONE = 10;
     /**
      * Consistency level TWO guarantees that data has been written to at least
      * two Replica nodes.
@@ -77,6 +70,14 @@ final class Cassandra
     const CONSISTENCY_QUORUM = 4;
 
     /**
+     * Consistency level ALL guarantees that data has been written to all
+     * Replica nodes.
+     *
+     * @see Cassandra\ExecutionOptions::__construct()
+     */
+    const CONSISTENCY_ALL = 5;
+
+    /**
      * Same as `CONSISTENCY_QUORUM`, but confined to the local data center. This
      * consistency level works only with `NetworkTopologyStrategy` replication.
      *
@@ -92,14 +93,6 @@ final class Cassandra
      * @see Cassandra\ExecutionOptions::__construct()
      */
     const CONSISTENCY_EACH_QUORUM = 7;
-
-    /**
-     * Consistency level ALL guarantees that data has been written to all
-     * Replica nodes.
-     *
-     * @see Cassandra\ExecutionOptions::__construct()
-     */
-    const CONSISTENCY_ALL = 5;
 
     /**
      * This is a serial consistency level, it is used in conditional updates,
@@ -122,18 +115,26 @@ final class Cassandra
     const CONSISTENCY_LOCAL_SERIAL = 9;
 
     /**
-     * Perform no verification of Cassandra nodes when using SSL encryption.
+     * Same as `CONSISTENCY_ONE`, but confined to the local data center. This
+     * consistency level works only with `NetworkTopologyStrategy` replication.
      *
-     * @see Cassandra\SSLOptions\Builder::withVerifyFlags()
+     * @see Cassandra\ExecutionOptions::__construct()
      */
-    const VERIFY_NONE          = 0;
+    const CONSISTENCY_LOCAL_ONE = 10;
 
     /**
-     * Verify presence and validity of SSL certificates of Cassandra.
+     * Perform no verification of nodes when using SSL encryption.
      *
      * @see Cassandra\SSLOptions\Builder::withVerifyFlags()
      */
-    const VERIFY_PEER_CERT     = 1;
+    const VERIFY_NONE = 0;
+
+    /**
+     * Verify presence and validity of SSL certificates.
+     *
+     * @see Cassandra\SSLOptions\Builder::withVerifyFlags()
+     */
+    const VERIFY_PEER_CERT = 1;
 
     /**
      * Verify that the IP address matches the SSL certificate’s common name or
@@ -160,6 +161,41 @@ final class Cassandra
     const BATCH_COUNTER = 2;
 
     /**
+     * Used to disable logging.
+     */
+    const LOG_DISABLED = 0;
+
+    /**
+     * Allow critical level logging.
+     */
+    const LOG_CRITICAL = 1;
+
+    /**
+     * Allow error level logging.
+     */
+    const LOG_ERROR = 2;
+
+    /**
+     * Allow warning level logging.
+     */
+    const LOG_WARN = 3;
+
+    /**
+     * Allow info level logging.
+     */
+    const LOG_INFO = 4;
+
+    /**
+     * Allow debug level logging.
+     */
+    const LOG_DEBUG = 5;
+
+    /**
+     * Allow trace level logging.
+     */
+    const LOG_TRACE = 6;
+
+    /**
      * When using a map, collection or set of type text, all of its elements
      * must be strings.
      *
@@ -167,7 +203,7 @@ final class Cassandra
      * @see Cassandra\Collection::__construct()
      * @see Cassandra\Map::__construct()
      */
-    const TYPE_TEXT = 'text';
+    const TYPE_TEXT = "text";
 
     /**
      * When using a map, collection or set of type ascii, all of its elements
@@ -177,7 +213,7 @@ final class Cassandra
      * @see Cassandra\Collection::__construct()
      * @see Cassandra\Map::__construct()
      */
-    const TYPE_ASCII = 'ascii';
+    const TYPE_ASCII = "ascii";
 
     /**
      * When using a map, collection or set of type varchar, all of its elements
@@ -187,7 +223,7 @@ final class Cassandra
      * @see Cassandra\Collection::__construct()
      * @see Cassandra\Map::__construct()
      */
-    const TYPE_VARCHAR = 'varchar';
+    const TYPE_VARCHAR = "varchar";
 
     /**
      * When using a map, collection or set of type bigint, all of its elements
@@ -197,7 +233,27 @@ final class Cassandra
      * @see Cassandra\Collection::__construct()
      * @see Cassandra\Map::__construct()
      */
-    const TYPE_BIGINT = 'bigint';
+    const TYPE_BIGINT = "bigint";
+
+    /**
+     * When using a map, collection or set of type smallint, all of its elements
+     * must be instances of Inet.
+     *
+     * @see Cassandra\Set::__construct()
+     * @see Cassandra\Collection::__construct()
+     * @see Cassandra\Map::__construct()
+     */
+    const TYPE_SMALLINT = "smallint";
+
+    /**
+     * When using a map, collection or set of type tinyint, all of its elements
+     * must be instances of Inet.
+     *
+     * @see Cassandra\Set::__construct()
+     * @see Cassandra\Collection::__construct()
+     * @see Cassandra\Map::__construct()
+     */
+    const TYPE_TINYINT = "tinyint";
 
     /**
      * When using a map, collection or set of type blob, all of its elements
@@ -207,17 +263,17 @@ final class Cassandra
      * @see Cassandra\Collection::__construct()
      * @see Cassandra\Map::__construct()
      */
-    const TYPE_BLOB = 'blob';
+    const TYPE_BLOB = "blob";
 
     /**
-     * When using a map, collection or set of type boolean, all of its elements
-     * must be booleans.
+     * When using a map, collection or set of type bool, all of its elements
+     * must be bools.
      *
      * @see Cassandra\Set::__construct()
      * @see Cassandra\Collection::__construct()
      * @see Cassandra\Map::__construct()
      */
-    const TYPE_BOOLEAN = 'boolean';
+    const TYPE_BOOLEAN = "boolean";
 
     /**
      * When using a map, collection or set of type counter, all of its elements
@@ -227,7 +283,7 @@ final class Cassandra
      * @see Cassandra\Collection::__construct()
      * @see Cassandra\Map::__construct()
      */
-    const TYPE_COUNTER = 'counter';
+    const TYPE_COUNTER = "counter";
 
     /**
      * When using a map, collection or set of type decimal, all of its elements
@@ -237,7 +293,7 @@ final class Cassandra
      * @see Cassandra\Collection::__construct()
      * @see Cassandra\Map::__construct()
      */
-    const TYPE_DECIMAL = 'decimal';
+    const TYPE_DECIMAL = "decimal";
 
     /**
      * When using a map, collection or set of type double, all of its elements
@@ -247,7 +303,7 @@ final class Cassandra
      * @see Cassandra\Collection::__construct()
      * @see Cassandra\Map::__construct()
      */
-    const TYPE_DOUBLE = 'double';
+    const TYPE_DOUBLE = "double";
 
     /**
      * When using a map, collection or set of type float, all of its elements
@@ -257,7 +313,7 @@ final class Cassandra
      * @see Cassandra\Collection::__construct()
      * @see Cassandra\Map::__construct()
      */
-    const TYPE_FLOAT = 'float';
+    const TYPE_FLOAT = "float";
 
     /**
      * When using a map, collection or set of type int, all of its elements
@@ -267,7 +323,7 @@ final class Cassandra
      * @see Cassandra\Collection::__construct()
      * @see Cassandra\Map::__construct()
      */
-    const TYPE_INT = 'int';
+    const TYPE_INT = "int";
 
     /**
      * When using a map, collection or set of type timestamp, all of its elements
@@ -277,7 +333,7 @@ final class Cassandra
      * @see Cassandra\Collection::__construct()
      * @see Cassandra\Map::__construct()
      */
-    const TYPE_TIMESTAMP = 'timestamp';
+    const TYPE_TIMESTAMP = "timestamp";
 
     /**
      * When using a map, collection or set of type uuid, all of its elements
@@ -287,7 +343,7 @@ final class Cassandra
      * @see Cassandra\Collection::__construct()
      * @see Cassandra\Map::__construct()
      */
-    const TYPE_UUID = 'uuid';
+    const TYPE_UUID = "uuid";
 
     /**
      * When using a map, collection or set of type varint, all of its elements
@@ -297,7 +353,7 @@ final class Cassandra
      * @see Cassandra\Collection::__construct()
      * @see Cassandra\Map::__construct()
      */
-    const TYPE_VARINT = 'varint';
+    const TYPE_VARINT = "varint";
 
     /**
      * When using a map, collection or set of type timeuuid, all of its elements
@@ -307,7 +363,7 @@ final class Cassandra
      * @see Cassandra\Collection::__construct()
      * @see Cassandra\Map::__construct()
      */
-    const TYPE_TIMEUUID = 'timeuuid';
+    const TYPE_TIMEUUID = "timeuuid";
 
     /**
      * When using a map, collection or set of type inet, all of its elements
@@ -317,29 +373,28 @@ final class Cassandra
      * @see Cassandra\Collection::__construct()
      * @see Cassandra\Map::__construct()
      */
-    const TYPE_INET = 'inet';
+    const TYPE_INET = "inet";
 
     /**
-     * Current version of the extension.
+     * The current version of the extension.
      */
-    const VERSION = '1.1';
+    const VERSION = "1.3.0-devel";
 
     /**
-     * Version of the cpp-driver the extension is compiled against.
+     * The version of the cpp-driver the extension is compiled against.
      */
-    const CPP_DRIVER_VERSION = '2.2.2';
+    const CPP_DRIVER_VERSION = "2.6.0-dev";
 
     /**
-     * Returns a Cluster Builder.
-     *
-     * @return Cassandra\Cluster\Builder a Cluster Builder instance
+     * Creates a new cluster builder for constructing a Cassandra\Cluster object.
+     * @return Cassandra\Cluster\Builder A cluster builder object with default settings
      */
-    public static function cluster() {}
+    public static function cluster() { }
 
     /**
-     * Returns SSL Options Builder.
-     *
-     * @return Cassandra\SSLOptions\Builder an SSLOptions Builder instance
+     * Creates a new ssl builder for constructing a Cassandra\SSLOptions object.
+     * @return Cassandra\SSLOptions\Builder A SSL options builder with default settings
      */
-    public static function ssl() {}
+    public static function ssl() { }
+
 }

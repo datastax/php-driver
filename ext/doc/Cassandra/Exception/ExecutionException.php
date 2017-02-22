@@ -25,4 +25,23 @@ namespace Cassandra\Exception;
  * @see ReadTimeoutException
  * @see WriteTimeoutException
  */
-class ExecutionException extends RuntimeException {}
+class ExecutionException extends RuntimeException  {
+
+    /**
+     * @param mixed $message
+     * @param mixed $code
+     * @param mixed $previous
+     */
+    public function __construct($message, $code, $previous) { }
+
+    /**
+     * @return mixed
+     */
+    public function __wakeup() { }
+
+    /**
+     * @return mixed
+     */
+    public function __toString() { }
+
+}

@@ -18,8 +18,6 @@
 
 namespace Cassandra\RetryPolicy;
 
-use Cassandra\RetryPolicy;
-
 /**
  * The default retry policy. This policy retries a query, using the
  * request's original consistency level, in the following cases:
@@ -29,8 +27,7 @@ use Cassandra\RetryPolicy;
  * * On unavailable, it will move to the next host.
  *
  * In all other cases the error will be returned.
- *
  */
-final class DefaultPolicy implements RetryPolicy
-{
+final class DefaultPolicy implements RetryPolicy {
+
 }

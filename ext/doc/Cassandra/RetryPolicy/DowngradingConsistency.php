@@ -18,8 +18,6 @@
 
 namespace Cassandra\RetryPolicy;
 
-use Cassandra\RetryPolicy;
-
 /**
  * A retry policy that will downgrade the consistency of a request in
  * an attempt to save a request in cases where there is any chance of success. A
@@ -41,7 +39,6 @@ use Cassandra\RetryPolicy;
  * Important: This policy may attempt to retry requests with a lower
  * consistency level. Using this policy can break consistency guarantees.
  */
-final class DowngradingConsistency implements RetryPolicy
-{
-}
+final class DowngradingConsistency implements RetryPolicy {
 
+}

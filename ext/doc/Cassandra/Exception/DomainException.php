@@ -18,9 +18,26 @@
 
 namespace Cassandra\Exception;
 
-use Cassandra\Exception;
-
 /**
- * Cassandra-specific domain exception.
+ * Cassandra domain exception.
  */
-class DomainException extends \DomainException implements Exception {}
+class DomainException extends \DomainException implements Exception {
+
+    /**
+     * @param mixed $message
+     * @param mixed $code
+     * @param mixed $previous
+     */
+    public function __construct($message, $code, $previous) { }
+
+    /**
+     * @return mixed
+     */
+    public function __wakeup() { }
+
+    /**
+     * @return mixed
+     */
+    public function __toString() { }
+
+}

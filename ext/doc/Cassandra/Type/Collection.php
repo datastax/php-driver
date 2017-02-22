@@ -18,38 +18,42 @@
 
 namespace Cassandra\Type;
 
-use Cassandra\Type;
+/**
+ * A class that represents the list type. The list type contains the type of the
+ * elements contain in the list.
+ */
+final class Collection extends Type {
 
-final class Collection extends Type
-{
+    private function __construct() { }
+
     /**
      * Returns "list"
      * @return string "list"
      */
-    public function name() {}
-
-    /**
-     * Returns type representation in CQL, e.g. `list<varchar>`
-     * @return string Type representation in CQL
-     */
-    public function __toString() {}
+    public function name() { }
 
     /**
      * Returns type of values
      * @return Type Type of values
      */
-    public function valueType() {}
+    public function valueType() { }
 
     /**
-     * Creates a new Cassandra\Collection from the given values.
+     * Returns type representation in CQL, e.g. `list<varchar>`
+     * @return string Type representation in CQL
+     */
+    public function __toString() { }
+
+    /**
+     * Creates a new Cassandra\Collection from the given values.  When no values
+     * given, creates an empty list.
      *
      * @throws Exception\InvalidArgumentException when values given are of a
      *                                            different type than what this
      *                                            list type expects.
-     *
-     * @param  mixed $value,...      One or more values to be added to the list.
-     *                               When no values given, creates an empty list.
-     * @return Cassandra\Collection  A list with given values.
+     * @param mixed $value ,...      One or more values to be added to the list.
+     * @return Cassandra\Collection A list with given values.
      */
-    public function create($value = null) {}
+    public function create($value) { }
+
 }

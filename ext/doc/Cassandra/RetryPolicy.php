@@ -21,6 +21,6 @@ namespace Cassandra;
 /**
  * Interface for retry policies.
  */
-interface RetryPolicy
-{
+interface RetryPolicy {
+
 }

@@ -18,9 +18,26 @@
 
 namespace Cassandra\Exception;
 
-use Cassandra\Exception;
-
 /**
- * Cassandra-specific runtime exception.
+ * Cassandra runtime exception.
  */
-class RuntimeException extends \RuntimeException implements Exception {}
+class RuntimeException extends \RuntimeException implements Exception {
+
+    /**
+     * @param mixed $message
+     * @param mixed $code
+     * @param mixed $previous
+     */
+    public function __construct($message, $code, $previous) { }
+
+    /**
+     * @return mixed
+     */
+    public function __wakeup() { }
+
+    /**
+     * @return mixed
+     */
+    public function __toString() { }
+
+}

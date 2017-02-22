@@ -24,17 +24,17 @@ namespace Cassandra;
  *
  * @see Session::prepareAsync()
  */
-final class FuturePreparedStatement implements Future
-{
+final class FuturePreparedStatement implements Future {
+
     /**
      * {@inheritDoc}
      *
      * @throws Exception\InvalidArgumentException
      * @throws Exception\TimeoutException
      *
-     * @param float|null $timeout
-     *
-     * @return mixed a value that the future has been resolved with
+     * @param int|double|null $timeout A timeout in seconds
+     * @return PreparedStatement A prepared statement
      */
-    public function get($timeout = null) {}
+    public function get($timeout) { }
+
 }

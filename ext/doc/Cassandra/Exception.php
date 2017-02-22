@@ -23,4 +23,6 @@ namespace Cassandra;
  * Makes it easy to catch all driver-related exceptions using
  * `catch (Cassandra\Exception $e)`.
  */
-interface Exception {}
+interface Exception {
+
+}

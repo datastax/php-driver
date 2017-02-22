@@ -23,53 +23,48 @@ namespace Cassandra\Cluster;
  *
  * @see \Cassandra::cluster()
  */
-final class Builder
-{
+final class Builder {
+
     /**
      * Returns a Cluster Instance.
-     *
      * @return \Cassandra\Cluster Cluster instance
      */
-    public function build() {}
+    public function build() { }
 
     /**
      * Configures default consistency for all requests.
      *
      * @param int $consistency A consistency level, must be one of Cassandra::CONSISTENCY_* values
-     *
      * @return Builder self
      */
-    public function withDefaultConsistency($consistency) {}
+    public function withDefaultConsistency($consistency) { }
 
     /**
      * Configures default page size for all results.
      * Set to `null` to disable paging altogether.
      *
      * @param int|null $pageSize default page size
-     *
      * @return Builder self
      */
-    public function withDefaultPageSize($pageSize) {}
+    public function withDefaultPageSize($pageSize) { }
 
     /**
      * Configures default timeout for future resolution in blocking operations
      * Set to null to disable (default).
      *
      * @param float|null $timeout Timeout value in seconds, can be fractional
-     *
      * @return Builder self
      */
-    public function withDefaultTimeout($timeout) {}
+    public function withDefaultTimeout($timeout) { }
 
     /**
      * Configures the initial endpoints. Note that the driver will
      * automatically discover and connect to the rest of the cluster.
      *
-     * @param string $host,... one or more ip addresses or hostnames
-     *
+     * @param string $host ,... one or more ip addresses or hostnames
      * @return Builder self
      */
-    public function withContactPoints($host) {}
+    public function withContactPoints($host) { }
 
     /**
      * Specify a different port to be used when connecting to the cluster.
@@ -77,84 +72,116 @@ final class Builder
      * @throws \Cassandra\Exception\InvalidArgumentException
      *
      * @param int $port a number between 1 and 65535
-     *
      * @return Builder self
      */
-    public function withPort($port) {}
+    public function withPort($port) { }
 
     /**
      * Configures this cluster to use a round robin load balancing policy.
-     *
      * @return Builder self
      */
-    public function withRoundRobinLoadBalancingPolicy() {}
+    public function withRoundRobinLoadBalancingPolicy() { }
 
     /**
      * Configures this cluster to use a datacenter aware round robin load balancing policy.
      *
-     * @param string $localDatacenter                          Name of the local datacenter
-     * @param int    $hostPerRemoteDatacenter                  Maximum number of hosts to try in remote datacenters
-     * @param bool   $useRemoteDatacenterForLocalConsistencies Allow using hosts from remote datacenters to execute statements with local consistencies
-     *
+     * @param string $localDatacenter Name of the local datacenter
+     * @param int $hostPerRemoteDatacenter Maximum number of hosts to try in remote datacenters
+     * @param bool $useRemoteDatacenterForLocalConsistencies Allow using hosts from remote datacenters to execute statements with local consistencies
      * @return Builder self
      */
-    public function withDatacenterAwareRoundRobinLoadBalancingPolicy($localDatacenter, $hostPerRemoteDatacenter, $useRemoteDatacenterForLocalConsistencies) {}
+    public function withDatacenterAwareRoundRobinLoadBalancingPolicy($localDatacenter, $hostPerRemoteDatacenter, $useRemoteDatacenterForLocalConsistencies) { }
+
+    /**
+     * Sets the blacklist hosts. Any host in the blacklist will be ignored and
+     * a conneciton will not be established. This is useful for ensuring that
+     * the driver will not connection to a predefied set of hosts.
+     *
+     * @param string $hosts A comma delimited list of addresses.
+     * @return Builder self
+     */
+    public function withBlackListHosts($hosts) { }
+
+    /**
+     * Sets the whitelist hosts. Any host not in the whitelist will be ignored
+     * and a connection will not be established. This policy is useful for
+     * ensuring that the driver will only connect to a predefined set of hosts.
+     *
+     * @param string $hosts A comma delimited list of addresses.
+     * @return Builder self
+     */
+    public function withWhiteListHosts($hosts) { }
+
+    /**
+     * Sets the blacklist datacenters. Any datacenter in the blacklist will be
+     * ignored and a connection will not be established to any host in those
+     * datacenters. This policy is useful for ensuring the driver will not
+     * connect to any host in a specific datacenter.
+     *
+     * @param string $dcs A comma delimited list of datacenters.
+     * @return Builder self
+     */
+    public function withBlackListDCs($dcs) { }
+
+    /**
+     * Sets the whitelist datacenters. Any host not in a whitelisted datacenter
+     * will be ignored. This policy is useful for ensuring the driver will only
+     * connect to hosts in specific datacenters.
+     *
+     * @param string $dcs A comma delimited list of datacenters.
+     * @return Builder self
+     */
+    public function withWhiteListDCs($dcs) { }
 
     /**
      * Enable token aware routing.
      *
      * @param bool $enabled Whether to enable token aware routing (optional)
-     *
      * @return Builder self
      */
-    public function withTokenAwareRouting($enabled = true) {}
+    public function withTokenAwareRouting($enabled) { }
 
     /**
-     * Configures cassandra authentication.
+     * Configures plain-text authentication.
      *
      * @param string $username Username
      * @param string $password Password
-     *
      * @return Builder self
      */
-    public function withCredentials($username, $password) {}
+    public function withCredentials($username, $password) { }
 
     /**
      * Timeout used for establishing TCP connections.
      *
      * @param float $timeout Timeout value in seconds, can be fractional
-     *
      * @return Builder self
      */
-    public function withConnectTimeout($timeout) {}
+    public function withConnectTimeout($timeout) { }
 
     /**
      * Timeout used for waiting for a response from a node.
      *
      * @param float $timeout Timeout value in seconds, can be fractional
-     *
      * @return Builder self
      */
-    public function withRequestTimeout($timeout) {}
+    public function withRequestTimeout($timeout) { }
 
     /**
      * Set up ssl context.
      *
-     * @param \Cassandra\SSLOptions $options a preconfigured ssl context
-     *
+     * @param Cassandra\SSLOptions $options a preconfigured ssl context
      * @return Builder self
      */
-    public function withSSL(\Cassandra\SSLOptions $options) {}
+    public function withSSL($options) { }
 
     /**
      * Enable persistent sessions and clusters.
      *
-     * @param bool $enabled whether to enable persistent sessions and clusters
      *                      (optional)
-     *
+     * @param bool $enabled whether to enable persistent sessions and clusters
      * @return Builder self
      */
-    public function withPersistentSessions($enabled = true) {}
+    public function withPersistentSessions($enabled) { }
 
     /**
      * Force the driver to use a specific binary protocol version.
@@ -166,12 +193,11 @@ final class Builder
      *
      * NOTE: Apache Cassandra 3.x supports protocol version 3 and 4 only
      *
-     * @param int $version the actual protocol version, only `1`, `2`, `3`, or
      *                     `4` are supported
-     *
+     * @param int $version the actual protocol version, only `1`, `2`, `3`, or
      * @return Builder self
      */
-    public function withProtocolVersion($version) {}
+    public function withProtocolVersion($version) { }
 
     /**
      * Total number of IO threads to use for handling the requests.
@@ -180,10 +206,9 @@ final class Builder
      *       of connections <= number of io threads * max connections per host
      *
      * @param int $count total number of threads.
-     *
      * @return Builder self
      */
-    public function withIOThreads($count) {}
+    public function withIOThreads($count) { }
 
     /**
      * Set the size of connection pools used by the driver. Pools are fixed
@@ -194,70 +219,63 @@ final class Builder
      * until only the core number of connections is left.
      *
      * @param int $core minimum connections to keep open to any given host
-     * @param int $max  maximum connections to keep open to any given host
-     *
+     * @param int $max maximum connections to keep open to any given host
      * @return Builder self
      */
-    public function withConnectionsPerHost($core = 1, $max = 2) {}
+    public function withConnectionsPerHost($core, $max) { }
 
     /**
      * Specify interval in seconds that the driver should wait before attempting
      * to re-establish a closed connection.
      *
      * @param float $interval interval in seconds
-     *
      * @return Builder self
      */
-    public function withReconnectInterval($interval) {}
+    public function withReconnectInterval($interval) { }
 
     /**
      * Enables/disables latency-aware routing.
      *
      * @param bool $enabled whether to actually enable or disable the routing.
-     *
      * @return Builder self
      */
-    public function withLatencyAwareRouting($enabled = true) {}
+    public function withLatencyAwareRouting($enabled) { }
 
     /**
      * Disables nagle algorithm for lower latency.
      *
      * @param bool $enabled whether to actually enable or disable nodelay.
-     *
      * @return Builder self
      */
-    public function withTCPNodelay($enabled = true) {}
+    public function withTCPNodelay($enabled) { }
 
     /**
      * Enables/disables TCP keepalive.
      *
-     * @param float|null $delay the period of inactivity in seconds, after
      *                          which the keepalive probe should be sent over
      *                          the connection. If set to `null`, disables
      *                          keepalive probing.
-     *
+     * @param float|null $delay the period of inactivity in seconds, after
      * @return Builder self
      */
-    public function withTCPKeepalive($delay) {}
+    public function withTCPKeepalive($delay) { }
 
     /**
      * Configures the retry policy.
      *
-     * @param RetryPolicy $policy the retry policy to use.
-     *
+     * @param Cassandra\Cluster\RetryPolicy $policy the retry policy to use.
      * @return Builder self
      */
-    public function withRetryPolicy(RetryPolicy $policy) {}
+    public function withRetryPolicy($policy) { }
 
     /**
      * Sets the timestamp generator.
      *
-     * @param Cassandra\TimestampGenerator $generator A timestamp generator that will be used
      *                                                to generate timestamps for statements.
-     *
+     * @param Cassandra\TimestampGenerator $generator A timestamp generator that will be used
      * @return Builder self
      */
-    public function withTimestampGenerator($generator) {}
+    public function withTimestampGenerator($generator) { }
 
     /**
      * Enables/disables Schema Metadata.
@@ -267,11 +285,10 @@ final class Builder
      * routing and $session->schema() will always return an empty object. This
      * can be useful for reducing the startup overhead of short-lived sessions.
      *
-     * @param bool $enable whether the driver fetches and maintains schema metadata.
-     *
+     * @param bool $enabled whether the driver fetches and maintains schema metadata.
      * @return Builder self
      */
-    public function withSchemaMetadata($enable = true) {}
+    public function withSchemaMetadata($enabled) { }
 
     /**
      * Enables/disables Hostname Resolution.
@@ -280,11 +297,10 @@ final class Builder
      * reverse IP lookup. This is useful for authentication (Kerberos) or
      * encryption SSL services that require a valid hostname for verification.
      *
-     * @param bool $enable whether the driver uses hostname resolution.
-     *
+     * @param bool $enabled whether the driver uses hostname resolution.
      * @return Builder self
      */
-    public function withHostnameResolution($enable = true) {}
+    public function withHostnameResolution($enabled) { }
 
     /**
      * Enables/disables Randomized Contact Points.
@@ -295,11 +311,10 @@ final class Builder
      *
      * Note: This setting should only be disabled for debugging and testing.
      *
-     * @param bool $enable whether the driver uses randomized contact points.
-     *
+     * @param bool $enabled whether the driver uses randomized contact points.
      * @return Builder self
      */
-    public function withRandomizedContactPoints($enable = true) {}
+    public function withRandomizedContactPoints($enabled) { }
 
     /**
      * Specify interval in seconds that the driver should wait before attempting
@@ -308,9 +323,8 @@ final class Builder
      * preventing intermediate network devices from dropping connections.
      *
      * @param float $interval interval in seconds (0 to disable heartbeat).
-     *
      * @return Builder self
      */
-    public function withConnectionHeartbeatInterval($interval) {}
+    public function withConnectionHeartbeatInterval($interval) { }
 
 }

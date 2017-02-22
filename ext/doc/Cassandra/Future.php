@@ -26,17 +26,17 @@ namespace Cassandra;
  * @see Session::prepareAsync()
  * @see Session::closeAsync()
  */
-interface Future
-{
+interface Future {
+
     /**
      * Waits for a given future resource to resolve and throws errors if any.
      *
      * @throws Exception\InvalidArgumentException
      * @throws Exception\TimeoutException
      *
-     * @param float|null $timeout
-     *
+     * @param int|double|null $timeout A timeout in seconds
      * @return mixed a value that the future has been resolved with
      */
-    public function get($timeout = null);
+    public function get($timeout);
+
 }

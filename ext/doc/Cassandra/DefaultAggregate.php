@@ -21,68 +21,60 @@ namespace Cassandra;
 /**
  * A PHP representation of an aggregate
  */
-final class DefaultAggregate implements Aggregate
-{
+final class DefaultAggregate implements Aggregate {
+
     /**
      * {@inheritDoc}
-     *
      * @return string Full name of the aggregate including name and types
      */
-    public function name() {}
+    public function name() { }
 
     /**
      * {@inheritDoc}
-     *
      * @return string Simple name of the aggregate
      */
-    public function simpleName() {}
+    public function simpleName() { }
 
     /**
      * {@inheritDoc}
-     *
      * @return array Argument types of the aggregate
      */
-    public function argumentTypes() {}
+    public function argumentTypes() { }
 
     /**
      * {@inheritDoc}
-     *
-     * @return Cassandra\Function Final public function of the aggregate
-     */
-    public function finalFunction() {}
-
-    /**
-     * {@inheritDoc}
-     *
      * @return Cassandra\Function State public function of the aggregate
      */
-    public function stateFunction() {}
+    public function stateFunction() { }
 
     /**
      * {@inheritDoc}
-     *
+     * @return Cassandra\Function Final public function of the aggregate
+     */
+    public function finalFunction() { }
+
+    /**
+     * {@inheritDoc}
      * @return Cassandra\Value Initial condition of the aggregate
      */
-    public function initialCondition() {}
+    public function initialCondition() { }
 
     /**
      * {@inheritDoc}
-     *
-     * @return Cassandra\Type Return type of the aggregate
-     */
-    public function returnType() {}
-
-    /**
-     * {@inheritDoc}
-     *
      * @return Cassandra\Type State type of the aggregate
      */
-    public function stateType() {}
+    public function stateType() { }
 
     /**
      * {@inheritDoc}
-     *
+     * @return Cassandra\Type Return type of the aggregate
+     */
+    public function returnType() { }
+
+    /**
+     * {@inheritDoc}
      * @return string Signature of the aggregate (same as name())
      */
-    public function signature() {}
+    public function signature() { }
+
 }

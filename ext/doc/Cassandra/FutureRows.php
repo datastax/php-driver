@@ -23,17 +23,17 @@ namespace Cassandra;
  *
  * @see Session::executeAsync()
  */
-final class FutureRows implements Future
-{
+final class FutureRows implements Future {
+
     /**
      * {@inheritDoc}
      *
      * @throws Exception\InvalidArgumentException
      * @throws Exception\TimeoutException
      *
-     * @param float|null $timeout
-     *
-     * @return mixed a value that the future has been resolved with
+     * @param int|double|null $timeout A timeout in seconds
+     * @return Rows|null The result set
      */
-    public function get($timeout = null) {}
+    public function get($timeout) { }
+
 }

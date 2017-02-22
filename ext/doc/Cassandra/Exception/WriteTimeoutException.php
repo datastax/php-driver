@@ -23,4 +23,23 @@ namespace Cassandra\Exception;
  * from the required number of replica nodes in time during a write.
  * @see https://github.com/apache/cassandra/blob/cassandra-2.1/doc/native_protocol_v1.spec#L683-L708 Description of WriteTimeout error in the native protocol spec
  */
-class WriteTimeoutException extends ExecutionException {}
+class WriteTimeoutException extends ExecutionException  {
+
+    /**
+     * @param mixed $message
+     * @param mixed $code
+     * @param mixed $previous
+     */
+    public function __construct($message, $code, $previous) { }
+
+    /**
+     * @return mixed
+     */
+    public function __wakeup() { }
+
+    /**
+     * @return mixed
+     */
+    public function __toString() { }
+
+}

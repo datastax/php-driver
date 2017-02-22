@@ -21,4 +21,23 @@ namespace Cassandra\Exception;
 /**
  * AlreadyExistsException is raised when attempting to re-create existing keyspace.
  */
-class AlreadyExistsException extends ConfigurationException {}
+class AlreadyExistsException extends ConfigurationException  {
+
+    /**
+     * @param mixed $message
+     * @param mixed $code
+     * @param mixed $previous
+     */
+    public function __construct($message, $code, $previous) { }
+
+    /**
+     * @return mixed
+     */
+    public function __wakeup() { }
+
+    /**
+     * @return mixed
+     */
+    public function __toString() { }
+
+}

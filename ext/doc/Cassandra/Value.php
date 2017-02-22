@@ -40,12 +40,12 @@ namespace Cassandra;
  * @see Numeric
  * @see UuidInterface
  */
-interface Value
-{
+interface Value {
+
     /**
      * The type of represented by the value.
-     *
      * @return Type
      */
-    function type();
+    public function type();
+
 }

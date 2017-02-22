@@ -21,59 +21,60 @@ namespace Cassandra;
 /**
  * A PHP representation of an aggregate
  */
-interface Aggregate
-{
+interface Aggregate {
+
     /**
      * Returns the full name of the aggregate
      * @return string Full name of the aggregate including name and types
      */
-    function name();
+    public function name();
 
     /**
      * Returns the simple name of the aggregate
      * @return string Simple name of the aggregate
      */
-    function simpleName();
+    public function simpleName();
 
     /**
      * Returns the argument types of the aggregate
      * @return array Argument types of the aggregate
      */
-    function argumentTypes();
+    public function argumentTypes();
 
     /**
      * Returns the final function of the aggregate
      * @return Cassandra\Function Final function of the aggregate
      */
-    function finalFunction();
+    public function finalFunction();
 
     /**
      * Returns the state function of the aggregate
      * @return Cassandra\Function State function of the aggregate
      */
-    function stateFunction();
+    public function stateFunction();
 
     /**
      * Returns the initial condition of the aggregate
      * @return Cassandra\Value Initial condition of the aggregate
      */
-    function initialCondition();
+    public function initialCondition();
 
     /**
      * Returns the return type of the aggregate
      * @return Cassandra\Type Return type of the aggregate
      */
-    function returnType();
+    public function returnType();
 
     /**
      * Returns the state type of the aggregate
      * @return Cassandra\Type State type of the aggregate
      */
-    function stateType();
+    public function stateType();
 
     /**
      * Returns the signature of the aggregate
      * @return string Signature of the aggregate (same as name())
      */
-    function signature();
+    public function signature();
+
 }

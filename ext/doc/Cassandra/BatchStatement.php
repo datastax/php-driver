@@ -37,24 +37,23 @@ namespace Cassandra;
  * @see Cassandra::BATCH_UNLOGGED
  * @see Cassandra::BATCH_COUNTER
  */
-final class BatchStatement implements Statement
-{
+final class BatchStatement implements Statement {
+
     /**
      * Creates a new batch statement.
-     *
      * @param int $type must be one of Cassandra::BATCH_* (default: Cassandra::BATCH_LOGGED).
      */
-    public function __construct($type = \Cassandra::BATCH_LOGGED) {}
+    public function __construct($type) { }
 
     /**
      * Adds a statement to this batch.
      *
-     * @param string|Statement $statement string or statement to add
-     * @param array|null $arguments positional or named arguments
      *
      * @throws Exception\InvalidArgumentException
-     *
+     * @param string|Statement $statement string or statement to add
+     * @param array|null $arguments positional or named arguments (optional)
      * @return BatchStatement self
      */
-    public function add($statement, array $arguments = null) {}
+    public function add($statement, $arguments) { }
+
 }

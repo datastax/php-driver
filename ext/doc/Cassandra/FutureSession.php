@@ -23,17 +23,17 @@ namespace Cassandra;
  *
  * @see Cluster::connectAsync()
  */
-final class FutureSession implements Future
-{
+final class FutureSession implements Future {
+
     /**
      * {@inheritDoc}
      *
      * @throws Exception\InvalidArgumentException
      * @throws Exception\TimeoutException
      *
-     * @param float|null $timeout
-     *
-     * @return mixed a value that the future has been resolved with
+     * @param int|double|null $timeout A timeout in seconds
+     * @return Session A connected session
      */
-    public function get($timeout = null) {}
+    public function get($timeout) { }
+
 }

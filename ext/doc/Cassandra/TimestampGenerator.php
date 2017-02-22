@@ -21,6 +21,6 @@ namespace Cassandra;
 /**
  * Interface for timestamp generators.
  */
-interface TimestampGenerator
-{
+interface TimestampGenerator {
+
 }

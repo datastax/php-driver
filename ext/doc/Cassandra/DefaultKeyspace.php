@@ -21,48 +21,97 @@ namespace Cassandra;
 /**
  * A PHP representation of a keyspace
  */
-final class DefaultKeyspace implements Keyspace
-{
+final class DefaultKeyspace implements Keyspace {
+
     /**
      * {@inheritDoc}
-     *
      * @return string Name
      */
-    public function name() {}
+    public function name() { }
 
     /**
      * {@inheritDoc}
-     *
      * @return string Replication class
      */
-    public function replicationClassName() {}
+    public function replicationClassName() { }
 
     /**
      * {@inheritDoc}
-     *
      * @return Cassandra\Map Replication options
      */
-    public function replicationOptions() {}
+    public function replicationOptions() { }
 
     /**
      * {@inheritDoc}
-     *
      * @return string Whether durable writes are enabled
      */
-    public function hasDurableWrites() {}
+    public function hasDurableWrites() { }
 
     /**
      * {@inheritDoc}
-     *
-     * @param  string          $name  Table name
-     * @return Cassandra\Table        Table instance or null
+     * @param string $name Table name
+     * @return Cassandra\Table Table instance or null
      */
-    public function table($name) {}
+    public function table($name) { }
 
     /**
      * {@inheritDoc}
-     *
      * @return array An array of `Cassandra\Table` instances
      */
-    public function tables() {}
+    public function tables() { }
+
+    /**
+     * {@inheritDoc}
+     * @param Type\UserType $name
+     * @return Type\UserType|null {@inheritDoc}
+     */
+    public function userType($name) { }
+
+    /**
+     * {@inheritDoc}
+     * @return array {@inheritDoc}
+     */
+    public function userTypes() { }
+
+    /**
+     * {@inheritDoc}
+     * @param string $name {@inheritDoc}
+     * @return MaterizedView|null {@inheritDoc}
+     */
+    public function materializedView($name) { }
+
+    /**
+     * {@inheritDoc}
+     * @return array {@inheritDoc}
+     */
+    public function materializedViews() { }
+
+    /**
+     * {@inheritDoc}
+     * @param string $name {@inheritDoc}
+     * @param string|Type $params {@inheritDoc}
+     * @return Function|null {@inheritDoc}
+     */
+    public function function_($name, ...$params) { }
+
+    /**
+     * {@inheritDoc}
+     * @return array {@inheritDoc}
+     */
+    public function functions() { }
+
+    /**
+     * {@inheritDoc}
+     * @param string $name {@inheritDoc}
+     * @param string|Type $params {@inheritDoc}
+     * @return Aggregate|null {@inheritDoc}
+     */
+    public function aggregate($name, ...$params) { }
+
+    /**
+     * {@inheritDoc}
+     * @return array {@inheritDoc}
+     */
+    public function aggregates() { }
+
 }

@@ -21,17 +21,17 @@ namespace Cassandra;
 /**
  * A future that always resolves in a value.
  */
-final class FutureValue implements Future
-{
+final class FutureValue implements Future {
+
     /**
      * {@inheritDoc}
      *
      * @throws Exception\InvalidArgumentException
      * @throws Exception\TimeoutException
      *
-     * @param float|null $timeout
-     *
-     * @return mixed a value that the future has been resolved with
+     * @param int|double|null $timeout A timeout in seconds
+     * @return mixed A value
      */
-    public function get($timeout = null) {}
+    public function get($timeout) { }
+
 }

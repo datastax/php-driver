@@ -22,4 +22,23 @@ namespace Cassandra\Exception;
  * TruncateException is raised when something went wrong during table
  * truncation.
  */
-class TruncateException extends ExecutionException {}
+class TruncateException extends ExecutionException  {
+
+    /**
+     * @param mixed $message
+     * @param mixed $code
+     * @param mixed $previous
+     */
+    public function __construct($message, $code, $previous) { }
+
+    /**
+     * @return mixed
+     */
+    public function __wakeup() { }
+
+    /**
+     * @return mixed
+     */
+    public function __toString() { }
+
+}

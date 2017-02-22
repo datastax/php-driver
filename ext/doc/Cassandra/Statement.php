@@ -25,6 +25,6 @@ namespace Cassandra;
  * @see PreparedStatement
  * @see BatchStatement
  */
-interface Statement
-{
+interface Statement {
+
 }
