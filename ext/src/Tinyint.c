@@ -76,19 +76,43 @@ php_driver_tinyint_init(INTERNAL_FUNCTION_PARAMETERS)
   } else {
     if (Z_TYPE_P(value) == IS_LONG) {
       number = (cass_int32_t) Z_LVAL_P(value);
+
+      if (number < INT8_MIN || number > INT8_MAX) {
+        zend_throw_exception_ex(php_driver_range_exception_ce, 0 TSRMLS_CC,
+          "value must be between -128 and 127, %ld given", Z_LVAL_P(value));
+        return;
+      }
     } else if (Z_TYPE_P(value) == IS_DOUBLE) {
       number = (cass_int32_t) Z_DVAL_P(value);
+
+      if (number < INT8_MIN || number > INT8_MAX) {
+        zend_throw_exception_ex(php_driver_range_exception_ce, 0 TSRMLS_CC,
+          "value must be between -128 and 127, %g given", Z_DVAL_P(value));
+        return;
+      }
     } else if (Z_TYPE_P(value) == IS_STRING) {
       if (!php_driver_parse_int(Z_STRVAL_P(value), Z_STRLEN_P(value),
                                         &number TSRMLS_CC)) {
+        // If the parsing function fails, it would have set an exception. If it's
+        // a range error, the error message would be wrong because the parsing
+        // function supports all 32-bit values, so the "valid" range it reports would
+        // be too large for Tinyint. Reset the exception in that case.
+
+        if (errno == ERANGE) {
+          zend_throw_exception_ex(php_driver_range_exception_ce, 0 TSRMLS_CC,
+            "value must be between -128 and 127, %s given", Z_STRVAL_P(value));
+        }
+        return;
+      }
+
+      if (number < INT8_MIN || number > INT8_MAX) {
+        zend_throw_exception_ex(php_driver_range_exception_ce, 0 TSRMLS_CC,
+          "value must be between -128 and 127, %s given", Z_STRVAL_P(value));
         return;
       }
     } else {
       INVALID_ARGUMENT(value, "a long, a double, a numeric string or a " \
                               PHP_DRIVER_NAMESPACE "\\Tinyint");
-    }
-    if (number < INT8_MIN || number > INT8_MAX) {
-      INVALID_ARGUMENT(value, ("between -128 and 127"));
     }
     self->data.tinyint.value = (cass_int8_t) number;
   }

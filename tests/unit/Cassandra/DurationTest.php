@@ -49,7 +49,7 @@ class DurationTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException InvalidArgumentException
+     * @expectedException RangeException
      * @expectedExceptionMessage nanos must be between -2147483648 and 2147483647, 8589934592 given
      */
     public function testStringArgOverflowError()
@@ -58,7 +58,7 @@ class DurationTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException InvalidArgumentException
+     * @expectedException RangeException
      * @expectedExceptionMessage nanos must be between -2147483648 and 2147483647, -8589934592 given
      */
     public function testStringArgUnderflowError()
@@ -67,7 +67,7 @@ class DurationTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException InvalidArgumentException
+     * @expectedException RangeException
      * @expectedExceptionMessage nanos must be between -2147483648 and 2147483647, 8589934592 given
      */
     public function testBigintArgOverflowError()
@@ -76,7 +76,7 @@ class DurationTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException InvalidArgumentException
+     * @expectedException RangeException
      * @expectedExceptionMessage nanos must be between -2147483648 and 2147483647, -8589934592 given
      */
     public function testBigintArgUnderflowError()
@@ -85,7 +85,7 @@ class DurationTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException InvalidArgumentException
+     * @expectedException RangeException
      * @expectedExceptionMessageRegExp /days must be between -2147483648 and 2147483647, 8\.?58993.* given/
      */
     public function testLongArgOverflowError()
@@ -94,7 +94,7 @@ class DurationTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException InvalidArgumentException
+     * @expectedException RangeException
      * @expectedExceptionMessageRegExp /days must be between -2147483648 and 2147483647, -8\.?58993.* given/
      */
     public function testLongArgUnderflowError()
@@ -103,7 +103,7 @@ class DurationTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException InvalidArgumentException
+     * @expectedException RangeException
      * @expectedExceptionMessage months must be between -2147483648 and 2147483647, 8.58993e+9 given
      */
     public function testDoubleArgOverflowError()
@@ -112,7 +112,7 @@ class DurationTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException InvalidArgumentException
+     * @expectedException RangeException
      * @expectedExceptionMessage months must be between -2147483648 and 2147483647, -8.58993e+9 given
      */
     public function testDoubleArgUnderflowError()

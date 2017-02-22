@@ -29,8 +29,8 @@ static int get_int32(zval* value, cass_int32_t* destination, const char* param_n
     cass_int64_t long_value = Z_LVAL_P(value);
 
     if (long_value > INT32_MAX || long_value < INT32_MIN) {
-      zend_throw_exception_ex(php_driver_invalid_argument_exception_ce, 0 TSRMLS_CC,
-        "%s must be between %d and %d, %lld given",
+      zend_throw_exception_ex(php_driver_range_exception_ce, 0 TSRMLS_CC,
+        "%s must be between %d and %d, " LL_FORMAT " given",
         param_name, INT32_MIN, INT32_MAX, long_value);
       return 0;
     }
@@ -40,7 +40,7 @@ static int get_int32(zval* value, cass_int32_t* destination, const char* param_n
     double double_value = Z_DVAL_P(value);
 
     if (double_value > INT32_MAX || double_value < INT32_MIN) {
-      zend_throw_exception_ex(php_driver_invalid_argument_exception_ce, 0 TSRMLS_CC,
+      zend_throw_exception_ex(php_driver_range_exception_ce, 0 TSRMLS_CC,
         "%s must be between %d and %d, %g given",
         param_name, INT32_MIN, INT32_MAX, double_value);
       return 0;
@@ -53,8 +53,8 @@ static int get_int32(zval* value, cass_int32_t* destination, const char* param_n
     }
 
     if (parsed_big_int > INT32_MAX || parsed_big_int < INT32_MIN) {
-      zend_throw_exception_ex(php_driver_invalid_argument_exception_ce, 0 TSRMLS_CC,
-        "%s must be between %d and %d, %lld given",
+      zend_throw_exception_ex(php_driver_range_exception_ce, 0 TSRMLS_CC,
+        "%s must be between %d and %d, " LL_FORMAT " given",
         param_name, INT32_MIN, INT32_MAX, parsed_big_int);
       return 0;
     }
@@ -65,8 +65,8 @@ static int get_int32(zval* value, cass_int32_t* destination, const char* param_n
     cass_int64_t bigint_value = bigint->data.bigint.value;
 
     if (bigint_value > INT32_MAX || bigint_value < INT32_MIN) {
-      zend_throw_exception_ex(php_driver_invalid_argument_exception_ce, 0 TSRMLS_CC,
-        "%s must be between %d and %d, %lld given",
+      zend_throw_exception_ex(php_driver_range_exception_ce, 0 TSRMLS_CC,
+        "%s must be between %d and %d, " LL_FORMAT " given",
         param_name, INT32_MIN, INT32_MAX, bigint_value);
       return 0;
     }

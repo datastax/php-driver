@@ -55,11 +55,7 @@ static int
 to_string(zval *result, php_driver_numeric *bigint TSRMLS_DC)
 {
   char *string;
-#ifdef WIN32
-  spprintf(&string, 0, "%I64d", (long long int) bigint->data.bigint.value);
-#else
-  spprintf(&string, 0, "%lld", (long long int) bigint->data.bigint.value);
-#endif
+  spprintf(&string, 0, LL_FORMAT, (long long int) bigint->data.bigint.value);
   PHP5TO7_ZVAL_STRING(result, string);
   efree(string);
   return SUCCESS;
@@ -85,6 +81,15 @@ php_driver_bigint_init(INTERNAL_FUNCTION_PARAMETERS)
   if (Z_TYPE_P(value) == IS_LONG) {
     self->data.bigint.value = (cass_int64_t) Z_LVAL_P(value);
   } else if (Z_TYPE_P(value) == IS_DOUBLE) {
+    double double_value = Z_DVAL_P(value);
+
+    if (double_value > INT64_MAX || double_value < INT64_MIN) {
+      zend_throw_exception_ex(php_driver_range_exception_ce, 0 TSRMLS_CC,
+        "value must be between " LL_FORMAT " and " LL_FORMAT ", %g given",
+        INT64_MIN, INT64_MAX, double_value);
+      return;
+    }
+
     self->data.bigint.value = (cass_int64_t) Z_DVAL_P(value);
   } else if (Z_TYPE_P(value) == IS_STRING) {
     if (!php_driver_parse_bigint(Z_STRVAL_P(value), Z_STRLEN_P(value),

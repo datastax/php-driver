@@ -36,6 +36,12 @@ typedef int pid_t;
 #include <process.h>
 #endif
 
+#ifdef WIN32
+#  define LL_FORMAT "%I64d"
+#else
+#  define LL_FORMAT "%lld"
+#endif
+
 #if PHP_VERSION_ID < 50600
 #  error PHP 5.6.0 or later is required in order to build the driver
 #endif

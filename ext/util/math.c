@@ -147,11 +147,8 @@ php_driver_parse_int(char* in, int in_len, cass_int32_t* number TSRMLS_DC)
   }
 
   if (errno == ERANGE) {
-    if (*number == INT_MAX) {
-      zend_throw_exception_ex(php_driver_range_exception_ce, 0 TSRMLS_CC, "Value is too big for int: '%s'", in);
-    } else {
-      zend_throw_exception_ex(php_driver_range_exception_ce, 0 TSRMLS_CC, "Value is too small for int: '%s'", in);
-    }
+    zend_throw_exception_ex(php_driver_range_exception_ce, 0 TSRMLS_CC,
+      "value must be between %d and %d, %s given", INT_MIN, INT_MAX, in);
     return 0;
   }
 
@@ -200,11 +197,8 @@ php_driver_parse_bigint(char *in, int in_len, cass_int64_t *number TSRMLS_DC)
   }
 
   if (errno == ERANGE) {
-    if (*number == INT64_MAX) {
-      zend_throw_exception_ex(php_driver_range_exception_ce, 0 TSRMLS_CC, "Value is too big for bigint: '%s'", in);
-    } else {
-      zend_throw_exception_ex(php_driver_range_exception_ce, 0 TSRMLS_CC, "Value is too small for bigint: '%s'", in);
-    }
+    zend_throw_exception_ex(php_driver_range_exception_ce, 0 TSRMLS_CC,
+      "value must be between " LL_FORMAT " and " LL_FORMAT ", %s given", INT64_MIN, INT64_MAX, in);
     return 0;
   }
 
