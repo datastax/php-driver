@@ -103,7 +103,7 @@ Cassandra\Type:
         comment: time type
         type: Cassandra\Type
     duration:
-      comment: Get reperesentation of duration type
+      comment: Get representation of duration type
       return:
         comment: duration type
         type: Cassandra\Type
