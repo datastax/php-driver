@@ -109,6 +109,12 @@ php_driver_validate_object(zval *object, zval *ztype TSRMLS_DC)
     }
 
     return 1;
+  case CASS_VALUE_TYPE_DURATION:
+    if (!INSTANCE_OF(php_driver_duration_ce)) {
+      EXPECTING_VALUE("an instance of " PHP_DRIVER_NAMESPACE "\\Duration");
+    }
+
+    return 1;
   case CASS_VALUE_TYPE_TIMESTAMP:
     if (!INSTANCE_OF(php_driver_timestamp_ce)) {
       EXPECTING_VALUE("an instance of " PHP_DRIVER_NAMESPACE "\\Timestamp");
@@ -237,6 +243,8 @@ php_driver_value_type(char *type, CassValueType *value_type TSRMLS_DC)
     *value_type = CASS_VALUE_TYPE_COUNTER;
   } else if (strcmp("decimal", type) == 0) {
     *value_type = CASS_VALUE_TYPE_DECIMAL;
+  } else if (strcmp("duration", type) == 0) {
+    *value_type = CASS_VALUE_TYPE_DURATION;
   } else if (strcmp("double", type) == 0) {
     *value_type = CASS_VALUE_TYPE_DOUBLE;
   } else if (strcmp("float", type) == 0) {
@@ -281,6 +289,7 @@ php_driver_collection_append(CassCollection *collection, zval *value, CassValueT
   php_driver_time       *time;
   php_driver_uuid       *uuid;
   php_driver_inet       *inet;
+  php_driver_duration   *duration;
   size_t                size;
   cass_byte_t          *data;
   php_driver_collection *coll;
@@ -361,6 +370,10 @@ php_driver_collection_append(CassCollection *collection, zval *value, CassValueT
     CHECK_ERROR(cass_collection_append_decimal(collection, data, size, numeric->data.decimal.scale));
     free(data);
     break;
+  case CASS_VALUE_TYPE_DURATION:
+    duration = PHP_DRIVER_GET_DURATION(value);
+    CHECK_ERROR(cass_collection_append_duration(collection, duration->months, duration->days, duration->nanos));
+    break;
   case CASS_VALUE_TYPE_INET:
     inet = PHP_DRIVER_GET_INET(value);
     CHECK_ERROR(cass_collection_append_inet(collection, inet->inet));
@@ -414,6 +427,7 @@ php_driver_tuple_set(CassTuple *tuple, php5to7_ulong index, zval *value, CassVal
   php_driver_time       *time;
   php_driver_uuid       *uuid;
   php_driver_inet       *inet;
+  php_driver_duration   *duration;
   size_t                size;
   cass_byte_t          *data;
   php_driver_collection *coll;
@@ -499,6 +513,10 @@ php_driver_tuple_set(CassTuple *tuple, php5to7_ulong index, zval *value, CassVal
     CHECK_ERROR(cass_tuple_set_decimal(tuple, index, data, size, numeric->data.decimal.scale));
     free(data);
     break;
+  case CASS_VALUE_TYPE_DURATION:
+    duration = PHP_DRIVER_GET_DURATION(value);
+    CHECK_ERROR(cass_tuple_set_duration(tuple, index, duration->months, duration->days, duration->nanos));
+    break;
   case CASS_VALUE_TYPE_INET:
     inet = PHP_DRIVER_GET_INET(value);
     CHECK_ERROR(cass_tuple_set_inet(tuple, index, inet->inet));
@@ -554,6 +572,7 @@ php_driver_user_type_set(CassUserType *ut,
   php_driver_time       *time;
   php_driver_uuid       *uuid;
   php_driver_inet       *inet;
+  php_driver_duration   *duration;
   size_t                size;
   cass_byte_t          *data;
   php_driver_collection *coll;
@@ -638,6 +657,10 @@ php_driver_user_type_set(CassUserType *ut,
     data = (cass_byte_t *) export_twos_complement(numeric->data.decimal.value, &size);
     CHECK_ERROR(cass_user_type_set_decimal_by_name(ut, name, data, size, numeric->data.decimal.scale));
     free(data);
+    break;
+  case CASS_VALUE_TYPE_DURATION:
+    duration = PHP_DRIVER_GET_DURATION(value);
+    CHECK_ERROR(cass_user_type_set_duration_by_name(ut, name, duration->months, duration->days, duration->nanos));
     break;
   case CASS_VALUE_TYPE_INET:
     inet = PHP_DRIVER_GET_INET(value);
