@@ -2,6 +2,7 @@
 #include "php_driver_globals.h"
 #include "php_driver_types.h"
 
+#include "util/hash.h"
 #include "util/math.h"
 #include "util/types.h"
 
@@ -215,7 +216,7 @@ static zend_function_entry php_driver_duration_methods[] = {
   PHP_FE_END
 };
 
-static zend_object_handlers php_driver_duration_handlers;
+static php_driver_value_handlers php_driver_duration_handlers;
 
 static HashTable *
 php_driver_duration_properties(zval *object TSRMLS_DC)
@@ -270,6 +271,19 @@ php_driver_duration_compare(zval *obj1, zval *obj2 TSRMLS_DC)
   return (left->nanos == right->nanos) ? 0 : 1;
 }
 
+static unsigned
+php_driver_duration_hash_value(zval *obj TSRMLS_DC)
+{
+  php_driver_duration *self = PHP_DRIVER_GET_DURATION(obj);
+  unsigned hashv = 0;
+
+  hashv = php_driver_combine_hash(hashv, (unsigned) self->months);
+  hashv = php_driver_combine_hash(hashv, (unsigned) self->days);
+  hashv = php_driver_combine_hash(hashv, (unsigned) self->nanos);
+
+  return hashv;
+}
+
 static void
 php_driver_duration_free(php5to7_zend_object_free *object TSRMLS_DC)
 {
@@ -300,7 +314,9 @@ void php_driver_define_Duration(TSRMLS_D)
   php_driver_duration_ce->create_object = php_driver_duration_new;
 
   memcpy(&php_driver_duration_handlers, zend_get_std_object_handlers(), sizeof(zend_object_handlers));
-  php_driver_duration_handlers.get_properties  = php_driver_duration_properties;
-  php_driver_duration_handlers.compare_objects = php_driver_duration_compare;
-  php_driver_duration_handlers.clone_obj = NULL;
+  php_driver_duration_handlers.std.get_properties  = php_driver_duration_properties;
+  php_driver_duration_handlers.std.compare_objects = php_driver_duration_compare;
+
+  php_driver_duration_handlers.hash_value = php_driver_duration_hash_value;
+  php_driver_duration_handlers.std.clone_obj = NULL;
 }
