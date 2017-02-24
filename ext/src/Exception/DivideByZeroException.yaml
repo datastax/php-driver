@@ -1,5 +1,5 @@
 ---
-Cassandra\Exception\DivideByZeroException:
+Exception\DivideByZeroException:
   comment: Cassandra domain exception.
   methods:
     __construct:

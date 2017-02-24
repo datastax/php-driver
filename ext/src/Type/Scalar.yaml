@@ -1,5 +1,5 @@
 ---
-Cassandra\Type\Scalar:
+Type\Scalar:
   comment: A class that represents a primitive type (e.g. `varchar` or `bigint`)
   methods:
     name:

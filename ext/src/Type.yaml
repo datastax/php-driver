@@ -1,118 +1,118 @@
 ---
-Cassandra\Type:
+Type:
   comment: Cluster object is used to create Sessions.
   methods:
     varchar:
       comment: Get representation of varchar type
       return:
         comment: varchar type
-        type: Cassandra\Type
+        type: Type
     text:
       comment: Get representation of text type
       return:
         comment: text type
-        type: Cassandra\Type
+        type: Type
     blob:
       comment: Get representation of blob type
       return:
         comment: blob type
-        type: Cassandra\Type
+        type: Type
     ascii:
       comment: Get representation of ascii type
       return:
         comment: ascii type
-        type: Cassandra\Type
+        type: Type
     bigint:
       comment: Get representation of bigint type
       return:
         comment: bigint type
-        type: Cassandra\Type
+        type: Type
     counter:
       comment: Get representation of counter type
       return:
         comment: counter type
-        type: Cassandra\Type
+        type: Type
     int:
       comment: Get representation of int type
       return:
         comment: int type
-        type: Cassandra\Type
+        type: Type
     varint:
       comment: Get representation of varint type
       return:
         comment: varint type
-        type: Cassandra\Type
+        type: Type
     boolean:
       comment: Get representation of boolean type
       return:
         comment: boolean type
-        type: Cassandra\Type
+        type: Type
     decimal:
       comment: Get representation of decimal type
       return:
         comment: decimal type
-        type: Cassandra\Type
+        type: Type
     double:
       comment: Get representation of double type
       return:
         comment: double type
-        type: Cassandra\Type
+        type: Type
     float:
       comment: Get representation of float type
       return:
         comment: float type
-        type: Cassandra\Type
+        type: Type
     inet:
       comment: Get representation of inet type
       return:
         comment: inet type
-        type: Cassandra\Type
+        type: Type
     timestamp:
       comment: Get representation of timestamp type
       return:
         comment: timestamp type
-        type: Cassandra\Type
+        type: Type
     uuid:
       comment: Get representation of uuid type
       return:
         comment: uuid type
-        type: Cassandra\Type
+        type: Type
     timeuuid:
       comment: Get representation of timeuuid type
       return:
         comment: timeuuid type
-        type: Cassandra\Type
+        type: Type
     smallint:
       comment: Get representation of smallint type
       return:
         comment: smallint type
-        type: Cassandra\Type
+        type: Type
     tinyint:
       comment: Get representation of tinyint type
       return:
         comment: tinyint type
-        type: Cassandra\Type
+        type: Type
     date:
       comment: Get representation of date type
       return:
         comment: date type
-        type: Cassandra\Type
+        type: Type
     time:
       comment: Get representation of time type
       return:
         comment: time type
-        type: Cassandra\Type
+        type: Type
     duration:
       comment: Get representation of duration type
       return:
         comment: duration type
-        type: Cassandra\Type
+        type: Type
     collection:
       comment: |-
         Initialize a Collection type
         @code{.php}
         <?php
-        use Cassandra\Type;
+        use Type;
 
         $collection = Type::collection(Type::int())
                           ->create(1, 2, 3, 4, 5, 6, 7, 8, 9);
@@ -122,7 +122,7 @@ Cassandra\Type:
       params:
         type:
           comment: The type of values
-          type: Cassandra\Type
+          type: Type
       return:
         comment: '      The collection type'
         type: Type
@@ -131,7 +131,7 @@ Cassandra\Type:
         Initialize a map type
         @code{.php}
         <?php
-        use Cassandra\Type;
+        use Type;
 
         $map = Type::map(Type::int(), Type::varchar())
                    ->create(1, "a", 2, "b", 3, "c", 4, "d", 5, "e", 6, "f")
@@ -141,19 +141,19 @@ Cassandra\Type:
       params:
         keyType:
           comment: The type of keys
-          type: Cassandra\Type
+          type: Type
         valueType:
           comment: The type of values
-          type: Cassandra\Type
+          type: Type
       return:
         comment: '            The map type'
-        type: Cassandra\Type
+        type: Type
     set:
       comment: |-
         Initialize a set type
         @code{.php}
         <?php
-        use Cassandra\Type;
+        use Type;
 
         $set = Type::set(Type::varchar())
                    ->create("a", "b", "c", "d", "e", "f", "g", "h", "i", "j");
@@ -163,7 +163,7 @@ Cassandra\Type:
       params:
         type:
           comment: The types of values
-          type: Cassandra\Type
+          type: Type
       return:
         comment: The set type
         type: Type
@@ -172,7 +172,7 @@ Cassandra\Type:
         Initialize a tuple type
         @code{.php}
         <?php
-        use Cassandra\Type;
+        use Type;
 
         $tuple = Type::tuple(Type::varchar(), Type::int())
                    ->create("a", 123);
@@ -182,18 +182,18 @@ Cassandra\Type:
       params:
         types:
           comment: A variadic list of types
-          type: Cassandra\Type
+          type: Type
       return:
         comment: The tuple type
-        type: Cassandra\Type
+        type: Type
     userType:
       comment: |-
         Initialize a user type
         @code{.php}
         <?php
-        use Cassandra\Type;
+        use Type;
 
-        $userType = Type::userTupe("a", Type::varchar(), "b", Type::int())
+        $userType = Type::userType("a", Type::varchar(), "b", Type::int())
                         ->create("a", "abc", "b", 123);
 
         var_dump($userType);
@@ -201,10 +201,10 @@ Cassandra\Type:
       params:
         types:
           comment: A variadic list of name/type pairs
-          type: Cassandra\Type
+          type: Type
       return:
         comment: The user type
-        type: Cassandra\Type
+        type: Type
     name:
       comment: Returns the name of this type as string.
       return:

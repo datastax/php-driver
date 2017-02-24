@@ -1,8 +1,8 @@
 ---
-Cassandra\FuturePreparedStatement:
+FuturePreparedStatement:
   comment: |-
-    A future returned from `Cassandra\Session::prepareAsync()`
-    This future will resolve with a `Cassandra\PreparedStatement` or an exception.
+    A future returned from `Session::prepareAsync()`
+    This future will resolve with a PreparedStatement or an exception.
 
     @see Session::prepareAsync()
   methods:

@@ -1,5 +1,5 @@
 ---
-Cassandra\Timestamp:
+Timestamp:
   comment: A PHP representation of the CQL `timestamp` datatype
   methods:
     __construct:

@@ -1,5 +1,5 @@
 ---
-Cassandra\Numeric:
+Numeric:
   comment: |-
     Common interface implemented by all numeric types, providing basic
     arithmetic functions.
@@ -14,7 +14,7 @@ Cassandra\Numeric:
       params:
         num:
           comment: a number to add to this one
-          type: Cassandra\Numeric
+          type: Numeric
       return:
         comment: sum
         type: Numeric
@@ -23,7 +23,7 @@ Cassandra\Numeric:
       params:
         num:
           comment: a number to subtract from this one
-          type: Cassandra\Numeric
+          type: Numeric
       return:
         comment: difference
         type: Numeric
@@ -32,7 +32,7 @@ Cassandra\Numeric:
       params:
         num:
           comment: a number to multiply this one by
-          type: Cassandra\Numeric
+          type: Numeric
       return:
         comment: product
         type: Numeric
@@ -41,7 +41,7 @@ Cassandra\Numeric:
       params:
         num:
           comment: a number to divide this one by
-          type: Cassandra\Numeric
+          type: Numeric
       return:
         comment: quotient
         type: Numeric
@@ -50,7 +50,7 @@ Cassandra\Numeric:
       params:
         num:
           comment: a number to divide this one by
-          type: Cassandra\Numeric
+          type: Numeric
       return:
         comment: remainder
         type: Numeric

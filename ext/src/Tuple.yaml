@@ -1,5 +1,5 @@
 ---
-Cassandra\Tuple:
+Tuple:
   comment: A PHP representation of the CQL `tuple` datatype
   methods:
     __construct:

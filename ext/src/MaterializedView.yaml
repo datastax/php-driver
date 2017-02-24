@@ -1,37 +1,37 @@
 ---
-Cassandra\MaterializedView:
+MaterializedView:
   comment: A PHP representation of a materialized view
   methods:
     baseTable:
       comment: Returns the base table of the view
       return:
         comment: Base table of the view
-        type: Cassandra\Table
+        type: Table
     name:
-      comment: Returns the name of this table
+      comment: Returns the name of this view
       return:
-        comment: Name of the table
+        comment: Name of the view
         type: string
     option:
-      comment: Return a table's option by name
+      comment: Return a view's option by name
       params:
         name:
           comment: The name of the option
           type: string
       return:
         comment: Value of an option by name
-        type: Cassandra\Value
+        type: Value
     options:
-      comment: |-
-        Returns all the table's options
-                      view's options.
+      comment: Returns all the view's options
       return:
-        comment: A dictionary of `string` and `Value` pairs of the
+        comment: |-
+          A dictionary of string and Value pairs of the
+          view's options.
         type: array
     comment:
-      comment: Description of the table, if any
+      comment: Description of the view, if any
       return:
-        comment: Table description or null
+        comment: View description or null
         type: string
     readRepairChance:
       comment: Returns read repair chance
@@ -87,12 +87,12 @@ Cassandra\MaterializedView:
       comment: Returns compaction strategy options
       return:
         comment: Compaction strategy options
-        type: Cassandra\Map
+        type: Map
     compressionParameters:
       comment: Returns compression parameters
       return:
         comment: Compression parameters
-        type: Cassandra\Map
+        type: Map
     populateIOCacheOnFlush:
       comment: Returns whether or not the `populate_io_cache_on_flush` is true
       return:
@@ -121,26 +121,26 @@ Cassandra\MaterializedView:
           type: string
       return:
         comment: Column instance
-        type: Cassandra\Column
+        type: Column
     columns:
-      comment: Returns all columns in this table
+      comment: Returns all columns in this view
       return:
-        comment: A list of `Cassandra\Column` instances
+        comment: A list of `Column` instances
         type: array
     partitionKey:
-      comment: Returns the partition key columns of the table
+      comment: Returns the partition key columns of the view
       return:
-        comment: A list of of `Cassandra\Column` instances
+        comment: A list of of `Column` instances
         type: array
     primaryKey:
-      comment: Returns both the partition and clustering key columns of the table
+      comment: Returns both the partition and clustering key columns of the view
       return:
-        comment: A list of of `Cassandra\Column` instances
+        comment: A list of of `Column` instances
         type: array
     clusteringKey:
-      comment: Returns the clustering key columns of the table
+      comment: Returns the clustering key columns of the view
       return:
-        comment: A list of of `Cassandra\Column` instances
+        comment: A list of of `Column` instances
         type: array
     clusteringOrder:
       comment: ""

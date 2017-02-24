@@ -1,9 +1,9 @@
 ---
-Cassandra\DefaultCluster:
+DefaultCluster:
   comment: |-
     Default cluster implementation.
 
-    @see Cassandra\Cluster
+    @see Cluster
   methods:
     connect:
       comment: |

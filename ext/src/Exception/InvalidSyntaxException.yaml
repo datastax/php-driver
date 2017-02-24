@@ -1,5 +1,5 @@
 ---
-Cassandra\Exception\InvalidSyntaxException:
+Exception\InvalidSyntaxException:
   comment: InvalidSyntaxException is raised when CQL in the request is syntactically
     incorrect.
   methods:

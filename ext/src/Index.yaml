@@ -1,5 +1,5 @@
 ---
-Cassandra\Index:
+Index:
   comment: A PHP representation of an index
   methods:
     name:
@@ -25,7 +25,7 @@ Cassandra\Index:
           type: string
       return:
         comment: Value of an option by name
-        type: Cassandra\Value
+        type: Value
     options:
       comment: |-
         Returns all the index's options
@@ -41,6 +41,6 @@ Cassandra\Index:
     isCustom:
       comment: Determines if the index is a custom index.
       return:
-        comment: Returns `true` if this is a custom index
+        comment: true if a custom index
         type: bool
 ...

@@ -1,5 +1,5 @@
 ---
-Cassandra\Exception\WriteTimeoutException:
+Exception\WriteTimeoutException:
   comment: |-
     WriteTimeoutException is raised when a coordinator failed to receive acks
     from the required number of replica nodes in time during a write.

@@ -1,7 +1,7 @@
 <?php
 
 define("LICENSE_COMMENT", "/**
- * Copyright 2015-2016 DataStax, Inc.
+ * Copyright 2017 DataStax, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the \"License\");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ define("LICENSE_COMMENT", "/**
 
 define("DOC_COMMENT_HEADER", "/**" . PHP_EOL);
 define("DOC_COMMENT_LINE", " * ");
+define("DOC_COMMENT_LINE_EMPTY", " *");
 define("DOC_COMMENT_FOOTER", " */" . PHP_EOL);
 
 define("PHP_SYNTAX_CHECK", "php -l -n");
@@ -88,16 +89,27 @@ function replaceKeyword($string) {
     return $string;
 }
 
-function writeCommentDoc($file, $comment, $indent = 0) {
-    $lines = explode(PHP_EOL, $comment);
-    if (strlen(end($lines)) == 0) {
+function trimEmptyLines(&$lines) {
+    while ($lines && strlen(trim($lines[0])) == 0) {
         array_pop($lines);
     }
+    while ($lines && strlen(trim($lines[count($lines) - 1])) == 0) {
+        array_pop($lines);
+    }
+}
+
+function writeCommentLines($file, $lines, $indent) {
     foreach($lines as $line) {
         $commentLine = str_pad("", strlen(INDENT) * $indent, INDENT, STR_PAD_LEFT) . DOC_COMMENT_LINE . "$line";
         $commentLine = rtrim($commentLine) . PHP_EOL;
         fwrite($file, str_pad($commentLine, $indent, INDENT, STR_PAD_LEFT));
     }
+}
+
+function writeCommentDoc($file, $comment, $indent = 0) {
+    $lines = explode(PHP_EOL, $comment);
+    trimEmptyLines($lines);
+    writeCommentLines($file, $lines, $indent);
 }
 
 function writeParameterDoc($doc, $file, $class, $method, $parameter) {
@@ -161,8 +173,6 @@ function writeParameterDoc($doc, $file, $class, $method, $parameter) {
 }
 
 function writeReturnDoc($doc, $file, $class, $method) {
-    if ($method->isConstructor() || $method->isDestructor()) return;
-
     $className = $class->getName();
     $methodName = $method->getShortName();
 
@@ -216,9 +226,27 @@ function writeConstant($doc, $file, $class, $constantName, $constantValue) {
     if (is_int($constantValue)) {
         fwrite($file, INDENT . "const $constantName = $constantValue;" . PHP_EOL);
     } else {
-        fwrite($file, INDENT . "const $constantName = \"$constantValue\";" . PHP_EOL);
+        fwrite($file, INDENT . "const $constantName = '$constantValue';" . PHP_EOL);
     }
     fwrite($file, PHP_EOL);
+}
+
+function writeMethodCommentDoc($file, $comment, &$throws, &$sees) {
+    $lines = array();
+
+    $currentList = &$lines;
+    foreach (explode(PHP_EOL, $comment) as $commentLine) {
+        if (preg_match("/@throws/", $commentLine)) {
+            $currentList = &$throws;
+        } else if (preg_match("/@see/", $commentLine)) {
+            $currentList = &$sees;
+        } else if (strlen(trim($commentLine)) == 0) {
+            $currentList = &$lines;
+        }
+        $currentList[] = $commentLine;
+    }
+    trimEmptyLines($lines);
+    writeCommentLines($file, $lines, 1);
 }
 
 function writeMethodDoc($doc, $file, $class, $method) {
@@ -242,16 +270,41 @@ function writeMethodDoc($doc, $file, $class, $method) {
         $methodName = $method->getShortName();
         $parameters = $method->getParameters();
 
+        $throws = array();
+        $sees = array();
+        $needsNewline = false;
+
         if ($comment) {
-            if (count($parameters) > 0) {
-                $comment .= PHP_EOL;
-            }
-            writeCommentDoc($file, $comment, 1);
+            writeMethodCommentDoc($file, $comment, $throws, $sees);
+            $needsNewline = true;
+        }
+
+        if ($needsNewline && !empty($parameters)) {
+            fwrite($file, INDENT . DOC_COMMENT_LINE_EMPTY . PHP_EOL);
+            $needsNewline = true;
         }
         foreach ($parameters as $parameter) {
             writeParameterDoc($doc, $file, $class, $method, $parameter);
         }
-        writeReturnDoc($doc, $file, $class, $method);
+
+        if ($needsNewline && !empty($throws)) {
+            fwrite($file, INDENT . DOC_COMMENT_LINE_EMPTY . PHP_EOL);
+            $needsNewline = true;
+        }
+        writeCommentLines($file, $throws, 1);
+
+        if (!$method->isConstructor() && !$method->isDestructor()) {
+            if ($needsNewline) {
+                fwrite($file, INDENT . DOC_COMMENT_LINE_EMPTY . PHP_EOL);
+                $needsNewline = true;
+            }
+            writeReturnDoc($doc, $file, $class, $method);
+        }
+
+        if ($needsNewline && !empty($sees))  {
+            fwrite($file, INDENT . DOC_COMMENT_LINE_EMPTY . PHP_EOL);
+        }
+        writeCommentLines($file, $sees, 1);
     } else {
         fwrite($file, INDENT . DOC_COMMENT_LINE . "@return mixed" . PHP_EOL);
         logWarning("Missing documentation for method '$className::$methodName()'");
@@ -458,6 +511,13 @@ foreach ($regex as $fileName => $notused) {
 
         if ($doc === false) {
             logWarning("Unable to open doc yaml file '$yamlFileName'");
+        }
+
+        $classNameNoCoreNamespace = preg_replace("/" . INPUT_NAMESPACE . "\\\\/", "", $class->getName());
+
+        if (isset($doc[$classNameNoCoreNamespace]) && $classNameNoCoreNamespace != $class->getName()) {
+            $doc[$class->getName()] = $doc[$classNameNoCoreNamespace];
+            unset($doc[$classNameNoCoreNamespace]);
         }
 
         writeClass($doc, $file, $class);

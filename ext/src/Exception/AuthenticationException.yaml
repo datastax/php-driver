@@ -1,5 +1,5 @@
 ---
-Cassandra\Exception\AuthenticationException:
+Exception\AuthenticationException:
   comment: |-
     AuthenticationException is raised when client was not configured with valid
     authentication credentials.

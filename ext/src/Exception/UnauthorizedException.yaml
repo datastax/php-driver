@@ -1,5 +1,5 @@
 ---
-Cassandra\Exception\UnauthorizedException:
+Exception\UnauthorizedException:
   comment: |-
     UnauthorizedException is raised when the current user doesn't have
     sufficient permissions to access data.

@@ -1,5 +1,5 @@
 ---
-Cassandra\Exception\RangeException:
+Exception\RangeException:
   comment: Cassandra domain exception.
   methods:
     __construct:

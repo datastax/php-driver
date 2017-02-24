@@ -1,5 +1,5 @@
 ---
-Cassandra\Type\Set:
+Type\Set:
   comment: |-
     A class that represents the set type. The set type contains the type of the
     elements contain in the set.
@@ -21,7 +21,7 @@ Cassandra\Type\Set:
         type: Type
     create:
       comment: |-
-        Creates a new Cassandra\Set from the given values.
+        Creates a new Set from the given values.
 
         @throws Exception\InvalidArgumentException when values given are of a
                                                    different type than what this
@@ -33,5 +33,5 @@ Cassandra\Type\Set:
           type: mixed
       return:
         comment: '   A set with given values.'
-        type: Cassandra\Set
+        type: Set
 ...

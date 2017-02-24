@@ -1,5 +1,5 @@
 ---
-Cassandra\Timeuuid:
+Timeuuid:
   comment: A PHP representation of the CQL `timeuuid` datatype
   methods:
     __construct:

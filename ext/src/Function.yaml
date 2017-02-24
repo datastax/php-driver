@@ -1,5 +1,5 @@
 ---
-Cassandra\Function:
+Function:
   comment: A PHP representation of a function
   methods:
     name:
@@ -21,7 +21,7 @@ Cassandra\Function:
       comment: Returns the return type of the function
       return:
         comment: Return type of the function
-        type: Cassandra\Type
+        type: Type
     signature:
       comment: Returns the signature of the function
       return:
@@ -38,7 +38,7 @@ Cassandra\Function:
         comment: Body of the function
         type: string
     isCalledOnNullInput:
-      comment: Determines if a funciton is called when the value is null.
+      comment: Determines if a function is called when the value is null.
       return:
         comment: Returns whether the function is called when the input columns are
           null

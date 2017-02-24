@@ -1,5 +1,5 @@
 ---
-Cassandra\Cluster\Builder:
+Cluster\Builder:
   comment: |-
     Cluster builder allows fluent configuration of the cluster instance.
 
@@ -9,7 +9,7 @@ Cassandra\Cluster\Builder:
       comment: Returns a Cluster Instance.
       return:
         comment: Cluster instance
-        type: \Cassandra\Cluster
+        type: \Cluster
     withDefaultConsistency:
       comment: |
         Configures default consistency for all requests.
@@ -57,7 +57,7 @@ Cassandra\Cluster\Builder:
       comment: |
         Specify a different port to be used when connecting to the cluster.
 
-        @throws \Cassandra\Exception\InvalidArgumentException
+        @throws \Exception\InvalidArgumentException
       params:
         port:
           comment: a number between 1 and 65535
@@ -136,15 +136,12 @@ Cassandra\Cluster\Builder:
       params:
         options:
           comment: a preconfigured ssl context
-          type: Cassandra\SSLOptions
+          type: SSLOptions
       return:
         comment: self
         type: Builder
     withPersistentSessions:
-      comment: |-
-        Enable persistent sessions and clusters.
-
-                             (optional)
+      comment: Enable persistent sessions and clusters.
       params:
         enabled:
           comment: whether to enable persistent sessions and clusters
@@ -162,11 +159,9 @@ Cassandra\Cluster\Builder:
         Apache Cassandra 2.2+ supports protocol version 4
 
         NOTE: Apache Cassandra 3.x supports protocol version 3 and 4 only
-
-                            `4` are supported
       params:
         version:
-          comment: the actual protocol version, only `1`, `2`, `3`, or
+          comment: The protocol version
           type: int
       return:
         comment: self
@@ -234,15 +229,14 @@ Cassandra\Cluster\Builder:
         comment: self
         type: Builder
     withTCPKeepalive:
-      comment: |-
-        Enables/disables TCP keepalive.
-
-                                 which the keepalive probe should be sent over
-                                 the connection. If set to `null`, disables
-                                 keepalive probing.
+      comment: Enables/disables TCP keepalive.
       params:
         delay:
-          comment: the period of inactivity in seconds, after
+          comment: |-
+            The period of inactivity in seconds, after
+            which the keepalive probe should be sent over
+            the connection. If set to `null`, disables
+            keepalive probing.
           type: float|null
       return:
         comment: self
@@ -253,19 +247,18 @@ Cassandra\Cluster\Builder:
       params:
         policy:
           comment: the retry policy to use.
-          type: Cassandra\Cluster\RetryPolicy
+          type: Cluster\RetryPolicy
       return:
         comment: self
         type: Builder
     withTimestampGenerator:
-      comment: |-
-        Sets the timestamp generator.
-
-                                                       to generate timestamps for statements.
+      comment: Sets the timestamp generator.
       params:
         generator:
-          comment: A timestamp generator that will be used
-          type: Cassandra\TimestampGenerator
+          comment: |-
+            A timestamp generator that will be used
+            to generate timestamps for statements.
+          type: TimestampGenerator
       return:
         comment: self
         type: Builder

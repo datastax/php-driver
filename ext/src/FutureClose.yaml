@@ -1,7 +1,7 @@
 ---
-Cassandra\FutureClose:
+FutureClose:
   comment: |-
-    A future returned from Cassandra\Session::closeAsync().
+    A future returned from Session::closeAsync().
 
     @see Session::closeAsync()
   methods:
@@ -17,5 +17,5 @@ Cassandra\FutureClose:
           type: int|double|null
       return:
         comment: Nothing
-        type: mixed
+        type: "null"
 ...

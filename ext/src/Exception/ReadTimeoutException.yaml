@@ -1,5 +1,5 @@
 ---
-Cassandra\Exception\ReadTimeoutException:
+Exception\ReadTimeoutException:
   comment: |-
     ReadTimeoutException is raised when a coordinator failed to receive acks
     from the required number of replica nodes in time during a read.

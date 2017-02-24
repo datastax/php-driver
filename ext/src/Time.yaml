@@ -1,5 +1,5 @@
 ---
-Cassandra\Time:
+Time:
   comment: A PHP representation of the CQL `time` type.
   methods:
     __construct:
@@ -28,7 +28,7 @@ Cassandra\Time:
     __toString:
       comment: ""
       return:
-        comment: 'this date in string format: Cassandra\Time(nanoseconds=$nanoseconds)'
+        comment: 'this date in string format: Time(nanoseconds=$nanoseconds)'
         type: string
     seconds:
       comment: ""

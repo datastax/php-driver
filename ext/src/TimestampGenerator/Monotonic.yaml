@@ -1,5 +1,5 @@
 ---
-Cassandra\TimestampGenerator\Monotonic:
+TimestampGenerator\Monotonic:
   comment: |-
     A timestamp generator that generates monotonically increasing timestamps
     client-side. The timestamps generated have a microsecond granularity with

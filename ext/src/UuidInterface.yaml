@@ -1,5 +1,5 @@
 ---
-Cassandra\UuidInterface:
+UuidInterface:
   comment: A PHP representation of the CQL `uuid` datatype
   methods:
     uuid:

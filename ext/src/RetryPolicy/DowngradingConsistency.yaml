@@ -1,5 +1,5 @@
 ---
-Cassandra\RetryPolicy\DowngradingConsistency:
+RetryPolicy\DowngradingConsistency:
   comment: |-
     A retry policy that will downgrade the consistency of a request in
     an attempt to save a request in cases where there is any chance of success. A

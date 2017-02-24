@@ -1,5 +1,5 @@
 ---
-Cassandra\Type\Custom:
+Type\Custom:
   comment: A class that represents a custom type.
   methods:
     name:

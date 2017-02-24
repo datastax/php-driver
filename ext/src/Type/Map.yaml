@@ -1,5 +1,5 @@
 ---
-Cassandra\Type\Map:
+Type\Map:
   comment: |-
     A class that represents the map type. The map type contains two types that
     represents the types of the key and value contained in the map.
@@ -26,12 +26,12 @@ Cassandra\Type\Map:
         type: Type
     create:
       comment: |-
-        Creates a new Cassandra\Map from the given values.
+        Creates a new Map from the given values.
 
         @code{.php}
         <?php
-        use Cassandra\Type;
-        use Cassandra\Uuid;
+        use Type;
+        use Uuid;
 
         $type = Type::map(Type::uuid(), Type::varchar());
         $map = $type->create(new Uuid(), 'first uuid',
@@ -54,5 +54,5 @@ Cassandra\Type\Map:
           type: mixed
       return:
         comment: '   A set with given values.'
-        type: Cassandra\Map
+        type: Map
 ...

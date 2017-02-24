@@ -1,5 +1,5 @@
 ---
-Cassandra\Map:
+Map:
   comment: A PHP representation of the CQL `map` datatype
   methods:
     __construct:

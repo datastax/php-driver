@@ -1,5 +1,5 @@
 ---
-Cassandra\DefaultIndex:
+DefaultIndex:
   comment: A PHP representation of an index
   methods:
     name:

@@ -1,6 +1,10 @@
 ---
-Cassandra\Session:
-  comment: A session is used to prepare and execute statements.
+Session:
+  comment: |-
+    A session is used to prepare and execute statements.
+
+    @see Cluster::connect()
+    @see Cluster::connectAsync()
   methods:
     execute:
       comment: |
@@ -15,11 +19,11 @@ Cassandra\Session:
           comment: execution options (optional)
           type: array|ExecutionOptions|null
       return:
-        comment: A colleciton of rows.
+        comment: A collection of rows.
         type: Rows
     executeAsync:
       comment: |-
-        Execute a query asyncrhonously. This method returns immediately, but
+        Execute a query asynchronously. This method returns immediately, but
         the query continues execution in the background.
       params:
         statement:
@@ -42,7 +46,7 @@ Cassandra\Session:
           type: string
         options:
           comment: Options to control preparing the query.
-          type: Cassandra\ExecutionOptions
+          type: ExecutionOptions
       return:
         comment: |
           A prepared statement that can be bound with parameters and executed.
@@ -55,7 +59,7 @@ Cassandra\Session:
           type: string
         options:
           comment: Options to control preparing the query.
-          type: Cassandra\ExecutionOptions
+          type: ExecutionOptions
       return:
         comment: A future that can be used to retrieve the prepared statement.
         type: FuturePreparedStatement

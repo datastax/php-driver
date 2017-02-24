@@ -1,5 +1,5 @@
 ---
-Cassandra\Exception\InvalidQueryException:
+Exception\InvalidQueryException:
   comment: |-
     InvalidQueryException is raised when query is syntactically correct but invalid.
     For example when attempting to create a table without specifying a keyspace.

@@ -1,5 +1,5 @@
 ---
-Cassandra\DefaultSession:
+DefaultSession:
   comment: '{@inheritDoc}'
   methods:
     schema:
@@ -39,7 +39,7 @@ Cassandra\DefaultSession:
           type: string
         options:
           comment: '{@inheritDoc}'
-          type: Cassandra\ExecutionOptions
+          type: ExecutionOptions
       return:
         comment: '{@inheritDoc}'
         type: PreparedStatement
@@ -51,7 +51,7 @@ Cassandra\DefaultSession:
           type: string
         options:
           comment: '{@inheritDoc}'
-          type: Cassandra\ExecutionOptions
+          type: ExecutionOptions
       return:
         comment: '{@inheritDoc}'
         type: FuturePreparedStatement

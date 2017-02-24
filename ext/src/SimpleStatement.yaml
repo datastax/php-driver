@@ -1,5 +1,5 @@
 ---
-Cassandra\SimpleStatement:
+SimpleStatement:
   comment: |-
     Simple statements can be executed using a Session instance.
     They are constructed with a CQL string that can contain positional

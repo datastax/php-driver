@@ -1,4 +1,4 @@
 ---
-Cassandra\RetryPolicy:
+RetryPolicy:
   comment: Interface for retry policies.
 ...

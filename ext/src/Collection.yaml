@@ -1,5 +1,5 @@
 ---
-Cassandra\Collection:
+Collection:
   comment: A PHP representation of the CQL `list` datatype
   methods:
     __construct:

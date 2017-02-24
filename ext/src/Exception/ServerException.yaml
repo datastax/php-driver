@@ -1,5 +1,5 @@
 ---
-Cassandra\Exception\ServerException:
+Exception\ServerException:
   comment: |-
     ServerException is raised when something unexpected happened on the server.
     This exception is most likely due to a server-side bug.

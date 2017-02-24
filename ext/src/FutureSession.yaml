@@ -1,7 +1,7 @@
 ---
-Cassandra\FutureSession:
+FutureSession:
   comment: |-
-    A future that resolves with `Cassandra\Session`.
+    A future that resolves with Session.
 
     @see Cluster::connectAsync()
   methods:

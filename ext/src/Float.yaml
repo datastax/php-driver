@@ -1,5 +1,5 @@
 ---
-Cassandra\Float:
+Float:
   comment: A PHP representation of the CQL `float` datatype
   methods:
     min:
@@ -16,7 +16,7 @@ Cassandra\Float:
       comment: Creates a new float.
       params:
         value:
-          comment: A float value as a string, number or Cassandra\Float
+          comment: A float value as a string, number or Float
           type: double|int|string|Float
     type:
       comment: The type of this float.
@@ -38,7 +38,7 @@ Cassandra\Float:
       params:
         num:
           comment: a number to add to this one
-          type: Cassandra\Numeric
+          type: Numeric
       return:
         comment: sum
         type: Numeric
@@ -47,7 +47,7 @@ Cassandra\Float:
       params:
         num:
           comment: a number to subtract from this one
-          type: Cassandra\Numeric
+          type: Numeric
       return:
         comment: difference
         type: Numeric
@@ -56,7 +56,7 @@ Cassandra\Float:
       params:
         num:
           comment: a number to multiply this one by
-          type: Cassandra\Numeric
+          type: Numeric
       return:
         comment: product
         type: Numeric
@@ -65,7 +65,7 @@ Cassandra\Float:
       params:
         num:
           comment: a number to divide this one by
-          type: Cassandra\Numeric
+          type: Numeric
       return:
         comment: quotient
         type: Numeric
@@ -74,7 +74,7 @@ Cassandra\Float:
       params:
         num:
           comment: a number to divide this one by
-          type: Cassandra\Numeric
+          type: Numeric
       return:
         comment: remainder
         type: Numeric

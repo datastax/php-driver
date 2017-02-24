@@ -1,5 +1,5 @@
 ---
-Cassandra\Exception\AlreadyExistsException:
+Exception\AlreadyExistsException:
   comment: AlreadyExistsException is raised when attempting to re-create existing
     keyspace.
   methods:

@@ -1,5 +1,5 @@
 ---
-Cassandra\PreparedStatement:
+PreparedStatement:
   comment: |-
     Prepared statements are faster to execute because the server doesn't need
     to process a statement's CQL during the execution.

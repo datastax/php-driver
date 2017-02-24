@@ -1,5 +1,5 @@
 ---
-Cassandra\Rows:
+Rows:
   comment: Rows represent a result of statement execution.
   methods:
     count:

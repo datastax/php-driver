@@ -1,5 +1,5 @@
 ---
-Cassandra\Statement:
+Statement:
   comment: |-
     All statements implement this common interface.
 

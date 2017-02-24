@@ -1,7 +1,7 @@
 ---
-Cassandra\SSLOptions:
+SSLOptions:
   comment: |-
-    SSL options for Cassandra\Cluster.
+    SSL options for Cluster.
 
     @see SSLOptions\Builder
 ...

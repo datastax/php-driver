@@ -1,5 +1,5 @@
 ---
-Cassandra\UserTypeValue:
+UserTypeValue:
   comment: A PHP representation of the CQL UDT datatype
   methods:
     __construct:

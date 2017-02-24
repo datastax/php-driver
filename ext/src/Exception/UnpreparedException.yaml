@@ -1,5 +1,5 @@
 ---
-Cassandra\Exception\UnpreparedException:
+Exception\UnpreparedException:
   comment: |-
     UnpreparedException is raised when a given prepared statement id does not
     exist on the server. The driver should be automatically re-preparing the

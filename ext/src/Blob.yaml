@@ -1,5 +1,5 @@
 ---
-Cassandra\Blob:
+Blob:
   comment: A PHP representation of the CQL `blob` datatype
   methods:
     __construct:

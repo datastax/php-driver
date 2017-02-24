@@ -1,5 +1,5 @@
 ---
-Cassandra\Exception\ProtocolException:
+Exception\ProtocolException:
   comment: |-
     ProtocolException is raised when a client did not follow server's protocol,
     e.g. sending a QUERY message before STARTUP. Seeing this error can be

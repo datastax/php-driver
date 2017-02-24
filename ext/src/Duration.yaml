@@ -1,5 +1,5 @@
 ---
-Cassandra\Duration:
+Duration:
   comment: A PHP representation of the CQL `duration` datatype
   methods:
     __construct:

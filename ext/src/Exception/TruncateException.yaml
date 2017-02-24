@@ -1,5 +1,5 @@
 ---
-Cassandra\Exception\TruncateException:
+Exception\TruncateException:
   comment: |-
     TruncateException is raised when something went wrong during table
     truncation.

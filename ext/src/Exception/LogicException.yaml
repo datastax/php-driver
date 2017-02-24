@@ -1,5 +1,5 @@
 ---
-Cassandra\Exception\LogicException:
+Exception\LogicException:
   comment: Cassandra logic exception.
   methods:
     __construct:

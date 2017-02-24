@@ -1,5 +1,5 @@
 ---
-Cassandra\Keyspace:
+Keyspace:
   comment: A PHP representation of a keyspace
   methods:
     name:
@@ -16,7 +16,7 @@ Cassandra\Keyspace:
       comment: Returns replication options
       return:
         comment: Replication options
-        type: Cassandra\Map
+        type: Map
     hasDurableWrites:
       comment: Returns whether the keyspace has durable writes enabled
       return:
@@ -30,11 +30,11 @@ Cassandra\Keyspace:
           type: string
       return:
         comment: Table instance or null
-        type: Cassandra\Table|null
+        type: Table|null
     tables:
       comment: Returns all tables defined in this keyspace
       return:
-        comment: An array of `Cassandra\Table` instances
+        comment: An array of `Table` instances
         type: array
     userType:
       comment: Get user type by name

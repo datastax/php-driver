@@ -1,16 +1,16 @@
 ---
-Cassandra\SSLOptions\Builder:
+SSLOptions\Builder:
   comment: |-
     SSLOptions builder allows fluent configuration of ssl options.
 
     @see \Cassandra::ssl()
-    @see \Cassandra\Cluster\Builder::withSSL()
+    @see \Cluster\Builder::withSSL()
   methods:
     withTrustedCerts:
       comment: |
         Adds a trusted certificate. This is used to verify node's identity.
 
-        @throws \Cassandra\Exception\InvalidArgumentException
+        @throws \Exception\InvalidArgumentException
       params:
         path:
           comment: ',... one or more paths to files containing a PEM formatted certificate.'
@@ -22,7 +22,7 @@ Cassandra\SSLOptions\Builder:
       comment: |
         Disable certificate verification.
 
-        @throws \Cassandra\Exception\InvalidArgumentException
+        @throws \Exception\InvalidArgumentException
       params:
         flags:
           comment: ""
@@ -37,7 +37,7 @@ Cassandra\SSLOptions\Builder:
         This is used to authenticate the client on the server-side. This should contain the entire Certificate
         chain starting with the certificate itself.
 
-        @throws \Cassandra\Exception\InvalidArgumentException
+        @throws \Exception\InvalidArgumentException
       params:
         path:
           comment: path to a file containing a PEM formatted certificate.
@@ -50,7 +50,7 @@ Cassandra\SSLOptions\Builder:
         Set client-side private key. This is used to authenticate the client on
         the server-side.
 
-        @throws \Cassandra\Exception\InvalidArgumentException
+        @throws \Exception\InvalidArgumentException
       params:
         path:
           comment: Path to the private key file
@@ -65,5 +65,5 @@ Cassandra\SSLOptions\Builder:
       comment: Builds SSL options.
       return:
         comment: ssl options configured accordingly.
-        type: \Cassandra\SSLOptions
+        type: \SSLOptions
 ...

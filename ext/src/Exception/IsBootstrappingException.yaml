@@ -1,5 +1,5 @@
 ---
-Cassandra\Exception\IsBootstrappingException:
+Exception\IsBootstrappingException:
   comment: IsBootstrappingException is raised when a node is bootstrapping.
   methods:
     __construct:

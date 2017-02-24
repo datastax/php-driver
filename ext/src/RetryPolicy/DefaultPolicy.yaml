@@ -1,5 +1,5 @@
 ---
-Cassandra\RetryPolicy\DefaultPolicy:
+RetryPolicy\DefaultPolicy:
   comment: |-
     The default retry policy. This policy retries a query, using the
     request's original consistency level, in the following cases:

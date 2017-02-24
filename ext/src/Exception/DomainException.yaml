@@ -1,5 +1,5 @@
 ---
-Cassandra\Exception\DomainException:
+Exception\DomainException:
   comment: Cassandra domain exception.
   methods:
     __construct:

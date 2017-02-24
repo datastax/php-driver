@@ -1,5 +1,5 @@
 ---
-Cassandra\Exception\ExecutionException:
+Exception\ExecutionException:
   comment: |-
     ExecutionException is raised when something went wrong during request execution.
     @see TruncateException

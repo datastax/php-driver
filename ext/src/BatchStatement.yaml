@@ -1,5 +1,5 @@
 ---
-Cassandra\BatchStatement:
+BatchStatement:
   comment: |-
     Batch statements are used to execute a series of simple or prepared
     statements.
@@ -28,7 +28,6 @@ Cassandra\BatchStatement:
     add:
       comment: |-
         Adds a statement to this batch.
-
 
         @throws Exception\InvalidArgumentException
       params:

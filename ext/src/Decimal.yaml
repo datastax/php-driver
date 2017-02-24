@@ -1,5 +1,5 @@
 ---
-Cassandra\Decimal:
+Decimal:
   comment: |-
     A PHP representation of the CQL `decimal` datatype
 
@@ -12,9 +12,6 @@ Cassandra\Decimal:
         ~~~{.php}
         <?php
         $decimal = new Cassandra::Decimal("1313123123.234234234234234234123");
-
-        $this->assertEquals(21, $decimal->scale());
-        $this->assertEquals("1313123123234234234234234234123", $decimal->value());
         ~~~
       params:
         value:
@@ -45,7 +42,7 @@ Cassandra\Decimal:
       params:
         num:
           comment: a number to add to this one
-          type: Cassandra\Numeric
+          type: Numeric
       return:
         comment: sum
         type: Numeric
@@ -54,7 +51,7 @@ Cassandra\Decimal:
       params:
         num:
           comment: a number to subtract from this one
-          type: Cassandra\Numeric
+          type: Numeric
       return:
         comment: difference
         type: Numeric
@@ -63,7 +60,7 @@ Cassandra\Decimal:
       params:
         num:
           comment: a number to multiply this one by
-          type: Cassandra\Numeric
+          type: Numeric
       return:
         comment: product
         type: Numeric
@@ -72,7 +69,7 @@ Cassandra\Decimal:
       params:
         num:
           comment: a number to divide this one by
-          type: Cassandra\Numeric
+          type: Numeric
       return:
         comment: quotient
         type: Numeric
@@ -81,7 +78,7 @@ Cassandra\Decimal:
       params:
         num:
           comment: a number to divide this one by
-          type: Cassandra\Numeric
+          type: Numeric
       return:
         comment: remainder
         type: Numeric

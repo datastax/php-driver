@@ -1,5 +1,5 @@
 ---
-Cassandra\FutureValue:
+FutureValue:
   comment: A future that always resolves in a value.
   methods:
     get:

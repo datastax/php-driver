@@ -1,5 +1,5 @@
 ---
-Cassandra\DefaultColumn:
+DefaultColumn:
   comment: A PHP representation of a column
   methods:
     name:
@@ -11,7 +11,7 @@ Cassandra\DefaultColumn:
       comment: '{@inheritDoc}'
       return:
         comment: Type of the column
-        type: Cassandra\Type
+        type: Type
     isReversed:
       comment: '{@inheritDoc}'
       return:

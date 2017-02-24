@@ -1,5 +1,5 @@
 ---
-Cassandra\Future:
+Future:
   comment: |-
     Futures are returns from asynchronous methods.
 

@@ -1,5 +1,5 @@
 ---
-Cassandra\DefaultFunction:
+DefaultFunction:
   comment: A PHP representation of a public function
   methods:
     name:
@@ -21,7 +21,7 @@ Cassandra\DefaultFunction:
       comment: '{@inheritDoc}'
       return:
         comment: Return type of the function
-        type: Cassandra\Type
+        type: Type
     signature:
       comment: '{@inheritDoc}'
       return:

@@ -1,5 +1,5 @@
 ---
-Cassandra\Exception\TimeoutException:
+Exception\TimeoutException:
   comment: |-
     TimeoutException is generally raised when a future did not resolve
     within a given time interval.

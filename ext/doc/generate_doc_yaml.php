@@ -16,7 +16,7 @@ function doesParentHaveMethod($class, $method) {
 }
 
 function writeDocYaml($yamlFileName, $class) {
-    yaml_emit_file($yamlFileName, array($class->getName() => $classDoc));
+    yaml_emit_file($yamlFileName, array($this->classNameNoCoreNamespace => $classDoc));
 }
 
 function usage() {
@@ -50,7 +50,8 @@ class YamlClassDoc {
 
 
     public function emit() {
-        yaml_emit_file($this->yamlFileName, array($this->class->getName() => $this->classDoc));
+        $classNameNoCoreNamespace = self::getClassNameWithNoCoreNamespace($this->class->getName());
+        yaml_emit_file($this->yamlFileName, array($classNameNoCoreNamespace => $this->classDoc));
     }
 
     public static function emitAll() {
@@ -122,15 +123,21 @@ class YamlClassDoc {
         return null;
     }
 
+    private static function getClassNameWithNoCoreNamespace($className) {
+        return preg_replace("/" . INPUT_NAMESPACE . "\\\\/", "", $className);
+    }
+
     private static function loadYaml($class, $yamlFileName) {
         $classDoc = yaml_parse_file($yamlFileName);
+        $classNameNoCoreNamespace = self::getClassNameWithNoCoreNamespace($class->getName());
+        print("$classNameNoCoreNamespace\n");
 
         if ($classDoc === false) {
             $fullClassName = $class->getName();
             echo "Generating doc yaml file for '$fullClassName' ($yamlFileName)\n";
             $classDoc = array();
-        } else if (isset($classDoc[$class->getName()])){
-            $classDoc = $classDoc[$class->getName()];
+        } else if (isset($classDoc[$classNameNoCoreNamespace])){
+            $classDoc = $classDoc[$classNameNoCoreNamespace];
         } else {
             logWarning( "Unable to find top level class in '$yamlFileName'\n");
             return;

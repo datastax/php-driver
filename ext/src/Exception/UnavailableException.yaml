@@ -1,5 +1,5 @@
 ---
-Cassandra\Exception\UnavailableException:
+Exception\UnavailableException:
   comment: |-
     UnavailableException is raised when a coordinator detected that there aren't
     enough replica nodes available to fulfill the request.

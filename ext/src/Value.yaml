@@ -1,5 +1,5 @@
 ---
-Cassandra\Value:
+Value:
   comment: |-
     Common interface implemented by all Cassandra value types.
 

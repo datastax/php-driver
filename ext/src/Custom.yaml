@@ -1,6 +1,6 @@
 ---
-Cassandra\Custom:
-  comment: An interface for representing custom values.
+Custom:
+  comment: A class for representing custom values.
   methods:
     type:
       comment: The type of this value.

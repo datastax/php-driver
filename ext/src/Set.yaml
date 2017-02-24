@@ -1,5 +1,5 @@
 ---
-Cassandra\Set:
+Set:
   comment: A PHP representation of the CQL `set` datatype
   methods:
     __construct:

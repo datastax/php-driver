@@ -1,5 +1,5 @@
 ---
-Cassandra\Type\Collection:
+Type\Collection:
   comment: |-
     A class that represents the list type. The list type contains the type of the
     elements contain in the list.
@@ -21,7 +21,7 @@ Cassandra\Type\Collection:
         type: Type
     create:
       comment: |-
-        Creates a new Cassandra\Collection from the given values.  When no values
+        Creates a new Collection from the given values.  When no values
         given, creates an empty list.
 
         @throws Exception\InvalidArgumentException when values given are of a
@@ -33,5 +33,5 @@ Cassandra\Type\Collection:
           type: mixed
       return:
         comment: ' A list with given values.'
-        type: Cassandra\Collection
+        type: Collection
 ...
