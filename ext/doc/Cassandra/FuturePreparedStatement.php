@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright 2015-2016 DataStax, Inc.
+ * Copyright 2017 DataStax, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,8 +19,8 @@
 namespace Cassandra;
 
 /**
- * A future returned from `Cassandra\Session::prepareAsync()`
- * This future will resolve with a `Cassandra\PreparedStatement` or an exception.
+ * A future returned from `Session::prepareAsync()`
+ * This future will resolve with a PreparedStatement or an exception.
  *
  * @see Session::prepareAsync()
  */
@@ -29,10 +29,11 @@ final class FuturePreparedStatement implements Future {
     /**
      * {@inheritDoc}
      *
+     * @param int|double|null $timeout A timeout in seconds
+     *
      * @throws Exception\InvalidArgumentException
      * @throws Exception\TimeoutException
      *
-     * @param int|double|null $timeout A timeout in seconds
      * @return PreparedStatement A prepared statement
      */
     public function get($timeout) { }

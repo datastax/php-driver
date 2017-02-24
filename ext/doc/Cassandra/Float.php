@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright 2015-2016 DataStax, Inc.
+ * Copyright 2017 DataStax, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,24 +25,28 @@ final class Float_ implements Value, Numeric {
 
     /**
      * Creates a new float.
-     * @param double|int|string|Float $value A float value as a string, number or Cassandra\Float
+     *
+     * @param double|int|string|Float $value A float value as a string, number or Float
      */
     public function __construct($value) { }
 
     /**
      * Returns string representation of the float value.
+     *
      * @return string float value
      */
     public function __toString() { }
 
     /**
      * The type of this float.
+     *
      * @return Type
      */
     public function type() { }
 
     /**
      * Returns the float value.
+     *
      * @return float float value
      */
     public function value() { }
@@ -63,31 +67,31 @@ final class Float_ implements Value, Numeric {
     public function isNaN() { }
 
     /**
-     * @param Cassandra\Numeric $num a number to add to this one
+     * @param Numeric $num a number to add to this one
      * @return Numeric sum
      */
     public function add($num) { }
 
     /**
-     * @param Cassandra\Numeric $num a number to subtract from this one
+     * @param Numeric $num a number to subtract from this one
      * @return Numeric difference
      */
     public function sub($num) { }
 
     /**
-     * @param Cassandra\Numeric $num a number to multiply this one by
+     * @param Numeric $num a number to multiply this one by
      * @return Numeric product
      */
     public function mul($num) { }
 
     /**
-     * @param Cassandra\Numeric $num a number to divide this one by
+     * @param Numeric $num a number to divide this one by
      * @return Numeric quotient
      */
     public function div($num) { }
 
     /**
-     * @param Cassandra\Numeric $num a number to divide this one by
+     * @param Numeric $num a number to divide this one by
      * @return Numeric remainder
      */
     public function mod($num) { }
@@ -119,12 +123,14 @@ final class Float_ implements Value, Numeric {
 
     /**
      * Minimum possible Float value
+     *
      * @return Float minimum value
      */
     public static function min() { }
 
     /**
      * Maximum possible Float value
+     *
      * @return Float maximum value
      */
     public static function max() { }

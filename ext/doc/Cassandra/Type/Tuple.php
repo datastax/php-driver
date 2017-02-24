@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright 2015-2016 DataStax, Inc.
+ * Copyright 2017 DataStax, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,31 +28,36 @@ final class Tuple extends Type {
 
     /**
      * Returns "tuple"
+     *
      * @return string "tuple"
      */
     public function name() { }
 
     /**
      * Returns type representation in CQL, e.g. `tuple<varchar, int>`
+     *
      * @return string Type representation in CQL
      */
     public function __toString() { }
 
     /**
      * Returns types of values
+     *
      * @return array An array of types
      */
     public function types() { }
 
     /**
-     * Creates a new Cassandra\Tuple from the given values. When no values given,
+     * Creates a new Tuple from the given values. When no values given,
      * creates a tuple with null for the values.
+     *
+     * @param mixed $values {@inheritDoc}
      *
      * @throws Exception\InvalidArgumentException when values given are of a
      *                                            different type than what the
      *                                            tuple expects.
-     * @param mixed $values {@inheritDoc}
-     * @return Cassandra\Tuple A tuple with given values.
+     *
+     * @return Tuple A tuple with given values.
      */
     public function create($values) { }
 

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright 2015-2016 DataStax, Inc.
+ * Copyright 2017 DataStax, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,6 +26,7 @@ final class Timestamp implements Value {
     /**
      * Creates a new timestamp from either unix timestamp and microseconds or
      * from the current time by default.
+     *
      * @param int $seconds The number of seconds
      * @param int $microseconds The number of microseconds
      */
@@ -33,6 +34,7 @@ final class Timestamp implements Value {
 
     /**
      * The type of this timestamp.
+     *
      * @return Type
      */
     public function type() { }
@@ -40,29 +42,33 @@ final class Timestamp implements Value {
     /**
      * Unix timestamp.
      *
-     * @see time
      * @return int seconds
+     *
+     * @see time
      */
     public function time() { }
 
     /**
      * Microtime from this timestamp
      *
+     * @param bool $get_as_float Whether to get this value as float
+     *
+     * @return float|string Float or string representation
      *
      * @see microtime
-     * @param bool $get_as_float Whether to get this value as float
-     * @return float|string Float or string representation
      */
     public function microtime($get_as_float) { }
 
     /**
      * Converts current timestamp to PHP DateTime.
+     *
      * @return \DateTime PHP representation
      */
     public function toDateTime() { }
 
     /**
      * Returns a string representation of this timestamp.
+     *
      * @return string timestamp
      */
     public function __toString() { }

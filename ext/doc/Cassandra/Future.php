@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright 2015-2016 DataStax, Inc.
+ * Copyright 2017 DataStax, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,10 +31,11 @@ interface Future {
     /**
      * Waits for a given future resource to resolve and throws errors if any.
      *
+     * @param int|double|null $timeout A timeout in seconds
+     *
      * @throws Exception\InvalidArgumentException
      * @throws Exception\TimeoutException
      *
-     * @param int|double|null $timeout A timeout in seconds
      * @return mixed a value that the future has been resolved with
      */
     public function get($timeout);

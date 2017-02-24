@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright 2015-2016 DataStax, Inc.
+ * Copyright 2017 DataStax, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,24 +25,28 @@ final class Inet implements Value {
 
     /**
      * Creates a new IPv4 or IPv6 inet address.
+     *
      * @param string $address any IPv4 or IPv6 address
      */
     public function __construct($address) { }
 
     /**
      * Returns the normalized string representation of the address.
+     *
      * @return string address
      */
     public function __toString() { }
 
     /**
      * The type of this inet.
+     *
      * @return Type
      */
     public function type() { }
 
     /**
      * Returns the normalized string representation of the address.
+     *
      * @return string address
      */
     public function address() { }

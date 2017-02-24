@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright 2015-2016 DataStax, Inc.
+ * Copyright 2017 DataStax, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,57 +25,70 @@ final class DefaultSession implements Session {
 
     /**
      * {@inheritDoc}
+     *
      * @param string|Statement $statement {@inheritDoc}
      * @param array|ExecutionOptions|null $options {@inheritDoc}
+     *
      * @return Rows {@inheritDoc}
      */
     public function execute($statement, $options) { }
 
     /**
      * {@inheritDoc}
+     *
      * @param string|Statement $statement {@inheritDoc}
      * @param array|ExecutionOptions|null $options {@inheritDoc}
+     *
      * @return FutureRows {@inheritDoc}
      */
     public function executeAsync($statement, $options) { }
 
     /**
      * {@inheritDoc}
+     *
      * @param string $cql {@inheritDoc}
-     * @param Cassandra\ExecutionOptions $options {@inheritDoc}
+     * @param ExecutionOptions $options {@inheritDoc}
+     *
      * @return PreparedStatement {@inheritDoc}
      */
     public function prepare($cql, $options) { }
 
     /**
      * {@inheritDoc}
+     *
      * @param string $cql {@inheritDoc}
-     * @param Cassandra\ExecutionOptions $options {@inheritDoc}
+     * @param ExecutionOptions $options {@inheritDoc}
+     *
      * @return FuturePreparedStatement {@inheritDoc}
      */
     public function prepareAsync($cql, $options) { }
 
     /**
      * {@inheritDoc}
+     *
      * @param double $timeout {@inheritDoc}
+     *
      * @return null {@inheritDoc}
      */
     public function close($timeout) { }
 
     /**
      * {@inheritDoc}
+     *
      * @return FutureClose {@inheritDoc}
      */
     public function closeAsync() { }
 
     /**
      * {@inheritDoc}
+     *
      * @return array {@inheritDoc}
      */
     public function metrics() { }
 
     /**
      * {@inheritDoc}
+     *
      * @return Schema {@inheritDoc}
      */
     public function schema() { }

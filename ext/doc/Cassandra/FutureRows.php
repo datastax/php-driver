@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright 2015-2016 DataStax, Inc.
+ * Copyright 2017 DataStax, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@
 namespace Cassandra;
 
 /**
- * This future results is resolved with `Cassandra\Rows`.
+ * This future results is resolved with Rows.
  *
  * @see Session::executeAsync()
  */
@@ -28,10 +28,11 @@ final class FutureRows implements Future {
     /**
      * {@inheritDoc}
      *
+     * @param int|double|null $timeout A timeout in seconds
+     *
      * @throws Exception\InvalidArgumentException
      * @throws Exception\TimeoutException
      *
-     * @param int|double|null $timeout A timeout in seconds
      * @return Rows|null The result set
      */
     public function get($timeout) { }

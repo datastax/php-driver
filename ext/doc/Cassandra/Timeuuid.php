@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright 2015-2016 DataStax, Inc.
+ * Copyright 2017 DataStax, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,30 +25,35 @@ final class Timeuuid implements Value, UuidInterface {
 
     /**
      * Creates a timeuuid from a given timestamp or current time.
+     *
      * @param int $timestamp Unix timestamp
      */
     public function __construct($timestamp) { }
 
     /**
      * Returns this timeuuid as string.
+     *
      * @return string timeuuid
      */
     public function __toString() { }
 
     /**
      * The type of this timeuuid.
+     *
      * @return Type
      */
     public function type() { }
 
     /**
      * Returns this timeuuid as string.
+     *
      * @return string timeuuid
      */
     public function uuid() { }
 
     /**
      * Returns the version of this timeuuid.
+     *
      * @return int version of this timeuuid
      */
     public function version() { }
@@ -56,13 +61,15 @@ final class Timeuuid implements Value, UuidInterface {
     /**
      * Unix timestamp.
      *
-     * @see time
      * @return int seconds
+     *
+     * @see time
      */
     public function time() { }
 
     /**
      * Converts current timeuuid to PHP DateTime.
+     *
      * @return \DateTime PHP representation
      */
     public function toDateTime() { }

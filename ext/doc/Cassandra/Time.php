@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright 2015-2016 DataStax, Inc.
+ * Copyright 2017 DataStax, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,12 +25,14 @@ final class Time implements Value {
 
     /**
      * Creates a new Time object
+     *
      * @param int|string $nanoseconds Number of nanoseconds since last microsecond
      */
     public function __construct($nanoseconds) { }
 
     /**
      * The type of this date.
+     *
      * @return Type
      */
     public function type() { }
@@ -47,7 +49,7 @@ final class Time implements Value {
     public static function fromDateTime($datetime) { }
 
     /**
-     * @return string this date in string format: Cassandra\Time(nanoseconds=$nanoseconds)
+     * @return string this date in string format: Time(nanoseconds=$nanoseconds)
      */
     public function __toString() { }
 

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright 2015-2016 DataStax, Inc.
+ * Copyright 2017 DataStax, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,64 +31,66 @@ final class Decimal implements Value, Numeric {
      * ~~~{.php}
      * <?php
      * $decimal = new Cassandra::Decimal("1313123123.234234234234234234123");
-     *
-     * $this->assertEquals(21, $decimal->scale());
-     * $this->assertEquals("1313123123234234234234234234123", $decimal->value());
      * ~~~
+     *
      * @param string $value Any decimal string
      */
     public function __construct($value) { }
 
     /**
      * String representation of this decimal.
+     *
      * @return string Decimal value
      */
     public function __toString() { }
 
     /**
      * The type of this decimal.
+     *
      * @return Type
      */
     public function type() { }
 
     /**
      * Numeric value of this decimal as string.
+     *
      * @return string Numeric value
      */
     public function value() { }
 
     /**
      * Scale of this decimal as int.
+     *
      * @return int Scale
      */
     public function scale() { }
 
     /**
-     * @param Cassandra\Numeric $num a number to add to this one
+     * @param Numeric $num a number to add to this one
      * @return Numeric sum
      */
     public function add($num) { }
 
     /**
-     * @param Cassandra\Numeric $num a number to subtract from this one
+     * @param Numeric $num a number to subtract from this one
      * @return Numeric difference
      */
     public function sub($num) { }
 
     /**
-     * @param Cassandra\Numeric $num a number to multiply this one by
+     * @param Numeric $num a number to multiply this one by
      * @return Numeric product
      */
     public function mul($num) { }
 
     /**
-     * @param Cassandra\Numeric $num a number to divide this one by
+     * @param Numeric $num a number to divide this one by
      * @return Numeric quotient
      */
     public function div($num) { }
 
     /**
-     * @param Cassandra\Numeric $num a number to divide this one by
+     * @param Numeric $num a number to divide this one by
      * @return Numeric remainder
      */
     public function mod($num) { }
