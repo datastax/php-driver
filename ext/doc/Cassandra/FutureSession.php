@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright 2015-2016 DataStax, Inc.
+ * Copyright 2017 DataStax, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,21 +19,22 @@
 namespace Cassandra;
 
 /**
- * A future that resolves with `Cassandra\Session`.
+ * A future that resolves with Session.
  *
  * @see Cluster::connectAsync()
  */
-final class FutureSession implements Future
-{
+final class FutureSession implements Future {
+
     /**
      * {@inheritDoc}
+     *
+     * @param int|double|null $timeout A timeout in seconds
      *
      * @throws Exception\InvalidArgumentException
      * @throws Exception\TimeoutException
      *
-     * @param float|null $timeout
-     *
-     * @return mixed a value that the future has been resolved with
+     * @return Session A connected session
      */
-    public function get($timeout = null) {}
+    public function get($timeout) { }
+
 }

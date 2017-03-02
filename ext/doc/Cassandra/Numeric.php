@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright 2015-2016 DataStax, Inc.
+ * Copyright 2017 DataStax, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,65 +27,61 @@ namespace Cassandra;
  * @see Float
  * @see Varint
  */
-interface Numeric
-{
+interface Numeric {
+
     /**
-     * @param Numeric $addend a number to add to this one
-     *
+     * @param Numeric $num a number to add to this one
      * @return Numeric sum
      */
-    function add(Numeric $addend);
+    public function add($num);
 
     /**
-     * @param Numeric $subtrahend a number to subtract from this one
-     *
+     * @param Numeric $num a number to subtract from this one
      * @return Numeric difference
      */
-    function sub(Numeric $subtrahend);
+    public function sub($num);
 
     /**
-     * @param Numeric $multiplier a number to multiply this one by
-     *
+     * @param Numeric $num a number to multiply this one by
      * @return Numeric product
      */
-    function mul(Numeric $multiplier);
+    public function mul($num);
 
     /**
-     * @param Numeric $divisor a number to divide this one by
-     *
+     * @param Numeric $num a number to divide this one by
      * @return Numeric quotient
      */
-    function div(Numeric $divisor);
+    public function div($num);
 
     /**
-     * @param Numeric $divisor a number to divide this one by
-     *
+     * @param Numeric $num a number to divide this one by
      * @return Numeric remainder
      */
-    function mod(Numeric $divisor);
+    public function mod($num);
 
     /**
      * @return Numeric absolute value
      */
-    function abs();
+    public function abs();
 
     /**
      * @return Numeric negative value
      */
-    function neg();
+    public function neg();
 
     /**
      * @return Numeric square root
      */
-    function sqrt();
+    public function sqrt();
 
     /**
      * @return int this number as int
      */
-    function toInt();
+    public function toInt();
 
     /**
      * @return float this number as float
      */
-    function toDouble();
+    public function toDouble();
+
 }

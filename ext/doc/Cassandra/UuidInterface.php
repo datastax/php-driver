@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright 2015-2016 DataStax, Inc.
+ * Copyright 2017 DataStax, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,8 +21,8 @@ namespace Cassandra;
 /**
  * A PHP representation of the CQL `uuid` datatype
  */
-interface UuidInterface
-{
+interface UuidInterface {
+
     /**
      * Returns this uuid as string.
      *
@@ -36,4 +36,5 @@ interface UuidInterface
      * @return int version of this uuid
      */
     public function version();
+
 }

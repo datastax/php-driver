@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright 2015-2016 DataStax, Inc.
+ * Copyright 2017 DataStax, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,82 +19,78 @@
 namespace Cassandra;
 
 /**
- * Actual session implementation.
- *
- * @see Cassandra\Session
+ * {@inheritDoc}
  */
-final class DefaultSession implements Session
-{
-    /**
-     * {@inheritDoc}
-     *
-     * @return array Performance/Diagnostic metrics.
-     */
-    public function metrics() {}
+final class DefaultSession implements Session {
 
     /**
      * {@inheritDoc}
      *
-     * @return Schema current schema.
+     * @param string|Statement $statement {@inheritDoc}
+     * @param array|ExecutionOptions|null $options {@inheritDoc}
+     *
+     * @return Rows {@inheritDoc}
      */
-    public function schema() {}
+    public function execute($statement, $options) { }
 
     /**
      * {@inheritDoc}
      *
-     * @throws Exception
+     * @param string|Statement $statement {@inheritDoc}
+     * @param array|ExecutionOptions|null $options {@inheritDoc}
      *
-     * @param string|Statement $statement string or statement to be executed
-     * @param ExecutionOptions $options   execution options (optional)
-     *
-     * @return Rows execution result
+     * @return FutureRows {@inheritDoc}
      */
-    public function execute($statement, ExecutionOptions $options = null) {}
+    public function executeAsync($statement, $options) { }
 
     /**
      * {@inheritDoc}
      *
-     * @param string|Statement      $statement string or statement to be executed
-     * @param ExecutionOptions|null $options   execution options (optional)
+     * @param string $cql {@inheritDoc}
+     * @param ExecutionOptions $options {@inheritDoc}
      *
-     * @return Future future result
+     * @return PreparedStatement {@inheritDoc}
      */
-    public function executeAsync($statement, ExecutionOptions $options = null) {}
+    public function prepare($cql, $options) { }
 
     /**
      * {@inheritDoc}
      *
-     * @throws Exception
+     * @param string $cql {@inheritDoc}
+     * @param ExecutionOptions $options {@inheritDoc}
      *
-     * @param string                $cql     CQL statement string
-     * @param ExecutionOptions|null $options execution options (optional)
-     *
-     * @return PreparedStatement prepared statement
+     * @return FuturePreparedStatement {@inheritDoc}
      */
-    public function prepare($cql, ExecutionOptions $options = null) {}
+    public function prepareAsync($cql, $options) { }
 
     /**
      * {@inheritDoc}
      *
-     * @param string                $cql     CQL string to be prepared
-     * @param ExecutionOptions|null $options preparation options
+     * @param double $timeout {@inheritDoc}
      *
-     * @return Future statement
+     * @return null {@inheritDoc}
      */
-    public function prepareAsync($cql, ExecutionOptions $options = null) {}
+    public function close($timeout) { }
 
     /**
      * {@inheritDoc}
      *
-     * @param float|null $timeout Timeout to wait for closure in seconds
-     * @return void
+     * @return FutureClose {@inheritDoc}
      */
-    public function close($timeout = null) {}
+    public function closeAsync() { }
 
     /**
      * {@inheritDoc}
      *
-     * @return Future future
+     * @return array {@inheritDoc}
      */
-    public function closeAsync() {}
+    public function metrics() { }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return Schema {@inheritDoc}
+     */
+    public function schema() { }
+
 }

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright 2015-2016 DataStax, Inc.
+ * Copyright 2017 DataStax, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,27 +21,29 @@ namespace Cassandra;
 /**
  * A PHP representation of a schema
  */
-final class DefaultSchema implements Schema
-{
-    /**
-     * {@inheritDoc}
-     *
-     * @param  string             $name Name of the keyspace to get
-     * @return Cassandra\Keyspace       Keyspace instance or null
-     */
-    public function keyspace($name) {}
+final class DefaultSchema implements Schema {
 
     /**
      * {@inheritDoc}
      *
-     * @return array An array of `Cassandra\Keyspace` instances.
+     * @param string $name Name of the keyspace to get
+     *
+     * @return Keyspace Keyspace instance or null
      */
-    public function keyspaces() {}
+    public function keyspace($name) { }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return array An array of `Keyspace` instances.
+     */
+    public function keyspaces() { }
 
     /**
      * {@inheritDoc}
      *
      * @return int Version of the schema.
      */
-    public function version() {}
+    public function version() { }
+
 }

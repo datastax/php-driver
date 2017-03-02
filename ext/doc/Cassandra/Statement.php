@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright 2015-2016 DataStax, Inc.
+ * Copyright 2017 DataStax, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,6 +25,6 @@ namespace Cassandra;
  * @see PreparedStatement
  * @see BatchStatement
  */
-interface Statement
-{
+interface Statement {
+
 }

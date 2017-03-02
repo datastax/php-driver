@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright 2015-2016 DataStax, Inc.
+ * Copyright 2017 DataStax, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,55 +21,57 @@ namespace Cassandra;
 /**
  * A PHP representation of an index
  */
-final class DefaultIndex implements Index
-{
+final class DefaultIndex implements Index {
+
     /**
      * {@inheritDoc}
      *
      * @return string Name of the index
      */
-    public function name() {}
+    public function name() { }
 
     /**
      * {@inheritDoc}
      *
      * @return string Kind of the index
      */
-    public function kind() {}
+    public function kind() { }
 
     /**
      * {@inheritDoc}
      *
      * @return string Target column name of the index
      */
-    public function target() {}
+    public function target() { }
 
     /**
      * {@inheritDoc}
      *
-     * @return Cassandra\Value Value of an option by name
+     * @param string $name {@inheritDoc}
+     *
+     * @return Value Value of an option by name
      */
-    public function option($name) {}
+    public function option($name) { }
 
     /**
      * {@inheritDoc}
      *
-     * @return array A dictionary of `string` and `Cassandra\Value pairs of the
-     *               index's options.
+     * @return array A dictionary of `string` and `Value` pairs of the
      */
-    public function options() {}
+    public function options() { }
 
     /**
      * {@inheritDoc}
      *
      * @return string Class name of a custom index
      */
-    public function className() {}
+    public function className() { }
 
     /**
      * {@inheritDoc}
      *
-     * @return boolean
+     * @return bool
      */
-    public function isCustom() {}
+    public function isCustom() { }
+
 }

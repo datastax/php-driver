@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright 2015-2016 DataStax, Inc.
+ * Copyright 2017 DataStax, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,4 +22,23 @@ namespace Cassandra\Exception;
  * TimeoutException is generally raised when a future did not resolve
  * within a given time interval.
  */
-class TimeoutException extends RuntimeException {}
+class TimeoutException extends RuntimeException  {
+
+    /**
+     * @param mixed $message
+     * @param mixed $code
+     * @param mixed $previous
+     */
+    public function __construct($message, $code, $previous) { }
+
+    /**
+     * @return mixed
+     */
+    public function __wakeup() { }
+
+    /**
+     * @return mixed
+     */
+    public function __toString() { }
+
+}

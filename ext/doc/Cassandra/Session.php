@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright 2015-2016 DataStax, Inc.
+ * Copyright 2017 DataStax, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,91 +22,85 @@ namespace Cassandra;
  * A session is used to prepare and execute statements.
  *
  * @see Cluster::connect()
+ * @see Cluster::connectAsync()
  */
-interface Session
-{
+interface Session {
+
     /**
-     * Returns current performance/diagnostic metrics.
+     * Execute a query.
+     *
+     * @param string|Statement $statement string or statement to be executed.
+     * @param array|ExecutionOptions|null $options execution options (optional)
+     *
+     * @throws Exception
+     *
+     * @return Rows A collection of rows.
+     */
+    public function execute($statement, $options);
+
+    /**
+     * Execute a query asynchronously. This method returns immediately, but
+     * the query continues execution in the background.
+     *
+     * @param string|Statement $statement string or statement to be executed.
+     * @param array|ExecutionOptions|null $options execution options (optional)
+     *
+     * @return FutureRows A future that can be used to retrieve the result.
+     */
+    public function executeAsync($statement, $options);
+
+    /**
+     * Prepare a query for execution.
+     *
+     * @param string $cql The query to be prepared.
+     * @param ExecutionOptions $options Options to control preparing the query.
+     *
+     * @throws Exception
+     *
+     * @return PreparedStatement A prepared statement that can be bound with parameters and executed.
+     */
+    public function prepare($cql, $options);
+
+    /**
+     * Asynchronously prepare a query for execution.
+     *
+     * @param string $cql The query to be prepared.
+     * @param ExecutionOptions $options Options to control preparing the query.
+     *
+     * @return FuturePreparedStatement A future that can be used to retrieve the prepared statement.
+     */
+    public function prepareAsync($cql, $options);
+
+    /**
+     * Close the session and all its connections.
+     *
+     * @param double $timeout The amount of time in seconds to wait for the session to close.
+     *
+     * @throws Exception
+     *
+     * @return null Nothing.
+     */
+    public function close($timeout);
+
+    /**
+     * Asynchronously close the session and all its connections.
+     *
+     * @return FutureClose A future that can be waited on.
+     */
+    public function closeAsync();
+
+    /**
+     * Get performance and diagnostic metrics.
      *
      * @return array Performance/Diagnostic metrics.
      */
     public function metrics();
 
     /**
-     * Returns current schema.
+     * Get a snapshot of the cluster's current schema.
      *
-     * NOTE: the returned Schema instance will not be updated as the actual
-     *       schema changes, instead an updated instance should be requested by
-     *       calling Session::schema() again.
-     *
-     * @return Schema current schema.
+     * @return Schema A snapshot of the cluster's schema.
      */
     public function schema();
 
-    /**
-     * Executes a given statement and returns a result.
-     *
-     * @throws Exception
-     *
-     * @param string|Statement $statement string or statement to be executed
-     * @param array|ExecutionOptions|null $options   execution options (optional)
-     *
-     * @return Rows execution result
-     */
-    public function execute($statement, ExecutionOptions $options = null);
-
-    /**
-     * Executes a given statement and returns a future result.
-     *
-     * Note that this method ignores timeout specified in the ExecutionOptions,
-     * you can provide one to Future::get() instead.
-     *
-     * @param string|Statement $statement string or statement to be executed
-     * @param array|ExecutionOptions|null $options   execution options (optional)
-     *
-     * @return Future future result
-     */
-    public function executeAsync($statement, ExecutionOptions $options = null);
-
-    /**
-     * Creates a prepared statement from a given CQL string.
-     *
-     * Note that this method only uses the ExecutionOptions::$timeout option,
-     * all other options will be ignored.
-     *
-     * @throws Exception
-     *
-     * @param string                $cql     CQL statement string
-     * @param array|ExecutionOptions|null $options execution options (optional)
-     *
-     * @return PreparedStatement prepared statement
-     */
-    public function prepare($cql, ExecutionOptions $options = null);
-
-    /**
-     * Asynchronously prepares a statement and returns a future prepared statement.
-     *
-     * Note that all options passed to this method will be ignored.
-     *
-     * @param string                $cql     CQL string to be prepared
-     * @param array|ExecutionOptions|null $options preparation options
-     *
-     * @return Future statement
-     */
-    public function prepareAsync($cql, ExecutionOptions $options = null);
-
-    /**
-     * Closes current session and all of its connections.
-     *
-     * @param float|null $timeout Timeout to wait for closure in seconds
-     * @return void
-     */
-    public function close($timeout = null);
-
-    /**
-     * Asynchronously closes current session once all pending requests have finished.
-     *
-     * @return Future future
-     */
-    public function closeAsync();
 }

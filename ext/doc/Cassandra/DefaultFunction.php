@@ -1,9 +1,9 @@
 <?php
 
 /**
- * Copyright 2015-2016 DataStax, Inc.
+ * Copyright 2017 DataStax, Inc.
  *
- * Licensed under the Apache License, Version 2.0 (the "License") {}
+ * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
@@ -16,66 +16,67 @@
  * limitations under the License.
  */
 
-namespace Cassandra {}
+namespace Cassandra;
 
 /**
  * A PHP representation of a public function
  */
-final class DefaultFunction implements Function
-{
+final class DefaultFunction implements Function_ {
+
     /**
      * {@inheritDoc}
      *
      * @return string Full name of the function including name and types
      */
-    public public function name() {}
+    public function name() { }
 
     /**
      * {@inheritDoc}
      *
      * @return string Simple name of the function
      */
-    public function simpleName() {}
+    public function simpleName() { }
 
     /**
      * {@inheritDoc}
      *
      * @return array Arguments of the function
      */
-    public function arguments() {}
+    public function arguments() { }
 
     /**
      * {@inheritDoc}
      *
-     * @return Cassandra\Type Return type of the function
+     * @return Type Return type of the function
      */
-    public function returnType() {}
+    public function returnType() { }
 
     /**
      * {@inheritDoc}
      *
      * @return string Signature of the function (same as name())
      */
-    public function signature() {}
+    public function signature() { }
 
     /**
      * {@inheritDoc}
      *
      * @return string Language used by the function
      */
-    public function language() {}
+    public function language() { }
 
     /**
      * {@inheritDoc}
      *
      * @return string Body of the function
      */
-    public function body() {}
+    public function body() { }
 
     /**
      * {@inheritDoc}
      *
-     * @return boolean
+     * @return bool
      */
-    public function isCalledOnNullInput() {}
+    public function isCalledOnNullInput() { }
+
 }

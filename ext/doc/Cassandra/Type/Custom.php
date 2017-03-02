@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright 2015-2016 DataStax, Inc.
+ * Copyright 2017 DataStax, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,31 +18,31 @@
 
 namespace Cassandra\Type;
 
-use Cassandra\Type;
+/**
+ * A class that represents a custom type.
+ */
+final class Custom extends Type {
 
-final class Custom extends Type
-{
+    private function __construct() { }
+
     /**
      * {@inheritDoc}
      *
      * @return string The name of this type
      */
-    public function name() {}
+    public function name() { }
 
     /**
      * {@inheritDoc}
      *
      * @return string String representation of this type
      */
-    public function __toString() {}
+    public function __toString() { }
 
     /**
-     * Creation of custom type instances is not supported
-     *
-     * @throws Cassandra\Exception\LogicException
-     *
-     * @param  mixed $value the value
-     * @return null         nothing
+     * @param mixed $value
+     * @return mixed
      */
-    public function create($value = null) {}
+    public function create($value) { }
+
 }

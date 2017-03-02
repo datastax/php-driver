@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright 2015-2016 DataStax, Inc.
+ * Copyright 2017 DataStax, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,39 +21,36 @@ namespace Cassandra;
 /**
  * A PHP representation of the CQL `time` type.
  */
-final class Time implements Value
-{
+final class Time implements Value {
+
     /**
      * Creates a new Time object
      *
-     * @param int|string $nanoseconds  Number of nanoseconds since last microsecond
+     * @param int|string $nanoseconds Number of nanoseconds since last microsecond
      */
-    public function __construct($nanoseconds = 0) {}
-
-
-    /**
-     * Creates a new Time object with the current time.
-     *
-     * @return Time
-     */
-    public static function now() {}
+    public function __construct($nanoseconds) { }
 
     /**
      * The type of this date.
      *
      * @return Type
      */
-    public function type() {}
+    public function type() { }
 
     /**
-     * @return int number of nanoseconds since the last full microsecond since
-     *             the last full second since the last full minute since the
-     *             last full hour since midnight
+     * @return int
      */
-    public function nanoseconds() {}
+    public function seconds() { }
 
     /**
-     * @return string this date in string format: Cassandra\Time(nanoseconds=$nanoseconds)
+     * @param DateTime $datetime
+     * @return Time
      */
-    public function __toString() {}
+    public static function fromDateTime($datetime) { }
+
+    /**
+     * @return string this date in string format: Time(nanoseconds=$nanoseconds)
+     */
+    public function __toString() { }
+
 }

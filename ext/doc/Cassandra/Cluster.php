@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright 2015-2016 DataStax, Inc.
+ * Copyright 2017 DataStax, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,8 +21,8 @@ namespace Cassandra;
 /**
  * Cluster object is used to create Sessions.
  */
-interface Cluster
-{
+interface Cluster {
+
     /**
      * Creates a new Session instance.
      *
@@ -30,7 +30,7 @@ interface Cluster
      *
      * @return Session Session instance
      */
-    function connect($keyspace = null);
+    public function connect($keyspace);
 
     /**
      * Creates a new Session instance.
@@ -39,5 +39,6 @@ interface Cluster
      *
      * @return Future A Future Session instance
      */
-    function connectAsync($keyspace = null);
+    public function connectAsync($keyspace);
+
 }

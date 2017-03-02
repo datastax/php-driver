@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright 2015-2016 DataStax, Inc.
+ * Copyright 2017 DataStax, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,11 +18,31 @@
 
 namespace Cassandra\Type;
 
-use Cassandra\Type;
+/**
+ * A class that represents a primitive type (e.g. `varchar` or `bigint`)
+ */
+final class Scalar extends Type {
 
-final class Scalar extends Type
-{
-    public function name() {}
-    public function __toString() {}
-    public function create($value = null) {}
+    private function __construct() { }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return string {@inheritDoc}
+     */
+    public function name() { }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return string {@inheritDoc}
+     */
+    public function __toString() { }
+
+    /**
+     * @param mixed $value
+     * @return mixed
+     */
+    public function create($value) { }
+
 }

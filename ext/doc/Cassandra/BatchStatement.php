@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright 2015-2016 DataStax, Inc.
+ * Copyright 2017 DataStax, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,24 +37,25 @@ namespace Cassandra;
  * @see Cassandra::BATCH_UNLOGGED
  * @see Cassandra::BATCH_COUNTER
  */
-final class BatchStatement implements Statement
-{
+final class BatchStatement implements Statement {
+
     /**
      * Creates a new batch statement.
      *
      * @param int $type must be one of Cassandra::BATCH_* (default: Cassandra::BATCH_LOGGED).
      */
-    public function __construct($type = \Cassandra::BATCH_LOGGED) {}
+    public function __construct($type) { }
 
     /**
      * Adds a statement to this batch.
      *
      * @param string|Statement $statement string or statement to add
-     * @param array|null $arguments positional or named arguments
+     * @param array|null $arguments positional or named arguments (optional)
      *
      * @throws Exception\InvalidArgumentException
      *
      * @return BatchStatement self
      */
-    public function add($statement, array $arguments = null) {}
+    public function add($statement, $arguments) { }
+
 }

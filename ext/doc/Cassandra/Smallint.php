@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright 2015-2016 DataStax, Inc.
+ * Copyright 2017 DataStax, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,101 +18,104 @@
 
 namespace Cassandra;
 
+/**
+ * A PHP representation of the CQL `smallint` datatype.
+ */
+final class Smallint implements Value, Numeric {
 
-final class Smallint implements Value, Numeric
-{
     /**
-     * Minimum possible Smallint value
+     * Creates a new 16-bit signed integer.
      *
-     * @return Smallint minimum value
+     * @param int|double|string $value The value as an integer, double or string
      */
-    public static function min() {}
+    public function __construct($value) { }
 
     /**
-     * Maximum possible Smallint value
-     *
-     * @return Smallint maximum value
+     * @return string
      */
-    public static function max() {}
-
-    /**
-     * Creates a new 16bit integer.
-     *
-     * @param string $value integer value as a string
-     */
-    public function __construct($value) {}
-
-    /**
-     * @param Numeric $addend a number to add to this one
-     *
-     * @return Numeric sum
-     */
-    public function add(Numeric $addend) {}
-
-    /**
-     * @param Numeric $subtrahend a number to subtract from this one
-     *
-     * @return Numeric difference
-     */
-    public function sub(Numeric $subtrahend) {}
-
-    /**
-     * @param Numeric $multiplier a number to multiply this one by
-     *
-     * @return Numeric product
-     */
-    public function mul(Numeric $multiplier) {}
-
-    /**
-     * @param Numeric $divisor a number to divide this one by
-     *
-     * @return Numeric quotient
-     */
-    public function div(Numeric $divisor) {}
-
-    /**
-     * @param Numeric $divisor a number to divide this one by
-     *
-     * @return Numeric remainder
-     */
-    public function mod(Numeric $divisor) {}
-
-    /**
-     * @return Numeric absolute value
-     */
-    public function abs() {}
-
-    /**
-     * @return Numeric negative value
-     */
-    public function neg() {}
-
-    /**
-     * @return Numeric square root
-     */
-    public function sqrt() {}
-
-    /**
-     * @return int this number as int
-     */
-    public function toInt() {}
-
-    /**
-     * @return float this number as float
-     */
-    public function toDouble() {}
+    public function __toString() { }
 
     /**
      * The type of this value (smallint).
      *
      * @return Type
      */
-    public function type() {}
+    public function type() { }
 
     /**
      * Returns the integer value.
      *
      * @return int integer value
      */
-    public function value() {}
+    public function value() { }
+
+    /**
+     * @param Numeric $num a number to add to this one
+     * @return Numeric sum
+     */
+    public function add($num) { }
+
+    /**
+     * @param Numeric $num a number to subtract from this one
+     * @return Numeric difference
+     */
+    public function sub($num) { }
+
+    /**
+     * @param Numeric $num a number to multiply this one by
+     * @return Numeric product
+     */
+    public function mul($num) { }
+
+    /**
+     * @param Numeric $num a number to divide this one by
+     * @return Numeric quotient
+     */
+    public function div($num) { }
+
+    /**
+     * @param Numeric $num a number to divide this one by
+     * @return Numeric remainder
+     */
+    public function mod($num) { }
+
+    /**
+     * @return Numeric absolute value
+     */
+    public function abs() { }
+
+    /**
+     * @return Numeric negative value
+     */
+    public function neg() { }
+
+    /**
+     * @return Numeric square root
+     */
+    public function sqrt() { }
+
+    /**
+     * @return int this number as int
+     */
+    public function toInt() { }
+
+    /**
+     * @return float this number as float
+     */
+    public function toDouble() { }
+
+    /**
+     * Minimum possible Smallint value
+     *
+     * @return Smallint minimum value
+     */
+    public static function min() { }
+
+    /**
+     * Maximum possible Smallint value
+     *
+     * @return Smallint maximum value
+     */
+    public static function max() { }
+
 }

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright 2015-2016 DataStax, Inc.
+ * Copyright 2017 DataStax, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,39 +18,47 @@
 
 namespace Cassandra\Type;
 
-use Cassandra\Type;
+/**
+ * A class that represents the tuple type. The tuple type is able to represent
+ * a composite type of one or more types accessed by index.
+ */
+final class Tuple extends Type {
 
-final class Tuple extends Type
-{
+    private function __construct() { }
+
     /**
      * Returns "tuple"
+     *
      * @return string "tuple"
      */
-    public function name() {}
+    public function name() { }
 
     /**
      * Returns type representation in CQL, e.g. `tuple<varchar, int>`
+     *
      * @return string Type representation in CQL
      */
-    public function __toString() {}
+    public function __toString() { }
 
     /**
      * Returns types of values
+     *
      * @return array An array of types
      */
-    public function types() {}
+    public function types() { }
 
     /**
-     * Creates a new Cassandra\Tuple from the given values.
+     * Creates a new Tuple from the given values. When no values given,
+     * creates a tuple with null for the values.
+     *
+     * @param mixed $values {@inheritDoc}
      *
      * @throws Exception\InvalidArgumentException when values given are of a
      *                                            different type than what the
      *                                            tuple expects.
      *
-     * @param  mixed $value,...      One or more values to be added to the tuple.
-     *                               When no values given, creates a tuple with
-     *                               null for the values.
-     * @return Cassandra\Tuple  A tuple with given values.
+     * @return Tuple A tuple with given values.
      */
-    public function create($value = null) {}
+    public function create($values) { }
+
 }

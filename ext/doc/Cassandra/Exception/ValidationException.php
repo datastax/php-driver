@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright 2015-2016 DataStax, Inc.
+ * Copyright 2017 DataStax, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,11 +21,30 @@ namespace Cassandra\Exception;
 /**
  * ValidationException is raised on invalid request, before even attempting to
  * execute it.
- * @see Cassandra\Exception\InvalidSyntaxException
- * @see Cassandra\Exception\UnauthorizedException
- * @see Cassandra\Exception\InvalidQueryException
- * @see Cassandra\Exception\ConfigurationException
- * @see Cassandra\Exception\AlreadyExistsException
- * @see Cassandra\Exception\UnpreparedException
+ * @see Exception\InvalidSyntaxException
+ * @see Exception\UnauthorizedException
+ * @see Exception\InvalidQueryException
+ * @see Exception\ConfigurationException
+ * @see Exception\AlreadyExistsException
+ * @see Exception\UnpreparedException
  */
-class ValidationException extends RuntimeException {}
+class ValidationException extends RuntimeException  {
+
+    /**
+     * @param mixed $message
+     * @param mixed $code
+     * @param mixed $previous
+     */
+    public function __construct($message, $code, $previous) { }
+
+    /**
+     * @return mixed
+     */
+    public function __wakeup() { }
+
+    /**
+     * @return mixed
+     */
+    public function __toString() { }
+
+}

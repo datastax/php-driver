@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright 2015-2016 DataStax, Inc.
+ * Copyright 2017 DataStax, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,40 +21,41 @@ namespace Cassandra;
 /**
  * A PHP representation of the CQL `blob` datatype
  */
-final class Blob implements Value
-{
+final class Blob implements Value {
+
     /**
      * Creates a new bytes array.
      *
      * @param string $bytes any bytes
      */
-    public function __construct($bytes) {}
+    public function __construct($bytes) { }
+
+    /**
+     * Returns bytes as a hex string.
+     *
+     * @return string bytes as hexadecimal string
+     */
+    public function __toString() { }
 
     /**
      * The type of this blob.
      *
      * @return Type
      */
-    public function type() {}
+    public function type() { }
 
     /**
      * Returns bytes as a hex string.
      *
      * @return string bytes as hexadecimal string
      */
-    public function bytes() {}
-
-    /**
-     * Returns bytes as a hex string.
-     *
-     * @return string bytes as hexadecimal string
-     */
-    public function __toString() {}
+    public function bytes() { }
 
     /**
      * Returns bytes as a binary string.
      *
      * @return string bytes as binary string
      */
-    public function toBinaryString() {}
+    public function toBinaryString() { }
+
 }

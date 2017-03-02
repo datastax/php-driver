@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright 2015-2016 DataStax, Inc.
+ * Copyright 2017 DataStax, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,47 +21,55 @@ namespace Cassandra;
 /**
  * A PHP representation of a column
  */
-interface Column
-{
+interface Column {
+
     /**
      * Returns the name of the column.
+     *
      * @return string Name of the column or null
      */
-    function name();
+    public function name();
 
     /**
      * Returns the type of the column.
-     * @return Cassandra\Type Type of the column
+     *
+     * @return Type Type of the column
      */
-    function type();
+    public function type();
 
     /**
      * Returns whether the column is in descending or ascending order.
-     * @return boolean Whether the column is stored in descending order.
+     *
+     * @return bool Whether the column is stored in descending order.
      */
-    function isReversed();
+    public function isReversed();
 
     /**
      * Returns true for static columns.
-     * @return boolean Whether the column is static
+     *
+     * @return bool Whether the column is static
      */
-    function isStatic();
+    public function isStatic();
 
     /**
      * Returns true for frozen columns.
-     * @return boolean Whether the column is frozen
+     *
+     * @return bool Whether the column is frozen
      */
-    function isFrozen();
+    public function isFrozen();
 
     /**
      * Returns name of the index if defined.
+     *
      * @return string Name of the index if defined or null
      */
-    function indexName();
+    public function indexName();
 
     /**
      * Returns index options if present.
+     *
      * @return string Index options if present or null
      */
-    function indexOptions();
+    public function indexOptions();
+
 }

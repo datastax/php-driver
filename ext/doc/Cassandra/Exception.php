@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright 2015-2016 DataStax, Inc.
+ * Copyright 2017 DataStax, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,8 @@ namespace Cassandra;
 /**
  * An interface implemented by all exceptions thrown by the PHP Driver.
  * Makes it easy to catch all driver-related exceptions using
- * `catch (Cassandra\Exception $e)`.
+ * `catch (Exception $e)`.
  */
-interface Exception {}
+interface Exception {
+
+}

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright 2015-2016 DataStax, Inc.
+ * Copyright 2017 DataStax, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,18 +18,16 @@
 
 namespace Cassandra\RetryPolicy;
 
-use Cassandra\RetryPolicy;
-
 /**
  * A retry policy that logs the decisions of its child policy.
  */
-final class Logging implements RetryPolicy
-{
+final class Logging implements RetryPolicy {
+
     /**
      * Creates a new Logging retry policy.
      *
-     * @param Cassandra\RetryPolicy $childPolicy Any retry policy other than
-     *                                           Cassandra\Logging
+     * @param RetryPolicy $childPolicy Any retry policy other than Logging
      */
-    public function __construct(RetryPolicy $childPolicy) {}
+    public function __construct($childPolicy) { }
+
 }

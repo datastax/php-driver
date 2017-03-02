@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright 2015-2016 DataStax, Inc.
+ * Copyright 2017 DataStax, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,163 +21,191 @@ namespace Cassandra;
 /**
  * A PHP representation of a table
  */
-interface Table
-{
+interface Table {
+
     /**
      * Returns the name of this table
+     *
      * @return string Name of the table
      */
-    function name();
+    public function name();
 
     /**
      * Return a table's option by name
-     * @return Cassandra\Value Value of an option by name
+     *
+     * @param string $name The name of the option
+     *
+     * @return Value Value of an option by name
      */
-    function option($name);
+    public function option($name);
 
     /**
      * Returns all the table's options
-     * @return array A dictionary of `string` and `Cassandra\Value pairs of the
      *               view's options.
+     *
+     * @return array A dictionary of `string` and `Value` pairs of the
      */
-    function options();
+    public function options();
 
     /**
      * Description of the table, if any
+     *
      * @return string Table description or null
      */
-    function comment();
+    public function comment();
 
     /**
      * Returns read repair chance
+     *
      * @return float Read repair chance
      */
-    function readRepairChance();
+    public function readRepairChance();
 
     /**
      * Returns local read repair chance
+     *
      * @return float Local read repair chance
      */
-    function localReadRepairChance();
+    public function localReadRepairChance();
 
     /**
      * Returns GC grace seconds
+     *
      * @return int GC grace seconds
      */
-    function gcGraceSeconds();
+    public function gcGraceSeconds();
 
     /**
      * Returns caching options
+     *
      * @return string Caching options
      */
-    function caching();
+    public function caching();
 
     /**
      * Returns bloom filter FP chance
+     *
      * @return float Bloom filter FP chance
      */
-    function bloomFilterFPChance();
+    public function bloomFilterFPChance();
 
     /**
      * Returns memtable flush period in milliseconds
+     *
      * @return int Memtable flush period in milliseconds
      */
-    function memtableFlushPeriodMs();
+    public function memtableFlushPeriodMs();
 
     /**
      * Returns default TTL.
+     *
      * @return int Default TTL.
      */
-    function defaultTTL();
+    public function defaultTTL();
 
     /**
      * Returns speculative retry.
+     *
      * @return string Speculative retry.
      */
-    function speculativeRetry();
+    public function speculativeRetry();
 
     /**
      * Returns index interval
+     *
      * @return int Index interval
      */
-    function indexInterval();
+    public function indexInterval();
 
     /**
      * Returns compaction strategy class name
+     *
      * @return string Compaction strategy class name
      */
-    function compactionStrategyClassName();
+    public function compactionStrategyClassName();
 
     /**
      * Returns compaction strategy options
-     * @return Cassandra\Map Compaction strategy options
+     *
+     * @return Map Compaction strategy options
      */
-    function compactionStrategyOptions();
+    public function compactionStrategyOptions();
 
     /**
      * Returns compression parameters
-     * @return Cassandra\Map Compression parameters
+     *
+     * @return Map Compression parameters
      */
-    function compressionParameters();
+    public function compressionParameters();
 
     /**
      * Returns whether or not the `populate_io_cache_on_flush` is true
-     * @return boolean Value of `populate_io_cache_on_flush` or null
+     *
+     * @return bool Value of `populate_io_cache_on_flush` or null
      */
-    function populateIOCacheOnFlush();
+    public function populateIOCacheOnFlush();
 
     /**
      * Returns whether or not the `replicate_on_write` is true
-     * @return boolean Value of `replicate_on_write` or null
+     *
+     * @return bool Value of `replicate_on_write` or null
      */
-    function replicateOnWrite();
+    public function replicateOnWrite();
 
     /**
      * Returns the value of `max_index_interval`
+     *
      * @return int Value of `max_index_interval` or null
      */
-    function maxIndexInterval();
+    public function maxIndexInterval();
 
     /**
      * Returns the value of `min_index_interval`
+     *
      * @return int Value of `min_index_interval` or null
      */
-    function minIndexInterval();
+    public function minIndexInterval();
 
     /**
      * Returns column by name
-     * @param  string           $name Name of the column
-     * @return Cassandra\Column Column instance
+     *
+     * @param string $name Name of the column
+     *
+     * @return Column Column instance
      */
-    function column($name);
+    public function column($name);
 
     /**
      * Returns all columns in this table
-     * @return array A list of `Cassandra\Column` instances
+     *
+     * @return array A list of Column instances
      */
-    function columns();
+    public function columns();
 
     /**
      * Returns the partition key columns of the table
-     * @return array A list of of `Cassandra\Column` instances
+     *
+     * @return array A list of of Column instances
      */
-     function partitionKey();
+    public function partitionKey();
 
     /**
      * Returns both the partition and clustering key columns of the table
-     * @return array A list of of `Cassandra\Column` instances
+     *
+     * @return array A list of of Column instances
      */
-     function primaryKey();
+    public function primaryKey();
 
     /**
      * Returns the clustering key columns of the table
-     * @return array A list of of `Cassandra\Column` instances
+     *
+     * @return array A list of of Column instances
      */
-     function clusteringKey();
+    public function clusteringKey();
 
     /**
-     *
      * @return array A list of cluster column orders ('asc' and 'desc')
      */
-     function clusteringOrder();
+    public function clusteringOrder();
+
 }

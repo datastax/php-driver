@@ -19,24 +19,15 @@
 namespace Cassandra;
 
 /**
- * A PHP representation of a schema
+ * A class for representing custom values.
  */
-interface Schema {
+abstract class Custom implements Value {
 
     /**
-     * Returns a Keyspace instance by name.
+     * The type of this value.
      *
-     * @param string $name Name of the keyspace to get
-     *
-     * @return Keyspace Keyspace instance or null
+     * @return Type\Custom
      */
-    public function keyspace($name);
-
-    /**
-     * Returns all keyspaces defined in the schema.
-     *
-     * @return array An array of Keyspace instances.
-     */
-    public function keyspaces();
+    public abstract function type();
 
 }

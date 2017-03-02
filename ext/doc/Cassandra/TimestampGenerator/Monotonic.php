@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright 2015-2016 DataStax, Inc.
+ * Copyright 2017 DataStax, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,8 +18,6 @@
 
 namespace Cassandra\TimestampGenerator;
 
-use Cassandra\TimestampGenerator;
-
 /**
  * A timestamp generator that generates monotonically increasing timestamps
  * client-side. The timestamps generated have a microsecond granularity with
@@ -29,6 +27,6 @@ use Cassandra\TimestampGenerator;
  * exceeded then a warning is logged and timestamps stop incrementing until
  * the next clock tick.
  */
-final class Monotonic implements TimestampGenerator
-{
+final class Monotonic implements TimestampGenerator {
+
 }

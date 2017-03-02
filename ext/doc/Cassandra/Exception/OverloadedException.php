@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright 2015-2016 DataStax, Inc.
+ * Copyright 2017 DataStax, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,4 +21,23 @@ namespace Cassandra\Exception;
 /**
  * OverloadedException is raised when a node is overloaded.
  */
-class OverloadedException extends ServerException {}
+class OverloadedException extends ServerException  {
+
+    /**
+     * @param mixed $message
+     * @param mixed $code
+     * @param mixed $previous
+     */
+    public function __construct($message, $code, $previous) { }
+
+    /**
+     * @return mixed
+     */
+    public function __wakeup() { }
+
+    /**
+     * @return mixed
+     */
+    public function __toString() { }
+
+}

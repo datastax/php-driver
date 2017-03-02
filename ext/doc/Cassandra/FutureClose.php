@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright 2015-2016 DataStax, Inc.
+ * Copyright 2017 DataStax, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,21 +19,22 @@
 namespace Cassandra;
 
 /**
- * A future returned from Cassandra\Session::closeAsync().
+ * A future returned from Session::closeAsync().
  *
  * @see Session::closeAsync()
  */
-final class FutureClose implements Future
-{
+final class FutureClose implements Future {
+
     /**
      * {@inheritDoc}
+     *
+     * @param int|double|null $timeout A timeout in seconds
      *
      * @throws Exception\InvalidArgumentException
      * @throws Exception\TimeoutException
      *
-     * @param float|null $timeout
-     *
-     * @return mixed a value that the future has been resolved with
+     * @return null Nothing
      */
-    public function get($timeout = null) {}
+    public function get($timeout) { }
+
 }

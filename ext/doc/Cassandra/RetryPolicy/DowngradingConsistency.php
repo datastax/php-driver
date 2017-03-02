@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright 2015-2016 DataStax, Inc.
+ * Copyright 2017 DataStax, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,8 +17,6 @@
  */
 
 namespace Cassandra\RetryPolicy;
-
-use Cassandra\RetryPolicy;
 
 /**
  * A retry policy that will downgrade the consistency of a request in
@@ -41,7 +39,6 @@ use Cassandra\RetryPolicy;
  * Important: This policy may attempt to retry requests with a lower
  * consistency level. Using this policy can break consistency guarantees.
  */
-final class DowngradingConsistency implements RetryPolicy
-{
-}
+final class DowngradingConsistency implements RetryPolicy {
 
+}

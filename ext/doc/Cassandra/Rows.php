@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright 2015-2016 DataStax, Inc.
+ * Copyright 2017 DataStax, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,55 +21,65 @@ namespace Cassandra;
 /**
  * Rows represent a result of statement execution.
  */
-final class Rows implements \Iterator, \Countable, \ArrayAccess
-{
+final class Rows implements \Iterator, \ArrayAccess {
+
+    /**
+     */
+    public function __construct() { }
+
     /**
      * Returns the number of rows.
      *
      * @return int number of rows
+     *
      * @see \Countable::count()
      */
-    public function count() {}
+    public function count() { }
 
     /**
      * Resets the rows iterator.
      *
      * @return void
+     *
      * @see \Iterator::rewind()
      */
-    public function rewind() {}
+    public function rewind() { }
 
     /**
      * Returns current row.
      *
      * @return array current row
+     *
      * @see \Iterator::current()
      */
-    public function current() {}
+    public function current() { }
 
     /**
      * Returns current index.
      *
      * @return int index
+     *
      * @see \Iterator::key()
      */
-    public function key() {}
+    public function key() { }
 
     /**
      * Advances the rows iterator by one.
      *
      * @return void
+     *
      * @see \Iterator::next()
      */
-    public function next() {}
+    public function next() { }
 
     /**
      * Returns existence of more rows being available.
      *
      * @return bool whether there are more rows available for iteration
+     *
      * @see \Iterator::valid()
      */
-    public function valid() {}
+    public function valid() { }
 
     /**
      * Returns existence of a given row.
@@ -77,9 +87,10 @@ final class Rows implements \Iterator, \Countable, \ArrayAccess
      * @param int $offset row index
      *
      * @return bool whether a row at a given index exists
+     *
      * @see \ArrayAccess::offsetExists()
      */
-    public function offsetExists($offset) {}
+    public function offsetExists($offset) { }
 
     /**
      * Returns a row at given index.
@@ -87,41 +98,44 @@ final class Rows implements \Iterator, \Countable, \ArrayAccess
      * @param int $offset row index
      *
      * @return array|null row at a given index
+     *
      * @see \ArrayAccess::offsetGet()
      */
-    public function offsetGet($offset) {}
+    public function offsetGet($offset) { }
 
     /**
      * Sets a row at given index.
      *
-     * @throws Exception\DomainException
-     *
-     * @param int   $offset row index
+     * @param int $offset row index
      * @param array $value row value
      *
+     * @throws Exception\DomainException
+     *
      * @return void
+     *
      * @see \ArrayAccess::offsetSet()
      */
-    public function offsetSet($offset, $value) {}
+    public function offsetSet($offset, $value) { }
 
     /**
      * Removes a row at given index.
      *
-     * @throws Exception\DomainException
-     *
      * @param int $offset row index
      *
+     * @throws Exception\DomainException
+     *
      * @return void
+     *
      * @see \ArrayAccess::offsetUnset()
      */
-    public function offsetUnset($offset) {}
+    public function offsetUnset($offset) { }
 
     /**
      * Check for the last page when paging.
      *
      * @return bool whether this is the last page or not
      */
-    public function isLastPage() {}
+    public function isLastPage() { }
 
     /**
      * Get the next page of results.
@@ -130,26 +144,27 @@ final class Rows implements \Iterator, \Countable, \ArrayAccess
      *
      * @return Rows|null loads and returns next result page
      */
-    public function nextPage($timeout = null) {}
+    public function nextPage($timeout) { }
 
     /**
      * Get the next page of results asynchronously.
      *
      * @return Future returns future of the next result page
      */
-    public function nextPageAsync() {}
+    public function nextPageAsync() { }
 
     /**
      * Returns the raw paging state token.
      *
      * @return string
      */
-    public function pagingStateToken() {}
+    public function pagingStateToken() { }
 
     /**
      * Get the first row.
      *
      * @return array|null returns first row if any
      */
-    public function first() {}
+    public function first() { }
+
 }

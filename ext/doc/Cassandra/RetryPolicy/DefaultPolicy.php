@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright 2015-2016 DataStax, Inc.
+ * Copyright 2017 DataStax, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,8 +18,6 @@
 
 namespace Cassandra\RetryPolicy;
 
-use Cassandra\RetryPolicy;
-
 /**
  * The default retry policy. This policy retries a query, using the
  * request's original consistency level, in the following cases:
@@ -29,8 +27,7 @@ use Cassandra\RetryPolicy;
  * * On unavailable, it will move to the next host.
  *
  * In all other cases the error will be returned.
- *
  */
-final class DefaultPolicy implements RetryPolicy
-{
+final class DefaultPolicy implements RetryPolicy {
+
 }

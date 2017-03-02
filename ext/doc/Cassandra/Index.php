@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright 2015-2016 DataStax, Inc.
+ * Copyright 2017 DataStax, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,48 +21,58 @@ namespace Cassandra;
 /**
  * A PHP representation of an index
  */
-interface Index
-{
+interface Index {
+
     /**
      * Returns the name of the index
+     *
      * @return string Name of the index
      */
-    function name();
+    public function name();
 
     /**
      * Returns the kind of index
+     *
      * @return string Kind of the index
      */
-    function kind();
+    public function kind();
 
     /**
      * Returns the target column of the index
+     *
      * @return string Target column name of the index
      */
-    function target();
+    public function target();
 
     /**
      * Return a column's option by name
-     * @return Cassandra\Value Value of an option by name
+     *
+     * @param string $name The name of the option
+     *
+     * @return Value Value of an option by name
      */
-    function option($name);
+    public function option($name);
 
     /**
      * Returns all the index's options
-     * @return array A dictionary of `string` and `Cassandra\Value pairs of the
      *               index's options.
+     *
+     * @return array A dictionary of `string` and `Value` pairs of the
      */
-    function options();
+    public function options();
 
     /**
      * Returns the class name of the index
+     *
      * @return string Class name of a custom index
      */
-    function className();
+    public function className();
 
     /**
-     * Returns `true` if this is a custom index
-     * @return boolean
+     * Determines if the index is a custom index.
+     *
+     * @return bool true if a custom index
      */
-    function isCustom();
+    public function isCustom();
+
 }

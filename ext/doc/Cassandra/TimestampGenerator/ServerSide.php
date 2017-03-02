@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright 2015-2016 DataStax, Inc.
+ * Copyright 2017 DataStax, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,12 +18,9 @@
 
 namespace Cassandra\TimestampGenerator;
 
-use Cassandra\TimestampGenerator;
-
 /**
- * A timestamp generator that allows Cassandra to assign timestamps
- * server-side.
+ * A timestamp generator that allows the server-side to assign timestamps.
  */
-final class ServerSide implements TimestampGenerator
-{
+final class ServerSide implements TimestampGenerator {
+
 }
