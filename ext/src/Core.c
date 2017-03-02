@@ -45,6 +45,7 @@ void php_driver_define_Core(TSRMLS_D)
 
   INIT_CLASS_ENTRY(ce, PHP_DRIVER_NAMESPACE, core_methods);
   php_driver_core_ce = zend_register_internal_class(&ce TSRMLS_CC);
+  php_driver_core_ce->ce_flags |= ZEND_ACC_FINAL;
 
   zend_declare_class_constant_long(php_driver_core_ce, ZEND_STRL("CONSISTENCY_ANY"),          CASS_CONSISTENCY_ANY TSRMLS_CC);
   zend_declare_class_constant_long(php_driver_core_ce, ZEND_STRL("CONSISTENCY_ONE"),          CASS_CONSISTENCY_ONE TSRMLS_CC);

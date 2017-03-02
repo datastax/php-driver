@@ -1,0 +1,89 @@
+---
+Collection:
+  comment: A PHP representation of the CQL `list` datatype
+  methods:
+    __construct:
+      comment: Creates a new collection of a given type.
+      params:
+        type:
+          comment: ""
+          type: Type
+    type:
+      comment: The type of this collection.
+      return:
+        comment: ""
+        type: Type
+    values:
+      comment: Array of values in this collection.
+      return:
+        comment: values
+        type: array
+    add:
+      comment: |
+        Adds one or more values to this collection.
+      params:
+        value:
+          comment: ',... one or more values to add'
+          type: mixed
+      return:
+        comment: total number of values in this collection
+        type: int
+    remove:
+      comment: |
+        Deletes the value at a given index
+      params:
+        index:
+          comment: Index
+          type: int
+      return:
+        comment: '       Whether the value at a given index is correctly removed'
+        type: bool
+    get:
+      comment: Retrieves the value at a given index.
+      params:
+        index:
+          comment: Index
+          type: int
+      return:
+        comment: '        Value or null'
+        type: mixed
+    find:
+      comment: Finds index of a value in this collection.
+      params:
+        value:
+          comment: Value
+          type: mixed
+      return:
+        comment: '           Index or null'
+        type: int
+    count:
+      comment: Total number of elements in this collection
+      return:
+        comment: count
+        type: int
+    current:
+      comment: Current element for iteration
+      return:
+        comment: current element
+        type: mixed
+    key:
+      comment: Current key for iteration
+      return:
+        comment: current key
+        type: int
+    next:
+      comment: Move internal iterator forward
+      return:
+        comment: ""
+        type: void
+    valid:
+      comment: Check whether a current value exists
+      return:
+        comment: ""
+        type: bool
+    rewind:
+      comment: Rewind internal iterator
+      return:
+        comment: ""
+        type: void
+...

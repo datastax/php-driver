@@ -1,5 +1,5 @@
 ---
-Cassandra\Duration:
+Duration:
   comment: A PHP representation of the CQL `duration` datatype
   methods:
     __construct:
@@ -15,7 +15,7 @@ Cassandra\Duration:
           comment: Nanos attribute of the duration.
           type: long|double|string|Bigint
     type:
-      comment: ""
+      comment: '{@inheritDoc}'
       return:
         comment: the Cassandra type for Duration
         type: Type
@@ -37,6 +37,7 @@ Cassandra\Duration:
     __toString:
       comment: ""
       return:
-        comment: string representation of this Duration; may be used as a literal parameter in CQL queries.
+        comment: string representation of this Duration; may be used as a literal
+          parameter in CQL queries.
         type: string
 ...

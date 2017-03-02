@@ -1,0 +1,40 @@
+---
+Type\Tuple:
+  comment: |-
+    A class that represents the tuple type. The tuple type is able to represent
+    a composite type of one or more types accessed by index.
+  methods:
+    name:
+      comment: Returns "tuple"
+      return:
+        comment: '"tuple"'
+        type: string
+    __toString:
+      comment: Returns type representation in CQL, e.g. `tuple<varchar, int>`
+      return:
+        comment: Type representation in CQL
+        type: string
+    types:
+      comment: Returns types of values
+      return:
+        comment: An array of types
+        type: array
+    create:
+      comment: |-
+        Creates a new Tuple from the given values. When no values given,
+        creates a tuple with null for the values.
+
+        @throws Exception\InvalidArgumentException when values given are of a
+                                                   different type than what the
+                                                   tuple expects.
+      params:
+        value:
+          comment: ',...      One or more values to be added to the tuple.'
+          type: mixed
+        values:
+          comment: '{@inheritDoc}'
+          type: mixed
+      return:
+        comment: ' A tuple with given values.'
+        type: Tuple
+...

@@ -200,10 +200,6 @@ ZEND_BEGIN_ARG_INFO_EX(arginfo_types, 0, ZEND_RETURN_VALUE, 0)
   ZEND_ARG_INFO(0, types)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_values, 0, ZEND_RETURN_VALUE, 0)
-  ZEND_ARG_INFO(0, values)
-ZEND_END_ARG_INFO()
-
 ZEND_BEGIN_ARG_INFO_EX(arginfo_type, 0, ZEND_RETURN_VALUE, 1)
   PHP_DRIVER_NAMESPACE_ZEND_ARG_OBJ_INFO(0, type, Type, 0)
 ZEND_END_ARG_INFO()
@@ -216,7 +212,6 @@ ZEND_END_ARG_INFO()
 static zend_function_entry php_driver_type_methods[] = {
   PHP_ABSTRACT_ME(Type, name,       arginfo_none)
   PHP_ABSTRACT_ME(Type, __toString, arginfo_none)
-  PHP_ABSTRACT_ME(Type, create,     arginfo_values)
 
 #define XX_SCALAR_METHOD(name, _) PHP_ME(Type, name, arginfo_none, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC|ZEND_ACC_FINAL)
   PHP_DRIVER_SCALAR_TYPES_MAP(XX_SCALAR_METHOD)

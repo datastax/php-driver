@@ -1,0 +1,101 @@
+---
+Keyspace:
+  comment: A PHP representation of a keyspace
+  methods:
+    name:
+      comment: Returns keyspace name
+      return:
+        comment: Name
+        type: string
+    replicationClassName:
+      comment: Returns replication class name
+      return:
+        comment: Replication class
+        type: string
+    replicationOptions:
+      comment: Returns replication options
+      return:
+        comment: Replication options
+        type: Map
+    hasDurableWrites:
+      comment: Returns whether the keyspace has durable writes enabled
+      return:
+        comment: Whether durable writes are enabled
+        type: string
+    table:
+      comment: Returns a table by name
+      params:
+        name:
+          comment: Table name
+          type: string
+      return:
+        comment: Table instance or null
+        type: Table|null
+    tables:
+      comment: Returns all tables defined in this keyspace
+      return:
+        comment: An array of `Table` instances
+        type: array
+    userType:
+      comment: Get user type by name
+      params:
+        name:
+          comment: User type name
+          type: string
+      return:
+        comment: A user type or null
+        type: Type\UserType|null
+    userTypes:
+      comment: Get all user types
+      return:
+        comment: An array of user types
+        type: array
+    materializedView:
+      comment: Get materialized view by name
+      params:
+        name:
+          comment: Materialized view name
+          type: string
+      return:
+        comment: A materialized view or null
+        type: MaterizedView|null
+    materializedViews:
+      comment: Gets all materialized views
+      return:
+        comment: An array of materialized views
+        type: array
+    function:
+      comment: Get a function by name and signature
+      params:
+        name:
+          comment: Function name
+          type: string
+        '...':
+          comment: Function arguments
+          type: string|Type
+      return:
+        comment: A function or null
+        type: Function|null
+    functions:
+      comment: Get all functions
+      return:
+        comment: An array of functions
+        type: array
+    aggregate:
+      comment: Get an aggregate by name and signature
+      params:
+        name:
+          comment: Aggregate name
+          type: string
+        '...':
+          comment: Aggregate arguments
+          type: string|Type
+      return:
+        comment: An aggregate or null
+        type: Aggregate|null
+    aggregates:
+      comment: Get all aggregates
+      return:
+        comment: An array of aggregates
+        type: array
+...

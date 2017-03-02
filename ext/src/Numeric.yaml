@@ -1,0 +1,82 @@
+---
+Numeric:
+  comment: |-
+    Common interface implemented by all numeric types, providing basic
+    arithmetic functions.
+
+    @see Bigint
+    @see Decimal
+    @see Float
+    @see Varint
+  methods:
+    add:
+      comment: ""
+      params:
+        num:
+          comment: a number to add to this one
+          type: Numeric
+      return:
+        comment: sum
+        type: Numeric
+    sub:
+      comment: ""
+      params:
+        num:
+          comment: a number to subtract from this one
+          type: Numeric
+      return:
+        comment: difference
+        type: Numeric
+    mul:
+      comment: ""
+      params:
+        num:
+          comment: a number to multiply this one by
+          type: Numeric
+      return:
+        comment: product
+        type: Numeric
+    div:
+      comment: ""
+      params:
+        num:
+          comment: a number to divide this one by
+          type: Numeric
+      return:
+        comment: quotient
+        type: Numeric
+    mod:
+      comment: ""
+      params:
+        num:
+          comment: a number to divide this one by
+          type: Numeric
+      return:
+        comment: remainder
+        type: Numeric
+    abs:
+      comment: ""
+      return:
+        comment: absolute value
+        type: Numeric
+    neg:
+      comment: ""
+      return:
+        comment: negative value
+        type: Numeric
+    sqrt:
+      comment: ""
+      return:
+        comment: square root
+        type: Numeric
+    toInt:
+      comment: ""
+      return:
+        comment: this number as int
+        type: int
+    toDouble:
+      comment: ""
+      return:
+        comment: this number as float
+        type: float
+...

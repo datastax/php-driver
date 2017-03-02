@@ -1,0 +1,30 @@
+---
+Exception\ConfigurationException:
+  comment: |-
+    ConfigurationException is raised when query is syntactically correct but
+    invalid because of some configuration issue.
+    For example when attempting to drop a non-existent keyspace.
+  methods:
+    __construct:
+      comment: ""
+      params:
+        message:
+          comment: ""
+          type: mixed
+        code:
+          comment: ""
+          type: mixed
+        previous:
+          comment: ""
+          type: mixed
+    __wakeup:
+      comment: ""
+      return:
+        comment: ""
+        type: mixed
+    __toString:
+      comment: ""
+      return:
+        comment: ""
+        type: mixed
+...

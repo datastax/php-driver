@@ -42,6 +42,7 @@ static zend_function_entry php_driver_session_methods[] = {
   PHP_ABSTRACT_ME(Session, prepareAsync, arginfo_prepare)
   PHP_ABSTRACT_ME(Session, close, arginfo_timeout)
   PHP_ABSTRACT_ME(Session, closeAsync, arginfo_none)
+  PHP_ABSTRACT_ME(Session, metrics, arginfo_none)
   PHP_ABSTRACT_ME(Session, schema, arginfo_none)
   PHP_FE_END
 };

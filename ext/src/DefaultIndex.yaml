@@ -1,0 +1,44 @@
+---
+DefaultIndex:
+  comment: A PHP representation of an index
+  methods:
+    name:
+      comment: '{@inheritDoc}'
+      return:
+        comment: Name of the index
+        type: string
+    kind:
+      comment: '{@inheritDoc}'
+      return:
+        comment: Kind of the index
+        type: string
+    target:
+      comment: '{@inheritDoc}'
+      return:
+        comment: Target column name of the index
+        type: string
+    option:
+      comment: '{@inheritDoc}'
+      params:
+        name:
+          comment: '{@inheritDoc}'
+          type: string
+      return:
+        comment: Value of an option by name
+        type: Value
+    options:
+      comment: '{@inheritDoc}'
+      return:
+        comment: A dictionary of `string` and `Value` pairs of the
+        type: array
+    className:
+      comment: '{@inheritDoc}'
+      return:
+        comment: Class name of a custom index
+        type: string
+    isCustom:
+      comment: '{@inheritDoc}'
+      return:
+        comment: ""
+        type: bool
+...

@@ -1,0 +1,81 @@
+---
+Set:
+  comment: A PHP representation of the CQL `set` datatype
+  methods:
+    __construct:
+      comment: Creates a new collection of a given type.
+      params:
+        type:
+          comment: ""
+          type: Type
+    type:
+      comment: The type of this set.
+      return:
+        comment: ""
+        type: Type
+    values:
+      comment: Array of values in this set.
+      return:
+        comment: values
+        type: array
+    add:
+      comment: |
+        Adds a value to this set.
+      params:
+        value:
+          comment: Value
+          type: mixed
+      return:
+        comment: whether the value has been added
+        type: bool
+    has:
+      comment: |
+        Returns whether a value is in this set.
+      params:
+        value:
+          comment: Value
+          type: mixed
+      return:
+        comment: whether the value is in the set
+        type: bool
+    remove:
+      comment: |
+        Removes a value to this set.
+      params:
+        value:
+          comment: Value
+          type: mixed
+      return:
+        comment: whether the value has been removed
+        type: bool
+    count:
+      comment: Total number of elements in this set
+      return:
+        comment: count
+        type: int
+    current:
+      comment: Current element for iteration
+      return:
+        comment: current element
+        type: mixed
+    key:
+      comment: Current key for iteration
+      return:
+        comment: current key
+        type: int
+    next:
+      comment: Move internal iterator forward
+      return:
+        comment: ""
+        type: void
+    valid:
+      comment: Check whether a current value exists
+      return:
+        comment: ""
+        type: bool
+    rewind:
+      comment: Rewind internal iterator
+      return:
+        comment: ""
+        type: void
+...

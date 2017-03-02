@@ -1,0 +1,50 @@
+---
+Aggregate:
+  comment: A PHP representation of an aggregate
+  methods:
+    name:
+      comment: Returns the full name of the aggregate
+      return:
+        comment: Full name of the aggregate including name and types
+        type: string
+    simpleName:
+      comment: Returns the simple name of the aggregate
+      return:
+        comment: Simple name of the aggregate
+        type: string
+    argumentTypes:
+      comment: Returns the argument types of the aggregate
+      return:
+        comment: Argument types of the aggregate
+        type: array
+    finalFunction:
+      comment: Returns the final function of the aggregate
+      return:
+        comment: Final function of the aggregate
+        type: Function
+    stateFunction:
+      comment: Returns the state function of the aggregate
+      return:
+        comment: State function of the aggregate
+        type: Function
+    initialCondition:
+      comment: Returns the initial condition of the aggregate
+      return:
+        comment: Initial condition of the aggregate
+        type: Value
+    returnType:
+      comment: Returns the return type of the aggregate
+      return:
+        comment: Return type of the aggregate
+        type: Type
+    stateType:
+      comment: Returns the state type of the aggregate
+      return:
+        comment: State type of the aggregate
+        type: Type
+    signature:
+      comment: Returns the signature of the aggregate
+      return:
+        comment: Signature of the aggregate (same as name())
+        type: string
+...

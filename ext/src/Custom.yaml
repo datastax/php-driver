@@ -1,0 +1,10 @@
+---
+Custom:
+  comment: A class for representing custom values.
+  methods:
+    type:
+      comment: The type of this value.
+      return:
+        comment: ""
+        type: Type\Custom
+...

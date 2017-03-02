@@ -1,0 +1,77 @@
+---
+DefaultSession:
+  comment: '{@inheritDoc}'
+  methods:
+    schema:
+      comment: '{@inheritDoc}'
+      return:
+        comment: '{@inheritDoc}'
+        type: Schema
+    execute:
+      comment: '{@inheritDoc}'
+      return:
+        comment: '{@inheritDoc}'
+        type: Rows
+      params:
+        statement:
+          comment: '{@inheritDoc}'
+          type: string|Statement
+        options:
+          comment: '{@inheritDoc}'
+          type: array|ExecutionOptions|null
+    executeAsync:
+      comment: '{@inheritDoc}'
+      params:
+        statement:
+          comment: '{@inheritDoc}'
+          type: string|Statement
+        options:
+          comment: '{@inheritDoc}'
+          type: array|ExecutionOptions|null
+      return:
+        comment: '{@inheritDoc}'
+        type: FutureRows
+    prepare:
+      comment: '{@inheritDoc}'
+      params:
+        cql:
+          comment: '{@inheritDoc}'
+          type: string
+        options:
+          comment: '{@inheritDoc}'
+          type: ExecutionOptions
+      return:
+        comment: '{@inheritDoc}'
+        type: PreparedStatement
+    prepareAsync:
+      comment: '{@inheritDoc}'
+      params:
+        cql:
+          comment: '{@inheritDoc}'
+          type: string
+        options:
+          comment: '{@inheritDoc}'
+          type: ExecutionOptions
+      return:
+        comment: '{@inheritDoc}'
+        type: FuturePreparedStatement
+    close:
+      comment: '{@inheritDoc}'
+      params:
+        timeout:
+          comment: '{@inheritDoc}'
+          type: double
+      return:
+        comment: '{@inheritDoc}'
+        type: "null"
+    closeAsync:
+      comment: '{@inheritDoc}'
+      return:
+        comment: '{@inheritDoc}'
+        type: FutureClose
+    metrics:
+      comment: '{@inheritDoc}'
+      return:
+        comment: '{@inheritDoc}'
+        type: array
+...

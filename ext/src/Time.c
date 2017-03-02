@@ -190,8 +190,7 @@ PHP_METHOD(Time, __toString)
 /* }}} */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo__construct, 0, ZEND_RETURN_VALUE, 0)
-  ZEND_ARG_INFO(0, seconds)
-  ZEND_ARG_INFO(0, microseconds)
+  ZEND_ARG_INFO(0, nanoseconds)
 ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_datetime, 0, ZEND_RETURN_VALUE, 1)

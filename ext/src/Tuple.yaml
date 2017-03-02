@@ -1,0 +1,73 @@
+---
+Tuple:
+  comment: A PHP representation of the CQL `tuple` datatype
+  methods:
+    __construct:
+      comment: Creates a new tuple with the given types.
+      params:
+        types:
+          comment: Array of types
+          type: array
+    type:
+      comment: The type of this tuple.
+      return:
+        comment: ""
+        type: Type
+    values:
+      comment: Array of values in this tuple.
+      return:
+        comment: values
+        type: array
+    set:
+      comment: |
+        Sets the value at index in this tuple .
+      params:
+        index:
+          comment: Index
+          type: int
+        value:
+          comment: A value or null
+          type: mixed
+      return:
+        comment: ""
+        type: void
+    get:
+      comment: Retrieves the value at a given index.
+      params:
+        index:
+          comment: Index
+          type: int
+      return:
+        comment: A value or null
+        type: mixed
+    count:
+      comment: Total number of elements in this tuple
+      return:
+        comment: count
+        type: int
+    current:
+      comment: Current element for iteration
+      return:
+        comment: current element
+        type: mixed
+    key:
+      comment: Current key for iteration
+      return:
+        comment: current key
+        type: int
+    next:
+      comment: Move internal iterator forward
+      return:
+        comment: ""
+        type: void
+    valid:
+      comment: Check whether a current value exists
+      return:
+        comment: ""
+        type: bool
+    rewind:
+      comment: Rewind internal iterator
+      return:
+        comment: ""
+        type: void
+...

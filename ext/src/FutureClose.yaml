@@ -1,0 +1,21 @@
+---
+FutureClose:
+  comment: |-
+    A future returned from Session::closeAsync().
+
+    @see Session::closeAsync()
+  methods:
+    get:
+      comment: |
+        {@inheritDoc}
+
+        @throws Exception\InvalidArgumentException
+        @throws Exception\TimeoutException
+      params:
+        timeout:
+          comment: A timeout in seconds
+          type: int|double|null
+      return:
+        comment: Nothing
+        type: "null"
+...

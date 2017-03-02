@@ -1,0 +1,50 @@
+---
+DefaultAggregate:
+  comment: A PHP representation of an aggregate
+  methods:
+    name:
+      comment: '{@inheritDoc}'
+      return:
+        comment: Full name of the aggregate including name and types
+        type: string
+    simpleName:
+      comment: '{@inheritDoc}'
+      return:
+        comment: Simple name of the aggregate
+        type: string
+    argumentTypes:
+      comment: '{@inheritDoc}'
+      return:
+        comment: Argument types of the aggregate
+        type: array
+    finalFunction:
+      comment: '{@inheritDoc}'
+      return:
+        comment: Final public function of the aggregate
+        type: Function
+    stateFunction:
+      comment: '{@inheritDoc}'
+      return:
+        comment: State public function of the aggregate
+        type: Function
+    initialCondition:
+      comment: '{@inheritDoc}'
+      return:
+        comment: Initial condition of the aggregate
+        type: Value
+    returnType:
+      comment: '{@inheritDoc}'
+      return:
+        comment: Return type of the aggregate
+        type: Type
+    stateType:
+      comment: '{@inheritDoc}'
+      return:
+        comment: State type of the aggregate
+        type: Type
+    signature:
+      comment: '{@inheritDoc}'
+      return:
+        comment: Signature of the aggregate (same as name())
+        type: string
+...

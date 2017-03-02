@@ -1,0 +1,9 @@
+---
+Statement:
+  comment: |-
+    All statements implement this common interface.
+
+    @see SimpleStatement
+    @see PreparedStatement
+    @see BatchStatement
+...

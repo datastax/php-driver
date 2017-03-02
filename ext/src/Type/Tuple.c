@@ -145,7 +145,7 @@ ZEND_BEGIN_ARG_INFO_EX(arginfo_values, 0, ZEND_RETURN_VALUE, 0)
 ZEND_END_ARG_INFO()
 
 static zend_function_entry php_driver_type_tuple_methods[] = {
-  PHP_ME(TypeTuple, __construct, arginfo_none,   ZEND_ACC_PUBLIC)
+  PHP_ME(TypeTuple, __construct, arginfo_none,   ZEND_ACC_PRIVATE)
   PHP_ME(TypeTuple, name,        arginfo_none,   ZEND_ACC_PUBLIC)
   PHP_ME(TypeTuple, __toString,  arginfo_none,   ZEND_ACC_PUBLIC)
   PHP_ME(TypeTuple, types,       arginfo_none,   ZEND_ACC_PUBLIC)

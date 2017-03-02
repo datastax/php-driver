@@ -1,0 +1,110 @@
+---
+Decimal:
+  comment: |-
+    A PHP representation of the CQL `decimal` datatype
+
+    The actual value of a decimal is `$value * pow(10, $scale * -1)`
+  methods:
+    __construct:
+      comment: |-
+        Creates a decimal from a given decimal string:
+
+        ~~~{.php}
+        <?php
+        $decimal = new Cassandra::Decimal("1313123123.234234234234234234123");
+        ~~~
+      params:
+        value:
+          comment: Any decimal string
+          type: string
+    type:
+      comment: The type of this decimal.
+      return:
+        comment: ""
+        type: Type
+    __toString:
+      comment: String representation of this decimal.
+      return:
+        comment: Decimal value
+        type: string
+    value:
+      comment: Numeric value of this decimal as string.
+      return:
+        comment: Numeric value
+        type: string
+    scale:
+      comment: Scale of this decimal as int.
+      return:
+        comment: Scale
+        type: int
+    add:
+      comment: ""
+      params:
+        num:
+          comment: a number to add to this one
+          type: Numeric
+      return:
+        comment: sum
+        type: Numeric
+    sub:
+      comment: ""
+      params:
+        num:
+          comment: a number to subtract from this one
+          type: Numeric
+      return:
+        comment: difference
+        type: Numeric
+    mul:
+      comment: ""
+      params:
+        num:
+          comment: a number to multiply this one by
+          type: Numeric
+      return:
+        comment: product
+        type: Numeric
+    div:
+      comment: ""
+      params:
+        num:
+          comment: a number to divide this one by
+          type: Numeric
+      return:
+        comment: quotient
+        type: Numeric
+    mod:
+      comment: ""
+      params:
+        num:
+          comment: a number to divide this one by
+          type: Numeric
+      return:
+        comment: remainder
+        type: Numeric
+    abs:
+      comment: ""
+      return:
+        comment: absolute value
+        type: Numeric
+    neg:
+      comment: ""
+      return:
+        comment: negative value
+        type: Numeric
+    sqrt:
+      comment: ""
+      return:
+        comment: square root
+        type: Numeric
+    toInt:
+      comment: ""
+      return:
+        comment: this number as int
+        type: int
+    toDouble:
+      comment: ""
+      return:
+        comment: this number as float
+        type: float
+...

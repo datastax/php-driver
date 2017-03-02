@@ -1,0 +1,30 @@
+---
+Value:
+  comment: |-
+    Common interface implemented by all Cassandra value types.
+
+    @see Bigint
+    @see Smallint
+    @see Tinyint
+    @see Blob
+    @see Collection
+    @see Float
+    @see Inet
+    @see Map
+    @see Set
+    @see Timestamp
+    @see Timeuuid
+    @see Uuid
+    @see Varint
+    @see Date
+    @see Time
+
+    @see Numeric
+    @see UuidInterface
+  methods:
+    type:
+      comment: The type of represented by the value.
+      return:
+        comment: ""
+        type: Type
+...

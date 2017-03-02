@@ -1,0 +1,69 @@
+---
+SSLOptions\Builder:
+  comment: |-
+    SSLOptions builder allows fluent configuration of ssl options.
+
+    @see \Cassandra::ssl()
+    @see \Cluster\Builder::withSSL()
+  methods:
+    withTrustedCerts:
+      comment: |
+        Adds a trusted certificate. This is used to verify node's identity.
+
+        @throws \Exception\InvalidArgumentException
+      params:
+        path:
+          comment: ',... one or more paths to files containing a PEM formatted certificate.'
+          type: string
+      return:
+        comment: self
+        type: Builder
+    withVerifyFlags:
+      comment: |
+        Disable certificate verification.
+
+        @throws \Exception\InvalidArgumentException
+      params:
+        flags:
+          comment: ""
+          type: int
+      return:
+        comment: self
+        type: Builder
+    withClientCert:
+      comment: |
+        Set client-side certificate chain.
+
+        This is used to authenticate the client on the server-side. This should contain the entire Certificate
+        chain starting with the certificate itself.
+
+        @throws \Exception\InvalidArgumentException
+      params:
+        path:
+          comment: path to a file containing a PEM formatted certificate.
+          type: string
+      return:
+        comment: self
+        type: Builder
+    withPrivateKey:
+      comment: |
+        Set client-side private key. This is used to authenticate the client on
+        the server-side.
+
+        @throws \Exception\InvalidArgumentException
+      params:
+        path:
+          comment: Path to the private key file
+          type: string
+        passphrase:
+          comment: Passphrase for the private key, if any
+          type: string|null
+      return:
+        comment: self
+        type: Builder
+    build:
+      comment: Builds SSL options.
+      return:
+        comment: ssl options configured accordingly.
+        type: \SSLOptions
+...

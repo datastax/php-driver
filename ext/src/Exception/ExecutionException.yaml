@@ -1,0 +1,32 @@
+---
+Exception\ExecutionException:
+  comment: |-
+    ExecutionException is raised when something went wrong during request execution.
+    @see TruncateException
+    @see UnavailableException
+    @see ReadTimeoutException
+    @see WriteTimeoutException
+  methods:
+    __construct:
+      comment: ""
+      params:
+        message:
+          comment: ""
+          type: mixed
+        code:
+          comment: ""
+          type: mixed
+        previous:
+          comment: ""
+          type: mixed
+    __wakeup:
+      comment: ""
+      return:
+        comment: ""
+        type: mixed
+    __toString:
+      comment: ""
+      return:
+        comment: ""
+        type: mixed
+...

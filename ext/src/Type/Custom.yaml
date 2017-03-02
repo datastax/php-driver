@@ -1,0 +1,24 @@
+---
+Type\Custom:
+  comment: A class that represents a custom type.
+  methods:
+    name:
+      comment: '{@inheritDoc}'
+      return:
+        comment: The name of this type
+        type: string
+    __toString:
+      comment: '{@inheritDoc}'
+      return:
+        comment: String representation of this type
+        type: string
+    create:
+      comment: ""
+      params:
+        value:
+          comment: ""
+          type: mixed
+      return:
+        comment: ""
+        type: mixed
+...

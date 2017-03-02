@@ -1,0 +1,15 @@
+---
+UuidInterface:
+  comment: A PHP representation of the CQL `uuid` datatype
+  methods:
+    uuid:
+      comment: Returns this uuid as string.
+      return:
+        comment: uuid as string
+        type: string
+    version:
+      comment: Returns the version of this uuid.
+      return:
+        comment: version of this uuid
+        type: int
+...

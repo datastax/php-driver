@@ -175,7 +175,7 @@ if (PHP_CASSANDRA != "no") {
               "OverloadedException.c " +
               "ProtocolException.c " +
               "RangeException.c " +
-              "ReadTimeout.c " +
+              "ReadTimeoutException.c " +
               "RuntimeException.c " +
               "ServerException.c " +
               "TimeoutException.c " +

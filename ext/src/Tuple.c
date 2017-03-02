@@ -257,7 +257,7 @@ PHP_METHOD(Tuple, rewind)
 /* }}} */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo__construct, 0, ZEND_RETURN_VALUE, 1)
-  ZEND_ARG_INFO(0, type)
+  ZEND_ARG_INFO(0, types)
 ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_value, 0, ZEND_RETURN_VALUE, 1)

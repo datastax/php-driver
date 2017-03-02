@@ -1,0 +1,19 @@
+---
+Schema:
+  comment: A PHP representation of a schema
+  methods:
+    keyspace:
+      comment: Returns a Keyspace instance by name.
+      params:
+        name:
+          comment: Name of the keyspace to get
+          type: string
+      return:
+        comment: Keyspace instance or null
+        type: Keyspace
+    keyspaces:
+      comment: Returns all keyspaces defined in the schema.
+      return:
+        comment: An array of Keyspace instances.
+        type: array
+...

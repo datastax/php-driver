@@ -1,0 +1,21 @@
+---
+FutureSession:
+  comment: |-
+    A future that resolves with Session.
+
+    @see Cluster::connectAsync()
+  methods:
+    get:
+      comment: |
+        {@inheritDoc}
+
+        @throws Exception\InvalidArgumentException
+        @throws Exception\TimeoutException
+      params:
+        timeout:
+          comment: A timeout in seconds
+          type: int|double|null
+      return:
+        comment: A connected session
+        type: Session
+...

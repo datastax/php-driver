@@ -1,0 +1,37 @@
+---
+Type\Collection:
+  comment: |-
+    A class that represents the list type. The list type contains the type of the
+    elements contain in the list.
+  methods:
+    name:
+      comment: Returns "list"
+      return:
+        comment: '"list"'
+        type: string
+    __toString:
+      comment: Returns type representation in CQL, e.g. `list<varchar>`
+      return:
+        comment: Type representation in CQL
+        type: string
+    valueType:
+      comment: Returns type of values
+      return:
+        comment: Type of values
+        type: Type
+    create:
+      comment: |-
+        Creates a new Collection from the given values.  When no values
+        given, creates an empty list.
+
+        @throws Exception\InvalidArgumentException when values given are of a
+                                                   different type than what this
+                                                   list type expects.
+      params:
+        value:
+          comment: ',...      One or more values to be added to the list.'
+          type: mixed
+      return:
+        comment: ' A list with given values.'
+        type: Collection
+...

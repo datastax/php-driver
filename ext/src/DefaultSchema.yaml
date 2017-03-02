@@ -1,0 +1,24 @@
+---
+DefaultSchema:
+  comment: A PHP representation of a schema
+  methods:
+    keyspace:
+      comment: '{@inheritDoc}'
+      params:
+        name:
+          comment: Name of the keyspace to get
+          type: string
+      return:
+        comment: '      Keyspace instance or null'
+        type: Keyspace
+    keyspaces:
+      comment: '{@inheritDoc}'
+      return:
+        comment: An array of `Keyspace` instances.
+        type: array
+    version:
+      comment: '{@inheritDoc}'
+      return:
+        comment: Version of the schema.
+        type: int
+...

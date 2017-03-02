@@ -1,0 +1,94 @@
+---
+Session:
+  comment: |-
+    A session is used to prepare and execute statements.
+
+    @see Cluster::connect()
+    @see Cluster::connectAsync()
+  methods:
+    execute:
+      comment: |
+        Execute a query.
+
+        @throws Exception
+      params:
+        statement:
+          comment: string or statement to be executed.
+          type: string|Statement
+        options:
+          comment: execution options (optional)
+          type: array|ExecutionOptions|null
+      return:
+        comment: A collection of rows.
+        type: Rows
+    executeAsync:
+      comment: |-
+        Execute a query asynchronously. This method returns immediately, but
+        the query continues execution in the background.
+      params:
+        statement:
+          comment: string or statement to be executed.
+          type: string|Statement
+        options:
+          comment: execution options (optional)
+          type: array|ExecutionOptions|null
+      return:
+        comment: A future that can be used to retrieve the result.
+        type: FutureRows
+    prepare:
+      comment: |
+        Prepare a query for execution.
+
+        @throws Exception
+      params:
+        cql:
+          comment: The query to be prepared.
+          type: string
+        options:
+          comment: Options to control preparing the query.
+          type: ExecutionOptions
+      return:
+        comment: |
+          A prepared statement that can be bound with parameters and executed.
+        type: PreparedStatement
+    prepareAsync:
+      comment: Asynchronously prepare a query for execution.
+      params:
+        cql:
+          comment: The query to be prepared.
+          type: string
+        options:
+          comment: Options to control preparing the query.
+          type: ExecutionOptions
+      return:
+        comment: A future that can be used to retrieve the prepared statement.
+        type: FuturePreparedStatement
+    close:
+      comment: |
+        Close the session and all its connections.
+
+        @throws Exception
+      params:
+        timeout:
+          comment: |
+            The amount of time in seconds to wait for the session to close.
+          type: double
+      return:
+        comment: Nothing.
+        type: "null"
+    closeAsync:
+      comment: Asynchronously close the session and all its connections.
+      return:
+        comment: A future that can be waited on.
+        type: FutureClose
+    schema:
+      comment: Get a snapshot of the cluster's current schema.
+      return:
+        comment: A snapshot of the cluster's schema.
+        type: Schema
+    metrics:
+      comment: Get performance and diagnostic metrics.
+      return:
+        comment: Performance/Diagnostic metrics.
+        type: array
+...

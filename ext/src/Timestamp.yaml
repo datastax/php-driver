@@ -1,0 +1,52 @@
+---
+Timestamp:
+  comment: A PHP representation of the CQL `timestamp` datatype
+  methods:
+    __construct:
+      comment: |-
+        Creates a new timestamp from either unix timestamp and microseconds or
+        from the current time by default.
+      params:
+        seconds:
+          comment: The number of seconds
+          type: int
+        microseconds:
+          comment: The number of microseconds
+          type: int
+    type:
+      comment: The type of this timestamp.
+      return:
+        comment: ""
+        type: Type
+    time:
+      comment: |-
+        Unix timestamp.
+
+        @see time
+      return:
+        comment: seconds
+        type: int
+    microtime:
+      comment: |-
+        Microtime from this timestamp
+
+
+        @see microtime
+      params:
+        get_as_float:
+          comment: Whether to get this value as float
+          type: bool
+      return:
+        comment: Float or string representation
+        type: float|string
+    toDateTime:
+      comment: Converts current timestamp to PHP DateTime.
+      return:
+        comment: PHP representation
+        type: \DateTime
+    __toString:
+      comment: Returns a string representation of this timestamp.
+      return:
+        comment: timestamp
+        type: string
+...

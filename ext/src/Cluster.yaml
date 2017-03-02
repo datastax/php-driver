@@ -1,0 +1,25 @@
+---
+Cluster:
+  comment: Cluster object is used to create Sessions.
+  methods:
+    connect:
+      comment: |
+        Creates a new Session instance.
+      params:
+        keyspace:
+          comment: Optional keyspace name
+          type: string
+      return:
+        comment: Session instance
+        type: Session
+    connectAsync:
+      comment: |
+        Creates a new Session instance.
+      params:
+        keyspace:
+          comment: Optional keyspace name
+          type: string
+      return:
+        comment: A Future Session instance
+        type: Future
+...

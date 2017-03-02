@@ -1,0 +1,31 @@
+---
+DefaultCluster:
+  comment: |-
+    Default cluster implementation.
+
+    @see Cluster
+  methods:
+    connect:
+      comment: |
+        {@inheritDoc}
+      params:
+        keyspace:
+          comment: Optional keyspace name
+          type: string
+        timeout:
+          comment: Optional timeout
+          type: int
+      return:
+        comment: Session instance
+        type: Session
+    connectAsync:
+      comment: |
+        {@inheritDoc}
+      params:
+        keyspace:
+          comment: Optional keyspace name
+          type: string
+      return:
+        comment: A Future Session instance
+        type: Future
+...

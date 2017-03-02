@@ -1,0 +1,22 @@
+---
+FuturePreparedStatement:
+  comment: |-
+    A future returned from `Session::prepareAsync()`
+    This future will resolve with a PreparedStatement or an exception.
+
+    @see Session::prepareAsync()
+  methods:
+    get:
+      comment: |
+        {@inheritDoc}
+
+        @throws Exception\InvalidArgumentException
+        @throws Exception\TimeoutException
+      params:
+        timeout:
+          comment: A timeout in seconds
+          type: int|double|null
+      return:
+        comment: A prepared statement
+        type: PreparedStatement
+...

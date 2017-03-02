@@ -1,0 +1,150 @@
+---
+MaterializedView:
+  comment: A PHP representation of a materialized view
+  methods:
+    baseTable:
+      comment: Returns the base table of the view
+      return:
+        comment: Base table of the view
+        type: Table
+    name:
+      comment: Returns the name of this view
+      return:
+        comment: Name of the view
+        type: string
+    option:
+      comment: Return a view's option by name
+      params:
+        name:
+          comment: The name of the option
+          type: string
+      return:
+        comment: Value of an option by name
+        type: Value
+    options:
+      comment: Returns all the view's options
+      return:
+        comment: |-
+          A dictionary of string and Value pairs of the
+          view's options.
+        type: array
+    comment:
+      comment: Description of the view, if any
+      return:
+        comment: View description or null
+        type: string
+    readRepairChance:
+      comment: Returns read repair chance
+      return:
+        comment: Read repair chance
+        type: float
+    localReadRepairChance:
+      comment: Returns local read repair chance
+      return:
+        comment: Local read repair chance
+        type: float
+    gcGraceSeconds:
+      comment: Returns GC grace seconds
+      return:
+        comment: GC grace seconds
+        type: int
+    caching:
+      comment: Returns caching options
+      return:
+        comment: Caching options
+        type: string
+    bloomFilterFPChance:
+      comment: Returns bloom filter FP chance
+      return:
+        comment: Bloom filter FP chance
+        type: float
+    memtableFlushPeriodMs:
+      comment: Returns memtable flush period in milliseconds
+      return:
+        comment: Memtable flush period in milliseconds
+        type: int
+    defaultTTL:
+      comment: Returns default TTL.
+      return:
+        comment: Default TTL.
+        type: int
+    speculativeRetry:
+      comment: Returns speculative retry.
+      return:
+        comment: Speculative retry.
+        type: string
+    indexInterval:
+      comment: Returns index interval
+      return:
+        comment: Index interval
+        type: int
+    compactionStrategyClassName:
+      comment: Returns compaction strategy class name
+      return:
+        comment: Compaction strategy class name
+        type: string
+    compactionStrategyOptions:
+      comment: Returns compaction strategy options
+      return:
+        comment: Compaction strategy options
+        type: Map
+    compressionParameters:
+      comment: Returns compression parameters
+      return:
+        comment: Compression parameters
+        type: Map
+    populateIOCacheOnFlush:
+      comment: Returns whether or not the `populate_io_cache_on_flush` is true
+      return:
+        comment: Value of `populate_io_cache_on_flush` or null
+        type: bool
+    replicateOnWrite:
+      comment: Returns whether or not the `replicate_on_write` is true
+      return:
+        comment: Value of `replicate_on_write` or null
+        type: bool
+    maxIndexInterval:
+      comment: Returns the value of `max_index_interval`
+      return:
+        comment: Value of `max_index_interval` or null
+        type: int
+    minIndexInterval:
+      comment: Returns the value of `min_index_interval`
+      return:
+        comment: Value of `min_index_interval` or null
+        type: int
+    column:
+      comment: Returns column by name
+      params:
+        name:
+          comment: Name of the column
+          type: string
+      return:
+        comment: Column instance
+        type: Column
+    columns:
+      comment: Returns all columns in this view
+      return:
+        comment: A list of `Column` instances
+        type: array
+    partitionKey:
+      comment: Returns the partition key columns of the view
+      return:
+        comment: A list of of `Column` instances
+        type: array
+    primaryKey:
+      comment: Returns both the partition and clustering key columns of the view
+      return:
+        comment: A list of of `Column` instances
+        type: array
+    clusteringKey:
+      comment: Returns the clustering key columns of the view
+      return:
+        comment: A list of of `Column` instances
+        type: array
+    clusteringOrder:
+      comment: ""
+      return:
+        comment: A list of cluster column orders ('asc' and 'desc')
+        type: array
+...

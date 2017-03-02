@@ -1,0 +1,31 @@
+---
+Blob:
+  comment: A PHP representation of the CQL `blob` datatype
+  methods:
+    __construct:
+      comment: Creates a new bytes array.
+      params:
+        bytes:
+          comment: any bytes
+          type: string
+    type:
+      comment: The type of this blob.
+      return:
+        comment: ""
+        type: Type
+    bytes:
+      comment: Returns bytes as a hex string.
+      return:
+        comment: bytes as hexadecimal string
+        type: string
+    __toString:
+      comment: Returns bytes as a hex string.
+      return:
+        comment: bytes as hexadecimal string
+        type: string
+    toBinaryString:
+      comment: Returns bytes as a binary string.
+      return:
+        comment: bytes as binary string
+        type: string
+...

@@ -1,0 +1,35 @@
+---
+Exception\ValidationException:
+  comment: |-
+    ValidationException is raised on invalid request, before even attempting to
+    execute it.
+    @see Exception\InvalidSyntaxException
+    @see Exception\UnauthorizedException
+    @see Exception\InvalidQueryException
+    @see Exception\ConfigurationException
+    @see Exception\AlreadyExistsException
+    @see Exception\UnpreparedException
+  methods:
+    __construct:
+      comment: ""
+      params:
+        message:
+          comment: ""
+          type: mixed
+        code:
+          comment: ""
+          type: mixed
+        previous:
+          comment: ""
+          type: mixed
+    __wakeup:
+      comment: ""
+      return:
+        comment: ""
+        type: mixed
+    __toString:
+      comment: ""
+      return:
+        comment: ""
+        type: mixed
+...

@@ -1,0 +1,24 @@
+---
+Type\Scalar:
+  comment: A class that represents a primitive type (e.g. `varchar` or `bigint`)
+  methods:
+    name:
+      comment: '{@inheritDoc}'
+      return:
+        comment: '{@inheritDoc}'
+        type: string
+    __toString:
+      comment: '{@inheritDoc}'
+      return:
+        comment: '{@inheritDoc}'
+        type: string
+    create:
+      comment: ""
+      params:
+        value:
+          comment: ""
+          type: mixed
+      return:
+        comment: ""
+        type: mixed
+...

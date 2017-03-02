@@ -1,0 +1,74 @@
+---
+UserTypeValue:
+  comment: A PHP representation of the CQL UDT datatype
+  methods:
+    __construct:
+      comment: Creates a new user type value with the given name/type pairs.
+      params:
+        types:
+          comment: Array of types
+          type: array
+    type:
+      comment: The type of this user type value.
+      return:
+        comment: ""
+        type: Type
+    values:
+      comment: Array of values in this user type value.
+      return:
+        comment: values
+        type: array
+    set:
+      comment: |
+        Sets the value at name in this user type value.
+      params:
+        name:
+          comment: String of the field name
+          type: sting
+        value:
+          comment: A value or null
+          type: mixed
+      return:
+        comment: ""
+        type: void
+    get:
+      comment: |
+        Retrieves the value at a given name.
+      params:
+        name:
+          comment: String of the field name
+          type: string
+      return:
+        comment: A value or null
+        type: mixed
+    count:
+      comment: Total number of elements in this user type value.
+      return:
+        comment: count
+        type: int
+    current:
+      comment: Current element for iteration
+      return:
+        comment: The current element
+        type: mixed
+    key:
+      comment: Current key for iteration
+      return:
+        comment: current key
+        type: int
+    next:
+      comment: Move internal iterator forward
+      return:
+        comment: ""
+        type: void
+    valid:
+      comment: Check whether a current value exists
+      return:
+        comment: ""
+        type: bool
+    rewind:
+      comment: Rewind internal iterator
+      return:
+        comment: ""
+        type: void
+...

@@ -1,0 +1,31 @@
+---
+Uuid:
+  comment: A PHP representation of the CQL `uuid` datatype
+  methods:
+    __construct:
+      comment: Creates a uuid from a given uuid string or a random one.
+      params:
+        uuid:
+          comment: A uuid string
+          type: string
+    __toString:
+      comment: Returns this uuid as string.
+      return:
+        comment: uuid
+        type: string
+    type:
+      comment: The type of this uuid.
+      return:
+        comment: ""
+        type: Type
+    uuid:
+      comment: Returns this uuid as string.
+      return:
+        comment: uuid
+        type: string
+    version:
+      comment: Returns the version of this uuid.
+      return:
+        comment: version of this uuid
+        type: int
+...

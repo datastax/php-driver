@@ -1,0 +1,44 @@
+---
+Timeuuid:
+  comment: A PHP representation of the CQL `timeuuid` datatype
+  methods:
+    __construct:
+      comment: Creates a timeuuid from a given timestamp or current time.
+      params:
+        timestamp:
+          comment: Unix timestamp
+          type: int
+    type:
+      comment: The type of this timeuuid.
+      return:
+        comment: ""
+        type: Type
+    __toString:
+      comment: Returns this timeuuid as string.
+      return:
+        comment: timeuuid
+        type: string
+    uuid:
+      comment: Returns this timeuuid as string.
+      return:
+        comment: timeuuid
+        type: string
+    version:
+      comment: Returns the version of this timeuuid.
+      return:
+        comment: version of this timeuuid
+        type: int
+    time:
+      comment: |-
+        Unix timestamp.
+
+        @see time
+      return:
+        comment: seconds
+        type: int
+    toDateTime:
+      comment: Converts current timeuuid to PHP DateTime.
+      return:
+        comment: PHP representation
+        type: \DateTime
+...

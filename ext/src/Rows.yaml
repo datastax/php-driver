@@ -1,0 +1,144 @@
+---
+Rows:
+  comment: Rows represent a result of statement execution.
+  methods:
+    count:
+      comment: |-
+        Returns the number of rows.
+
+        @see \Countable::count()
+      return:
+        comment: number of rows
+        type: int
+    rewind:
+      comment: |-
+        Resets the rows iterator.
+
+        @see \Iterator::rewind()
+      return:
+        comment: ""
+        type: void
+    current:
+      comment: |-
+        Returns current row.
+
+        @see \Iterator::current()
+      return:
+        comment: current row
+        type: array
+    key:
+      comment: |-
+        Returns current index.
+
+        @see \Iterator::key()
+      return:
+        comment: index
+        type: int
+    next:
+      comment: |-
+        Advances the rows iterator by one.
+
+        @see \Iterator::next()
+      return:
+        comment: ""
+        type: void
+    valid:
+      comment: |-
+        Returns existence of more rows being available.
+
+        @see \Iterator::valid()
+      return:
+        comment: whether there are more rows available for iteration
+        type: bool
+    offsetExists:
+      comment: |-
+        Returns existence of a given row.
+
+
+        @see \ArrayAccess::offsetExists()
+      params:
+        offset:
+          comment: row index
+          type: int
+      return:
+        comment: whether a row at a given index exists
+        type: bool
+    offsetGet:
+      comment: |-
+        Returns a row at given index.
+
+
+        @see \ArrayAccess::offsetGet()
+      params:
+        offset:
+          comment: row index
+          type: int
+      return:
+        comment: row at a given index
+        type: array|null
+    offsetSet:
+      comment: |-
+        Sets a row at given index.
+
+        @throws Exception\DomainException
+
+
+        @see \ArrayAccess::offsetSet()
+      params:
+        offset:
+          comment: row index
+          type: int
+        value:
+          comment: row value
+          type: array
+      return:
+        comment: ""
+        type: void
+    offsetUnset:
+      comment: |-
+        Removes a row at given index.
+
+        @throws Exception\DomainException
+
+
+        @see \ArrayAccess::offsetUnset()
+      params:
+        offset:
+          comment: row index
+          type: int
+      return:
+        comment: ""
+        type: void
+    isLastPage:
+      comment: Check for the last page when paging.
+      return:
+        comment: whether this is the last page or not
+        type: bool
+    nextPage:
+      comment: |
+        Get the next page of results.
+      params:
+        timeout:
+          comment: ""
+          type: float|null
+      return:
+        comment: loads and returns next result page
+        type: Rows|null
+    nextPageAsync:
+      comment: Get the next page of results asynchronously.
+      return:
+        comment: returns future of the next result page
+        type: Future
+    pagingStateToken:
+      comment: Returns the raw paging state token.
+      return:
+        comment: ""
+        type: string
+    first:
+      comment: Get the first row.
+      return:
+        comment: returns first row if any
+        type: array|null
+    __construct:
+      comment: ""
+...

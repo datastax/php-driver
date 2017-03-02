@@ -1,0 +1,101 @@
+---
+DefaultKeyspace:
+  comment: A PHP representation of a keyspace
+  methods:
+    name:
+      comment: '{@inheritDoc}'
+      return:
+        comment: Name
+        type: string
+    replicationClassName:
+      comment: '{@inheritDoc}'
+      return:
+        comment: Replication class
+        type: string
+    replicationOptions:
+      comment: '{@inheritDoc}'
+      return:
+        comment: Replication options
+        type: Map
+    hasDurableWrites:
+      comment: '{@inheritDoc}'
+      return:
+        comment: Whether durable writes are enabled
+        type: string
+    table:
+      comment: '{@inheritDoc}'
+      params:
+        name:
+          comment: Table name
+          type: string
+      return:
+        comment: '       Table instance or null'
+        type: Table
+    tables:
+      comment: '{@inheritDoc}'
+      return:
+        comment: An array of `Table` instances
+        type: array
+    userType:
+      comment: '{@inheritDoc}'
+      params:
+        name:
+          comment: '{@inheritDoc}'
+          type: string
+      return:
+        comment: '{@inheritDoc}'
+        type: Type\UserType|null
+    userTypes:
+      comment: '{@inheritDoc}'
+      return:
+        comment: '{@inheritDoc}'
+        type: array
+    materializedView:
+      comment: '{@inheritDoc}'
+      params:
+        name:
+          comment: '{@inheritDoc}'
+          type: string
+      return:
+        comment: '{@inheritDoc}'
+        type: MaterizedView|null
+    materializedViews:
+      comment: '{@inheritDoc}'
+      return:
+        comment: '{@inheritDoc}'
+        type: array
+    function:
+      comment: '{@inheritDoc}'
+      params:
+        name:
+          comment: '{@inheritDoc}'
+          type: string
+        '...':
+          comment: '{@inheritDoc}'
+          type: string|Type
+      return:
+        comment: '{@inheritDoc}'
+        type: Function|null
+    functions:
+      comment: '{@inheritDoc}'
+      return:
+        comment: '{@inheritDoc}'
+        type: array
+    aggregate:
+      comment: '{@inheritDoc}'
+      params:
+        name:
+          comment: '{@inheritDoc}'
+          type: string
+        '...':
+          comment: '{@inheritDoc}'
+          type: string|Type
+      return:
+        comment: '{@inheritDoc}'
+        type: Aggregate|null
+    aggregates:
+      comment: '{@inheritDoc}'
+      return:
+        comment: '{@inheritDoc}'
+        type: array
+...

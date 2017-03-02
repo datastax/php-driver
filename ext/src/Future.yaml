@@ -1,0 +1,24 @@
+---
+Future:
+  comment: |-
+    Futures are returns from asynchronous methods.
+
+    @see Cluster::connectAsync()
+    @see Session::executeAsync()
+    @see Session::prepareAsync()
+    @see Session::closeAsync()
+  methods:
+    get:
+      comment: |
+        Waits for a given future resource to resolve and throws errors if any.
+
+        @throws Exception\InvalidArgumentException
+        @throws Exception\TimeoutException
+      params:
+        timeout:
+          comment: A timeout in seconds
+          type: int|double|null
+      return:
+        comment: a value that the future has been resolved with
+        type: mixed
+...

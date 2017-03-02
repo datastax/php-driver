@@ -1,0 +1,45 @@
+---
+Date:
+  comment: A PHP representation of the CQL `date` type.
+  methods:
+    __construct:
+      comment: Creates a new Date object
+      params:
+        seconds:
+          comment: Absolute seconds from epoch (1970, 1, 1), can be negative, defaults
+            to current time.
+          type: int
+    type:
+      comment: The type of this date.
+      return:
+        comment: ""
+        type: Type
+    seconds:
+      comment: ""
+      return:
+        comment: Absolute seconds from epoch (1970, 1, 1), can be negative
+        type: int
+    toDateTime:
+      comment: Converts current date to PHP DateTime.
+      params:
+        time:
+          comment: An optional Time object that is added to the DateTime object.
+          type: Time
+      return:
+        comment: PHP representation
+        type: \DateTime
+    fromDateTime:
+      comment: Creates a new Date object from a \DateTime object.
+      params:
+        datetime:
+          comment: A \DateTime object to convert.
+          type: \DateTime
+      return:
+        comment: PHP representation
+        type: \DateTime
+    __toString:
+      comment: ""
+      return:
+        comment: 'this date in string format: Date(seconds=$seconds)'
+        type: string
+...

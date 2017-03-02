@@ -1,0 +1,372 @@
+---
+Cluster\Builder:
+  comment: |-
+    Cluster builder allows fluent configuration of the cluster instance.
+
+    @see \Cassandra::cluster()
+  methods:
+    build:
+      comment: Returns a Cluster Instance.
+      return:
+        comment: Cluster instance
+        type: \Cluster
+    withDefaultConsistency:
+      comment: |
+        Configures default consistency for all requests.
+      params:
+        consistency:
+          comment: A consistency level, must be one of Cassandra::CONSISTENCY_* values
+          type: int
+      return:
+        comment: self
+        type: Builder
+    withDefaultPageSize:
+      comment: |
+        Configures default page size for all results.
+        Set to `null` to disable paging altogether.
+      params:
+        pageSize:
+          comment: default page size
+          type: int|null
+      return:
+        comment: self
+        type: Builder
+    withDefaultTimeout:
+      comment: |
+        Configures default timeout for future resolution in blocking operations
+        Set to null to disable (default).
+      params:
+        timeout:
+          comment: Timeout value in seconds, can be fractional
+          type: float|null
+      return:
+        comment: self
+        type: Builder
+    withContactPoints:
+      comment: |
+        Configures the initial endpoints. Note that the driver will
+        automatically discover and connect to the rest of the cluster.
+      params:
+        host:
+          comment: ',... one or more ip addresses or hostnames'
+          type: string
+      return:
+        comment: self
+        type: Builder
+    withPort:
+      comment: |
+        Specify a different port to be used when connecting to the cluster.
+
+        @throws \Exception\InvalidArgumentException
+      params:
+        port:
+          comment: a number between 1 and 65535
+          type: int
+      return:
+        comment: self
+        type: Builder
+    withRoundRobinLoadBalancingPolicy:
+      comment: Configures this cluster to use a round robin load balancing policy.
+      return:
+        comment: self
+        type: Builder
+    withDatacenterAwareRoundRobinLoadBalancingPolicy:
+      comment: |
+        Configures this cluster to use a datacenter aware round robin load balancing policy.
+      params:
+        localDatacenter:
+          comment: Name of the local datacenter
+          type: string
+        hostPerRemoteDatacenter:
+          comment: Maximum number of hosts to try in remote datacenters
+          type: int
+        useRemoteDatacenterForLocalConsistencies:
+          comment: Allow using hosts from remote datacenters to execute statements
+            with local consistencies
+          type: bool
+      return:
+        comment: self
+        type: Builder
+    withTokenAwareRouting:
+      comment: |
+        Enable token aware routing.
+      params:
+        enabled:
+          comment: Whether to enable token aware routing (optional)
+          type: bool
+      return:
+        comment: self
+        type: Builder
+    withCredentials:
+      comment: |
+        Configures plain-text authentication.
+      params:
+        username:
+          comment: Username
+          type: string
+        password:
+          comment: Password
+          type: string
+      return:
+        comment: self
+        type: Builder
+    withConnectTimeout:
+      comment: |
+        Timeout used for establishing TCP connections.
+      params:
+        timeout:
+          comment: Timeout value in seconds, can be fractional
+          type: float
+      return:
+        comment: self
+        type: Builder
+    withRequestTimeout:
+      comment: |
+        Timeout used for waiting for a response from a node.
+      params:
+        timeout:
+          comment: Timeout value in seconds, can be fractional
+          type: float
+      return:
+        comment: self
+        type: Builder
+    withSSL:
+      comment: |
+        Set up ssl context.
+      params:
+        options:
+          comment: a preconfigured ssl context
+          type: SSLOptions
+      return:
+        comment: self
+        type: Builder
+    withPersistentSessions:
+      comment: Enable persistent sessions and clusters.
+      params:
+        enabled:
+          comment: whether to enable persistent sessions and clusters
+          type: bool
+      return:
+        comment: self
+        type: Builder
+    withProtocolVersion:
+      comment: |-
+        Force the driver to use a specific binary protocol version.
+
+        Apache Cassandra 1.2+ supports protocol version 1
+        Apache Cassandra 2.0+ supports protocol version 2
+        Apache Cassandra 2.1+ supports protocol version 3
+        Apache Cassandra 2.2+ supports protocol version 4
+
+        NOTE: Apache Cassandra 3.x supports protocol version 3 and 4 only
+      params:
+        version:
+          comment: The protocol version
+          type: int
+      return:
+        comment: self
+        type: Builder
+    withIOThreads:
+      comment: |
+        Total number of IO threads to use for handling the requests.
+
+        Note: number of io threads * core connections per host <= total number
+              of connections <= number of io threads * max connections per host
+      params:
+        count:
+          comment: total number of threads.
+          type: int
+      return:
+        comment: self
+        type: Builder
+    withConnectionsPerHost:
+      comment: |
+        Set the size of connection pools used by the driver. Pools are fixed
+        when only `$core` is given, when a `$max` is specified as well,
+        additional connections will be created automatically based on current
+        load until the maximum number of connection has been reached. When
+        request load goes down, extra connections are automatically cleaned up
+        until only the core number of connections is left.
+      params:
+        core:
+          comment: minimum connections to keep open to any given host
+          type: int
+        max:
+          comment: maximum connections to keep open to any given host
+          type: int
+      return:
+        comment: self
+        type: Builder
+    withReconnectInterval:
+      comment: |
+        Specify interval in seconds that the driver should wait before attempting
+        to re-establish a closed connection.
+      params:
+        interval:
+          comment: interval in seconds
+          type: float
+      return:
+        comment: self
+        type: Builder
+    withLatencyAwareRouting:
+      comment: |
+        Enables/disables latency-aware routing.
+      params:
+        enabled:
+          comment: whether to actually enable or disable the routing.
+          type: bool
+      return:
+        comment: self
+        type: Builder
+    withTCPNodelay:
+      comment: |
+        Disables nagle algorithm for lower latency.
+      params:
+        enabled:
+          comment: whether to actually enable or disable nodelay.
+          type: bool
+      return:
+        comment: self
+        type: Builder
+    withTCPKeepalive:
+      comment: Enables/disables TCP keepalive.
+      params:
+        delay:
+          comment: |-
+            The period of inactivity in seconds, after
+            which the keepalive probe should be sent over
+            the connection. If set to `null`, disables
+            keepalive probing.
+          type: float|null
+      return:
+        comment: self
+        type: Builder
+    withRetryPolicy:
+      comment: |
+        Configures the retry policy.
+      params:
+        policy:
+          comment: the retry policy to use.
+          type: Cluster\RetryPolicy
+      return:
+        comment: self
+        type: Builder
+    withTimestampGenerator:
+      comment: Sets the timestamp generator.
+      params:
+        generator:
+          comment: |-
+            A timestamp generator that will be used
+            to generate timestamps for statements.
+          type: TimestampGenerator
+      return:
+        comment: self
+        type: Builder
+    withSchemaMetadata:
+      comment: |
+        Enables/disables Schema Metadata.
+
+        If disabled this allows the driver to skip over retrieving and
+        updating schema metadata, but it also disables the usage of token-aware
+        routing and $session->schema() will always return an empty object. This
+        can be useful for reducing the startup overhead of short-lived sessions.
+      params:
+        enabled:
+          comment: whether the driver fetches and maintains schema metadata.
+          type: bool
+      return:
+        comment: self
+        type: Builder
+    withHostnameResolution:
+      comment: |
+        Enables/disables Hostname Resolution.
+
+        If enabled the driver will resolve hostnames for IP addresses using
+        reverse IP lookup. This is useful for authentication (Kerberos) or
+        encryption SSL services that require a valid hostname for verification.
+      params:
+        enabled:
+          comment: whether the driver uses hostname resolution.
+          type: bool
+      return:
+        comment: self
+        type: Builder
+    withRandomizedContactPoints:
+      comment: |
+        Enables/disables Randomized Contact Points.
+
+        If enabled this allows the driver randomly use contact points in order
+        to evenly spread the load across the cluster and prevent
+        hotspots/load spikes during notifications (e.g. massive schema change).
+
+        Note: This setting should only be disabled for debugging and testing.
+      params:
+        enabled:
+          comment: whether the driver uses randomized contact points.
+          type: bool
+      return:
+        comment: self
+        type: Builder
+    withConnectionHeartbeatInterval:
+      comment: |
+        Specify interval in seconds that the driver should wait before attempting
+        to send heartbeat messages and control the amount of time the connection
+        must be idle before sending heartbeat messages. This is useful for
+        preventing intermediate network devices from dropping connections.
+      params:
+        interval:
+          comment: interval in seconds (0 to disable heartbeat).
+          type: float
+      return:
+        comment: self
+        type: Builder
+    withBlackListHosts:
+      comment: |
+        Sets the blacklist hosts. Any host in the blacklist will be ignored and
+        a conneciton will not be established. This is useful for ensuring that
+        the driver will not connection to a predefied set of hosts.
+      params:
+        hosts:
+          comment: A comma delimited list of addresses.
+          type: string
+      return:
+        comment: self
+        type: Builder
+    withWhiteListHosts:
+      comment: |
+        Sets the whitelist hosts. Any host not in the whitelist will be ignored
+        and a connection will not be established. This policy is useful for
+        ensuring that the driver will only connect to a predefined set of hosts.
+      params:
+        hosts:
+          comment: A comma delimited list of addresses.
+          type: string
+      return:
+        comment: self
+        type: Builder
+    withBlackListDCs:
+      comment: |
+        Sets the blacklist datacenters. Any datacenter in the blacklist will be
+        ignored and a connection will not be established to any host in those
+        datacenters. This policy is useful for ensuring the driver will not
+        connect to any host in a specific datacenter.
+      params:
+        dcs:
+          comment: A comma delimited list of datacenters.
+          type: string
+      return:
+        comment: self
+        type: Builder
+    withWhiteListDCs:
+      comment: |
+        Sets the whitelist datacenters. Any host not in a whitelisted datacenter
+        will be ignored. This policy is useful for ensuring the driver will only
+        connect to hosts in specific datacenters.
+      params:
+        dcs:
+          comment: A comma delimited list of datacenters.
+          type: string
+      return:
+        comment: self
+        type: Builder
+...

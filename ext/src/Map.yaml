@@ -1,0 +1,152 @@
+---
+Map:
+  comment: A PHP representation of the CQL `map` datatype
+  methods:
+    __construct:
+      comment: Creates a new map of a given key and value type.
+      params:
+        keyType:
+          comment: ""
+          type: Type
+        valueType:
+          comment: ""
+          type: Type
+    type:
+      comment: The type of this map.
+      return:
+        comment: ""
+        type: Type
+    keys:
+      comment: Returns all keys in the map as an array.
+      return:
+        comment: keys
+        type: array
+    values:
+      comment: Returns all values in the map as an array.
+      return:
+        comment: values
+        type: array
+    set:
+      comment: Sets key/value in the map.
+      params:
+        key:
+          comment: key
+          type: mixed
+        value:
+          comment: value
+          type: mixed
+      return:
+        comment: ""
+        type: mixed
+    get:
+      comment: |
+        Gets the value of the key in the map.
+      params:
+        key:
+          comment: Key
+          type: mixed
+      return:
+        comment: Value or null
+        type: mixed
+    remove:
+      comment: |
+        Removes the key from the map.
+      params:
+        key:
+          comment: Key
+          type: mixed
+      return:
+        comment: Whether the key was removed or not, e.g. didn't exist
+        type: bool
+    has:
+      comment: |
+        Returns whether the key is in the map.
+      params:
+        key:
+          comment: Key
+          type: mixed
+      return:
+        comment: Whether the key is in the map or not
+        type: bool
+    count:
+      comment: Total number of elements in this map
+      return:
+        comment: count
+        type: int
+    current:
+      comment: Current value for iteration
+      return:
+        comment: current value
+        type: mixed
+    key:
+      comment: Current key for iteration
+      return:
+        comment: current key
+        type: int
+    next:
+      comment: Move internal iterator forward
+      return:
+        comment: ""
+        type: void
+    valid:
+      comment: Check whether a current value exists
+      return:
+        comment: ""
+        type: bool
+    rewind:
+      comment: Rewind internal iterator
+      return:
+        comment: ""
+        type: void
+    offsetSet:
+      comment: |
+        Sets the value at a given key
+
+        @throws Exception\InvalidArgumentException when the type of key or value is wrong
+      params:
+        key:
+          comment: Key to use.
+          type: mixed
+        value:
+          comment: Value to set.
+          type: mixed
+      return:
+        comment: ""
+        type: void
+    offsetGet:
+      comment: |-
+        Retrieves the value at a given key
+
+        @throws Exception\InvalidArgumentException when the type of key is wrong
+      params:
+        key:
+          comment: Key to use.
+          type: mixed
+      return:
+        comment: '     Value or `null`'
+        type: mixed
+    offsetUnset:
+      comment: |
+        Deletes the value at a given key
+
+        @throws Exception\InvalidArgumentException when the type of key is wrong
+      params:
+        key:
+          comment: Key to use.
+          type: mixed
+      return:
+        comment: ""
+        type: void
+    offsetExists:
+      comment: |
+        Returns whether the value a given key is present
+
+        @throws Exception\InvalidArgumentException when the type of key is wrong
+      params:
+        key:
+          comment: Key to use.
+          type: mixed
+      return:
+        comment: '       Whether the value at a given key is present'
+        type: bool
+...

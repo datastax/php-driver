@@ -304,15 +304,15 @@ PHP_METHOD(UserTypeValue, rewind)
 /* }}} */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo__construct, 0, ZEND_RETURN_VALUE, 1)
-  ZEND_ARG_INFO(0, type)
+  ZEND_ARG_INFO(0, types)
 ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_value, 0, ZEND_RETURN_VALUE, 1)
   ZEND_ARG_INFO(0, value)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_index, 0, ZEND_RETURN_VALUE, 1)
-  ZEND_ARG_INFO(0, index)
+ZEND_BEGIN_ARG_INFO_EX(arginfo_name, 0, ZEND_RETURN_VALUE, 1)
+  ZEND_ARG_INFO(0, name)
 ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_none, 0, ZEND_RETURN_VALUE, 0)
@@ -323,7 +323,7 @@ static zend_function_entry php_driver_user_type_value_methods[] = {
   PHP_ME(UserTypeValue, type, arginfo_none, ZEND_ACC_PUBLIC)
   PHP_ME(UserTypeValue, values, arginfo_none, ZEND_ACC_PUBLIC)
   PHP_ME(UserTypeValue, set, arginfo_value, ZEND_ACC_PUBLIC)
-  PHP_ME(UserTypeValue, get, arginfo_index, ZEND_ACC_PUBLIC)
+  PHP_ME(UserTypeValue, get, arginfo_name, ZEND_ACC_PUBLIC)
   /* Countable */
   PHP_ME(UserTypeValue, count, arginfo_none, ZEND_ACC_PUBLIC)
   /* Iterator */

@@ -1,0 +1,63 @@
+---
+Type\UserType:
+  comment: |-
+    A class that represents a user type. The user type is able to represent a
+    composite type of one or more types accessed by name.
+  methods:
+    name:
+      comment: Returns type name for the user type
+      return:
+        comment: ""
+        type: string
+    keyspace:
+      comment: Returns keyspace for the user type
+      return:
+        comment: ""
+        type: string
+    __toString:
+      comment: |-
+        Returns type representation in CQL, e.g. keyspace1.type_name1 or
+        `userType<name1:varchar, name2:int>`.
+      return:
+        comment: Type representation in CQL
+        type: string
+    types:
+      comment: Returns types of values
+      return:
+        comment: An array of types
+        type: array
+    create:
+      comment: |-
+        Creates a new UserTypeValue from the given name/value pairs. When
+        no values given, creates an empty user type.
+
+        @throws Exception\InvalidArgumentException when values given are of a
+                                                   different types than what the
+                                                   user type expects.
+      params:
+        value:
+          comment: ',...      One or more name/value pairs to be added to the user
+            type.'
+          type: mixed
+      return:
+        comment: ' A user type value with given name/value pairs.'
+        type: UserTypeValue
+    withName:
+      comment: Associate the user type with a name.
+      params:
+        name:
+          comment: Name of the user type.
+          type: string
+      return:
+        comment: Nothing.
+        type: "null"
+    withKeyspace:
+      comment: Associate the user type with a keyspace.
+      params:
+        keyspace:
+          comment: Keyspace that contains the user type.
+          type: string
+      return:
+        comment: Nothing.
+        type: "null"
+...

@@ -1,0 +1,47 @@
+---
+Time:
+  comment: A PHP representation of the CQL `time` type.
+  methods:
+    __construct:
+      comment: Creates a new Time object
+      params:
+        nanoseconds:
+          comment: Number of nanoseconds since last microsecond
+          type: int|string
+    now:
+      comment: Creates a new Time object with the current time.
+      return:
+        comment: ""
+        type: Time
+    type:
+      comment: The type of this date.
+      return:
+        comment: ""
+        type: Type
+    nanoseconds:
+      comment: |2-
+                    the last full second since the last full minute since the
+                    last full hour since midnight
+      return:
+        comment: number of nanoseconds since the last full microsecond since
+        type: int
+    __toString:
+      comment: ""
+      return:
+        comment: 'this date in string format: Time(nanoseconds=$nanoseconds)'
+        type: string
+    seconds:
+      comment: ""
+      return:
+        comment: ""
+        type: int
+    fromDateTime:
+      comment: ""
+      params:
+        datetime:
+          comment: ""
+          type: DateTime
+      return:
+        comment: ""
+        type: Time
+...

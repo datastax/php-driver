@@ -1,0 +1,58 @@
+---
+Type\Map:
+  comment: |-
+    A class that represents the map type. The map type contains two types that
+    represents the types of the key and value contained in the map.
+  methods:
+    name:
+      comment: Returns "map"
+      return:
+        comment: '"map"'
+        type: string
+    __toString:
+      comment: Returns type representation in CQL, e.g. `map<varchar, int>`
+      return:
+        comment: Type representation in CQL
+        type: string
+    keyType:
+      comment: Returns type of keys
+      return:
+        comment: Type of keys
+        type: Type
+    valueType:
+      comment: Returns type of values
+      return:
+        comment: Type of values
+        type: Type
+    create:
+      comment: |-
+        Creates a new Map from the given values.
+
+        @code{.php}
+        <?php
+        use Type;
+        use Uuid;
+
+        $type = Type::map(Type::uuid(), Type::varchar());
+        $map = $type->create(new Uuid(), 'first uuid',
+                             new Uuid(), 'second uuid',
+                             new Uuid(), 'third uuid');
+
+        var_dump($map);
+        @endcode
+
+        @throws Exception\InvalidArgumentException when keys or values given are
+                                                   of a different type than what
+                                                   this map type expects.
+
+                                 is a key and each even value is a value for the
+                                 map, e.g. `create(key, value, key, value)`.
+                                 When no values given, creates an empty map.
+      params:
+        value:
+          comment: ',... An even number of values, where each odd value'
+          type: mixed
+      return:
+        comment: '   A set with given values.'
+        type: Map
+...

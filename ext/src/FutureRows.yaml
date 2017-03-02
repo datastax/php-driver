@@ -1,0 +1,21 @@
+---
+FutureRows:
+  comment: |-
+    This future results is resolved with Rows.
+
+    @see Session::executeAsync()
+  methods:
+    get:
+      comment: |
+        {@inheritDoc}
+
+        @throws Exception\InvalidArgumentException
+        @throws Exception\TimeoutException
+      params:
+        timeout:
+          comment: A timeout in seconds
+          type: int|double|null
+      return:
+        comment: The result set
+        type: Rows|null
+...

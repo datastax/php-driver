@@ -1,0 +1,18 @@
+---
+FutureValue:
+  comment: A future that always resolves in a value.
+  methods:
+    get:
+      comment: |
+        {@inheritDoc}
+
+        @throws Exception\InvalidArgumentException
+        @throws Exception\TimeoutException
+      params:
+        timeout:
+          comment: A timeout in seconds
+          type: int|double|null
+      return:
+        comment: A value
+        type: mixed
+...

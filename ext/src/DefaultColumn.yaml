@@ -1,0 +1,40 @@
+---
+DefaultColumn:
+  comment: A PHP representation of a column
+  methods:
+    name:
+      comment: '{@inheritDoc}'
+      return:
+        comment: Name of the column or null
+        type: string
+    type:
+      comment: '{@inheritDoc}'
+      return:
+        comment: Type of the column
+        type: Type
+    isReversed:
+      comment: '{@inheritDoc}'
+      return:
+        comment: Whether the column is stored in descending order.
+        type: bool
+    isStatic:
+      comment: '{@inheritDoc}'
+      return:
+        comment: Whether the column is static
+        type: bool
+    isFrozen:
+      comment: '{@inheritDoc}'
+      return:
+        comment: Whether the column is frozen
+        type: bool
+    indexName:
+      comment: '{@inheritDoc}'
+      return:
+        comment: Name of the index if defined or null
+        type: string
+    indexOptions:
+      comment: '{@inheritDoc}'
+      return:
+        comment: Index options if present or null
+        type: string
+...

@@ -1,0 +1,11 @@
+---
+RetryPolicy\Logging:
+  comment: A retry policy that logs the decisions of its child policy.
+  methods:
+    __construct:
+      comment: Creates a new Logging retry policy.
+      params:
+        childPolicy:
+          comment: Any retry policy other than Logging
+          type: RetryPolicy
+...

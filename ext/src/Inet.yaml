@@ -1,0 +1,26 @@
+---
+Inet:
+  comment: A PHP representation of the CQL `inet` datatype
+  methods:
+    __construct:
+      comment: Creates a new IPv4 or IPv6 inet address.
+      params:
+        address:
+          comment: any IPv4 or IPv6 address
+          type: string
+    type:
+      comment: The type of this inet.
+      return:
+        comment: ""
+        type: Type
+    address:
+      comment: Returns the normalized string representation of the address.
+      return:
+        comment: address
+        type: string
+    __toString:
+      comment: Returns the normalized string representation of the address.
+      return:
+        comment: address
+        type: string
+...

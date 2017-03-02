@@ -1,0 +1,171 @@
+---
+DefaultTable:
+  comment: A PHP representation of a table
+  methods:
+    name:
+      comment: '{@inheritDoc}'
+      return:
+        comment: Name of the table
+        type: string
+    option:
+      comment: '{@inheritDoc}'
+      params:
+        name:
+          comment: '{@inheritDoc}'
+          type: string
+      return:
+        comment: Value of an option by name
+        type: Value
+    options:
+      comment: '{@inheritDoc}'
+      return:
+        comment: A dictionary of `string` and `Value` pairs of the
+        type: array
+    comment:
+      comment: '{@inheritDoc}'
+      return:
+        comment: Table description or null
+        type: string
+    readRepairChance:
+      comment: '{@inheritDoc}'
+      return:
+        comment: Read repair chance
+        type: float
+    localReadRepairChance:
+      comment: '{@inheritDoc}'
+      return:
+        comment: Local read repair chance
+        type: float
+    gcGraceSeconds:
+      comment: '{@inheritDoc}'
+      return:
+        comment: GC grace seconds
+        type: int
+    caching:
+      comment: '{@inheritDoc}'
+      return:
+        comment: Caching options
+        type: string
+    bloomFilterFPChance:
+      comment: '{@inheritDoc}'
+      return:
+        comment: Bloom filter FP chance
+        type: float
+    memtableFlushPeriodMs:
+      comment: '{@inheritDoc}'
+      return:
+        comment: Memtable flush period in milliseconds
+        type: int
+    defaultTTL:
+      comment: '{@inheritDoc}'
+      return:
+        comment: Default TTL.
+        type: int
+    speculativeRetry:
+      comment: '{@inheritDoc}'
+      return:
+        comment: Speculative retry.
+        type: string
+    indexInterval:
+      comment: '{@inheritDoc}'
+      return:
+        comment: Index interval
+        type: int
+    compactionStrategyClassName:
+      comment: '{@inheritDoc}'
+      return:
+        comment: Compaction strategy class name
+        type: string
+    compactionStrategyOptions:
+      comment: '{@inheritDoc}'
+      return:
+        comment: Compaction strategy options
+        type: Map
+    compressionParameters:
+      comment: '{@inheritDoc}'
+      return:
+        comment: Compression parameters
+        type: Map
+    populateIOCacheOnFlush:
+      comment: '{@inheritDoc}'
+      return:
+        comment: Value of `populate_io_cache_on_flush` or null
+        type: bool
+    replicateOnWrite:
+      comment: '{@inheritDoc}'
+      return:
+        comment: Value of `replicate_on_write` or null
+        type: bool
+    maxIndexInterval:
+      comment: '{@inheritDoc}'
+      return:
+        comment: Value of `max_index_interval` or null
+        type: int
+    minIndexInterval:
+      comment: '{@inheritDoc}'
+      return:
+        comment: Value of `min_index_interval` or null
+        type: int
+    column:
+      comment: '{@inheritDoc}'
+      params:
+        name:
+          comment: Name of the column
+          type: string
+      return:
+        comment: Column instance
+        type: Column
+    columns:
+      comment: '{@inheritDoc}'
+      return:
+        comment: A list of `Column` instances
+        type: array
+    partitionKey:
+      comment: '{@inheritDoc}'
+      return:
+        comment: A list of of `Column` instance
+        type: array
+    primaryKey:
+      comment: '{@inheritDoc}'
+      return:
+        comment: A list of of `Column` instance
+        type: array
+    clusteringKey:
+      comment: '{@inheritDoc}'
+      return:
+        comment: A list of of `Column` instances
+        type: array
+    clusteringOrder:
+      comment: '{@inheritDoc}'
+      return:
+        comment: A list of cluster column orders ('asc' and 'desc')
+        type: array
+    index:
+      comment: Get an index by name
+      params:
+        name:
+          comment: Index name
+          type: string
+      return:
+        comment: An index or null
+        type: Index|null
+    indexes:
+      comment: Gets all indexes
+      return:
+        comment: An array of indexes
+        type: array
+    materializedView:
+      comment: Get materialized view by name
+      params:
+        name:
+          comment: Materialized view name
+          type: string
+      return:
+        comment: A materialized view or null
+        type: MaterizedView|null
+    materializedViews:
+      comment: Gets all materialized views
+      return:
+        comment: An array of materialized views
+        type: array
+...

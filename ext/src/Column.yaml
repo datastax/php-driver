@@ -1,0 +1,40 @@
+---
+Column:
+  comment: A PHP representation of a column
+  methods:
+    name:
+      comment: Returns the name of the column.
+      return:
+        comment: Name of the column or null
+        type: string
+    type:
+      comment: Returns the type of the column.
+      return:
+        comment: Type of the column
+        type: Type
+    isReversed:
+      comment: Returns whether the column is in descending or ascending order.
+      return:
+        comment: Whether the column is stored in descending order.
+        type: bool
+    isStatic:
+      comment: Returns true for static columns.
+      return:
+        comment: Whether the column is static
+        type: bool
+    isFrozen:
+      comment: Returns true for frozen columns.
+      return:
+        comment: Whether the column is frozen
+        type: bool
+    indexName:
+      comment: Returns name of the index if defined.
+      return:
+        comment: Name of the index if defined or null
+        type: string
+    indexOptions:
+      comment: Returns index options if present.
+      return:
+        comment: Index options if present or null
+        type: string
+...

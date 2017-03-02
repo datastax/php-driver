@@ -1,0 +1,218 @@
+---
+Type:
+  comment: Cluster object is used to create Sessions.
+  methods:
+    varchar:
+      comment: Get representation of varchar type
+      return:
+        comment: varchar type
+        type: Type
+    text:
+      comment: Get representation of text type
+      return:
+        comment: text type
+        type: Type
+    blob:
+      comment: Get representation of blob type
+      return:
+        comment: blob type
+        type: Type
+    ascii:
+      comment: Get representation of ascii type
+      return:
+        comment: ascii type
+        type: Type
+    bigint:
+      comment: Get representation of bigint type
+      return:
+        comment: bigint type
+        type: Type
+    counter:
+      comment: Get representation of counter type
+      return:
+        comment: counter type
+        type: Type
+    int:
+      comment: Get representation of int type
+      return:
+        comment: int type
+        type: Type
+    varint:
+      comment: Get representation of varint type
+      return:
+        comment: varint type
+        type: Type
+    boolean:
+      comment: Get representation of boolean type
+      return:
+        comment: boolean type
+        type: Type
+    decimal:
+      comment: Get representation of decimal type
+      return:
+        comment: decimal type
+        type: Type
+    double:
+      comment: Get representation of double type
+      return:
+        comment: double type
+        type: Type
+    float:
+      comment: Get representation of float type
+      return:
+        comment: float type
+        type: Type
+    inet:
+      comment: Get representation of inet type
+      return:
+        comment: inet type
+        type: Type
+    timestamp:
+      comment: Get representation of timestamp type
+      return:
+        comment: timestamp type
+        type: Type
+    uuid:
+      comment: Get representation of uuid type
+      return:
+        comment: uuid type
+        type: Type
+    timeuuid:
+      comment: Get representation of timeuuid type
+      return:
+        comment: timeuuid type
+        type: Type
+    smallint:
+      comment: Get representation of smallint type
+      return:
+        comment: smallint type
+        type: Type
+    tinyint:
+      comment: Get representation of tinyint type
+      return:
+        comment: tinyint type
+        type: Type
+    date:
+      comment: Get representation of date type
+      return:
+        comment: date type
+        type: Type
+    time:
+      comment: Get representation of time type
+      return:
+        comment: time type
+        type: Type
+    duration:
+      comment: Get representation of duration type
+      return:
+        comment: duration type
+        type: Type
+    collection:
+      comment: |-
+        Initialize a Collection type
+        @code{.php}
+        <?php
+        use Type;
+
+        $collection = Type::collection(Type::int())
+                          ->create(1, 2, 3, 4, 5, 6, 7, 8, 9);
+
+        var_dump($collection);
+        @endcode
+      params:
+        type:
+          comment: The type of values
+          type: Type
+      return:
+        comment: '      The collection type'
+        type: Type
+    map:
+      comment: |-
+        Initialize a map type
+        @code{.php}
+        <?php
+        use Type;
+
+        $map = Type::map(Type::int(), Type::varchar())
+                   ->create(1, "a", 2, "b", 3, "c", 4, "d", 5, "e", 6, "f")
+
+        var_dump($map);
+        @endcode
+      params:
+        keyType:
+          comment: The type of keys
+          type: Type
+        valueType:
+          comment: The type of values
+          type: Type
+      return:
+        comment: '            The map type'
+        type: Type
+    set:
+      comment: |-
+        Initialize a set type
+        @code{.php}
+        <?php
+        use Type;
+
+        $set = Type::set(Type::varchar())
+                   ->create("a", "b", "c", "d", "e", "f", "g", "h", "i", "j");
+
+        var_dump($set);
+        @endcode
+      params:
+        type:
+          comment: The types of values
+          type: Type
+      return:
+        comment: The set type
+        type: Type
+    tuple:
+      comment: |-
+        Initialize a tuple type
+        @code{.php}
+        <?php
+        use Type;
+
+        $tuple = Type::tuple(Type::varchar(), Type::int())
+                   ->create("a", 123);
+
+        var_dump($tuple);
+        @endcode
+      params:
+        types:
+          comment: A variadic list of types
+          type: Type
+      return:
+        comment: The tuple type
+        type: Type
+    userType:
+      comment: |-
+        Initialize a user type
+        @code{.php}
+        <?php
+        use Type;
+
+        $userType = Type::userType("a", Type::varchar(), "b", Type::int())
+                        ->create("a", "abc", "b", 123);
+
+        var_dump($userType);
+        @endcode
+      params:
+        types:
+          comment: A variadic list of name/type pairs
+          type: Type
+      return:
+        comment: The user type
+        type: Type
+    name:
+      comment: Returns the name of this type as string.
+      return:
+        comment: Name of this type
+        type: string
+    __toString:
+      comment: Returns string representation of this type.
+      return:
+        comment: String representation of this type
+        type: string
+...
