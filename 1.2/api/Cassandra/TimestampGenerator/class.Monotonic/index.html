@@ -1,0 +1,893 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <meta name="description" content="DataStax PHP Driver for Apache Cassandra">
+    <meta name="author" content="DataStax">
+
+    <title>DataStax PHP Driver - Monotonic</title>
+
+    <link rel="icon" href="../../../../../favicon.ico">
+    <link rel="apple-touch-icon" href="../../../../../favicon.png">
+    <link href="../../../../../css/style.css" rel="stylesheet">
+    <link href="../../../../../css/pygments.css" rel="stylesheet">
+    <link href="../../../../../css/hotkeys.css" rel="stylesheet">
+
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  </head>
+  <body ng-app="docs">
+    <div class="navbar">
+      <div class="container-fluid">
+        <div class="row row-offcanvas row-offcanvas-left">
+          <div class="col-sm-3 text-center">
+            <a class="ds-home" href="../../../../"><img alt="Brand" src="../../../../../img/logo.png"></a>
+            <ul class="list-inline ds-sites" role="nav">
+              <li><a href="https://academy.datastax.com/" class="navbar-link">DataStax Academy</a></li>
+              <li><a href="http://www.datastax.com/dev/blog" class="navbar-link">Tech Blog</a></li>
+              <li><a href="http://www.datastax.com/what-we-offer/products-services/support" class="navbar-link">Support</a></li>
+            </ul>
+          </div>
+          <div class="col-md-5">
+            <p class="lead pubtitle">DataStax PHP Driver</p>
+            
+            <div class="text-info">
+              <span class="text-warning">Attention:</span> Viewing documentation for version
+              <div class="btn-group">
+                <button id="current-version" class="btn btn-default btn-sm dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  1.2
+                  <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu" role="menu" aria-labelledby="current-version">
+                
+                  <li><a href="../../../../../api/Cassandra/TimestampGenerator/class.Monotonic/">1.3</a></li>
+                
+                  <li class="disabled"><a href="./">1.2</a></li>
+                
+                  <li><a href="../../../../../1.1/api/Cassandra/TimestampGenerator/class.Monotonic/">1.1</a></li>
+                
+                  <li><a href="../../../../../1.0/">1.0</a></li>
+                
+                </ul>
+              </div>
+            </div>
+            
+          </div>
+          <div class="col-md-4">
+            <form id="search" class="form-search dropdown visible-lg-inline-block" ng-controller="search" ng-class="{open: hasResults}" role="search" ng-submit="submit()" data-spy="affix" data-offset-top="130">
+              <div class="form-group has-feedback">
+                <input type="search" class="form-control input-sm mousetrap" placeholder="Search..." ng-model="q" ng-change="search('1.2')" ng-disabled="!searchReady" disabled data-hotkey="{down: moveDown, up: moveUp, esc: reset}" data-search>
+              </div>
+              <ul class="dropdown-menu search-results" role="menu">
+                <li ng-repeat="result in results" ng-class="{'bg-warning': $index == current}"><a ng-href="{{basePath}}{{result.path}}"><span ng-bind-html="summary(result)"></span></a></li>
+              </ul>
+            </form>
+            <a href="http://www.datastax.com/download" class="btn btn-primary btn-sm">Download</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container-fluid" id="content">
+      <div class="row">
+        <div class="col-md-3">
+          <div id="navigation" class="side-nav" role="tablist" aria-multiselectable="true">
+            <h3><a href="../../../../">Contents</a></h3>
+            <ul class="nav nav-pills nav-stacked">
+  
+  
+  <li>
+    <a href="../../../../features/">
+      Features <small>page</small>
+      
+      
+      <span class="glyphicon glyphicon-plus-sign pull-right" aria-hidden="true"></span>
+      
+      
+    </a>
+    
+  </li>
+  
+  
+  <li class="active">
+    <a href="../../../">
+      API docs <small>index</small>
+      
+      
+      <span class="glyphicon glyphicon-minus-sign pull-right" aria-hidden="true"></span>
+      
+      
+    </a>
+    <ul class="nav nav-pills nav-stacked">
+  
+  
+  <li class="active">
+    <a href="../../">
+      Cassandra <small>namespace</small>
+      
+      
+      <span class="glyphicon glyphicon-minus-sign pull-right" aria-hidden="true"></span>
+      
+      
+    </a>
+    <ul class="nav nav-pills nav-stacked">
+  
+  
+  <li>
+    <a href="../../Cluster/">
+      Cluster <small>namespace</small>
+      
+      
+      <span class="glyphicon glyphicon-plus-sign pull-right" aria-hidden="true"></span>
+      
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../../Exception/">
+      Exception <small>namespace</small>
+      
+      
+      <span class="glyphicon glyphicon-plus-sign pull-right" aria-hidden="true"></span>
+      
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../../RetryPolicy/">
+      RetryPolicy <small>namespace</small>
+      
+      
+      <span class="glyphicon glyphicon-plus-sign pull-right" aria-hidden="true"></span>
+      
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../../SSLOptions/">
+      SSLOptions <small>namespace</small>
+      
+      
+      <span class="glyphicon glyphicon-plus-sign pull-right" aria-hidden="true"></span>
+      
+      
+    </a>
+    
+  </li>
+  
+  
+  <li class="active">
+    <a href="../">
+      TimestampGenerator <small>namespace</small>
+      
+      
+      <span class="glyphicon glyphicon-minus-sign pull-right" aria-hidden="true"></span>
+      
+      
+    </a>
+    <ul class="nav nav-pills nav-stacked">
+  
+  
+  <li class="active">
+    <a href="./" class="current">
+      Monotonic <small>class</small>
+      
+    </a>
+    <ul class="nav nav-pills nav-stacked">
+  
+</ul>
+
+  </li>
+  
+  
+  <li>
+    <a href="../class.ServerSide/">
+      ServerSide <small>class</small>
+      
+    </a>
+    
+  </li>
+  
+</ul>
+
+  </li>
+  
+  
+  <li>
+    <a href="../../Type/">
+      Type <small>namespace</small>
+      
+      
+      <span class="glyphicon glyphicon-plus-sign pull-right" aria-hidden="true"></span>
+      
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../../class.BatchStatement/">
+      BatchStatement <small>class</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../../class.Bigint/">
+      Bigint <small>class</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../../class.Blob/">
+      Blob <small>class</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../../class.Collection/">
+      Collection <small>class</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../../class.Date/">
+      Date <small>class</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../../class.Decimal/">
+      Decimal <small>class</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../../class.DefaultAggregate/">
+      DefaultAggregate <small>class</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../../class.DefaultCluster/">
+      DefaultCluster <small>class</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../../class.DefaultColumn/">
+      DefaultColumn <small>class</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../../interface.Aggregate/">
+      Aggregate <small>interface</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../../interface.Cluster/">
+      Cluster <small>interface</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../../interface.Column/">
+      Column <small>interface</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../../interface.Exception/">
+      Exception <small>interface</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../../interface.Function/">
+      Function <small>interface</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../../interface.Future/">
+      Future <small>interface</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../../interface.Index/">
+      Index <small>interface</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../../interface.Keyspace/">
+      Keyspace <small>interface</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../../interface.MaterializedView/">
+      MaterializedView <small>interface</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../../interface.Numeric/">
+      Numeric <small>interface</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../../interface.RetryPolicy/">
+      RetryPolicy <small>interface</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../../interface.Schema/">
+      Schema <small>interface</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../../interface.Session/">
+      Session <small>interface</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../../interface.Statement/">
+      Statement <small>interface</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../../interface.Table/">
+      Table <small>interface</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../../interface.TimestampGenerator/">
+      TimestampGenerator <small>interface</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../../interface.UuidInterface/">
+      UuidInterface <small>interface</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../../interface.Value/">
+      Value <small>interface</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../../class.DefaultIndex/">
+      DefaultIndex <small>class</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../../class.DefaultKeyspace/">
+      DefaultKeyspace <small>class</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../../class.DefaultMaterializedView/">
+      DefaultMaterializedView <small>class</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../../class.DefaultSchema/">
+      DefaultSchema <small>class</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../../class.DefaultSession/">
+      DefaultSession <small>class</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../../class.DefaultTable/">
+      DefaultTable <small>class</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../../class.ExecutionOptions/">
+      ExecutionOptions <small>class</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../../class.Float/">
+      Float <small>class</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../../class.FutureClose/">
+      FutureClose <small>class</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../../class.FutureException/">
+      FutureException <small>class</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../../class.FuturePreparedStatement/">
+      FuturePreparedStatement <small>class</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../../class.FutureRows/">
+      FutureRows <small>class</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../../class.FutureSession/">
+      FutureSession <small>class</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../../class.FutureValue/">
+      FutureValue <small>class</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../../class.Inet/">
+      Inet <small>class</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../../class.Map/">
+      Map <small>class</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../../class.PreparedStatement/">
+      PreparedStatement <small>class</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../../class.Rows/">
+      Rows <small>class</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../../class.Set/">
+      Set <small>class</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../../class.SimpleStatement/">
+      SimpleStatement <small>class</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../../class.Smallint/">
+      Smallint <small>class</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../../class.SSLOptions/">
+      SSLOptions <small>class</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../../class.Time/">
+      Time <small>class</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../../class.Timestamp/">
+      Timestamp <small>class</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../../class.Timeuuid/">
+      Timeuuid <small>class</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../../class.Tinyint/">
+      Tinyint <small>class</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../../class.Tuple/">
+      Tuple <small>class</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../../class.Type/">
+      Type <small>class</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../../class.UserTypeValue/">
+      UserTypeValue <small>class</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../../class.Uuid/">
+      Uuid <small>class</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../../class.Varint/">
+      Varint <small>class</small>
+      
+    </a>
+    
+  </li>
+  
+</ul>
+
+  </li>
+  
+  
+  <li>
+    <a href="../../../class.Cassandra/">
+      Cassandra <small>class</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../../../class.DefaultFunction/">
+      DefaultFunction <small>class</small>
+      
+    </a>
+    
+  </li>
+  
+</ul>
+
+  </li>
+  
+</ul>
+
+          </div>
+        </div>
+        <div class="col-md-9 content">
+          <div class="crumbs-wrapper">
+            <nav id="crumbs" data-spy="affix" data-offset-top="130">
+              <ol class="breadcrumb">
+                
+                
+                
+                <li><a href="../../../../">Home</a></li>
+                
+                
+                
+                
+                
+                <li><a href="../../../">API docs</a></li>
+                
+                
+                
+                
+                
+                <li><a href="../../">Cassandra</a></li>
+                
+                
+                
+                
+                
+                <li><a href="../">TimestampGenerator</a></li>
+                
+                
+                
+                
+                
+                <li class="active">Monotonic</li>
+                
+                
+                
+              </ol>
+            </nav>
+          </div>
+          
+
+<div class="page-header">
+  <h1 id="class-Monotonic" class="target">
+    <small>class</small>
+    Monotonic
+  <a class="anchor" href="#class-Monotonic" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+</h1>
+</div>
+
+<p>A timestamp generator that generates monotonically increasing timestamps client-side. The timestamps generated have a microsecond granularity with the sub-millisecond part generated using a counter. The implementation guarantees that no more than 1000 timestamps will be generated for a given clock tick even if shared by multiple session objects. If that rate is exceeded then a warning is logged and timestamps stop incrementing until the next clock tick.</p>
+
+
+<h2 id="implements" class="target">Implements<a class="anchor" href="#implements" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+</h2>
+<ul class="list-inline">
+  <li><code><a href="../../interface.TimestampGenerator/">Cassandra\TimestampGenerator</a></code></li>
+</ul>
+
+
+
+
+
+
+        </div>
+      </div>
+    </div>
+
+    
+    <footer class="container text-muted">
+      <ul class="list-inline">
+      
+        
+        <li>
+          <a href="http://downloads.datastax.com/php-driver/">Binaries</a>
+        </li>
+      
+        <li>·</li>
+        <li>
+          <a href="https://github.com/datastax/php-driver/">Code</a>
+        </li>
+      
+        <li>·</li>
+        <li>
+          <a href="http://datastax.github.io/php-driver/">Docs</a>
+        </li>
+      
+        <li>·</li>
+        <li>
+          <a href="https://datastax-oss.atlassian.net/browse/PHP/">Issues</a>
+        </li>
+      
+        <li>·</li>
+        <li>
+          <a href="https://groups.google.com/a/lists.datastax.com/forum/#!forum/php-driver-user">Mailing List</a>
+        </li>
+      
+        <li>·</li>
+        <li>
+          <a href="irc://irc.freenode.net/datastax-drivers">IRC Channel</a>
+        </li>
+      
+        <li>·</li>
+        <li>
+          <a href="https://github.com/datastax/php-driver/releases">Releases</a>
+        </li>
+      
+      </ul>
+    </footer>
+    
+
+    <script src="../../../../../js/jquery.js"></script>
+    <script src="../../../../../js/bootstrap.js"></script>
+    <script src="../../../../../js/angular.js"></script>
+    <script src="../../../../../js/mousetrap.js"></script>
+    <script src="../../../../../js/hotkeys.js"></script>
+    <script src="../../../../../js/ZeroClipboard.js"></script>
+    <script src="../../../../../js/lunr.js"></script>
+    <script src="../../../../../js/app.js"></script>
+  </body>
+</html>

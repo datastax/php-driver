@@ -22,640 +22,785 @@
       <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
   </head>
-  <body ng-app="docs" data-spy="scroll" data-target="#table-of-contents" data-offset="69">
-    <header class="container-fluid navbar">
-      <div class="row">
-        <div class="col-sm-4">
-          <a class="navbar-brand" href="../../../"><img alt="Brand" src="../../../img/logo.png">DataStax PHP Driver</a>
-        </div>
-        <div class="col-md-4 col-md-offset-4">
-          <div class="row">
-            <div class="col-md-12">
-              <ul class="list-inline" role="nav">
-                <li><a href="https://academy.datastax.com/" class="navbar-link">DataStax Academy</a></li>
-                <li><a href="http://www.datastax.com/dev/blog" class="navbar-link">Tech Blog</a></li>
-                <li><a href="http://www.datastax.com/what-we-offer/products-services/support" class="navbar-link">Support</a></li>
-              </ul>
-            </div>
+  <body ng-app="docs">
+    <div class="navbar">
+      <div class="container-fluid">
+        <div class="row row-offcanvas row-offcanvas-left">
+          <div class="col-sm-3 text-center">
+            <a class="ds-home" href="../../../"><img alt="Brand" src="../../../img/logo.png"></a>
+            <ul class="list-inline ds-sites" role="nav">
+              <li><a href="https://academy.datastax.com/" class="navbar-link">DataStax Academy</a></li>
+              <li><a href="http://www.datastax.com/dev/blog" class="navbar-link">Tech Blog</a></li>
+              <li><a href="http://www.datastax.com/what-we-offer/products-services/support" class="navbar-link">Support</a></li>
+            </ul>
           </div>
-          <div class="row">
-            <div class="col-md-8">
-              <form id="search" class="form-search dropdown visible-lg-block" ng-controller="search" ng-class="{open: hasResults}" role="search" ng-submit="submit()" data-spy="affix" data-offset-top="130">
-                <div class="form-group has-feedback">
-                  <input type="search" class="form-control input-sm mousetrap" placeholder="Search..." ng-model="q" ng-change="search('local')" ng-disabled="!searchReady" disabled data-hotkey="{down: moveDown, up: moveUp, esc: reset}" data-search>
-                </div>
-                <ul class="dropdown-menu search-results" role="menu">
-                  <li ng-repeat="result in results" ng-class="{'bg-warning': $index == current}"><a ng-href="{{basePath}}{{result.path}}"><span ng-bind-html="summary(result)"></span></a></li>
+          <div class="col-md-5">
+            <p class="lead pubtitle">DataStax PHP Driver</p>
+            
+            <div class="text-info">
+              <span class="text-warning">Attention:</span> Viewing documentation for version
+              <div class="btn-group">
+                <button id="current-version" class="btn btn-default btn-sm dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  1.3
+                  <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu" role="menu" aria-labelledby="current-version">
+                
+                  <li class="disabled"><a href="./">1.3</a></li>
+                
+                  <li><a href="../../../1.2/api/Cassandra/class.Type/">1.2</a></li>
+                
+                  <li><a href="../../../1.1/">1.1</a></li>
+                
+                  <li><a href="../../../1.0/">1.0</a></li>
+                
                 </ul>
-              </form>
+              </div>
             </div>
-            <div class="col-md-4">
-              <a href="http://www.datastax.com/download" class="btn btn-primary btn-sm">Download</a>
-            </div>
+            
+          </div>
+          <div class="col-md-4">
+            <form id="search" class="form-search dropdown visible-lg-inline-block" ng-controller="search" ng-class="{open: hasResults}" role="search" ng-submit="submit()" data-spy="affix" data-offset-top="130">
+              <div class="form-group has-feedback">
+                <input type="search" class="form-control input-sm mousetrap" placeholder="Search..." ng-model="q" ng-change="search('1.3')" ng-disabled="!searchReady" disabled data-hotkey="{down: moveDown, up: moveUp, esc: reset}" data-search>
+              </div>
+              <ul class="dropdown-menu search-results" role="menu">
+                <li ng-repeat="result in results" ng-class="{'bg-warning': $index == current}"><a ng-href="{{basePath}}{{result.path}}"><span ng-bind-html="summary(result)"></span></a></li>
+              </ul>
+            </form>
+            <a href="http://www.datastax.com/download" class="btn btn-primary btn-sm">Download</a>
           </div>
         </div>
       </div>
-      <div class="row crumbs-wrapper">
-        <div class="col-md-12">
-          <nav id="crumbs" data-spy="affix" data-offset-top="130">
-            <ol class="breadcrumb">
-              
-              
-              
-              
-              <li><a href="../../../">Home</a></li>
-              
-              
-              
-              
-              
-              <li><a href="../../">API docs</a></li>
-              
-              
-              
-              
-              
-              <li><a href="../">Cassandra</a></li>
-              
-              
-              
-              
-              
-              <li class="active">Type</li>
-              <li class="dropdown" id="table-of-contents">
-                <div class="btn-group">
-                  <button id="current-section" type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown">
-                    Jump to&#8230; <span class="caret"></span><span class="sr-only">Table of Contents</span>
-                  </button>
-                  <ul class="dropdown-menu nav nav-pills nav-stacked">
-                    <li><a href="#class-Type">Page Top <span class="glyphicon glyphicon-chevron-up" aria-hidden="true"></span></a></li>
-<li><a href="#extended-by">Extended by
-</a></li>
-<li>
-<a href="#methods">Methods
-</a><ul class="nav nav-pills nav-stacked">
-<li><a href="#method-varchar">varchar
-</a></li>
-<li><a href="#method-text">text
-</a></li>
-<li><a href="#method-blob">blob
-</a></li>
-<li><a href="#method-ascii">ascii
-</a></li>
-<li><a href="#method-bigint">bigint
-</a></li>
-<li><a href="#method-counter">counter
-</a></li>
-<li><a href="#method-int">int
-</a></li>
-<li><a href="#method-varint">varint
-</a></li>
-<li><a href="#method-boolean">boolean
-</a></li>
-<li><a href="#method-decimal">decimal
-</a></li>
-<li><a href="#method-double">double
-</a></li>
-<li><a href="#method-float">float
-</a></li>
-<li><a href="#method-inet">inet
-</a></li>
-<li><a href="#method-timestamp">timestamp
-</a></li>
-<li><a href="#method-uuid">uuid
-</a></li>
-<li><a href="#method-timeuuid">timeuuid
-</a></li>
-<li><a href="#method-collection">collection
-</a></li>
-<li><a href="#method-map">map
-</a></li>
-<li><a href="#method-set">set
-</a></li>
-<li><a href="#method-name">name
-</a></li>
-<li><a href="#method-__toString">__toString
-</a></li>
-<li><a href="#method-create">create
-</a></li>
-</ul>
-</li>
-                  </ul>
-                </div>
-              </li>
-              
-              
-              
-            </ol>
-          </nav>
-        </div>
-      </div>
-    </header>
+    </div>
 
     <div class="container-fluid" id="content">
       <div class="row">
         <div class="col-md-3">
           <div id="navigation" class="side-nav" role="tablist" aria-multiselectable="true">
-            <h3>Contents</h3>
+            <h3><a href="../../../">Contents</a></h3>
             <ul class="nav nav-pills nav-stacked">
   
   
-  
-  <li class="active">
-    <a href="../../">API docs <small>index</small></a>
-    <ul class="nav nav-pills nav-stacked">
-  
-  
-  
   <li>
-    <a href="../../class.Cassandra/">Cassandra <small>class</small></a>
-  </li>
-  
-  
-  
-  
-  <li class="active">
-    <a href="../">Cassandra <small>namespace</small></a>
-    <ul class="nav nav-pills nav-stacked">
-  
-  
-  
-  <li>
-    <a href="../interface.Aggregate/">Aggregate <small>interface</small></a>
-  </li>
-  
-  
-  
-  
-  <li>
-    <a href="../class.BatchStatement/">BatchStatement <small>class</small></a>
-  </li>
-  
-  
-  
-  
-  <li>
-    <a href="../class.Bigint/">Bigint <small>class</small></a>
-  </li>
-  
-  
-  
-  
-  <li>
-    <a href="../class.Blob/">Blob <small>class</small></a>
-  </li>
-  
-  
-  
-  
-  <li>
-    <a href="../Cluster/">Cluster <small>namespace</small></a>
-  </li>
-  
-  
-  
-  
-  <li>
-    <a href="../interface.Cluster/">Cluster <small>interface</small></a>
-  </li>
-  
-  
-  
-  
-  <li>
-    <a href="../class.Collection/">Collection <small>class</small></a>
-  </li>
-  
-  
-  
-  
-  <li>
-    <a href="../interface.Column/">Column <small>interface</small></a>
-  </li>
-  
-  
-  
-  
-  <li>
-    <a href="../class.Date/">Date <small>class</small></a>
-  </li>
-  
-  
-  
-  
-  <li>
-    <a href="../class.Decimal/">Decimal <small>class</small></a>
-  </li>
-  
-  
-  
-  
-  <li>
-    <a href="../class.DefaultAggregate/">DefaultAggregate <small>class</small></a>
-  </li>
-  
-  
-  
-  
-  <li>
-    <a href="../class.DefaultCluster/">DefaultCluster <small>class</small></a>
-  </li>
-  
-  
-  
-  
-  <li>
-    <a href="../class.DefaultColumn/">DefaultColumn <small>class</small></a>
-  </li>
-  
-  
-  
-  
-  <li>
-    <a href="../class.DefaultIndex/">DefaultIndex <small>class</small></a>
-  </li>
-  
-  
-  
-  
-  <li>
-    <a href="../class.DefaultKeyspace/">DefaultKeyspace <small>class</small></a>
-  </li>
-  
-  
-  
-  
-  <li>
-    <a href="../class.DefaultMaterializedView/">DefaultMaterializedView <small>class</small></a>
-  </li>
-  
-  
-  
-  
-  <li>
-    <a href="../class.DefaultSchema/">DefaultSchema <small>class</small></a>
-  </li>
-  
-  
-  
-  
-  <li>
-    <a href="../class.DefaultSession/">DefaultSession <small>class</small></a>
-  </li>
-  
-  
-  
-  
-  <li>
-    <a href="../class.DefaultTable/">DefaultTable <small>class</small></a>
-  </li>
-  
-  
-  
-  
-  <li>
-    <a href="../interface.Exception/">Exception <small>interface</small></a>
-  </li>
-  
-  
-  
-  
-  <li>
-    <a href="../Exception/">Exception <small>namespace</small></a>
-  </li>
-  
-  
-  
-  
-  <li>
-    <a href="../class.ExecutionOptions/">ExecutionOptions <small>class</small></a>
-  </li>
-  
-  
-  
-  
-  <li>
-    <a href="../class.Float/">Float <small>class</small></a>
-  </li>
-  
-  
-  
-  
-  <li>
-    <a href="../interface.Function/">Function <small>interface</small></a>
-  </li>
-  
-  
-  
-  
-  <li>
-    <a href="../interface.Future/">Future <small>interface</small></a>
-  </li>
-  
-  
-  
-  
-  <li>
-    <a href="../class.FutureClose/">FutureClose <small>class</small></a>
-  </li>
-  
-  
-  
-  
-  <li>
-    <a href="../class.FutureException/">FutureException <small>class</small></a>
-  </li>
-  
-  
-  
-  
-  <li>
-    <a href="../class.FuturePreparedStatement/">FuturePreparedStatement <small>class</small></a>
-  </li>
-  
-  
-  
-  
-  <li>
-    <a href="../class.FutureRows/">FutureRows <small>class</small></a>
-  </li>
-  
-  
-  
-  
-  <li>
-    <a href="../class.FutureSession/">FutureSession <small>class</small></a>
-  </li>
-  
-  
-  
-  
-  <li>
-    <a href="../class.FutureValue/">FutureValue <small>class</small></a>
-  </li>
-  
-  
-  
-  
-  <li>
-    <a href="../interface.Index/">Index <small>interface</small></a>
-  </li>
-  
-  
-  
-  
-  <li>
-    <a href="../class.Inet/">Inet <small>class</small></a>
-  </li>
-  
-  
-  
-  
-  <li>
-    <a href="../interface.Keyspace/">Keyspace <small>interface</small></a>
-  </li>
-  
-  
-  
-  
-  <li>
-    <a href="../class.Map/">Map <small>class</small></a>
-  </li>
-  
-  
-  
-  
-  <li>
-    <a href="../interface.MaterializedView/">MaterializedView <small>interface</small></a>
-  </li>
-  
-  
-  
-  
-  <li>
-    <a href="../interface.Numeric/">Numeric <small>interface</small></a>
-  </li>
-  
-  
-  
-  
-  <li>
-    <a href="../class.PreparedStatement/">PreparedStatement <small>class</small></a>
-  </li>
-  
-  
-  
-  
-  <li>
-    <a href="../interface.RetryPolicy/">RetryPolicy <small>interface</small></a>
-  </li>
-  
-  
-  
-  
-  <li>
-    <a href="../RetryPolicy/">RetryPolicy <small>namespace</small></a>
-  </li>
-  
-  
-  
-  
-  <li>
-    <a href="../class.Rows/">Rows <small>class</small></a>
-  </li>
-  
-  
-  
-  
-  <li>
-    <a href="../SSLOptions/">SSLOptions <small>namespace</small></a>
-  </li>
-  
-  
-  
-  
-  <li>
-    <a href="../class.SSLOptions/">SSLOptions <small>class</small></a>
-  </li>
-  
-  
-  
-  
-  <li>
-    <a href="../interface.Schema/">Schema <small>interface</small></a>
-  </li>
-  
-  
-  
-  
-  <li>
-    <a href="../interface.Session/">Session <small>interface</small></a>
-  </li>
-  
-  
-  
-  
-  <li>
-    <a href="../class.Set/">Set <small>class</small></a>
-  </li>
-  
-  
-  
-  
-  <li>
-    <a href="../class.SimpleStatement/">SimpleStatement <small>class</small></a>
-  </li>
-  
-  
-  
-  
-  <li>
-    <a href="../class.Smallint/">Smallint <small>class</small></a>
-  </li>
-  
-  
-  
-  
-  <li>
-    <a href="../interface.Statement/">Statement <small>interface</small></a>
-  </li>
-  
-  
-  
-  
-  <li>
-    <a href="../interface.Table/">Table <small>interface</small></a>
-  </li>
-  
-  
-  
-  
-  <li>
-    <a href="../class.Time/">Time <small>class</small></a>
-  </li>
-  
-  
-  
-  
-  <li>
-    <a href="../class.Timestamp/">Timestamp <small>class</small></a>
-  </li>
-  
-  
-  
-  
-  <li>
-    <a href="../interface.TimestampGenerator/">TimestampGenerator <small>interface</small></a>
-  </li>
-  
-  
-  
-  
-  <li>
-    <a href="../TimestampGenerator/">TimestampGenerator <small>namespace</small></a>
-  </li>
-  
-  
-  
-  
-  <li>
-    <a href="../class.Timeuuid/">Timeuuid <small>class</small></a>
-  </li>
-  
-  
-  
-  
-  <li>
-    <a href="../class.Tinyint/">Tinyint <small>class</small></a>
-  </li>
-  
-  
-  
-  
-  <li>
-    <a href="../class.Tuple/">Tuple <small>class</small></a>
-  </li>
-  
-  
-  
-  
-  <li class="active">
-    <a href="./" class="current">Type <small>class</small></a>
+    <a href="../../../features/">
+      Features <small>page</small>
+      
+      
+      <span class="glyphicon glyphicon-plus-sign pull-right" aria-hidden="true"></span>
+      
+      
+    </a>
     
   </li>
   
   
+  <li class="active">
+    <a href="../../">
+      API docs <small>index</small>
+      
+      
+      <span class="glyphicon glyphicon-minus-sign pull-right" aria-hidden="true"></span>
+      
+      
+    </a>
+    <ul class="nav nav-pills nav-stacked">
+  
+  
+  <li class="active">
+    <a href="../">
+      Cassandra <small>namespace</small>
+      
+      
+      <span class="glyphicon glyphicon-minus-sign pull-right" aria-hidden="true"></span>
+      
+      
+    </a>
+    <ul class="nav nav-pills nav-stacked">
   
   
   <li>
-    <a href="../Type/">Type <small>namespace</small></a>
+    <a href="../Cluster/">
+      Cluster <small>namespace</small>
+      
+      
+      <span class="glyphicon glyphicon-plus-sign pull-right" aria-hidden="true"></span>
+      
+      
+    </a>
+    
   </li>
-  
-  
   
   
   <li>
-    <a href="../class.UserTypeValue/">UserTypeValue <small>class</small></a>
+    <a href="../Exception/">
+      Exception <small>namespace</small>
+      
+      
+      <span class="glyphicon glyphicon-plus-sign pull-right" aria-hidden="true"></span>
+      
+      
+    </a>
+    
   </li>
-  
-  
   
   
   <li>
-    <a href="../class.Uuid/">Uuid <small>class</small></a>
+    <a href="../RetryPolicy/">
+      RetryPolicy <small>namespace</small>
+      
+      
+      <span class="glyphicon glyphicon-plus-sign pull-right" aria-hidden="true"></span>
+      
+      
+    </a>
+    
   </li>
-  
-  
   
   
   <li>
-    <a href="../interface.UuidInterface/">UuidInterface <small>interface</small></a>
+    <a href="../SSLOptions/">
+      SSLOptions <small>namespace</small>
+      
+      
+      <span class="glyphicon glyphicon-plus-sign pull-right" aria-hidden="true"></span>
+      
+      
+    </a>
+    
   </li>
-  
-  
   
   
   <li>
-    <a href="../interface.Value/">Value <small>interface</small></a>
+    <a href="../TimestampGenerator/">
+      TimestampGenerator <small>namespace</small>
+      
+      
+      <span class="glyphicon glyphicon-plus-sign pull-right" aria-hidden="true"></span>
+      
+      
+    </a>
+    
   </li>
-  
-  
   
   
   <li>
-    <a href="../class.Varint/">Varint <small>class</small></a>
+    <a href="../Type/">
+      Type <small>namespace</small>
+      
+      
+      <span class="glyphicon glyphicon-plus-sign pull-right" aria-hidden="true"></span>
+      
+      
+    </a>
+    
   </li>
   
+  
+  <li>
+    <a href="../class.BatchStatement/">
+      BatchStatement <small>class</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../class.Bigint/">
+      Bigint <small>class</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../class.Blob/">
+      Blob <small>class</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../class.Collection/">
+      Collection <small>class</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../class.Custom/">
+      Custom <small>class</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../class.Date/">
+      Date <small>class</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../class.Decimal/">
+      Decimal <small>class</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../class.DefaultAggregate/">
+      DefaultAggregate <small>class</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../class.DefaultCluster/">
+      DefaultCluster <small>class</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../interface.Aggregate/">
+      Aggregate <small>interface</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../interface.Cluster/">
+      Cluster <small>interface</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../interface.Column/">
+      Column <small>interface</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../interface.Exception/">
+      Exception <small>interface</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../interface.Function_/">
+      Function_ <small>interface</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../interface.Future/">
+      Future <small>interface</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../interface.Index/">
+      Index <small>interface</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../interface.Keyspace/">
+      Keyspace <small>interface</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../interface.Numeric/">
+      Numeric <small>interface</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../interface.RetryPolicy/">
+      RetryPolicy <small>interface</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../interface.Schema/">
+      Schema <small>interface</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../interface.Session/">
+      Session <small>interface</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../interface.Statement/">
+      Statement <small>interface</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../interface.Table/">
+      Table <small>interface</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../interface.TimestampGenerator/">
+      TimestampGenerator <small>interface</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../interface.UuidInterface/">
+      UuidInterface <small>interface</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../interface.Value/">
+      Value <small>interface</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../class.DefaultColumn/">
+      DefaultColumn <small>class</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../class.DefaultFunction/">
+      DefaultFunction <small>class</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../class.DefaultIndex/">
+      DefaultIndex <small>class</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../class.DefaultKeyspace/">
+      DefaultKeyspace <small>class</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../class.DefaultMaterializedView/">
+      DefaultMaterializedView <small>class</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../class.DefaultSchema/">
+      DefaultSchema <small>class</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../class.DefaultSession/">
+      DefaultSession <small>class</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../class.DefaultTable/">
+      DefaultTable <small>class</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../class.Duration/">
+      Duration <small>class</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../class.ExecutionOptions/">
+      ExecutionOptions <small>class</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../class.Float_/">
+      Float_ <small>class</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../class.FutureClose/">
+      FutureClose <small>class</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../class.FutureException/">
+      FutureException <small>class</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../class.FuturePreparedStatement/">
+      FuturePreparedStatement <small>class</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../class.FutureRows/">
+      FutureRows <small>class</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../class.FutureSession/">
+      FutureSession <small>class</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../class.FutureValue/">
+      FutureValue <small>class</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../class.Inet/">
+      Inet <small>class</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../class.Map/">
+      Map <small>class</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../class.MaterializedView/">
+      MaterializedView <small>class</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../class.PreparedStatement/">
+      PreparedStatement <small>class</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../class.Rows/">
+      Rows <small>class</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../class.Set/">
+      Set <small>class</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../class.SimpleStatement/">
+      SimpleStatement <small>class</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../class.Smallint/">
+      Smallint <small>class</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../class.SSLOptions/">
+      SSLOptions <small>class</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../class.Time/">
+      Time <small>class</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../class.Timestamp/">
+      Timestamp <small>class</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../class.Timeuuid/">
+      Timeuuid <small>class</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../class.Tinyint/">
+      Tinyint <small>class</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../class.Tuple/">
+      Tuple <small>class</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li class="active">
+    <a href="./" class="current">
+      Type <small>class</small>
+      
+    </a>
+    <ul class="nav nav-pills nav-stacked">
   
 </ul>
 
   </li>
   
   
+  <li>
+    <a href="../class.UserTypeValue/">
+      UserTypeValue <small>class</small>
+      
+    </a>
+    
+  </li>
   
   
   <li>
-    <a href="../../class.DefaultFunction/">DefaultFunction <small>class</small></a>
+    <a href="../class.Uuid/">
+      Uuid <small>class</small>
+      
+    </a>
+    
   </li>
   
+  
+  <li>
+    <a href="../class.Varint/">
+      Varint <small>class</small>
+      
+    </a>
+    
+  </li>
   
 </ul>
 
   </li>
   
   
-  
-  
   <li>
-    <a href="../../../features/">Features <small>page</small></a>
+    <a href="../../class.Cassandra/">
+      Cassandra <small>class</small>
+      
+    </a>
+    
   </li>
   
+</ul>
+
+  </li>
   
 </ul>
 
           </div>
         </div>
         <div class="col-md-9 content">
+          <div class="crumbs-wrapper">
+            <nav id="crumbs" data-spy="affix" data-offset-top="130">
+              <ol class="breadcrumb">
+                
+                
+                
+                <li><a href="../../../">Home</a></li>
+                
+                
+                
+                
+                
+                <li><a href="../../">API docs</a></li>
+                
+                
+                
+                
+                
+                <li><a href="../">Cassandra</a></li>
+                
+                
+                
+                
+                
+                <li class="active">Type</li>
+                
+                
+                
+              </ol>
+            </nav>
+          </div>
           
 
 <div class="page-header">
@@ -688,619 +833,6 @@
 </h2>
 
 <div class="methods-content">
-  <div class="panel panel-default member-definition">
-    <div class="panel-heading method-heading">
-      static <code><a href="./">Cassandra\Type</a></code> <h3 id="method-varchar" class="target">varchar<a class="anchor" href="#method-varchar" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
-</h3> <big>(</big>  <big>)</big>
-    </div>
-    <div class="panel-body method-body">
-      <p>Get representation of cassandra varchar type</p>
-
-      <dl class="dl-horizontal notes">
-<dt><span class="label label-default">Static</span></dt>
-<dd>This method is static</dd>
-</dl>
-<dl class="tags">
-<dt class="tag-title">Returns:</dt>
-<dd class="tag-content"><table class="table table-striped return">
-<thead><tr>
-<th class="type">Type</th>
-<th class="details">Details</th>
-</tr></thead>
-<tbody><tr>
-<td><code><a href="./">Cassandra\Type</a></code></td>
-<td>
-<p>varchar type</p>
-</td>
-</tr></tbody>
-</table></dd>
-</dl>
-    </div>
-  </div>
-  <div class="panel panel-default member-definition">
-    <div class="panel-heading method-heading">
-      static <code><a href="./">Cassandra\Type</a></code> <h3 id="method-text" class="target">text<a class="anchor" href="#method-text" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
-</h3> <big>(</big>  <big>)</big>
-    </div>
-    <div class="panel-body method-body">
-      <p>Get representation of cassandra text type</p>
-
-      <dl class="dl-horizontal notes">
-<dt><span class="label label-default">Static</span></dt>
-<dd>This method is static</dd>
-</dl>
-<dl class="tags">
-<dt class="tag-title">Returns:</dt>
-<dd class="tag-content"><table class="table table-striped return">
-<thead><tr>
-<th class="type">Type</th>
-<th class="details">Details</th>
-</tr></thead>
-<tbody><tr>
-<td><code><a href="./">Cassandra\Type</a></code></td>
-<td>
-<p>text type</p>
-</td>
-</tr></tbody>
-</table></dd>
-</dl>
-    </div>
-  </div>
-  <div class="panel panel-default member-definition">
-    <div class="panel-heading method-heading">
-      static <code><a href="./">Cassandra\Type</a></code> <h3 id="method-blob" class="target">blob<a class="anchor" href="#method-blob" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
-</h3> <big>(</big>  <big>)</big>
-    </div>
-    <div class="panel-body method-body">
-      <p>Get representation of cassandra blob type</p>
-
-      <dl class="dl-horizontal notes">
-<dt><span class="label label-default">Static</span></dt>
-<dd>This method is static</dd>
-</dl>
-<dl class="tags">
-<dt class="tag-title">Returns:</dt>
-<dd class="tag-content"><table class="table table-striped return">
-<thead><tr>
-<th class="type">Type</th>
-<th class="details">Details</th>
-</tr></thead>
-<tbody><tr>
-<td><code><a href="./">Cassandra\Type</a></code></td>
-<td>
-<p>blob type</p>
-</td>
-</tr></tbody>
-</table></dd>
-</dl>
-    </div>
-  </div>
-  <div class="panel panel-default member-definition">
-    <div class="panel-heading method-heading">
-      static <code><a href="./">Cassandra\Type</a></code> <h3 id="method-ascii" class="target">ascii<a class="anchor" href="#method-ascii" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
-</h3> <big>(</big>  <big>)</big>
-    </div>
-    <div class="panel-body method-body">
-      <p>Get representation of cassandra ascii type</p>
-
-      <dl class="dl-horizontal notes">
-<dt><span class="label label-default">Static</span></dt>
-<dd>This method is static</dd>
-</dl>
-<dl class="tags">
-<dt class="tag-title">Returns:</dt>
-<dd class="tag-content"><table class="table table-striped return">
-<thead><tr>
-<th class="type">Type</th>
-<th class="details">Details</th>
-</tr></thead>
-<tbody><tr>
-<td><code><a href="./">Cassandra\Type</a></code></td>
-<td>
-<p>ascii type</p>
-</td>
-</tr></tbody>
-</table></dd>
-</dl>
-    </div>
-  </div>
-  <div class="panel panel-default member-definition">
-    <div class="panel-heading method-heading">
-      static <code><a href="./">Cassandra\Type</a></code> <h3 id="method-bigint" class="target">bigint<a class="anchor" href="#method-bigint" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
-</h3> <big>(</big>  <big>)</big>
-    </div>
-    <div class="panel-body method-body">
-      <p>Get representation of cassandra bigint type</p>
-
-      <dl class="dl-horizontal notes">
-<dt><span class="label label-default">Static</span></dt>
-<dd>This method is static</dd>
-</dl>
-<dl class="tags">
-<dt class="tag-title">Returns:</dt>
-<dd class="tag-content"><table class="table table-striped return">
-<thead><tr>
-<th class="type">Type</th>
-<th class="details">Details</th>
-</tr></thead>
-<tbody><tr>
-<td><code><a href="./">Cassandra\Type</a></code></td>
-<td>
-<p>bigint type</p>
-</td>
-</tr></tbody>
-</table></dd>
-</dl>
-    </div>
-  </div>
-  <div class="panel panel-default member-definition">
-    <div class="panel-heading method-heading">
-      static <code><a href="./">Cassandra\Type</a></code> <h3 id="method-counter" class="target">counter<a class="anchor" href="#method-counter" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
-</h3> <big>(</big>  <big>)</big>
-    </div>
-    <div class="panel-body method-body">
-      <p>Get representation of cassandra counter type</p>
-
-      <dl class="dl-horizontal notes">
-<dt><span class="label label-default">Static</span></dt>
-<dd>This method is static</dd>
-</dl>
-<dl class="tags">
-<dt class="tag-title">Returns:</dt>
-<dd class="tag-content"><table class="table table-striped return">
-<thead><tr>
-<th class="type">Type</th>
-<th class="details">Details</th>
-</tr></thead>
-<tbody><tr>
-<td><code><a href="./">Cassandra\Type</a></code></td>
-<td>
-<p>counter type</p>
-</td>
-</tr></tbody>
-</table></dd>
-</dl>
-    </div>
-  </div>
-  <div class="panel panel-default member-definition">
-    <div class="panel-heading method-heading">
-      static <code><a href="./">Cassandra\Type</a></code> <h3 id="method-int" class="target">int<a class="anchor" href="#method-int" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
-</h3> <big>(</big>  <big>)</big>
-    </div>
-    <div class="panel-body method-body">
-      <p>Get representation of cassandra int type</p>
-
-      <dl class="dl-horizontal notes">
-<dt><span class="label label-default">Static</span></dt>
-<dd>This method is static</dd>
-</dl>
-<dl class="tags">
-<dt class="tag-title">Returns:</dt>
-<dd class="tag-content"><table class="table table-striped return">
-<thead><tr>
-<th class="type">Type</th>
-<th class="details">Details</th>
-</tr></thead>
-<tbody><tr>
-<td><code><a href="./">Cassandra\Type</a></code></td>
-<td>
-<p>int type</p>
-</td>
-</tr></tbody>
-</table></dd>
-</dl>
-    </div>
-  </div>
-  <div class="panel panel-default member-definition">
-    <div class="panel-heading method-heading">
-      static <code><a href="./">Cassandra\Type</a></code> <h3 id="method-varint" class="target">varint<a class="anchor" href="#method-varint" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
-</h3> <big>(</big>  <big>)</big>
-    </div>
-    <div class="panel-body method-body">
-      <p>Get representation of cassandra varint type</p>
-
-      <dl class="dl-horizontal notes">
-<dt><span class="label label-default">Static</span></dt>
-<dd>This method is static</dd>
-</dl>
-<dl class="tags">
-<dt class="tag-title">Returns:</dt>
-<dd class="tag-content"><table class="table table-striped return">
-<thead><tr>
-<th class="type">Type</th>
-<th class="details">Details</th>
-</tr></thead>
-<tbody><tr>
-<td><code><a href="./">Cassandra\Type</a></code></td>
-<td>
-<p>varint type</p>
-</td>
-</tr></tbody>
-</table></dd>
-</dl>
-    </div>
-  </div>
-  <div class="panel panel-default member-definition">
-    <div class="panel-heading method-heading">
-      static <code><a href="./">Cassandra\Type</a></code> <h3 id="method-boolean" class="target">boolean<a class="anchor" href="#method-boolean" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
-</h3> <big>(</big>  <big>)</big>
-    </div>
-    <div class="panel-body method-body">
-      <p>Get representation of cassandra boolean type</p>
-
-      <dl class="dl-horizontal notes">
-<dt><span class="label label-default">Static</span></dt>
-<dd>This method is static</dd>
-</dl>
-<dl class="tags">
-<dt class="tag-title">Returns:</dt>
-<dd class="tag-content"><table class="table table-striped return">
-<thead><tr>
-<th class="type">Type</th>
-<th class="details">Details</th>
-</tr></thead>
-<tbody><tr>
-<td><code><a href="./">Cassandra\Type</a></code></td>
-<td>
-<p>boolean type</p>
-</td>
-</tr></tbody>
-</table></dd>
-</dl>
-    </div>
-  </div>
-  <div class="panel panel-default member-definition">
-    <div class="panel-heading method-heading">
-      static <code><a href="./">Cassandra\Type</a></code> <h3 id="method-decimal" class="target">decimal<a class="anchor" href="#method-decimal" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
-</h3> <big>(</big>  <big>)</big>
-    </div>
-    <div class="panel-body method-body">
-      <p>Get representation of cassandra decimal type</p>
-
-      <dl class="dl-horizontal notes">
-<dt><span class="label label-default">Static</span></dt>
-<dd>This method is static</dd>
-</dl>
-<dl class="tags">
-<dt class="tag-title">Returns:</dt>
-<dd class="tag-content"><table class="table table-striped return">
-<thead><tr>
-<th class="type">Type</th>
-<th class="details">Details</th>
-</tr></thead>
-<tbody><tr>
-<td><code><a href="./">Cassandra\Type</a></code></td>
-<td>
-<p>decimal type</p>
-</td>
-</tr></tbody>
-</table></dd>
-</dl>
-    </div>
-  </div>
-  <div class="panel panel-default member-definition">
-    <div class="panel-heading method-heading">
-      static <code><a href="./">Cassandra\Type</a></code> <h3 id="method-double" class="target">double<a class="anchor" href="#method-double" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
-</h3> <big>(</big>  <big>)</big>
-    </div>
-    <div class="panel-body method-body">
-      <p>Get representation of cassandra double type</p>
-
-      <dl class="dl-horizontal notes">
-<dt><span class="label label-default">Static</span></dt>
-<dd>This method is static</dd>
-</dl>
-<dl class="tags">
-<dt class="tag-title">Returns:</dt>
-<dd class="tag-content"><table class="table table-striped return">
-<thead><tr>
-<th class="type">Type</th>
-<th class="details">Details</th>
-</tr></thead>
-<tbody><tr>
-<td><code><a href="./">Cassandra\Type</a></code></td>
-<td>
-<p>double type</p>
-</td>
-</tr></tbody>
-</table></dd>
-</dl>
-    </div>
-  </div>
-  <div class="panel panel-default member-definition">
-    <div class="panel-heading method-heading">
-      static <code><a href="./">Cassandra\Type</a></code> <h3 id="method-float" class="target">float<a class="anchor" href="#method-float" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
-</h3> <big>(</big>  <big>)</big>
-    </div>
-    <div class="panel-body method-body">
-      <p>Get representation of cassandra float type</p>
-
-      <dl class="dl-horizontal notes">
-<dt><span class="label label-default">Static</span></dt>
-<dd>This method is static</dd>
-</dl>
-<dl class="tags">
-<dt class="tag-title">Returns:</dt>
-<dd class="tag-content"><table class="table table-striped return">
-<thead><tr>
-<th class="type">Type</th>
-<th class="details">Details</th>
-</tr></thead>
-<tbody><tr>
-<td><code><a href="./">Cassandra\Type</a></code></td>
-<td>
-<p>float type</p>
-</td>
-</tr></tbody>
-</table></dd>
-</dl>
-    </div>
-  </div>
-  <div class="panel panel-default member-definition">
-    <div class="panel-heading method-heading">
-      static <code><a href="./">Cassandra\Type</a></code> <h3 id="method-inet" class="target">inet<a class="anchor" href="#method-inet" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
-</h3> <big>(</big>  <big>)</big>
-    </div>
-    <div class="panel-body method-body">
-      <p>Get representation of cassandra inet type</p>
-
-      <dl class="dl-horizontal notes">
-<dt><span class="label label-default">Static</span></dt>
-<dd>This method is static</dd>
-</dl>
-<dl class="tags">
-<dt class="tag-title">Returns:</dt>
-<dd class="tag-content"><table class="table table-striped return">
-<thead><tr>
-<th class="type">Type</th>
-<th class="details">Details</th>
-</tr></thead>
-<tbody><tr>
-<td><code><a href="./">Cassandra\Type</a></code></td>
-<td>
-<p>inet type</p>
-</td>
-</tr></tbody>
-</table></dd>
-</dl>
-    </div>
-  </div>
-  <div class="panel panel-default member-definition">
-    <div class="panel-heading method-heading">
-      static <code><a href="./">Cassandra\Type</a></code> <h3 id="method-timestamp" class="target">timestamp<a class="anchor" href="#method-timestamp" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
-</h3> <big>(</big>  <big>)</big>
-    </div>
-    <div class="panel-body method-body">
-      <p>Get representation of cassandra timestamp type</p>
-
-      <dl class="dl-horizontal notes">
-<dt><span class="label label-default">Static</span></dt>
-<dd>This method is static</dd>
-</dl>
-<dl class="tags">
-<dt class="tag-title">Returns:</dt>
-<dd class="tag-content"><table class="table table-striped return">
-<thead><tr>
-<th class="type">Type</th>
-<th class="details">Details</th>
-</tr></thead>
-<tbody><tr>
-<td><code><a href="./">Cassandra\Type</a></code></td>
-<td>
-<p>timestamp type</p>
-</td>
-</tr></tbody>
-</table></dd>
-</dl>
-    </div>
-  </div>
-  <div class="panel panel-default member-definition">
-    <div class="panel-heading method-heading">
-      static <code><a href="./">Cassandra\Type</a></code> <h3 id="method-uuid" class="target">uuid<a class="anchor" href="#method-uuid" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
-</h3> <big>(</big>  <big>)</big>
-    </div>
-    <div class="panel-body method-body">
-      <p>Get representation of cassandra uuid type</p>
-
-      <dl class="dl-horizontal notes">
-<dt><span class="label label-default">Static</span></dt>
-<dd>This method is static</dd>
-</dl>
-<dl class="tags">
-<dt class="tag-title">Returns:</dt>
-<dd class="tag-content"><table class="table table-striped return">
-<thead><tr>
-<th class="type">Type</th>
-<th class="details">Details</th>
-</tr></thead>
-<tbody><tr>
-<td><code><a href="./">Cassandra\Type</a></code></td>
-<td>
-<p>uuid type</p>
-</td>
-</tr></tbody>
-</table></dd>
-</dl>
-    </div>
-  </div>
-  <div class="panel panel-default member-definition">
-    <div class="panel-heading method-heading">
-      static <code><a href="./">Cassandra\Type</a></code> <h3 id="method-timeuuid" class="target">timeuuid<a class="anchor" href="#method-timeuuid" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
-</h3> <big>(</big>  <big>)</big>
-    </div>
-    <div class="panel-body method-body">
-      <p>Get representation of cassandra timeuuid type</p>
-
-      <dl class="dl-horizontal notes">
-<dt><span class="label label-default">Static</span></dt>
-<dd>This method is static</dd>
-</dl>
-<dl class="tags">
-<dt class="tag-title">Returns:</dt>
-<dd class="tag-content"><table class="table table-striped return">
-<thead><tr>
-<th class="type">Type</th>
-<th class="details">Details</th>
-</tr></thead>
-<tbody><tr>
-<td><code><a href="./">Cassandra\Type</a></code></td>
-<td>
-<p>timeuuid type</p>
-</td>
-</tr></tbody>
-</table></dd>
-</dl>
-    </div>
-  </div>
-  <div class="panel panel-default member-definition">
-    <div class="panel-heading method-heading">
-      static <code><a href="./">Cassandra\Type</a></code> <h3 id="method-collection" class="target">collection<a class="anchor" href="#method-collection" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
-</h3> <big>(</big> <code><a href="./">Cassandra\Type</a></code> $type <big>)</big>
-    </div>
-    <div class="panel-body method-body">
-      <p>Initialize a <code><a href="../Type/class.Collection/">Type\Collection</a></code> type </p>
-<pre class="highlight"><code><span class="cp">&lt;?php</span>
-<span class="k">use</span> <span class="nx">Cassandra</span><span class="o">::</span><span class="na">Type</span><span class="p">;</span>
-
-<span class="nv">$collection</span> <span class="o">=</span> <span class="nx">Type</span><span class="o">::</span><span class="na">collection</span><span class="p">(</span><span class="nx">Type</span><span class="o">::</span><span class="na">int</span><span class="p">())</span>
-                  <span class="o">-&gt;</span><span class="na">create</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">9</span><span class="p">);</span>
-
-<span class="nb">var_dump</span><span class="p">(</span><span class="nv">$collection</span><span class="p">);</span>
-</code></pre>
-      <dl class="dl-horizontal notes">
-<dt><span class="label label-default">Static</span></dt>
-<dd>This method is static</dd>
-</dl>
-<dl class="tags">
-<dt class="tag-title">Parameters:</dt>
-<dd class="tag-content"><table class="table table-striped param">
-<thead><tr>
-<th class="name">Name</th>
-<th class="type">Type</th>
-<th class="details">Details</th>
-</tr></thead>
-<tbody><tr>
-<td><var>$type</var></td>
-<td><code><a href="./">Cassandra\Type</a></code></td>
-<td>
-<p>The type of values</p>
-</td>
-</tr></tbody>
-</table></dd>
-<dt class="tag-title">Returns:</dt>
-<dd class="tag-content"><table class="table table-striped return">
-<thead><tr>
-<th class="type">Type</th>
-<th class="details">Details</th>
-</tr></thead>
-<tbody><tr>
-<td><code><a href="./">Cassandra\Type</a></code></td>
-<td>
-<p>The collection type</p>
-</td>
-</tr></tbody>
-</table></dd>
-</dl>
-    </div>
-  </div>
-  <div class="panel panel-default member-definition">
-    <div class="panel-heading method-heading">
-      static <code><a href="./">Cassandra\Type</a></code> <h3 id="method-map" class="target">map<a class="anchor" href="#method-map" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
-</h3> <big>(</big> <code><a href="./">Cassandra\Type</a></code> $key_type, <code><a href="./">Cassandra\Type</a></code> $value_type <big>)</big>
-    </div>
-    <div class="panel-body method-body">
-      <p>Initialize a map type </p>
-<pre class="highlight"><code><span class="cp">&lt;?php</span>
-<span class="k">use</span> <span class="nx">Cassandra</span><span class="o">::</span><span class="na">Type</span><span class="p">;</span>
-
-<span class="nv">$map</span> <span class="o">=</span> <span class="nx">Type</span><span class="o">::</span><span class="na">map</span><span class="p">(</span><span class="nx">Type</span><span class="o">::</span><span class="na">int</span><span class="p">(),</span> <span class="nx">Type</span><span class="o">::</span><span class="na">varchar</span><span class="p">())</span>
-           <span class="o">-&gt;</span><span class="na">create</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s2">"a"</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">"b"</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="s2">"c"</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="s2">"d"</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="s2">"e"</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="s2">"f"</span><span class="p">)</span>
-
-<span class="nb">var_dump</span><span class="p">(</span><span class="nv">$map</span><span class="p">);</span>
-</code></pre>
-      <dl class="dl-horizontal notes">
-<dt><span class="label label-default">Static</span></dt>
-<dd>This method is static</dd>
-</dl>
-<dl class="tags">
-<dt class="tag-title">Parameters:</dt>
-<dd class="tag-content"><table class="table table-striped param">
-<thead><tr>
-<th class="name">Name</th>
-<th class="type">Type</th>
-<th class="details">Details</th>
-</tr></thead>
-<tbody>
-<tr>
-<td><var>$key_type</var></td>
-<td><code><a href="./">Cassandra\Type</a></code></td>
-<td>
-<p>The type of keys</p>
-</td>
-</tr>
-<tr>
-<td><var>$value_type</var></td>
-<td><code><a href="./">Cassandra\Type</a></code></td>
-<td>
-<p>The type of values</p>
-</td>
-</tr>
-</tbody>
-</table></dd>
-<dt class="tag-title">Returns:</dt>
-<dd class="tag-content"><table class="table table-striped return">
-<thead><tr>
-<th class="type">Type</th>
-<th class="details">Details</th>
-</tr></thead>
-<tbody><tr>
-<td><code><a href="./">Cassandra\Type</a></code></td>
-<td>
-<p>The map type</p>
-</td>
-</tr></tbody>
-</table></dd>
-</dl>
-    </div>
-  </div>
-  <div class="panel panel-default member-definition">
-    <div class="panel-heading method-heading">
-      static <code>static</code> <h3 id="method-set" class="target">set<a class="anchor" href="#method-set" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
-</h3> <big>(</big> <code><a href="./">Cassandra\Type</a></code> $type <big>)</big>
-    </div>
-    <div class="panel-body method-body">
-      <p>Initialize a set type </p>
-<pre class="highlight"><code><span class="cp">&lt;?php</span>
-<span class="k">use</span> <span class="nx">Cassandra</span><span class="o">::</span><span class="na">Type</span><span class="p">;</span>
-
-<span class="nv">$set</span> <span class="o">=</span> <span class="nx">Type</span><span class="o">::</span><span class="na">set</span><span class="p">(</span><span class="nx">Type</span><span class="o">::</span><span class="na">varchar</span><span class="p">)</span>
-           <span class="o">-&gt;</span><span class="na">create</span><span class="p">(</span><span class="s2">"a"</span><span class="p">,</span> <span class="s2">"b"</span><span class="p">,</span> <span class="s2">"c"</span><span class="p">,</span> <span class="s2">"d"</span><span class="p">,</span> <span class="s2">"e"</span><span class="p">,</span> <span class="s2">"f"</span><span class="p">,</span> <span class="s2">"g"</span><span class="p">,</span> <span class="s2">"h"</span><span class="p">,</span> <span class="s2">"i"</span><span class="p">,</span> <span class="s2">"j"</span><span class="p">);</span>
-
-<span class="nb">var_dump</span><span class="p">(</span><span class="nv">$set</span><span class="p">);</span>
-</code></pre>
-      <dl class="dl-horizontal notes">
-<dt><span class="label label-default">Static</span></dt>
-<dd>This method is static</dd>
-</dl>
-<dl class="tags">
-<dt class="tag-title">Parameters:</dt>
-<dd class="tag-content"><table class="table table-striped param">
-<thead><tr>
-<th class="name">Name</th>
-<th class="type">Type</th>
-<th class="details">Details</th>
-</tr></thead>
-<tbody><tr>
-<td><var>$type</var></td>
-<td><code><a href="./">Cassandra\Type</a></code></td>
-<td>
-<p>[description]</p>
-</td>
-</tr></tbody>
-</table></dd>
-</dl>
-    </div>
-  </div>
   <div class="panel panel-default member-definition">
     <div class="panel-heading method-heading">
       <code>string</code> <h3 id="method-name" class="target">name<a class="anchor" href="#method-name" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
@@ -1353,13 +885,633 @@
   </div>
   <div class="panel panel-default member-definition">
     <div class="panel-heading method-heading">
-      <code>mixed</code> <h3 id="method-create" class="target">create<a class="anchor" href="#method-create" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
-</h3> <big>(</big> <code>mixed</code> $value <big>=</big> <var>null</var> <big>)</big>
+      static <code><a href="./">Cassandra\Type</a></code> <h3 id="method-ascii" class="target">ascii<a class="anchor" href="#method-ascii" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+</h3> <big>(</big>  <big>)</big>
     </div>
     <div class="panel-body method-body">
-      <p>Instantiate a value of this type from provided value(s).</p>
+      <p>Get representation of ascii type</p>
 
-      <dl class="tags">
+      <dl class="dl-horizontal notes">
+<dt><span class="label label-default">Static</span></dt>
+<dd>This method is static</dd>
+</dl>
+<dl class="tags">
+<dt class="tag-title">Returns:</dt>
+<dd class="tag-content"><table class="table table-striped return">
+<thead><tr>
+<th class="type">Type</th>
+<th class="details">Details</th>
+</tr></thead>
+<tbody><tr>
+<td><code><a href="./">Cassandra\Type</a></code></td>
+<td>
+<p>ascii type</p>
+</td>
+</tr></tbody>
+</table></dd>
+</dl>
+    </div>
+  </div>
+  <div class="panel panel-default member-definition">
+    <div class="panel-heading method-heading">
+      static <code><a href="./">Cassandra\Type</a></code> <h3 id="method-bigint" class="target">bigint<a class="anchor" href="#method-bigint" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+</h3> <big>(</big>  <big>)</big>
+    </div>
+    <div class="panel-body method-body">
+      <p>Get representation of bigint type</p>
+
+      <dl class="dl-horizontal notes">
+<dt><span class="label label-default">Static</span></dt>
+<dd>This method is static</dd>
+</dl>
+<dl class="tags">
+<dt class="tag-title">Returns:</dt>
+<dd class="tag-content"><table class="table table-striped return">
+<thead><tr>
+<th class="type">Type</th>
+<th class="details">Details</th>
+</tr></thead>
+<tbody><tr>
+<td><code><a href="./">Cassandra\Type</a></code></td>
+<td>
+<p>bigint type</p>
+</td>
+</tr></tbody>
+</table></dd>
+</dl>
+    </div>
+  </div>
+  <div class="panel panel-default member-definition">
+    <div class="panel-heading method-heading">
+      static <code><a href="./">Cassandra\Type</a></code> <h3 id="method-smallint" class="target">smallint<a class="anchor" href="#method-smallint" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+</h3> <big>(</big>  <big>)</big>
+    </div>
+    <div class="panel-body method-body">
+      <p>Get representation of smallint type</p>
+
+      <dl class="dl-horizontal notes">
+<dt><span class="label label-default">Static</span></dt>
+<dd>This method is static</dd>
+</dl>
+<dl class="tags">
+<dt class="tag-title">Returns:</dt>
+<dd class="tag-content"><table class="table table-striped return">
+<thead><tr>
+<th class="type">Type</th>
+<th class="details">Details</th>
+</tr></thead>
+<tbody><tr>
+<td><code><a href="./">Cassandra\Type</a></code></td>
+<td>
+<p>smallint type</p>
+</td>
+</tr></tbody>
+</table></dd>
+</dl>
+    </div>
+  </div>
+  <div class="panel panel-default member-definition">
+    <div class="panel-heading method-heading">
+      static <code><a href="./">Cassandra\Type</a></code> <h3 id="method-tinyint" class="target">tinyint<a class="anchor" href="#method-tinyint" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+</h3> <big>(</big>  <big>)</big>
+    </div>
+    <div class="panel-body method-body">
+      <p>Get representation of tinyint type</p>
+
+      <dl class="dl-horizontal notes">
+<dt><span class="label label-default">Static</span></dt>
+<dd>This method is static</dd>
+</dl>
+<dl class="tags">
+<dt class="tag-title">Returns:</dt>
+<dd class="tag-content"><table class="table table-striped return">
+<thead><tr>
+<th class="type">Type</th>
+<th class="details">Details</th>
+</tr></thead>
+<tbody><tr>
+<td><code><a href="./">Cassandra\Type</a></code></td>
+<td>
+<p>tinyint type</p>
+</td>
+</tr></tbody>
+</table></dd>
+</dl>
+    </div>
+  </div>
+  <div class="panel panel-default member-definition">
+    <div class="panel-heading method-heading">
+      static <code><a href="./">Cassandra\Type</a></code> <h3 id="method-blob" class="target">blob<a class="anchor" href="#method-blob" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+</h3> <big>(</big>  <big>)</big>
+    </div>
+    <div class="panel-body method-body">
+      <p>Get representation of blob type</p>
+
+      <dl class="dl-horizontal notes">
+<dt><span class="label label-default">Static</span></dt>
+<dd>This method is static</dd>
+</dl>
+<dl class="tags">
+<dt class="tag-title">Returns:</dt>
+<dd class="tag-content"><table class="table table-striped return">
+<thead><tr>
+<th class="type">Type</th>
+<th class="details">Details</th>
+</tr></thead>
+<tbody><tr>
+<td><code><a href="./">Cassandra\Type</a></code></td>
+<td>
+<p>blob type</p>
+</td>
+</tr></tbody>
+</table></dd>
+</dl>
+    </div>
+  </div>
+  <div class="panel panel-default member-definition">
+    <div class="panel-heading method-heading">
+      static <code><a href="./">Cassandra\Type</a></code> <h3 id="method-boolean" class="target">boolean<a class="anchor" href="#method-boolean" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+</h3> <big>(</big>  <big>)</big>
+    </div>
+    <div class="panel-body method-body">
+      <p>Get representation of boolean type</p>
+
+      <dl class="dl-horizontal notes">
+<dt><span class="label label-default">Static</span></dt>
+<dd>This method is static</dd>
+</dl>
+<dl class="tags">
+<dt class="tag-title">Returns:</dt>
+<dd class="tag-content"><table class="table table-striped return">
+<thead><tr>
+<th class="type">Type</th>
+<th class="details">Details</th>
+</tr></thead>
+<tbody><tr>
+<td><code><a href="./">Cassandra\Type</a></code></td>
+<td>
+<p>boolean type</p>
+</td>
+</tr></tbody>
+</table></dd>
+</dl>
+    </div>
+  </div>
+  <div class="panel panel-default member-definition">
+    <div class="panel-heading method-heading">
+      static <code><a href="./">Cassandra\Type</a></code> <h3 id="method-counter" class="target">counter<a class="anchor" href="#method-counter" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+</h3> <big>(</big>  <big>)</big>
+    </div>
+    <div class="panel-body method-body">
+      <p>Get representation of counter type</p>
+
+      <dl class="dl-horizontal notes">
+<dt><span class="label label-default">Static</span></dt>
+<dd>This method is static</dd>
+</dl>
+<dl class="tags">
+<dt class="tag-title">Returns:</dt>
+<dd class="tag-content"><table class="table table-striped return">
+<thead><tr>
+<th class="type">Type</th>
+<th class="details">Details</th>
+</tr></thead>
+<tbody><tr>
+<td><code><a href="./">Cassandra\Type</a></code></td>
+<td>
+<p>counter type</p>
+</td>
+</tr></tbody>
+</table></dd>
+</dl>
+    </div>
+  </div>
+  <div class="panel panel-default member-definition">
+    <div class="panel-heading method-heading">
+      static <code><a href="./">Cassandra\Type</a></code> <h3 id="method-decimal" class="target">decimal<a class="anchor" href="#method-decimal" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+</h3> <big>(</big>  <big>)</big>
+    </div>
+    <div class="panel-body method-body">
+      <p>Get representation of decimal type</p>
+
+      <dl class="dl-horizontal notes">
+<dt><span class="label label-default">Static</span></dt>
+<dd>This method is static</dd>
+</dl>
+<dl class="tags">
+<dt class="tag-title">Returns:</dt>
+<dd class="tag-content"><table class="table table-striped return">
+<thead><tr>
+<th class="type">Type</th>
+<th class="details">Details</th>
+</tr></thead>
+<tbody><tr>
+<td><code><a href="./">Cassandra\Type</a></code></td>
+<td>
+<p>decimal type</p>
+</td>
+</tr></tbody>
+</table></dd>
+</dl>
+    </div>
+  </div>
+  <div class="panel panel-default member-definition">
+    <div class="panel-heading method-heading">
+      static <code><a href="./">Cassandra\Type</a></code> <h3 id="method-double" class="target">double<a class="anchor" href="#method-double" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+</h3> <big>(</big>  <big>)</big>
+    </div>
+    <div class="panel-body method-body">
+      <p>Get representation of double type</p>
+
+      <dl class="dl-horizontal notes">
+<dt><span class="label label-default">Static</span></dt>
+<dd>This method is static</dd>
+</dl>
+<dl class="tags">
+<dt class="tag-title">Returns:</dt>
+<dd class="tag-content"><table class="table table-striped return">
+<thead><tr>
+<th class="type">Type</th>
+<th class="details">Details</th>
+</tr></thead>
+<tbody><tr>
+<td><code><a href="./">Cassandra\Type</a></code></td>
+<td>
+<p>double type</p>
+</td>
+</tr></tbody>
+</table></dd>
+</dl>
+    </div>
+  </div>
+  <div class="panel panel-default member-definition">
+    <div class="panel-heading method-heading">
+      static <code><a href="./">Cassandra\Type</a></code> <h3 id="method-duration" class="target">duration<a class="anchor" href="#method-duration" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+</h3> <big>(</big>  <big>)</big>
+    </div>
+    <div class="panel-body method-body">
+      <p>Get representation of duration type</p>
+
+      <dl class="dl-horizontal notes">
+<dt><span class="label label-default">Static</span></dt>
+<dd>This method is static</dd>
+</dl>
+<dl class="tags">
+<dt class="tag-title">Returns:</dt>
+<dd class="tag-content"><table class="table table-striped return">
+<thead><tr>
+<th class="type">Type</th>
+<th class="details">Details</th>
+</tr></thead>
+<tbody><tr>
+<td><code><a href="./">Cassandra\Type</a></code></td>
+<td>
+<p>duration type</p>
+</td>
+</tr></tbody>
+</table></dd>
+</dl>
+    </div>
+  </div>
+  <div class="panel panel-default member-definition">
+    <div class="panel-heading method-heading">
+      static <code><a href="./">Cassandra\Type</a></code> <h3 id="method-float" class="target">float<a class="anchor" href="#method-float" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+</h3> <big>(</big>  <big>)</big>
+    </div>
+    <div class="panel-body method-body">
+      <p>Get representation of float type</p>
+
+      <dl class="dl-horizontal notes">
+<dt><span class="label label-default">Static</span></dt>
+<dd>This method is static</dd>
+</dl>
+<dl class="tags">
+<dt class="tag-title">Returns:</dt>
+<dd class="tag-content"><table class="table table-striped return">
+<thead><tr>
+<th class="type">Type</th>
+<th class="details">Details</th>
+</tr></thead>
+<tbody><tr>
+<td><code><a href="./">Cassandra\Type</a></code></td>
+<td>
+<p>float type</p>
+</td>
+</tr></tbody>
+</table></dd>
+</dl>
+    </div>
+  </div>
+  <div class="panel panel-default member-definition">
+    <div class="panel-heading method-heading">
+      static <code><a href="./">Cassandra\Type</a></code> <h3 id="method-int" class="target">int<a class="anchor" href="#method-int" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+</h3> <big>(</big>  <big>)</big>
+    </div>
+    <div class="panel-body method-body">
+      <p>Get representation of int type</p>
+
+      <dl class="dl-horizontal notes">
+<dt><span class="label label-default">Static</span></dt>
+<dd>This method is static</dd>
+</dl>
+<dl class="tags">
+<dt class="tag-title">Returns:</dt>
+<dd class="tag-content"><table class="table table-striped return">
+<thead><tr>
+<th class="type">Type</th>
+<th class="details">Details</th>
+</tr></thead>
+<tbody><tr>
+<td><code><a href="./">Cassandra\Type</a></code></td>
+<td>
+<p>int type</p>
+</td>
+</tr></tbody>
+</table></dd>
+</dl>
+    </div>
+  </div>
+  <div class="panel panel-default member-definition">
+    <div class="panel-heading method-heading">
+      static <code><a href="./">Cassandra\Type</a></code> <h3 id="method-text" class="target">text<a class="anchor" href="#method-text" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+</h3> <big>(</big>  <big>)</big>
+    </div>
+    <div class="panel-body method-body">
+      <p>Get representation of text type</p>
+
+      <dl class="dl-horizontal notes">
+<dt><span class="label label-default">Static</span></dt>
+<dd>This method is static</dd>
+</dl>
+<dl class="tags">
+<dt class="tag-title">Returns:</dt>
+<dd class="tag-content"><table class="table table-striped return">
+<thead><tr>
+<th class="type">Type</th>
+<th class="details">Details</th>
+</tr></thead>
+<tbody><tr>
+<td><code><a href="./">Cassandra\Type</a></code></td>
+<td>
+<p>text type</p>
+</td>
+</tr></tbody>
+</table></dd>
+</dl>
+    </div>
+  </div>
+  <div class="panel panel-default member-definition">
+    <div class="panel-heading method-heading">
+      static <code><a href="./">Cassandra\Type</a></code> <h3 id="method-timestamp" class="target">timestamp<a class="anchor" href="#method-timestamp" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+</h3> <big>(</big>  <big>)</big>
+    </div>
+    <div class="panel-body method-body">
+      <p>Get representation of timestamp type</p>
+
+      <dl class="dl-horizontal notes">
+<dt><span class="label label-default">Static</span></dt>
+<dd>This method is static</dd>
+</dl>
+<dl class="tags">
+<dt class="tag-title">Returns:</dt>
+<dd class="tag-content"><table class="table table-striped return">
+<thead><tr>
+<th class="type">Type</th>
+<th class="details">Details</th>
+</tr></thead>
+<tbody><tr>
+<td><code><a href="./">Cassandra\Type</a></code></td>
+<td>
+<p>timestamp type</p>
+</td>
+</tr></tbody>
+</table></dd>
+</dl>
+    </div>
+  </div>
+  <div class="panel panel-default member-definition">
+    <div class="panel-heading method-heading">
+      static <code><a href="./">Cassandra\Type</a></code> <h3 id="method-date" class="target">date<a class="anchor" href="#method-date" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+</h3> <big>(</big>  <big>)</big>
+    </div>
+    <div class="panel-body method-body">
+      <p>Get representation of date type</p>
+
+      <dl class="dl-horizontal notes">
+<dt><span class="label label-default">Static</span></dt>
+<dd>This method is static</dd>
+</dl>
+<dl class="tags">
+<dt class="tag-title">Returns:</dt>
+<dd class="tag-content"><table class="table table-striped return">
+<thead><tr>
+<th class="type">Type</th>
+<th class="details">Details</th>
+</tr></thead>
+<tbody><tr>
+<td><code><a href="./">Cassandra\Type</a></code></td>
+<td>
+<p>date type</p>
+</td>
+</tr></tbody>
+</table></dd>
+</dl>
+    </div>
+  </div>
+  <div class="panel panel-default member-definition">
+    <div class="panel-heading method-heading">
+      static <code><a href="./">Cassandra\Type</a></code> <h3 id="method-time" class="target">time<a class="anchor" href="#method-time" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+</h3> <big>(</big>  <big>)</big>
+    </div>
+    <div class="panel-body method-body">
+      <p>Get representation of time type</p>
+
+      <dl class="dl-horizontal notes">
+<dt><span class="label label-default">Static</span></dt>
+<dd>This method is static</dd>
+</dl>
+<dl class="tags">
+<dt class="tag-title">Returns:</dt>
+<dd class="tag-content"><table class="table table-striped return">
+<thead><tr>
+<th class="type">Type</th>
+<th class="details">Details</th>
+</tr></thead>
+<tbody><tr>
+<td><code><a href="./">Cassandra\Type</a></code></td>
+<td>
+<p>time type</p>
+</td>
+</tr></tbody>
+</table></dd>
+</dl>
+    </div>
+  </div>
+  <div class="panel panel-default member-definition">
+    <div class="panel-heading method-heading">
+      static <code><a href="./">Cassandra\Type</a></code> <h3 id="method-uuid" class="target">uuid<a class="anchor" href="#method-uuid" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+</h3> <big>(</big>  <big>)</big>
+    </div>
+    <div class="panel-body method-body">
+      <p>Get representation of uuid type</p>
+
+      <dl class="dl-horizontal notes">
+<dt><span class="label label-default">Static</span></dt>
+<dd>This method is static</dd>
+</dl>
+<dl class="tags">
+<dt class="tag-title">Returns:</dt>
+<dd class="tag-content"><table class="table table-striped return">
+<thead><tr>
+<th class="type">Type</th>
+<th class="details">Details</th>
+</tr></thead>
+<tbody><tr>
+<td><code><a href="./">Cassandra\Type</a></code></td>
+<td>
+<p>uuid type</p>
+</td>
+</tr></tbody>
+</table></dd>
+</dl>
+    </div>
+  </div>
+  <div class="panel panel-default member-definition">
+    <div class="panel-heading method-heading">
+      static <code><a href="./">Cassandra\Type</a></code> <h3 id="method-varchar" class="target">varchar<a class="anchor" href="#method-varchar" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+</h3> <big>(</big>  <big>)</big>
+    </div>
+    <div class="panel-body method-body">
+      <p>Get representation of varchar type</p>
+
+      <dl class="dl-horizontal notes">
+<dt><span class="label label-default">Static</span></dt>
+<dd>This method is static</dd>
+</dl>
+<dl class="tags">
+<dt class="tag-title">Returns:</dt>
+<dd class="tag-content"><table class="table table-striped return">
+<thead><tr>
+<th class="type">Type</th>
+<th class="details">Details</th>
+</tr></thead>
+<tbody><tr>
+<td><code><a href="./">Cassandra\Type</a></code></td>
+<td>
+<p>varchar type</p>
+</td>
+</tr></tbody>
+</table></dd>
+</dl>
+    </div>
+  </div>
+  <div class="panel panel-default member-definition">
+    <div class="panel-heading method-heading">
+      static <code><a href="./">Cassandra\Type</a></code> <h3 id="method-varint" class="target">varint<a class="anchor" href="#method-varint" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+</h3> <big>(</big>  <big>)</big>
+    </div>
+    <div class="panel-body method-body">
+      <p>Get representation of varint type</p>
+
+      <dl class="dl-horizontal notes">
+<dt><span class="label label-default">Static</span></dt>
+<dd>This method is static</dd>
+</dl>
+<dl class="tags">
+<dt class="tag-title">Returns:</dt>
+<dd class="tag-content"><table class="table table-striped return">
+<thead><tr>
+<th class="type">Type</th>
+<th class="details">Details</th>
+</tr></thead>
+<tbody><tr>
+<td><code><a href="./">Cassandra\Type</a></code></td>
+<td>
+<p>varint type</p>
+</td>
+</tr></tbody>
+</table></dd>
+</dl>
+    </div>
+  </div>
+  <div class="panel panel-default member-definition">
+    <div class="panel-heading method-heading">
+      static <code><a href="./">Cassandra\Type</a></code> <h3 id="method-timeuuid" class="target">timeuuid<a class="anchor" href="#method-timeuuid" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+</h3> <big>(</big>  <big>)</big>
+    </div>
+    <div class="panel-body method-body">
+      <p>Get representation of timeuuid type</p>
+
+      <dl class="dl-horizontal notes">
+<dt><span class="label label-default">Static</span></dt>
+<dd>This method is static</dd>
+</dl>
+<dl class="tags">
+<dt class="tag-title">Returns:</dt>
+<dd class="tag-content"><table class="table table-striped return">
+<thead><tr>
+<th class="type">Type</th>
+<th class="details">Details</th>
+</tr></thead>
+<tbody><tr>
+<td><code><a href="./">Cassandra\Type</a></code></td>
+<td>
+<p>timeuuid type</p>
+</td>
+</tr></tbody>
+</table></dd>
+</dl>
+    </div>
+  </div>
+  <div class="panel panel-default member-definition">
+    <div class="panel-heading method-heading">
+      static <code><a href="./">Cassandra\Type</a></code> <h3 id="method-inet" class="target">inet<a class="anchor" href="#method-inet" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+</h3> <big>(</big>  <big>)</big>
+    </div>
+    <div class="panel-body method-body">
+      <p>Get representation of inet type</p>
+
+      <dl class="dl-horizontal notes">
+<dt><span class="label label-default">Static</span></dt>
+<dd>This method is static</dd>
+</dl>
+<dl class="tags">
+<dt class="tag-title">Returns:</dt>
+<dd class="tag-content"><table class="table table-striped return">
+<thead><tr>
+<th class="type">Type</th>
+<th class="details">Details</th>
+</tr></thead>
+<tbody><tr>
+<td><code><a href="./">Cassandra\Type</a></code></td>
+<td>
+<p>inet type</p>
+</td>
+</tr></tbody>
+</table></dd>
+</dl>
+    </div>
+  </div>
+  <div class="panel panel-default member-definition">
+    <div class="panel-heading method-heading">
+      static <code><a href="./">Cassandra\Type</a></code> <h3 id="method-collection" class="target">collection<a class="anchor" href="#method-collection" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+</h3> <big>(</big> <code><a href="./">Cassandra\Type</a></code> $type <big>)</big>
+    </div>
+    <div class="panel-body method-body">
+      <p>Initialize a <code><a href="../Type/class.Collection/">Type\Collection</a></code> type </p>
+<pre class="highlight"><code><span class="cp">&lt;?php</span>
+<span class="k">use</span> <span class="nx">Type</span><span class="p">;</span>
+
+<span class="nv">$collection</span> <span class="o">=</span> <span class="nx">Type</span><span class="o">::</span><span class="na">collection</span><span class="p">(</span><span class="nx">Type</span><span class="o">::</span><span class="na">int</span><span class="p">())</span>
+                  <span class="o">-&gt;</span><span class="na">create</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">9</span><span class="p">);</span>
+
+<span class="nb">var_dump</span><span class="p">(</span><span class="nv">$collection</span><span class="p">);</span>
+</code></pre>
+      <dl class="dl-horizontal notes">
+<dt><span class="label label-default">Static</span></dt>
+<dd>This method is static</dd>
+</dl>
+<dl class="tags">
 <dt class="tag-title">Parameters:</dt>
 <dd class="tag-content"><table class="table table-striped param">
 <thead><tr>
@@ -1368,23 +1520,10 @@
 <th class="details">Details</th>
 </tr></thead>
 <tbody><tr>
-<td><var>$value</var></td>
-<td><code>mixed</code></td>
+<td><var>$type</var></td>
+<td><code><a href="./">Cassandra\Type</a></code></td>
 <td>
-<p>one or more values to coerce into this type</p>
-</td>
-</tr></tbody>
-</table></dd>
-<dt class="tag-title">Throws:</dt>
-<dd class="tag-content"><table class="table table-striped throw">
-<thead><tr>
-<th class="type">Type</th>
-<th class="details">Details</th>
-</tr></thead>
-<tbody><tr>
-<td><code><a href="../Exception/class.InvalidArgumentException/">Exception\InvalidArgumentException</a></code></td>
-<td>
-<p>when values given cannot be represented by this type.</p>
+<p>The type of values</p>
 </td>
 </tr></tbody>
 </table></dd>
@@ -1395,9 +1534,222 @@
 <th class="details">Details</th>
 </tr></thead>
 <tbody><tr>
-<td><code>mixed</code></td>
+<td><code><a href="./">Cassandra\Type</a></code></td>
 <td>
-<p>a value of this type</p>
+<p>The collection type</p>
+</td>
+</tr></tbody>
+</table></dd>
+</dl>
+    </div>
+  </div>
+  <div class="panel panel-default member-definition">
+    <div class="panel-heading method-heading">
+      static <code><a href="./">Cassandra\Type</a></code> <h3 id="method-set" class="target">set<a class="anchor" href="#method-set" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+</h3> <big>(</big> <code><a href="./">Cassandra\Type</a></code> $type <big>)</big>
+    </div>
+    <div class="panel-body method-body">
+      <p>Initialize a set type </p>
+<pre class="highlight"><code><span class="cp">&lt;?php</span>
+<span class="k">use</span> <span class="nx">Type</span><span class="p">;</span>
+
+<span class="nv">$set</span> <span class="o">=</span> <span class="nx">Type</span><span class="o">::</span><span class="na">set</span><span class="p">(</span><span class="nx">Type</span><span class="o">::</span><span class="na">varchar</span><span class="p">())</span>
+           <span class="o">-&gt;</span><span class="na">create</span><span class="p">(</span><span class="s2">"a"</span><span class="p">,</span> <span class="s2">"b"</span><span class="p">,</span> <span class="s2">"c"</span><span class="p">,</span> <span class="s2">"d"</span><span class="p">,</span> <span class="s2">"e"</span><span class="p">,</span> <span class="s2">"f"</span><span class="p">,</span> <span class="s2">"g"</span><span class="p">,</span> <span class="s2">"h"</span><span class="p">,</span> <span class="s2">"i"</span><span class="p">,</span> <span class="s2">"j"</span><span class="p">);</span>
+
+<span class="nb">var_dump</span><span class="p">(</span><span class="nv">$set</span><span class="p">);</span>
+</code></pre>
+      <dl class="dl-horizontal notes">
+<dt><span class="label label-default">Static</span></dt>
+<dd>This method is static</dd>
+</dl>
+<dl class="tags">
+<dt class="tag-title">Parameters:</dt>
+<dd class="tag-content"><table class="table table-striped param">
+<thead><tr>
+<th class="name">Name</th>
+<th class="type">Type</th>
+<th class="details">Details</th>
+</tr></thead>
+<tbody><tr>
+<td><var>$type</var></td>
+<td><code><a href="./">Cassandra\Type</a></code></td>
+<td>
+<p>The types of values</p>
+</td>
+</tr></tbody>
+</table></dd>
+<dt class="tag-title">Returns:</dt>
+<dd class="tag-content"><table class="table table-striped return">
+<thead><tr>
+<th class="type">Type</th>
+<th class="details">Details</th>
+</tr></thead>
+<tbody><tr>
+<td><code><a href="./">Cassandra\Type</a></code></td>
+<td>
+<p>The set type</p>
+</td>
+</tr></tbody>
+</table></dd>
+</dl>
+    </div>
+  </div>
+  <div class="panel panel-default member-definition">
+    <div class="panel-heading method-heading">
+      static <code><a href="./">Cassandra\Type</a></code> <h3 id="method-map" class="target">map<a class="anchor" href="#method-map" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+</h3> <big>(</big> <code><a href="./">Cassandra\Type</a></code> $keyType, <code><a href="./">Cassandra\Type</a></code> $valueType <big>)</big>
+    </div>
+    <div class="panel-body method-body">
+      <p>Initialize a map type </p>
+<pre class="highlight"><code><span class="cp">&lt;?php</span>
+<span class="k">use</span> <span class="nx">Type</span><span class="p">;</span>
+
+<span class="nv">$map</span> <span class="o">=</span> <span class="nx">Type</span><span class="o">::</span><span class="na">map</span><span class="p">(</span><span class="nx">Type</span><span class="o">::</span><span class="na">int</span><span class="p">(),</span> <span class="nx">Type</span><span class="o">::</span><span class="na">varchar</span><span class="p">())</span>
+           <span class="o">-&gt;</span><span class="na">create</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s2">"a"</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">"b"</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="s2">"c"</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="s2">"d"</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="s2">"e"</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="s2">"f"</span><span class="p">)</span>
+
+<span class="nb">var_dump</span><span class="p">(</span><span class="nv">$map</span><span class="p">);</span>
+</code></pre>
+      <dl class="dl-horizontal notes">
+<dt><span class="label label-default">Static</span></dt>
+<dd>This method is static</dd>
+</dl>
+<dl class="tags">
+<dt class="tag-title">Parameters:</dt>
+<dd class="tag-content"><table class="table table-striped param">
+<thead><tr>
+<th class="name">Name</th>
+<th class="type">Type</th>
+<th class="details">Details</th>
+</tr></thead>
+<tbody>
+<tr>
+<td><var>$keyType</var></td>
+<td><code><a href="./">Cassandra\Type</a></code></td>
+<td>
+<p>The type of keys</p>
+</td>
+</tr>
+<tr>
+<td><var>$valueType</var></td>
+<td><code><a href="./">Cassandra\Type</a></code></td>
+<td>
+<p>The type of values</p>
+</td>
+</tr>
+</tbody>
+</table></dd>
+<dt class="tag-title">Returns:</dt>
+<dd class="tag-content"><table class="table table-striped return">
+<thead><tr>
+<th class="type">Type</th>
+<th class="details">Details</th>
+</tr></thead>
+<tbody><tr>
+<td><code><a href="./">Cassandra\Type</a></code></td>
+<td>
+<p>The map type</p>
+</td>
+</tr></tbody>
+</table></dd>
+</dl>
+    </div>
+  </div>
+  <div class="panel panel-default member-definition">
+    <div class="panel-heading method-heading">
+      static <code><a href="./">Cassandra\Type</a></code> <h3 id="method-tuple" class="target">tuple<a class="anchor" href="#method-tuple" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+</h3> <big>(</big> <code><a href="./">Cassandra\Type</a></code> $types <big>)</big>
+    </div>
+    <div class="panel-body method-body">
+      <p>Initialize a tuple type </p>
+<pre class="highlight"><code><span class="cp">&lt;?php</span>
+<span class="k">use</span> <span class="nx">Type</span><span class="p">;</span>
+
+<span class="nv">$tuple</span> <span class="o">=</span> <span class="nx">Type</span><span class="o">::</span><span class="na">tuple</span><span class="p">(</span><span class="nx">Type</span><span class="o">::</span><span class="na">varchar</span><span class="p">(),</span> <span class="nx">Type</span><span class="o">::</span><span class="na">int</span><span class="p">())</span>
+           <span class="o">-&gt;</span><span class="na">create</span><span class="p">(</span><span class="s2">"a"</span><span class="p">,</span> <span class="mi">123</span><span class="p">);</span>
+
+<span class="nb">var_dump</span><span class="p">(</span><span class="nv">$tuple</span><span class="p">);</span>
+</code></pre>
+      <dl class="dl-horizontal notes">
+<dt><span class="label label-default">Static</span></dt>
+<dd>This method is static</dd>
+</dl>
+<dl class="tags">
+<dt class="tag-title">Parameters:</dt>
+<dd class="tag-content"><table class="table table-striped param">
+<thead><tr>
+<th class="name">Name</th>
+<th class="type">Type</th>
+<th class="details">Details</th>
+</tr></thead>
+<tbody><tr>
+<td><var>$types</var></td>
+<td><code><a href="./">Cassandra\Type</a></code></td>
+<td>
+<p>A variadic list of types</p>
+</td>
+</tr></tbody>
+</table></dd>
+<dt class="tag-title">Returns:</dt>
+<dd class="tag-content"><table class="table table-striped return">
+<thead><tr>
+<th class="type">Type</th>
+<th class="details">Details</th>
+</tr></thead>
+<tbody><tr>
+<td><code><a href="./">Cassandra\Type</a></code></td>
+<td>
+<p>The tuple type</p>
+</td>
+</tr></tbody>
+</table></dd>
+</dl>
+    </div>
+  </div>
+  <div class="panel panel-default member-definition">
+    <div class="panel-heading method-heading">
+      static <code><a href="./">Cassandra\Type</a></code> <h3 id="method-userType" class="target">userType<a class="anchor" href="#method-userType" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+</h3> <big>(</big> <code><a href="./">Cassandra\Type</a></code> $types <big>)</big>
+    </div>
+    <div class="panel-body method-body">
+      <p>Initialize a user type </p>
+<pre class="highlight"><code><span class="cp">&lt;?php</span>
+<span class="k">use</span> <span class="nx">Type</span><span class="p">;</span>
+
+<span class="nv">$userType</span> <span class="o">=</span> <span class="nx">Type</span><span class="o">::</span><span class="na">userType</span><span class="p">(</span><span class="s2">"a"</span><span class="p">,</span> <span class="nx">Type</span><span class="o">::</span><span class="na">varchar</span><span class="p">(),</span> <span class="s2">"b"</span><span class="p">,</span> <span class="nx">Type</span><span class="o">::</span><span class="na">int</span><span class="p">())</span>
+                <span class="o">-&gt;</span><span class="na">create</span><span class="p">(</span><span class="s2">"a"</span><span class="p">,</span> <span class="s2">"abc"</span><span class="p">,</span> <span class="s2">"b"</span><span class="p">,</span> <span class="mi">123</span><span class="p">);</span>
+
+<span class="nb">var_dump</span><span class="p">(</span><span class="nv">$userType</span><span class="p">);</span>
+</code></pre>
+      <dl class="dl-horizontal notes">
+<dt><span class="label label-default">Static</span></dt>
+<dd>This method is static</dd>
+</dl>
+<dl class="tags">
+<dt class="tag-title">Parameters:</dt>
+<dd class="tag-content"><table class="table table-striped param">
+<thead><tr>
+<th class="name">Name</th>
+<th class="type">Type</th>
+<th class="details">Details</th>
+</tr></thead>
+<tbody><tr>
+<td><var>$types</var></td>
+<td><code><a href="./">Cassandra\Type</a></code></td>
+<td>
+<p>A variadic list of name/type pairs</p>
+</td>
+</tr></tbody>
+</table></dd>
+<dt class="tag-title">Returns:</dt>
+<dd class="tag-content"><table class="table table-striped return">
+<thead><tr>
+<th class="type">Type</th>
+<th class="details">Details</th>
+</tr></thead>
+<tbody><tr>
+<td><code><a href="./">Cassandra\Type</a></code></td>
+<td>
+<p>The user type</p>
 </td>
 </tr></tbody>
 </table></dd>

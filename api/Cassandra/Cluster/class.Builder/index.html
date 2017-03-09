@@ -22,659 +22,803 @@
       <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
   </head>
-  <body ng-app="docs" data-spy="scroll" data-target="#table-of-contents" data-offset="69">
-    <header class="container-fluid navbar">
-      <div class="row">
-        <div class="col-sm-4">
-          <a class="navbar-brand" href="../../../../"><img alt="Brand" src="../../../../img/logo.png">DataStax PHP Driver</a>
-        </div>
-        <div class="col-md-4 col-md-offset-4">
-          <div class="row">
-            <div class="col-md-12">
-              <ul class="list-inline" role="nav">
-                <li><a href="https://academy.datastax.com/" class="navbar-link">DataStax Academy</a></li>
-                <li><a href="http://www.datastax.com/dev/blog" class="navbar-link">Tech Blog</a></li>
-                <li><a href="http://www.datastax.com/what-we-offer/products-services/support" class="navbar-link">Support</a></li>
-              </ul>
-            </div>
+  <body ng-app="docs">
+    <div class="navbar">
+      <div class="container-fluid">
+        <div class="row row-offcanvas row-offcanvas-left">
+          <div class="col-sm-3 text-center">
+            <a class="ds-home" href="../../../../"><img alt="Brand" src="../../../../img/logo.png"></a>
+            <ul class="list-inline ds-sites" role="nav">
+              <li><a href="https://academy.datastax.com/" class="navbar-link">DataStax Academy</a></li>
+              <li><a href="http://www.datastax.com/dev/blog" class="navbar-link">Tech Blog</a></li>
+              <li><a href="http://www.datastax.com/what-we-offer/products-services/support" class="navbar-link">Support</a></li>
+            </ul>
           </div>
-          <div class="row">
-            <div class="col-md-8">
-              <form id="search" class="form-search dropdown visible-lg-block" ng-controller="search" ng-class="{open: hasResults}" role="search" ng-submit="submit()" data-spy="affix" data-offset-top="130">
-                <div class="form-group has-feedback">
-                  <input type="search" class="form-control input-sm mousetrap" placeholder="Search..." ng-model="q" ng-change="search('local')" ng-disabled="!searchReady" disabled data-hotkey="{down: moveDown, up: moveUp, esc: reset}" data-search>
-                </div>
-                <ul class="dropdown-menu search-results" role="menu">
-                  <li ng-repeat="result in results" ng-class="{'bg-warning': $index == current}"><a ng-href="{{basePath}}{{result.path}}"><span ng-bind-html="summary(result)"></span></a></li>
+          <div class="col-md-5">
+            <p class="lead pubtitle">DataStax PHP Driver</p>
+            
+            <div class="text-info">
+              <span class="text-warning">Attention:</span> Viewing documentation for version
+              <div class="btn-group">
+                <button id="current-version" class="btn btn-default btn-sm dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  1.3
+                  <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu" role="menu" aria-labelledby="current-version">
+                
+                  <li class="disabled"><a href="./">1.3</a></li>
+                
+                  <li><a href="../../../../1.2/api/Cassandra/Cluster/class.Builder/">1.2</a></li>
+                
+                  <li><a href="../../../../1.1/api/Cassandra/Cluster/class.Builder/">1.1</a></li>
+                
+                  <li><a href="../../../../1.0/api/Cassandra/Cluster/class.Builder/">1.0</a></li>
+                
                 </ul>
-              </form>
+              </div>
             </div>
-            <div class="col-md-4">
-              <a href="http://www.datastax.com/download" class="btn btn-primary btn-sm">Download</a>
-            </div>
+            
+          </div>
+          <div class="col-md-4">
+            <form id="search" class="form-search dropdown visible-lg-inline-block" ng-controller="search" ng-class="{open: hasResults}" role="search" ng-submit="submit()" data-spy="affix" data-offset-top="130">
+              <div class="form-group has-feedback">
+                <input type="search" class="form-control input-sm mousetrap" placeholder="Search..." ng-model="q" ng-change="search('1.3')" ng-disabled="!searchReady" disabled data-hotkey="{down: moveDown, up: moveUp, esc: reset}" data-search>
+              </div>
+              <ul class="dropdown-menu search-results" role="menu">
+                <li ng-repeat="result in results" ng-class="{'bg-warning': $index == current}"><a ng-href="{{basePath}}{{result.path}}"><span ng-bind-html="summary(result)"></span></a></li>
+              </ul>
+            </form>
+            <a href="http://www.datastax.com/download" class="btn btn-primary btn-sm">Download</a>
           </div>
         </div>
       </div>
-      <div class="row crumbs-wrapper">
-        <div class="col-md-12">
-          <nav id="crumbs" data-spy="affix" data-offset-top="130">
-            <ol class="breadcrumb">
-              
-              
-              
-              
-              <li><a href="../../../../">Home</a></li>
-              
-              
-              
-              
-              
-              <li><a href="../../../">API docs</a></li>
-              
-              
-              
-              
-              
-              <li><a href="../../">Cassandra</a></li>
-              
-              
-              
-              
-              
-              <li><a href="../">Cluster</a></li>
-              
-              
-              
-              
-              
-              <li class="active">Builder</li>
-              <li class="dropdown" id="table-of-contents">
-                <div class="btn-group">
-                  <button id="current-section" type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown">
-                    Jump to&#8230; <span class="caret"></span><span class="sr-only">Table of Contents</span>
-                  </button>
-                  <ul class="dropdown-menu nav nav-pills nav-stacked">
-                    <li><a href="#class-Builder">Page Top <span class="glyphicon glyphicon-chevron-up" aria-hidden="true"></span></a></li>
-<li>
-<a href="#methods">Methods
-</a><ul class="nav nav-pills nav-stacked">
-<li><a href="#method-build">build
-</a></li>
-<li><a href="#method-withDefaultConsistency">withDefaultConsistency
-</a></li>
-<li><a href="#method-withDefaultPageSize">withDefaultPageSize
-</a></li>
-<li><a href="#method-withDefaultTimeout">withDefaultTimeout
-</a></li>
-<li><a href="#method-withContactPoints">withContactPoints
-</a></li>
-<li><a href="#method-withPort">withPort
-</a></li>
-<li><a href="#method-withRoundRobinLoadBalancingPolicy">withRoundRobinLoadBalancingPolicy
-</a></li>
-<li><a href="#method-withDatacenterAwareRoundRobinLoadBalancingPolicy">withDatacenterAwareRoundRobinLoadBalancingPolicy
-</a></li>
-<li><a href="#method-withTokenAwareRouting">withTokenAwareRouting
-</a></li>
-<li><a href="#method-withCredentials">withCredentials
-</a></li>
-<li><a href="#method-withConnectTimeout">withConnectTimeout
-</a></li>
-<li><a href="#method-withRequestTimeout">withRequestTimeout
-</a></li>
-<li><a href="#method-withSSL">withSSL
-</a></li>
-<li><a href="#method-withPersistentSessions">withPersistentSessions
-</a></li>
-<li><a href="#method-withProtocolVersion">withProtocolVersion
-</a></li>
-<li><a href="#method-withIOThreads">withIOThreads
-</a></li>
-<li><a href="#method-withConnectionsPerHost">withConnectionsPerHost
-</a></li>
-<li><a href="#method-withReconnectInterval">withReconnectInterval
-</a></li>
-<li><a href="#method-withLatencyAwareRouting">withLatencyAwareRouting
-</a></li>
-<li><a href="#method-withTCPNodelay">withTCPNodelay
-</a></li>
-<li><a href="#method-withTCPKeepalive">withTCPKeepalive
-</a></li>
-<li><a href="#method-withRetryPolicy">withRetryPolicy
-</a></li>
-<li><a href="#method-withTimestampGenerator">withTimestampGenerator
-</a></li>
-<li><a href="#method-withSchemaMetadata">withSchemaMetadata
-</a></li>
-</ul>
-</li>
-                  </ul>
-                </div>
-              </li>
-              
-              
-              
-            </ol>
-          </nav>
-        </div>
-      </div>
-    </header>
+    </div>
 
     <div class="container-fluid" id="content">
       <div class="row">
         <div class="col-md-3">
           <div id="navigation" class="side-nav" role="tablist" aria-multiselectable="true">
-            <h3>Contents</h3>
+            <h3><a href="../../../../">Contents</a></h3>
             <ul class="nav nav-pills nav-stacked">
   
   
-  
-  <li class="active">
-    <a href="../../../">API docs <small>index</small></a>
-    <ul class="nav nav-pills nav-stacked">
-  
-  
-  
   <li>
-    <a href="../../../class.Cassandra/">Cassandra <small>class</small></a>
-  </li>
-  
-  
-  
-  
-  <li class="active">
-    <a href="../../">Cassandra <small>namespace</small></a>
-    <ul class="nav nav-pills nav-stacked">
-  
-  
-  
-  <li>
-    <a href="../../interface.Aggregate/">Aggregate <small>interface</small></a>
-  </li>
-  
-  
-  
-  
-  <li>
-    <a href="../../class.BatchStatement/">BatchStatement <small>class</small></a>
-  </li>
-  
-  
-  
-  
-  <li>
-    <a href="../../class.Bigint/">Bigint <small>class</small></a>
-  </li>
-  
-  
-  
-  
-  <li>
-    <a href="../../class.Blob/">Blob <small>class</small></a>
-  </li>
-  
-  
-  
-  
-  <li class="active">
-    <a href="../">Cluster <small>namespace</small></a>
-    <ul class="nav nav-pills nav-stacked">
-  
-  
-  
-  <li class="active">
-    <a href="./" class="current">Builder <small>class</small></a>
+    <a href="../../../../features/">
+      Features <small>page</small>
+      
+      
+      <span class="glyphicon glyphicon-plus-sign pull-right" aria-hidden="true"></span>
+      
+      
+    </a>
     
   </li>
   
   
+  <li class="active">
+    <a href="../../../">
+      API docs <small>index</small>
+      
+      
+      <span class="glyphicon glyphicon-minus-sign pull-right" aria-hidden="true"></span>
+      
+      
+    </a>
+    <ul class="nav nav-pills nav-stacked">
+  
+  
+  <li class="active">
+    <a href="../../">
+      Cassandra <small>namespace</small>
+      
+      
+      <span class="glyphicon glyphicon-minus-sign pull-right" aria-hidden="true"></span>
+      
+      
+    </a>
+    <ul class="nav nav-pills nav-stacked">
+  
+  
+  <li class="active">
+    <a href="../">
+      Cluster <small>namespace</small>
+      
+      
+      <span class="glyphicon glyphicon-minus-sign pull-right" aria-hidden="true"></span>
+      
+      
+    </a>
+    <ul class="nav nav-pills nav-stacked">
+  
+  
+  <li class="active">
+    <a href="./" class="current">
+      Builder <small>class</small>
+      
+    </a>
+    <ul class="nav nav-pills nav-stacked">
+  
 </ul>
 
   </li>
-  
-  
-  
-  
-  <li>
-    <a href="../../interface.Cluster/">Cluster <small>interface</small></a>
-  </li>
-  
-  
-  
-  
-  <li>
-    <a href="../../class.Collection/">Collection <small>class</small></a>
-  </li>
-  
-  
-  
-  
-  <li>
-    <a href="../../interface.Column/">Column <small>interface</small></a>
-  </li>
-  
-  
-  
-  
-  <li>
-    <a href="../../class.Date/">Date <small>class</small></a>
-  </li>
-  
-  
-  
-  
-  <li>
-    <a href="../../class.Decimal/">Decimal <small>class</small></a>
-  </li>
-  
-  
-  
-  
-  <li>
-    <a href="../../class.DefaultAggregate/">DefaultAggregate <small>class</small></a>
-  </li>
-  
-  
-  
-  
-  <li>
-    <a href="../../class.DefaultCluster/">DefaultCluster <small>class</small></a>
-  </li>
-  
-  
-  
-  
-  <li>
-    <a href="../../class.DefaultColumn/">DefaultColumn <small>class</small></a>
-  </li>
-  
-  
-  
-  
-  <li>
-    <a href="../../class.DefaultIndex/">DefaultIndex <small>class</small></a>
-  </li>
-  
-  
-  
-  
-  <li>
-    <a href="../../class.DefaultKeyspace/">DefaultKeyspace <small>class</small></a>
-  </li>
-  
-  
-  
-  
-  <li>
-    <a href="../../class.DefaultMaterializedView/">DefaultMaterializedView <small>class</small></a>
-  </li>
-  
-  
-  
-  
-  <li>
-    <a href="../../class.DefaultSchema/">DefaultSchema <small>class</small></a>
-  </li>
-  
-  
-  
-  
-  <li>
-    <a href="../../class.DefaultSession/">DefaultSession <small>class</small></a>
-  </li>
-  
-  
-  
-  
-  <li>
-    <a href="../../class.DefaultTable/">DefaultTable <small>class</small></a>
-  </li>
-  
-  
-  
-  
-  <li>
-    <a href="../../interface.Exception/">Exception <small>interface</small></a>
-  </li>
-  
-  
-  
-  
-  <li>
-    <a href="../../Exception/">Exception <small>namespace</small></a>
-  </li>
-  
-  
-  
-  
-  <li>
-    <a href="../../class.ExecutionOptions/">ExecutionOptions <small>class</small></a>
-  </li>
-  
-  
-  
-  
-  <li>
-    <a href="../../class.Float/">Float <small>class</small></a>
-  </li>
-  
-  
-  
-  
-  <li>
-    <a href="../../interface.Function/">Function <small>interface</small></a>
-  </li>
-  
-  
-  
-  
-  <li>
-    <a href="../../interface.Future/">Future <small>interface</small></a>
-  </li>
-  
-  
-  
-  
-  <li>
-    <a href="../../class.FutureClose/">FutureClose <small>class</small></a>
-  </li>
-  
-  
-  
-  
-  <li>
-    <a href="../../class.FutureException/">FutureException <small>class</small></a>
-  </li>
-  
-  
-  
-  
-  <li>
-    <a href="../../class.FuturePreparedStatement/">FuturePreparedStatement <small>class</small></a>
-  </li>
-  
-  
-  
-  
-  <li>
-    <a href="../../class.FutureRows/">FutureRows <small>class</small></a>
-  </li>
-  
-  
-  
-  
-  <li>
-    <a href="../../class.FutureSession/">FutureSession <small>class</small></a>
-  </li>
-  
-  
-  
-  
-  <li>
-    <a href="../../class.FutureValue/">FutureValue <small>class</small></a>
-  </li>
-  
-  
-  
-  
-  <li>
-    <a href="../../interface.Index/">Index <small>interface</small></a>
-  </li>
-  
-  
-  
-  
-  <li>
-    <a href="../../class.Inet/">Inet <small>class</small></a>
-  </li>
-  
-  
-  
-  
-  <li>
-    <a href="../../interface.Keyspace/">Keyspace <small>interface</small></a>
-  </li>
-  
-  
-  
-  
-  <li>
-    <a href="../../class.Map/">Map <small>class</small></a>
-  </li>
-  
-  
-  
-  
-  <li>
-    <a href="../../interface.MaterializedView/">MaterializedView <small>interface</small></a>
-  </li>
-  
-  
-  
-  
-  <li>
-    <a href="../../interface.Numeric/">Numeric <small>interface</small></a>
-  </li>
-  
-  
-  
-  
-  <li>
-    <a href="../../class.PreparedStatement/">PreparedStatement <small>class</small></a>
-  </li>
-  
-  
-  
-  
-  <li>
-    <a href="../../interface.RetryPolicy/">RetryPolicy <small>interface</small></a>
-  </li>
-  
-  
-  
-  
-  <li>
-    <a href="../../RetryPolicy/">RetryPolicy <small>namespace</small></a>
-  </li>
-  
-  
-  
-  
-  <li>
-    <a href="../../class.Rows/">Rows <small>class</small></a>
-  </li>
-  
-  
-  
-  
-  <li>
-    <a href="../../SSLOptions/">SSLOptions <small>namespace</small></a>
-  </li>
-  
-  
-  
-  
-  <li>
-    <a href="../../class.SSLOptions/">SSLOptions <small>class</small></a>
-  </li>
-  
-  
-  
-  
-  <li>
-    <a href="../../interface.Schema/">Schema <small>interface</small></a>
-  </li>
-  
-  
-  
-  
-  <li>
-    <a href="../../interface.Session/">Session <small>interface</small></a>
-  </li>
-  
-  
-  
-  
-  <li>
-    <a href="../../class.Set/">Set <small>class</small></a>
-  </li>
-  
-  
-  
-  
-  <li>
-    <a href="../../class.SimpleStatement/">SimpleStatement <small>class</small></a>
-  </li>
-  
-  
-  
-  
-  <li>
-    <a href="../../class.Smallint/">Smallint <small>class</small></a>
-  </li>
-  
-  
-  
-  
-  <li>
-    <a href="../../interface.Statement/">Statement <small>interface</small></a>
-  </li>
-  
-  
-  
-  
-  <li>
-    <a href="../../interface.Table/">Table <small>interface</small></a>
-  </li>
-  
-  
-  
-  
-  <li>
-    <a href="../../class.Time/">Time <small>class</small></a>
-  </li>
-  
-  
-  
-  
-  <li>
-    <a href="../../class.Timestamp/">Timestamp <small>class</small></a>
-  </li>
-  
-  
-  
-  
-  <li>
-    <a href="../../interface.TimestampGenerator/">TimestampGenerator <small>interface</small></a>
-  </li>
-  
-  
-  
-  
-  <li>
-    <a href="../../TimestampGenerator/">TimestampGenerator <small>namespace</small></a>
-  </li>
-  
-  
-  
-  
-  <li>
-    <a href="../../class.Timeuuid/">Timeuuid <small>class</small></a>
-  </li>
-  
-  
-  
-  
-  <li>
-    <a href="../../class.Tinyint/">Tinyint <small>class</small></a>
-  </li>
-  
-  
-  
-  
-  <li>
-    <a href="../../class.Tuple/">Tuple <small>class</small></a>
-  </li>
-  
-  
-  
-  
-  <li>
-    <a href="../../class.Type/">Type <small>class</small></a>
-  </li>
-  
-  
-  
-  
-  <li>
-    <a href="../../Type/">Type <small>namespace</small></a>
-  </li>
-  
-  
-  
-  
-  <li>
-    <a href="../../class.UserTypeValue/">UserTypeValue <small>class</small></a>
-  </li>
-  
-  
-  
-  
-  <li>
-    <a href="../../class.Uuid/">Uuid <small>class</small></a>
-  </li>
-  
-  
-  
-  
-  <li>
-    <a href="../../interface.UuidInterface/">UuidInterface <small>interface</small></a>
-  </li>
-  
-  
-  
-  
-  <li>
-    <a href="../../interface.Value/">Value <small>interface</small></a>
-  </li>
-  
-  
-  
-  
-  <li>
-    <a href="../../class.Varint/">Varint <small>class</small></a>
-  </li>
-  
   
 </ul>
 
   </li>
   
   
+  <li>
+    <a href="../../Exception/">
+      Exception <small>namespace</small>
+      
+      
+      <span class="glyphicon glyphicon-plus-sign pull-right" aria-hidden="true"></span>
+      
+      
+    </a>
+    
+  </li>
   
   
   <li>
-    <a href="../../../class.DefaultFunction/">DefaultFunction <small>class</small></a>
+    <a href="../../RetryPolicy/">
+      RetryPolicy <small>namespace</small>
+      
+      
+      <span class="glyphicon glyphicon-plus-sign pull-right" aria-hidden="true"></span>
+      
+      
+    </a>
+    
   </li>
   
+  
+  <li>
+    <a href="../../SSLOptions/">
+      SSLOptions <small>namespace</small>
+      
+      
+      <span class="glyphicon glyphicon-plus-sign pull-right" aria-hidden="true"></span>
+      
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../../TimestampGenerator/">
+      TimestampGenerator <small>namespace</small>
+      
+      
+      <span class="glyphicon glyphicon-plus-sign pull-right" aria-hidden="true"></span>
+      
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../../Type/">
+      Type <small>namespace</small>
+      
+      
+      <span class="glyphicon glyphicon-plus-sign pull-right" aria-hidden="true"></span>
+      
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../../class.BatchStatement/">
+      BatchStatement <small>class</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../../class.Bigint/">
+      Bigint <small>class</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../../class.Blob/">
+      Blob <small>class</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../../class.Collection/">
+      Collection <small>class</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../../class.Custom/">
+      Custom <small>class</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../../class.Date/">
+      Date <small>class</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../../class.Decimal/">
+      Decimal <small>class</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../../class.DefaultAggregate/">
+      DefaultAggregate <small>class</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../../class.DefaultCluster/">
+      DefaultCluster <small>class</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../../interface.Aggregate/">
+      Aggregate <small>interface</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../../interface.Cluster/">
+      Cluster <small>interface</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../../interface.Column/">
+      Column <small>interface</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../../interface.Exception/">
+      Exception <small>interface</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../../interface.Function_/">
+      Function_ <small>interface</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../../interface.Future/">
+      Future <small>interface</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../../interface.Index/">
+      Index <small>interface</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../../interface.Keyspace/">
+      Keyspace <small>interface</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../../interface.Numeric/">
+      Numeric <small>interface</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../../interface.RetryPolicy/">
+      RetryPolicy <small>interface</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../../interface.Schema/">
+      Schema <small>interface</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../../interface.Session/">
+      Session <small>interface</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../../interface.Statement/">
+      Statement <small>interface</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../../interface.Table/">
+      Table <small>interface</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../../interface.TimestampGenerator/">
+      TimestampGenerator <small>interface</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../../interface.UuidInterface/">
+      UuidInterface <small>interface</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../../interface.Value/">
+      Value <small>interface</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../../class.DefaultColumn/">
+      DefaultColumn <small>class</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../../class.DefaultFunction/">
+      DefaultFunction <small>class</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../../class.DefaultIndex/">
+      DefaultIndex <small>class</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../../class.DefaultKeyspace/">
+      DefaultKeyspace <small>class</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../../class.DefaultMaterializedView/">
+      DefaultMaterializedView <small>class</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../../class.DefaultSchema/">
+      DefaultSchema <small>class</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../../class.DefaultSession/">
+      DefaultSession <small>class</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../../class.DefaultTable/">
+      DefaultTable <small>class</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../../class.Duration/">
+      Duration <small>class</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../../class.ExecutionOptions/">
+      ExecutionOptions <small>class</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../../class.Float_/">
+      Float_ <small>class</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../../class.FutureClose/">
+      FutureClose <small>class</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../../class.FutureException/">
+      FutureException <small>class</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../../class.FuturePreparedStatement/">
+      FuturePreparedStatement <small>class</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../../class.FutureRows/">
+      FutureRows <small>class</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../../class.FutureSession/">
+      FutureSession <small>class</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../../class.FutureValue/">
+      FutureValue <small>class</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../../class.Inet/">
+      Inet <small>class</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../../class.Map/">
+      Map <small>class</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../../class.MaterializedView/">
+      MaterializedView <small>class</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../../class.PreparedStatement/">
+      PreparedStatement <small>class</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../../class.Rows/">
+      Rows <small>class</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../../class.Set/">
+      Set <small>class</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../../class.SimpleStatement/">
+      SimpleStatement <small>class</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../../class.Smallint/">
+      Smallint <small>class</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../../class.SSLOptions/">
+      SSLOptions <small>class</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../../class.Time/">
+      Time <small>class</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../../class.Timestamp/">
+      Timestamp <small>class</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../../class.Timeuuid/">
+      Timeuuid <small>class</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../../class.Tinyint/">
+      Tinyint <small>class</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../../class.Tuple/">
+      Tuple <small>class</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../../class.Type/">
+      Type <small>class</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../../class.UserTypeValue/">
+      UserTypeValue <small>class</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../../class.Uuid/">
+      Uuid <small>class</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../../class.Varint/">
+      Varint <small>class</small>
+      
+    </a>
+    
+  </li>
   
 </ul>
 
   </li>
   
   
-  
-  
   <li>
-    <a href="../../../../features/">Features <small>page</small></a>
+    <a href="../../../class.Cassandra/">
+      Cassandra <small>class</small>
+      
+    </a>
+    
   </li>
   
+</ul>
+
+  </li>
   
 </ul>
 
           </div>
         </div>
         <div class="col-md-9 content">
+          <div class="crumbs-wrapper">
+            <nav id="crumbs" data-spy="affix" data-offset-top="130">
+              <ol class="breadcrumb">
+                
+                
+                
+                <li><a href="../../../../">Home</a></li>
+                
+                
+                
+                
+                
+                <li><a href="../../../">API docs</a></li>
+                
+                
+                
+                
+                
+                <li><a href="../../">Cassandra</a></li>
+                
+                
+                
+                
+                
+                <li><a href="../">Cluster</a></li>
+                
+                
+                
+                
+                
+                <li class="active">Builder</li>
+                
+                
+                
+              </ol>
+            </nav>
+          </div>
           
 
 <div class="page-header">
@@ -1018,8 +1162,168 @@
   </div>
   <div class="panel panel-default member-definition">
     <div class="panel-heading method-heading">
+      <code><a href="./">Cluster\Builder</a></code> <h3 id="method-withBlackListHosts" class="target">withBlackListHosts<a class="anchor" href="#method-withBlackListHosts" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+</h3> <big>(</big> <code>string</code> $hosts <big>)</big>
+    </div>
+    <div class="panel-body method-body">
+      <p>Sets the blacklist hosts. Any host in the blacklist will be ignored and a conneciton will not be established. This is useful for ensuring that the driver will not connection to a predefied set of hosts.</p>
+
+      <dl class="tags">
+<dt class="tag-title">Parameters:</dt>
+<dd class="tag-content"><table class="table table-striped param">
+<thead><tr>
+<th class="name">Name</th>
+<th class="type">Type</th>
+<th class="details">Details</th>
+</tr></thead>
+<tbody><tr>
+<td><var>$hosts</var></td>
+<td><code>string</code></td>
+<td>
+<p>A comma delimited list of addresses.</p>
+</td>
+</tr></tbody>
+</table></dd>
+<dt class="tag-title">Returns:</dt>
+<dd class="tag-content"><table class="table table-striped return">
+<thead><tr>
+<th class="type">Type</th>
+<th class="details">Details</th>
+</tr></thead>
+<tbody><tr>
+<td><code><a href="./">Cluster\Builder</a></code></td>
+<td>
+<p>self</p>
+</td>
+</tr></tbody>
+</table></dd>
+</dl>
+    </div>
+  </div>
+  <div class="panel panel-default member-definition">
+    <div class="panel-heading method-heading">
+      <code><a href="./">Cluster\Builder</a></code> <h3 id="method-withWhiteListHosts" class="target">withWhiteListHosts<a class="anchor" href="#method-withWhiteListHosts" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+</h3> <big>(</big> <code>string</code> $hosts <big>)</big>
+    </div>
+    <div class="panel-body method-body">
+      <p>Sets the whitelist hosts. Any host not in the whitelist will be ignored and a connection will not be established. This policy is useful for ensuring that the driver will only connect to a predefined set of hosts.</p>
+
+      <dl class="tags">
+<dt class="tag-title">Parameters:</dt>
+<dd class="tag-content"><table class="table table-striped param">
+<thead><tr>
+<th class="name">Name</th>
+<th class="type">Type</th>
+<th class="details">Details</th>
+</tr></thead>
+<tbody><tr>
+<td><var>$hosts</var></td>
+<td><code>string</code></td>
+<td>
+<p>A comma delimited list of addresses.</p>
+</td>
+</tr></tbody>
+</table></dd>
+<dt class="tag-title">Returns:</dt>
+<dd class="tag-content"><table class="table table-striped return">
+<thead><tr>
+<th class="type">Type</th>
+<th class="details">Details</th>
+</tr></thead>
+<tbody><tr>
+<td><code><a href="./">Cluster\Builder</a></code></td>
+<td>
+<p>self</p>
+</td>
+</tr></tbody>
+</table></dd>
+</dl>
+    </div>
+  </div>
+  <div class="panel panel-default member-definition">
+    <div class="panel-heading method-heading">
+      <code><a href="./">Cluster\Builder</a></code> <h3 id="method-withBlackListDCs" class="target">withBlackListDCs<a class="anchor" href="#method-withBlackListDCs" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+</h3> <big>(</big> <code>string</code> $dcs <big>)</big>
+    </div>
+    <div class="panel-body method-body">
+      <p>Sets the blacklist datacenters. Any datacenter in the blacklist will be ignored and a connection will not be established to any host in those datacenters. This policy is useful for ensuring the driver will not connect to any host in a specific datacenter.</p>
+
+      <dl class="tags">
+<dt class="tag-title">Parameters:</dt>
+<dd class="tag-content"><table class="table table-striped param">
+<thead><tr>
+<th class="name">Name</th>
+<th class="type">Type</th>
+<th class="details">Details</th>
+</tr></thead>
+<tbody><tr>
+<td><var>$dcs</var></td>
+<td><code>string</code></td>
+<td>
+<p>A comma delimited list of datacenters.</p>
+</td>
+</tr></tbody>
+</table></dd>
+<dt class="tag-title">Returns:</dt>
+<dd class="tag-content"><table class="table table-striped return">
+<thead><tr>
+<th class="type">Type</th>
+<th class="details">Details</th>
+</tr></thead>
+<tbody><tr>
+<td><code><a href="./">Cluster\Builder</a></code></td>
+<td>
+<p>self</p>
+</td>
+</tr></tbody>
+</table></dd>
+</dl>
+    </div>
+  </div>
+  <div class="panel panel-default member-definition">
+    <div class="panel-heading method-heading">
+      <code><a href="./">Cluster\Builder</a></code> <h3 id="method-withWhiteListDCs" class="target">withWhiteListDCs<a class="anchor" href="#method-withWhiteListDCs" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+</h3> <big>(</big> <code>string</code> $dcs <big>)</big>
+    </div>
+    <div class="panel-body method-body">
+      <p>Sets the whitelist datacenters. Any host not in a whitelisted datacenter will be ignored. This policy is useful for ensuring the driver will only connect to hosts in specific datacenters.</p>
+
+      <dl class="tags">
+<dt class="tag-title">Parameters:</dt>
+<dd class="tag-content"><table class="table table-striped param">
+<thead><tr>
+<th class="name">Name</th>
+<th class="type">Type</th>
+<th class="details">Details</th>
+</tr></thead>
+<tbody><tr>
+<td><var>$dcs</var></td>
+<td><code>string</code></td>
+<td>
+<p>A comma delimited list of datacenters.</p>
+</td>
+</tr></tbody>
+</table></dd>
+<dt class="tag-title">Returns:</dt>
+<dd class="tag-content"><table class="table table-striped return">
+<thead><tr>
+<th class="type">Type</th>
+<th class="details">Details</th>
+</tr></thead>
+<tbody><tr>
+<td><code><a href="./">Cluster\Builder</a></code></td>
+<td>
+<p>self</p>
+</td>
+</tr></tbody>
+</table></dd>
+</dl>
+    </div>
+  </div>
+  <div class="panel panel-default member-definition">
+    <div class="panel-heading method-heading">
       <code><a href="./">Cluster\Builder</a></code> <h3 id="method-withTokenAwareRouting" class="target">withTokenAwareRouting<a class="anchor" href="#method-withTokenAwareRouting" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
-</h3> <big>(</big> <code>bool</code> $enabled <big>=</big> <var>true</var> <big>)</big>
+</h3> <big>(</big> <code>bool</code> $enabled <big>)</big>
     </div>
     <div class="panel-body method-body">
       <p>Enable token aware routing.</p>
@@ -1062,7 +1366,7 @@
 </h3> <big>(</big> <code>string</code> $username, <code>string</code> $password <big>)</big>
     </div>
     <div class="panel-body method-body">
-      <p>Configures cassandra authentication.</p>
+      <p>Configures plain-text authentication.</p>
 
       <dl class="tags">
 <dt class="tag-title">Parameters:</dt>
@@ -1228,7 +1532,7 @@
   <div class="panel panel-default member-definition">
     <div class="panel-heading method-heading">
       <code><a href="./">Cluster\Builder</a></code> <h3 id="method-withPersistentSessions" class="target">withPersistentSessions<a class="anchor" href="#method-withPersistentSessions" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
-</h3> <big>(</big> <code>bool</code> $enabled <big>=</big> <var>true</var> <big>)</big>
+</h3> <big>(</big> <code>bool</code> $enabled <big>)</big>
     </div>
     <div class="panel-body method-body">
       <p>Enable persistent sessions and clusters.</p>
@@ -1245,7 +1549,7 @@
 <td><var>$enabled</var></td>
 <td><code>bool</code></td>
 <td>
-<p>whether to enable persistent sessions and clusters (optional)</p>
+<p>whether to enable persistent sessions and clusters</p>
 </td>
 </tr></tbody>
 </table></dd>
@@ -1289,7 +1593,7 @@
 <td><var>$version</var></td>
 <td><code>int</code></td>
 <td>
-<p>the actual protocol version, only <code>1</code>, <code>2</code>, <code>3</code>, or <code>4</code> are supported</p>
+<p>The protocol version</p>
 </td>
 </tr></tbody>
 </table></dd>
@@ -1354,7 +1658,7 @@
   <div class="panel panel-default member-definition">
     <div class="panel-heading method-heading">
       <code><a href="./">Cluster\Builder</a></code> <h3 id="method-withConnectionsPerHost" class="target">withConnectionsPerHost<a class="anchor" href="#method-withConnectionsPerHost" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
-</h3> <big>(</big> <code>int</code> $core <big>=</big> <var>1</var>, <code>int</code> $max <big>=</big> <var>2</var> <big>)</big>
+</h3> <big>(</big> <code>int</code> $core, <code>int</code> $max <big>)</big>
     </div>
     <div class="panel-body method-body">
       <p><code><a href="../../class.Set/">Cassandra\Set</a></code> the size of connection pools used by the driver. Pools are fixed when only <code>$core</code> is given, when a <code>$max</code> is specified as well, additional connections will be created automatically based on current load until the maximum number of connection has been reached. When request load goes down, extra connections are automatically cleaned up until only the core number of connections is left.</p>
@@ -1443,7 +1747,7 @@
   <div class="panel panel-default member-definition">
     <div class="panel-heading method-heading">
       <code><a href="./">Cluster\Builder</a></code> <h3 id="method-withLatencyAwareRouting" class="target">withLatencyAwareRouting<a class="anchor" href="#method-withLatencyAwareRouting" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
-</h3> <big>(</big> <code>bool</code> $enabled <big>=</big> <var>true</var> <big>)</big>
+</h3> <big>(</big> <code>bool</code> $enabled <big>)</big>
     </div>
     <div class="panel-body method-body">
       <p>Enables/disables latency-aware routing.</p>
@@ -1483,7 +1787,7 @@
   <div class="panel panel-default member-definition">
     <div class="panel-heading method-heading">
       <code><a href="./">Cluster\Builder</a></code> <h3 id="method-withTCPNodelay" class="target">withTCPNodelay<a class="anchor" href="#method-withTCPNodelay" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
-</h3> <big>(</big> <code>bool</code> $enabled <big>=</big> <var>true</var> <big>)</big>
+</h3> <big>(</big> <code>bool</code> $enabled <big>)</big>
     </div>
     <div class="panel-body method-body">
       <p>Disables nagle algorithm for lower latency.</p>
@@ -1540,7 +1844,7 @@
 <td><var>$delay</var></td>
 <td><code>float</code></td>
 <td>
-<p>the period of inactivity in seconds, after which the keepalive probe should be sent over the connection. If set to <code>null</code>, disables keepalive probing.</p>
+<p>The period of inactivity in seconds, after which the keepalive probe should be sent over the connection. If set to <code>null</code>, disables keepalive probing.</p>
 </td>
 </tr></tbody>
 </table></dd>
@@ -1563,7 +1867,7 @@
   <div class="panel panel-default member-definition">
     <div class="panel-heading method-heading">
       <code><a href="./">Cluster\Builder</a></code> <h3 id="method-withRetryPolicy" class="target">withRetryPolicy<a class="anchor" href="#method-withRetryPolicy" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
-</h3> <big>(</big> <code><a href="../../interface.RetryPolicy/">Cassandra\RetryPolicy</a></code> $policy <big>)</big>
+</h3> <big>(</big> <code>Cluster\RetryPolicy</code> $policy <big>)</big>
     </div>
     <div class="panel-body method-body">
       <p>Configures the retry policy.</p>
@@ -1578,7 +1882,7 @@
 </tr></thead>
 <tbody><tr>
 <td><var>$policy</var></td>
-<td><code><a href="../../interface.RetryPolicy/">Cassandra\RetryPolicy</a></code></td>
+<td><code>Cluster\RetryPolicy</code></td>
 <td>
 <p>the retry policy to use.</p>
 </td>
@@ -1643,7 +1947,7 @@
   <div class="panel panel-default member-definition">
     <div class="panel-heading method-heading">
       <code><a href="./">Cluster\Builder</a></code> <h3 id="method-withSchemaMetadata" class="target">withSchemaMetadata<a class="anchor" href="#method-withSchemaMetadata" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
-</h3> <big>(</big> <code>bool</code> $enable <big>=</big> <var>true</var> <big>)</big>
+</h3> <big>(</big> <code>bool</code> $enabled <big>)</big>
     </div>
     <div class="panel-body method-body">
       <p>Enables/disables <code><a href="../../interface.Schema/">Cassandra\Schema</a></code> Metadata.</p>
@@ -1659,10 +1963,136 @@
 <th class="details">Details</th>
 </tr></thead>
 <tbody><tr>
-<td><var>$enable</var></td>
+<td><var>$enabled</var></td>
 <td><code>bool</code></td>
 <td>
 <p>whether the driver fetches and maintains schema metadata.</p>
+</td>
+</tr></tbody>
+</table></dd>
+<dt class="tag-title">Returns:</dt>
+<dd class="tag-content"><table class="table table-striped return">
+<thead><tr>
+<th class="type">Type</th>
+<th class="details">Details</th>
+</tr></thead>
+<tbody><tr>
+<td><code><a href="./">Cluster\Builder</a></code></td>
+<td>
+<p>self</p>
+</td>
+</tr></tbody>
+</table></dd>
+</dl>
+    </div>
+  </div>
+  <div class="panel panel-default member-definition">
+    <div class="panel-heading method-heading">
+      <code><a href="./">Cluster\Builder</a></code> <h3 id="method-withHostnameResolution" class="target">withHostnameResolution<a class="anchor" href="#method-withHostnameResolution" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+</h3> <big>(</big> <code>bool</code> $enabled <big>)</big>
+    </div>
+    <div class="panel-body method-body">
+      <p>Enables/disables Hostname Resolution.</p>
+
+<p>If enabled the driver will resolve hostnames for IP addresses using reverse IP lookup. This is useful for authentication (Kerberos) or encryption SSL services that require a valid hostname for verification.</p>
+
+      <dl class="tags">
+<dt class="tag-title">Parameters:</dt>
+<dd class="tag-content"><table class="table table-striped param">
+<thead><tr>
+<th class="name">Name</th>
+<th class="type">Type</th>
+<th class="details">Details</th>
+</tr></thead>
+<tbody><tr>
+<td><var>$enabled</var></td>
+<td><code>bool</code></td>
+<td>
+<p>whether the driver uses hostname resolution.</p>
+</td>
+</tr></tbody>
+</table></dd>
+<dt class="tag-title">Returns:</dt>
+<dd class="tag-content"><table class="table table-striped return">
+<thead><tr>
+<th class="type">Type</th>
+<th class="details">Details</th>
+</tr></thead>
+<tbody><tr>
+<td><code><a href="./">Cluster\Builder</a></code></td>
+<td>
+<p>self</p>
+</td>
+</tr></tbody>
+</table></dd>
+</dl>
+    </div>
+  </div>
+  <div class="panel panel-default member-definition">
+    <div class="panel-heading method-heading">
+      <code><a href="./">Cluster\Builder</a></code> <h3 id="method-withRandomizedContactPoints" class="target">withRandomizedContactPoints<a class="anchor" href="#method-withRandomizedContactPoints" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+</h3> <big>(</big> <code>bool</code> $enabled <big>)</big>
+    </div>
+    <div class="panel-body method-body">
+      <p>Enables/disables Randomized Contact Points.</p>
+
+<p>If enabled this allows the driver randomly use contact points in order to evenly spread the load across the cluster and prevent hotspots/load spikes during notifications (e.g. massive schema change).</p>
+
+<p>Note: This setting should only be disabled for debugging and testing.</p>
+
+      <dl class="tags">
+<dt class="tag-title">Parameters:</dt>
+<dd class="tag-content"><table class="table table-striped param">
+<thead><tr>
+<th class="name">Name</th>
+<th class="type">Type</th>
+<th class="details">Details</th>
+</tr></thead>
+<tbody><tr>
+<td><var>$enabled</var></td>
+<td><code>bool</code></td>
+<td>
+<p>whether the driver uses randomized contact points.</p>
+</td>
+</tr></tbody>
+</table></dd>
+<dt class="tag-title">Returns:</dt>
+<dd class="tag-content"><table class="table table-striped return">
+<thead><tr>
+<th class="type">Type</th>
+<th class="details">Details</th>
+</tr></thead>
+<tbody><tr>
+<td><code><a href="./">Cluster\Builder</a></code></td>
+<td>
+<p>self</p>
+</td>
+</tr></tbody>
+</table></dd>
+</dl>
+    </div>
+  </div>
+  <div class="panel panel-default member-definition">
+    <div class="panel-heading method-heading">
+      <code><a href="./">Cluster\Builder</a></code> <h3 id="method-withConnectionHeartbeatInterval" class="target">withConnectionHeartbeatInterval<a class="anchor" href="#method-withConnectionHeartbeatInterval" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+</h3> <big>(</big> <code>float</code> $interval <big>)</big>
+    </div>
+    <div class="panel-body method-body">
+      <p>Specify interval in seconds that the driver should wait before attempting to send heartbeat messages and control the amount of time the connection must be idle before sending heartbeat messages. This is useful for preventing intermediate network devices from dropping connections.</p>
+
+      <dl class="tags">
+<dt class="tag-title">Parameters:</dt>
+<dd class="tag-content"><table class="table table-striped param">
+<thead><tr>
+<th class="name">Name</th>
+<th class="type">Type</th>
+<th class="details">Details</th>
+</tr></thead>
+<tbody><tr>
+<td><var>$interval</var></td>
+<td><code>float</code></td>
+<td>
+<p>interval in seconds (0 to disable heartbeat).</p>
 </td>
 </tr></tbody>
 </table></dd>

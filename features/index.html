@@ -22,282 +22,293 @@
       <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
   </head>
-  <body ng-app="docs" data-spy="scroll" data-target="#table-of-contents" data-offset="69">
-    <header class="container-fluid navbar">
-      <div class="row">
-        <div class="col-sm-4">
-          <a class="navbar-brand" href="../"><img alt="Brand" src="../img/logo.png">DataStax PHP Driver</a>
-        </div>
-        <div class="col-md-4 col-md-offset-4">
-          <div class="row">
-            <div class="col-md-12">
-              <ul class="list-inline" role="nav">
-                <li><a href="https://academy.datastax.com/" class="navbar-link">DataStax Academy</a></li>
-                <li><a href="http://www.datastax.com/dev/blog" class="navbar-link">Tech Blog</a></li>
-                <li><a href="http://www.datastax.com/what-we-offer/products-services/support" class="navbar-link">Support</a></li>
-              </ul>
-            </div>
+  <body ng-app="docs">
+    <div class="navbar">
+      <div class="container-fluid">
+        <div class="row row-offcanvas row-offcanvas-left">
+          <div class="col-sm-3 text-center">
+            <a class="ds-home" href="../"><img alt="Brand" src="../img/logo.png"></a>
+            <ul class="list-inline ds-sites" role="nav">
+              <li><a href="https://academy.datastax.com/" class="navbar-link">DataStax Academy</a></li>
+              <li><a href="http://www.datastax.com/dev/blog" class="navbar-link">Tech Blog</a></li>
+              <li><a href="http://www.datastax.com/what-we-offer/products-services/support" class="navbar-link">Support</a></li>
+            </ul>
           </div>
-          <div class="row">
-            <div class="col-md-8">
-              <form id="search" class="form-search dropdown visible-lg-block" ng-controller="search" ng-class="{open: hasResults}" role="search" ng-submit="submit()" data-spy="affix" data-offset-top="130">
-                <div class="form-group has-feedback">
-                  <input type="search" class="form-control input-sm mousetrap" placeholder="Search..." ng-model="q" ng-change="search('local')" ng-disabled="!searchReady" disabled data-hotkey="{down: moveDown, up: moveUp, esc: reset}" data-search>
-                </div>
-                <ul class="dropdown-menu search-results" role="menu">
-                  <li ng-repeat="result in results" ng-class="{'bg-warning': $index == current}"><a ng-href="{{basePath}}{{result.path}}"><span ng-bind-html="summary(result)"></span></a></li>
+          <div class="col-md-5">
+            <p class="lead pubtitle">DataStax PHP Driver</p>
+            
+            <div class="text-info">
+              <span class="text-warning">Attention:</span> Viewing documentation for version
+              <div class="btn-group">
+                <button id="current-version" class="btn btn-default btn-sm dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  1.3
+                  <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu" role="menu" aria-labelledby="current-version">
+                
+                  <li class="disabled"><a href="./">1.3</a></li>
+                
+                  <li><a href="../1.2/features/">1.2</a></li>
+                
+                  <li><a href="../1.1/features/">1.1</a></li>
+                
+                  <li><a href="../1.0/features/">1.0</a></li>
+                
                 </ul>
-              </form>
+              </div>
             </div>
-            <div class="col-md-4">
-              <a href="http://www.datastax.com/download" class="btn btn-primary btn-sm">Download</a>
-            </div>
+            
+          </div>
+          <div class="col-md-4">
+            <form id="search" class="form-search dropdown visible-lg-inline-block" ng-controller="search" ng-class="{open: hasResults}" role="search" ng-submit="submit()" data-spy="affix" data-offset-top="130">
+              <div class="form-group has-feedback">
+                <input type="search" class="form-control input-sm mousetrap" placeholder="Search..." ng-model="q" ng-change="search('1.3')" ng-disabled="!searchReady" disabled data-hotkey="{down: moveDown, up: moveUp, esc: reset}" data-search>
+              </div>
+              <ul class="dropdown-menu search-results" role="menu">
+                <li ng-repeat="result in results" ng-class="{'bg-warning': $index == current}"><a ng-href="{{basePath}}{{result.path}}"><span ng-bind-html="summary(result)"></span></a></li>
+              </ul>
+            </form>
+            <a href="http://www.datastax.com/download" class="btn btn-primary btn-sm">Download</a>
           </div>
         </div>
       </div>
-      <div class="row crumbs-wrapper">
-        <div class="col-md-12">
-          <nav id="crumbs" data-spy="affix" data-offset-top="130">
-            <ol class="breadcrumb">
-              
-              
-              
-              
-              <li><a href="../">Home</a></li>
-              
-              
-              
-              
-              
-              <li class="active">Features</li>
-              <li class="dropdown" id="table-of-contents">
-                <div class="btn-group">
-                  <button id="current-section" type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown">
-                    Jump to&#8230; <span class="caret"></span><span class="sr-only">Table of Contents</span>
-                  </button>
-                  <ul class="dropdown-menu nav nav-pills nav-stacked">
-                    <li><a href="#features">Page Top <span class="glyphicon glyphicon-chevron-up" aria-hidden="true"></span></a></li>
-<li>
-<a href="#usage">Usage
-</a><ul class="nav nav-pills nav-stacked">
-<li><a href="#specifying-addresses-of-cassandra-nodes">Specifying addresses of Cassandra nodes
-</a></li>
-<li><a href="#discovering-nodes-in-the-cluster">Discovering nodes in the cluster
-</a></li>
-<li><a href="#persistent-sessions">Persistent sessions
-</a></li>
-<li><a href="#configuring-load-balancing-policy">Configuring load balancing policy
-</a></li>
-<li><a href="#setting-protocol-version">Setting protocol version
-</a></li>
-<li><a href="#tweaking-driver-s-throughput">Tweaking driver’s throughput
-</a></li>
-<li><a href="#disabling-tcp-nodelay">Disabling TCP nodelay
-</a></li>
-<li><a href="#enabling-tcp-keepalive">Enabling TCP keepalive
-</a></li>
-<li><a href="#authenticating-via-password-authenticator">Authenticating via PasswordAuthenticator
-
-</a></li>
-<li><a href="#enabling-ssl-encryption">Enabling SSL encryption
-</a></li>
-<li><a href="#executing-queries">Executing queries
-</a></li>
-<li><a href="#parameterized-queries">Parameterized queries
-</a></li>
-<li><a href="#prepared-statements">Prepared statements
-</a></li>
-<li><a href="#executing-statements-in-parallel">Executing statements in parallel
-</a></li>
-<li><a href="#creating-keyspaces-and-tables">Creating keyspaces and tables
-</a></li>
-<li><a href="#batch-statements">Batch statements
-</a></li>
-<li><a href="#result-paging">Result paging
-</a></li>
-<li><a href="#consistency">Consistency
-</a></li>
-<li><a href="#schema-metadata">Schema Metadata
-</a></li>
-<li><a href="#data-types">Data Types
-</a></li>
-<li><a href="#logging">Logging
-</a></li>
-</ul>
-</li>
-<li>
-<a href="#architecture">Architecture
-</a><ul class="nav nav-pills nav-stacked"><li><a href="#persistent-sessions">Persistent sessions
-</a></li></ul>
-</li>
-                  </ul>
-                </div>
-              </li>
-              
-              
-              
-            </ol>
-          </nav>
-        </div>
-      </div>
-    </header>
+    </div>
 
     <div class="container-fluid" id="content">
       <div class="row">
         <div class="col-md-3">
           <div id="navigation" class="side-nav" role="tablist" aria-multiselectable="true">
-            <h3>Contents</h3>
+            <h3><a href="../">Contents</a></h3>
             <ul class="nav nav-pills nav-stacked">
   
   
-  
-  <li>
-    <a href="../api/">API docs <small>index</small></a>
-  </li>
-  
-  
-  
-  
   <li class="active">
-    <a href="./" class="current">Features <small>page</small></a>
+    <a href="./" class="current">
+      Features <small>page</small>
+      
+      
+      <span class="glyphicon glyphicon-minus-sign pull-right" aria-hidden="true"></span>
+      
+      
+    </a>
     <ul class="nav nav-pills nav-stacked">
   
   
-  
   <li>
-    <a href="datatypes/">Datatypes <small>feature</small></a>
+    <a href="datatypes/">
+      Datatypes <small>feature</small>
+      
+    </a>
+    
   </li>
   
   
-  
-  
   <li>
-    <a href="consistency_level/">Consistency Level <small>feature</small></a>
+    <a href="consistency_level/">
+      Consistency Level <small>feature</small>
+      
+    </a>
+    
   </li>
   
   
-  
-  
   <li>
-    <a href="client_side_timestamps/">Client-side timestamps <small>feature</small></a>
+    <a href="client_side_timestamps/">
+      Client-side timestamps <small>feature</small>
+      
+    </a>
+    
   </li>
   
   
-  
-  
   <li>
-    <a href="simple_statements/">Simple Statements <small>feature</small></a>
+    <a href="simple_statements/">
+      Simple Statements <small>feature</small>
+      
+    </a>
+    
   </li>
   
   
-  
-  
   <li>
-    <a href="prepared_statements/">Prepared Statements <small>feature</small></a>
+    <a href="prepared_statements/">
+      Prepared Statements <small>feature</small>
+      
+    </a>
+    
   </li>
   
   
-  
-  
   <li>
-    <a href="batch_statements/">Batch statements <small>feature</small></a>
+    <a href="batch_statements/">
+      Batch statements <small>feature</small>
+      
+    </a>
+    
   </li>
   
   
-  
-  
   <li>
-    <a href="logging/">Logging <small>feature</small></a>
+    <a href="logging/">
+      Logging <small>feature</small>
+      
+    </a>
+    
   </li>
   
   
-  
-  
   <li>
-    <a href="result_paging/">Result paging <small>feature</small></a>
+    <a href="result_paging/">
+      Result paging <small>feature</small>
+      
+    </a>
+    
   </li>
   
   
-  
-  
   <li>
-    <a href="schema_metadata/">Schema Metadata <small>feature</small></a>
+    <a href="schema_metadata/">
+      Schema Metadata <small>feature</small>
+      
+    </a>
+    
   </li>
   
   
-  
-  
   <li>
-    <a href="sessions/">Sessions <small>page</small></a>
+    <a href="sessions/">
+      Sessions <small>page</small>
+      
+      
+      <span class="glyphicon glyphicon-plus-sign pull-right" aria-hidden="true"></span>
+      
+      
+    </a>
+    
   </li>
   
   
-  
-  
   <li>
-    <a href="ssl_encryption/">SSL encryption <small>feature</small></a>
+    <a href="ssl_encryption/">
+      SSL encryption <small>feature</small>
+      
+    </a>
+    
   </li>
   
   
-  
-  
   <li>
-    <a href="user_defined_types/">User defined types <small>feature</small></a>
+    <a href="user_defined_types/">
+      User defined types <small>feature</small>
+      
+    </a>
+    
   </li>
   
   
-  
-  
   <li>
-    <a href="tuples/">Tuples <small>feature</small></a>
+    <a href="tuples/">
+      Tuples <small>feature</small>
+      
+    </a>
+    
   </li>
   
   
-  
-  
   <li>
-    <a href="collections/">Collections <small>feature</small></a>
+    <a href="collections/">
+      Collections <small>feature</small>
+      
+    </a>
+    
   </li>
   
   
-  
-  
   <li>
-    <a href="secondary_index_metadata/">Secondary Index Metadata <small>feature</small></a>
+    <a href="materialized_view_metadata/">
+      Materialized View Metadata <small>feature</small>
+      
+    </a>
+    
   </li>
   
   
-  
-  
   <li>
-    <a href="function_and_aggregate_metadata/">User-defined Function (UDF) and Aggregate Metadata (UDA) <small>feature</small></a>
+    <a href="retry_polices/">
+      Retry Policies <small>feature</small>
+      
+    </a>
+    
   </li>
   
   
-  
-  
   <li>
-    <a href="retry_polices/">Retry Policies <small>feature</small></a>
+    <a href="secondary_index_metadata/">
+      Secondary Index Metadata <small>feature</small>
+      
+    </a>
+    
   </li>
   
   
+  <li>
+    <a href="simple_string_queries/">
+      Simple string queries <small>feature</small>
+      
+    </a>
+    
+  </li>
   
   
   <li>
-    <a href="materialized_view_metadata/">Materialized View Metadata <small>feature</small></a>
+    <a href="function_and_aggregate_metadata/">
+      User-defined Function (UDF) and Aggregate Metadata (UDA) <small>feature</small>
+      
+    </a>
+    
   </li>
-  
   
 </ul>
 
   </li>
   
+  
+  <li>
+    <a href="../api/">
+      API docs <small>index</small>
+      
+      
+      <span class="glyphicon glyphicon-plus-sign pull-right" aria-hidden="true"></span>
+      
+      
+    </a>
+    
+  </li>
   
 </ul>
 
           </div>
         </div>
         <div class="col-md-9 content">
+          <div class="crumbs-wrapper">
+            <nav id="crumbs" data-spy="affix" data-offset-top="130">
+              <ol class="breadcrumb">
+                
+                
+                
+                <li><a href="../">Home</a></li>
+                
+                
+                
+                
+                
+                <li class="active">Features</li>
+                
+                
+                
+              </ol>
+            </nav>
+          </div>
           
 
 <h1 id="features" class="target">Features<a class="anchor" href="#features" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
@@ -491,9 +502,9 @@
 
 <span class="nv">$session</span><span class="o">-&gt;</span><span class="na">execute</span><span class="p">(</span>
     <span class="k">new</span> <span class="nx">Cassandra\SimpleStatement</span><span class="p">(</span><span class="s2">"UPDATE users SET age = ? WHERE user_name = ?"</span><span class="p">),</span>
-    <span class="k">new</span> <span class="nx">Cassandra\ExecutionOptions</span><span class="p">(</span><span class="k">array</span><span class="p">(</span>
+    <span class="k">array</span><span class="p">(</span>
         <span class="s1">'arguments'</span> <span class="o">=&gt;</span> <span class="k">array</span><span class="p">(</span><span class="mi">41</span><span class="p">,</span> <span class="s1">'Sam'</span><span class="p">)</span>
-    <span class="p">))</span>
+    <span class="p">)</span>
 <span class="p">);</span>
 </code></pre>
 <p>For frequently executed queries, it’s strongly recommended to use prepared statements. As a rule of thumb, if your application is sending a request more than once, a prepared statement is almost always the right choice.</p>
@@ -506,9 +517,9 @@
 
 <span class="nv">$statement</span> <span class="o">=</span> <span class="nv">$session</span><span class="o">-&gt;</span><span class="na">prepare</span><span class="p">(</span><span class="s1">'INSERT INTO users (username, email) VALUES (?, ?)'</span><span class="p">);</span>
 
-<span class="nv">$session</span><span class="o">-&gt;</span><span class="na">execute</span><span class="p">(</span><span class="nv">$statement</span><span class="p">,</span> <span class="k">new</span> <span class="nx">Cassandra\ExecutionOptions</span><span class="p">(</span><span class="k">array</span><span class="p">(</span>
-    <span class="s1">'arguments'</span> <span class="o">=&gt;</span> <span class="k">array</span><span class="p">(</span><span class="s1">'avalanche123'</span><span class="p">,</span> <span class="s1">'bulat.shakirzyanov@datastax.com'</span><span class="p">)</span>
-<span class="p">)));</span>
+<span class="nv">$session</span><span class="o">-&gt;</span><span class="na">execute</span><span class="p">(</span><span class="nv">$statement</span><span class="p">,</span> <span class="k">array</span><span class="p">(</span>
+    <span class="s1">'arguments'</span> <span class="o">=&gt;</span> <span class="k">array</span><span class="p">(</span><span class="s1">'user1'</span><span class="p">,</span> <span class="s1">'user1@mycompany.com'</span><span class="p">)</span>
+<span class="p">));</span>
 </code></pre>
 <p>A prepared statement can be run many times, but the CQL parsing will only be done once on each node. Use prepared statements for queries you run over and over again.</p>
 
@@ -528,9 +539,9 @@
 
 <span class="c1">// execute all statements in background
 </span><span class="k">foreach</span> <span class="p">(</span><span class="nv">$data</span> <span class="k">as</span> <span class="nv">$arguments</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nv">$futures</span><span class="p">[]</span><span class="o">=</span> <span class="nv">$session</span><span class="o">-&gt;</span><span class="na">executeAsync</span><span class="p">(</span><span class="nv">$statement</span><span class="p">,</span> <span class="k">new</span> <span class="nx">ExecutionOptions</span><span class="p">(</span><span class="k">array</span><span class="p">(</span>
+    <span class="nv">$futures</span><span class="p">[]</span><span class="o">=</span> <span class="nv">$session</span><span class="o">-&gt;</span><span class="na">executeAsync</span><span class="p">(</span><span class="nv">$statement</span><span class="p">,</span> <span class="k">array</span><span class="p">(</span>
                     <span class="s1">'arguments'</span> <span class="o">=&gt;</span> <span class="nv">$arguments</span>
-                <span class="p">)));</span>
+                <span class="p">));</span>
 <span class="p">}</span>
 
 <span class="c1">// wait for all statements to complete
@@ -621,7 +632,7 @@ EOD
 <pre class="highlight"><code><span class="cp">&lt;?php</span>
 
 <span class="nv">$statement</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Cassandra\SimpleStatement</span><span class="p">(</span><span class="s2">"SELECT * FROM large_table WHERE id = 'partition_with_lots_of_data'"</span><span class="p">);</span>
-<span class="nv">$result</span>    <span class="o">=</span> <span class="nv">$session</span><span class="o">-&gt;</span><span class="na">execute</span><span class="p">(</span><span class="nv">$statement</span><span class="p">,</span> <span class="k">new</span> <span class="nx">Cassandra\ExecutionOptions</span><span class="p">(</span><span class="k">array</span><span class="p">(</span><span class="s1">'page_size'</span> <span class="o">=&gt;</span> <span class="mi">100</span><span class="p">)));</span>
+<span class="nv">$result</span>    <span class="o">=</span> <span class="nv">$session</span><span class="o">-&gt;</span><span class="na">execute</span><span class="p">(</span><span class="nv">$statement</span><span class="p">,</span> <span class="k">array</span><span class="p">(</span><span class="s1">'page_size'</span> <span class="o">=&gt;</span> <span class="mi">100</span><span class="p">));</span>
 
 <span class="k">while</span> <span class="p">(</span><span class="nv">$result</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">foreach</span> <span class="p">(</span><span class="nv">$result</span> <span class="k">as</span> <span class="nv">$row</span><span class="p">)</span> <span class="p">{</span>
@@ -650,20 +661,20 @@ EOD
 
 <span class="nv">$session</span><span class="o">-&gt;</span><span class="na">execute</span><span class="p">(</span>
     <span class="k">new</span> <span class="nx">Cassandra\SimpleStatement</span><span class="p">(</span><span class="s1">'SELECT * FROM users'</span><span class="p">),</span>
-    <span class="k">new</span> <span class="nx">Cassandra\ExecutionOptions</span><span class="p">(</span><span class="k">array</span><span class="p">(</span><span class="s1">'consistency'</span> <span class="o">=&gt;</span> <span class="nx">Cassandra</span><span class="o">::</span><span class="na">CONSISTENCY_LOCAL_QUORUM</span><span class="p">))</span>
+    <span class="k">array</span><span class="p">(</span><span class="s1">'consistency'</span> <span class="o">=&gt;</span> <span class="nx">Cassandra</span><span class="o">::</span><span class="na">CONSISTENCY_LOCAL_QUORUM</span><span class="p">)</span>
 <span class="p">);</span>
 
 <span class="nv">$statement</span> <span class="o">=</span> <span class="nv">$session</span><span class="o">-&gt;</span><span class="na">prepare</span><span class="p">(</span><span class="s1">'SELECT * FROM users'</span><span class="p">);</span>
-<span class="nv">$session</span><span class="o">-&gt;</span><span class="na">execute</span><span class="p">(</span><span class="nv">$statement</span><span class="p">,</span> <span class="k">new</span> <span class="nx">Cassandra\ExecutionOptions</span><span class="p">(</span><span class="k">array</span><span class="p">(</span>
+<span class="nv">$session</span><span class="o">-&gt;</span><span class="na">execute</span><span class="p">(</span><span class="nv">$statement</span><span class="p">,</span> <span class="k">array</span><span class="p">(</span>
     <span class="s1">'consistency'</span> <span class="o">=&gt;</span> <span class="nx">Cassandra</span><span class="o">::</span><span class="na">CONSISTENCY_LOCAL_QUORUM</span>
-<span class="p">)));</span>
+<span class="p">));</span>
 
 <span class="nv">$batch</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Cassandra\BatchStatement</span><span class="p">();</span>
 <span class="nv">$batch</span><span class="o">-&gt;</span><span class="na">add</span><span class="p">(</span><span class="k">new</span> <span class="nx">Cassandra\SimpleStatement</span><span class="p">(</span><span class="s2">"UPDATE users SET email = 'sue@foobar.com' WHERE id = 'sue'"</span><span class="p">));</span>
 <span class="nv">$batch</span><span class="o">-&gt;</span><span class="na">add</span><span class="p">(</span><span class="k">new</span> <span class="nx">Cassandra\SimpleStatement</span><span class="p">(</span><span class="s2">"UPDATE users SET email = 'tom@foobar.com' WHERE id = 'tom'"</span><span class="p">));</span>
-<span class="nv">$session</span><span class="o">-&gt;</span><span class="na">execute</span><span class="p">(</span><span class="nv">$batch</span><span class="p">,</span> <span class="k">new</span> <span class="nx">Cassandra\ExecutionOptions</span><span class="p">(</span><span class="k">array</span><span class="p">(</span>
+<span class="nv">$session</span><span class="o">-&gt;</span><span class="na">execute</span><span class="p">(</span><span class="nv">$batch</span><span class="p">,</span> <span class="k">array</span><span class="p">(</span>
     <span class="s1">'consistency'</span> <span class="o">=&gt;</span> <span class="nx">Cassandra</span><span class="o">::</span><span class="na">CONSISTENCY_LOCAL_QUORUM</span>
-<span class="p">)));</span>
+<span class="p">));</span>
 </code></pre>
 <p><a href="../api/Cassandra/class.ExecutionOptions/">Read more about <code>Cassandra\ExecutionOptions</code></a></p>
 
@@ -736,7 +747,7 @@ Schema metadata includes information about keyspace, tables and columns and it a
 
 <p>You can also use the rich type metadata API to define and inspect types, as well as validate data objects.</p>
 
-<p>The example below defines and creates a <a href="../api/Cassandra/class.Map/"><code>Cassandra\Map</code></a> using <a href="http://datastax.github.io/php-driver/api/Cassandra/interface.Type/"><code>Cassandra\Type</code></a> interface.</p>
+<p>The example below defines and creates a <a href="../api/Cassandra/class.Map/"><code>Cassandra\Map</code></a> using <a href="../api/Cassandra/class.Type/"><code>Cassandra\Type</code></a> interface.</p>
 <pre class="highlight"><code><span class="cp">&lt;?php</span>
 
 <span class="nv">$map</span> <span class="o">=</span> <span class="nx">Cassandra\Type</span><span class="o">::</span><span class="na">map</span><span class="p">(</span><span class="nx">Cassandra\Type</span><span class="o">::</span><span class="na">varchar</span><span class="p">(),</span> <span class="nx">Cassandra\Type</span><span class="o">::</span><span class="na">int</span><span class="p">())</span>

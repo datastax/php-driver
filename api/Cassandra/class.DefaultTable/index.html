@@ -22,648 +22,785 @@
       <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
   </head>
-  <body ng-app="docs" data-spy="scroll" data-target="#table-of-contents" data-offset="69">
-    <header class="container-fluid navbar">
-      <div class="row">
-        <div class="col-sm-4">
-          <a class="navbar-brand" href="../../../"><img alt="Brand" src="../../../img/logo.png">DataStax PHP Driver</a>
-        </div>
-        <div class="col-md-4 col-md-offset-4">
-          <div class="row">
-            <div class="col-md-12">
-              <ul class="list-inline" role="nav">
-                <li><a href="https://academy.datastax.com/" class="navbar-link">DataStax Academy</a></li>
-                <li><a href="http://www.datastax.com/dev/blog" class="navbar-link">Tech Blog</a></li>
-                <li><a href="http://www.datastax.com/what-we-offer/products-services/support" class="navbar-link">Support</a></li>
-              </ul>
-            </div>
+  <body ng-app="docs">
+    <div class="navbar">
+      <div class="container-fluid">
+        <div class="row row-offcanvas row-offcanvas-left">
+          <div class="col-sm-3 text-center">
+            <a class="ds-home" href="../../../"><img alt="Brand" src="../../../img/logo.png"></a>
+            <ul class="list-inline ds-sites" role="nav">
+              <li><a href="https://academy.datastax.com/" class="navbar-link">DataStax Academy</a></li>
+              <li><a href="http://www.datastax.com/dev/blog" class="navbar-link">Tech Blog</a></li>
+              <li><a href="http://www.datastax.com/what-we-offer/products-services/support" class="navbar-link">Support</a></li>
+            </ul>
           </div>
-          <div class="row">
-            <div class="col-md-8">
-              <form id="search" class="form-search dropdown visible-lg-block" ng-controller="search" ng-class="{open: hasResults}" role="search" ng-submit="submit()" data-spy="affix" data-offset-top="130">
-                <div class="form-group has-feedback">
-                  <input type="search" class="form-control input-sm mousetrap" placeholder="Search..." ng-model="q" ng-change="search('local')" ng-disabled="!searchReady" disabled data-hotkey="{down: moveDown, up: moveUp, esc: reset}" data-search>
-                </div>
-                <ul class="dropdown-menu search-results" role="menu">
-                  <li ng-repeat="result in results" ng-class="{'bg-warning': $index == current}"><a ng-href="{{basePath}}{{result.path}}"><span ng-bind-html="summary(result)"></span></a></li>
+          <div class="col-md-5">
+            <p class="lead pubtitle">DataStax PHP Driver</p>
+            
+            <div class="text-info">
+              <span class="text-warning">Attention:</span> Viewing documentation for version
+              <div class="btn-group">
+                <button id="current-version" class="btn btn-default btn-sm dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  1.3
+                  <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu" role="menu" aria-labelledby="current-version">
+                
+                  <li class="disabled"><a href="./">1.3</a></li>
+                
+                  <li><a href="../../../1.2/api/Cassandra/class.DefaultTable/">1.2</a></li>
+                
+                  <li><a href="../../../1.1/api/Cassandra/class.DefaultTable/">1.1</a></li>
+                
+                  <li><a href="../../../1.0/api/Cassandra/class.DefaultTable/">1.0</a></li>
+                
                 </ul>
-              </form>
+              </div>
             </div>
-            <div class="col-md-4">
-              <a href="http://www.datastax.com/download" class="btn btn-primary btn-sm">Download</a>
-            </div>
+            
+          </div>
+          <div class="col-md-4">
+            <form id="search" class="form-search dropdown visible-lg-inline-block" ng-controller="search" ng-class="{open: hasResults}" role="search" ng-submit="submit()" data-spy="affix" data-offset-top="130">
+              <div class="form-group has-feedback">
+                <input type="search" class="form-control input-sm mousetrap" placeholder="Search..." ng-model="q" ng-change="search('1.3')" ng-disabled="!searchReady" disabled data-hotkey="{down: moveDown, up: moveUp, esc: reset}" data-search>
+              </div>
+              <ul class="dropdown-menu search-results" role="menu">
+                <li ng-repeat="result in results" ng-class="{'bg-warning': $index == current}"><a ng-href="{{basePath}}{{result.path}}"><span ng-bind-html="summary(result)"></span></a></li>
+              </ul>
+            </form>
+            <a href="http://www.datastax.com/download" class="btn btn-primary btn-sm">Download</a>
           </div>
         </div>
       </div>
-      <div class="row crumbs-wrapper">
-        <div class="col-md-12">
-          <nav id="crumbs" data-spy="affix" data-offset-top="130">
-            <ol class="breadcrumb">
-              
-              
-              
-              
-              <li><a href="../../../">Home</a></li>
-              
-              
-              
-              
-              
-              <li><a href="../../">API docs</a></li>
-              
-              
-              
-              
-              
-              <li><a href="../">Cassandra</a></li>
-              
-              
-              
-              
-              
-              <li class="active">DefaultTable</li>
-              <li class="dropdown" id="table-of-contents">
-                <div class="btn-group">
-                  <button id="current-section" type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown">
-                    Jump to&#8230; <span class="caret"></span><span class="sr-only">Table of Contents</span>
-                  </button>
-                  <ul class="dropdown-menu nav nav-pills nav-stacked">
-                    <li><a href="#class-DefaultTable">Page Top <span class="glyphicon glyphicon-chevron-up" aria-hidden="true"></span></a></li>
-<li><a href="#implements">Implements
-</a></li>
-<li>
-<a href="#methods">Methods
-</a><ul class="nav nav-pills nav-stacked">
-<li><a href="#method-name">name
-</a></li>
-<li><a href="#method-option">option
-</a></li>
-<li><a href="#method-options">options
-</a></li>
-<li><a href="#method-comment">comment
-</a></li>
-<li><a href="#method-readRepairChance">readRepairChance
-</a></li>
-<li><a href="#method-localReadRepairChance">localReadRepairChance
-</a></li>
-<li><a href="#method-gcGraceSeconds">gcGraceSeconds
-</a></li>
-<li><a href="#method-caching">caching
-</a></li>
-<li><a href="#method-bloomFilterFPChance">bloomFilterFPChance
-</a></li>
-<li><a href="#method-memtableFlushPeriodMs">memtableFlushPeriodMs
-</a></li>
-<li><a href="#method-defaultTTL">defaultTTL
-</a></li>
-<li><a href="#method-speculativeRetry">speculativeRetry
-</a></li>
-<li><a href="#method-indexInterval">indexInterval
-</a></li>
-<li><a href="#method-compactionStrategyClassName">compactionStrategyClassName
-</a></li>
-<li><a href="#method-compactionStrategyOptions">compactionStrategyOptions
-</a></li>
-<li><a href="#method-compressionParameters">compressionParameters
-</a></li>
-<li><a href="#method-populateIOCacheOnFlush">populateIOCacheOnFlush
-</a></li>
-<li><a href="#method-replicateOnWrite">replicateOnWrite
-</a></li>
-<li><a href="#method-maxIndexInterval">maxIndexInterval
-</a></li>
-<li><a href="#method-minIndexInterval">minIndexInterval
-</a></li>
-<li><a href="#method-column">column
-</a></li>
-<li><a href="#method-columns">columns
-</a></li>
-<li><a href="#method-partitionKey">partitionKey
-</a></li>
-<li><a href="#method-primaryKey">primaryKey
-</a></li>
-<li><a href="#method-clusteringKey">clusteringKey
-</a></li>
-<li><a href="#method-clusteringOrder">clusteringOrder
-</a></li>
-</ul>
-</li>
-                  </ul>
-                </div>
-              </li>
-              
-              
-              
-            </ol>
-          </nav>
-        </div>
-      </div>
-    </header>
+    </div>
 
     <div class="container-fluid" id="content">
       <div class="row">
         <div class="col-md-3">
           <div id="navigation" class="side-nav" role="tablist" aria-multiselectable="true">
-            <h3>Contents</h3>
+            <h3><a href="../../../">Contents</a></h3>
             <ul class="nav nav-pills nav-stacked">
   
   
-  
-  <li class="active">
-    <a href="../../">API docs <small>index</small></a>
-    <ul class="nav nav-pills nav-stacked">
-  
-  
-  
   <li>
-    <a href="../../class.Cassandra/">Cassandra <small>class</small></a>
-  </li>
-  
-  
-  
-  
-  <li class="active">
-    <a href="../">Cassandra <small>namespace</small></a>
-    <ul class="nav nav-pills nav-stacked">
-  
-  
-  
-  <li>
-    <a href="../interface.Aggregate/">Aggregate <small>interface</small></a>
-  </li>
-  
-  
-  
-  
-  <li>
-    <a href="../class.BatchStatement/">BatchStatement <small>class</small></a>
-  </li>
-  
-  
-  
-  
-  <li>
-    <a href="../class.Bigint/">Bigint <small>class</small></a>
-  </li>
-  
-  
-  
-  
-  <li>
-    <a href="../class.Blob/">Blob <small>class</small></a>
-  </li>
-  
-  
-  
-  
-  <li>
-    <a href="../Cluster/">Cluster <small>namespace</small></a>
-  </li>
-  
-  
-  
-  
-  <li>
-    <a href="../interface.Cluster/">Cluster <small>interface</small></a>
-  </li>
-  
-  
-  
-  
-  <li>
-    <a href="../class.Collection/">Collection <small>class</small></a>
-  </li>
-  
-  
-  
-  
-  <li>
-    <a href="../interface.Column/">Column <small>interface</small></a>
-  </li>
-  
-  
-  
-  
-  <li>
-    <a href="../class.Date/">Date <small>class</small></a>
-  </li>
-  
-  
-  
-  
-  <li>
-    <a href="../class.Decimal/">Decimal <small>class</small></a>
-  </li>
-  
-  
-  
-  
-  <li>
-    <a href="../class.DefaultAggregate/">DefaultAggregate <small>class</small></a>
-  </li>
-  
-  
-  
-  
-  <li>
-    <a href="../class.DefaultCluster/">DefaultCluster <small>class</small></a>
-  </li>
-  
-  
-  
-  
-  <li>
-    <a href="../class.DefaultColumn/">DefaultColumn <small>class</small></a>
-  </li>
-  
-  
-  
-  
-  <li>
-    <a href="../class.DefaultIndex/">DefaultIndex <small>class</small></a>
-  </li>
-  
-  
-  
-  
-  <li>
-    <a href="../class.DefaultKeyspace/">DefaultKeyspace <small>class</small></a>
-  </li>
-  
-  
-  
-  
-  <li>
-    <a href="../class.DefaultMaterializedView/">DefaultMaterializedView <small>class</small></a>
-  </li>
-  
-  
-  
-  
-  <li>
-    <a href="../class.DefaultSchema/">DefaultSchema <small>class</small></a>
-  </li>
-  
-  
-  
-  
-  <li>
-    <a href="../class.DefaultSession/">DefaultSession <small>class</small></a>
-  </li>
-  
-  
-  
-  
-  <li class="active">
-    <a href="./" class="current">DefaultTable <small>class</small></a>
+    <a href="../../../features/">
+      Features <small>page</small>
+      
+      
+      <span class="glyphicon glyphicon-plus-sign pull-right" aria-hidden="true"></span>
+      
+      
+    </a>
     
   </li>
   
   
+  <li class="active">
+    <a href="../../">
+      API docs <small>index</small>
+      
+      
+      <span class="glyphicon glyphicon-minus-sign pull-right" aria-hidden="true"></span>
+      
+      
+    </a>
+    <ul class="nav nav-pills nav-stacked">
+  
+  
+  <li class="active">
+    <a href="../">
+      Cassandra <small>namespace</small>
+      
+      
+      <span class="glyphicon glyphicon-minus-sign pull-right" aria-hidden="true"></span>
+      
+      
+    </a>
+    <ul class="nav nav-pills nav-stacked">
   
   
   <li>
-    <a href="../interface.Exception/">Exception <small>interface</small></a>
+    <a href="../Cluster/">
+      Cluster <small>namespace</small>
+      
+      
+      <span class="glyphicon glyphicon-plus-sign pull-right" aria-hidden="true"></span>
+      
+      
+    </a>
+    
   </li>
-  
-  
   
   
   <li>
-    <a href="../Exception/">Exception <small>namespace</small></a>
+    <a href="../Exception/">
+      Exception <small>namespace</small>
+      
+      
+      <span class="glyphicon glyphicon-plus-sign pull-right" aria-hidden="true"></span>
+      
+      
+    </a>
+    
   </li>
-  
-  
   
   
   <li>
-    <a href="../class.ExecutionOptions/">ExecutionOptions <small>class</small></a>
+    <a href="../RetryPolicy/">
+      RetryPolicy <small>namespace</small>
+      
+      
+      <span class="glyphicon glyphicon-plus-sign pull-right" aria-hidden="true"></span>
+      
+      
+    </a>
+    
   </li>
-  
-  
   
   
   <li>
-    <a href="../class.Float/">Float <small>class</small></a>
+    <a href="../SSLOptions/">
+      SSLOptions <small>namespace</small>
+      
+      
+      <span class="glyphicon glyphicon-plus-sign pull-right" aria-hidden="true"></span>
+      
+      
+    </a>
+    
   </li>
-  
-  
   
   
   <li>
-    <a href="../interface.Function/">Function <small>interface</small></a>
+    <a href="../TimestampGenerator/">
+      TimestampGenerator <small>namespace</small>
+      
+      
+      <span class="glyphicon glyphicon-plus-sign pull-right" aria-hidden="true"></span>
+      
+      
+    </a>
+    
   </li>
-  
-  
   
   
   <li>
-    <a href="../interface.Future/">Future <small>interface</small></a>
+    <a href="../Type/">
+      Type <small>namespace</small>
+      
+      
+      <span class="glyphicon glyphicon-plus-sign pull-right" aria-hidden="true"></span>
+      
+      
+    </a>
+    
   </li>
-  
-  
   
   
   <li>
-    <a href="../class.FutureClose/">FutureClose <small>class</small></a>
+    <a href="../class.BatchStatement/">
+      BatchStatement <small>class</small>
+      
+    </a>
+    
   </li>
-  
-  
   
   
   <li>
-    <a href="../class.FutureException/">FutureException <small>class</small></a>
+    <a href="../class.Bigint/">
+      Bigint <small>class</small>
+      
+    </a>
+    
   </li>
-  
-  
   
   
   <li>
-    <a href="../class.FuturePreparedStatement/">FuturePreparedStatement <small>class</small></a>
+    <a href="../class.Blob/">
+      Blob <small>class</small>
+      
+    </a>
+    
   </li>
-  
-  
   
   
   <li>
-    <a href="../class.FutureRows/">FutureRows <small>class</small></a>
+    <a href="../class.Collection/">
+      Collection <small>class</small>
+      
+    </a>
+    
   </li>
-  
-  
   
   
   <li>
-    <a href="../class.FutureSession/">FutureSession <small>class</small></a>
+    <a href="../class.Custom/">
+      Custom <small>class</small>
+      
+    </a>
+    
   </li>
-  
-  
   
   
   <li>
-    <a href="../class.FutureValue/">FutureValue <small>class</small></a>
+    <a href="../class.Date/">
+      Date <small>class</small>
+      
+    </a>
+    
   </li>
-  
-  
   
   
   <li>
-    <a href="../interface.Index/">Index <small>interface</small></a>
+    <a href="../class.Decimal/">
+      Decimal <small>class</small>
+      
+    </a>
+    
   </li>
-  
-  
   
   
   <li>
-    <a href="../class.Inet/">Inet <small>class</small></a>
+    <a href="../class.DefaultAggregate/">
+      DefaultAggregate <small>class</small>
+      
+    </a>
+    
   </li>
-  
-  
   
   
   <li>
-    <a href="../interface.Keyspace/">Keyspace <small>interface</small></a>
+    <a href="../class.DefaultCluster/">
+      DefaultCluster <small>class</small>
+      
+    </a>
+    
   </li>
-  
-  
   
   
   <li>
-    <a href="../class.Map/">Map <small>class</small></a>
+    <a href="../interface.Aggregate/">
+      Aggregate <small>interface</small>
+      
+    </a>
+    
   </li>
-  
-  
   
   
   <li>
-    <a href="../interface.MaterializedView/">MaterializedView <small>interface</small></a>
+    <a href="../interface.Cluster/">
+      Cluster <small>interface</small>
+      
+    </a>
+    
   </li>
-  
-  
   
   
   <li>
-    <a href="../interface.Numeric/">Numeric <small>interface</small></a>
+    <a href="../interface.Column/">
+      Column <small>interface</small>
+      
+    </a>
+    
   </li>
-  
-  
   
   
   <li>
-    <a href="../class.PreparedStatement/">PreparedStatement <small>class</small></a>
+    <a href="../interface.Exception/">
+      Exception <small>interface</small>
+      
+    </a>
+    
   </li>
-  
-  
   
   
   <li>
-    <a href="../interface.RetryPolicy/">RetryPolicy <small>interface</small></a>
+    <a href="../interface.Function_/">
+      Function_ <small>interface</small>
+      
+    </a>
+    
   </li>
-  
-  
   
   
   <li>
-    <a href="../RetryPolicy/">RetryPolicy <small>namespace</small></a>
+    <a href="../interface.Future/">
+      Future <small>interface</small>
+      
+    </a>
+    
   </li>
-  
-  
   
   
   <li>
-    <a href="../class.Rows/">Rows <small>class</small></a>
+    <a href="../interface.Index/">
+      Index <small>interface</small>
+      
+    </a>
+    
   </li>
-  
-  
   
   
   <li>
-    <a href="../SSLOptions/">SSLOptions <small>namespace</small></a>
+    <a href="../interface.Keyspace/">
+      Keyspace <small>interface</small>
+      
+    </a>
+    
   </li>
-  
-  
   
   
   <li>
-    <a href="../class.SSLOptions/">SSLOptions <small>class</small></a>
+    <a href="../interface.Numeric/">
+      Numeric <small>interface</small>
+      
+    </a>
+    
   </li>
-  
-  
   
   
   <li>
-    <a href="../interface.Schema/">Schema <small>interface</small></a>
+    <a href="../interface.RetryPolicy/">
+      RetryPolicy <small>interface</small>
+      
+    </a>
+    
   </li>
-  
-  
   
   
   <li>
-    <a href="../interface.Session/">Session <small>interface</small></a>
+    <a href="../interface.Schema/">
+      Schema <small>interface</small>
+      
+    </a>
+    
   </li>
-  
-  
   
   
   <li>
-    <a href="../class.Set/">Set <small>class</small></a>
+    <a href="../interface.Session/">
+      Session <small>interface</small>
+      
+    </a>
+    
   </li>
-  
-  
   
   
   <li>
-    <a href="../class.SimpleStatement/">SimpleStatement <small>class</small></a>
+    <a href="../interface.Statement/">
+      Statement <small>interface</small>
+      
+    </a>
+    
   </li>
-  
-  
   
   
   <li>
-    <a href="../class.Smallint/">Smallint <small>class</small></a>
+    <a href="../interface.Table/">
+      Table <small>interface</small>
+      
+    </a>
+    
   </li>
-  
-  
   
   
   <li>
-    <a href="../interface.Statement/">Statement <small>interface</small></a>
+    <a href="../interface.TimestampGenerator/">
+      TimestampGenerator <small>interface</small>
+      
+    </a>
+    
   </li>
-  
-  
   
   
   <li>
-    <a href="../interface.Table/">Table <small>interface</small></a>
+    <a href="../interface.UuidInterface/">
+      UuidInterface <small>interface</small>
+      
+    </a>
+    
   </li>
-  
-  
   
   
   <li>
-    <a href="../class.Time/">Time <small>class</small></a>
+    <a href="../interface.Value/">
+      Value <small>interface</small>
+      
+    </a>
+    
   </li>
-  
-  
   
   
   <li>
-    <a href="../class.Timestamp/">Timestamp <small>class</small></a>
+    <a href="../class.DefaultColumn/">
+      DefaultColumn <small>class</small>
+      
+    </a>
+    
   </li>
-  
-  
   
   
   <li>
-    <a href="../interface.TimestampGenerator/">TimestampGenerator <small>interface</small></a>
+    <a href="../class.DefaultFunction/">
+      DefaultFunction <small>class</small>
+      
+    </a>
+    
   </li>
-  
-  
   
   
   <li>
-    <a href="../TimestampGenerator/">TimestampGenerator <small>namespace</small></a>
+    <a href="../class.DefaultIndex/">
+      DefaultIndex <small>class</small>
+      
+    </a>
+    
   </li>
-  
-  
   
   
   <li>
-    <a href="../class.Timeuuid/">Timeuuid <small>class</small></a>
+    <a href="../class.DefaultKeyspace/">
+      DefaultKeyspace <small>class</small>
+      
+    </a>
+    
   </li>
-  
-  
   
   
   <li>
-    <a href="../class.Tinyint/">Tinyint <small>class</small></a>
+    <a href="../class.DefaultMaterializedView/">
+      DefaultMaterializedView <small>class</small>
+      
+    </a>
+    
   </li>
-  
-  
   
   
   <li>
-    <a href="../class.Tuple/">Tuple <small>class</small></a>
+    <a href="../class.DefaultSchema/">
+      DefaultSchema <small>class</small>
+      
+    </a>
+    
   </li>
-  
-  
   
   
   <li>
-    <a href="../class.Type/">Type <small>class</small></a>
+    <a href="../class.DefaultSession/">
+      DefaultSession <small>class</small>
+      
+    </a>
+    
   </li>
   
   
-  
-  
-  <li>
-    <a href="../Type/">Type <small>namespace</small></a>
-  </li>
-  
-  
-  
-  
-  <li>
-    <a href="../class.UserTypeValue/">UserTypeValue <small>class</small></a>
-  </li>
-  
-  
-  
-  
-  <li>
-    <a href="../class.Uuid/">Uuid <small>class</small></a>
-  </li>
-  
-  
-  
-  
-  <li>
-    <a href="../interface.UuidInterface/">UuidInterface <small>interface</small></a>
-  </li>
-  
-  
-  
-  
-  <li>
-    <a href="../interface.Value/">Value <small>interface</small></a>
-  </li>
-  
-  
-  
-  
-  <li>
-    <a href="../class.Varint/">Varint <small>class</small></a>
-  </li>
-  
+  <li class="active">
+    <a href="./" class="current">
+      DefaultTable <small>class</small>
+      
+    </a>
+    <ul class="nav nav-pills nav-stacked">
   
 </ul>
 
   </li>
   
   
+  <li>
+    <a href="../class.Duration/">
+      Duration <small>class</small>
+      
+    </a>
+    
+  </li>
   
   
   <li>
-    <a href="../../class.DefaultFunction/">DefaultFunction <small>class</small></a>
+    <a href="../class.ExecutionOptions/">
+      ExecutionOptions <small>class</small>
+      
+    </a>
+    
   </li>
   
+  
+  <li>
+    <a href="../class.Float_/">
+      Float_ <small>class</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../class.FutureClose/">
+      FutureClose <small>class</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../class.FutureException/">
+      FutureException <small>class</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../class.FuturePreparedStatement/">
+      FuturePreparedStatement <small>class</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../class.FutureRows/">
+      FutureRows <small>class</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../class.FutureSession/">
+      FutureSession <small>class</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../class.FutureValue/">
+      FutureValue <small>class</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../class.Inet/">
+      Inet <small>class</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../class.Map/">
+      Map <small>class</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../class.MaterializedView/">
+      MaterializedView <small>class</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../class.PreparedStatement/">
+      PreparedStatement <small>class</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../class.Rows/">
+      Rows <small>class</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../class.Set/">
+      Set <small>class</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../class.SimpleStatement/">
+      SimpleStatement <small>class</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../class.Smallint/">
+      Smallint <small>class</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../class.SSLOptions/">
+      SSLOptions <small>class</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../class.Time/">
+      Time <small>class</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../class.Timestamp/">
+      Timestamp <small>class</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../class.Timeuuid/">
+      Timeuuid <small>class</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../class.Tinyint/">
+      Tinyint <small>class</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../class.Tuple/">
+      Tuple <small>class</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../class.Type/">
+      Type <small>class</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../class.UserTypeValue/">
+      UserTypeValue <small>class</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../class.Uuid/">
+      Uuid <small>class</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../class.Varint/">
+      Varint <small>class</small>
+      
+    </a>
+    
+  </li>
   
 </ul>
 
   </li>
   
   
-  
-  
   <li>
-    <a href="../../../features/">Features <small>page</small></a>
+    <a href="../../class.Cassandra/">
+      Cassandra <small>class</small>
+      
+    </a>
+    
   </li>
   
+</ul>
+
+  </li>
   
 </ul>
 
           </div>
         </div>
         <div class="col-md-9 content">
+          <div class="crumbs-wrapper">
+            <nav id="crumbs" data-spy="affix" data-offset-top="130">
+              <ol class="breadcrumb">
+                
+                
+                
+                <li><a href="../../../">Home</a></li>
+                
+                
+                
+                
+                
+                <li><a href="../../">API docs</a></li>
+                
+                
+                
+                
+                
+                <li><a href="../">Cassandra</a></li>
+                
+                
+                
+                
+                
+                <li class="active">DefaultTable</li>
+                
+                
+                
+              </ol>
+            </nav>
+          </div>
           
 
 <div class="page-header">
@@ -718,7 +855,7 @@
   <div class="panel panel-default member-definition">
     <div class="panel-heading method-heading">
       <code><a href="../interface.Value/">Cassandra\Value</a></code> <h3 id="method-option" class="target">option<a class="anchor" href="#method-option" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
-</h3> <big>(</big>  $name <big>)</big>
+</h3> <big>(</big> <code>string</code> $name <big>)</big>
     </div>
     <div class="panel-body method-body">
       <p>Return a table’s option by name</p>
@@ -733,8 +870,10 @@
 </tr></thead>
 <tbody><tr>
 <td><var>$name</var></td>
-<td></td>
-<td></td>
+<td><code>string</code></td>
+<td>
+<p>Return a table’s option by name</p>
+</td>
 </tr></tbody>
 </table></dd>
 <dt class="tag-title">Returns:</dt>
@@ -759,7 +898,7 @@
 </h3> <big>(</big>  <big>)</big>
     </div>
     <div class="panel-body method-body">
-      <p>Returns all the table’s options</p>
+      <p>Returns all the table’s options view’s options.</p>
 
       <dl class="tags">
 <dt class="tag-title">Returns:</dt>
@@ -771,7 +910,7 @@
 <tbody><tr>
 <td><code>array</code></td>
 <td>
-<p>A dictionary of <code>string</code> and `Cassandra::Value pairs of the table’s options.</p>
+<p>A dictionary of <code>string</code> and <code>Value</code> pairs of the</p>
 </td>
 </tr></tbody>
 </table></dd>
@@ -1105,7 +1244,7 @@
   </div>
   <div class="panel panel-default member-definition">
     <div class="panel-heading method-heading">
-      <code>boolean</code> <h3 id="method-populateIOCacheOnFlush" class="target">populateIOCacheOnFlush<a class="anchor" href="#method-populateIOCacheOnFlush" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+      <code>bool</code> <h3 id="method-populateIOCacheOnFlush" class="target">populateIOCacheOnFlush<a class="anchor" href="#method-populateIOCacheOnFlush" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
 </h3> <big>(</big>  <big>)</big>
     </div>
     <div class="panel-body method-body">
@@ -1119,7 +1258,7 @@
 <th class="details">Details</th>
 </tr></thead>
 <tbody><tr>
-<td><code>boolean</code></td>
+<td><code>bool</code></td>
 <td>
 <p><code><a href="../interface.Value/">Cassandra\Value</a></code> of <code>populate_io_cache_on_flush</code> or null</p>
 </td>
@@ -1130,7 +1269,7 @@
   </div>
   <div class="panel panel-default member-definition">
     <div class="panel-heading method-heading">
-      <code>boolean</code> <h3 id="method-replicateOnWrite" class="target">replicateOnWrite<a class="anchor" href="#method-replicateOnWrite" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+      <code>bool</code> <h3 id="method-replicateOnWrite" class="target">replicateOnWrite<a class="anchor" href="#method-replicateOnWrite" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
 </h3> <big>(</big>  <big>)</big>
     </div>
     <div class="panel-body method-body">
@@ -1144,7 +1283,7 @@
 <th class="details">Details</th>
 </tr></thead>
 <tbody><tr>
-<td><code>boolean</code></td>
+<td><code>bool</code></td>
 <td>
 <p><code><a href="../interface.Value/">Cassandra\Value</a></code> of <code>replicate_on_write</code> or null</p>
 </td>
@@ -1261,7 +1400,7 @@
 <tbody><tr>
 <td><code>array</code></td>
 <td>
-<p>A list of <code>Cassandra::Column</code> instances</p>
+<p>A list of <code>Column</code> instances</p>
 </td>
 </tr></tbody>
 </table></dd>
@@ -1286,7 +1425,7 @@
 <tbody><tr>
 <td><code>array</code></td>
 <td>
-<p>A list of of <code>Cassandra::Column</code> instance</p>
+<p>A list of of <code>Column</code> instance</p>
 </td>
 </tr></tbody>
 </table></dd>
@@ -1311,7 +1450,7 @@
 <tbody><tr>
 <td><code>array</code></td>
 <td>
-<p>A list of of <code>Cassandra::Column</code> instance</p>
+<p>A list of of <code>Column</code> instance</p>
 </td>
 </tr></tbody>
 </table></dd>
@@ -1336,7 +1475,7 @@
 <tbody><tr>
 <td><code>array</code></td>
 <td>
-<p>A list of of <code>Cassandra::Column</code> instances</p>
+<p>A list of of <code>Column</code> instances</p>
 </td>
 </tr></tbody>
 </table></dd>
@@ -1361,6 +1500,136 @@
 <td><code>array</code></td>
 <td>
 <p>A list of cluster column orders (‘asc’ and &#8216;desc’)</p>
+</td>
+</tr></tbody>
+</table></dd>
+</dl>
+    </div>
+  </div>
+  <div class="panel panel-default member-definition">
+    <div class="panel-heading method-heading">
+      <code><a href="../interface.Index/">Cassandra\Index</a> null</code> <h3 id="method-index" class="target">index<a class="anchor" href="#method-index" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+</h3> <big>(</big> <code>string</code> $name <big>)</big>
+    </div>
+    <div class="panel-body method-body">
+      <p>Get an index by name</p>
+
+      <dl class="tags">
+<dt class="tag-title">Parameters:</dt>
+<dd class="tag-content"><table class="table table-striped param">
+<thead><tr>
+<th class="name">Name</th>
+<th class="type">Type</th>
+<th class="details">Details</th>
+</tr></thead>
+<tbody><tr>
+<td><var>$name</var></td>
+<td><code>string</code></td>
+<td>
+<p><code><a href="../interface.Index/">Cassandra\Index</a></code> name</p>
+</td>
+</tr></tbody>
+</table></dd>
+<dt class="tag-title">Returns:</dt>
+<dd class="tag-content"><table class="table table-striped return">
+<thead><tr>
+<th class="type">Type</th>
+<th class="details">Details</th>
+</tr></thead>
+<tbody><tr>
+<td><code>Index|null</code></td>
+<td>
+<p>An index or null</p>
+</td>
+</tr></tbody>
+</table></dd>
+</dl>
+    </div>
+  </div>
+  <div class="panel panel-default member-definition">
+    <div class="panel-heading method-heading">
+      <code>array</code> <h3 id="method-indexes" class="target">indexes<a class="anchor" href="#method-indexes" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+</h3> <big>(</big>  <big>)</big>
+    </div>
+    <div class="panel-body method-body">
+      <p>Gets all indexes</p>
+
+      <dl class="tags">
+<dt class="tag-title">Returns:</dt>
+<dd class="tag-content"><table class="table table-striped return">
+<thead><tr>
+<th class="type">Type</th>
+<th class="details">Details</th>
+</tr></thead>
+<tbody><tr>
+<td><code>array</code></td>
+<td>
+<p>An array of indexes</p>
+</td>
+</tr></tbody>
+</table></dd>
+</dl>
+    </div>
+  </div>
+  <div class="panel panel-default member-definition">
+    <div class="panel-heading method-heading">
+      <code>MaterizedView null</code> <h3 id="method-materializedView" class="target">materializedView<a class="anchor" href="#method-materializedView" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+</h3> <big>(</big> <code>string</code> $name <big>)</big>
+    </div>
+    <div class="panel-body method-body">
+      <p>Get materialized view by name</p>
+
+      <dl class="tags">
+<dt class="tag-title">Parameters:</dt>
+<dd class="tag-content"><table class="table table-striped param">
+<thead><tr>
+<th class="name">Name</th>
+<th class="type">Type</th>
+<th class="details">Details</th>
+</tr></thead>
+<tbody><tr>
+<td><var>$name</var></td>
+<td><code>string</code></td>
+<td>
+<p>Materialized view name</p>
+</td>
+</tr></tbody>
+</table></dd>
+<dt class="tag-title">Returns:</dt>
+<dd class="tag-content"><table class="table table-striped return">
+<thead><tr>
+<th class="type">Type</th>
+<th class="details">Details</th>
+</tr></thead>
+<tbody><tr>
+<td><code>MaterizedView|null</code></td>
+<td>
+<p>A materialized view or null</p>
+</td>
+</tr></tbody>
+</table></dd>
+</dl>
+    </div>
+  </div>
+  <div class="panel panel-default member-definition">
+    <div class="panel-heading method-heading">
+      <code>array</code> <h3 id="method-materializedViews" class="target">materializedViews<a class="anchor" href="#method-materializedViews" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+</h3> <big>(</big>  <big>)</big>
+    </div>
+    <div class="panel-body method-body">
+      <p>Gets all materialized views</p>
+
+      <dl class="tags">
+<dt class="tag-title">Returns:</dt>
+<dd class="tag-content"><table class="table table-striped return">
+<thead><tr>
+<th class="type">Type</th>
+<th class="details">Details</th>
+</tr></thead>
+<tbody><tr>
+<td><code>array</code></td>
+<td>
+<p>An array of materialized views</p>
 </td>
 </tr></tbody>
 </table></dd>
