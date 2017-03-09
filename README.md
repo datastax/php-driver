@@ -20,7 +20,7 @@ This is a wrapper around [the DataStax C/C++ Driver for Apache Cassandra and Dat
 * `Session::execute()` and `Session::executeAsync()` now support a [simple string](http://datastax.github.io/php-driver/features/simple_string_queries/) for the query CQL and a simple array for the query execution option.
 * Full support for Apache Cassandra 2.2 and 3.0+
 * Support for [`tinyint` and `smallint`](http://datastax.github.io/php-driver/features/datatypes/#using-cassandra-the-tinyint-and-smallint-types)
-* Support for [`date`](http://datastax.github.io/php-driver/features/datatypes/#using-cassandra-date-type) and [`time`](http://datastax.github.io/php-driver/features/http://localhost:8000/features/datatypes/#using-cassandra-time-type)
+* Support for [`date`](http://datastax.github.io/php-driver/features/datatypes/#using-cassandra-date-type) and [`time`](http://datastax.github.io/php-driver/features/datatypes/#using-cassandra-time-type)
 * Support for [user-defined function and aggregate](http://datastax.github.io/php-driver/features/function_and_aggregate_metadata) metadata
 * Support for [secondary index](http://datastax.github.io/php-driver/features/secondary_index_metadata) and [materialize view](http://datastax.github.io/php-driver/features/function_and_aggregate_metadata) metadata
 
