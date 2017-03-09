@@ -409,7 +409,7 @@ PHP_METHOD(Map, offsetExists)
   RETURN_FALSE;
 }
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo__construct, 0, ZEND_RETURN_VALUE, 1)
+ZEND_BEGIN_ARG_INFO_EX(arginfo__construct, 0, ZEND_RETURN_VALUE, 2)
   ZEND_ARG_INFO(0, keyType)
   ZEND_ARG_INFO(0, valueType)
 ZEND_END_ARG_INFO()
