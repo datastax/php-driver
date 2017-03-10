@@ -70,5 +70,5 @@ rm -rf %{buildroot}
 %{php_extdir}/cassandra.so
 
 %changelog
-* Wed Jan 18 2017 Michael Penick <michael.penick@datastax.com> - 1.0.0rc1-1
-- rc1 release
+* Mon Mar 13 2017 Michael Penick <michael.penick@datastax.com> - 1.3.0-1
+- release
