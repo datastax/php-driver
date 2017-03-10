@@ -14,11 +14,11 @@ protocol and Cassandra Query Language v3.
     <email>michael.penick@datastax.com</email>
     <active>yes</active>
   </lead>
-  <date>2016-08-08</date>
-  <time>11:25:32</time>
+  <date>2017-02-15</date>
+  <time>15:06:00</time>
   <version>
-    <release>1.2.2</release>
-    <api>1.2.2</api>
+    <release>1.3.0</release>
+    <api>1.3.0</api>
   </version>
   <stability>
     <release>stable</release>
@@ -26,146 +26,160 @@ protocol and Cassandra Query Language v3.
   </stability>
   <license uri="http://www.apache.org/licenses/LICENSE-2.0">Apache License 2.0</license>
   <notes>
-# 1.2.2
+# 1.3.0
+
+Features:
+
+* Added support for the `duration` type
+* Added support to pass a query string  directly to `Session::execute()` and
+  `Session::executeAsync()`
+* `ExecutionOptions` has been deprecated in favor of using an array
 
 Bug Fixes:
-
-* [PHP-88] \Cassandra\Timestamp::toDateTime segfault with PHP7
-* [PHP-112] Freeing a null future as result of a failure in \Cassandra\DefaultSession::executeAsync()
-* [PHP-115] \Cassandra\UUID returning duplicate UUIDs
+* [PHP-86] Decimal __toString method
+* [PHP-109] Cassandra solr_query not working after upgrading to DSE 5
+* [PHP-114] pecl install compiler output is dominated by C90 warnings
+* [PHP-119] Driver crashes upon getting type of column
+* [PHP-143] Memory leak in `FutureSession`
+* [PHP-144] Fix persistent sessions reference counting issue
+* [PHP-147] Unable to create Bigint with PHP_INT_MIN
   </notes>
   <contents>
     <dir name="/">
       <file role="src" name="config.m4" />
       <file role="src" name="config.w32" />
-      <file role="src" name="php_cassandra.c" />
-      <file role="src" name="php_cassandra.h" />
-      <file role="src" name="php_cassandra_types.h" />
-      <file role="src" name="src/Cassandra.c" />
-      <file role="src" name="src/Cassandra/Aggregate.c" />
-      <file role="src" name="src/Cassandra/BatchStatement.c" />
-      <file role="src" name="src/Cassandra/Bigint.c" />
-      <file role="src" name="src/Cassandra/Bigint.h" />
-      <file role="src" name="src/Cassandra/Blob.c" />
-      <file role="src" name="src/Cassandra/Blob.h" />
-      <file role="src" name="src/Cassandra/Cluster.c" />
-      <file role="src" name="src/Cassandra/Cluster/Builder.c" />
-      <file role="src" name="src/Cassandra/Collection.c" />
-      <file role="src" name="src/Cassandra/Collection.h" />
-      <file role="src" name="src/Cassandra/Column.c" />
-      <file role="src" name="src/Cassandra/Date.c" />
-      <file role="src" name="src/Cassandra/Date.h" />
-      <file role="src" name="src/Cassandra/Decimal.c" />
-      <file role="src" name="src/Cassandra/Decimal.h" />
-      <file role="src" name="src/Cassandra/DefaultAggregate.c" />
-      <file role="src" name="src/Cassandra/DefaultCluster.c" />
-      <file role="src" name="src/Cassandra/DefaultColumn.c" />
-      <file role="src" name="src/Cassandra/DefaultColumn.h" />
-      <file role="src" name="src/Cassandra/DefaultFunction.c" />
-      <file role="src" name="src/Cassandra/DefaultFunction.h" />
-      <file role="src" name="src/Cassandra/DefaultIndex.c" />
-      <file role="src" name="src/Cassandra/DefaultIndex.h" />
-      <file role="src" name="src/Cassandra/DefaultKeyspace.c" />
-      <file role="src" name="src/Cassandra/DefaultMaterializedView.c" />
-      <file role="src" name="src/Cassandra/DefaultMaterializedView.h" />
-      <file role="src" name="src/Cassandra/DefaultSchema.c" />
-      <file role="src" name="src/Cassandra/DefaultSession.c" />
-      <file role="src" name="src/Cassandra/DefaultTable.c" />
-      <file role="src" name="src/Cassandra/DefaultTable.h" />
-      <file role="src" name="src/Cassandra/Exception.c" />
-      <file role="src" name="src/Cassandra/Exception/AlreadyExistsException.c" />
-      <file role="src" name="src/Cassandra/Exception/AuthenticationException.c" />
-      <file role="src" name="src/Cassandra/Exception/ConfigurationException.c" />
-      <file role="src" name="src/Cassandra/Exception/DivideByZeroException.c" />
-      <file role="src" name="src/Cassandra/Exception/DomainException.c" />
-      <file role="src" name="src/Cassandra/Exception/ExecutionException.c" />
-      <file role="src" name="src/Cassandra/Exception/InvalidArgumentException.c" />
-      <file role="src" name="src/Cassandra/Exception/InvalidQueryException.c" />
-      <file role="src" name="src/Cassandra/Exception/InvalidSyntaxException.c" />
-      <file role="src" name="src/Cassandra/Exception/IsBootstrappingException.c" />
-      <file role="src" name="src/Cassandra/Exception/LogicException.c" />
-      <file role="src" name="src/Cassandra/Exception/OverloadedException.c" />
-      <file role="src" name="src/Cassandra/Exception/ProtocolException.c" />
-      <file role="src" name="src/Cassandra/Exception/RangeException.c" />
-      <file role="src" name="src/Cassandra/Exception/ReadTimeout.c" />
-      <file role="src" name="src/Cassandra/Exception/RuntimeException.c" />
-      <file role="src" name="src/Cassandra/Exception/ServerException.c" />
-      <file role="src" name="src/Cassandra/Exception/TimeoutException.c" />
-      <file role="src" name="src/Cassandra/Exception/TruncateException.c" />
-      <file role="src" name="src/Cassandra/Exception/UnauthorizedException.c" />
-      <file role="src" name="src/Cassandra/Exception/UnavailableException.c" />
-      <file role="src" name="src/Cassandra/Exception/UnpreparedException.c" />
-      <file role="src" name="src/Cassandra/Exception/ValidationException.c" />
-      <file role="src" name="src/Cassandra/Exception/WriteTimeoutException.c" />
-      <file role="src" name="src/Cassandra/ExecutionOptions.c" />
-      <file role="src" name="src/Cassandra/Float.c" />
-      <file role="src" name="src/Cassandra/Float.h" />
-      <file role="src" name="src/Cassandra/Function.c" />
-      <file role="src" name="src/Cassandra/Future.c" />
-      <file role="src" name="src/Cassandra/FutureClose.c" />
-      <file role="src" name="src/Cassandra/FuturePreparedStatement.c" />
-      <file role="src" name="src/Cassandra/FutureRows.c" />
-      <file role="src" name="src/Cassandra/FutureRows.h" />
-      <file role="src" name="src/Cassandra/FutureSession.c" />
-      <file role="src" name="src/Cassandra/FutureValue.c" />
-      <file role="src" name="src/Cassandra/Index.c" />
-      <file role="src" name="src/Cassandra/Inet.c" />
-      <file role="src" name="src/Cassandra/Inet.h" />
-      <file role="src" name="src/Cassandra/Keyspace.c" />
-      <file role="src" name="src/Cassandra/Map.c" />
-      <file role="src" name="src/Cassandra/Map.h" />
-      <file role="src" name="src/Cassandra/MaterializedView.c" />
-      <file role="src" name="src/Cassandra/Numeric.c" />
-      <file role="src" name="src/Cassandra/PreparedStatement.c" />
-      <file role="src" name="src/Cassandra/RetryPolicy.c" />
-      <file role="src" name="src/Cassandra/RetryPolicy/DefaultPolicy.c" />
-      <file role="src" name="src/Cassandra/RetryPolicy/DowngradingConsistency.c" />
-      <file role="src" name="src/Cassandra/RetryPolicy/Fallthrough.c" />
-      <file role="src" name="src/Cassandra/RetryPolicy/Logging.c" />
-      <file role="src" name="src/Cassandra/Rows.c" />
-      <file role="src" name="src/Cassandra/SSLOptions.c" />
-      <file role="src" name="src/Cassandra/SSLOptions/Builder.c" />
-      <file role="src" name="src/Cassandra/Schema.c" />
-      <file role="src" name="src/Cassandra/Session.c" />
-      <file role="src" name="src/Cassandra/Set.c" />
-      <file role="src" name="src/Cassandra/Set.h" />
-      <file role="src" name="src/Cassandra/SimpleStatement.c" />
-      <file role="src" name="src/Cassandra/Smallint.c" />
-      <file role="src" name="src/Cassandra/Smallint.h" />
-      <file role="src" name="src/Cassandra/Statement.c" />
-      <file role="src" name="src/Cassandra/Table.c" />
-      <file role="src" name="src/Cassandra/Table.h" />
-      <file role="src" name="src/Cassandra/Time.c" />
-      <file role="src" name="src/Cassandra/Time.h" />
-      <file role="src" name="src/Cassandra/Timestamp.c" />
-      <file role="src" name="src/Cassandra/Timestamp.h" />
-      <file role="src" name="src/Cassandra/TimestampGenerator.c" />
-      <file role="src" name="src/Cassandra/TimestampGenerator/Monotonic.c" />
-      <file role="src" name="src/Cassandra/TimestampGenerator/ServerSide.c" />
-      <file role="src" name="src/Cassandra/Timeuuid.c" />
-      <file role="src" name="src/Cassandra/Timeuuid.h" />
-      <file role="src" name="src/Cassandra/Tinyint.c" />
-      <file role="src" name="src/Cassandra/Tinyint.h" />
-      <file role="src" name="src/Cassandra/Tuple.c" />
-      <file role="src" name="src/Cassandra/Tuple.h" />
-      <file role="src" name="src/Cassandra/Type.c" />
-      <file role="src" name="src/Cassandra/Type/Collection.c" />
-      <file role="src" name="src/Cassandra/Type/Custom.c" />
-      <file role="src" name="src/Cassandra/Type/Map.c" />
-      <file role="src" name="src/Cassandra/Type/Scalar.c" />
-      <file role="src" name="src/Cassandra/Type/Set.c" />
-      <file role="src" name="src/Cassandra/Type/Tuple.c" />
-      <file role="src" name="src/Cassandra/Type/Tuple.h" />
-      <file role="src" name="src/Cassandra/Type/UserType.c" />
-      <file role="src" name="src/Cassandra/Type/UserType.h" />
-      <file role="src" name="src/Cassandra/UserTypeValue.c" />
-      <file role="src" name="src/Cassandra/UserTypeValue.h" />
-      <file role="src" name="src/Cassandra/Uuid.c" />
-      <file role="src" name="src/Cassandra/Uuid.h" />
-      <file role="src" name="src/Cassandra/UuidInterface.c" />
-      <file role="src" name="src/Cassandra/Value.c" />
-      <file role="src" name="src/Cassandra/Varint.c" />
-      <file role="src" name="src/Cassandra/Varint.h" />
+      <file role="src" name="php_driver.c" />
+      <file role="src" name="php_driver.h" />
+      <file role="src" name="php_driver_globals.h" />
+      <file role="src" name="php_driver_types.h" />
+      <file role="src" name="src/Aggregate.c" />
+      <file role="src" name="src/BatchStatement.c" />
+      <file role="src" name="src/Bigint.c" />
+      <file role="src" name="src/Bigint.h" />
+      <file role="src" name="src/Blob.c" />
+      <file role="src" name="src/Blob.h" />
+      <file role="src" name="src/Cluster.c" />
+      <file role="src" name="src/Cluster/Builder.c" />
+      <file role="src" name="src/Collection.c" />
+      <file role="src" name="src/Collection.h" />
+      <file role="src" name="src/Column.c" />
+      <file role="src" name="src/Core.c" />
+      <file role="src" name="src/Custom.c" />
+      <file role="src" name="src/Date.c" />
+      <file role="src" name="src/Date.h" />
+      <file role="src" name="src/Decimal.c" />
+      <file role="src" name="src/Decimal.h" />
+      <file role="src" name="src/DefaultAggregate.c" />
+      <file role="src" name="src/DefaultCluster.c" />
+      <file role="src" name="src/DefaultColumn.c" />
+      <file role="src" name="src/DefaultColumn.h" />
+      <file role="src" name="src/DefaultFunction.c" />
+      <file role="src" name="src/DefaultFunction.h" />
+      <file role="src" name="src/DefaultIndex.c" />
+      <file role="src" name="src/DefaultIndex.h" />
+      <file role="src" name="src/DefaultKeyspace.c" />
+      <file role="src" name="src/DefaultMaterializedView.c" />
+      <file role="src" name="src/DefaultMaterializedView.h" />
+      <file role="src" name="src/DefaultSchema.c" />
+      <file role="src" name="src/DefaultSession.c" />
+      <file role="src" name="src/DefaultTable.c" />
+      <file role="src" name="src/DefaultTable.h" />
+      <file role="src" name="src/Duration.c" />
+      <file role="src" name="src/Duration.h" />
+      <file role="src" name="src/Exception.c" />
+      <file role="src" name="src/Exception/AlreadyExistsException.c" />
+      <file role="src" name="src/Exception/AuthenticationException.c" />
+      <file role="src" name="src/Exception/ConfigurationException.c" />
+      <file role="src" name="src/Exception/DivideByZeroException.c" />
+      <file role="src" name="src/Exception/DomainException.c" />
+      <file role="src" name="src/Exception/ExecutionException.c" />
+      <file role="src" name="src/Exception/InvalidArgumentException.c" />
+      <file role="src" name="src/Exception/InvalidQueryException.c" />
+      <file role="src" name="src/Exception/InvalidSyntaxException.c" />
+      <file role="src" name="src/Exception/IsBootstrappingException.c" />
+      <file role="src" name="src/Exception/LogicException.c" />
+      <file role="src" name="src/Exception/OverloadedException.c" />
+      <file role="src" name="src/Exception/ProtocolException.c" />
+      <file role="src" name="src/Exception/RangeException.c" />
+      <file role="src" name="src/Exception/ReadTimeout.c" />
+      <file role="src" name="src/Exception/RuntimeException.c" />
+      <file role="src" name="src/Exception/ServerException.c" />
+      <file role="src" name="src/Exception/TimeoutException.c" />
+      <file role="src" name="src/Exception/TruncateException.c" />
+      <file role="src" name="src/Exception/UnauthorizedException.c" />
+      <file role="src" name="src/Exception/UnavailableException.c" />
+      <file role="src" name="src/Exception/UnpreparedException.c" />
+      <file role="src" name="src/Exception/ValidationException.c" />
+      <file role="src" name="src/Exception/WriteTimeoutException.c" />
+      <file role="src" name="src/ExecutionOptions.c" />
+      <file role="src" name="src/Float.c" />
+      <file role="src" name="src/Float.h" />
+      <file role="src" name="src/Function.c" />
+      <file role="src" name="src/Future.c" />
+      <file role="src" name="src/FutureClose.c" />
+      <file role="src" name="src/FuturePreparedStatement.c" />
+      <file role="src" name="src/FutureRows.c" />
+      <file role="src" name="src/FutureRows.h" />
+      <file role="src" name="src/FutureSession.c" />
+      <file role="src" name="src/FutureValue.c" />
+      <file role="src" name="src/Index.c" />
+      <file role="src" name="src/Inet.c" />
+      <file role="src" name="src/Inet.h" />
+      <file role="src" name="src/Keyspace.c" />
+      <file role="src" name="src/Map.c" />
+      <file role="src" name="src/Map.h" />
+      <file role="src" name="src/MaterializedView.c" />
+      <file role="src" name="src/Numeric.c" />
+      <file role="src" name="src/PreparedStatement.c" />
+      <file role="src" name="src/RetryPolicy.c" />
+      <file role="src" name="src/RetryPolicy/DefaultPolicy.c" />
+      <file role="src" name="src/RetryPolicy/DowngradingConsistency.c" />
+      <file role="src" name="src/RetryPolicy/Fallthrough.c" />
+      <file role="src" name="src/RetryPolicy/Logging.c" />
+      <file role="src" name="src/Rows.c" />
+      <file role="src" name="src/SSLOptions.c" />
+      <file role="src" name="src/SSLOptions/Builder.c" />
+      <file role="src" name="src/Schema.c" />
+      <file role="src" name="src/Session.c" />
+      <file role="src" name="src/Set.c" />
+      <file role="src" name="src/Set.h" />
+      <file role="src" name="src/SimpleStatement.c" />
+      <file role="src" name="src/Smallint.c" />
+      <file role="src" name="src/Smallint.h" />
+      <file role="src" name="src/Statement.c" />
+      <file role="src" name="src/Table.c" />
+      <file role="src" name="src/Table.h" />
+      <file role="src" name="src/Time.c" />
+      <file role="src" name="src/Time.h" />
+      <file role="src" name="src/Timestamp.c" />
+      <file role="src" name="src/Timestamp.h" />
+      <file role="src" name="src/TimestampGenerator.c" />
+      <file role="src" name="src/TimestampGenerator/Monotonic.c" />
+      <file role="src" name="src/TimestampGenerator/ServerSide.c" />
+      <file role="src" name="src/Timeuuid.c" />
+      <file role="src" name="src/Timeuuid.h" />
+      <file role="src" name="src/Tinyint.c" />
+      <file role="src" name="src/Tinyint.h" />
+      <file role="src" name="src/Tuple.c" />
+      <file role="src" name="src/Tuple.h" />
+      <file role="src" name="src/Type.c" />
+      <file role="src" name="src/Type/Collection.c" />
+      <file role="src" name="src/Type/Custom.c" />
+      <file role="src" name="src/Type/Map.c" />
+      <file role="src" name="src/Type/Scalar.c" />
+      <file role="src" name="src/Type/Set.c" />
+      <file role="src" name="src/Type/Tuple.c" />
+      <file role="src" name="src/Type/Tuple.h" />
+      <file role="src" name="src/Type/UserType.c" />
+      <file role="src" name="src/Type/UserType.h" />
+      <file role="src" name="src/UserTypeValue.c" />
+      <file role="src" name="src/UserTypeValue.h" />
+      <file role="src" name="src/Uuid.c" />
+      <file role="src" name="src/Uuid.h" />
+      <file role="src" name="src/UuidInterface.c" />
+      <file role="src" name="src/Value.c" />
+      <file role="src" name="src/Varint.c" />
+      <file role="src" name="src/Varint.h" />
       <file role="src" name="util/bytes.c" />
       <file role="src" name="util/bytes.h" />
       <file role="src" name="util/collections.c" />
@@ -212,6 +226,7 @@ Bug Fixes:
       <file role="doc" name="doc/Cassandra/DefaultSchema.php" />
       <file role="doc" name="doc/Cassandra/DefaultSession.php" />
       <file role="doc" name="doc/Cassandra/DefaultTable.php" />
+      <file role="doc" name="doc/Cassandra/Duration.php" />
       <file role="doc" name="doc/Cassandra/Exception.php" />
       <file role="doc" name="doc/Cassandra/Exception/AlreadyExistsException.php" />
       <file role="doc" name="doc/Cassandra/Exception/AuthenticationException.php" />

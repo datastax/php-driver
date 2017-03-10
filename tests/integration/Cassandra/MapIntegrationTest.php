@@ -38,6 +38,15 @@ class MapIntegrationTest extends CollectionsIntegrationTest
      * Data provider for maps with scalar types
      */
     public function mapWithScalarTypes() {
+        // Ensure duration data type is not used as a key for set
+        $scalarCassandraTypes = array_filter($this->scalarCassandraTypes(),
+            function($cassandraType) {
+                if ($cassandraType[0] != "duration") {
+                    return $cassandraType;
+                }
+            }
+        );
+
         $mapKeyTypes = array_map(function ($cassandraType) {
             $mapType = Type::map($cassandraType[0], Type::int());
             $values = $cassandraType[1];
@@ -46,7 +55,7 @@ class MapIntegrationTest extends CollectionsIntegrationTest
                 $map->set($values[$i], $i);
             }
             return array($mapType, $map);
-        }, $this->scalarCassandraTypes());
+        }, $scalarCassandraTypes);
 
         $mapValueTypes = array_map(function ($cassandraType) {
             $mapType = Type::map(Type::int(), $cassandraType[0]);

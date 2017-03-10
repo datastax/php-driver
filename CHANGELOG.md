@@ -1,3 +1,21 @@
+# 1.3.0
+
+Features:
+
+* Added support for the `duration` type
+* Added support to pass a query string  directly to `Session::execute()` and
+  `Session::executeAsync()`
+* `ExecutionOptions` has been deprecated in favor of using an array
+
+Bug Fixes:
+* [PHP-86] Decimal __toString method
+* [PHP-109] Cassandra solr_query not working after upgrading to DSE 5
+* [PHP-114] pecl install compiler output is dominated by C90 warnings
+* [PHP-119] Driver crashes upon getting type of column
+* [PHP-143] Memory leak in `FutureSession`
+* [PHP-144] Fix persistent sessions reference counting issue
+* [PHP-147] Unable to create Bigint with PHP_INT_MIN
+
 # 1.2.2
 
 Bug Fixes:
