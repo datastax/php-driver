@@ -14,8 +14,8 @@ protocol and Cassandra Query Language v3.
     <email>michael.penick@datastax.com</email>
     <active>yes</active>
   </lead>
-  <date>2017-02-15</date>
-  <time>15:06:00</time>
+  <date>2017-03-16</date>
+  <time>09:15:49</time>
   <version>
     <release>1.3.0</release>
     <api>1.3.0</api>
@@ -101,7 +101,7 @@ Bug Fixes:
       <file role="src" name="src/Exception/OverloadedException.c" />
       <file role="src" name="src/Exception/ProtocolException.c" />
       <file role="src" name="src/Exception/RangeException.c" />
-      <file role="src" name="src/Exception/ReadTimeout.c" />
+      <file role="src" name="src/Exception/ReadTimeoutException.c" />
       <file role="src" name="src/Exception/RuntimeException.c" />
       <file role="src" name="src/Exception/ServerException.c" />
       <file role="src" name="src/Exception/TimeoutException.c" />
@@ -112,6 +112,7 @@ Bug Fixes:
       <file role="src" name="src/Exception/ValidationException.c" />
       <file role="src" name="src/Exception/WriteTimeoutException.c" />
       <file role="src" name="src/ExecutionOptions.c" />
+      <file role="src" name="src/ExecutionOptions.h" />
       <file role="src" name="src/Float.c" />
       <file role="src" name="src/Float.h" />
       <file role="src" name="src/Function.c" />
@@ -214,6 +215,7 @@ Bug Fixes:
       <file role="doc" name="doc/Cassandra/Cluster/Builder.php" />
       <file role="doc" name="doc/Cassandra/Collection.php" />
       <file role="doc" name="doc/Cassandra/Column.php" />
+      <file role="doc" name="doc/Cassandra/Custom.php" />
       <file role="doc" name="doc/Cassandra/Date.php" />
       <file role="doc" name="doc/Cassandra/Decimal.php" />
       <file role="doc" name="doc/Cassandra/DefaultAggregate.php" />
@@ -222,7 +224,7 @@ Bug Fixes:
       <file role="doc" name="doc/Cassandra/DefaultFunction.php" />
       <file role="doc" name="doc/Cassandra/DefaultIndex.php" />
       <file role="doc" name="doc/Cassandra/DefaultKeyspace.php" />
-      <file role="doc" name="doc/Cassandra/DefaultMaterialzedView.php" />
+      <file role="doc" name="doc/Cassandra/DefaultMaterializedView.php" />
       <file role="doc" name="doc/Cassandra/DefaultSchema.php" />
       <file role="doc" name="doc/Cassandra/DefaultSession.php" />
       <file role="doc" name="doc/Cassandra/DefaultTable.php" />
@@ -312,7 +314,7 @@ Bug Fixes:
   <dependencies>
   <required>
    <php>
-    <min>5.5.0</min>
+    <min>5.6.0</min>
     <max>7.0.99</max>
    </php>
    <pearinstaller>

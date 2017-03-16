@@ -59,7 +59,9 @@ class Release
     (
       Dir.glob(@dirname + '/ext/doc/**/*.*') <<
       File.join(@dirname, 'ext/LICENSE')
-    ).map {|p| p.gsub(@dirname + '/ext/', '') }.sort
+    )
+    .reject {|p| p[%r{.*ext/doc/generate_doc.*}] }
+    .map {|p| p.gsub(@dirname + '/ext/', '') }.sort
   end
 
   def tests
@@ -149,7 +151,7 @@ end
   <dependencies>
   <required>
    <php>
-    <min>5.5.0</min>
+    <min>5.6.0</min>
     <max>7.0.99</max>
    </php>
    <pearinstaller>
