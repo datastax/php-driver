@@ -15,24 +15,27 @@
 
 zend_class_entry *php_driver_duration_ce = NULL;
 
-static void to_string(zval *result, cass_int32_t value)
+static void to_string(zval *result, cass_int64_t value)
 {
   char *string;
-  spprintf(&string, 0, "%d", value);
+  spprintf(&string, 0, LL_FORMAT, value);
   PHP5TO7_ZVAL_STRING(result, string);
   efree(string);
 }
 
-static int get_int32(zval* value, cass_int32_t* destination, const char* param_name TSRMLS_DC)
+static int get_param(zval* value,
+                     const char* param_name,
+                     cass_int64_t min,
+                     cass_int64_t max,
+                     cass_int64_t *destination  TSRMLS_DC)
 {
-  // Adapted from Bigint __construct method.
   if (Z_TYPE_P(value) == IS_LONG) {
-    cass_int64_t long_value = Z_LVAL_P(value);
+    php5to7_long long_value = Z_LVAL_P(value);
 
-    if (long_value > INT32_MAX || long_value < INT32_MIN) {
-      zend_throw_exception_ex(php_driver_range_exception_ce, 0 TSRMLS_CC,
-        "%s must be between %d and %d, " LL_FORMAT " given",
-        param_name, INT32_MIN, INT32_MAX, long_value);
+    if (long_value > max || long_value < min) {
+      zend_throw_exception_ex(php_driver_invalid_argument_exception_ce, 0 TSRMLS_CC,
+        "%s must be between " LL_FORMAT " and " LL_FORMAT ", " LL_FORMAT " given",
+        param_name, min, max, long_value);
       return 0;
     }
 
@@ -40,39 +43,39 @@ static int get_int32(zval* value, cass_int32_t* destination, const char* param_n
   } else if (Z_TYPE_P(value) == IS_DOUBLE) {
     double double_value = Z_DVAL_P(value);
 
-    if (double_value > INT32_MAX || double_value < INT32_MIN) {
-      zend_throw_exception_ex(php_driver_range_exception_ce, 0 TSRMLS_CC,
-        "%s must be between %d and %d, %g given",
-        param_name, INT32_MIN, INT32_MAX, double_value);
+    if (double_value > max || double_value < min) {
+      zend_throw_exception_ex(php_driver_invalid_argument_exception_ce, 0 TSRMLS_CC,
+        "%s must be between " LL_FORMAT " and " LL_FORMAT ", %g given",
+        param_name, min, max, double_value);
       return 0;
     }
-    *destination = (cass_int32_t) double_value;
+    *destination = (cass_int64_t) double_value;
   } else if (Z_TYPE_P(value) == IS_STRING) {
     cass_int64_t parsed_big_int;
     if (!php_driver_parse_bigint(Z_STRVAL_P(value), Z_STRLEN_P(value), &parsed_big_int TSRMLS_CC)) {
       return 0;
     }
 
-    if (parsed_big_int > INT32_MAX || parsed_big_int < INT32_MIN) {
-      zend_throw_exception_ex(php_driver_range_exception_ce, 0 TSRMLS_CC,
-        "%s must be between %d and %d, " LL_FORMAT " given",
-        param_name, INT32_MIN, INT32_MAX, parsed_big_int);
+    if (parsed_big_int > max || parsed_big_int < min) {
+      zend_throw_exception_ex(php_driver_invalid_argument_exception_ce, 0 TSRMLS_CC,
+        "%s must be between " LL_FORMAT " and " LL_FORMAT ", " LL_FORMAT " given",
+        param_name, min, max, parsed_big_int);
       return 0;
     }
-    *destination = (cass_int32_t) parsed_big_int;
+    *destination = parsed_big_int;
   } else if (Z_TYPE_P(value) == IS_OBJECT &&
              instanceof_function(Z_OBJCE_P(value), php_driver_bigint_ce TSRMLS_CC)) {
     php_driver_numeric *bigint = PHP_DRIVER_GET_NUMERIC(value);
     cass_int64_t bigint_value = bigint->data.bigint.value;
 
-    if (bigint_value > INT32_MAX || bigint_value < INT32_MIN) {
-      zend_throw_exception_ex(php_driver_range_exception_ce, 0 TSRMLS_CC,
-        "%s must be between %d and %d, " LL_FORMAT " given",
-        param_name, INT32_MIN, INT32_MAX, bigint_value);
+    if (bigint_value > max || bigint_value < min) {
+      zend_throw_exception_ex(php_driver_invalid_argument_exception_ce, 0 TSRMLS_CC,
+        "%s must be between " LL_FORMAT " and " LL_FORMAT ", " LL_FORMAT " given",
+        param_name, min, max, bigint_value);
       return 0;
     }
 
-    *destination = (cass_int32_t) bigint_value;
+    *destination = bigint_value;
   } else {
     throw_invalid_argument(value, param_name, "a long, a double, a numeric string or a " \
                             PHP_DRIVER_NAMESPACE "\\Bigint" TSRMLS_CC);
@@ -91,7 +94,7 @@ char *php_driver_duration_to_string(php_driver_duration *duration)
   int is_negative = 0;
   cass_int32_t final_months = duration->months;
   cass_int32_t final_days = duration->days;
-  cass_int32_t final_nanos = duration->nanos;
+  cass_int64_t final_nanos = duration->nanos;
   
   is_negative = final_months < 0 || final_days < 0 || final_nanos < 0;
   if (final_months < 0)
@@ -101,7 +104,7 @@ char *php_driver_duration_to_string(php_driver_duration *duration)
   if (final_nanos < 0)
     final_nanos = -final_nanos;
   
-  spprintf(&rep, 0, "%s%dmo%dd%dns", is_negative ? "-" : "", final_months, final_days, final_nanos);
+  spprintf(&rep, 0, "%s%dmo%dd" LL_FORMAT "ns", is_negative ? "-" : "", final_months, final_days, final_nanos);
   return rep;
 }
 
@@ -109,6 +112,7 @@ void
 php_driver_duration_init(INTERNAL_FUNCTION_PARAMETERS)
 {
   zval *months, *days, *nanos;
+  cass_int64_t param;
   php_driver_duration *self = NULL;
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "zzz", &months, &days, &nanos) == FAILURE) {
@@ -117,20 +121,23 @@ php_driver_duration_init(INTERNAL_FUNCTION_PARAMETERS)
 
   self = PHP_DRIVER_GET_DURATION(getThis());
 
-  if (!get_int32(months, &self->months, "months" TSRMLS_CC)) {
+  if (!get_param(months, "months", INT32_MIN, INT32_MAX, &param  TSRMLS_CC)) {
     return;
   }
-  if (!get_int32(days, &self->days, "days" TSRMLS_CC)) {
-    return;
-  }
+  self->months = (cass_int32_t)param;
 
-  // No need to check the result of nanos parsing; get_int64 sets the exception if there's
-  // a failure, and we have no more work to do anyway.
-  get_int32(nanos, &self->nanos, "nanos" TSRMLS_CC);
+  if (!get_param(days, "days", INT32_MIN, INT32_MAX, &param TSRMLS_CC)) {
+    return;
+  }
+  self->days = (cass_int32_t)param;
+
+  if (!get_param(nanos, "nanos", INT64_MIN, INT64_MAX, &self->nanos TSRMLS_CC)) {
+    return;
+  }
 
   // Verify that all three attributes are non-negative or non-positive.
-  if (!(self->months <= 0 && self->days <= 0 && self->nanos <=0) &&
-      !(self->months >= 0 && self->days >= 0 && self->nanos >=0)) {
+  if (!(self->months <= 0 && self->days <= 0 && self->nanos <= 0) &&
+      !(self->months >= 0 && self->days >= 0 && self->nanos >= 0)) {
     zend_throw_exception_ex(spl_ce_BadFunctionCallException, 0 TSRMLS_CC, "%s",
       "A duration must have all non-negative or non-positive attributes"
     );

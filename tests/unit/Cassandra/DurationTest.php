@@ -50,72 +50,90 @@ class DurationTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @expectedException RangeException
-     * @expectedExceptionMessage nanos must be between -2147483648 and 2147483647, 8589934592 given
+     * @expectedExceptionMessage value must be between -9223372036854775808 and 9223372036854775807, 9223372036854775808 given
      */
-    public function testStringArgOverflowError()
+    public function testString64BitArgOverflowError()
     {
-        new Duration(1, 2, "8589934592");
+        new Duration(1, 2, "9223372036854775808");
     }
 
     /**
      * @expectedException RangeException
-     * @expectedExceptionMessage nanos must be between -2147483648 and 2147483647, -8589934592 given
+     * @expectedExceptionMessage value must be between -9223372036854775808 and 9223372036854775807, -9223372036854775809 given
      */
-    public function testStringArgUnderflowError()
+    public function testString64BitArgUnderflowError()
     {
-        new Duration(1, 2, "-8589934592");
+        new Duration(1, 2, "-9223372036854775809");
     }
 
     /**
-     * @expectedException RangeException
-     * @expectedExceptionMessage nanos must be between -2147483648 and 2147483647, 8589934592 given
+     * @expectedException InvalidArgumentException
+     * @expectedExceptionMessage nanos must be between -9223372036854775808 and 9223372036854775807, 1.84467e+19 given
      */
-    public function testBigintArgOverflowError()
+    public function testDouble64BitArgOverflowError()
     {
-        new Duration(1, 2, new Bigint("8589934592"));
+        new Duration(1, 2, pow(2, 64));
     }
 
     /**
-     * @expectedException RangeException
-     * @expectedExceptionMessage nanos must be between -2147483648 and 2147483647, -8589934592 given
+     * @expectedException InvalidArgumentException
+     * @expectedExceptionMessage nanos must be between -9223372036854775808 and 9223372036854775807, -1.84467e+19 given
      */
-    public function testBigintArgUnderflowError()
+    public function testDouble64BitArgUnderflowError()
     {
-        new Duration(1, 2, new Bigint("-8589934592"));
+        new Duration(1, 2, -pow(2, 64));
     }
 
     /**
-     * @expectedException RangeException
+     * @expectedException InvalidArgumentException
+     * @expectedExceptionMessage days must be between -2147483648 and 2147483647, 2147483648 given
+     */
+    public function testString32BitArgOverflowError()
+    {
+        new Duration(1, "2147483648", 0);
+    }
+
+    /**
+     * @expectedException InvalidArgumentException
+     * @expectedExceptionMessage days must be between -2147483648 and 2147483647, -2147483649 given
+     */
+    public function testString32BitArgUnderflowError()
+    {
+        new Duration(1, "-2147483649", 0);
+    }
+
+    /**
+     * @expectedException InvalidArgumentException
      * @expectedExceptionMessageRegExp /days must be between -2147483648 and 2147483647, 8\.?58993.* given/
      */
-    public function testLongArgOverflowError()
+    public function testLong32BitArgOverflowError()
     {
         new Duration(1, 8589934592, 2);
     }
 
     /**
-     * @expectedException RangeException
+     * @expectedException InvalidArgumentException
      * @expectedExceptionMessageRegExp /days must be between -2147483648 and 2147483647, -8\.?58993.* given/
      */
-    public function testLongArgUnderflowError()
+    public function testLong32BitArgUnderflowError()
     {
         new Duration(1, -8589934592, 2);
     }
 
     /**
-     * @expectedException RangeException
+     * @expectedException InvalidArgumentException
      * @expectedExceptionMessage months must be between -2147483648 and 2147483647, 8.58993e+9 given
      */
-    public function testDoubleArgOverflowError()
+    public function testDouble32BitArgOverflowError()
     {
         new Duration(8589934592.5, 1, 2);
     }
 
     /**
-     * @expectedException RangeException
+     * @expectedException InvalidArgumentException
      * @expectedExceptionMessage months must be between -2147483648 and 2147483647, -8.58993e+9 given
      */
-    public function testDoubleArgUnderflowError()
+    public function testDouble32BitArgUnderflowError()
     {
         new Duration(-8589934592.5, 1, 2);
     }
@@ -168,7 +186,7 @@ class DurationTest extends \PHPUnit_Framework_TestCase
         $duration = new Duration($months, $days, $nanos);
         $this->assertEquals((int) $months, $duration->months());
         $this->assertEquals((int) $days, $duration->days());
-        $this->assertEquals((int) $nanos, $duration->nanos());
+        $this->assertEquals((string)$nanos, $duration->nanos());
         $this->assertEquals("duration", $duration->type()->name());
     }
 
@@ -182,8 +200,8 @@ class DurationTest extends \PHPUnit_Framework_TestCase
             array(0, -1, -3),
             array(-1, 0, -3),
             array(-1, -1, 0),
-            array(2147483647, 2147483647.0, new Bigint(2147483647)),
-            array(-2147483648, -2147483648.0, new Bigint(-2147483648)),
+            array(2147483647, 2147483647.0, new Bigint("9223372036854775807")),
+            array(-2147483648, -2147483648.0, new Bigint("-9223372036854775808")),
             array("2147483647", 0, 0),
             array("-2147483648", 0, 0)
         );

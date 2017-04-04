@@ -7,7 +7,7 @@ default:
               tags: "~@cassandra-version-less-2.1&&~@cassandra-version-only-2.0&&~@broken"
             contexts:
                 - FeatureContext:
-                    cassandra_version: 3.0.8
+                    cassandra_version: "3.10"
 
 cassandra-version-2.2:
     formatters:

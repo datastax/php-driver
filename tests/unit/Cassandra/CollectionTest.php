@@ -112,7 +112,8 @@ class CollectionTest extends \PHPUnit_Framework_TestCase
             array(Type::timeuuid(), new Timeuuid(0)),
             array(Type::uuid(), new Uuid("03398c99-c635-4fad-b30a-3b2c49f785c2")),
             array(Type::varchar(), "varchar"),
-            array(Type::varint(), new Varint("9223372036854775808"))
+            array(Type::varint(), new Varint("9223372036854775808")),
+            array(Type::duration(), new Duration(1, 2, 3))
         );
     }
 

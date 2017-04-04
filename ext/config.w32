@@ -4,7 +4,7 @@ ARG_ENABLE("cassandra", "Enable DataStax PHP Cassandra extension", "no");
 
 // Establish the minimum Cassandra C/C++ driver and PHP version
 var driver_minimum_major = 2;
-var driver_minimum_minor = 6;
+var driver_minimum_minor = 7;
 var driver_minimum_patch = 0;
 var driver_minimum_version = driver_minimum_major + "." + driver_minimum_minor + "." + driver_minimum_patch;
 var php_minimum_major = 5;
