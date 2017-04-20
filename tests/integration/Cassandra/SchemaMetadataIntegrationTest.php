@@ -51,11 +51,10 @@ class SchemaMetadataIntegrationTest extends BasicIntegrationTest {
     }
 
     protected function createKeyspace($keyspaceName, $replicationFactor = 1) {
-        $statement = new SimpleStatement(
+        $this->session->execute(
             "CREATE KEYSPACE $keyspaceName " .
             "WITH REPLICATION = { 'class' : 'SimpleStrategy', 'replication_factor' : $replicationFactor }"
         );
-        $this->session->execute($statement);
     }
 
     protected function createKeyspaceWithSchema($keyspaceName, $tableSchemas) {
@@ -69,7 +68,7 @@ class SchemaMetadataIntegrationTest extends BasicIntegrationTest {
                     array_filter(array_keys($tableSchema),
                     function ($columnName) { return strpos($columnName, "key") === 0; }))
             );
-            $this->session->execute(new SimpleStatement($query));
+            $this->session->execute($query);
         }
     }
 
@@ -77,30 +76,24 @@ class SchemaMetadataIntegrationTest extends BasicIntegrationTest {
      * Create the table for the secondary indexes
      */
     protected function createTableForSecondaryIndexes() {
-        $statement = new SimpleStatement(
-            "CREATE TABLE {$this->tableNamePrefix} (key1 text, value1 int, value2 map<text, text>, PRIMARY KEY(key1))"
+        $this->session->execute(
+            "CREATE TABLE {$this->tableNamePrefix} " .
+            "(key1 text, value1 int, value2 map<text, text>, PRIMARY KEY(key1))"
         );
-        $this->session->execute($statement);
     }
 
     /**
      * Create the simple secondary index using the table
      */
     protected function createSimpleSecondaryIndex() {
-        $statement = new SimpleStatement(
-            "CREATE INDEX simple ON {$this->tableNamePrefix} (value1)"
-        );
-        $this->session->execute($statement);
+        $this->session->execute("CREATE INDEX simple ON {$this->tableNamePrefix} (value1)");
     }
 
     /**
      * Create the collections secondary index using the table
      */
     protected function createCollectionSecondaryIndex() {
-        $statement = new SimpleStatement(
-            "CREATE INDEX collection ON {$this->tableNamePrefix} (KEYS(value2))"
-        );
-        $this->session->execute($statement);
+        $this->session->execute("CREATE INDEX collection ON {$this->tableNamePrefix} (KEYS(value2))");
     }
 
     /**
@@ -131,51 +124,48 @@ class SchemaMetadataIntegrationTest extends BasicIntegrationTest {
      * Create the tables for the materialized views
      */
     protected function createTablesForMaterializedViews() {
-        $statement = new SimpleStatement(
-            "CREATE TABLE {$this->tableNamePrefix}_1 (key1 text, value1 int, PRIMARY KEY(key1))"
+        $this->session->execute(
+            "CREATE TABLE {$this->tableNamePrefix}_1 " .
+            "(key1 text, value1 int, PRIMARY KEY(key1))"
         );
-        $this->session->execute($statement);
-        $statement = new SimpleStatement(
-            "CREATE TABLE {$this->tableNamePrefix}_2 (key1 text, key2 int, value1 int, PRIMARY KEY(key1, key2))"
+        $this->session->execute(
+            "CREATE TABLE {$this->tableNamePrefix}_2 " .
+            "(key1 text, key2 int, value1 int, PRIMARY KEY(key1, key2))"
         );
-        $this->session->execute($statement);
     }
 
     /**
      * Create the simple materialized view using the first table
      */
     protected function createSimpleMaterializedView() {
-        $statement = new SimpleStatement(
+        $this->session->execute(
             "CREATE MATERIALIZED VIEW simple AS " .
             "SELECT key1 FROM {$this->tableNamePrefix}_1 WHERE value1 IS NOT NULL " .
             "PRIMARY KEY(value1, key1)"
         );
-        $this->session->execute($statement);
     }
 
     /**
      * Create the primary key materialized view using the second table
      */
     protected function createPrimaryKeyMaterializedView() {
-        $statement = new SimpleStatement(
+        $this->session->execute(
             "CREATE MATERIALIZED VIEW primary_key AS " .
             "SELECT key1 FROM {$this->tableNamePrefix}_2 WHERE key2 IS NOT NULL AND value1 IS NOT NULL " .
             "PRIMARY KEY((value1, key2), key1)"
         );
-        $this->session->execute($statement);
     }
 
     /**
      * Create the primary key materialized view using the second table
      */
     protected function createClusteringKeyMaterializedView() {
-        $statement = new SimpleStatement(
+        $this->session->execute(
             "CREATE MATERIALIZED VIEW clustering_key AS " .
             "SELECT key1 FROM {$this->tableNamePrefix}_2 WHERE key2 IS NOT NULL AND value1 IS NOT NULL " .
             "PRIMARY KEY(value1, key2, key1) " .
             "WITH CLUSTERING ORDER BY (key2 DESC)"
         );
-        $this->session->execute($statement);
     }
 
     /**
@@ -245,21 +235,42 @@ class SchemaMetadataIntegrationTest extends BasicIntegrationTest {
     }
 
     /**
+     * Wait for the function to exist in the current keyspace schema
+     *
+     * @param string $name Function name to look for
+     * @param int $retries (Optional) Number of retries (default: 100)
+     * @return bool True if function was found; false otherwise
+     */
+    private function waitForFunction($name, $retries = 100) {
+        // Determine if the function should be searched for
+        if ($retries > 0) {
+            // Get the list of functions from the current keyspace
+            $functions = $this->session->schema()->keyspace($this->keyspaceName)->functions();
+            // Iterate over each function and determine if expected function exists
+            foreach ($functions as $function) {
+                if ($name == $function->simpleName()) {
+                    return true;
+                }
+            }
+            // Take a nap and attempt to retry the search
+            usleep(100000); // 100ms
+            $this->waitForFunction($name, --$retries);
+        }
+        // Unable to find function
+        return false;
+    }
+
+
+    /**
      * Create the user defined function
      */
     protected function createUserDefinedFunction() {
-        $statement = new SimpleStatement(
-          "CREATE OR REPLACE FUNCTION user_defined_function(rhs int, lhs int) " .
-          "RETURNS NULL ON NULL INPUT " .
-          "RETURNS int LANGUAGE javascript AS 'lhs + rhs'"
+        $this->session->execute(
+            "CREATE OR REPLACE FUNCTION user_defined_function(rhs int, lhs int) " .
+            "RETURNS NULL ON NULL INPUT " .
+            "RETURNS int LANGUAGE javascript AS 'lhs + rhs'"
         );
-        $this->session->execute($statement);
-
-        $cluster = \Cassandra::cluster()
-            ->withContactPoints("127.0.0.1")
-            ->withPersistentSessions(false)
-            ->build();
-        $session = $cluster->connect();
+        $this->waitForFunction("user_defined_function");
     }
 
     /**
@@ -326,6 +337,32 @@ class SchemaMetadataIntegrationTest extends BasicIntegrationTest {
     }
 
     /**
+     * Wait for the aggregate to exist in the current keyspace schema
+     *
+     * @param string $name Aggregate name to look for
+     * @param int $retries (Optional) Number of retries (default: 100)
+     * @return bool True if aggregate was found; false otherwise
+     */
+    private function waitForAggregate($name, $retries = 100) {
+        // Determine if the aggregate should be searched for
+        if ($retries > 0) {
+            // Get the list of aggregates from the current keyspace
+            $aggregates = $this->session->schema()->keyspace($this->keyspaceName)->aggregates();
+            // Iterate over each function and determine if expected function exists
+            foreach ($aggregates as $aggregate) {
+                if ($name == $aggregate->simpleName()) {
+                    return true;
+                }
+            }
+            // Take a nap and attempt to retry the search
+            usleep(100000); // 100ms
+            $this->waitForFunction($name, --$retries);
+        }
+        // Unable to find aggregate
+        return false;
+    }
+
+    /**
      * Create the user defined aggregate and two user defined functions for the
      * associated aggregate
      */
@@ -334,20 +371,20 @@ class SchemaMetadataIntegrationTest extends BasicIntegrationTest {
         $this->createUserDefinedFunction();
 
         // Create the UDA
-        $statement = new SimpleStatement(
+        $this->session->execute(
             "CREATE OR REPLACE FUNCTION uda_udf_final(val int) " .
             "RETURNS NULL ON NULL INPUT " .
             "RETURNS int LANGUAGE javascript AS 'val * val'"
         );
-        $this->session->execute($statement);
-        $statement = new SimpleStatement(
+        $this->waitForFunction("uda_udf_final");
+        $this->session->execute(
             "CREATE OR REPLACE AGGREGATE user_defined_aggregate(int) " .
             "SFUNC user_defined_function " .
             "STYPE int " .
             "FINALFUNC uda_udf_final " .
             "INITCOND 0"
         );
-        $this->session->execute($statement);
+        $this->waitForAggregate("user_defined_aggregate");
     }
 
     /**
@@ -585,10 +622,10 @@ class SchemaMetadataIntegrationTest extends BasicIntegrationTest {
      * @test
      */
     public function testGetColumnIndexOptions() {
-        $statement = new SimpleStatement(
-            "CREATE TABLE {$this->tableNamePrefix}_with_index (key int PRIMARY KEY, value map<text, frozen<map<int, int>>>)"
+        $this->session->execute(
+            "CREATE TABLE {$this->tableNamePrefix}_with_index " .
+            "(key int PRIMARY KEY, value map<text, frozen<map<int, int>>>)"
         );
-        $this->session->execute($statement);
 
         $keyspace = $this->session->schema()->keyspace($this->keyspaceName);
         $this->assertNotNull($keyspace);
@@ -599,10 +636,8 @@ class SchemaMetadataIntegrationTest extends BasicIntegrationTest {
         $indexOptions = $table->column("value")->indexOptions();
         $this->assertNull($indexOptions);
 
-        $statement = new SimpleStatement(
-            "CREATE INDEX ON {$this->tableNamePrefix}_with_index (value)"
-        );
-        $this->session->execute($statement);
+        $this->session->execute("CREATE INDEX ON {$this->tableNamePrefix}_with_index (value)");
+        sleep(10);
 
         $keyspace = $this->session->schema()->keyspace($this->keyspaceName);
         $this->assertNotNull($keyspace);
@@ -624,10 +659,10 @@ class SchemaMetadataIntegrationTest extends BasicIntegrationTest {
      * @test
      */
     public function testSchemaMetadataWithNullFields() {
-        $statement = new SimpleStatement(
-            "CREATE TABLE {$this->tableNamePrefix}_null_comment (key int PRIMARY KEY, value int)"
+        $this->session->execute(
+            "CREATE TABLE {$this->tableNamePrefix}_null_comment " .
+            "(key int PRIMARY KEY, value int)"
         );
-        $this->session->execute($statement);
 
         $keyspace = $this->session->schema()->keyspace($this->keyspaceName);
         $table = $keyspace->table("{$this->tableNamePrefix}_null_comment");
@@ -649,20 +684,18 @@ class SchemaMetadataIntegrationTest extends BasicIntegrationTest {
      * @ticket PHP-62
      */
     public function testSchemaMetadataWithNestedColumnTypes() {
-        $statement = new SimpleStatement(
-            "CREATE TABLE {$this->tableNamePrefix}_nested1 (key int PRIMARY KEY, value map<frozen<list<int>>, int>)"
+        $this->session->execute(
+            "CREATE TABLE {$this->tableNamePrefix}_nested1 " .
+            "(key int PRIMARY KEY, value map<frozen<list<int>>, int>)"
         );
-        $this->session->execute($statement);
-
-        $statement = new SimpleStatement(
-            "CREATE TABLE {$this->tableNamePrefix}_nested2 (key int PRIMARY KEY, value map<int, frozen<list<int>>>)"
+        $this->session->execute(
+            "CREATE TABLE {$this->tableNamePrefix}_nested2 " .
+            "(key int PRIMARY KEY, value map<int, frozen<list<int>>>)"
         );
-        $this->session->execute($statement);
-
-        $statement = new SimpleStatement(
-            "CREATE TABLE {$this->tableNamePrefix}_nested3 (key int PRIMARY KEY, value list<frozen<map<int, frozen<set<int>>>>>)"
+        $this->session->execute(
+            "CREATE TABLE {$this->tableNamePrefix}_nested3 " .
+            "(key int PRIMARY KEY, value list<frozen<map<int, frozen<set<int>>>>>)"
         );
-        $this->session->execute($statement);
 
         $keyspace = $this->session->schema()->keyspace($this->keyspaceName);
 
@@ -950,8 +983,7 @@ class SchemaMetadataIntegrationTest extends BasicIntegrationTest {
         $this->assertNotEmpty($keyspace->materializedView("simple"));
 
         // Drop the materialized view and validate it no longer exists
-        $statement = new SimpleStatement("DROP MATERIALIZED VIEW simple");
-        $this->session->execute($statement);
+        $this->session->execute("DROP MATERIALIZED VIEW simple");
         $keyspace = $this->session->schema()->keyspace($this->keyspaceName);
         $this->assertCount(0, $keyspace->materializedViews());
         $this->assertEmpty($keyspace->materializedView("simple"));
@@ -1037,8 +1069,7 @@ class SchemaMetadataIntegrationTest extends BasicIntegrationTest {
         $this->assertUserDefinedFunction();
 
         // Drop the UDF and validate it no longer exists
-        $statement = new SimpleStatement("DROP FUNCTION user_defined_function");
-        $this->session->execute($statement);
+        $this->session->execute("DROP FUNCTION user_defined_function");
         $keyspace = $this->session->schema()->keyspace($this->keyspaceName);
         $this->assertCount(0, $keyspace->functions());
         $this->assertEmpty($keyspace->function("user_defined_function"));
@@ -1091,14 +1122,14 @@ class SchemaMetadataIntegrationTest extends BasicIntegrationTest {
     public function testIteratorUserDefinedAggregates() {
         // Create the UDAs (the same UDA with a different name)
         $this->createUserDefinedAggregate();
-        $statement = new SimpleStatement(
+        $this->session->execute(
             "CREATE OR REPLACE AGGREGATE user_defined_aggregate_repeat(int) " .
             "SFUNC user_defined_function " .
             "STYPE int " .
             "FINALFUNC uda_udf_final " .
             "INITCOND 0"
         );
-        $this->session->execute($statement);
+        $this->waitForAggregate("user_defined_aggregate_repeat");
 
         // Validate the UDAs exists
         $keyspace = $this->session->schema()->keyspace($this->keyspaceName);
@@ -1137,8 +1168,7 @@ class SchemaMetadataIntegrationTest extends BasicIntegrationTest {
         $this->assertUserDefinedAggregate();
 
         // Drop the UDA and validate it no longer exists
-        $statement = new SimpleStatement("DROP AGGREGATE user_defined_aggregate");
-        $this->session->execute($statement);
+        $this->session->execute("DROP AGGREGATE user_defined_aggregate");
         $keyspace = $this->session->schema()->keyspace($this->keyspaceName);
         $this->assertCount(0, $keyspace->aggregates());
         $this->assertEmpty($keyspace->function("user_defined_aggregate"));
@@ -1217,12 +1247,11 @@ class SchemaMetadataIntegrationTest extends BasicIntegrationTest {
      */
     public function testSingleQuoteCustomValue() {
         // Create a table using a single quoted custom value
-        $statement = new \Cassandra\SimpleStatement(
+        $this->session->execute(
             "CREATE TABLE {$this->keyspaceName}.{$this->tableNamePrefix} ("
             . "key TEXT PRIMARY KEY,"
             . "value 'org.apache.cassandra.db.marshal.LexicalUUIDType')"
         );
-        $this->session->execute($statement);
 
         // Get the schema from the session
         $schema = $this->session->schema();

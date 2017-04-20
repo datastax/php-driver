@@ -63,7 +63,7 @@ class RetryPolicyIntegrationTest extends BasicIntegrationTest {
 
         // Create the table
         $query = "CREATE TABLE {$this->tableNamePrefix} (key int, value_int int, PRIMARY KEY(key, value_int))";
-        $this->session->execute(new SimpleStatement($query));
+        $this->session->execute($query);
 
         // Create the insert query
         $this->insertQuery = "INSERT INTO {$this->tableNamePrefix} (key, value_int) VALUES (?, ?)";
@@ -85,8 +85,6 @@ class RetryPolicyIntegrationTest extends BasicIntegrationTest {
             // Create all statement types
             $batch = new BatchStatement(\Cassandra::BATCH_UNLOGGED);
             $prepare = $this->session->prepare($this->insertQuery);
-            $simple = new SimpleStatement($this->insertQuery);
-
 
             // Create the default execution options
             $options = array(
@@ -104,13 +102,13 @@ class RetryPolicyIntegrationTest extends BasicIntegrationTest {
                     if ($i % 2 == 0) {
                         $batch->add($prepare, $values);
                     } else {
-                        $batch->add($simple, $values);
+                        $batch->add($this->insertQuery, $values);
                     }
                 } else {
                     // Execute either the prepare or simple statment
                     $statement = $prepare;
                     if ($statementType == self::SIMPLE_STATEMENT) {
-                        $statement = $simple;
+                        $statement = $this->insertQuery;
                     }
                     $options["arguments"] = $values;
                     $this->session->execute($statement, $options);
@@ -147,13 +145,14 @@ class RetryPolicyIntegrationTest extends BasicIntegrationTest {
     private function assert(RetryPolicy $policy, $key, $numberOfAsserts, $consistency, $retries = self::NUMBER_OF_TIMEOUT_EXCEPTIONS) {
         try {
             // Select the values
-            $query = "SELECT value_int FROM {$this->tableNamePrefix} WHERE key = {$key}";
-            $statement = new SimpleStatement($query);
             $options = array(
                 "consistency" => $consistency,
                 "retry_policy" => $policy
             );
-            $rows = $this->session->execute($statement, $options);
+            $rows = $this->session->execute(
+                "SELECT value_int FROM {$this->tableNamePrefix} WHERE key = {$key}",
+                $options
+            );
 
             // Assert the values
             $this->assertCount($numberOfAsserts, $rows);

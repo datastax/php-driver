@@ -39,7 +39,7 @@ DefaultSession:
           type: string
         options:
           comment: '{@inheritDoc}'
-          type: ExecutionOptions
+          type: array|ExecutionOptions|null
       return:
         comment: '{@inheritDoc}'
         type: PreparedStatement
@@ -51,7 +51,7 @@ DefaultSession:
           type: string
         options:
           comment: '{@inheritDoc}'
-          type: ExecutionOptions
+          type: array|ExecutionOptions|null
       return:
         comment: '{@inheritDoc}'
         type: FuturePreparedStatement

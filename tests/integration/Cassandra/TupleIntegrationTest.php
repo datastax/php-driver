@@ -239,14 +239,13 @@ class TupleIntegrationTest extends CollectionsIntegrationTest {
      */
     public function testUserType() {
         // Create the user types
-        $this->session->execute(new SimpleStatement(UserTypeIntegrationTest::PHONE_USER_TYPE_CQL));
-        $this->session->execute(new SimpleStatement(UserTypeIntegrationTest::ADDRESS_USER_TYPE_CQL));
+        $this->session->execute(UserTypeIntegrationTest::PHONE_USER_TYPE_CQL);
+        $this->session->execute(UserTypeIntegrationTest::ADDRESS_USER_TYPE_CQL);
 
         // Create the table
-        $query = "CREATE TABLE " . $this->tableNamePrefix .
-            " (key timeuuid PRIMARY KEY, value " .
-            "frozen<tuple<address>>)";
-        $this->session->execute(new SimpleStatement($query));
+        $this->session->execute(
+            "CREATE TABLE {$this->tableNamePrefix} (key timeuuid PRIMARY KEY, value frozen<tuple<address>>)"
+        );
 
         // Generate a valid address user type and assign it to a tuple
         $address = UserTypeIntegrationTest::generateAddressValue();
@@ -261,16 +260,16 @@ class TupleIntegrationTest extends CollectionsIntegrationTest {
         );
 
         // Insert the value into the table
-        $query = "INSERT INTO " . $this->tableNamePrefix . " (key, value) VALUES (?, ?)";
-        $statement = new SimpleStatement($query);
-        $options = array("arguments" => $values);
-        $this->session->execute($statement, $options);
+        $this->session->execute(
+            "INSERT INTO {$this->tableNamePrefix} (key, value) VALUES (?, ?)",
+            array("arguments" => $values)
+        );
 
         // Select the tuple
-        $query = "SELECT value FROM " . $this->tableNamePrefix . " WHERE key=?";
-        $statement = new SimpleStatement($query);
-        $options = array("arguments" => array($key));
-        $rows = $this->session->execute($statement, $options);
+        $rows = $this->session->execute(
+            "SELECT value FROM {$this->tableNamePrefix} WHERE key=?",
+            array("arguments" => array($key))
+        );
 
         // Ensure the tuple collection is valid
         $this->assertCount(1, $rows);

@@ -52,8 +52,7 @@ class TimestampIntegrationTest extends BasicIntegrationTest {
         parent::setUp();
 
         // Create the table
-        $query = "CREATE TABLE {$this->tableNamePrefix} (key int PRIMARY KEY, value_int int)";
-        $this->session->execute(new SimpleStatement($query));
+        $this->session->execute("CREATE TABLE {$this->tableNamePrefix} (key int PRIMARY KEY, value_int int)");
 
         // Generate the insert and select queries
         $this->insertQuery = "INSERT INTO {$this->tableNamePrefix} (key, value_int) VALUES (?, ?)";
@@ -83,9 +82,7 @@ class TimestampIntegrationTest extends BasicIntegrationTest {
      */
     private function serverNow() {
         // Query the server for the current time
-        $query = "SELECT dateOf(now()) FROM system.local";
-        $statement = new SimpleStatement($query);
-        $rows = $this->session->execute($statement);
+        $rows = $this->session->execute("SELECT dateOf(now()) FROM system.local");
 
         // Return the server time in microseconds
         return current($rows->first())->time() * self::SECONDS_TO_MICROSECONDS;
@@ -140,13 +137,12 @@ class TimestampIntegrationTest extends BasicIntegrationTest {
      */
     private function getTimestamp($key) {
         // Select the timestamp from the table
-        $statement = new SimpleStatement($this->selectQuery);
         $options = array(
             "arguments" => array(
                 "key" => $key
             )
         );
-        $rows = $this->session->execute($statement, $options);
+        $rows = $this->session->execute($this->selectQuery, $options);
         $row = $rows->first();
         $this->assertArrayHasKey("writetime(value_int)", $row);
 
@@ -273,11 +269,10 @@ class TimestampIntegrationTest extends BasicIntegrationTest {
     public function testBatchStatement() {
         // Create the batch statement
         $batch = new BatchStatement(\Cassandra::BATCH_UNLOGGED);
-        $simple = new SimpleStatement($this->insertQuery);
         $prepare = $this->session->prepare($this->insertQuery);
 
         // Simple statement
-        $batch->add($simple, array(
+        $batch->add($this->insertQuery, array(
             0,
             1
         ));
@@ -287,9 +282,7 @@ class TimestampIntegrationTest extends BasicIntegrationTest {
             "value_int" => 2
         ));
         // Forced timestamp (simple)
-        $query = "{$this->insertQuery} USING TIMESTAMP 90";
-        $simple = new SimpleStatement($query);
-        $batch->add($simple, array(
+        $batch->add("{$this->insertQuery} USING TIMESTAMP 90", array(
             2,
             3
         ));

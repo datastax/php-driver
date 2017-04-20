@@ -7,8 +7,20 @@ Session:
     @see Cluster::connectAsync()
   methods:
     execute:
-      comment: |
+      comment: |-
         Execute a query.
+
+        Available execution options:
+        | Option Name        | Option **Type** | Option Details                                                                                           |
+        |--------------------|-----------------|----------------------------------------------------------------------------------------------------------|
+        | arguments          | array           | An array or positional or named arguments                                                                |
+        | consistency        | int             | A consistency constant e.g Dse::CONSISTENCY_ONE, Dse::CONSISTENCY_QUORUM, etc.                           |
+        | timeout            | int             | A number of rows to include in result for paging                                                         |
+        | paging_state_token | string          | A string token use to resume from the state of a previous result set                                     |
+        | retry_policy       | RetryPolicy     | A retry policy that is used to handle server-side failures for this request                              |
+        | serial_consistency | int             | Either Dse::CONSISTENCY_SERIAL or Dse::CONSISTENCY_LOCAL_SERIAL                                          |
+        | timestamp          | int\|string     | Either an integer or integer string timestamp that represents the number of microseconds since the epoch |
+        | execute_as         | string          | User to execute statement as                                                                             |
 
         @throws Exception
       params:
@@ -16,7 +28,7 @@ Session:
           comment: string or statement to be executed.
           type: string|Statement
         options:
-          comment: execution options (optional)
+          comment: Options to control execution of the query.
           type: array|ExecutionOptions|null
       return:
         comment: A collection of rows.
@@ -25,12 +37,14 @@ Session:
       comment: |-
         Execute a query asynchronously. This method returns immediately, but
         the query continues execution in the background.
+
+        @see Session::execute() for valid execution options
       params:
         statement:
           comment: string or statement to be executed.
           type: string|Statement
         options:
-          comment: execution options (optional)
+          comment: Options to control execution of the query.
           type: array|ExecutionOptions|null
       return:
         comment: A future that can be used to retrieve the result.
@@ -40,26 +54,31 @@ Session:
         Prepare a query for execution.
 
         @throws Exception
+
+        @see Session::execute() for valid execution options
       params:
         cql:
           comment: The query to be prepared.
           type: string
         options:
-          comment: Options to control preparing the query.
-          type: ExecutionOptions
+          comment: |
+            Options to control preparing the query.
+          type: array|ExecutionOptions|null
       return:
-        comment: |
-          A prepared statement that can be bound with parameters and executed.
+        comment: A prepared statement that can be bound with parameters and executed.
         type: PreparedStatement
     prepareAsync:
-      comment: Asynchronously prepare a query for execution.
+      comment: |
+        Asynchronously prepare a query for execution.
+
+        @see Session::execute() for valid execution options
       params:
         cql:
           comment: The query to be prepared.
           type: string
         options:
           comment: Options to control preparing the query.
-          type: ExecutionOptions
+          type: array|ExecutionOptions|null
       return:
         comment: A future that can be used to retrieve the prepared statement.
         type: FuturePreparedStatement

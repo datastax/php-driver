@@ -35,11 +35,13 @@ class SimpleStatementIntegrationTest extends BasicIntegrationTest {
      */
     public function testByName() {
         // Create the table
-        $query = "CREATE TABLE {$this->tableNamePrefix} (key timeuuid, value_int int, value_boolean boolean, value_text text, PRIMARY KEY (value_int, key)) WITH CLUSTERING ORDER BY (key DESC)";
-        $this->session->execute(new SimpleStatement($query));
+        $this->session->execute(
+            "CREATE TABLE  {$this->tableNamePrefix}" .
+            "(key timeuuid, value_int int, value_boolean boolean, " .
+            "value_text text, PRIMARY KEY (value_int, key)) WITH CLUSTERING ORDER BY (key DESC)"
+        );
 
         // Create the insert query and insert valid named parameters
-        $query = "INSERT INTO {$this->tableNamePrefix} (key, value_int, value_boolean, value_text) VALUES (?, ?, ?, ?)";
         $values = array(
             // Reversed order from table and insert queries
             array(
@@ -65,16 +67,16 @@ class SimpleStatementIntegrationTest extends BasicIntegrationTest {
                 "value_text" => "This is row number three."
             )
         );
-        $statement = new SimpleStatement($query);
+        $statement = new SimpleStatement(
+            "INSERT INTO {$this->tableNamePrefix} " .
+            "(key, value_int, value_boolean, value_text) VALUES (?, ?, ?, ?)"
+        );
         foreach ($values as $value) {
-            $options = array("arguments" => $value);
-            $this->session->execute($statement, $options);
+            $this->session->execute($statement, array("arguments" => $value));
         }
 
         // Select and assert the values
-        $query = "SELECT * FROM {$this->tableNamePrefix}";
-        $statement = new SimpleStatement($query);
-        $rows = $this->session->execute($statement);
+        $rows = $this->session->execute("SELECT * FROM {$this->tableNamePrefix}");
         $this->assertCount(count($values), $rows);
         foreach ($rows as $i => $row) {
             $value = $values[$i];
@@ -112,11 +114,13 @@ class SimpleStatementIntegrationTest extends BasicIntegrationTest {
         }
 
         // Create the table
-        $query = "CREATE TABLE {$this->tableNamePrefix} (key timeuuid, value_int int, \"value_iNT\" int, value_boolean boolean, \"value_BooLeaN\" boolean, PRIMARY KEY (value_int, key)) WITH CLUSTERING ORDER BY (key DESC)";
-        $this->session->execute(new SimpleStatement($query));
+        $this->session->execute(
+            "CREATE TABLE {$this->tableNamePrefix} " .
+            "(key timeuuid, value_int int, \"value_iNT\" int, value_boolean boolean, " .
+            "\"value_BooLeaN\" boolean, PRIMARY KEY (value_int, key)) WITH CLUSTERING ORDER BY (key DESC)"
+        );
 
         // Create the insert query and insert valid named parameters
-        $query = "INSERT INTO {$this->tableNamePrefix} (key, value_int, \"value_iNT\", value_boolean, \"value_BooLeaN\") VALUES (?, ?, ?, ?, ?)";
         $values = array(
             // Reversed order from table and insert queries
             array(
@@ -145,16 +149,16 @@ class SimpleStatementIntegrationTest extends BasicIntegrationTest {
                 "\"value_BooLeaN\"" => true
             )
         );
-        $statement = new SimpleStatement($query);
+        $statement = new SimpleStatement(
+            "INSERT INTO  {$this->tableNamePrefix}" .
+            "(key, value_int, \"value_iNT\", value_boolean, \"value_BooLeaN\") VALUES (?, ?, ?, ?, ?)"
+        );
         foreach ($values as $value) {
-            $options = array("arguments" => $value);
-            $this->session->execute($statement, $options);
+            $this->session->execute($statement, array("arguments" => $value));
         }
 
         // Select and assert the values
-        $query = "SELECT * FROM {$this->tableNamePrefix}";
-        $statement = new SimpleStatement($query);
-        $rows = $this->session->execute($statement);
+        $rows = $this->session->execute("SELECT * FROM {$this->tableNamePrefix}");
         $this->assertCount(count($values), $rows);
         foreach ($rows as $i => $row) {
             $expected = array();
@@ -181,18 +185,21 @@ class SimpleStatementIntegrationTest extends BasicIntegrationTest {
      */
     public function testByNameInvalidBindName() {
         // Create the table
-        $query = "CREATE TABLE {$this->tableNamePrefix} (key timeuuid PRIMARY KEY, value_int int)";
-        $this->session->execute(new SimpleStatement($query));
+        $this->session->execute(new SimpleStatement(
+            "CREATE TABLE {$this->tableNamePrefix} (key timeuuid PRIMARY KEY, value_int int)"
+        ));
 
         // Create the insert query and attempt to insert invalid valid name
-        $query = "INSERT INTO {$this->tableNamePrefix} (key, value_int) VALUES (?, ?)";
         $values = array(
             "key" => new Timeuuid(),
             "wrong_name" => 1
         );
-        $statement = new SimpleStatement($query);
-        $options = array("arguments" => $values);
-        $this->session->execute($statement, $options);
+        $this->session->execute(
+            new SimpleStatement(
+                "INSERT INTO {$this->tableNamePrefix} (key, value_int) VALUES (?, ?)"
+            ),
+            array("arguments" => $values)
+        );
     }
 
     /**
@@ -217,19 +224,23 @@ class SimpleStatementIntegrationTest extends BasicIntegrationTest {
         }
 
         // Create the table
-        $query = "CREATE TABLE {$this->tableNamePrefix} (key timeuuid PRIMARY KEY, \"value_iNT\" int, \"value_TeXT\" text)";
-        $this->session->execute(new SimpleStatement($query));
+        $this->session->execute(new SimpleStatement(
+            "CREATE TABLE {$this->tableNamePrefix} " .
+            "(key timeuuid PRIMARY KEY, \"value_iNT\" int, \"value_TeXT\" text)"
+        ));
 
         // Create the insert query and attempt to insert invalid valid name
-        $query = "INSERT INTO {$this->tableNamePrefix} (key, \"value_TeXT\", \"value_iNT\") VALUES (?, ?, ?)";
         $values = array(
             "key" => new Timeuuid(),
             "value_iNT" => 1,
             "value_text" => "Exception will be thrown; case-sensitive"
         );
-        $statement = new SimpleStatement($query);
-        $options = array("arguments" => $values);
-        $this->session->execute($statement, $options);
+        $this->session->execute(
+            new SimpleStatement(
+                "INSERT INTO {$this->tableNamePrefix} (key, \"value_TeXT\", \"value_iNT\") VALUES (?, ?, ?)"
+            ),
+            array("arguments" => $values)
+        );
     }
 
     /**
@@ -245,24 +256,28 @@ class SimpleStatementIntegrationTest extends BasicIntegrationTest {
      */
     public function testByNameNullValue() {
         // Create the table
-        $query = "CREATE TABLE {$this->tableNamePrefix} (key timeuuid PRIMARY KEY, value_int int, value_boolean boolean, value_text text)";
-        $this->session->execute(new SimpleStatement($query));
+        $this->session->execute(new SimpleStatement(
+            "CREATE TABLE {$this->tableNamePrefix} " .
+            "(key timeuuid PRIMARY KEY, value_int int, value_boolean boolean, value_text text)"
+        ));
 
         // Create the insert query and insert valid named parameters
-        $query = "INSERT INTO {$this->tableNamePrefix} (key, value_int, value_boolean, value_text) VALUES (?, ?, ?, ?)";
         $values = array(
             "key" => new Timeuuid(),
             "value_int" => null,
             "value_boolean" => null,
             "value_text" => "Null values should exist for value_int and value_boolean"
         );
-        $statement = new SimpleStatement($query);
-        $options = array("arguments" => $values);
-        $this->session->execute($statement, $options);
+        $this->session->execute(
+            new SimpleStatement(
+                "INSERT INTO {$this->tableNamePrefix} " .
+                "(key, value_int, value_boolean, value_text) VALUES (?, ?, ?, ?)"
+            ),
+            array("arguments" => $values)
+        );
 
         // Select and assert the values
-        $query = "SELECT * FROM {$this->tableNamePrefix}";
-        $statement = new SimpleStatement($query);
+        $statement = new SimpleStatement("SELECT * FROM {$this->tableNamePrefix}");
         $rows = $this->session->execute($statement);
         $this->assertCount(1, $rows);
         $row = $rows->first();

@@ -79,8 +79,7 @@ Feature: Simple Statements
           $session->execute($statement, $options);
       }
 
-      $statement = new Cassandra\SimpleStatement("SELECT * FROM simplex.playlists");
-      $result    = $session->execute($statement);
+      $result = $session->execute("SELECT * FROM simplex.playlists");
 
       foreach ($result as $row) {
         echo $row['artist'] . ": " . $row['title'] . " / " . $row['album'] . "\n";
@@ -136,12 +135,10 @@ Feature: Simple Statements
       );
 
       foreach ($songs as $song) {
-          $options = array('arguments' => $song);
-          $session->execute($statement, $options);
+          $session->execute($statement, array('arguments' => $song));
       }
 
-      $statement = new Cassandra\SimpleStatement("SELECT * FROM simplex.playlists");
-      $result    = $session->execute($statement);
+      $result = $session->execute("SELECT * FROM simplex.playlists");
 
       foreach ($result as $row) {
         echo $row['artist'] . ": " . $row['title'] . " / " . $row['album'] . "\n";
@@ -170,10 +167,6 @@ Feature: Simple Statements
                      ->withContactPoints('127.0.0.1')
                      ->build();
       $session   = $cluster->connect("simplex");
-      $statement = new Cassandra\SimpleStatement(
-          "INSERT INTO playlists (id, song_id, artist, title, album) " .
-          "VALUES (62c36092-82a1-3a00-93d1-46196ee77204, ?, ?, ?, ?)"
-      );
 
       $songs = array(
           array(
@@ -186,7 +179,11 @@ Feature: Simple Statements
 
       foreach ($songs as $song) {
           $options = array('arguments' => $song);
-          $session->execute($statement, $options);
+          $session->execute(
+              "INSERT INTO playlists (id, song_id, artist, title, album) " .
+              "VALUES (62c36092-82a1-3a00-93d1-46196ee77204, ?, ?, ?, ?)",
+              $options
+          );
       }
 
       $statement = new Cassandra\SimpleStatement(

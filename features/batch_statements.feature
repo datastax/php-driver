@@ -36,19 +36,12 @@ Feature: Batch statements
     Given the following example:
       """php
       <?php
-      $cluster   = Cassandra::cluster()
-                     ->withContactPoints('127.0.0.1')
-                     ->build();
-      $session   = $cluster->connect("simplex");
-      $prepared  = $session->prepare(
-                     "INSERT INTO playlists (id, song_id, artist, title, album) " .
-                     "VALUES (62c36092-82a1-3a00-93d1-46196ee77204, ?, ?, ?, ?)"
-                   );
-      $simple    = new Cassandra\SimpleStatement(
-                     "INSERT INTO playlists (id, song_id, artist, title, album) " .
-                     "VALUES (62c36092-82a1-3a00-93d1-46196ee77204, ?, ?, ?, ?)"
-                   );
-      $batch     = new Cassandra\BatchStatement(Cassandra::BATCH_LOGGED);
+      $cluster     = Cassandra::cluster()->build();
+      $session     = $cluster->connect("simplex");
+      $insertQuery = "INSERT INTO playlists (id, song_id, artist, title, album) " .
+                     "VALUES (62c36092-82a1-3a00-93d1-46196ee77204, ?, ?, ?, ?)";
+      $prepared    = $session->prepare($insertQuery);
+      $batch       = new Cassandra\BatchStatement(Cassandra::BATCH_LOGGED);
 
       $batch->add($prepared, array(
           'song_id' => new Cassandra\Uuid('756716f7-2e54-4715-9f00-91dcbea6cf50'),
@@ -57,9 +50,9 @@ Feature: Batch statements
           'artist'  => 'Joséphine Baker'
       ));
 
-      $batch->add($simple, array(
+      $batch->add($insertQuery, array(
           new Cassandra\Uuid('f6071e72-48ec-4fcb-bf3e-379c8a696488'),
-          'Willi Ostermann', 'Die Mösch', 'In Gold',
+          'Willi Ostermann', 'Die Mösch', 'In Gold'
       ));
 
       $batch->add($prepared, array(
@@ -69,8 +62,7 @@ Feature: Batch statements
 
       $session->execute($batch);
 
-      $statement = new Cassandra\SimpleStatement("SELECT * FROM simplex.playlists");
-      $result    = $session->execute($statement);
+      $result = $session->execute("SELECT * FROM simplex.playlists");
 
       foreach ($result as $row) {
         echo $row['artist'] . ": " . $row['title'] . " / " . $row['album'] . "\n";

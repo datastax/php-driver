@@ -93,7 +93,7 @@ abstract class DatatypeIntegrationTests extends BasicIntegrationTest {
             return "$name " . self::typeString($type);
         }, array_keys($userType->types()), $userType->types()));
         $query = sprintf($query, $this->userTypeString($userType), $fieldsString);
-        $this->session->execute(new SimpleStatement($query));
+        $this->session->execute($query);
     }
 
     /**
@@ -110,7 +110,7 @@ abstract class DatatypeIntegrationTests extends BasicIntegrationTest {
 
         $query = sprintf($query, $tableName, $cqlType);
 
-        $this->session->execute(new SimpleStatement($query));
+        $this->session->execute($query);
 
         return $tableName;
     }
@@ -119,7 +119,7 @@ abstract class DatatypeIntegrationTests extends BasicIntegrationTest {
      * Create a new table with specified type and insert and verify value
      *
      * @param $type Cassandra\Type
-     * @param $options Cassandra\ExecutionOptions
+     * @param $options array
      * @param $key string
      * @param $value mixed
      */
@@ -135,12 +135,13 @@ abstract class DatatypeIntegrationTests extends BasicIntegrationTest {
      * Insert a value into table
      *
      * @param $tableName string
-     * @param $options Cassandra\ExecutionOptions
+     * @param $options array
      */
     protected function insertValue($tableName, $options) {
-        $insertQuery = "INSERT INTO $tableName (key, value) VALUES (?, ?)";
-
-        $this->session->execute(new SimpleStatement($insertQuery), $options);
+        $this->session->execute(
+            "INSERT INTO $tableName (key, value) VALUES (?, ?)",
+            $options
+        );
     }
 
     /**
@@ -152,11 +153,10 @@ abstract class DatatypeIntegrationTests extends BasicIntegrationTest {
      * @param $value mixed
      */
     protected function verifyValue($tableName, $type, $key, $value) {
-        $selectQuery = "SELECT * FROM $tableName WHERE key = ?";
-
-        $options = array('arguments' => array($key));
-
-        $result = $this->session->execute(new SimpleStatement($selectQuery), $options);
+        $result = $this->session->execute(
+            "SELECT * FROM  $tableName WHERE key = ?",
+            array('arguments' => array($key))
+        );
 
         $this->assertEquals(count($result), 1);
 

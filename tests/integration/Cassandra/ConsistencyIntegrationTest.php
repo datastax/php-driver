@@ -38,22 +38,17 @@ class ConsistencyIntegrationTest extends BasicIntegrationTest {
      */
     public function testDefaultConsistencyLevel() {
         // Create a new table
-        $query = "CREATE TABLE {$this->tableNamePrefix} (key int PRIMARY KEY)";
-        $statement = new SimpleStatement($query);
-        $this->session->execute($statement);
+        $this->session->execute("CREATE TABLE {$this->tableNamePrefix} (key int PRIMARY KEY)");
 
         // Enable tracing
         $this->ccm->enableTracing(true);
 
         // Insert a value into the table
         $insertQuery = "INSERT INTO {$this->tableNamePrefix} (key) VALUES (1)";
-        $statement = new SimpleStatement($insertQuery);
-        $this->session->execute($statement);
+        $this->session->execute($insertQuery);
 
         // Check the trace logs to determine the consistency level used
-        $query = "SELECT parameters FROM system_traces.sessions";
-        $statement = new SimpleStatement($query);
-        $rows = $this->session->execute($statement);
+        $rows = $this->session->execute("SELECT parameters FROM system_traces.sessions");
         $isAsserted = false;
         foreach ($rows as $row) {
             // Find the parameters that contains the insert query

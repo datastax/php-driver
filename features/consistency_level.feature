@@ -38,20 +38,18 @@ Feature: Consistency Level
                          "'Joséphine Baker', " .
                          "'La Petite Tonkinoise', " .
                          "'Bye Bye Blackbird')";
-      $statement   = new Cassandra\SimpleStatement($insertQuery);
 
       // ExecutionOptions is deprecated, but still legal. Disable error reporting for it.
       error_reporting(E_ALL ^ E_DEPRECATED);
 
-      $options     = new Cassandra\ExecutionOptions(array('consistency' => Cassandra::CONSISTENCY_ALL));
-      $session->execute($statement, $options);
+      $options = new Cassandra\ExecutionOptions(array('consistency' => Cassandra::CONSISTENCY_ALL));
+      $session->execute($insertQuery, $options);
 
       // Restore error-reporting to normal.
       error_reporting(E_ALL);
 
       // Below uses the system_traces.events table to verify consistency ALL is met
-      $statement = new Cassandra\SimpleStatement("SELECT source from system_traces.events");
-      $result    = $session->execute($statement, $options);
+      $result    = $session->execute("SELECT source from system_traces.events", $options);
       $sources   = array();
       foreach ($result as $row) {
           array_push($sources, (string) $row['source']);
@@ -85,13 +83,11 @@ Feature: Consistency Level
                          "'Joséphine Baker', " .
                          "'La Petite Tonkinoise', " .
                          "'Bye Bye Blackbird')";
-      $statement   = new Cassandra\SimpleStatement($insertQuery);
       $options     = array('consistency' => Cassandra::CONSISTENCY_ALL);
-      $session->execute($statement, $options);
+      $session->execute($insertQuery, $options);
 
       // Below uses the system_traces.events table to verify consistency ALL is met
-      $statement = new Cassandra\SimpleStatement("SELECT source from system_traces.events");
-      $result    = $session->execute($statement, $options);
+      $result    = $session->execute("SELECT source from system_traces.events", $options);
       $sources   = array();
       foreach ($result as $row) {
           array_push($sources, (string) $row['source']);

@@ -50,8 +50,7 @@ Feature: Retry Policies
                           );
       $session->execute($statement, $options);
 
-      $statement = new Cassandra\SimpleStatement("SELECT * FROM simplex.playlists");
-      $result    = $session->execute($statement);
+      $result = $session->execute("SELECT * FROM simplex.playlists");
 
       foreach ($result as $row) {
         echo $row['artist'] . ": " . $row['title'] . " / " . $row['album'] . "\n";
@@ -90,8 +89,7 @@ Feature: Retry Policies
                           );
       $session->execute($statement, $options);
 
-      $statement = new Cassandra\SimpleStatement("SELECT * FROM simplex.playlists");
-      $result    = $session->execute($statement);
+      $result = $session->execute("SELECT * FROM simplex.playlists");
 
       foreach ($result as $row) {
         echo $row['artist'] . ": " . $row['title'] . " / " . $row['album'] . "\n";
@@ -124,10 +122,6 @@ Feature: Retry Policies
                      "INSERT INTO playlists (id, song_id, artist, title, album) " .
                      "VALUES (62c36092-82a1-3a00-93d1-46196ee77204, ?, ?, ?, ?)"
                    );
-      $simple    = new Cassandra\SimpleStatement(
-                     "INSERT INTO playlists (id, song_id, artist, title, album) " .
-                     "VALUES (62c36092-82a1-3a00-93d1-46196ee77204, ?, ?, ?, ?)"
-                   );
       $batch     = new Cassandra\BatchStatement(Cassandra::BATCH_UNLOGGED);
 
       $options    = array(
@@ -142,10 +136,14 @@ Feature: Retry Policies
           'artist'  => 'Joséphine Baker'
       ));
 
-      $batch->add($simple, array(
-          new Cassandra\Uuid('f6071e72-48ec-4fcb-bf3e-379c8a696488'),
-          'Willi Ostermann', 'Die Mösch', 'In Gold',
-      ));
+      $batch->add(
+          "INSERT INTO playlists (id, song_id, artist, title, album) " .
+          "VALUES (62c36092-82a1-3a00-93d1-46196ee77204, ?, ?, ?, ?)",
+          array(
+              new Cassandra\Uuid('f6071e72-48ec-4fcb-bf3e-379c8a696488'),
+              'Willi Ostermann', 'Die Mösch', 'In Gold',
+          )
+      );
 
       $batch->add($prepared, array(
           new Cassandra\Uuid('fbdf82ed-0063-4796-9c7c-a3d4f47b4b25'),
@@ -154,8 +152,7 @@ Feature: Retry Policies
 
       $session->execute($batch, $options);
 
-      $statement = new Cassandra\SimpleStatement("SELECT * FROM simplex.playlists");
-      $result    = $session->execute($statement);
+      $result = $session->execute("SELECT * FROM simplex.playlists");
 
       foreach ($result as $row) {
         echo $row['artist'] . ": " . $row['title'] . " / " . $row['album'] . "\n";
