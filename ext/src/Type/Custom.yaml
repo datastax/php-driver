@@ -3,14 +3,14 @@ Type\Custom:
   comment: A class that represents a custom type.
   methods:
     name:
-      comment: '{@inheritDoc}'
+      comment: ""
       return:
         comment: The name of this type
         type: string
     __toString:
-      comment: '{@inheritDoc}'
+      comment: ""
       return:
-        comment: String representation of this type
+        comment: ""
         type: string
     create:
       comment: ""

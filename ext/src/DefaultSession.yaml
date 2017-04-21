@@ -1,77 +1,77 @@
 ---
 DefaultSession:
-  comment: '{@inheritDoc}'
+  comment: ""
   methods:
     schema:
-      comment: '{@inheritDoc}'
+      comment: ""
       return:
-        comment: '{@inheritDoc}'
+        comment: ""
         type: Schema
     execute:
-      comment: '{@inheritDoc}'
+      comment: ""
       return:
-        comment: '{@inheritDoc}'
+        comment: ""
         type: Rows
       params:
         statement:
-          comment: '{@inheritDoc}'
+          comment: ""
           type: string|Statement
         options:
-          comment: '{@inheritDoc}'
+          comment: ""
           type: array|ExecutionOptions|null
     executeAsync:
-      comment: '{@inheritDoc}'
+      comment: ""
       params:
         statement:
-          comment: '{@inheritDoc}'
+          comment: ""
           type: string|Statement
         options:
-          comment: '{@inheritDoc}'
+          comment: ""
           type: array|ExecutionOptions|null
       return:
-        comment: '{@inheritDoc}'
+        comment: ""
         type: FutureRows
     prepare:
-      comment: '{@inheritDoc}'
+      comment: ""
       params:
         cql:
-          comment: '{@inheritDoc}'
+          comment: ""
           type: string
         options:
-          comment: '{@inheritDoc}'
+          comment: ""
           type: array|ExecutionOptions|null
       return:
-        comment: '{@inheritDoc}'
+        comment: ""
         type: PreparedStatement
     prepareAsync:
-      comment: '{@inheritDoc}'
+      comment: ""
       params:
         cql:
-          comment: '{@inheritDoc}'
+          comment: ""
           type: string
         options:
-          comment: '{@inheritDoc}'
+          comment: ""
           type: array|ExecutionOptions|null
       return:
-        comment: '{@inheritDoc}'
+        comment: ""
         type: FuturePreparedStatement
     close:
-      comment: '{@inheritDoc}'
+      comment: ""
       params:
         timeout:
-          comment: '{@inheritDoc}'
+          comment: ""
           type: double
       return:
-        comment: '{@inheritDoc}'
+        comment: ""
         type: "null"
     closeAsync:
-      comment: '{@inheritDoc}'
+      comment: ""
       return:
-        comment: '{@inheritDoc}'
+        comment: ""
         type: FutureClose
     metrics:
-      comment: '{@inheritDoc}'
+      comment: ""
       return:
-        comment: '{@inheritDoc}'
+        comment: ""
         type: array
 ...

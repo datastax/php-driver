@@ -3,99 +3,99 @@ DefaultKeyspace:
   comment: A PHP representation of a keyspace
   methods:
     name:
-      comment: '{@inheritDoc}'
+      comment: ""
       return:
-        comment: Name
+        comment: ""
         type: string
     replicationClassName:
-      comment: '{@inheritDoc}'
+      comment: ""
       return:
-        comment: Replication class
+        comment: ""
         type: string
     replicationOptions:
-      comment: '{@inheritDoc}'
+      comment: ""
       return:
-        comment: Replication options
+        comment: ""
         type: Map
     hasDurableWrites:
-      comment: '{@inheritDoc}'
+      comment: ""
       return:
-        comment: Whether durable writes are enabled
+        comment: ""
         type: string
     table:
-      comment: '{@inheritDoc}'
+      comment: ""
       params:
         name:
-          comment: Table name
+          comment: ""
           type: string
       return:
-        comment: '       Table instance or null'
+        comment: ""
         type: Table
     tables:
-      comment: '{@inheritDoc}'
+      comment: ""
       return:
-        comment: An array of `Table` instances
+        comment: ""
         type: array
     userType:
-      comment: '{@inheritDoc}'
+      comment: ""
       params:
         name:
-          comment: '{@inheritDoc}'
+          comment: ""
           type: string
       return:
-        comment: '{@inheritDoc}'
+        comment: ""
         type: Type\UserType|null
     userTypes:
-      comment: '{@inheritDoc}'
+      comment: ""
       return:
-        comment: '{@inheritDoc}'
+        comment: ""
         type: array
     materializedView:
-      comment: '{@inheritDoc}'
+      comment: ""
       params:
         name:
-          comment: '{@inheritDoc}'
+          comment: ""
           type: string
       return:
-        comment: '{@inheritDoc}'
+        comment: ""
         type: MaterizedView|null
     materializedViews:
-      comment: '{@inheritDoc}'
+      comment: ""
       return:
-        comment: '{@inheritDoc}'
+        comment: ""
         type: array
     function:
-      comment: '{@inheritDoc}'
+      comment: ""
       params:
         name:
-          comment: '{@inheritDoc}'
+          comment: ""
           type: string
         '...':
-          comment: '{@inheritDoc}'
+          comment: ""
           type: string|Type
       return:
-        comment: '{@inheritDoc}'
+        comment: ""
         type: Function|null
     functions:
-      comment: '{@inheritDoc}'
+      comment: ""
       return:
-        comment: '{@inheritDoc}'
+        comment: ""
         type: array
     aggregate:
-      comment: '{@inheritDoc}'
+      comment: ""
       params:
         name:
-          comment: '{@inheritDoc}'
+          comment: ""
           type: string
         '...':
-          comment: '{@inheritDoc}'
+          comment: ""
           type: string|Type
       return:
-        comment: '{@inheritDoc}'
+        comment: ""
         type: Aggregate|null
     aggregates:
-      comment: '{@inheritDoc}'
+      comment: ""
       return:
-        comment: '{@inheritDoc}'
+        comment: ""
         type: array
 ...

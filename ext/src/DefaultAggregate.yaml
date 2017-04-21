@@ -3,48 +3,48 @@ DefaultAggregate:
   comment: A PHP representation of an aggregate
   methods:
     name:
-      comment: '{@inheritDoc}'
+      comment: ""
       return:
-        comment: Full name of the aggregate including name and types
+        comment: ""
         type: string
     simpleName:
-      comment: '{@inheritDoc}'
+      comment: ""
       return:
-        comment: Simple name of the aggregate
+        comment: ""
         type: string
     argumentTypes:
-      comment: '{@inheritDoc}'
+      comment: ""
       return:
-        comment: Argument types of the aggregate
+        comment: ""
         type: array
     finalFunction:
-      comment: '{@inheritDoc}'
+      comment: ""
       return:
         comment: Final public function of the aggregate
         type: Function
     stateFunction:
-      comment: '{@inheritDoc}'
+      comment: ""
       return:
         comment: State public function of the aggregate
         type: Function
     initialCondition:
-      comment: '{@inheritDoc}'
+      comment: ""
       return:
-        comment: Initial condition of the aggregate
+        comment: ""
         type: Value
     returnType:
-      comment: '{@inheritDoc}'
+      comment: ""
       return:
-        comment: Return type of the aggregate
+        comment: ""
         type: Type
     stateType:
-      comment: '{@inheritDoc}'
+      comment: ""
       return:
-        comment: State type of the aggregate
+        comment: ""
         type: Type
     signature:
-      comment: '{@inheritDoc}'
+      comment: ""
       return:
-        comment: Signature of the aggregate (same as name())
+        comment: ""
         type: string
 ...

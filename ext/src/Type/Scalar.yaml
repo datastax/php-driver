@@ -3,14 +3,14 @@ Type\Scalar:
   comment: A class that represents a primitive type (e.g. `varchar` or `bigint`)
   methods:
     name:
-      comment: '{@inheritDoc}'
+      comment: ""
       return:
-        comment: '{@inheritDoc}'
+        comment: ""
         type: string
     __toString:
-      comment: '{@inheritDoc}'
+      comment: ""
       return:
-        comment: '{@inheritDoc}'
+        comment: ""
         type: string
     create:
       comment: ""

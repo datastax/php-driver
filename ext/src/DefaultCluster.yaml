@@ -6,26 +6,24 @@ DefaultCluster:
     @see Cluster
   methods:
     connect:
-      comment: |
-        {@inheritDoc}
+      comment: ""
       params:
         keyspace:
-          comment: Optional keyspace name
+          comment: ""
           type: string
         timeout:
           comment: Optional timeout
           type: int
       return:
-        comment: Session instance
+        comment: ""
         type: Session
     connectAsync:
-      comment: |
-        {@inheritDoc}
+      comment: ""
       params:
         keyspace:
-          comment: Optional keyspace name
+          comment: ""
           type: string
       return:
-        comment: A Future Session instance
+        comment: ""
         type: Future
 ...

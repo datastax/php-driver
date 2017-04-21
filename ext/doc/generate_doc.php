@@ -1,5 +1,7 @@
 <?php
 
+require_once(dirname(__FILE__) . DIRECTORY_SEPARATOR . "generate_doc_common.php");
+
 define("LICENSE_COMMENT", "/**
  * Copyright 2017 DataStax, Inc.
  *
@@ -27,12 +29,10 @@ if (count($argv) < 2) {
     die("Usage: {$argv[0]} <directory>" . PHP_EOL);
 }
 
-
 define("BASEDIR", $argv[1]);
 define("SRCDIR", BASEDIR . "/src");
 define("DOCDIR", BASEDIR . "/doc");
 
-define("INPUT_NAMESPACE", "Cassandra");
 define("OUTPUT_NAMESPACE", "Cassandra");
 define("INDENT", "    ");
 
@@ -61,21 +61,6 @@ function isAlreadyImplementedByBase($current, $implemented) {
     }
 
     return false;
-}
-
-function doesParentHaveMethod($class, $method) {
-    $parent = $class->getParentClass();
-    if ($parent) {
-        if ($parent->hasMethod($method->getName())) {
-            return true;
-        }
-        return doesParentHaveMethod($parent, $method);
-    }
-    return false;
-}
-
-function logWarning($message) {
-    fwrite(STDERR, "Warning: $message" . PHP_EOL);
 }
 
 function replaceKeyword($string) {
@@ -112,6 +97,35 @@ function writeCommentDoc($file, $comment, $indent = 0) {
     writeCommentLines($file, $lines, $indent);
 }
 
+function writeParamReturnCommentDoc($file, $typeAndName, $comment) {
+    $lines = explode(PHP_EOL, $comment);
+    if (strlen(end($lines)) == 0) {
+        array_pop($lines);
+    }
+
+    $first = true;
+    if ($lines) {
+        foreach($lines as $line) {
+            if ($first) {
+                $commentLine = "$typeAndName $line";
+                $commentLine = rtrim($commentLine) . PHP_EOL;
+                fwrite($file, INDENT . DOC_COMMENT_LINE . $commentLine);
+            } else {
+                $commentLine = str_pad("", strlen($typeAndName) + 1, " ") . $line;
+                $commentLine = rtrim($commentLine) . PHP_EOL;
+                $docCommentLine = DOC_COMMENT_LINE;
+                if ($commentLine == PHP_EOL) {
+                    $docCommentLine = rtrim($docCommentLine);
+                }
+                fwrite($file, INDENT . $docCommentLine . $commentLine);
+            }
+            $first = false;
+        }
+    } else {
+        fwrite($file, INDENT . DOC_COMMENT_LINE . $typeAndName . PHP_EOL);
+    }
+}
+
 function writeParameterDoc($doc, $file, $class, $method, $parameter) {
     $className = $class->getName();
     $methodName = $method->getShortName();
@@ -137,34 +151,7 @@ function writeParameterDoc($doc, $file, $class, $method, $parameter) {
 
         $parameterType = $parameterType ? $parameterType : "mixed";
         $parameterType = $type ? $type : $parameterType; # Overrides builtin if provided
-        $parameterTypeAndName = "@param $parameterType \$$parameterName";
-
-        $lines = explode(PHP_EOL, $comment);
-        if (strlen(end($lines)) == 0) {
-            array_pop($lines);
-        }
-
-        $first = true;
-        if ($lines) {
-            foreach($lines as $line) {
-                if ($first) {
-                    $commentLine = "$parameterTypeAndName $line";
-                    $commentLine = rtrim($commentLine) . PHP_EOL;
-                    fwrite($file, INDENT . DOC_COMMENT_LINE . $commentLine);
-                } else {
-                    $commentLine = str_pad("", strlen($parameterTypeAndName) + 1, " ") . $line;
-                    $commentLine = rtrim($commentLine) . PHP_EOL;
-                    $doc_comment_line = DOC_COMMENT_LINE;
-                    if ($commentLine == PHP_EOL) {
-                        $doc_comment_line = rtrim($doc_comment_line);
-                    }
-                    fwrite($file, INDENT . $doc_comment_line . $commentLine);
-                }
-                $first = false;
-            }
-        } else {
-            fwrite($file, INDENT . DOC_COMMENT_LINE . $parameterTypeAndName . PHP_EOL);
-        }
+        writeParamReturnCommentDoc($file, "@param $parameterType \$$parameterName", $comment);
     } else {
         $parameterType = $parameterType ? $parameterType : "mixed";
         fwrite($file, INDENT . DOC_COMMENT_LINE . "@param $parameterType \$$parameterName" . PHP_EOL);
@@ -190,9 +177,7 @@ function writeReturnDoc($doc, $file, $class, $method) {
         }
 
         $type = $type ? $type : "mixed";
-        $commentLine = "@return $type $comment";
-        $commentLine = rtrim($commentLine) . PHP_EOL;
-        fwrite($file, INDENT . DOC_COMMENT_LINE . $commentLine);
+        writeParamReturnCommentDoc($file, "@return $type", $comment);
     } else {
         fwrite($file, INDENT . DOC_COMMENT_LINE . "@return mixed" . PHP_EOL);
         logWarning("Missing 'return' documentation for method '$className::$methodName()'");
@@ -462,16 +447,56 @@ function writeClass($doc, $file, $class) {
     fwrite($file, "}" . PHP_EOL);
 }
 
-$iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator(SRCDIR));
-$regex = new RegexIterator($iterator, '/^.+\.c$/i', RecursiveRegexIterator::GET_MATCH);
+function populateFromParent($classDoc, $doc) {
+    if (empty(trim($doc["comment"]))) {
+        $classComment = $classDoc->getParentClassComment();
+        $doc["comment"] =  $classComment !== null ? $classComment : "";
+    }
+    if (isset($doc["methods"])) {
+        foreach ($doc["methods"] as $methodName => &$methodDoc) {
+            if (empty(trim($methodDoc["comment"]))) {
+                $methodComment = $classDoc->getParentMethodComment($methodName);
+                $methodDoc["comment"] = $methodComment !== null ? $methodComment : "";
+            }
 
-foreach ($regex as $fileName => $notused) {
-    $yamlFileName = preg_replace("/(.+)\.c$/", "$1.yaml", $fileName);
-    $fileName = substr($fileName, strlen(SRCDIR));
-    $fileName = preg_replace("/(.+)\.c$/", "$1", $fileName);
+            if (isset($methodDoc["return"])) {
+                $returnDoc = $methodDoc["return"];
+                $parentReturnDoc = $classDoc->getParentReturnDoc($methodName);
+                if ($parentReturnDoc !== null &&
+                    empty(trim($returnDoc["comment"])) &&
+                    ($returnDoc["type"] == "mixed" || $returnDoc["type"] == $parentReturnDoc["type"])) {
+                        $methodDoc["return"]["type"] = $parentReturnDoc["type"];
+                        $methodDoc["return"]["comment"] = $parentReturnDoc["comment"];
+                    }
+            }
 
-    if ($fileName == "/Core") {
-        $fileName = "/" . INPUT_NAMESPACE;
+            if (isset($methodDoc["params"])) {
+                foreach ($methodDoc["params"] as $paramName => $paramDoc) {
+                    $parentParamDoc = $classDoc->getParentParamDoc($methodName, $paramName);
+                    if ($parentParamDoc !== null &&
+                        empty(trim($paramDoc["comment"])) &&
+                        ($paramDoc["type"] == "mixed" ||  $paramDoc["type"] == $parentParamDoc["type"])) {
+                            $methodDoc["params"][$paramName]["type"] = $parentParamDoc["type"];
+                            $methodDoc["params"][$paramName]["comment"] = $parentParamDoc["comment"];
+                     }
+                }
+            }
+        }
+    }
+
+    return $doc;
+}
+
+YamlClassDoc::loadAll(SRCDIR);
+
+foreach(YamlClassDoc::getClassDocs() as $classDoc) {
+    $fileName = $classDoc->getFileName();
+    $yamlFileName = $classDoc->getYamlFileName();
+    $class = $classDoc->getClass();
+    $classNameNoCoreNamespace = $classDoc->getClassNameWithNoCoreNamespace();
+    $doc = populateFromParent($classDoc, $classDoc->getDoc());
+
+    if ($fileName == "/". INPUT_NAMESPACE) {
         $fullClassName = str_replace("/", "\\", $fileName);
         $namespaceDirectory = DOCDIR . "/" . dirname($fileName);
     } else {
@@ -479,57 +504,44 @@ foreach ($regex as $fileName => $notused) {
         $namespaceDirectory = DOCDIR . "/" . OUTPUT_NAMESPACE . dirname($fileName);
     }
 
-    try {
-        if (!is_dir($namespaceDirectory)) {
-            if (!mkdir($namespaceDirectory, 0777, true)) {
-                die("Unable to create directory '$namespaceDirectory'" . PHP_EOL);
-            }
+    if (!is_dir($namespaceDirectory)) {
+        if (!mkdir($namespaceDirectory, 0777, true)) {
+            die("Unable to create directory '$namespaceDirectory'" . PHP_EOL);
         }
+    }
 
-        $class = new ReflectionClass($fullClassName);
+    $className = $class->getShortName();
 
-        $className = $class->getShortName();
+    $stubFileName = rtrim($namespaceDirectory, "/")  . "/$className.php";
+    echo "Generating stub for '$fullClassName' ($yamlFileName --> $stubFileName)" . PHP_EOL;
+    if(!($file = fopen($stubFileName, "w"))) {
+        die("Unable to create file '$stubFileName'" . PHP_EOL);
+    }
 
-        $stubFileName = rtrim($namespaceDirectory, "/")  . "/$className.php";
-        echo "Generating stub for '$fullClassName' ($yamlFileName --> $stubFileName)" . PHP_EOL;
-        if(!($file = fopen($stubFileName, "w"))) {
-            die("Unable to create file '$stubFileName'" . PHP_EOL);
-        }
+    fwrite($file, "<?php" . PHP_EOL);
+    fwrite($file, PHP_EOL);
+    fwrite($file, LICENSE_COMMENT . PHP_EOL);
+    fwrite($file, PHP_EOL);
 
-        fwrite($file, "<?php" . PHP_EOL);
+    $namespace = $class->getNamespaceName();
+    if ($namespace) {
+        fwrite($file, "namespace $namespace;" . PHP_EOL);
         fwrite($file, PHP_EOL);
-        fwrite($file, LICENSE_COMMENT . PHP_EOL);
-        fwrite($file, PHP_EOL);
+    }
 
-        $namespace = $class->getNamespaceName();
-        if ($namespace) {
-            fwrite($file, "namespace $namespace;" . PHP_EOL);
-            fwrite($file, PHP_EOL);
-        }
+    if ($classNameNoCoreNamespace === $class->getName()) {
+        $doc = array($classNameNoCoreNamespace => $doc);
+    } else {
+        $doc = array($class->getName() => $doc);
+    }
 
-        $doc = yaml_parse_file($yamlFileName);
+    writeClass($doc, $file, $class);
 
-        if ($doc === false) {
-            logWarning("Unable to open doc yaml file '$yamlFileName'");
-        }
+    fclose($file);
 
-        $classNameNoCoreNamespace = preg_replace("/" . INPUT_NAMESPACE . "\\\\/", "", $class->getName());
-
-        if (isset($doc[$classNameNoCoreNamespace]) && $classNameNoCoreNamespace != $class->getName()) {
-            $doc[$class->getName()] = $doc[$classNameNoCoreNamespace];
-            unset($doc[$classNameNoCoreNamespace]);
-        }
-
-        writeClass($doc, $file, $class);
-
-        fclose($file);
-
-        exec(PHP_SYNTAX_CHECK . " $stubFileName", $syntaxCheckOutput, $syntaxCheckReturnVar);
-        if ($syntaxCheckReturnVar !== 0) {
-            $syntaxCheckOutput = implode(PHP_EOL, $syntaxCheckOutput);
-            die("Syntax invalid for '$fullClassName' ($stubFileName): $syntaxCheckOutput" . PHP_EOL);
-        }
-    } catch(ReflectionException $e) {
-        logWarning("Ignoring '$fullClassName': $e");
+    exec(PHP_SYNTAX_CHECK . " $stubFileName", $syntaxCheckOutput, $syntaxCheckReturnVar);
+    if ($syntaxCheckReturnVar !== 0) {
+        $syntaxCheckOutput = implode(PHP_EOL, $syntaxCheckOutput);
+        die("Syntax invalid for '$fullClassName' ($stubFileName): $syntaxCheckOutput" . PHP_EOL);
     }
 }
