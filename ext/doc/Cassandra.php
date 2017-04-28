@@ -29,7 +29,7 @@ final class Cassandra {
      * has been written on the Coordinator. Requests with this consistency level
      * are not guranteed to make it to Replica nodes.
      *
-     * @see ExecutionOptions::__construct()
+     * @see Session::execute()
      */
     const CONSISTENCY_ANY = 0;
 
@@ -37,7 +37,7 @@ final class Cassandra {
      * Consistency level ONE guarantees that data has been written to at least
      * one Replica node.
      *
-     * @see ExecutionOptions::__construct()
+     * @see Session::execute()
      */
     const CONSISTENCY_ONE = 1;
 
@@ -45,7 +45,7 @@ final class Cassandra {
      * Consistency level TWO guarantees that data has been written to at least
      * two Replica nodes.
      *
-     * @see ExecutionOptions::__construct()
+     * @see Session::execute()
      */
     const CONSISTENCY_TWO = 2;
 
@@ -53,7 +53,7 @@ final class Cassandra {
      * Consistency level THREE guarantees that data has been written to at least
      * three Replica nodes.
      *
-     * @see ExecutionOptions::__construct()
+     * @see Session::execute()
      */
     const CONSISTENCY_THREE = 3;
 
@@ -65,7 +65,7 @@ final class Cassandra {
      * ceiling function and `RF` is the replication factor used. For example,
      * for a replication factor of `5`, the majority is `ceil(5 / 2 + 1) = 3`.
      *
-     * @see ExecutionOptions::__construct()
+     * @see Session::execute()
      */
     const CONSISTENCY_QUORUM = 4;
 
@@ -73,7 +73,7 @@ final class Cassandra {
      * Consistency level ALL guarantees that data has been written to all
      * Replica nodes.
      *
-     * @see ExecutionOptions::__construct()
+     * @see Session::execute()
      */
     const CONSISTENCY_ALL = 5;
 
@@ -81,7 +81,7 @@ final class Cassandra {
      * Same as `CONSISTENCY_QUORUM`, but confined to the local data center. This
      * consistency level works only with `NetworkTopologyStrategy` replication.
      *
-     * @see ExecutionOptions::__construct()
+     * @see Session::execute()
      */
     const CONSISTENCY_LOCAL_QUORUM = 6;
 
@@ -90,19 +90,20 @@ final class Cassandra {
      * least a majority Replica nodes in all datacenters. This consistency level
      * works only with `NetworkTopologyStrategy` replication.
      *
-     * @see ExecutionOptions::__construct()
+     * @see Session::execute()
      */
     const CONSISTENCY_EACH_QUORUM = 7;
 
     /**
      * This is a serial consistency level, it is used in conditional updates,
      * e.g. (`CREATE|INSERT ... IF NOT EXISTS`), and should be specified as the
-     * `serial_consistency` option of the ExecutionOptions instance.
+     * `serial_consistency` execution option when invoking `session.execute`
+     * or `session.execute_async`.
      *
      * Consistency level SERIAL, when set, ensures that a Paxos commit fails if
      * any of the replicas is down.
      *
-     * @see ExecutionOptions::__construct()
+     * @see Session::execute()
      */
     const CONSISTENCY_SERIAL = 8;
 
@@ -110,7 +111,7 @@ final class Cassandra {
      * Same as `CONSISTENCY_SERIAL`, but confined to the local data center. This
      * consistency level works only with `NetworkTopologyStrategy` replication.
      *
-     * @see ExecutionOptions::__construct()
+     * @see Session::execute()
      */
     const CONSISTENCY_LOCAL_SERIAL = 9;
 
@@ -118,7 +119,7 @@ final class Cassandra {
      * Same as `CONSISTENCY_ONE`, but confined to the local data center. This
      * consistency level works only with `NetworkTopologyStrategy` replication.
      *
-     * @see ExecutionOptions::__construct()
+     * @see Session::execute()
      */
     const CONSISTENCY_LOCAL_ONE = 10;
 
@@ -378,12 +379,12 @@ final class Cassandra {
     /**
      * The current version of the extension.
      */
-    const VERSION = '1.3.0-devel';
+    const VERSION = '1.3.0';
 
     /**
      * The version of the cpp-driver the extension is compiled against.
      */
-    const CPP_DRIVER_VERSION = '2.6.0-dev';
+    const CPP_DRIVER_VERSION = '2.7.0';
 
     /**
      * Creates a new cluster builder for constructing a Cluster object.

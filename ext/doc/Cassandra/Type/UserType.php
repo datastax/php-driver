@@ -38,7 +38,7 @@ final class UserType extends Type {
     /**
      * Returns type name for the user type
      *
-     * @return string
+     * @return string Name of this type
      */
     public function name() { }
 

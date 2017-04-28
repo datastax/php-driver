@@ -26,16 +26,16 @@ final class Scalar extends Type {
     private function __construct() { }
 
     /**
-     * {@inheritDoc}
+     * Returns the name of this type as string.
      *
-     * @return string {@inheritDoc}
+     * @return string Name of this type
      */
     public function name() { }
 
     /**
-     * {@inheritDoc}
+     * Returns string representation of this type.
      *
-     * @return string {@inheritDoc}
+     * @return string String representation of this type
      */
     public function __toString() { }
 

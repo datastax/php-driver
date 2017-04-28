@@ -55,9 +55,8 @@ interface Index {
 
     /**
      * Returns all the index's options
-     *               index's options.
      *
-     * @return array A dictionary of `string` and `Value` pairs of the
+     * @return array A dictionary of `string` and `Value` pairs of the index's options.
      */
     public function options();
 

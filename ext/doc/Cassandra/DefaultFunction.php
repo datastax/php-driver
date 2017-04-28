@@ -24,58 +24,58 @@ namespace Cassandra;
 final class DefaultFunction implements Function_ {
 
     /**
-     * {@inheritDoc}
+     * Returns the full name of the function
      *
      * @return string Full name of the function including name and types
      */
     public function name() { }
 
     /**
-     * {@inheritDoc}
+     * Returns the simple name of the function
      *
      * @return string Simple name of the function
      */
     public function simpleName() { }
 
     /**
-     * {@inheritDoc}
+     * Returns the arguments of the function
      *
      * @return array Arguments of the function
      */
     public function arguments() { }
 
     /**
-     * {@inheritDoc}
+     * Returns the return type of the function
      *
      * @return Type Return type of the function
      */
     public function returnType() { }
 
     /**
-     * {@inheritDoc}
+     * Returns the signature of the function
      *
      * @return string Signature of the function (same as name())
      */
     public function signature() { }
 
     /**
-     * {@inheritDoc}
+     * Returns the lanuage of the function
      *
      * @return string Language used by the function
      */
     public function language() { }
 
     /**
-     * {@inheritDoc}
+     * Returns the body of the function
      *
      * @return string Body of the function
      */
     public function body() { }
 
     /**
-     * {@inheritDoc}
+     * Determines if a function is called when the value is null.
      *
-     * @return bool
+     * @return bool Returns whether the function is called when the input columns are null
      */
     public function isCalledOnNullInput() { }
 

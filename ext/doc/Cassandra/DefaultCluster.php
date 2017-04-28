@@ -26,7 +26,7 @@ namespace Cassandra;
 final class DefaultCluster implements Cluster {
 
     /**
-     * {@inheritDoc}
+     * Creates a new Session instance.
      *
      * @param string $keyspace Optional keyspace name
      * @param int $timeout Optional timeout
@@ -36,7 +36,7 @@ final class DefaultCluster implements Cluster {
     public function connect($keyspace, $timeout) { }
 
     /**
-     * {@inheritDoc}
+     * Creates a new Session instance.
      *
      * @param string $keyspace Optional keyspace name
      *

@@ -24,112 +24,112 @@ namespace Cassandra;
 final class DefaultKeyspace implements Keyspace {
 
     /**
-     * {@inheritDoc}
+     * Returns keyspace name
      *
      * @return string Name
      */
     public function name() { }
 
     /**
-     * {@inheritDoc}
+     * Returns replication class name
      *
      * @return string Replication class
      */
     public function replicationClassName() { }
 
     /**
-     * {@inheritDoc}
+     * Returns replication options
      *
      * @return Map Replication options
      */
     public function replicationOptions() { }
 
     /**
-     * {@inheritDoc}
+     * Returns whether the keyspace has durable writes enabled
      *
      * @return string Whether durable writes are enabled
      */
     public function hasDurableWrites() { }
 
     /**
-     * {@inheritDoc}
+     * Returns a table by name
      *
      * @param string $name Table name
      *
-     * @return Table Table instance or null
+     * @return Table
      */
     public function table($name) { }
 
     /**
-     * {@inheritDoc}
+     * Returns all tables defined in this keyspace
      *
      * @return array An array of `Table` instances
      */
     public function tables() { }
 
     /**
-     * {@inheritDoc}
+     * Get user type by name
      *
-     * @param string $name {@inheritDoc}
+     * @param string $name User type name
      *
-     * @return Type\UserType|null {@inheritDoc}
+     * @return Type\UserType|null A user type or null
      */
     public function userType($name) { }
 
     /**
-     * {@inheritDoc}
+     * Get all user types
      *
-     * @return array {@inheritDoc}
+     * @return array An array of user types
      */
     public function userTypes() { }
 
     /**
-     * {@inheritDoc}
+     * Get materialized view by name
      *
-     * @param string $name {@inheritDoc}
+     * @param string $name Materialized view name
      *
-     * @return MaterizedView|null {@inheritDoc}
+     * @return MaterizedView|null A materialized view or null
      */
     public function materializedView($name) { }
 
     /**
-     * {@inheritDoc}
+     * Gets all materialized views
      *
-     * @return array {@inheritDoc}
+     * @return array An array of materialized views
      */
     public function materializedViews() { }
 
     /**
-     * {@inheritDoc}
+     * Get a function by name and signature
      *
-     * @param string $name {@inheritDoc}
-     * @param string|Type $params {@inheritDoc}
+     * @param string $name Function name
+     * @param string|Type $params Function arguments
      *
-     * @return Function|null {@inheritDoc}
+     * @return Function|null A function or null
      */
     public function function_($name, ...$params) { }
 
     /**
-     * {@inheritDoc}
+     * Get all functions
      *
-     * @return array {@inheritDoc}
+     * @return array An array of functions
      */
     public function functions() { }
 
     /**
-     * {@inheritDoc}
+     * Get an aggregate by name and signature
      *
-     * @param string $name {@inheritDoc}
-     * @param string|Type $params {@inheritDoc}
+     * @param string $name Aggregate name
+     * @param string|Type $params Aggregate arguments
      *
-     * @return Aggregate|null {@inheritDoc}
+     * @return Aggregate|null An aggregate or null
      */
     public function aggregate($name, ...$params) { }
 
     /**
-     * {@inheritDoc}
+     * Get all aggregates
      *
-     * @return array {@inheritDoc}
+     * @return array An array of aggregates
      */
     public function aggregates() { }
 
