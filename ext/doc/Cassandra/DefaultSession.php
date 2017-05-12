@@ -19,77 +19,105 @@
 namespace Cassandra;
 
 /**
- * {@inheritDoc}
+ * A session is used to prepare and execute statements.
+ *
+ * @see Cluster::connect()
+ * @see Cluster::connectAsync()
  */
 final class DefaultSession implements Session {
 
     /**
-     * {@inheritDoc}
+     * Execute a query.
      *
-     * @param string|Statement $statement {@inheritDoc}
-     * @param array|ExecutionOptions|null $options {@inheritDoc}
+     * Available execution options:
+     * | Option Name        | Option **Type** | Option Details                                                                                           |
+     * |--------------------|-----------------|----------------------------------------------------------------------------------------------------------|
+     * | arguments          | array           | An array or positional or named arguments                                                                |
+     * | consistency        | int             | A consistency constant e.g Dse::CONSISTENCY_ONE, Dse::CONSISTENCY_QUORUM, etc.                           |
+     * | timeout            | int             | A number of rows to include in result for paging                                                         |
+     * | paging_state_token | string          | A string token use to resume from the state of a previous result set                                     |
+     * | retry_policy       | RetryPolicy     | A retry policy that is used to handle server-side failures for this request                              |
+     * | serial_consistency | int             | Either Dse::CONSISTENCY_SERIAL or Dse::CONSISTENCY_LOCAL_SERIAL                                          |
+     * | timestamp          | int\|string     | Either an integer or integer string timestamp that represents the number of microseconds since the epoch |
+     * | execute_as         | string          | User to execute statement as                                                                             |
      *
-     * @return Rows {@inheritDoc}
+     * @param string|Statement $statement string or statement to be executed.
+     * @param array|ExecutionOptions|null $options Options to control execution of the query.
+     *
+     * @throws Exception
+     *
+     * @return Rows A collection of rows.
      */
     public function execute($statement, $options) { }
 
     /**
-     * {@inheritDoc}
+     * Execute a query asynchronously. This method returns immediately, but
+     * the query continues execution in the background.
      *
-     * @param string|Statement $statement {@inheritDoc}
-     * @param array|ExecutionOptions|null $options {@inheritDoc}
+     * @param string|Statement $statement string or statement to be executed.
+     * @param array|ExecutionOptions|null $options Options to control execution of the query.
      *
-     * @return FutureRows {@inheritDoc}
+     * @return FutureRows A future that can be used to retrieve the result.
+     *
+     * @see Session::execute() for valid execution options
      */
     public function executeAsync($statement, $options) { }
 
     /**
-     * {@inheritDoc}
+     * Prepare a query for execution.
      *
-     * @param string $cql {@inheritDoc}
-     * @param ExecutionOptions $options {@inheritDoc}
+     * @param string $cql The query to be prepared.
+     * @param array|ExecutionOptions|null $options Options to control preparing the query.
      *
-     * @return PreparedStatement {@inheritDoc}
+     * @throws Exception
+     *
+     * @return PreparedStatement A prepared statement that can be bound with parameters and executed.
+     *
+     * @see Session::execute() for valid execution options
      */
     public function prepare($cql, $options) { }
 
     /**
-     * {@inheritDoc}
+     * Asynchronously prepare a query for execution.
      *
-     * @param string $cql {@inheritDoc}
-     * @param ExecutionOptions $options {@inheritDoc}
+     * @param string $cql The query to be prepared.
+     * @param array|ExecutionOptions|null $options Options to control preparing the query.
      *
-     * @return FuturePreparedStatement {@inheritDoc}
+     * @return FuturePreparedStatement A future that can be used to retrieve the prepared statement.
+     *
+     * @see Session::execute() for valid execution options
      */
     public function prepareAsync($cql, $options) { }
 
     /**
-     * {@inheritDoc}
+     * Close the session and all its connections.
      *
-     * @param double $timeout {@inheritDoc}
+     * @param double $timeout The amount of time in seconds to wait for the session to close.
      *
-     * @return null {@inheritDoc}
+     * @throws Exception
+     *
+     * @return null Nothing.
      */
     public function close($timeout) { }
 
     /**
-     * {@inheritDoc}
+     * Asynchronously close the session and all its connections.
      *
-     * @return FutureClose {@inheritDoc}
+     * @return FutureClose A future that can be waited on.
      */
     public function closeAsync() { }
 
     /**
-     * {@inheritDoc}
+     * Get performance and diagnostic metrics.
      *
-     * @return array {@inheritDoc}
+     * @return array Performance/Diagnostic metrics.
      */
     public function metrics() { }
 
     /**
-     * {@inheritDoc}
+     * Get a snapshot of the cluster's current schema.
      *
-     * @return Schema {@inheritDoc}
+     * @return Schema A snapshot of the cluster's schema.
      */
     public function schema() { }
 

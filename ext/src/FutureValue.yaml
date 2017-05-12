@@ -3,14 +3,10 @@ FutureValue:
   comment: A future that always resolves in a value.
   methods:
     get:
-      comment: |
-        {@inheritDoc}
-
-        @throws Exception\InvalidArgumentException
-        @throws Exception\TimeoutException
+      comment: ""
       params:
         timeout:
-          comment: A timeout in seconds
+          comment: ""
           type: int|double|null
       return:
         comment: A value

@@ -50,7 +50,7 @@ abstract class MaterializedView implements Table {
      * Returns all the view's options
      *
      * @return array A dictionary of string and Value pairs of the
-view's options.
+     *               view's options.
      */
     public abstract function options();
 

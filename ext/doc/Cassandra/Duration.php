@@ -31,7 +31,7 @@ final class Duration implements Value {
     public function __construct($months, $days, $nanos) { }
 
     /**
-     * {@inheritDoc}
+     * The type of represented by the value.
      *
      * @return Type the Cassandra type for Duration
      */

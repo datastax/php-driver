@@ -5,8 +5,7 @@ Feature: Result paging
   paging through query results is allowed.
 
   Page size can be specified by setting the `$pageSize` attribute of
-  `Cassandra\ExecutionOptions` or cluster-wide, using
-  `Cassandra\Cluster\Buidler::withDefaultPageSize()`.
+  execution-options or cluster-wide, using `Cassandra\Cluster\Builder::withDefaultPageSize()`.
 
   Once a `Cassandra\Rows` object has been received, next page can be retrieved
   using `Cassandra\Rows::nextPage()` or `Cassandra\Rows::nextPageAsync()`
@@ -47,9 +46,8 @@ Feature: Result paging
                      ->withContactPoints('127.0.0.1')
                      ->build();
       $session   = $cluster->connect("simplex");
-      $statement = new Cassandra\SimpleStatement("SELECT * FROM paging_entries");
       $options   = array('page_size' => 5);
-      $rows      = $session->execute($statement, $options);
+      $rows      = $session->execute("SELECT * FROM paging_entries", $options);
 
       while (true) {
           echo "entries in page: " . $rows->count() . "\n";
@@ -94,12 +92,9 @@ Feature: Result paging
                      ->withContactPoints('127.0.0.1')
                      ->build();
       $session   = $cluster->connect("simplex");
-      $statement = new Cassandra\SimpleStatement("SELECT * FROM paging_entries");
-      $options   = array('page_size' => 10);
-      $rows      = $session->execute($statement, $options);
 
-      $firstPageRows = $session->execute($statement, $options);
-      echo $firstPageRows->isLastPage() ? "1: last\n" : "1: not last\n";
+      $firstPageRows = $session->execute("SELECT * FROM paging_entries", array('page_size' => 10));
+      echo "Page 1: " . ($firstPageRows->isLastPage() ? "last" : "not last") . PHP_EOL;
 
       $secondPageRows = $firstPageRows->nextPage();
       echo $firstPageRows->isLastPage() ? "1: last\n" : "1: not last\n";
@@ -127,9 +122,9 @@ Feature: Result paging
                      ->withContactPoints('127.0.0.1')
                      ->build();
       $session   = $cluster->connect("simplex");
-      $statement = new Cassandra\SimpleStatement("SELECT * FROM paging_entries");
+      $query     = "SELECT * FROM paging_entries";
       $options = array('page_size' => 2);
-      $result = $session->execute($statement, $options);
+      $result = $session->execute($query, $options);
 
       foreach ($result as $row) {
         printf("key: '%s' value: %d\n", $row['key'], $row['value']);
@@ -141,7 +136,7 @@ Feature: Result paging
               'paging_state_token' => $result->pagingStateToken()
           );
 
-          $result = $session->execute($statement, $options);
+          $result = $session->execute($query, $options);
 
           foreach ($result as $row) {
             printf("key: '%s' value: %d\n", $row['key'], $row['value']);

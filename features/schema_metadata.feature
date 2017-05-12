@@ -150,7 +150,7 @@ Feature: Schema Metadata
                          ->build();
       $session = $cluster->connect("simplex");
       $cql = "ALTER TABLE values WITH index_interval = '512'";
-      $session->execute(new Cassandra\SimpleStatement($cql));
+      $session->execute($cql);
       $schema  = $session->schema();
       $table   = $schema->keyspace("simplex")->table("values");
 
@@ -174,7 +174,7 @@ Feature: Schema Metadata
       $cql = "ALTER TABLE values WITH default_time_to_live = '10000' AND "
              . "memtable_flush_period_in_ms = '100' AND "
              . "speculative_retry = '10ms'";
-      $session->execute(new Cassandra\SimpleStatement($cql));
+      $session->execute($cql);
       $schema  = $session->schema();
       $table   = $schema->keyspace("simplex")->table("values");
 
@@ -201,7 +201,7 @@ Feature: Schema Metadata
       $session = $cluster->connect("simplex");
       $cql = "ALTER TABLE values WITH max_index_interval = '16' AND "
              . "min_index_interval = '4'";
-      $session->execute(new Cassandra\SimpleStatement($cql));
+      $session->execute($cql);
       $schema  = $session->schema();
       $table   = $schema->keyspace("simplex")->table("values");
 

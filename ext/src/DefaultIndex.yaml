@@ -3,41 +3,41 @@ DefaultIndex:
   comment: A PHP representation of an index
   methods:
     name:
-      comment: '{@inheritDoc}'
+      comment: ""
       return:
-        comment: Name of the index
+        comment: ""
         type: string
     kind:
-      comment: '{@inheritDoc}'
+      comment: ""
       return:
-        comment: Kind of the index
+        comment: ""
         type: string
     target:
-      comment: '{@inheritDoc}'
+      comment: ""
       return:
-        comment: Target column name of the index
+        comment: ""
         type: string
     option:
-      comment: '{@inheritDoc}'
+      comment: ""
       params:
         name:
-          comment: '{@inheritDoc}'
+          comment: ""
           type: string
       return:
-        comment: Value of an option by name
+        comment: ""
         type: Value
     options:
-      comment: '{@inheritDoc}'
+      comment: ""
       return:
-        comment: A dictionary of `string` and `Value` pairs of the
+        comment: ""
         type: array
     className:
-      comment: '{@inheritDoc}'
+      comment: ""
       return:
-        comment: Class name of a custom index
+        comment: ""
         type: string
     isCustom:
-      comment: '{@inheritDoc}'
+      comment: ""
       return:
         comment: ""
         type: bool

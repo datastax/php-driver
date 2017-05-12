@@ -41,9 +41,8 @@ interface Table {
 
     /**
      * Returns all the table's options
-     *               view's options.
      *
-     * @return array A dictionary of `string` and `Value` pairs of the
+     * @return array A dictionary of `string` and `Value` pairs of the table's options.
      */
     public function options();
 

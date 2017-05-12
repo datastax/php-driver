@@ -51,7 +51,7 @@ final class Tuple extends Type {
      * Creates a new Tuple from the given values. When no values given,
      * creates a tuple with null for the values.
      *
-     * @param mixed $values {@inheritDoc}
+     * @param mixed $values ,... One or more values to be added to the tuple.
      *
      * @throws Exception\InvalidArgumentException when values given are of a
      *                                            different type than what the

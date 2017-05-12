@@ -19,13 +19,13 @@ Uuid:
         comment: ""
         type: Type
     uuid:
-      comment: Returns this uuid as string.
+      comment: ""
       return:
         comment: uuid
         type: string
     version:
-      comment: Returns the version of this uuid.
+      comment: ""
       return:
-        comment: version of this uuid
+        comment: ""
         type: int
 ...

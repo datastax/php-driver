@@ -76,6 +76,40 @@ class TupleTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @dataProvider scalarTypes
+     */
+    public function testScalarTypes($type, $value)
+    {
+        $tuple = Type::tuple($type)->create();
+        $tuple->set(0, $value);
+        $this->assertEquals(1, count($tuple));
+        $this->assertEquals($tuple->get(0), $value);
+    }
+
+    public function scalarTypes()
+    {
+        return array(
+            array(Type::ascii(), "ascii"),
+            array(Type::bigint(), new Bigint("9223372036854775807")),
+            array(Type::blob(), new Blob("blob")),
+            array(Type::boolean(), true),
+            array(Type::counter(), new Bigint(123)),
+            array(Type::decimal(), new Decimal("3.14159265359")),
+            array(Type::double(), 3.14159),
+            array(Type::float(), new Float(3.14159)),
+            array(Type::inet(), new Inet("127.0.0.1")),
+            array(Type::int(), 123),
+            array(Type::text(), "text"),
+            array(Type::timestamp(), new Timestamp(123)),
+            array(Type::timeuuid(), new Timeuuid(0)),
+            array(Type::uuid(), new Uuid("03398c99-c635-4fad-b30a-3b2c49f785c2")),
+            array(Type::varchar(), "varchar"),
+            array(Type::varint(), new Varint("9223372036854775808")),
+            array(Type::duration(), new Duration(1, 2, 3), new Duration(1, 2, 3))
+        );
+    }
+
+    /**
      * @dataProvider compositeTypes
      */
     public function testCompositeKeys($type, $value)

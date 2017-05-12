@@ -1,10 +1,10 @@
-# Features
+# Core
 
 ## Usage
 
 ### Specifying addresses of Cassandra nodes
 
-[`withContactPoints()`](http://datastax.github.io/php-driver/api/Cassandra/Cluster/class.Builder/#method.withContactPoints) and [`withPort()`](http://datastax.github.io/php-driver/api/Cassandra/Cluster/class.Builder/#method.withPort) methods of the [`Cassandra\Cluster\Builder`](http://datastax.github.io/php-driver/api/Cassandra/Cluster/class.Builder/) are used to specify IP addresses or hostnames and port number of the nodes in a given Cassandra cluster.
+[`withContactPoints()`](/api/Cassandra/Cluster/class.Builder/#method.withContactPoints) and [`withPort()`](/api/Cassandra/Cluster/class.Builder/#method.withPort) methods of the [`Cassandra\Cluster\Builder`](/api/Cassandra/Cluster/class.Builder/) are used to specify IP addresses or hostnames and port number of the nodes in a given Cassandra cluster.
 
 Note that you don't have to specify the addresses of all hosts in your cluster. Once the driver has established a connection to any host, it will perform auto-discovery and connect to all hosts in the cluster.
 
@@ -24,7 +24,7 @@ After the initial connection to one of the hosts specified via `withContactPoint
 
 ### Persistent sessions
 
-In order to limit the startup time and total number of connections to a Cassandra cluster, the PHP Driver enables persistent sessions by default. All cluster and sessions using the same initial configuration will be shared across requests when persistent sessions are enabled. You can toggle this setting using [`Cassandra\Cluster\Builder::withPersistentSessions()`](http://datastax.github.io/php-driver/api/Cassandra/Cluster/class.Builder/#method.withPersistentSessions).
+In order to limit the startup time and total number of connections to a Cassandra cluster, the PHP Driver enables persistent sessions by default. All cluster and sessions using the same initial configuration will be shared across requests when persistent sessions are enabled. You can toggle this setting using [`Cassandra\Cluster\Builder::withPersistentSessions()`](/api/Cassandra/Cluster/class.Builder/#method.withPersistentSessions).
 
 ```php
 <?php
@@ -45,7 +45,7 @@ Persistent sessions stay alive for the duration of the parent process, typically
 
 The PHP Driver comes with a variety of load balancing policies. By default it uses a combination of latency aware, token aware and data center aware round robin load balancing.
 
-The token aware load balancing policy uses the same hashing algorithms as the Apache Cassandra to directly route the execution of prepared statements to the replica node, avoiding an additional network hop to/from the coordinator. You can toggle its usage with [`Cassandra\Cluster\Builder::withTokenAwareRouting()`](http://datastax.github.io/php-driver/api/Cassandra/Cluster/class.Builder/#method.withTokenAwareRouting).
+The token aware load balancing policy uses the same hashing algorithms as the Apache Cassandra to directly route the execution of prepared statements to the replica node, avoiding an additional network hop to/from the coordinator. You can toggle its usage with [`Cassandra\Cluster\Builder::withTokenAwareRouting()`](/api/Cassandra/Cluster/class.Builder/#method.withTokenAwareRouting).
 
 ```php
 <?php
@@ -56,7 +56,7 @@ $cluster = Cassandra::cluster()
 $session = $cluster->connect();
 ```
 
-The default datacenter aware round robin load balancing policy is configured to keep all traffic in the same datacenter. Upon connecting to a host from the initial list of contact points, the driver will consider that host's datacenter to be local. Only hosts from the same datacenter will be connected to and used for executing statements. You can override the name of the local datacenter. The number of hosts from remote datacenters that the driver may use and whether it should execute statements with local consistencies on those hosts in case none of the local hosts are available. All of that is configurable via [`Cassandra\Cluster\Builder::withDatacenterAwareRoundRobinLoadBalancingPolicy()`](http://datastax.github.io/php-driver/api/Cassandra/Cluster/class.Builder/#method.withDatacenterAwareRoundRobinLoadBalancingPolicy).
+The default datacenter aware round robin load balancing policy is configured to keep all traffic in the same datacenter. Upon connecting to a host from the initial list of contact points, the driver will consider that host's datacenter to be local. Only hosts from the same datacenter will be connected to and used for executing statements. You can override the name of the local datacenter. The number of hosts from remote datacenters that the driver may use and whether it should execute statements with local consistencies on those hosts in case none of the local hosts are available. All of that is configurable via [`Cassandra\Cluster\Builder::withDatacenterAwareRoundRobinLoadBalancingPolicy()`](/api/Cassandra/Cluster/class.Builder/#method.withDatacenterAwareRoundRobinLoadBalancingPolicy).
 
 ```php
 <?php
@@ -67,7 +67,7 @@ $cluster = Cassandra::cluster()
 $session = $cluster->connect();
 ```
 
-You may disable datacenter awareness by calling [`Cassandra\Cluster\Builder::withRoundRobinLoadBalancingPolicy()`](http://datastax.github.io/php-driver/api/Cassandra/Cluster/class.Builder/#method.withRoundRobinLoadBalancingPolicy).
+You may disable datacenter awareness by calling [`Cassandra\Cluster\Builder::withRoundRobinLoadBalancingPolicy()`](/api/Cassandra/Cluster/class.Builder/#method.withRoundRobinLoadBalancingPolicy).
 
 ```php
 <?php
@@ -78,7 +78,7 @@ $cluster = Cassandra::cluster()
 $session = $cluster->connect();
 ```
 
-Finally, latency-aware routing ensures that requests are routed to the hosts that respond the fastest. You can switch it off via [`Cassandra\Cluster\Builder::withLatencyAwareRouting()`](http://datastax.github.io/php-driver/api/Cassandra/Cluster/class.Builder/#method.withLatencyAwareRouting).
+Finally, latency-aware routing ensures that requests are routed to the hosts that respond the fastest. You can switch it off via [`Cassandra\Cluster\Builder::withLatencyAwareRouting()`](/api/Cassandra/Cluster/class.Builder/#method.withLatencyAwareRouting).
 
 ```php
 <?php
@@ -95,7 +95,7 @@ The PHP driver will automatically negotiate native protocol version of TCP conne
 
 In a scenario with an Apache Cassandra cluster consisting of nodes of mixed versions (e.g. 1.2.x and 2.0.x), this might pose problems as the driver could establish native protocol version to be 2, while some of the nodes don't support it, causing connections to the rest of the cluster to fail.
 
-You can force the driver to start negotiation at a lower protocol version by using [`Cassandra\Cluster\Builder::withProtocolVersion()`](http://datastax.github.io/php-driver/api/Cassandra/Cluster/class.Builder/#method.withProtocolVersion).
+You can force the driver to start negotiation at a lower protocol version by using [`Cassandra\Cluster\Builder::withProtocolVersion()`](/api/Cassandra/Cluster/class.Builder/#method.withProtocolVersion).
 
 ```php
 <?php
@@ -116,7 +116,7 @@ inflight_requests = io_threads * requests_per_connection * maximum_number_of_con
 
 Where `io_threads` by default is `1`, `requests_per_connection` for the currently supported protocol versions is `128`, `maximum_number_of_connections_per_host` by default is `2` and `connected_hosts` is the total number of hosts that can be connected to. This last variable depends on the load balancing policy used, data center aware policy only connects to the hosts in the same data center by default.
 
-You can change the value of `io_threads` from the formula above by using [`Cassandra\Cluster\Builder::withIOThreads()`](http://datastax.github.io/php-driver/api/Cassandra/Cluster/class.Builder/#method.withIOThreads).
+You can change the value of `io_threads` from the formula above by using [`Cassandra\Cluster\Builder::withIOThreads()`](/api/Cassandra/Cluster/class.Builder/#method.withIOThreads).
 
 ```php
 <?php
@@ -127,7 +127,7 @@ $cluster = Cassandra::cluster()
 $session = $cluster->connect();
 ```
 
-You can change the value of `maximum_number_of_connections_per_host` from the formula above by using [`Cassandra\Cluster\Builder::withConnectionsPerHost()`](http://datastax.github.io/php-driver/api/Cassandra/Cluster/class.Builder/#method.withConnectionsPerHost).
+You can change the value of `maximum_number_of_connections_per_host` from the formula above by using [`Cassandra\Cluster\Builder::withConnectionsPerHost()`](/api/Cassandra/Cluster/class.Builder/#method.withConnectionsPerHost).
 
 ```php
 <?php
@@ -140,7 +140,7 @@ $session = $cluster->connect();
 
 ### Disabling TCP nodelay
 
-By default, the driver enables TCP nodelay (Nagle's algorithm) on all connections it uses. Disabling it is not recommended but possible via [`Cassandra\Cluster\Builder::withTCPNodelay()`](http://datastax.github.io/php-driver/api/Cassandra/Cluster/class.Builder/#method.withTCPNodelay).
+By default, the driver enables TCP nodelay (Nagle's algorithm) on all connections it uses. Disabling it is not recommended but possible via [`Cassandra\Cluster\Builder::withTCPNodelay()`](/api/Cassandra/Cluster/class.Builder/#method.withTCPNodelay).
 
 ```php
 <?php
@@ -153,7 +153,7 @@ $session = $cluster->connect();
 
 ### Enabling TCP keepalive
 
-By default, TCP keepalive is disabled. It can be useful to make sure TCP connections are not silently dropped by a firewall or some other intermediary network device. You can enable it using [`Cassandra\Cluster\Builder::withTCPKeepalive()`](http://datastax.github.io/php-driver/api/Cassandra/Cluster/class.Builder/#method.withTCPKeepalive).
+By default, TCP keepalive is disabled. It can be useful to make sure TCP connections are not silently dropped by a firewall or some other intermediary network device. You can enable it using [`Cassandra\Cluster\Builder::withTCPKeepalive()`](/api/Cassandra/Cluster/class.Builder/#method.withTCPKeepalive).
 
 ```php
 <?php
@@ -168,7 +168,7 @@ $session = $cluster->connect();
 
 ### Authenticating via `PasswordAuthenticator`
 
-The PHP Driver supports Apache Cassandra's built-in password authentication mechanism. To enable it, use [`Cassandra\Cluster\Builder::withCredentials()`](http://datastax.github.io/php-driver/api/Cassandra/Cluster/class.Builder/#method.withCredentials).
+The PHP Driver supports Apache Cassandra's built-in password authentication mechanism. To enable it, use [`Cassandra\Cluster\Builder::withCredentials()`](/api/Cassandra/Cluster/class.Builder/#method.withCredentials).
 
 ```php
 <?php
@@ -181,7 +181,7 @@ $session = $cluster->connect();
 
 ### Enabling SSL encryption
 
-The PHP Driver supports SSL encryption of network connections. You must configure [`Cassandra\SSLOptions`](http://datastax.github.io/php-driver/api/Cassandra/class.SSLOptions/) using the [`Cassandra\SSLOptions\Builder`](http://datastax.github.io/php-driver/api/Cassandra/SSLOptions/class.Builder/).
+The PHP Driver supports SSL encryption of network connections. You must configure [`Cassandra\SSLOptions`](/api/Cassandra/class.SSLOptions/) using the [`Cassandra\SSLOptions\Builder`](/api/Cassandra/SSLOptions/class.Builder/).
 
 ```php
 <?php
@@ -200,12 +200,12 @@ $session = $cluster->connect();
 
 ### Executing queries
 
-You run CQL statements by passing them to [`Cassandra\Session::execute()`](http://datastax.github.io/php-driver/api/Cassandra/interface.Session/).
+You run CQL statements by passing them to [`Cassandra\Session::execute()`](/api/Cassandra/interface.Session/).
 
 ```php
 <?php
 
-$result = $session->execute(new Cassandra\SimpleStatement('SELECT keyspace_name, columnfamily_name FROM system.schema_columnfamilies'));
+$result = $session->execute('SELECT keyspace_name, columnfamily_name FROM system.schema_columnfamilies');
 
 foreach ($result as $row) {
     printf("The keyspace \"%s\" has a table \"%s\".\n", $row['keyspace_name'], $row['columnfamily_name']);
@@ -220,10 +220,8 @@ foreach ($result as $row) {
 <?php
 
 $session->execute(
-    new Cassandra\SimpleStatement("UPDATE users SET age = ? WHERE user_name = ?"),
-    array(
-        'arguments' => array(41, 'Sam')
-    )
+    "UPDATE users SET age = ? WHERE user_name = ?",
+    array('arguments' => array(41, 'Sam'))
 );
 ```
 
@@ -231,7 +229,7 @@ For frequently executed queries, it's strongly recommended to use prepared state
 
 ### Prepared statements
 
-The driver supports prepared statements. Use [`Cassandra\Session::prepare()`](http://datastax.github.io/php-driver/api/Cassandra/interface.Session/#method.prepare) to create a [`Cassandra\PreparedStatement`](http://datastax.github.io/php-driver/api/Cassandra/class.PreparedStatement/) object, and then call [`Cassandra\Session::execute()`](http://datastax.github.io/php-driver/api/Cassandra/interface.Session/#method.execute).
+The driver supports prepared statements. Use [`Cassandra\Session::prepare()`](/api/Cassandra/interface.Session/#method.prepare) to create a [`Cassandra\PreparedStatement`](/api/Cassandra/class.PreparedStatement/) object, and then call [`Cassandra\Session::execute()`](/api/Cassandra/interface.Session/#method.execute).
 
 ```php
 <?php
@@ -239,7 +237,7 @@ The driver supports prepared statements. Use [`Cassandra\Session::prepare()`](ht
 $statement = $session->prepare('INSERT INTO users (username, email) VALUES (?, ?)');
 
 $session->execute($statement, array(
-    'arguments' => array('user1', 'user1@mycompany.com')
+    'arguments' => array('avalanche123', 'bulat.shakirzyanov@datastax.com')
 ));
 ```
 
@@ -262,8 +260,8 @@ $futures   = array();
 
 // execute all statements in background
 foreach ($data as $arguments) {
-    $futures[]= $session->executeAsync($statement, array(
-                    'arguments' => $arguments
+    $futures[] = $session->executeAsync($statement, array(
+                     'arguments' => $arguments
                 ));
 }
 
@@ -274,7 +272,7 @@ foreach ($futures as $future) {
 }
 ```
 
-Note that it is not enough to simply create a [`Cassandra\Future`](http://datastax.github.io/php-driver/api/Cassandra/interface.Future/) by calling one of the `*Async()` methods, you must ensure that this future has enough time to be executed by calling [`Cassandra\Future::get()`](http://datastax.github.io/php-driver/api/Cassandra/interface.Future/#method.get).
+Note that it is not enough to simply create a [`Cassandra\Future`](/api/Cassandra/interface.Future/) by calling one of the `*Async()` methods, you must ensure that this future has enough time to be executed by calling [`Cassandra\Future::get()`](/api/Cassandra/interface.Future/#method.get).
 
 ### Creating keyspaces and tables
 
@@ -283,24 +281,22 @@ There is no special facility for creating keyspaces and tables, they are created
 ```php
 <?php
 
-$createKeyspace = new Cassandra\SimpleStatement(<<<EOD
+$createKeyspace = <<<EOD
 CREATE KEYSPACE measurements
 WITH replication = {
   'class': 'SimpleStrategy',
   'replication_factor': 1
 }
-EOD
-);
+EOD;
 
-$createTable = new Cassandra\SimpleStatement(<<<EOD
+$createTable = <<<EOD
 CREATE TABLE events (
   id INT,
   date DATE,
   comment VARCHAR,
   PRIMARY KEY (id)
 )
-EOD
-);
+EOD;
 
 $session->execute($createKeyspace);
 $session->execute('USE measurements');
@@ -323,11 +319,12 @@ $batch = new Cassandra\BatchStatement();
 $statement = $session->prepare("UPDATE users SET name = ? WHERE user_id = ?");
 $batch->add($statement, array('Sue', 'unicorn31'));
 
-$statement = new Cassandra\SimpleStatement("UPDATE users SET age = 19 WHERE user_id = 'unicorn31'");
-$batch->add($statement);
+$batch->add("UPDATE users SET age = 19 WHERE user_id = 'unicorn31'");
 
-$statement = new Cassandra\SimpleStatement("INSERT INTO activity (user_id, what, when) VALUES (?, 'login', NOW())");
-$batch->add($statement, array('unicorn31'));
+$batch->add(
+    "INSERT INTO activity (user_id, what, when) VALUES (?, 'login', NOW())",
+    array('unicorn31')
+);
 
 $session->execute($batch);
 ```
@@ -342,7 +339,7 @@ $batch = new Cassandra\BatchStatement(Cassandra::BATCH_UNLOGGED);
 $batch = new Cassandra\BatchStatement(Cassandra::BATCH_COUNTER);
 ```
 
-[Read more about `Cassandra\BatchStatement`](http://datastax.github.io/php-driver/api/Cassandra/class.BatchStatement/)
+[Read more about `Cassandra\BatchStatement`](/api/Cassandra/class.BatchStatement/)
 
 Cassandra 1.2 also supported batching, but only as a CQL feature, you had to build the batch as a string, and it didn't really play well with prepared statements.
 
@@ -350,7 +347,7 @@ Cassandra 1.2 also supported batching, but only as a CQL feature, you had to bui
 
 **If you're using Cassandra 2.0** or later you can page your query results.
 
-By default, a page size of 5000 will be used, you can override the default page size via [`Cassandra\Cluster\Builder::withDefaultPageSize()`](http://datastax.github.io/php-driver/api/Cassandra/Cluster/class.Builder/#method.withDefaultPageSize).
+By default, a page size of 5000 will be used, you can override the default page size via [`Cassandra\Cluster\Builder::withDefaultPageSize()`](/api/Cassandra/Cluster/class.Builder/#method.withDefaultPageSize).
 
 ```php
 <?php
@@ -361,12 +358,13 @@ $cluster = Cassandra::cluster()
 $session = $cluster->connect();
 ```
 
-You can also override the page size on a per-execute basis by adding the `page_size` option to [`Cassandra\ExecutionOptions`](http://datastax.github.io/php-driver/api/Cassandra/class.ExecutionOptions/):
+You can also override the page size on a per-execute basis by adding the `page_size` execution option to a call to
+[`Cassandra\Session.executeAsync`](/api/Cassandra/interface.Session/#method-executeAsync) or [`Cassandra\Session.execute`](/api/Cassandra/interface.Session/#method-execute):
 
 ```php
 <?php
 
-$statement = new Cassandra\SimpleStatement("SELECT * FROM large_table WHERE id = 'partition_with_lots_of_data'");
+$statement = "SELECT * FROM large_table WHERE id = 'partition_with_lots_of_data'";
 $result    = $session->execute($statement, array('page_size' => 100));
 
 while ($result) {
@@ -377,7 +375,7 @@ while ($result) {
 }
 ```
 
-[Read more about `Cassandra\Rows::nextPage()`](http://datastax.github.io/php-driver/api/Cassandra/class.Rows/#method.nextPage)
+[Read more about `Cassandra\Rows::nextPage()`](/api/Cassandra/class.Rows/#method.nextPage)
 
 ### Consistency
 
@@ -392,15 +390,15 @@ $cluster = Cassandra::cluster()
 $session = $cluster->connect();
 ```
 
-[Read more `Cassandra\Cluster\Builder::withDefaultConsistency()`](http://datastax.github.io/php-driver/api/Cassandra/Cluster/class.Builder/#method.withDefaultConsistency)
+[Read more `Cassandra\Cluster\Builder::withDefaultConsistency()`](/api/Cassandra/Cluster/class.Builder/#method.withDefaultConsistency)
 
-Consistency can also be passed via `Cassandra\ExecutionOptions`.
+Consistency can also be passed via execution options.
 
 ```php
 <?php
 
 $session->execute(
-    new Cassandra\SimpleStatement('SELECT * FROM users'),
+    'SELECT * FROM users',
     array('consistency' => Cassandra::CONSISTENCY_LOCAL_QUORUM)
 );
 
@@ -410,16 +408,16 @@ $session->execute($statement, array(
 ));
 
 $batch = new Cassandra\BatchStatement();
-$batch->add(new Cassandra\SimpleStatement("UPDATE users SET email = 'sue@foobar.com' WHERE id = 'sue'"));
-$batch->add(new Cassandra\SimpleStatement("UPDATE users SET email = 'tom@foobar.com' WHERE id = 'tom'"));
+$batch->add("UPDATE users SET email = 'sue@foobar.com' WHERE id = 'sue'");
+$batch->add("UPDATE users SET email = 'tom@foobar.com' WHERE id = 'tom'");
 $session->execute($batch, array(
     'consistency' => Cassandra::CONSISTENCY_LOCAL_QUORUM
 ));
 ```
 
-[Read more about `Cassandra\ExecutionOptions`](http://datastax.github.io/php-driver/api/Cassandra/class.ExecutionOptions/)
+[Read more about `Cassandra\ExecutionOptions`](/api/Cassandra/class.ExecutionOptions/)
 
-[Read more about `Cassandra\Session::execute()`](http://datastax.github.io/php-driver/api/Cassandra/interface.Session/#method.execute)
+[Read more about `Cassandra\Session::execute()`](/api/Cassandra/interface.Session/#method.execute)
 
 The default consistency level unless you've set it yourself is `Cassandra::CONSISTENCY_LOCAL_ONE`.
 
@@ -427,7 +425,7 @@ Consistency is ignored for `USE`, `TRUNCATE`, `CREATE` and `ALTER` statements, a
 
 ### Schema Metadata
 
-The DataStax PHP driver exposes schema metadata via [`Cassandra\Schema`](http://datastax.github.io/php-driver/api/Cassandra/interface.Schema/) object, available using [`Cassandra\Session::schema()`](http://datastax.github.io/php-driver/api/Cassandra/interface.Session/#method.schema).
+The DataStax PHP driver exposes schema metadata via [`Cassandra\Schema`](/api/Cassandra/interface.Schema/) object, available using [`Cassandra\Session::schema()`](/api/Cassandra/interface.Session/#method.schema).
 Schema metadata includes information about keyspace, tables and columns and it automatically kept up-to-date with the Cassandra cluster.
 
 ```php
@@ -481,21 +479,21 @@ foreach ($schema->keyspaces() as $keyspace) {
 }
 ```
 
-**NOTE** A new instance of [`Cassandra\Schema`](http://datastax.github.io/php-driver/api/Cassandra/interface.Schema/) is returned each time [`Cassandra\Session::schema()`](http://datastax.github.io/php-driver/api/Cassandra/interface.Session/#method.schema) is called. This instance is a simple value object and its information, such as keyspaces, tables and columns will not be kept up-to-date with the state of the cluster. In order to obtain the latest schema metadata, you have to call [`Cassandra\Session::schema()`](http://datastax.github.io/php-driver/api/Cassandra/interface.Session/#method.schema) again.
+**NOTE** A new instance of [`Cassandra\Schema`](/api/Cassandra/interface.Schema/) is returned each time [`Cassandra\Session::schema()`](/api/Cassandra/interface.Session/#method.schema) is called. This instance is a simple value object and its information, such as keyspaces, tables and columns will not be kept up-to-date with the state of the cluster. In order to obtain the latest schema metadata, you have to call [`Cassandra\Session::schema()`](/api/Cassandra/interface.Session/#method.schema) again.
 
 ### Data Types
 
-The PHP driver for Apache Cassandra supports [a variety of datatypes](http://datastax.github.io/php-driver/features/datatypes/).
+The PHP driver for Apache Cassandra supports [a variety of datatypes](/features/core/datatypes/).
 
 You can also use the rich type metadata API to define and inspect types, as well as validate data objects.
 
-The example below defines and creates a [`Cassandra\Map`](http://datastax.github.io/php-driver/api/Cassandra/class.Map/) using [`Cassandra\Type`](http://datastax.github.io/php-driver/api/Cassandra/class.Type/) interface.
+The example below defines and creates a [`Cassandra\Map`](/api/Cassandra/class.Map/) using [`Cassandra\Type`](/api/Cassandra/class.Type/) interface.
 
 ```php
 <?php
 
 $map = Cassandra\Type::map(Cassandra\Type::varchar(), Cassandra\Type::int())
-                     ->create('a', 1, 'b', 2, 'c', 3, 'd', 4);
+           ->create('a', 1, 'b', 2, 'c', 3, 'd', 4);
 
 var_dump(array_combine($map->keys(), $map->values()));
 ```
@@ -533,4 +531,4 @@ The PHP Driver follows the architecture of [the C/C++ Driver](http://datastax.gi
 
 ### Persistent sessions
 
-By default, the driver uses persistent sessions to prevent each request from creating completely new TCP connections to a Cassandra cluster. You can toggle this functionality using [`Cassandra\Cluster\Builder::withPersistentSessions`](http://datastax.github.io/php-driver/api/Cassandra/Cluster/class.Builder/#method.withPersistentSessions)
+By default, the driver uses persistent sessions to prevent each request from creating completely new TCP connections to a Cassandra cluster. You can toggle this functionality using [`Cassandra\Cluster\Builder::withPersistentSessions`](/api/Cassandra/Cluster/class.Builder/#method.withPersistentSessions)

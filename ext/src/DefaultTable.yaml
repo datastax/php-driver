@@ -3,142 +3,142 @@ DefaultTable:
   comment: A PHP representation of a table
   methods:
     name:
-      comment: '{@inheritDoc}'
+      comment: ""
       return:
-        comment: Name of the table
+        comment: ""
         type: string
     option:
-      comment: '{@inheritDoc}'
+      comment: ""
       params:
         name:
-          comment: '{@inheritDoc}'
+          comment: ""
           type: string
       return:
-        comment: Value of an option by name
+        comment: ""
         type: Value
     options:
-      comment: '{@inheritDoc}'
+      comment: ""
       return:
-        comment: A dictionary of `string` and `Value` pairs of the
+        comment: ""
         type: array
     comment:
-      comment: '{@inheritDoc}'
+      comment: ""
       return:
-        comment: Table description or null
+        comment: ""
         type: string
     readRepairChance:
-      comment: '{@inheritDoc}'
+      comment: ""
       return:
-        comment: Read repair chance
+        comment: ""
         type: float
     localReadRepairChance:
-      comment: '{@inheritDoc}'
+      comment: ""
       return:
-        comment: Local read repair chance
+        comment: ""
         type: float
     gcGraceSeconds:
-      comment: '{@inheritDoc}'
+      comment: ""
       return:
-        comment: GC grace seconds
+        comment: ""
         type: int
     caching:
-      comment: '{@inheritDoc}'
+      comment: ""
       return:
-        comment: Caching options
+        comment: ""
         type: string
     bloomFilterFPChance:
-      comment: '{@inheritDoc}'
+      comment: ""
       return:
-        comment: Bloom filter FP chance
+        comment: ""
         type: float
     memtableFlushPeriodMs:
-      comment: '{@inheritDoc}'
+      comment: ""
       return:
-        comment: Memtable flush period in milliseconds
+        comment: ""
         type: int
     defaultTTL:
-      comment: '{@inheritDoc}'
+      comment: ""
       return:
-        comment: Default TTL.
+        comment: ""
         type: int
     speculativeRetry:
-      comment: '{@inheritDoc}'
+      comment: ""
       return:
-        comment: Speculative retry.
+        comment: ""
         type: string
     indexInterval:
-      comment: '{@inheritDoc}'
+      comment: ""
       return:
-        comment: Index interval
+        comment: ""
         type: int
     compactionStrategyClassName:
-      comment: '{@inheritDoc}'
+      comment: ""
       return:
-        comment: Compaction strategy class name
+        comment: ""
         type: string
     compactionStrategyOptions:
-      comment: '{@inheritDoc}'
+      comment: ""
       return:
-        comment: Compaction strategy options
+        comment: ""
         type: Map
     compressionParameters:
-      comment: '{@inheritDoc}'
+      comment: ""
       return:
-        comment: Compression parameters
+        comment: ""
         type: Map
     populateIOCacheOnFlush:
-      comment: '{@inheritDoc}'
+      comment: ""
       return:
-        comment: Value of `populate_io_cache_on_flush` or null
+        comment: ""
         type: bool
     replicateOnWrite:
-      comment: '{@inheritDoc}'
+      comment: ""
       return:
-        comment: Value of `replicate_on_write` or null
+        comment: ""
         type: bool
     maxIndexInterval:
-      comment: '{@inheritDoc}'
+      comment: ""
       return:
-        comment: Value of `max_index_interval` or null
+        comment: ""
         type: int
     minIndexInterval:
-      comment: '{@inheritDoc}'
+      comment: ""
       return:
-        comment: Value of `min_index_interval` or null
+        comment: ""
         type: int
     column:
-      comment: '{@inheritDoc}'
+      comment: ""
       params:
         name:
-          comment: Name of the column
+          comment: ""
           type: string
       return:
-        comment: Column instance
+        comment: ""
         type: Column
     columns:
-      comment: '{@inheritDoc}'
+      comment: ""
       return:
         comment: A list of `Column` instances
         type: array
     partitionKey:
-      comment: '{@inheritDoc}'
+      comment: ""
       return:
         comment: A list of of `Column` instance
         type: array
     primaryKey:
-      comment: '{@inheritDoc}'
+      comment: ""
       return:
         comment: A list of of `Column` instance
         type: array
     clusteringKey:
-      comment: '{@inheritDoc}'
+      comment: ""
       return:
         comment: A list of of `Column` instances
         type: array
     clusteringOrder:
-      comment: '{@inheritDoc}'
+      comment: ""
       return:
-        comment: A list of cluster column orders ('asc' and 'desc')
+        comment: ""
         type: array
     index:
       comment: Get an index by name

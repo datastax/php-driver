@@ -22,71 +22,71 @@ Tinyint:
       comment: ""
       params:
         num:
-          comment: a number to add to this one
+          comment: ""
           type: Numeric
       return:
-        comment: sum
+        comment: ""
         type: Numeric
     sub:
       comment: ""
       params:
         num:
-          comment: a number to subtract from this one
+          comment: ""
           type: Numeric
       return:
-        comment: difference
+        comment: ""
         type: Numeric
     mul:
       comment: ""
       params:
         num:
-          comment: a number to multiply this one by
+          comment: ""
           type: Numeric
       return:
-        comment: product
+        comment: ""
         type: Numeric
     div:
       comment: ""
       params:
         num:
-          comment: a number to divide this one by
+          comment: ""
           type: Numeric
       return:
-        comment: quotient
+        comment: ""
         type: Numeric
     mod:
       comment: ""
       params:
         num:
-          comment: a number to divide this one by
+          comment: ""
           type: Numeric
       return:
-        comment: remainder
+        comment: ""
         type: Numeric
     abs:
       comment: ""
       return:
-        comment: absolute value
+        comment: ""
         type: Numeric
     neg:
       comment: ""
       return:
-        comment: negative value
+        comment: ""
         type: Numeric
     sqrt:
       comment: ""
       return:
-        comment: square root
+        comment: ""
         type: Numeric
     toInt:
       comment: ""
       return:
-        comment: this number as int
+        comment: ""
         type: int
     toDouble:
       comment: ""
       return:
-        comment: this number as float
+        comment: ""
         type: float
     type:
       comment: The type of this value (tinyint).

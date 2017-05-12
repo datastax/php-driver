@@ -3,38 +3,38 @@ DefaultColumn:
   comment: A PHP representation of a column
   methods:
     name:
-      comment: '{@inheritDoc}'
+      comment: ""
       return:
-        comment: Name of the column or null
+        comment: ""
         type: string
     type:
-      comment: '{@inheritDoc}'
+      comment: ""
       return:
-        comment: Type of the column
+        comment: ""
         type: Type
     isReversed:
-      comment: '{@inheritDoc}'
+      comment: ""
       return:
-        comment: Whether the column is stored in descending order.
+        comment: ""
         type: bool
     isStatic:
-      comment: '{@inheritDoc}'
+      comment: ""
       return:
-        comment: Whether the column is static
+        comment: ""
         type: bool
     isFrozen:
-      comment: '{@inheritDoc}'
+      comment: ""
       return:
-        comment: Whether the column is frozen
+        comment: ""
         type: bool
     indexName:
-      comment: '{@inheritDoc}'
+      comment: ""
       return:
-        comment: Name of the index if defined or null
+        comment: ""
         type: string
     indexOptions:
-      comment: '{@inheritDoc}'
+      comment: ""
       return:
-        comment: Index options if present or null
+        comment: ""
         type: string
 ...

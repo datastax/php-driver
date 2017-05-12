@@ -3,21 +3,21 @@ DefaultSchema:
   comment: A PHP representation of a schema
   methods:
     keyspace:
-      comment: '{@inheritDoc}'
+      comment: ""
       params:
         name:
-          comment: Name of the keyspace to get
+          comment: ""
           type: string
       return:
-        comment: '      Keyspace instance or null'
+        comment: ""
         type: Keyspace
     keyspaces:
-      comment: '{@inheritDoc}'
+      comment: ""
       return:
         comment: An array of `Keyspace` instances.
         type: array
     version:
-      comment: '{@inheritDoc}'
+      comment: Get the version of the schema snapshot
       return:
         comment: Version of the schema.
         type: int

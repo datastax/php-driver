@@ -76,8 +76,7 @@ Feature: Session management
                      ->withContactPoints('127.0.0.1')
                      ->build();
       $session   = $cluster->connect("simplex");
-      $statement = new Cassandra\SimpleStatement("SELECT * FROM simplex.playlists");
-      $future    = $session->executeAsync($statement);
+      $future    = $session->executeAsync("SELECT * FROM simplex.playlists");
       $session->close();
 
       echo "Result contains " . $future->get()->count() . " rows";

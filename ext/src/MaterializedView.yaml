@@ -16,10 +16,10 @@ MaterializedView:
       comment: Return a view's option by name
       params:
         name:
-          comment: The name of the option
+          comment: ""
           type: string
       return:
-        comment: Value of an option by name
+        comment: ""
         type: Value
     options:
       comment: Returns all the view's options
@@ -34,93 +34,93 @@ MaterializedView:
         comment: View description or null
         type: string
     readRepairChance:
-      comment: Returns read repair chance
+      comment: ""
       return:
-        comment: Read repair chance
+        comment: ""
         type: float
     localReadRepairChance:
-      comment: Returns local read repair chance
+      comment: ""
       return:
-        comment: Local read repair chance
+        comment: ""
         type: float
     gcGraceSeconds:
-      comment: Returns GC grace seconds
+      comment: ""
       return:
-        comment: GC grace seconds
+        comment: ""
         type: int
     caching:
-      comment: Returns caching options
+      comment: ""
       return:
-        comment: Caching options
+        comment: ""
         type: string
     bloomFilterFPChance:
-      comment: Returns bloom filter FP chance
+      comment: ""
       return:
-        comment: Bloom filter FP chance
+        comment: ""
         type: float
     memtableFlushPeriodMs:
-      comment: Returns memtable flush period in milliseconds
+      comment: ""
       return:
-        comment: Memtable flush period in milliseconds
+        comment: ""
         type: int
     defaultTTL:
-      comment: Returns default TTL.
+      comment: ""
       return:
-        comment: Default TTL.
+        comment: ""
         type: int
     speculativeRetry:
-      comment: Returns speculative retry.
+      comment: ""
       return:
-        comment: Speculative retry.
+        comment: ""
         type: string
     indexInterval:
-      comment: Returns index interval
+      comment: ""
       return:
-        comment: Index interval
+        comment: ""
         type: int
     compactionStrategyClassName:
-      comment: Returns compaction strategy class name
+      comment: ""
       return:
-        comment: Compaction strategy class name
+        comment: ""
         type: string
     compactionStrategyOptions:
-      comment: Returns compaction strategy options
+      comment: ""
       return:
-        comment: Compaction strategy options
+        comment: ""
         type: Map
     compressionParameters:
-      comment: Returns compression parameters
+      comment: ""
       return:
-        comment: Compression parameters
+        comment: ""
         type: Map
     populateIOCacheOnFlush:
-      comment: Returns whether or not the `populate_io_cache_on_flush` is true
+      comment: ""
       return:
-        comment: Value of `populate_io_cache_on_flush` or null
+        comment: ""
         type: bool
     replicateOnWrite:
-      comment: Returns whether or not the `replicate_on_write` is true
+      comment: ""
       return:
-        comment: Value of `replicate_on_write` or null
+        comment: ""
         type: bool
     maxIndexInterval:
-      comment: Returns the value of `max_index_interval`
+      comment: ""
       return:
-        comment: Value of `max_index_interval` or null
+        comment: ""
         type: int
     minIndexInterval:
-      comment: Returns the value of `min_index_interval`
+      comment: ""
       return:
-        comment: Value of `min_index_interval` or null
+        comment: ""
         type: int
     column:
-      comment: Returns column by name
+      comment: ""
       params:
         name:
-          comment: Name of the column
+          comment: ""
           type: string
       return:
-        comment: Column instance
+        comment: ""
         type: Column
     columns:
       comment: Returns all columns in this view
@@ -145,6 +145,6 @@ MaterializedView:
     clusteringOrder:
       comment: ""
       return:
-        comment: A list of cluster column orders ('asc' and 'desc')
+        comment: ""
         type: array
 ...

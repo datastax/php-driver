@@ -26,14 +26,14 @@ final class Custom extends Type {
     private function __construct() { }
 
     /**
-     * {@inheritDoc}
+     * Returns the name of this type as string.
      *
      * @return string The name of this type
      */
     public function name() { }
 
     /**
-     * {@inheritDoc}
+     * Returns string representation of this type.
      *
      * @return string String representation of this type
      */

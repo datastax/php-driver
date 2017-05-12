@@ -3,42 +3,42 @@ DefaultFunction:
   comment: A PHP representation of a public function
   methods:
     name:
-      comment: '{@inheritDoc}'
+      comment: ""
       return:
-        comment: Full name of the function including name and types
+        comment: ""
         type: string
     simpleName:
-      comment: '{@inheritDoc}'
+      comment: ""
       return:
-        comment: Simple name of the function
+        comment: ""
         type: string
     arguments:
-      comment: '{@inheritDoc}'
+      comment: ""
       return:
-        comment: Arguments of the function
+        comment: ""
         type: array
     returnType:
-      comment: '{@inheritDoc}'
+      comment: ""
       return:
-        comment: Return type of the function
+        comment: ""
         type: Type
     signature:
-      comment: '{@inheritDoc}'
+      comment: ""
       return:
-        comment: Signature of the function (same as name())
+        comment: ""
         type: string
     language:
-      comment: '{@inheritDoc}'
+      comment: ""
       return:
-        comment: Language used by the function
+        comment: ""
         type: string
     body:
-      comment: '{@inheritDoc}'
+      comment: ""
       return:
-        comment: Body of the function
+        comment: ""
         type: string
     isCalledOnNullInput:
-      comment: '{@inheritDoc}'
+      comment: ""
       return:
         comment: ""
         type: bool

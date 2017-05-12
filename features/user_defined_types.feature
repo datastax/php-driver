@@ -25,14 +25,9 @@ Feature: User defined types
     And the following example:
       """php
       <?php
-      $cluster   = Cassandra::cluster()
-                     ->withContactPoints('127.0.0.1')
-                     ->build();
+      $cluster   = Cassandra::cluster()->build();
       $session   = $cluster->connect("simplex");
       $keyspace = $session->schema()->keyspace("simplex");
-
-      $statement = new Cassandra\SimpleStatement(
-                      "INSERT INTO users (id, name, addresses) VALUES (?, ?, ?)");
 
       $addressType = $keyspace->userType("address");
       $addressesType = $keyspace->userType("addresses");
@@ -57,24 +52,33 @@ Feature: User defined types
                       'zip', 10025),
                   'work', $addressType->create(
                       'city', 'New York',
-                      'street', '60  SSTable Drive',
+                      'street', '60 SSTable Drive',
                       'zip', 10024)
               )
           ),
       );
 
       foreach ($users as $user) {
-        $options = array('arguments' => $user);
-        $session->execute($statement, $options);
+          $options = array('arguments' => $user);
+          $session->execute("INSERT INTO users (id, name, addresses) VALUES (?, ?, ?)", $options);
       }
 
-      $statement = new Cassandra\SimpleStatement("SELECT * FROM users");
-      $result    = $session->execute($statement);
+      $result    = $session->execute("SELECT * FROM users");
 
       foreach ($result as $row) {
-          print 'ID: ' . $row['id'] . "\n";
-          print 'Name: ' . $row['name'] . "\n";
-          print 'Addresses: ' . var_export($row['addresses'], true). "\n";
+          echo "ID: {$row['id']}" . PHP_EOL;
+          echo "Name: {$row['name']}" . PHP_EOL;
+          echo "Address:" . PHP_EOL;
+          foreach ($row['addresses'] as $type => $address) {
+              echo "  {$type}:" . PHP_EOL;
+              if (is_null($address)) {
+                  echo "    NULL" . PHP_EOL;
+              } else {
+                  foreach ($address as $key => $value) {
+                      echo "    {$key} => {$value}" . PHP_EOL;
+                  }
+              }
+          }
       }
       """
     When it is executed
@@ -82,184 +86,24 @@ Feature: User defined types
       """
       ID: 56357d2b-4586-433c-ad24-afa9918bc415
       Name: Charles Wallace
-      Addresses: Cassandra\UserTypeValue::__set_state(array(
-         'type' =>
-        Cassandra\Type\UserType::__set_state(array(
-           'types' =>
-          array (
-            'home' =>
-            Cassandra\Type\UserType::__set_state(array(
-               'types' =>
-              array (
-                'street' =>
-                Cassandra\Type\Scalar::__set_state(array(
-                   'name' => 'varchar',
-                )),
-                'city' =>
-                Cassandra\Type\Scalar::__set_state(array(
-                   'name' => 'varchar',
-                )),
-                'zip' =>
-                Cassandra\Type\Scalar::__set_state(array(
-                   'name' => 'int',
-                )),
-              ),
-            )),
-            'work' =>
-            Cassandra\Type\UserType::__set_state(array(
-               'types' =>
-              array (
-                'street' =>
-                Cassandra\Type\Scalar::__set_state(array(
-                   'name' => 'varchar',
-                )),
-                'city' =>
-                Cassandra\Type\Scalar::__set_state(array(
-                   'name' => 'varchar',
-                )),
-                'zip' =>
-                Cassandra\Type\Scalar::__set_state(array(
-                   'name' => 'int',
-                )),
-              ),
-            )),
-          ),
-        )),
-         'values' =>
-        array (
-          'home' =>
-          Cassandra\UserTypeValue::__set_state(array(
-             'type' =>
-            Cassandra\Type\UserType::__set_state(array(
-               'types' =>
-              array (
-                'street' =>
-                Cassandra\Type\Scalar::__set_state(array(
-                   'name' => 'varchar',
-                )),
-                'city' =>
-                Cassandra\Type\Scalar::__set_state(array(
-                   'name' => 'varchar',
-                )),
-                'zip' =>
-                Cassandra\Type\Scalar::__set_state(array(
-                   'name' => 'int',
-                )),
-              ),
-            )),
-             'values' =>
-            array (
-              'street' => '9042 Cassandra Lane',
-              'city' => 'Phoenix',
-              'zip' => 85023,
-            ),
-          )),
-          'work' => NULL,
-        ),
-      ))
+      Address:
+        home:
+          street => 9042 Cassandra Lane
+          city => Phoenix
+          zip => 85023
+        work:
+          NULL
       ID: ce359590-8528-4682-a9f3-add53fc9aa09
       Name: Kevin Malone
-      Addresses: Cassandra\UserTypeValue::__set_state(array(
-         'type' =>
-        Cassandra\Type\UserType::__set_state(array(
-           'types' =>
-          array (
-            'home' =>
-            Cassandra\Type\UserType::__set_state(array(
-               'types' =>
-              array (
-                'street' =>
-                Cassandra\Type\Scalar::__set_state(array(
-                   'name' => 'varchar',
-                )),
-                'city' =>
-                Cassandra\Type\Scalar::__set_state(array(
-                   'name' => 'varchar',
-                )),
-                'zip' =>
-                Cassandra\Type\Scalar::__set_state(array(
-                   'name' => 'int',
-                )),
-              ),
-            )),
-            'work' =>
-            Cassandra\Type\UserType::__set_state(array(
-               'types' =>
-              array (
-                'street' =>
-                Cassandra\Type\Scalar::__set_state(array(
-                   'name' => 'varchar',
-                )),
-                'city' =>
-                Cassandra\Type\Scalar::__set_state(array(
-                   'name' => 'varchar',
-                )),
-                'zip' =>
-                Cassandra\Type\Scalar::__set_state(array(
-                   'name' => 'int',
-                )),
-              ),
-            )),
-          ),
-        )),
-         'values' =>
-        array (
-          'home' =>
-          Cassandra\UserTypeValue::__set_state(array(
-             'type' =>
-            Cassandra\Type\UserType::__set_state(array(
-               'types' =>
-              array (
-                'street' =>
-                Cassandra\Type\Scalar::__set_state(array(
-                   'name' => 'varchar',
-                )),
-                'city' =>
-                Cassandra\Type\Scalar::__set_state(array(
-                   'name' => 'varchar',
-                )),
-                'zip' =>
-                Cassandra\Type\Scalar::__set_state(array(
-                   'name' => 'int',
-                )),
-              ),
-            )),
-             'values' =>
-            array (
-              'street' => '1000 Database Road',
-              'city' => 'New York',
-              'zip' => 10025,
-            ),
-          )),
-          'work' =>
-          Cassandra\UserTypeValue::__set_state(array(
-             'type' =>
-            Cassandra\Type\UserType::__set_state(array(
-               'types' =>
-              array (
-                'street' =>
-                Cassandra\Type\Scalar::__set_state(array(
-                   'name' => 'varchar',
-                )),
-                'city' =>
-                Cassandra\Type\Scalar::__set_state(array(
-                   'name' => 'varchar',
-                )),
-                'zip' =>
-                Cassandra\Type\Scalar::__set_state(array(
-                   'name' => 'int',
-                )),
-              ),
-            )),
-             'values' =>
-            array (
-              'street' => '60  SSTable Drive',
-              'city' => 'New York',
-              'zip' => 10024,
-            ),
-          )),
-        ),
-      ))
+      Address:
+        home:
+          street => 1000 Database Road
+          city => New York
+          zip => 10025
+        work:
+          street => 60 SSTable Drive
+          city => New York
+          zip => 10024
       """
 
   Scenario: Using Cassandra manually create user defined types
@@ -281,13 +125,8 @@ Feature: User defined types
     And the following example:
       """php
       <?php
-      $cluster   = Cassandra::cluster()
-                     ->withContactPoints('127.0.0.1')
-                     ->build();
+      $cluster   = Cassandra::cluster()->build();
       $session   = $cluster->connect("simplex");
-
-      $statement = new Cassandra\SimpleStatement(
-                      "INSERT INTO users (id, name, addresses) VALUES (?, ?, ?)");
 
       $addressType = Cassandra\Type::userType(
           'street', Cassandra\Type::text(),
@@ -320,24 +159,33 @@ Feature: User defined types
                       'zip', 10025),
                   'work', $addressType->create(
                       'city', 'New York',
-                      'street', '60  SSTable Drive',
+                      'street', '60 SSTable Drive',
                       'zip', 10024)
               )
           ),
       );
 
       foreach ($users as $user) {
-        $options = array('arguments' => $user);
-        $session->execute($statement, $options);
+          $options = array('arguments' => $user);
+          $session->execute("INSERT INTO users (id, name, addresses) VALUES (?, ?, ?)", $options);
       }
 
-      $statement = new Cassandra\SimpleStatement("SELECT * FROM users");
-      $result    = $session->execute($statement);
+      $result    = $session->execute("SELECT * FROM users");
 
       foreach ($result as $row) {
-          print 'ID: ' . $row['id'] . "\n";
-          print 'Name: ' . $row['name'] . "\n";
-          print 'Addresses: ' . var_export($row['addresses'], true). "\n";
+          echo "ID: {$row['id']}" . PHP_EOL;
+          echo "Name: {$row['name']}" . PHP_EOL;
+          echo "Address:" . PHP_EOL;
+          foreach ($row['addresses'] as $type => $address) {
+              echo "  {$type}:" . PHP_EOL;
+              if (is_null($address)) {
+                  echo "    NULL" . PHP_EOL;
+              } else {
+                  foreach ($address as $key => $value) {
+                      echo "    {$key} => {$value}" . PHP_EOL;
+                  }
+              }
+          }
       }
       """
     When it is executed
@@ -345,182 +193,22 @@ Feature: User defined types
       """
       ID: 56357d2b-4586-433c-ad24-afa9918bc415
       Name: Charles Wallace
-      Addresses: Cassandra\UserTypeValue::__set_state(array(
-         'type' =>
-        Cassandra\Type\UserType::__set_state(array(
-           'types' =>
-          array (
-            'home' =>
-            Cassandra\Type\UserType::__set_state(array(
-               'types' =>
-              array (
-                'street' =>
-                Cassandra\Type\Scalar::__set_state(array(
-                   'name' => 'varchar',
-                )),
-                'city' =>
-                Cassandra\Type\Scalar::__set_state(array(
-                   'name' => 'varchar',
-                )),
-                'zip' =>
-                Cassandra\Type\Scalar::__set_state(array(
-                   'name' => 'int',
-                )),
-              ),
-            )),
-            'work' =>
-            Cassandra\Type\UserType::__set_state(array(
-               'types' =>
-              array (
-                'street' =>
-                Cassandra\Type\Scalar::__set_state(array(
-                   'name' => 'varchar',
-                )),
-                'city' =>
-                Cassandra\Type\Scalar::__set_state(array(
-                   'name' => 'varchar',
-                )),
-                'zip' =>
-                Cassandra\Type\Scalar::__set_state(array(
-                   'name' => 'int',
-                )),
-              ),
-            )),
-          ),
-        )),
-         'values' =>
-        array (
-          'home' =>
-          Cassandra\UserTypeValue::__set_state(array(
-             'type' =>
-            Cassandra\Type\UserType::__set_state(array(
-               'types' =>
-              array (
-                'street' =>
-                Cassandra\Type\Scalar::__set_state(array(
-                   'name' => 'varchar',
-                )),
-                'city' =>
-                Cassandra\Type\Scalar::__set_state(array(
-                   'name' => 'varchar',
-                )),
-                'zip' =>
-                Cassandra\Type\Scalar::__set_state(array(
-                   'name' => 'int',
-                )),
-              ),
-            )),
-             'values' =>
-            array (
-              'street' => '9042 Cassandra Lane',
-              'city' => 'Phoenix',
-              'zip' => 85023,
-            ),
-          )),
-          'work' => NULL,
-        ),
-      ))
+      Address:
+        home:
+          street => 9042 Cassandra Lane
+          city => Phoenix
+          zip => 85023
+        work:
+          NULL
       ID: ce359590-8528-4682-a9f3-add53fc9aa09
       Name: Kevin Malone
-      Addresses: Cassandra\UserTypeValue::__set_state(array(
-         'type' =>
-        Cassandra\Type\UserType::__set_state(array(
-           'types' =>
-          array (
-            'home' =>
-            Cassandra\Type\UserType::__set_state(array(
-               'types' =>
-              array (
-                'street' =>
-                Cassandra\Type\Scalar::__set_state(array(
-                   'name' => 'varchar',
-                )),
-                'city' =>
-                Cassandra\Type\Scalar::__set_state(array(
-                   'name' => 'varchar',
-                )),
-                'zip' =>
-                Cassandra\Type\Scalar::__set_state(array(
-                   'name' => 'int',
-                )),
-              ),
-            )),
-            'work' =>
-            Cassandra\Type\UserType::__set_state(array(
-               'types' =>
-              array (
-                'street' =>
-                Cassandra\Type\Scalar::__set_state(array(
-                   'name' => 'varchar',
-                )),
-                'city' =>
-                Cassandra\Type\Scalar::__set_state(array(
-                   'name' => 'varchar',
-                )),
-                'zip' =>
-                Cassandra\Type\Scalar::__set_state(array(
-                   'name' => 'int',
-                )),
-              ),
-            )),
-          ),
-        )),
-         'values' =>
-        array (
-          'home' =>
-          Cassandra\UserTypeValue::__set_state(array(
-             'type' =>
-            Cassandra\Type\UserType::__set_state(array(
-               'types' =>
-              array (
-                'street' =>
-                Cassandra\Type\Scalar::__set_state(array(
-                   'name' => 'varchar',
-                )),
-                'city' =>
-                Cassandra\Type\Scalar::__set_state(array(
-                   'name' => 'varchar',
-                )),
-                'zip' =>
-                Cassandra\Type\Scalar::__set_state(array(
-                   'name' => 'int',
-                )),
-              ),
-            )),
-             'values' =>
-            array (
-              'street' => '1000 Database Road',
-              'city' => 'New York',
-              'zip' => 10025,
-            ),
-          )),
-          'work' =>
-          Cassandra\UserTypeValue::__set_state(array(
-             'type' =>
-            Cassandra\Type\UserType::__set_state(array(
-               'types' =>
-              array (
-                'street' =>
-                Cassandra\Type\Scalar::__set_state(array(
-                   'name' => 'varchar',
-                )),
-                'city' =>
-                Cassandra\Type\Scalar::__set_state(array(
-                   'name' => 'varchar',
-                )),
-                'zip' =>
-                Cassandra\Type\Scalar::__set_state(array(
-                   'name' => 'int',
-                )),
-              ),
-            )),
-             'values' =>
-            array (
-              'street' => '60  SSTable Drive',
-              'city' => 'New York',
-              'zip' => 10024,
-            ),
-          )),
-        ),
-      ))
+      Address:
+        home:
+          street => 1000 Database Road
+          city => New York
+          zip => 10025
+        work:
+          street => 60 SSTable Drive
+          city => New York
+          zip => 10024
       """

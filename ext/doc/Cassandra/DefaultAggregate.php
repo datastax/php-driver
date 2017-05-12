@@ -24,63 +24,63 @@ namespace Cassandra;
 final class DefaultAggregate implements Aggregate {
 
     /**
-     * {@inheritDoc}
+     * Returns the full name of the aggregate
      *
      * @return string Full name of the aggregate including name and types
      */
     public function name() { }
 
     /**
-     * {@inheritDoc}
+     * Returns the simple name of the aggregate
      *
      * @return string Simple name of the aggregate
      */
     public function simpleName() { }
 
     /**
-     * {@inheritDoc}
+     * Returns the argument types of the aggregate
      *
      * @return array Argument types of the aggregate
      */
     public function argumentTypes() { }
 
     /**
-     * {@inheritDoc}
+     * Returns the state function of the aggregate
      *
      * @return Function State public function of the aggregate
      */
     public function stateFunction() { }
 
     /**
-     * {@inheritDoc}
+     * Returns the final function of the aggregate
      *
      * @return Function Final public function of the aggregate
      */
     public function finalFunction() { }
 
     /**
-     * {@inheritDoc}
+     * Returns the initial condition of the aggregate
      *
      * @return Value Initial condition of the aggregate
      */
     public function initialCondition() { }
 
     /**
-     * {@inheritDoc}
+     * Returns the state type of the aggregate
      *
      * @return Type State type of the aggregate
      */
     public function stateType() { }
 
     /**
-     * {@inheritDoc}
+     * Returns the return type of the aggregate
      *
      * @return Type Return type of the aggregate
      */
     public function returnType() { }
 
     /**
-     * {@inheritDoc}
+     * Returns the signature of the aggregate
      *
      * @return string Signature of the aggregate (same as name())
      */

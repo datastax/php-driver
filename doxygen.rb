@@ -25,4 +25,8 @@ end
 text.gsub!(/(\/\*\*[\s\S]*?@return\s+([^\s]*)[\s\S]*?\*\/[\s\S]*?)((public|protected|private)(\s+static)?)?\s+function\s+([\S]*?)\s*?\(/, '\1 \3 \2 function \6(')
 text.gsub!(/\@return/, '@retval')
 
+text.gsub!(/function_/, 'function')
+text.gsub!(/Function_/, 'Function')
+text.gsub!(/Float_/, 'Float')
+
 puts text

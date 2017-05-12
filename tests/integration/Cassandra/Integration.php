@@ -164,16 +164,13 @@ class Integration {
             ->withPersistentSessions(false)
             ->build();
         $this->session = $this->cluster->connect();
-        $statement = new SimpleStatement($query);
-        $this->session->execute($statement);
+        $this->session->execute($query);
 
         // Update the session to use the new keyspace by default
-        $statement = new SimpleStatement("USE " . $this->keyspaceName);
-        $this->session->execute($statement);
+        $this->session->execute("USE " . $this->keyspaceName);
 
         // Get the server version the session is connected to
-        $statement = new SimpleStatement(self::SELECT_SERVER_VERSION);
-        $rows = $this->session->execute($statement);
+        $rows = $this->session->execute(self::SELECT_SERVER_VERSION);
         $this->serverVersion = $rows->first()["release_version"];
     }
 
@@ -181,8 +178,7 @@ class Integration {
         // Drop keyspace for integration test (may or may have not been created)
         if (!is_null($this->session)) {
             try {
-                $statement = new SimpleStatement('DROP KEYSPACE "' . $this->keyspaceName . '"');
-                $this->session->execute($statement);
+                $this->session->execute('DROP KEYSPACE "' . $this->keyspaceName . '"');
             } catch (Exception $e) {
                 ; // no-op
             }

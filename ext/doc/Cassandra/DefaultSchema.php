@@ -24,7 +24,7 @@ namespace Cassandra;
 final class DefaultSchema implements Schema {
 
     /**
-     * {@inheritDoc}
+     * Returns a Keyspace instance by name.
      *
      * @param string $name Name of the keyspace to get
      *
@@ -33,14 +33,14 @@ final class DefaultSchema implements Schema {
     public function keyspace($name) { }
 
     /**
-     * {@inheritDoc}
+     * Returns all keyspaces defined in the schema.
      *
      * @return array An array of `Keyspace` instances.
      */
     public function keyspaces() { }
 
     /**
-     * {@inheritDoc}
+     * Get the version of the schema snapshot
      *
      * @return int Version of the schema.
      */

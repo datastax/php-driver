@@ -176,7 +176,7 @@ PHP_DRIVER_END_OBJECT_TYPE(inet)
 PHP_DRIVER_BEGIN_OBJECT_TYPE(duration)
   cass_int32_t months;
   cass_int32_t days;
-  cass_int32_t nanos;
+  cass_int64_t nanos;
 PHP_DRIVER_END_OBJECT_TYPE(duration)
 
 PHP_DRIVER_BEGIN_OBJECT_TYPE(collection)

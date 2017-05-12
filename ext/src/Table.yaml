@@ -17,11 +17,9 @@ Table:
         comment: Value of an option by name
         type: Value
     options:
-      comment: |-
-        Returns all the table's options
-                      view's options.
+      comment: Returns all the table's options
       return:
-        comment: A dictionary of `string` and `Value` pairs of the
+        comment: A dictionary of `string` and `Value` pairs of the table's options.
         type: array
     comment:
       comment: Description of the table, if any
