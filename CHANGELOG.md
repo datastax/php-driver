@@ -1,3 +1,15 @@
+# 1.3.1
+
+Bug Fixes:
+
+* [PHP-170] Duration nanos should support a signed 64-bit range
+
+Documentation:
+
+* [PHP-184] Remove {@inheritDoc} from method parameters
+* [PHP-183] Remove references to SimpleStatement and ExecutionOptions from docs,
+  features, and most tests
+
 # 1.3.0
 
 Features:
@@ -8,6 +20,7 @@ Features:
 * `ExecutionOptions` has been deprecated in favor of using an array
 
 Bug Fixes:
+
 * [PHP-86] Decimal __toString method
 * [PHP-109] Cassandra solr_query not working after upgrading to DSE 5
 * [PHP-114] pecl install compiler output is dominated by C90 warnings
