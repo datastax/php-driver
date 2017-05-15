@@ -97,5 +97,5 @@ dch -m -v "$version-$release" -D $dist "Version $version"
 
 echo "Building package:"
 nprocs=$(grep -e '^processor' -c /proc/cpuinfo)
-DH_PHP_VERSIONS_OVERRIDE=7.0 DEB_BUILD_OPTIONS="parallel=$nprocs" debuild -i -b -uc -us
+DEB_BUILD_OPTIONS="parallel=$nprocs" debuild -i -b -uc -us
 popd
