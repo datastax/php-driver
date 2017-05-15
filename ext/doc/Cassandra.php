@@ -379,7 +379,7 @@ final class Cassandra {
     /**
      * The current version of the extension.
      */
-    const VERSION = '1.3.0';
+    const VERSION = '1.3.1';
 
     /**
      * The version of the cpp-driver the extension is compiled against.
