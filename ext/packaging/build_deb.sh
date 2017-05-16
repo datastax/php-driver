@@ -56,23 +56,27 @@ check_command "dch" "debhelper"
 check_command "lsb_release" "lsb-release"
 
 pecl_name="cassandra"
-pecl_version=$(header_version "../version.h")
 version=$(header_version_full "../version.h")
 release=1
 dist=$(lsb_release -s -c)
 base="php-driver-$version"
 files="config.m4 php_driver.c php_driver.h php_driver_globals.h php_driver_types.h version.h src util"
 
-echo "Building version $version"
 
-libuv_version=$(dpkg -s libuv | grep 'Version' | awk '{ print $2 }')
-
-if [[ -e $libuv_version ]]; then
-  echo "'libuv' required, but not installed"
-  exit 1
+if [[ -z $1 ]]; then
+  php_version=$(php-config --version | sed -rn 's/^([0-9]+)\.([0-9]+)(.*)/\1.\2/p')
+else
+  php_version=$1
 fi
 
-echo "Using libuv version $libuv_version"
+debian_dir="debian-php$php_version"
+
+if [[ ! -e $debian_dir ]]; then
+  echo "PHP $php_version not supported"
+  exit -1
+fi
+
+echo "Building version $version with PHP $php_version"
 
 if [[ -d build ]]; then
   read -p "Build directory exists, remove? [y|n] " -n 1 -r
@@ -84,18 +88,18 @@ fi
 mkdir -p "build/$base"
 
 echo "Copying files"
-mkdir -p "build/$base/$pecl_name-$pecl_version"
 cp ../package.xml "build/$base"
 for file in $files; do
-  cp -r  "../$file" "build/$base/$pecl_name-$pecl_version/$file"
+  cp -r  "../$file" "build/$base/$file"
 done
-cp -r debian "build/$base"
+
+cp -r $debian_dir "build/$base/debian"
 
 pushd "build/$base"
 echo "Updating changlog"
-dch -m -v "$version-$release" -D $dist "Version $version"
-
+dch -M --create --package "php$php_version-cassandra-driver" -v "$version-$release" -D $dist "Version $version"
 echo "Building package:"
 nprocs=$(grep -e '^processor' -c /proc/cpuinfo)
-DEB_BUILD_OPTIONS="parallel=$nprocs" debuild -i -b -uc -us
+DEB_BUILD_OPTIONS="parallel=$nprocs" debuild -e PHP_VERSION="$php_version" -i -b -uc -us 
+
 popd

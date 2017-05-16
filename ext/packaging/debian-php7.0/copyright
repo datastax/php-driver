@@ -1,5 +1,5 @@
 Format: http://dep.debian.net/deps/dep5
-Upstream-Name: php-cassandra-driver
+Upstream-Name: php7.0-cassandra-driver
 Source: https://github.com/datastax/php-driver
 
 Files: *
