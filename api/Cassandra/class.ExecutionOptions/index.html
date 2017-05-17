@@ -84,7 +84,7 @@
   
   <li>
     <a href="../../../features/">
-      Features <small>page</small>
+      Core <small>page</small>
       
       
       <span class="glyphicon glyphicon-plus-sign pull-right" aria-hidden="true"></span>
@@ -315,8 +315,8 @@
   
   
   <li>
-    <a href="../interface.Function_/">
-      Function_ <small>interface</small>
+    <a href="../interface.Function/">
+      Function <small>interface</small>
       
     </a>
     
@@ -525,8 +525,8 @@
   
   
   <li>
-    <a href="../class.Float_/">
-      Float_ <small>class</small>
+    <a href="../class.Float/">
+      Float <small>class</small>
       
     </a>
     
@@ -536,15 +536,6 @@
   <li>
     <a href="../class.FutureClose/">
       FutureClose <small>class</small>
-      
-    </a>
-    
-  </li>
-  
-  
-  <li>
-    <a href="../class.FutureException/">
-      FutureException <small>class</small>
       
     </a>
     
@@ -761,6 +752,15 @@
     
   </li>
   
+  
+  <li>
+    <a href="../../class.YamlClassDoc/">
+      YamlClassDoc <small>class</small>
+      
+    </a>
+    
+  </li>
+  
 </ul>
 
   </li>
@@ -812,6 +812,10 @@
 </div>
 
 <p>Request execution options.</p>
+
+<p><strong>Deprecated</strong>:</p>
+
+<p>Use an array of options instead of creating an instance of this class.</p>
 <dl class="tags">
 <dt class="tag-title">See Also:</dt>
 <dd class="tag-content"><ul class="see">
@@ -837,18 +841,6 @@
     </div>
     <div class="panel-body method-body">
       <p>Creates a new options object for execution.</p>
-
-<ul>
-<li>array[‘arguments’] array An array or positional or named arguments</li>
-<li>array[&#8216;consistency’] int One of Cassandra::CONSISTENCY_*</li>
-<li>array[&#8216;timeout’] int|null A number of seconds or null</li>
-<li>array[&#8216;page_size’] int A number of rows to include in result for paging</li>
-<li>array[&#8216;paging_state_token’] string A string token use to resume from the state of a previous result set</li>
-<li>array[&#8216;retry_policy’] <code><a href="../interface.RetryPolicy/">Cassandra\RetryPolicy</a></code> A retry policy that is used to handle server-side failures for this request</li>
-<li>array[&#8216;serial_consistency’] int Either <code><a href="../../class.Cassandra/#constant-CONSISTENCY_SERIAL">Cassandra::CONSISTENCY_SERIAL</a></code> or <code><a href="../../class.Cassandra/#constant-CONSISTENCY_LOCAL_SERIAL">Cassandra::CONSISTENCY_LOCAL_SERIAL</a></code>
-</li>
-<li>array[&#8216;timestamp’] int|string Either an integer or integer string timestamp that represents the number of microseconds since the epoch.</li>
-</ul>
 
       <dl class="tags">
 <dt class="tag-title">Parameters:</dt>
@@ -877,6 +869,9 @@
 <td></td>
 </tr></tbody>
 </table></dd>
+<dt class="tag-title">See Also:</dt>
+<dd class="tag-content"><ul class="see"><li>
+<code><a href="../interface.Session/#method-execute">Session::execute()</a></code> for valid execution options</li></ul></dd>
 </dl>
     </div>
   </div>

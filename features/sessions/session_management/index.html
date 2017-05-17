@@ -84,7 +84,7 @@
   
   <li class="active">
     <a href="../../">
-      Features <small>page</small>
+      Core <small>page</small>
       
       
       <span class="glyphicon glyphicon-minus-sign pull-right" aria-hidden="true"></span>
@@ -258,6 +258,24 @@
   
   
   <li>
+    <a href="../../duration_collections/">
+      Duration <small>feature</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../../duration/">
+      Duration <small>feature</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
     <a href="../../materialized_view_metadata/">
       Materialized View Metadata <small>feature</small>
       
@@ -335,7 +353,7 @@
                 
                 
                 
-                <li><a href="../../">Features</a></li>
+                <li><a href="../../">Core</a></li>
                 
                 
                 
@@ -440,8 +458,7 @@
                <span class="o">-&gt;</span><span class="na">withContactPoints</span><span class="p">(</span><span class="s1">'127.0.0.1'</span><span class="p">)</span>
                <span class="o">-&gt;</span><span class="na">build</span><span class="p">();</span>
 <span class="nv">$session</span>   <span class="o">=</span> <span class="nv">$cluster</span><span class="o">-&gt;</span><span class="na">connect</span><span class="p">(</span><span class="s2">"simplex"</span><span class="p">);</span>
-<span class="nv">$statement</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Cassandra\SimpleStatement</span><span class="p">(</span><span class="s2">"SELECT * FROM simplex.playlists"</span><span class="p">);</span>
-<span class="nv">$future</span>    <span class="o">=</span> <span class="nv">$session</span><span class="o">-&gt;</span><span class="na">executeAsync</span><span class="p">(</span><span class="nv">$statement</span><span class="p">);</span>
+<span class="nv">$future</span>    <span class="o">=</span> <span class="nv">$session</span><span class="o">-&gt;</span><span class="na">executeAsync</span><span class="p">(</span><span class="s2">"SELECT * FROM simplex.playlists"</span><span class="p">);</span>
 <span class="nv">$session</span><span class="o">-&gt;</span><span class="na">close</span><span class="p">();</span>
 
 <span class="k">echo</span> <span class="s2">"Result contains "</span> <span class="o">.</span> <span class="nv">$future</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">count</span><span class="p">()</span> <span class="o">.</span> <span class="s2">" rows"</span><span class="p">;</span>

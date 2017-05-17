@@ -3,2839 +3,2851 @@
 
   <url>
     <loc>http://datastax.github.io/php-driver//index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//features/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//features/sessions/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//features/batch_statements/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//features/client_side_timestamps/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//features/collections/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//features/consistency_level/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//features/datatypes/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>http://datastax.github.io/php-driver//features/duration/index.html</loc>
+    <lastmod>2017-05-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>http://datastax.github.io/php-driver//features/duration_collections/index.html</loc>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//features/function_and_aggregate_metadata/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//features/logging/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//features/materialized_view_metadata/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//features/prepared_statements/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//features/result_paging/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//features/retry_polices/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//features/schema_metadata/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//features/secondary_index_metadata/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//features/sessions/persistent_sessions/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//features/sessions/session_management/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//features/sessions/session_object/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//features/simple_statements/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//features/simple_string_queries/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//features/ssl_encryption/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//features/tuples/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//features/user_defined_types/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//api/class.Cassandra/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//api/Cassandra/class.BatchStatement/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//api/Cassandra/class.Bigint/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//api/Cassandra/class.Blob/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//api/Cassandra/Cluster/class.Builder/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//api/Cassandra/class.Collection/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//api/Cassandra/class.Custom/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//api/Cassandra/class.Date/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//api/Cassandra/class.Decimal/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//api/Cassandra/class.DefaultAggregate/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//api/Cassandra/class.DefaultCluster/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//api/Cassandra/class.DefaultColumn/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//api/Cassandra/class.DefaultFunction/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//api/Cassandra/class.DefaultIndex/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//api/Cassandra/class.DefaultKeyspace/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//api/Cassandra/class.DefaultMaterializedView/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//api/Cassandra/class.DefaultSchema/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//api/Cassandra/class.DefaultSession/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//api/Cassandra/class.DefaultTable/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//api/Cassandra/class.Duration/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//api/Cassandra/Exception/class.AlreadyExistsException/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//api/Cassandra/Exception/class.AuthenticationException/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//api/Cassandra/Exception/class.ConfigurationException/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//api/Cassandra/Exception/class.DivideByZeroException/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//api/Cassandra/Exception/class.DomainException/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//api/Cassandra/Exception/class.ExecutionException/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//api/Cassandra/Exception/class.InvalidArgumentException/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//api/Cassandra/Exception/class.InvalidQueryException/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//api/Cassandra/Exception/class.InvalidSyntaxException/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//api/Cassandra/Exception/class.IsBootstrappingException/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//api/Cassandra/Exception/class.LogicException/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//api/Cassandra/Exception/class.OverloadedException/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//api/Cassandra/Exception/class.ProtocolException/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//api/Cassandra/Exception/class.RangeException/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//api/Cassandra/Exception/class.ReadTimeoutException/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//api/Cassandra/Exception/class.RuntimeException/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//api/Cassandra/Exception/class.ServerException/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//api/Cassandra/Exception/class.TimeoutException/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//api/Cassandra/Exception/class.TruncateException/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//api/Cassandra/Exception/class.UnauthorizedException/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//api/Cassandra/Exception/class.UnavailableException/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//api/Cassandra/Exception/class.UnpreparedException/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//api/Cassandra/Exception/class.ValidationException/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//api/Cassandra/Exception/class.WriteTimeoutException/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//api/Cassandra/class.ExecutionOptions/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>http://datastax.github.io/php-driver//api/Cassandra/class.Float_/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <loc>http://datastax.github.io/php-driver//api/Cassandra/class.Float/index.html</loc>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//api/Cassandra/class.FutureClose/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>1.0</priority>
-  </url>
-  <url>
-    <loc>http://datastax.github.io/php-driver//api/Cassandra/class.FutureException/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//api/Cassandra/class.FuturePreparedStatement/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//api/Cassandra/class.FutureRows/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//api/Cassandra/class.FutureSession/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//api/Cassandra/class.FutureValue/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//api/Cassandra/class.Inet/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//api/Cassandra/class.Map/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//api/Cassandra/class.MaterializedView/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//api/Cassandra/class.PreparedStatement/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//api/Cassandra/RetryPolicy/class.DefaultPolicy/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//api/Cassandra/RetryPolicy/class.DowngradingConsistency/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//api/Cassandra/RetryPolicy/class.Fallthrough/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//api/Cassandra/RetryPolicy/class.Logging/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//api/Cassandra/class.Rows/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//api/Cassandra/class.SSLOptions/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//api/Cassandra/SSLOptions/class.Builder/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//api/Cassandra/class.Set/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//api/Cassandra/class.SimpleStatement/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//api/Cassandra/class.Smallint/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//api/Cassandra/class.Time/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//api/Cassandra/class.Timestamp/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//api/Cassandra/TimestampGenerator/class.Monotonic/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//api/Cassandra/TimestampGenerator/class.ServerSide/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//api/Cassandra/class.Timeuuid/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//api/Cassandra/class.Tinyint/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//api/Cassandra/class.Tuple/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//api/Cassandra/class.Type/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//api/Cassandra/Type/class.Collection/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//api/Cassandra/Type/class.Custom/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//api/Cassandra/Type/class.Map/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//api/Cassandra/Type/class.Scalar/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//api/Cassandra/Type/class.Set/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//api/Cassandra/Type/class.Tuple/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//api/Cassandra/Type/class.UserType/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//api/Cassandra/class.UserTypeValue/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//api/Cassandra/class.Uuid/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//api/Cassandra/class.Varint/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>http://datastax.github.io/php-driver//api/class.YamlClassDoc/index.html</loc>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//api/Cassandra/interface.Aggregate/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//api/Cassandra/interface.Cluster/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//api/Cassandra/interface.Column/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//api/Cassandra/interface.Exception/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>http://datastax.github.io/php-driver//api/Cassandra/interface.Function_/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <loc>http://datastax.github.io/php-driver//api/Cassandra/interface.Function/index.html</loc>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//api/Cassandra/interface.Future/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//api/Cassandra/interface.Index/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//api/Cassandra/interface.Keyspace/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//api/Cassandra/interface.Numeric/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//api/Cassandra/interface.RetryPolicy/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//api/Cassandra/interface.Schema/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//api/Cassandra/interface.Session/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//api/Cassandra/interface.Statement/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//api/Cassandra/interface.Table/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//api/Cassandra/interface.TimestampGenerator/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//api/Cassandra/interface.UuidInterface/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//api/Cassandra/interface.Value/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//api/Cassandra/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//api/Cassandra/Cluster/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//api/Cassandra/Exception/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//api/Cassandra/RetryPolicy/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//api/Cassandra/SSLOptions/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//api/Cassandra/TimestampGenerator/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//api/Cassandra/Type/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//api/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.2/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.2/features/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.2/features/sessions/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.2/features/batch_statements/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.2/features/client_side_timestamps/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.2/features/collections/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.2/features/consistency_level/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.2/features/datatypes/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.2/features/function_and_aggregate_metadata/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.2/features/logging/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.2/features/materialized_view_metadata/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.2/features/prepared_statements/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.2/features/result_paging/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.2/features/retry_polices/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.2/features/schema_metadata/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.2/features/secondary_index_metadata/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.2/features/sessions/persistent_sessions/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.2/features/sessions/session_management/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.2/features/sessions/session_object/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.2/features/simple_statements/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.2/features/ssl_encryption/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.2/features/tuples/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.2/features/user_defined_types/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.2/api/class.Cassandra/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.2/api/Cassandra/class.BatchStatement/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.2/api/Cassandra/class.Bigint/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.2/api/Cassandra/class.Blob/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.2/api/Cassandra/Cluster/class.Builder/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.2/api/Cassandra/class.Collection/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.2/api/Cassandra/class.Date/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.2/api/Cassandra/class.Decimal/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.2/api/Cassandra/class.DefaultAggregate/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.2/api/Cassandra/class.DefaultCluster/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.2/api/Cassandra/class.DefaultColumn/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.2/api/Cassandra/class.DefaultIndex/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.2/api/Cassandra/class.DefaultKeyspace/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.2/api/Cassandra/class.DefaultMaterializedView/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.2/api/Cassandra/class.DefaultSchema/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.2/api/Cassandra/class.DefaultSession/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.2/api/Cassandra/class.DefaultTable/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.2/api/Cassandra/Exception/class.AlreadyExistsException/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.2/api/Cassandra/Exception/class.AuthenticationException/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.2/api/Cassandra/Exception/class.ConfigurationException/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.2/api/Cassandra/Exception/class.DivideByZeroException/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.2/api/Cassandra/Exception/class.DomainException/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.2/api/Cassandra/Exception/class.ExecutionException/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.2/api/Cassandra/Exception/class.InvalidArgumentException/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.2/api/Cassandra/Exception/class.InvalidQueryException/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.2/api/Cassandra/Exception/class.InvalidSyntaxException/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.2/api/Cassandra/Exception/class.IsBootstrappingException/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.2/api/Cassandra/Exception/class.LogicException/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.2/api/Cassandra/Exception/class.OverloadedException/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.2/api/Cassandra/Exception/class.ProtocolException/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.2/api/Cassandra/Exception/class.RangeException/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.2/api/Cassandra/Exception/class.ReadTimeoutException/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.2/api/Cassandra/Exception/class.RuntimeException/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.2/api/Cassandra/Exception/class.ServerException/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.2/api/Cassandra/Exception/class.TimeoutException/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.2/api/Cassandra/Exception/class.TruncateException/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.2/api/Cassandra/Exception/class.UnauthorizedException/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.2/api/Cassandra/Exception/class.UnavailableException/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.2/api/Cassandra/Exception/class.UnpreparedException/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.2/api/Cassandra/Exception/class.ValidationException/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.2/api/Cassandra/Exception/class.WriteTimeoutException/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.2/api/Cassandra/class.ExecutionOptions/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.2/api/Cassandra/class.Float/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.2/api/Cassandra/class.FutureClose/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.2/api/Cassandra/class.FutureException/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.2/api/Cassandra/class.FuturePreparedStatement/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.2/api/Cassandra/class.FutureRows/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.2/api/Cassandra/class.FutureSession/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.2/api/Cassandra/class.FutureValue/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.2/api/Cassandra/class.Inet/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.2/api/Cassandra/class.Map/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.2/api/Cassandra/class.PreparedStatement/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.2/api/Cassandra/RetryPolicy/class.DefaultPolicy/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.2/api/Cassandra/RetryPolicy/class.DowngradingConsistency/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.2/api/Cassandra/RetryPolicy/class.Fallthrough/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.2/api/Cassandra/RetryPolicy/class.Logging/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.2/api/Cassandra/class.Rows/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.2/api/Cassandra/class.SSLOptions/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.2/api/Cassandra/SSLOptions/class.Builder/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.2/api/Cassandra/class.Set/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.2/api/Cassandra/class.SimpleStatement/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.2/api/Cassandra/class.Smallint/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.2/api/Cassandra/class.Time/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.2/api/Cassandra/class.Timestamp/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.2/api/Cassandra/TimestampGenerator/class.Monotonic/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.2/api/Cassandra/TimestampGenerator/class.ServerSide/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.2/api/Cassandra/class.Timeuuid/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.2/api/Cassandra/class.Tinyint/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.2/api/Cassandra/class.Tuple/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.2/api/Cassandra/class.Type/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.2/api/Cassandra/Type/class.Collection/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.2/api/Cassandra/Type/class.Custom/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.2/api/Cassandra/Type/class.Map/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.2/api/Cassandra/Type/class.Scalar/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.2/api/Cassandra/Type/class.Set/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.2/api/Cassandra/Type/class.Tuple/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.2/api/Cassandra/Type/class.UserType/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.2/api/Cassandra/class.UserTypeValue/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.2/api/Cassandra/class.Uuid/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.2/api/Cassandra/class.Varint/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.2/api/class.DefaultFunction/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.2/api/Cassandra/interface.Aggregate/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.2/api/Cassandra/interface.Cluster/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.2/api/Cassandra/interface.Column/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.2/api/Cassandra/interface.Exception/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.2/api/Cassandra/interface.Function/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.2/api/Cassandra/interface.Future/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.2/api/Cassandra/interface.Index/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.2/api/Cassandra/interface.Keyspace/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.2/api/Cassandra/interface.MaterializedView/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.2/api/Cassandra/interface.Numeric/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.2/api/Cassandra/interface.RetryPolicy/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.2/api/Cassandra/interface.Schema/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.2/api/Cassandra/interface.Session/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.2/api/Cassandra/interface.Statement/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.2/api/Cassandra/interface.Table/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.2/api/Cassandra/interface.TimestampGenerator/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.2/api/Cassandra/interface.UuidInterface/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.2/api/Cassandra/interface.Value/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.2/api/Cassandra/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.2/api/Cassandra/Cluster/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.2/api/Cassandra/Exception/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.2/api/Cassandra/RetryPolicy/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.2/api/Cassandra/SSLOptions/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.2/api/Cassandra/TimestampGenerator/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.2/api/Cassandra/Type/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.2/api/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.1/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.1/features/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.1/features/sessions/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.1/features/batch_statements/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.1/features/client_side_timestamps/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.1/features/collections/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.1/features/consistency_level/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.1/features/datatypes/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.1/features/logging/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.1/features/prepared_statements/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.1/features/result_paging/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.1/features/retry_polices/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.1/features/schema_metadata/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.1/features/sessions/persistent_sessions/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.1/features/sessions/session_management/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.1/features/sessions/session_object/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.1/features/simple_statements/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.1/features/ssl_encryption/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.1/features/tuples/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.1/features/user_defined_types/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.1/api/class.Cassandra/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.1/api/Cassandra/class.BatchStatement/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.1/api/Cassandra/class.Bigint/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.1/api/Cassandra/class.Blob/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.1/api/Cassandra/Cluster/class.Builder/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.1/api/Cassandra/class.Collection/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.1/api/Cassandra/class.Decimal/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.1/api/Cassandra/class.DefaultCluster/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.1/api/Cassandra/class.DefaultColumn/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.1/api/Cassandra/class.DefaultKeyspace/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.1/api/Cassandra/class.DefaultSchema/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.1/api/Cassandra/class.DefaultSession/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.1/api/Cassandra/class.DefaultTable/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.1/api/Cassandra/Exception/class.AlreadyExistsException/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.1/api/Cassandra/Exception/class.AuthenticationException/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.1/api/Cassandra/Exception/class.ConfigurationException/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.1/api/Cassandra/Exception/class.DivideByZeroException/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.1/api/Cassandra/Exception/class.DomainException/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.1/api/Cassandra/Exception/class.ExecutionException/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.1/api/Cassandra/Exception/class.InvalidArgumentException/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.1/api/Cassandra/Exception/class.InvalidQueryException/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.1/api/Cassandra/Exception/class.InvalidSyntaxException/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.1/api/Cassandra/Exception/class.IsBootstrappingException/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.1/api/Cassandra/Exception/class.LogicException/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.1/api/Cassandra/Exception/class.OverloadedException/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.1/api/Cassandra/Exception/class.ProtocolException/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.1/api/Cassandra/Exception/class.RangeException/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.1/api/Cassandra/Exception/class.ReadTimeoutException/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.1/api/Cassandra/Exception/class.RuntimeException/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.1/api/Cassandra/Exception/class.ServerException/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.1/api/Cassandra/Exception/class.TimeoutException/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.1/api/Cassandra/Exception/class.TruncateException/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.1/api/Cassandra/Exception/class.UnauthorizedException/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.1/api/Cassandra/Exception/class.UnavailableException/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.1/api/Cassandra/Exception/class.UnpreparedException/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.1/api/Cassandra/Exception/class.ValidationException/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.1/api/Cassandra/Exception/class.WriteTimeoutException/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.1/api/Cassandra/class.ExecutionOptions/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.1/api/Cassandra/class.Float/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.1/api/Cassandra/class.FutureClose/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.1/api/Cassandra/class.FutureException/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.1/api/Cassandra/class.FuturePreparedStatement/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.1/api/Cassandra/class.FutureRows/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.1/api/Cassandra/class.FutureSession/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.1/api/Cassandra/class.FutureValue/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.1/api/Cassandra/class.Inet/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.1/api/Cassandra/class.Map/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.1/api/Cassandra/class.PreparedStatement/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.1/api/Cassandra/RetryPolicy/class.DefaultPolicy/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.1/api/Cassandra/RetryPolicy/class.DowngradingConsistency/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.1/api/Cassandra/RetryPolicy/class.Fallthrough/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.1/api/Cassandra/RetryPolicy/class.Logging/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.1/api/Cassandra/class.Rows/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.1/api/Cassandra/class.SSLOptions/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.1/api/Cassandra/SSLOptions/class.Builder/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.1/api/Cassandra/class.Set/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.1/api/Cassandra/class.SimpleStatement/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.1/api/Cassandra/class.Timestamp/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.1/api/Cassandra/TimestampGenerator/class.Monotonic/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.1/api/Cassandra/TimestampGenerator/class.ServerSide/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.1/api/Cassandra/class.Timeuuid/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.1/api/Cassandra/class.Tuple/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.1/api/Cassandra/Type/class.Collection/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.1/api/Cassandra/Type/class.Custom/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.1/api/Cassandra/Type/class.Map/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.1/api/Cassandra/Type/class.Scalar/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.1/api/Cassandra/Type/class.Set/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.1/api/Cassandra/Type/class.Tuple/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.1/api/Cassandra/Type/class.UserType/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.1/api/Cassandra/class.UserTypeValue/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.1/api/Cassandra/class.Uuid/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.1/api/Cassandra/class.Varint/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.1/api/Cassandra/interface.Cluster/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.1/api/Cassandra/interface.Column/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.1/api/Cassandra/interface.Exception/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.1/api/Cassandra/interface.Future/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.1/api/Cassandra/interface.Keyspace/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.1/api/Cassandra/interface.Numeric/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.1/api/Cassandra/interface.RetryPolicy/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.1/api/Cassandra/interface.Schema/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.1/api/Cassandra/interface.Session/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.1/api/Cassandra/interface.Statement/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.1/api/Cassandra/interface.Table/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.1/api/Cassandra/interface.TimestampGenerator/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.1/api/Cassandra/interface.Type/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.1/api/Cassandra/interface.UuidInterface/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.1/api/Cassandra/interface.Value/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.1/api/Cassandra/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.1/api/Cassandra/Cluster/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.1/api/Cassandra/Exception/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.1/api/Cassandra/RetryPolicy/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.1/api/Cassandra/SSLOptions/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.1/api/Cassandra/TimestampGenerator/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.1/api/Cassandra/Type/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.1/api/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.0/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.19999999999999996</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.0/features/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.19999999999999996</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.0/features/sessions/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.19999999999999996</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.0/features/batch_statements/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.19999999999999996</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.0/features/consistency_level/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.19999999999999996</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.0/features/datatypes/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.19999999999999996</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.0/features/logging/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.19999999999999996</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.0/features/prepared_statements/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.19999999999999996</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.0/features/result_paging/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.19999999999999996</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.0/features/schema_metadata/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.19999999999999996</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.0/features/sessions/persistent_sessions/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.19999999999999996</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.0/features/sessions/session_management/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.19999999999999996</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.0/features/sessions/session_object/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.19999999999999996</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.0/features/simple_statements/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.19999999999999996</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.0/features/ssl_encryption/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.19999999999999996</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.0/api/class.Cassandra/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.19999999999999996</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.0/api/Cassandra/class.BatchStatement/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.19999999999999996</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.0/api/Cassandra/class.Bigint/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.19999999999999996</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.0/api/Cassandra/class.Blob/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.19999999999999996</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.0/api/Cassandra/Cluster/class.Builder/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.19999999999999996</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.0/api/Cassandra/class.Collection/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.19999999999999996</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.0/api/Cassandra/class.Decimal/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.19999999999999996</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.0/api/Cassandra/class.DefaultCluster/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.19999999999999996</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.0/api/Cassandra/class.DefaultColumn/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.19999999999999996</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.0/api/Cassandra/class.DefaultKeyspace/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.19999999999999996</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.0/api/Cassandra/class.DefaultSchema/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.19999999999999996</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.0/api/Cassandra/class.DefaultSession/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.19999999999999996</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.0/api/Cassandra/class.DefaultTable/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.19999999999999996</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.0/api/Cassandra/Exception/class.AlreadyExistsException/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.19999999999999996</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.0/api/Cassandra/Exception/class.AuthenticationException/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.19999999999999996</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.0/api/Cassandra/Exception/class.ConfigurationException/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.19999999999999996</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.0/api/Cassandra/Exception/class.DivideByZeroException/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.19999999999999996</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.0/api/Cassandra/Exception/class.DomainException/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.19999999999999996</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.0/api/Cassandra/Exception/class.ExecutionException/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.19999999999999996</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.0/api/Cassandra/Exception/class.InvalidArgumentException/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.19999999999999996</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.0/api/Cassandra/Exception/class.InvalidQueryException/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.19999999999999996</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.0/api/Cassandra/Exception/class.InvalidSyntaxException/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.19999999999999996</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.0/api/Cassandra/Exception/class.IsBootstrappingException/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.19999999999999996</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.0/api/Cassandra/Exception/class.LogicException/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.19999999999999996</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.0/api/Cassandra/Exception/class.OverloadedException/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.19999999999999996</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.0/api/Cassandra/Exception/class.ProtocolException/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.19999999999999996</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.0/api/Cassandra/Exception/class.RangeException/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.19999999999999996</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.0/api/Cassandra/Exception/class.ReadTimeoutException/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.19999999999999996</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.0/api/Cassandra/Exception/class.RuntimeException/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.19999999999999996</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.0/api/Cassandra/Exception/class.ServerException/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.19999999999999996</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.0/api/Cassandra/Exception/class.TimeoutException/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.19999999999999996</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.0/api/Cassandra/Exception/class.TruncateException/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.19999999999999996</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.0/api/Cassandra/Exception/class.UnauthorizedException/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.19999999999999996</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.0/api/Cassandra/Exception/class.UnavailableException/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.19999999999999996</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.0/api/Cassandra/Exception/class.UnpreparedException/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.19999999999999996</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.0/api/Cassandra/Exception/class.ValidationException/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.19999999999999996</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.0/api/Cassandra/Exception/class.WriteTimeoutException/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.19999999999999996</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.0/api/Cassandra/class.ExecutionOptions/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.19999999999999996</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.0/api/Cassandra/class.Float/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.19999999999999996</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.0/api/Cassandra/class.FutureClose/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.19999999999999996</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.0/api/Cassandra/class.FutureException/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.19999999999999996</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.0/api/Cassandra/class.FuturePreparedStatement/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.19999999999999996</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.0/api/Cassandra/class.FutureRows/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.19999999999999996</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.0/api/Cassandra/class.FutureSession/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.19999999999999996</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.0/api/Cassandra/class.FutureValue/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.19999999999999996</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.0/api/Cassandra/class.Inet/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.19999999999999996</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.0/api/Cassandra/class.Map/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.19999999999999996</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.0/api/Cassandra/class.PreparedStatement/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.19999999999999996</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.0/api/Cassandra/class.Rows/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.19999999999999996</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.0/api/Cassandra/class.SSLOptions/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.19999999999999996</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.0/api/Cassandra/SSLOptions/class.Builder/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.19999999999999996</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.0/api/Cassandra/class.Set/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.19999999999999996</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.0/api/Cassandra/class.SimpleStatement/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.19999999999999996</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.0/api/Cassandra/class.Timestamp/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.19999999999999996</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.0/api/Cassandra/class.Timeuuid/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.19999999999999996</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.0/api/Cassandra/Type/class.Collection/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.19999999999999996</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.0/api/Cassandra/Type/class.Custom/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.19999999999999996</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.0/api/Cassandra/Type/class.Map/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.19999999999999996</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.0/api/Cassandra/Type/class.Scalar/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.19999999999999996</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.0/api/Cassandra/Type/class.Set/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.19999999999999996</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.0/api/Cassandra/class.Uuid/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.19999999999999996</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.0/api/Cassandra/class.Varint/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.19999999999999996</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.0/api/Cassandra/interface.Cluster/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.19999999999999996</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.0/api/Cassandra/interface.Column/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.19999999999999996</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.0/api/Cassandra/interface.Exception/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.19999999999999996</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.0/api/Cassandra/interface.Future/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.19999999999999996</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.0/api/Cassandra/interface.Keyspace/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.19999999999999996</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.0/api/Cassandra/interface.Numeric/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.19999999999999996</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.0/api/Cassandra/interface.Schema/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.19999999999999996</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.0/api/Cassandra/interface.Session/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.19999999999999996</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.0/api/Cassandra/interface.Statement/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.19999999999999996</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.0/api/Cassandra/interface.Table/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.19999999999999996</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.0/api/Cassandra/interface.Type/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.19999999999999996</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.0/api/Cassandra/interface.UuidInterface/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.19999999999999996</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.0/api/Cassandra/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.19999999999999996</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.0/api/Cassandra/Cluster/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.19999999999999996</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.0/api/Cassandra/Exception/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.19999999999999996</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.0/api/Cassandra/SSLOptions/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.19999999999999996</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.0/api/Cassandra/Type/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.19999999999999996</priority>
   </url>
   <url>
     <loc>http://datastax.github.io/php-driver//1.0/api/index.html</loc>
-    <lastmod>2017-03-09</lastmod>
+    <lastmod>2017-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.19999999999999996</priority>
   </url>

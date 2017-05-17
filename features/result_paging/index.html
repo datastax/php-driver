@@ -84,7 +84,7 @@
   
   <li class="active">
     <a href="../">
-      Features <small>page</small>
+      Core <small>page</small>
       
       
       <span class="glyphicon glyphicon-minus-sign pull-right" aria-hidden="true"></span>
@@ -228,6 +228,24 @@
   
   
   <li>
+    <a href="../duration_collections/">
+      Duration <small>feature</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../duration/">
+      Duration <small>feature</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
     <a href="../materialized_view_metadata/">
       Materialized View Metadata <small>feature</small>
       
@@ -305,7 +323,7 @@
                 
                 
                 
-                <li><a href="../">Features</a></li>
+                <li><a href="../">Core</a></li>
                 
                 
                 
@@ -327,8 +345,7 @@
 paging through query results is allowed.</p>
 
 <p>Page size can be specified by setting the <code>$pageSize</code> attribute of
-<code>Cassandra\ExecutionOptions</code> or cluster-wide, using
-<code>Cassandra\Cluster\Buidler::withDefaultPageSize()</code>.</p>
+execution-options or cluster-wide, using <code>Cassandra\Cluster\Builder::withDefaultPageSize()</code>.</p>
 
 <p>Once a <code>Cassandra\Rows</code> object has been received, next page can be retrieved
 using <code>Cassandra\Rows::nextPage()</code> or <code>Cassandra\Rows::nextPageAsync()</code>
@@ -372,9 +389,8 @@ methods for synchronous and asynchronous next page retrieval accordingly.</p>
                <span class="o">-&gt;</span><span class="na">withContactPoints</span><span class="p">(</span><span class="s1">'127.0.0.1'</span><span class="p">)</span>
                <span class="o">-&gt;</span><span class="na">build</span><span class="p">();</span>
 <span class="nv">$session</span>   <span class="o">=</span> <span class="nv">$cluster</span><span class="o">-&gt;</span><span class="na">connect</span><span class="p">(</span><span class="s2">"simplex"</span><span class="p">);</span>
-<span class="nv">$statement</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Cassandra\SimpleStatement</span><span class="p">(</span><span class="s2">"SELECT * FROM paging_entries"</span><span class="p">);</span>
 <span class="nv">$options</span>   <span class="o">=</span> <span class="k">array</span><span class="p">(</span><span class="s1">'page_size'</span> <span class="o">=&gt;</span> <span class="mi">5</span><span class="p">);</span>
-<span class="nv">$rows</span>      <span class="o">=</span> <span class="nv">$session</span><span class="o">-&gt;</span><span class="na">execute</span><span class="p">(</span><span class="nv">$statement</span><span class="p">,</span> <span class="nv">$options</span><span class="p">);</span>
+<span class="nv">$rows</span>      <span class="o">=</span> <span class="nv">$session</span><span class="o">-&gt;</span><span class="na">execute</span><span class="p">(</span><span class="s2">"SELECT * FROM paging_entries"</span><span class="p">,</span> <span class="nv">$options</span><span class="p">);</span>
 
 <span class="k">while</span> <span class="p">(</span><span class="kc">true</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">echo</span> <span class="s2">"entries in page: "</span> <span class="o">.</span> <span class="nv">$rows</span><span class="o">-&gt;</span><span class="na">count</span><span class="p">()</span> <span class="o">.</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">;</span>
@@ -422,12 +438,9 @@ key: b, value: 1
                <span class="o">-&gt;</span><span class="na">withContactPoints</span><span class="p">(</span><span class="s1">'127.0.0.1'</span><span class="p">)</span>
                <span class="o">-&gt;</span><span class="na">build</span><span class="p">();</span>
 <span class="nv">$session</span>   <span class="o">=</span> <span class="nv">$cluster</span><span class="o">-&gt;</span><span class="na">connect</span><span class="p">(</span><span class="s2">"simplex"</span><span class="p">);</span>
-<span class="nv">$statement</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Cassandra\SimpleStatement</span><span class="p">(</span><span class="s2">"SELECT * FROM paging_entries"</span><span class="p">);</span>
-<span class="nv">$options</span>   <span class="o">=</span> <span class="k">array</span><span class="p">(</span><span class="s1">'page_size'</span> <span class="o">=&gt;</span> <span class="mi">10</span><span class="p">);</span>
-<span class="nv">$rows</span>      <span class="o">=</span> <span class="nv">$session</span><span class="o">-&gt;</span><span class="na">execute</span><span class="p">(</span><span class="nv">$statement</span><span class="p">,</span> <span class="nv">$options</span><span class="p">);</span>
 
-<span class="nv">$firstPageRows</span> <span class="o">=</span> <span class="nv">$session</span><span class="o">-&gt;</span><span class="na">execute</span><span class="p">(</span><span class="nv">$statement</span><span class="p">,</span> <span class="nv">$options</span><span class="p">);</span>
-<span class="k">echo</span> <span class="nv">$firstPageRows</span><span class="o">-&gt;</span><span class="na">isLastPage</span><span class="p">()</span> <span class="o">?</span> <span class="s2">"1: last</span><span class="se">\n</span><span class="s2">"</span> <span class="o">:</span> <span class="s2">"1: not last</span><span class="se">\n</span><span class="s2">"</span><span class="p">;</span>
+<span class="nv">$firstPageRows</span> <span class="o">=</span> <span class="nv">$session</span><span class="o">-&gt;</span><span class="na">execute</span><span class="p">(</span><span class="s2">"SELECT * FROM paging_entries"</span><span class="p">,</span> <span class="k">array</span><span class="p">(</span><span class="s1">'page_size'</span> <span class="o">=&gt;</span> <span class="mi">10</span><span class="p">));</span>
+<span class="k">echo</span> <span class="s2">"Page 1: "</span> <span class="o">.</span> <span class="p">(</span><span class="nv">$firstPageRows</span><span class="o">-&gt;</span><span class="na">isLastPage</span><span class="p">()</span> <span class="o">?</span> <span class="s2">"last"</span> <span class="o">:</span> <span class="s2">"not last"</span><span class="p">)</span> <span class="o">.</span> <span class="nx">PHP_EOL</span><span class="p">;</span>
 
 <span class="nv">$secondPageRows</span> <span class="o">=</span> <span class="nv">$firstPageRows</span><span class="o">-&gt;</span><span class="na">nextPage</span><span class="p">();</span>
 <span class="k">echo</span> <span class="nv">$firstPageRows</span><span class="o">-&gt;</span><span class="na">isLastPage</span><span class="p">()</span> <span class="o">?</span> <span class="s2">"1: last</span><span class="se">\n</span><span class="s2">"</span> <span class="o">:</span> <span class="s2">"1: not last</span><span class="se">\n</span><span class="s2">"</span><span class="p">;</span>
@@ -457,9 +470,9 @@ entries in page 2: 3
                <span class="o">-&gt;</span><span class="na">withContactPoints</span><span class="p">(</span><span class="s1">'127.0.0.1'</span><span class="p">)</span>
                <span class="o">-&gt;</span><span class="na">build</span><span class="p">();</span>
 <span class="nv">$session</span>   <span class="o">=</span> <span class="nv">$cluster</span><span class="o">-&gt;</span><span class="na">connect</span><span class="p">(</span><span class="s2">"simplex"</span><span class="p">);</span>
-<span class="nv">$statement</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Cassandra\SimpleStatement</span><span class="p">(</span><span class="s2">"SELECT * FROM paging_entries"</span><span class="p">);</span>
+<span class="nv">$query</span>     <span class="o">=</span> <span class="s2">"SELECT * FROM paging_entries"</span><span class="p">;</span>
 <span class="nv">$options</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span><span class="s1">'page_size'</span> <span class="o">=&gt;</span> <span class="mi">2</span><span class="p">);</span>
-<span class="nv">$result</span> <span class="o">=</span> <span class="nv">$session</span><span class="o">-&gt;</span><span class="na">execute</span><span class="p">(</span><span class="nv">$statement</span><span class="p">,</span> <span class="nv">$options</span><span class="p">);</span>
+<span class="nv">$result</span> <span class="o">=</span> <span class="nv">$session</span><span class="o">-&gt;</span><span class="na">execute</span><span class="p">(</span><span class="nv">$query</span><span class="p">,</span> <span class="nv">$options</span><span class="p">);</span>
 
 <span class="k">foreach</span> <span class="p">(</span><span class="nv">$result</span> <span class="k">as</span> <span class="nv">$row</span><span class="p">)</span> <span class="p">{</span>
   <span class="nb">printf</span><span class="p">(</span><span class="s2">"key: '%s' value: %d</span><span class="se">\n</span><span class="s2">"</span><span class="p">,</span> <span class="nv">$row</span><span class="p">[</span><span class="s1">'key'</span><span class="p">],</span> <span class="nv">$row</span><span class="p">[</span><span class="s1">'value'</span><span class="p">]);</span>
@@ -471,7 +484,7 @@ entries in page 2: 3
         <span class="s1">'paging_state_token'</span> <span class="o">=&gt;</span> <span class="nv">$result</span><span class="o">-&gt;</span><span class="na">pagingStateToken</span><span class="p">()</span>
     <span class="p">);</span>
 
-    <span class="nv">$result</span> <span class="o">=</span> <span class="nv">$session</span><span class="o">-&gt;</span><span class="na">execute</span><span class="p">(</span><span class="nv">$statement</span><span class="p">,</span> <span class="nv">$options</span><span class="p">);</span>
+    <span class="nv">$result</span> <span class="o">=</span> <span class="nv">$session</span><span class="o">-&gt;</span><span class="na">execute</span><span class="p">(</span><span class="nv">$query</span><span class="p">,</span> <span class="nv">$options</span><span class="p">);</span>
 
     <span class="k">foreach</span> <span class="p">(</span><span class="nv">$result</span> <span class="k">as</span> <span class="nv">$row</span><span class="p">)</span> <span class="p">{</span>
       <span class="nb">printf</span><span class="p">(</span><span class="s2">"key: '%s' value: %d</span><span class="se">\n</span><span class="s2">"</span><span class="p">,</span> <span class="nv">$row</span><span class="p">[</span><span class="s1">'key'</span><span class="p">],</span> <span class="nv">$row</span><span class="p">[</span><span class="s1">'value'</span><span class="p">]);</span>

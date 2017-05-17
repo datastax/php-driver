@@ -84,7 +84,7 @@
   
   <li class="active">
     <a href="../">
-      Features <small>page</small>
+      Core <small>page</small>
       
       
       <span class="glyphicon glyphicon-minus-sign pull-right" aria-hidden="true"></span>
@@ -228,6 +228,24 @@
   
   
   <li>
+    <a href="../duration_collections/">
+      Duration <small>feature</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../duration/">
+      Duration <small>feature</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
     <a href="../materialized_view_metadata/">
       Materialized View Metadata <small>feature</small>
       
@@ -305,7 +323,7 @@
                 
                 
                 
-                <li><a href="../">Features</a></li>
+                <li><a href="../">Core</a></li>
                 
                 
                 
@@ -364,20 +382,18 @@
                    <span class="s2">"'Joséphine Baker', "</span> <span class="o">.</span>
                    <span class="s2">"'La Petite Tonkinoise', "</span> <span class="o">.</span>
                    <span class="s2">"'Bye Bye Blackbird')"</span><span class="p">;</span>
-<span class="nv">$statement</span>   <span class="o">=</span> <span class="k">new</span> <span class="nx">Cassandra\SimpleStatement</span><span class="p">(</span><span class="nv">$insertQuery</span><span class="p">);</span>
 
 <span class="c1">// ExecutionOptions is deprecated, but still legal. Disable error reporting for it.
 </span><span class="nb">error_reporting</span><span class="p">(</span><span class="k">E_ALL</span> <span class="o">^</span> <span class="nx">E_DEPRECATED</span><span class="p">);</span>
 
-<span class="nv">$options</span>     <span class="o">=</span> <span class="k">new</span> <span class="nx">Cassandra\ExecutionOptions</span><span class="p">(</span><span class="k">array</span><span class="p">(</span><span class="s1">'consistency'</span> <span class="o">=&gt;</span> <span class="nx">Cassandra</span><span class="o">::</span><span class="na">CONSISTENCY_ALL</span><span class="p">));</span>
-<span class="nv">$session</span><span class="o">-&gt;</span><span class="na">execute</span><span class="p">(</span><span class="nv">$statement</span><span class="p">,</span> <span class="nv">$options</span><span class="p">);</span>
+<span class="nv">$options</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Cassandra\ExecutionOptions</span><span class="p">(</span><span class="k">array</span><span class="p">(</span><span class="s1">'consistency'</span> <span class="o">=&gt;</span> <span class="nx">Cassandra</span><span class="o">::</span><span class="na">CONSISTENCY_ALL</span><span class="p">));</span>
+<span class="nv">$session</span><span class="o">-&gt;</span><span class="na">execute</span><span class="p">(</span><span class="nv">$insertQuery</span><span class="p">,</span> <span class="nv">$options</span><span class="p">);</span>
 
 <span class="c1">// Restore error-reporting to normal.
 </span><span class="nb">error_reporting</span><span class="p">(</span><span class="k">E_ALL</span><span class="p">);</span>
 
 <span class="c1">// Below uses the system_traces.events table to verify consistency ALL is met
-</span><span class="nv">$statement</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Cassandra\SimpleStatement</span><span class="p">(</span><span class="s2">"SELECT source from system_traces.events"</span><span class="p">);</span>
-<span class="nv">$result</span>    <span class="o">=</span> <span class="nv">$session</span><span class="o">-&gt;</span><span class="na">execute</span><span class="p">(</span><span class="nv">$statement</span><span class="p">,</span> <span class="nv">$options</span><span class="p">);</span>
+</span><span class="nv">$result</span>    <span class="o">=</span> <span class="nv">$session</span><span class="o">-&gt;</span><span class="na">execute</span><span class="p">(</span><span class="s2">"SELECT source from system_traces.events"</span><span class="p">,</span> <span class="nv">$options</span><span class="p">);</span>
 <span class="nv">$sources</span>   <span class="o">=</span> <span class="k">array</span><span class="p">();</span>
 <span class="k">foreach</span> <span class="p">(</span><span class="nv">$result</span> <span class="k">as</span> <span class="nv">$row</span><span class="p">)</span> <span class="p">{</span>
     <span class="nb">array_push</span><span class="p">(</span><span class="nv">$sources</span><span class="p">,</span> <span class="p">(</span><span class="nx">string</span><span class="p">)</span> <span class="nv">$row</span><span class="p">[</span><span class="s1">'source'</span><span class="p">]);</span>
@@ -416,13 +432,11 @@
                    <span class="s2">"'Joséphine Baker', "</span> <span class="o">.</span>
                    <span class="s2">"'La Petite Tonkinoise', "</span> <span class="o">.</span>
                    <span class="s2">"'Bye Bye Blackbird')"</span><span class="p">;</span>
-<span class="nv">$statement</span>   <span class="o">=</span> <span class="k">new</span> <span class="nx">Cassandra\SimpleStatement</span><span class="p">(</span><span class="nv">$insertQuery</span><span class="p">);</span>
 <span class="nv">$options</span>     <span class="o">=</span> <span class="k">array</span><span class="p">(</span><span class="s1">'consistency'</span> <span class="o">=&gt;</span> <span class="nx">Cassandra</span><span class="o">::</span><span class="na">CONSISTENCY_ALL</span><span class="p">);</span>
-<span class="nv">$session</span><span class="o">-&gt;</span><span class="na">execute</span><span class="p">(</span><span class="nv">$statement</span><span class="p">,</span> <span class="nv">$options</span><span class="p">);</span>
+<span class="nv">$session</span><span class="o">-&gt;</span><span class="na">execute</span><span class="p">(</span><span class="nv">$insertQuery</span><span class="p">,</span> <span class="nv">$options</span><span class="p">);</span>
 
 <span class="c1">// Below uses the system_traces.events table to verify consistency ALL is met
-</span><span class="nv">$statement</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Cassandra\SimpleStatement</span><span class="p">(</span><span class="s2">"SELECT source from system_traces.events"</span><span class="p">);</span>
-<span class="nv">$result</span>    <span class="o">=</span> <span class="nv">$session</span><span class="o">-&gt;</span><span class="na">execute</span><span class="p">(</span><span class="nv">$statement</span><span class="p">,</span> <span class="nv">$options</span><span class="p">);</span>
+</span><span class="nv">$result</span>    <span class="o">=</span> <span class="nv">$session</span><span class="o">-&gt;</span><span class="na">execute</span><span class="p">(</span><span class="s2">"SELECT source from system_traces.events"</span><span class="p">,</span> <span class="nv">$options</span><span class="p">);</span>
 <span class="nv">$sources</span>   <span class="o">=</span> <span class="k">array</span><span class="p">();</span>
 <span class="k">foreach</span> <span class="p">(</span><span class="nv">$result</span> <span class="k">as</span> <span class="nv">$row</span><span class="p">)</span> <span class="p">{</span>
     <span class="nb">array_push</span><span class="p">(</span><span class="nv">$sources</span><span class="p">,</span> <span class="p">(</span><span class="nx">string</span><span class="p">)</span> <span class="nv">$row</span><span class="p">[</span><span class="s1">'source'</span><span class="p">]);</span>

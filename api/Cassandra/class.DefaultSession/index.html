@@ -84,7 +84,7 @@
   
   <li>
     <a href="../../../features/">
-      Features <small>page</small>
+      Core <small>page</small>
       
       
       <span class="glyphicon glyphicon-plus-sign pull-right" aria-hidden="true"></span>
@@ -315,8 +315,8 @@
   
   
   <li>
-    <a href="../interface.Function_/">
-      Function_ <small>interface</small>
+    <a href="../interface.Function/">
+      Function <small>interface</small>
       
     </a>
     
@@ -525,8 +525,8 @@
   
   
   <li>
-    <a href="../class.Float_/">
-      Float_ <small>class</small>
+    <a href="../class.Float/">
+      Float <small>class</small>
       
     </a>
     
@@ -536,15 +536,6 @@
   <li>
     <a href="../class.FutureClose/">
       FutureClose <small>class</small>
-      
-    </a>
-    
-  </li>
-  
-  
-  <li>
-    <a href="../class.FutureException/">
-      FutureException <small>class</small>
       
     </a>
     
@@ -761,6 +752,15 @@
     
   </li>
   
+  
+  <li>
+    <a href="../../class.YamlClassDoc/">
+      YamlClassDoc <small>class</small>
+      
+    </a>
+    
+  </li>
+  
 </ul>
 
   </li>
@@ -811,7 +811,14 @@
 </h1>
 </div>
 
-
+<p>A session is used to prepare and execute statements.</p>
+<dl class="tags">
+<dt class="tag-title">See Also:</dt>
+<dd class="tag-content"><ul class="see">
+<li><code><a href="../interface.Cluster/#method-connect">Cluster::connect()</a></code></li>
+<li><code><a href="../interface.Cluster/#method-connectAsync">Cluster::connectAsync()</a></code></li>
+</ul></dd>
+</dl>
 
 <h2 id="implements" class="target">Implements<a class="anchor" href="#implements" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
 </h2>
@@ -834,6 +841,137 @@
     <div class="panel-body method-body">
       <p>Execute a query.</p>
 
+<p>Available execution options: </p>
+<table rows="9" cols="3">
+<tr>
+<th>Option Name 
+
+<p></p>
+</th>
+<th>Option <strong>Type</strong> 
+
+<p></p>
+</th>
+<th>Option Details 
+
+<p></p>
+</th>
+</tr>
+<tr>
+<td>arguments 
+
+<p></p>
+</td>
+<td>array 
+
+<p></p>
+</td>
+<td>An array or positional or named arguments 
+
+<p></p>
+</td>
+</tr>
+<tr>
+<td>consistency 
+
+<p></p>
+</td>
+<td>int 
+
+<p></p>
+</td>
+<td>A consistency constant e.g Dse::CONSISTENCY_ONE, Dse::CONSISTENCY_QUORUM, etc. 
+
+<p></p>
+</td>
+</tr>
+<tr>
+<td>timeout 
+
+<p></p>
+</td>
+<td>int 
+
+<p></p>
+</td>
+<td>A number of rows to include in result for paging 
+
+<p></p>
+</td>
+</tr>
+<tr>
+<td>paging_state_token 
+
+<p></p>
+</td>
+<td>string 
+
+<p></p>
+</td>
+<td>A string token use to resume from the state of a previous result set 
+
+<p></p>
+</td>
+</tr>
+<tr>
+<td>retry_policy 
+
+<p></p>
+</td>
+<td>
+<code><a href="../interface.RetryPolicy/">Cassandra\RetryPolicy</a></code> 
+
+<p></p>
+</td>
+<td>A retry policy that is used to handle server-side failures for this request 
+
+<p></p>
+</td>
+</tr>
+<tr>
+<td>serial_consistency 
+
+<p></p>
+</td>
+<td>int 
+
+<p></p>
+</td>
+<td>Either Dse::CONSISTENCY_SERIAL or Dse::CONSISTENCY_LOCAL_SERIAL 
+
+<p></p>
+</td>
+</tr>
+<tr>
+<td>timestamp 
+
+<p></p>
+</td>
+<td>int|string 
+
+<p></p>
+</td>
+<td>Either an integer or integer string timestamp that represents the number of microseconds since the epoch 
+
+<p></p>
+</td>
+</tr>
+<tr>
+<td>execute_as 
+
+<p></p>
+</td>
+<td>string 
+
+<p></p>
+</td>
+<td>User to execute statement as 
+
+<p></p>
+</td>
+</tr>
+</table>
+
       <dl class="tags">
 <dt class="tag-title">Parameters:</dt>
 <dd class="tag-content"><table class="table table-striped param">
@@ -849,7 +987,7 @@
 <code>string</code>|<code><a href="../interface.Statement/">Cassandra\Statement</a></code>
 </td>
 <td>
-<p>Execute a query.</p>
+<p>string or statement to be executed.</p>
 </td>
 </tr>
 <tr>
@@ -858,10 +996,21 @@
 <code>array</code>|<code><a href="../class.ExecutionOptions/">Cassandra\ExecutionOptions</a></code>
 </td>
 <td>
-<p>Execute a query.</p>
+<p>Options to control execution of the query.</p>
 </td>
 </tr>
 </tbody>
+</table></dd>
+<dt class="tag-title">Throws:</dt>
+<dd class="tag-content"><table class="table table-striped throw">
+<thead><tr>
+<th class="type">Type</th>
+<th class="details">Details</th>
+</tr></thead>
+<tbody><tr>
+<td><code><a href="../interface.Exception/">Cassandra\Exception</a></code></td>
+<td></td>
+</tr></tbody>
 </table></dd>
 <dt class="tag-title">Returns:</dt>
 <dd class="tag-content"><table class="table table-striped return">
@@ -872,7 +1021,7 @@
 <tbody><tr>
 <td><code><a href="../class.Rows/">Cassandra\Rows</a></code></td>
 <td>
-<p>Execute a query.</p>
+<p>A collection of rows.</p>
 </td>
 </tr></tbody>
 </table></dd>
@@ -902,7 +1051,7 @@
 <code>string</code>|<code><a href="../interface.Statement/">Cassandra\Statement</a></code>
 </td>
 <td>
-<p>Execute a query asynchronously. This method returns immediately, but the query continues execution in the background.</p>
+<p>string or statement to be executed.</p>
 </td>
 </tr>
 <tr>
@@ -911,7 +1060,7 @@
 <code>array</code>|<code><a href="../class.ExecutionOptions/">Cassandra\ExecutionOptions</a></code>
 </td>
 <td>
-<p>Execute a query asynchronously. This method returns immediately, but the query continues execution in the background.</p>
+<p>Options to control execution of the query.</p>
 </td>
 </tr>
 </tbody>
@@ -925,17 +1074,20 @@
 <tbody><tr>
 <td><code><a href="../class.FutureRows/">Cassandra\FutureRows</a></code></td>
 <td>
-<p>Execute a query asynchronously. This method returns immediately, but the query continues execution in the background.</p>
+<p>A future that can be used to retrieve the result.</p>
 </td>
 </tr></tbody>
 </table></dd>
+<dt class="tag-title">See Also:</dt>
+<dd class="tag-content"><ul class="see"><li>
+<code><a href="../interface.Session/#method-execute">Session::execute()</a></code> for valid execution options</li></ul></dd>
 </dl>
     </div>
   </div>
   <div class="panel panel-default member-definition">
     <div class="panel-heading method-heading">
       <code><a href="../class.PreparedStatement/">Cassandra\PreparedStatement</a></code> <h3 id="method-prepare" class="target">prepare<a class="anchor" href="#method-prepare" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
-</h3> <big>(</big> <code>string</code> $cql, <code><a href="../class.ExecutionOptions/">Cassandra\ExecutionOptions</a></code> $options <big>)</big>
+</h3> <big>(</big> <code>string</code> $cql, <code>mixed</code> $options <big>)</big>
     </div>
     <div class="panel-body method-body">
       <p>Prepare a query for execution.</p>
@@ -953,17 +1105,30 @@
 <td><var>$cql</var></td>
 <td><code>string</code></td>
 <td>
-<p>Prepare a query for execution.</p>
+<p>The query to be prepared.</p>
 </td>
 </tr>
 <tr>
 <td><var>$options</var></td>
-<td><code><a href="../class.ExecutionOptions/">Cassandra\ExecutionOptions</a></code></td>
 <td>
-<p>Prepare a query for execution.</p>
+<code>array</code>|<code><a href="../class.ExecutionOptions/">Cassandra\ExecutionOptions</a></code>
+</td>
+<td>
+<p>Options to control preparing the query.</p>
 </td>
 </tr>
 </tbody>
+</table></dd>
+<dt class="tag-title">Throws:</dt>
+<dd class="tag-content"><table class="table table-striped throw">
+<thead><tr>
+<th class="type">Type</th>
+<th class="details">Details</th>
+</tr></thead>
+<tbody><tr>
+<td><code><a href="../interface.Exception/">Cassandra\Exception</a></code></td>
+<td></td>
+</tr></tbody>
 </table></dd>
 <dt class="tag-title">Returns:</dt>
 <dd class="tag-content"><table class="table table-striped return">
@@ -974,17 +1139,20 @@
 <tbody><tr>
 <td><code><a href="../class.PreparedStatement/">Cassandra\PreparedStatement</a></code></td>
 <td>
-<p>Prepare a query for execution.</p>
+<p>A prepared statement that can be bound with parameters and executed.</p>
 </td>
 </tr></tbody>
 </table></dd>
+<dt class="tag-title">See Also:</dt>
+<dd class="tag-content"><ul class="see"><li>
+<code><a href="../interface.Session/#method-execute">Session::execute()</a></code> for valid execution options</li></ul></dd>
 </dl>
     </div>
   </div>
   <div class="panel panel-default member-definition">
     <div class="panel-heading method-heading">
       <code><a href="../class.FuturePreparedStatement/">Cassandra\FuturePreparedStatement</a></code> <h3 id="method-prepareAsync" class="target">prepareAsync<a class="anchor" href="#method-prepareAsync" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
-</h3> <big>(</big> <code>string</code> $cql, <code><a href="../class.ExecutionOptions/">Cassandra\ExecutionOptions</a></code> $options <big>)</big>
+</h3> <big>(</big> <code>string</code> $cql, <code>mixed</code> $options <big>)</big>
     </div>
     <div class="panel-body method-body">
       <p>Asynchronously prepare a query for execution.</p>
@@ -1002,14 +1170,16 @@
 <td><var>$cql</var></td>
 <td><code>string</code></td>
 <td>
-<p>Asynchronously prepare a query for execution.</p>
+<p>The query to be prepared.</p>
 </td>
 </tr>
 <tr>
 <td><var>$options</var></td>
-<td><code><a href="../class.ExecutionOptions/">Cassandra\ExecutionOptions</a></code></td>
 <td>
-<p>Asynchronously prepare a query for execution.</p>
+<code>array</code>|<code><a href="../class.ExecutionOptions/">Cassandra\ExecutionOptions</a></code>
+</td>
+<td>
+<p>Options to control preparing the query.</p>
 </td>
 </tr>
 </tbody>
@@ -1023,10 +1193,13 @@
 <tbody><tr>
 <td><code><a href="../class.FuturePreparedStatement/">Cassandra\FuturePreparedStatement</a></code></td>
 <td>
-<p>Asynchronously prepare a query for execution.</p>
+<p>A future that can be used to retrieve the prepared statement.</p>
 </td>
 </tr></tbody>
 </table></dd>
+<dt class="tag-title">See Also:</dt>
+<dd class="tag-content"><ul class="see"><li>
+<code><a href="../interface.Session/#method-execute">Session::execute()</a></code> for valid execution options</li></ul></dd>
 </dl>
     </div>
   </div>
@@ -1050,8 +1223,19 @@
 <td><var>$timeout</var></td>
 <td><code>double</code></td>
 <td>
-<p>Close the session and all its connections.</p>
+<p>The amount of time in seconds to wait for the session to close.</p>
 </td>
+</tr></tbody>
+</table></dd>
+<dt class="tag-title">Throws:</dt>
+<dd class="tag-content"><table class="table table-striped throw">
+<thead><tr>
+<th class="type">Type</th>
+<th class="details">Details</th>
+</tr></thead>
+<tbody><tr>
+<td><code><a href="../interface.Exception/">Cassandra\Exception</a></code></td>
+<td></td>
 </tr></tbody>
 </table></dd>
 <dt class="tag-title">Returns:</dt>
@@ -1063,7 +1247,7 @@
 <tbody><tr>
 <td><code>null</code></td>
 <td>
-<p>Close the session and all its connections.</p>
+<p>Nothing.</p>
 </td>
 </tr></tbody>
 </table></dd>
@@ -1088,7 +1272,7 @@
 <tbody><tr>
 <td><code><a href="../class.FutureClose/">Cassandra\FutureClose</a></code></td>
 <td>
-<p>Asynchronously close the session and all its connections.</p>
+<p>A future that can be waited on.</p>
 </td>
 </tr></tbody>
 </table></dd>
@@ -1113,7 +1297,7 @@
 <tbody><tr>
 <td><code>array</code></td>
 <td>
-<p>Get performance and diagnostic metrics.</p>
+<p>Performance/Diagnostic metrics.</p>
 </td>
 </tr></tbody>
 </table></dd>
@@ -1138,7 +1322,7 @@
 <tbody><tr>
 <td><code><a href="../interface.Schema/">Cassandra\Schema</a></code></td>
 <td>
-<p>Get a snapshot of the cluster’s current schema.</p>
+<p>A snapshot of the cluster’s schema.</p>
 </td>
 </tr></tbody>
 </table></dd>

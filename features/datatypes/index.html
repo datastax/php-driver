@@ -84,7 +84,7 @@
   
   <li class="active">
     <a href="../">
-      Features <small>page</small>
+      Core <small>page</small>
       
       
       <span class="glyphicon glyphicon-minus-sign pull-right" aria-hidden="true"></span>
@@ -228,6 +228,24 @@
   
   
   <li>
+    <a href="../duration_collections/">
+      Duration <small>feature</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../duration/">
+      Duration <small>feature</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
     <a href="../materialized_view_metadata/">
       Materialized View Metadata <small>feature</small>
       
@@ -305,7 +323,7 @@
                 
                 
                 
-                <li><a href="../">Features</a></li>
+                <li><a href="../">Core</a></li>
                 
                 
                 
@@ -379,104 +397,37 @@
   <span class="mi">ab3352d9-4f7f-4007-a35a-e62aa7ab0b19</span><span class="p">,</span>
   <span class="n">maxTimeuuid</span><span class="p">(</span><span class="s1">'2015-03-11 14:47:10+0000'</span><span class="p">),</span>
   <span class="s1">'200.199.198.197'</span>
-<span class="p">)</span>
+<span class="p">);</span>
 </code></pre>
 </dd>
 <dt>And </dt>
 <dd>the following example:<pre class="highlight"><code><span class="cp">&lt;?php</span>
-<span class="nv">$cluster</span>   <span class="o">=</span> <span class="nx">Cassandra</span><span class="o">::</span><span class="na">cluster</span><span class="p">()</span>
-               <span class="o">-&gt;</span><span class="na">withContactPoints</span><span class="p">(</span><span class="s1">'127.0.0.1'</span><span class="p">)</span>
-               <span class="o">-&gt;</span><span class="na">build</span><span class="p">();</span>
+<span class="nv">$cluster</span>   <span class="o">=</span> <span class="nx">Cassandra</span><span class="o">::</span><span class="na">cluster</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">build</span><span class="p">();</span>
 <span class="nv">$session</span>   <span class="o">=</span> <span class="nv">$cluster</span><span class="o">-&gt;</span><span class="na">connect</span><span class="p">(</span><span class="s2">"simplex"</span><span class="p">);</span>
-<span class="nv">$statement</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Cassandra\SimpleStatement</span><span class="p">(</span><span class="s2">"SELECT * FROM values"</span><span class="p">);</span>
-<span class="nv">$result</span>    <span class="o">=</span> <span class="nv">$session</span><span class="o">-&gt;</span><span class="na">execute</span><span class="p">(</span><span class="nv">$statement</span><span class="p">);</span>
+<span class="nv">$result</span>    <span class="o">=</span> <span class="nv">$session</span><span class="o">-&gt;</span><span class="na">execute</span><span class="p">(</span><span class="s2">"SELECT * FROM values"</span><span class="p">);</span>
 <span class="nv">$row</span>       <span class="o">=</span> <span class="nv">$result</span><span class="o">-&gt;</span><span class="na">first</span><span class="p">();</span>
 
-<span class="k">echo</span> <span class="s2">"Bigint: "</span> <span class="o">.</span> <span class="nb">var_export</span><span class="p">(</span><span class="nv">$row</span><span class="p">[</span><span class="s1">'bigint_value'</span><span class="p">],</span> <span class="kc">true</span><span class="p">)</span> <span class="o">.</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">;</span>
-<span class="k">echo</span> <span class="s2">"Decimal: "</span> <span class="o">.</span> <span class="nb">var_export</span><span class="p">(</span><span class="nv">$row</span><span class="p">[</span><span class="s1">'decimal_value'</span><span class="p">],</span> <span class="kc">true</span><span class="p">)</span> <span class="o">.</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">;</span>
-<span class="k">echo</span> <span class="s2">"Double: "</span> <span class="o">.</span> <span class="nb">sprintf</span><span class="p">(</span><span class="s1">'%.13f'</span><span class="p">,</span> <span class="nv">$row</span><span class="p">[</span><span class="s1">'double_value'</span><span class="p">])</span> <span class="o">.</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">;</span>
-<span class="k">echo</span> <span class="s2">"Float: "</span> <span class="o">.</span> <span class="nb">var_export</span><span class="p">(</span><span class="nv">$row</span><span class="p">[</span><span class="s1">'float_value'</span><span class="p">],</span> <span class="kc">true</span><span class="p">)</span> <span class="o">.</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">;</span>
-<span class="k">echo</span> <span class="s2">"Int: "</span> <span class="o">.</span> <span class="nb">var_export</span><span class="p">(</span><span class="nv">$row</span><span class="p">[</span><span class="s1">'int_value'</span><span class="p">],</span> <span class="kc">true</span><span class="p">)</span> <span class="o">.</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">;</span>
-<span class="k">echo</span> <span class="s2">"Varint: "</span> <span class="o">.</span> <span class="nb">var_export</span><span class="p">(</span><span class="nv">$row</span><span class="p">[</span><span class="s1">'varint_value'</span><span class="p">],</span> <span class="kc">true</span><span class="p">)</span> <span class="o">.</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">;</span>
-<span class="k">echo</span> <span class="s2">"Timestamp: "</span> <span class="o">.</span> <span class="nb">var_export</span><span class="p">(</span><span class="nv">$row</span><span class="p">[</span><span class="s1">'timestamp_value'</span><span class="p">],</span> <span class="kc">true</span><span class="p">)</span> <span class="o">.</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">;</span>
-<span class="k">echo</span> <span class="s2">"Blob: "</span> <span class="o">.</span> <span class="nb">var_export</span><span class="p">(</span><span class="nv">$row</span><span class="p">[</span><span class="s1">'blob_value'</span><span class="p">],</span> <span class="kc">true</span><span class="p">)</span> <span class="o">.</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">;</span>
-<span class="k">echo</span> <span class="s2">"Uuid: "</span> <span class="o">.</span> <span class="nb">var_export</span><span class="p">(</span><span class="nv">$row</span><span class="p">[</span><span class="s1">'uuid_value'</span><span class="p">],</span> <span class="kc">true</span><span class="p">)</span> <span class="o">.</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">;</span>
-<span class="k">echo</span> <span class="s2">"Timeuuid: "</span> <span class="o">.</span> <span class="nb">var_export</span><span class="p">(</span><span class="nv">$row</span><span class="p">[</span><span class="s1">'timeuuid_value'</span><span class="p">],</span> <span class="kc">true</span><span class="p">)</span> <span class="o">.</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">;</span>
-<span class="k">echo</span> <span class="s2">"Inet: "</span> <span class="o">.</span> <span class="nb">var_export</span><span class="p">(</span><span class="nv">$row</span><span class="p">[</span><span class="s1">'inet_value'</span><span class="p">],</span> <span class="kc">true</span><span class="p">)</span> <span class="o">.</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">;</span>
+<span class="k">foreach</span> <span class="p">(</span><span class="nv">$row</span> <span class="k">as</span> <span class="nv">$name</span> <span class="o">=&gt;</span> <span class="nv">$value</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nv">$name</span> <span class="o">!==</span> <span class="s2">"id"</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">echo</span> <span class="s2">"</span><span class="si">{</span><span class="nv">$name</span><span class="si">}</span><span class="s2"> =&gt; </span><span class="si">{</span><span class="nv">$value</span><span class="si">}</span><span class="s2">"</span> <span class="o">.</span><span class="nx">PHP_EOL</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
 </code></pre>
 </dd>
 <dt>When </dt>
 <dd>it is executed</dd>
 <dt>Then </dt>
-<dd>its output should contain:<pre><code>Bigint: Cassandra\Bigint::__set_state(array(
-   'type' =&gt;
-  Cassandra\Type\Scalar::__set_state(array(
-     'name' =&gt; 'bigint',
-  )),
-   'value' =&gt; '-765438000',
-))
-Decimal: Cassandra\Decimal::__set_state(array(
-   'type' =&gt;
-  Cassandra\Type\Scalar::__set_state(array(
-     'name' =&gt; 'decimal',
-  )),
-   'value' =&gt; '1313123123234234234234234234123',
-   'scale' =&gt; 21,
-))
-Double: 3.1415926535898
-Float: Cassandra\Float::__set_state(array(
-   'type' =&gt;
-  Cassandra\Type\Scalar::__set_state(array(
-     'name' =&gt; 'float',
-  )),
-   'value' =&gt; '3.14000010490417',
-))
-Int: 4
-Varint: Cassandra\Varint::__set_state(array(
-   'type' =&gt;
-  Cassandra\Type\Scalar::__set_state(array(
-     'name' =&gt; 'varint',
-  )),
-   'value' =&gt; '67890656781923123918798273492834712837198237',
-))
-Timestamp: Cassandra\Timestamp::__set_state(array(
-   'type' =&gt;
-  Cassandra\Type\Scalar::__set_state(array(
-     'name' =&gt; 'timestamp',
-  )),
-   'seconds' =&gt; 1425691864,
-   'microseconds' =&gt; 1000,
-))
-Blob: Cassandra\Blob::__set_state(array(
-   'type' =&gt;
-  Cassandra\Type\Scalar::__set_state(array(
-     'name' =&gt; 'blob',
-  )),
-   'bytes' =&gt; '0x3078303030303030',
-))
-Uuid: Cassandra\Uuid::__set_state(array(
-   'type' =&gt;
-  Cassandra\Type\Scalar::__set_state(array(
-     'name' =&gt; 'uuid',
-  )),
-   'uuid' =&gt; 'ab3352d9-4f7f-4007-a35a-e62aa7ab0b19',
-   'version' =&gt; 4,
-))
-Timeuuid: Cassandra\Timeuuid::__set_state(array(
-   'type' =&gt;
-  Cassandra\Type\Scalar::__set_state(array(
-     'name' =&gt; 'timeuuid',
-  )),
-   'uuid' =&gt; '7f0a920f-c7fd-11e4-7f7f-7f7f7f7f7f7f',
-   'version' =&gt; 1,
-))
-Inet: Cassandra\Inet::__set_state(array(
-   'type' =&gt;
-  Cassandra\Type\Scalar::__set_state(array(
-     'name' =&gt; 'inet',
-  )),
-   'address' =&gt; '200.199.198.197',
-))
+<dd>its output should contain these lines in any order:<pre><code>bigint_value =&gt; -765438000
+blob_value =&gt; 0x3078303030303030
+decimal_value =&gt; 1313123123.234234234234234234123
+double_value =&gt; 3.1415926535898
+float_value =&gt; 3.14000010490417
+inet_value =&gt; 200.199.198.197
+int_value =&gt; 4
+timestamp_value =&gt; 1425691864001
+timeuuid_value =&gt; 7f0a920f-c7fd-11e4-7f7f-7f7f7f7f7f7f
+uuid_value =&gt; ab3352d9-4f7f-4007-a35a-e62aa7ab0b19
+varint_value =&gt; 67890656781923123918798273492834712837198237
 </code></pre>
 </dd>
 </dl>
@@ -499,30 +450,29 @@ Inet: Cassandra\Inet::__set_state(array(
 </dd>
 <dt>And </dt>
 <dd>the following example:<pre class="highlight"><code><span class="cp">&lt;?php</span>
-<span class="nv">$cluster</span>   <span class="o">=</span> <span class="nx">Cassandra</span><span class="o">::</span><span class="na">cluster</span><span class="p">()</span>
-               <span class="o">-&gt;</span><span class="na">withContactPoints</span><span class="p">(</span><span class="s1">'127.0.0.1'</span><span class="p">)</span>
-               <span class="o">-&gt;</span><span class="na">build</span><span class="p">();</span>
+<span class="nv">$cluster</span>   <span class="o">=</span> <span class="nx">Cassandra</span><span class="o">::</span><span class="na">cluster</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">build</span><span class="p">();</span>
 <span class="nv">$session</span>   <span class="o">=</span> <span class="nv">$cluster</span><span class="o">-&gt;</span><span class="na">connect</span><span class="p">(</span><span class="s2">"simplex"</span><span class="p">);</span>
 
-<span class="nv">$statement</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Cassandra\SimpleStatement</span><span class="p">(</span><span class="s2">"INSERT INTO values (id, tinyint_value, smallint_value) VALUES (?, ?, ?)"</span><span class="p">);</span>
 <span class="nv">$options</span>   <span class="o">=</span> <span class="k">array</span><span class="p">(</span><span class="s1">'arguments'</span> <span class="o">=&gt;</span>
   <span class="k">array</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="k">new</span> <span class="nx">Cassandra\Tinyint</span><span class="p">(</span><span class="mi">127</span><span class="p">),</span> <span class="k">new</span> <span class="nx">Cassandra\Smallint</span><span class="p">(</span><span class="mi">32767</span><span class="p">))</span>
 <span class="p">);</span>
-<span class="nv">$session</span><span class="o">-&gt;</span><span class="na">execute</span><span class="p">(</span><span class="nv">$statement</span><span class="p">,</span> <span class="nv">$options</span><span class="p">);</span>
+<span class="nv">$session</span><span class="o">-&gt;</span><span class="na">execute</span><span class="p">(</span><span class="s2">"INSERT INTO values (id, tinyint_value, smallint_value) VALUES (?, ?, ?)"</span><span class="p">,</span> <span class="nv">$options</span><span class="p">);</span>
 
-<span class="nv">$statement</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Cassandra\SimpleStatement</span><span class="p">(</span><span class="s2">"SELECT * FROM values"</span><span class="p">);</span>
-<span class="nv">$result</span>    <span class="o">=</span> <span class="nv">$session</span><span class="o">-&gt;</span><span class="na">execute</span><span class="p">(</span><span class="nv">$statement</span><span class="p">);</span>
+<span class="nv">$result</span>    <span class="o">=</span> <span class="nv">$session</span><span class="o">-&gt;</span><span class="na">execute</span><span class="p">(</span><span class="s2">"SELECT * FROM values"</span><span class="p">);</span>
 <span class="nv">$row</span>       <span class="o">=</span> <span class="nv">$result</span><span class="o">-&gt;</span><span class="na">first</span><span class="p">();</span>
 
-<span class="k">echo</span> <span class="s2">"Tinyint: "</span> <span class="o">.</span> <span class="nv">$row</span><span class="p">[</span><span class="s1">'tinyint_value'</span><span class="p">]</span><span class="o">-&gt;</span><span class="na">value</span><span class="p">()</span> <span class="o">.</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">;</span>
-<span class="k">echo</span> <span class="s2">"Smallint: "</span> <span class="o">.</span> <span class="nv">$row</span><span class="p">[</span><span class="s1">'smallint_value'</span><span class="p">]</span><span class="o">-&gt;</span><span class="na">value</span><span class="p">()</span> <span class="o">.</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">;</span>
+<span class="k">foreach</span> <span class="p">(</span><span class="nv">$row</span> <span class="k">as</span> <span class="nv">$name</span> <span class="o">=&gt;</span> <span class="nv">$value</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nv">$name</span> <span class="o">!=</span> <span class="s2">"id"</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">echo</span> <span class="s2">"</span><span class="si">{</span><span class="nv">$name</span><span class="si">}</span><span class="s2"> =&gt; </span><span class="si">{</span><span class="nv">$value</span><span class="si">}</span><span class="s2">"</span> <span class="o">.</span><span class="nx">PHP_EOL</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
 </code></pre>
 </dd>
 <dt>When </dt>
 <dd>it is executed</dd>
 <dt>Then </dt>
-<dd>its output should contain:<pre><code>Tinyint: 127
-Smallint: 32767
+<dd>its output should contain:<pre><code>smallint_value =&gt; 32767
+tinyint_value =&gt; 127
 </code></pre>
 </dd>
 </dl>
@@ -544,26 +494,22 @@ Smallint: 32767
 </dd>
 <dt>And </dt>
 <dd>the following example:<pre class="highlight"><code><span class="cp">&lt;?php</span>
-<span class="nv">$cluster</span>   <span class="o">=</span> <span class="nx">Cassandra</span><span class="o">::</span><span class="na">cluster</span><span class="p">()</span>
-               <span class="o">-&gt;</span><span class="na">withContactPoints</span><span class="p">(</span><span class="s1">'127.0.0.1'</span><span class="p">)</span>
-               <span class="o">-&gt;</span><span class="na">build</span><span class="p">();</span>
+<span class="nv">$cluster</span>   <span class="o">=</span> <span class="nx">Cassandra</span><span class="o">::</span><span class="na">cluster</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">build</span><span class="p">();</span>
 <span class="nv">$session</span>   <span class="o">=</span> <span class="nv">$cluster</span><span class="o">-&gt;</span><span class="na">connect</span><span class="p">(</span><span class="s2">"simplex"</span><span class="p">);</span>
 
-<span class="nv">$statement</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Cassandra\SimpleStatement</span><span class="p">(</span><span class="s2">"INSERT INTO date_values (id, date_value) VALUES (?, ?)"</span><span class="p">);</span>
 <span class="nv">$options</span>   <span class="o">=</span> <span class="k">array</span><span class="p">(</span><span class="s1">'arguments'</span> <span class="o">=&gt;</span> <span class="k">array</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="k">new</span> <span class="nx">Cassandra\Date</span><span class="p">(</span><span class="mi">0</span><span class="p">)));</span>
-<span class="nv">$session</span><span class="o">-&gt;</span><span class="na">execute</span><span class="p">(</span><span class="nv">$statement</span><span class="p">,</span> <span class="nv">$options</span><span class="p">);</span>
+<span class="nv">$session</span><span class="o">-&gt;</span><span class="na">execute</span><span class="p">(</span><span class="s2">"INSERT INTO date_values (id, date_value) VALUES (?, ?)"</span><span class="p">,</span> <span class="nv">$options</span><span class="p">);</span>
 
-<span class="nv">$statement</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Cassandra\SimpleStatement</span><span class="p">(</span><span class="s2">"SELECT * FROM date_values"</span><span class="p">);</span>
-<span class="nv">$result</span>    <span class="o">=</span> <span class="nv">$session</span><span class="o">-&gt;</span><span class="na">execute</span><span class="p">(</span><span class="nv">$statement</span><span class="p">);</span>
+<span class="nv">$result</span>    <span class="o">=</span> <span class="nv">$session</span><span class="o">-&gt;</span><span class="na">execute</span><span class="p">(</span><span class="s2">"SELECT * FROM date_values"</span><span class="p">);</span>
 <span class="nv">$row</span>       <span class="o">=</span> <span class="nv">$result</span><span class="o">-&gt;</span><span class="na">first</span><span class="p">();</span>
 
-<span class="k">echo</span> <span class="s2">"Date: "</span> <span class="o">.</span> <span class="nv">$row</span><span class="p">[</span><span class="s1">'date_value'</span><span class="p">]</span><span class="o">-&gt;</span><span class="na">toDateTime</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">format</span><span class="p">(</span><span class="s2">"Y-m-d H:i:s"</span><span class="p">)</span> <span class="o">.</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">;</span>
-</code></pre>
+<span class="k">echo</span> <span class="s2">"date_value =&gt; </span><span class="si">{</span><span class="nv">$row</span><span class="p">[</span><span class="s1">'date_value'</span><span class="p">]</span><span class="o">-&gt;</span><span class="na">toDateTime</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">format</span><span class="p">(</span><span class="s1">'Y-m-d H:i:s'</span><span class="p">)}</span><span class="s2">" . PHP_EOL;
+</span></code></pre>
 </dd>
 <dt>When </dt>
 <dd>it is executed</dd>
 <dt>Then </dt>
-<dd>its output should contain:<pre><code>Date: 1970-01-01 00:00:00
+<dd>its output should contain:<pre><code>date_value =&gt; 1970-01-01 00:00:00
 </code></pre>
 </dd>
 </dl>
@@ -585,27 +531,23 @@ Smallint: 32767
 </dd>
 <dt>And </dt>
 <dd>the following example:<pre class="highlight"><code><span class="cp">&lt;?php</span>
-<span class="nv">$cluster</span>   <span class="o">=</span> <span class="nx">Cassandra</span><span class="o">::</span><span class="na">cluster</span><span class="p">()</span>
-               <span class="o">-&gt;</span><span class="na">withContactPoints</span><span class="p">(</span><span class="s1">'127.0.0.1'</span><span class="p">)</span>
-               <span class="o">-&gt;</span><span class="na">build</span><span class="p">();</span>
+<span class="nv">$cluster</span>   <span class="o">=</span> <span class="nx">Cassandra</span><span class="o">::</span><span class="na">cluster</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">build</span><span class="p">();</span>
 <span class="nv">$session</span>   <span class="o">=</span> <span class="nv">$cluster</span><span class="o">-&gt;</span><span class="na">connect</span><span class="p">(</span><span class="s2">"simplex"</span><span class="p">);</span>
 
-<span class="nv">$statement</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Cassandra\SimpleStatement</span><span class="p">(</span><span class="s2">"INSERT INTO time_values (id, time_value) VALUES (?, ?)"</span><span class="p">);</span>
 <span class="nv">$datetime</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">\DateTime</span><span class="p">(</span><span class="s2">"1970-01-01T00:00:01+0000"</span><span class="p">);</span>
 <span class="nv">$options</span>   <span class="o">=</span> <span class="k">array</span><span class="p">(</span><span class="s1">'arguments'</span> <span class="o">=&gt;</span> <span class="k">array</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nx">Cassandra\Time</span><span class="o">::</span><span class="na">fromDateTime</span><span class="p">(</span><span class="nv">$datetime</span><span class="p">)));</span>
-<span class="nv">$session</span><span class="o">-&gt;</span><span class="na">execute</span><span class="p">(</span><span class="nv">$statement</span><span class="p">,</span> <span class="nv">$options</span><span class="p">);</span>
+<span class="nv">$session</span><span class="o">-&gt;</span><span class="na">execute</span><span class="p">(</span><span class="s2">"INSERT INTO time_values (id, time_value) VALUES (?, ?)"</span><span class="p">,</span> <span class="nv">$options</span><span class="p">);</span>
 
-<span class="nv">$statement</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Cassandra\SimpleStatement</span><span class="p">(</span><span class="s2">"SELECT * FROM time_values"</span><span class="p">);</span>
-<span class="nv">$result</span>    <span class="o">=</span> <span class="nv">$session</span><span class="o">-&gt;</span><span class="na">execute</span><span class="p">(</span><span class="nv">$statement</span><span class="p">);</span>
+<span class="nv">$result</span>    <span class="o">=</span> <span class="nv">$session</span><span class="o">-&gt;</span><span class="na">execute</span><span class="p">(</span><span class="s2">"SELECT * FROM time_values"</span><span class="p">);</span>
 <span class="nv">$row</span>       <span class="o">=</span> <span class="nv">$result</span><span class="o">-&gt;</span><span class="na">first</span><span class="p">();</span>
 
-<span class="k">echo</span> <span class="s2">"Time: "</span> <span class="o">.</span> <span class="nv">$row</span><span class="p">[</span><span class="s1">'time_value'</span><span class="p">]</span> <span class="o">.</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">;</span>
-</code></pre>
+<span class="k">echo</span> <span class="s2">"time_value =&gt; </span><span class="si">{</span><span class="nv">$row</span><span class="p">[</span><span class="s1">'time_value'</span><span class="p">]}</span><span class="s2">" . PHP_EOL;
+</span></code></pre>
 </dd>
 <dt>When </dt>
 <dd>it is executed</dd>
 <dt>Then </dt>
-<dd>its output should contain:<pre><code>Time: 1000000000
+<dd>its output should contain:<pre><code>time_value =&gt; 1000000000
 </code></pre>
 </dd>
 </dl>

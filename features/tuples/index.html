@@ -84,7 +84,7 @@
   
   <li class="active">
     <a href="../">
-      Features <small>page</small>
+      Core <small>page</small>
       
       
       <span class="glyphicon glyphicon-minus-sign pull-right" aria-hidden="true"></span>
@@ -228,6 +228,24 @@
   
   
   <li>
+    <a href="../duration_collections/">
+      Duration <small>feature</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../duration/">
+      Duration <small>feature</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
     <a href="../materialized_view_metadata/">
       Materialized View Metadata <small>feature</small>
       
@@ -305,7 +323,7 @@
                 
                 
                 
-                <li><a href="../">Features</a></li>
+                <li><a href="../">Core</a></li>
                 
                 
                 
@@ -348,13 +366,8 @@
 </dd>
 <dt>And </dt>
 <dd>the following example:<pre class="highlight"><code><span class="cp">&lt;?php</span>
-<span class="nv">$cluster</span>   <span class="o">=</span> <span class="nx">Cassandra</span><span class="o">::</span><span class="na">cluster</span><span class="p">()</span>
-               <span class="o">-&gt;</span><span class="na">withContactPoints</span><span class="p">(</span><span class="s1">'127.0.0.1'</span><span class="p">)</span>
-               <span class="o">-&gt;</span><span class="na">build</span><span class="p">();</span>
+<span class="nv">$cluster</span>   <span class="o">=</span> <span class="nx">Cassandra</span><span class="o">::</span><span class="na">cluster</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">build</span><span class="p">();</span>
 <span class="nv">$session</span>   <span class="o">=</span> <span class="nv">$cluster</span><span class="o">-&gt;</span><span class="na">connect</span><span class="p">(</span><span class="s2">"simplex"</span><span class="p">);</span>
-
-<span class="nv">$statement</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Cassandra\SimpleStatement</span><span class="p">(</span>
-                <span class="s2">"INSERT INTO users (id, name, address) VALUES (?, ?, ?)"</span><span class="p">);</span>
 
 <span class="nv">$tupleType</span> <span class="o">=</span> <span class="nx">Cassandra\Type</span><span class="o">::</span><span class="na">tuple</span><span class="p">(</span><span class="nx">Cassandra\Type</span><span class="o">::</span><span class="na">text</span><span class="p">(),</span> <span class="nx">Cassandra\Type</span><span class="o">::</span><span class="na">text</span><span class="p">(),</span> <span class="nx">Cassandra\Type</span><span class="o">::</span><span class="na">int</span><span class="p">());</span>
 
@@ -377,17 +390,19 @@
 <span class="p">);</span>
 
 <span class="k">foreach</span> <span class="p">(</span><span class="nv">$users</span> <span class="k">as</span> <span class="nv">$user</span><span class="p">)</span> <span class="p">{</span>
-  <span class="nv">$options</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span><span class="s1">'arguments'</span> <span class="o">=&gt;</span> <span class="nv">$user</span><span class="p">);</span>
-  <span class="nv">$session</span><span class="o">-&gt;</span><span class="na">execute</span><span class="p">(</span><span class="nv">$statement</span><span class="p">,</span> <span class="nv">$options</span><span class="p">);</span>
+    <span class="nv">$options</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span><span class="s1">'arguments'</span> <span class="o">=&gt;</span> <span class="nv">$user</span><span class="p">);</span>
+    <span class="nv">$session</span><span class="o">-&gt;</span><span class="na">execute</span><span class="p">(</span><span class="s2">"INSERT INTO users (id, name, address) VALUES (?, ?, ?)"</span><span class="p">,</span> <span class="nv">$options</span><span class="p">);</span>
 <span class="p">}</span>
 
-<span class="nv">$statement</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Cassandra\SimpleStatement</span><span class="p">(</span><span class="s2">"SELECT * FROM users"</span><span class="p">);</span>
-<span class="nv">$result</span>    <span class="o">=</span> <span class="nv">$session</span><span class="o">-&gt;</span><span class="na">execute</span><span class="p">(</span><span class="nv">$statement</span><span class="p">);</span>
+<span class="nv">$result</span>    <span class="o">=</span> <span class="nv">$session</span><span class="o">-&gt;</span><span class="na">execute</span><span class="p">(</span><span class="s2">"SELECT * FROM users"</span><span class="p">);</span>
 
 <span class="k">foreach</span> <span class="p">(</span><span class="nv">$result</span> <span class="k">as</span> <span class="nv">$row</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">print</span> <span class="s1">'ID: '</span> <span class="o">.</span> <span class="nv">$row</span><span class="p">[</span><span class="s1">'id'</span><span class="p">]</span> <span class="o">.</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">;</span>
-    <span class="k">print</span> <span class="s1">'Name: '</span> <span class="o">.</span> <span class="nv">$row</span><span class="p">[</span><span class="s1">'name'</span><span class="p">]</span> <span class="o">.</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">;</span>
-    <span class="k">print</span> <span class="s1">'Address: '</span> <span class="o">.</span> <span class="nb">var_export</span><span class="p">(</span><span class="nv">$row</span><span class="p">[</span><span class="s1">'address'</span><span class="p">],</span> <span class="kc">true</span><span class="p">)</span><span class="o">.</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">;</span>
+    <span class="k">echo</span> <span class="s2">"ID: </span><span class="si">{</span><span class="nv">$row</span><span class="p">[</span><span class="s1">'id'</span><span class="p">]}</span><span class="s2">" . PHP_EOL;
+    echo "</span><span class="nx">Name</span><span class="o">:</span> <span class="p">{</span><span class="nv">$row</span><span class="p">[</span><span class="s1">'name'</span><span class="p">]}</span><span class="s2">" . PHP_EOL;
+    echo "</span><span class="nx">Address</span><span class="o">:</span><span class="s2">" . PHP_EOL;
+    foreach (</span><span class="nv">$row['address']</span><span class="s2"> as </span><span class="nv">$format</span><span class="s2">) {
+        echo "</span>  <span class="p">{</span><span class="nv">$format</span><span class="si">}</span><span class="s2">"</span> <span class="o">.</span> <span class="nx">PHP_EOL</span><span class="p">;</span>
+    <span class="p">}</span>
 <span class="p">}</span>
 </code></pre>
 </dd>
@@ -396,88 +411,22 @@
 <dt>Then </dt>
 <dd>its output should contain:<pre><code>ID: 56357d2b-4586-433c-ad24-afa9918bc415
 Name: Charles Wallace
-Address: Cassandra\Tuple::__set_state(array(
-   'type' =&gt;
-  Cassandra\Type\Tuple::__set_state(array(
-     'types' =&gt;
-    array (
-      0 =&gt;
-      Cassandra\Type\Scalar::__set_state(array(
-         'name' =&gt; 'varchar',
-      )),
-      1 =&gt;
-      Cassandra\Type\Scalar::__set_state(array(
-         'name' =&gt; 'varchar',
-      )),
-      2 =&gt;
-      Cassandra\Type\Scalar::__set_state(array(
-         'name' =&gt; 'int',
-      )),
-    ),
-  )),
-   'values' =&gt;
-  array (
-    0 =&gt; 'Phoenix',
-    1 =&gt; '9042 Cassandra Lane',
-    2 =&gt; 85023,
-  ),
-))
+Address:
+  Phoenix
+  9042 Cassandra Lane
+  85023
 ID: ce359590-8528-4682-a9f3-add53fc9aa09
 Name: Kevin Malone
-Address: Cassandra\Tuple::__set_state(array(
-   'type' =&gt;
-  Cassandra\Type\Tuple::__set_state(array(
-     'types' =&gt;
-    array (
-      0 =&gt;
-      Cassandra\Type\Scalar::__set_state(array(
-         'name' =&gt; 'varchar',
-      )),
-      1 =&gt;
-      Cassandra\Type\Scalar::__set_state(array(
-         'name' =&gt; 'varchar',
-      )),
-      2 =&gt;
-      Cassandra\Type\Scalar::__set_state(array(
-         'name' =&gt; 'int',
-      )),
-    ),
-  )),
-   'values' =&gt;
-  array (
-    0 =&gt; 'New York',
-    1 =&gt; '1000 Database Road',
-    2 =&gt; 10025,
-  ),
-))
+Address:
+  New York
+  1000 Database Road
+  10025
 ID: 7d64dca1-dd4d-4f3c-bec4-6a88fa082a13
 Name: Michael Scott
-Address: Cassandra\Tuple::__set_state(array(
-   'type' =&gt;
-  Cassandra\Type\Tuple::__set_state(array(
-     'types' =&gt;
-    array (
-      0 =&gt;
-      Cassandra\Type\Scalar::__set_state(array(
-         'name' =&gt; 'varchar',
-      )),
-      1 =&gt;
-      Cassandra\Type\Scalar::__set_state(array(
-         'name' =&gt; 'varchar',
-      )),
-      2 =&gt;
-      Cassandra\Type\Scalar::__set_state(array(
-         'name' =&gt; 'int',
-      )),
-    ),
-  )),
-   'values' =&gt;
-  array (
-    0 =&gt; 'Santa Clara',
-    1 =&gt; '20000 Log Ave',
-    2 =&gt; 95054,
-  ),
-))
+Address:
+  Santa Clara
+  20000 Log Ave
+  95054
 </code></pre>
 </dd>
 </dl>

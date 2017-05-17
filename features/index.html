@@ -9,7 +9,7 @@
     <meta name="description" content="DataStax PHP Driver for Apache Cassandra">
     <meta name="author" content="DataStax">
 
-    <title>DataStax PHP Driver - Features</title>
+    <title>DataStax PHP Driver - Core</title>
 
     <link rel="icon" href="../favicon.ico">
     <link rel="apple-touch-icon" href="../favicon.png">
@@ -84,7 +84,7 @@
   
   <li class="active">
     <a href="./" class="current">
-      Features <small>page</small>
+      Core <small>page</small>
       
       
       <span class="glyphicon glyphicon-minus-sign pull-right" aria-hidden="true"></span>
@@ -225,6 +225,24 @@
   
   
   <li>
+    <a href="duration_collections/">
+      Duration <small>feature</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="duration/">
+      Duration <small>feature</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
     <a href="materialized_view_metadata/">
       Materialized View Metadata <small>feature</small>
       
@@ -302,7 +320,7 @@
                 
                 
                 
-                <li class="active">Features</li>
+                <li class="active">Core</li>
                 
                 
                 
@@ -311,7 +329,7 @@
           </div>
           
 
-<h1 id="features" class="target">Features<a class="anchor" href="#features" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+<h1 id="core" class="target">Core<a class="anchor" href="#core" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
 </h1>
 
 <h2 id="usage" class="target">Usage<a class="anchor" href="#usage" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
@@ -488,7 +506,7 @@
 <p>You run CQL statements by passing them to <a href="../api/Cassandra/interface.Session/"><code>Cassandra\Session::execute()</code></a>.</p>
 <pre class="highlight"><code><span class="cp">&lt;?php</span>
 
-<span class="nv">$result</span> <span class="o">=</span> <span class="nv">$session</span><span class="o">-&gt;</span><span class="na">execute</span><span class="p">(</span><span class="k">new</span> <span class="nx">Cassandra\SimpleStatement</span><span class="p">(</span><span class="s1">'SELECT keyspace_name, columnfamily_name FROM system.schema_columnfamilies'</span><span class="p">));</span>
+<span class="nv">$result</span> <span class="o">=</span> <span class="nv">$session</span><span class="o">-&gt;</span><span class="na">execute</span><span class="p">(</span><span class="s1">'SELECT keyspace_name, columnfamily_name FROM system.schema_columnfamilies'</span><span class="p">);</span>
 
 <span class="k">foreach</span> <span class="p">(</span><span class="nv">$result</span> <span class="k">as</span> <span class="nv">$row</span><span class="p">)</span> <span class="p">{</span>
     <span class="nb">printf</span><span class="p">(</span><span class="s2">"The keyspace </span><span class="se">\"</span><span class="s2">%s</span><span class="se">\"</span><span class="s2"> has a table </span><span class="se">\"</span><span class="s2">%s</span><span class="se">\"</span><span class="s2">.</span><span class="se">\n</span><span class="s2">"</span><span class="p">,</span> <span class="nv">$row</span><span class="p">[</span><span class="s1">'keyspace_name'</span><span class="p">],</span> <span class="nv">$row</span><span class="p">[</span><span class="s1">'columnfamily_name'</span><span class="p">]);</span>
@@ -501,10 +519,8 @@
 <pre class="highlight"><code><span class="cp">&lt;?php</span>
 
 <span class="nv">$session</span><span class="o">-&gt;</span><span class="na">execute</span><span class="p">(</span>
-    <span class="k">new</span> <span class="nx">Cassandra\SimpleStatement</span><span class="p">(</span><span class="s2">"UPDATE users SET age = ? WHERE user_name = ?"</span><span class="p">),</span>
-    <span class="k">array</span><span class="p">(</span>
-        <span class="s1">'arguments'</span> <span class="o">=&gt;</span> <span class="k">array</span><span class="p">(</span><span class="mi">41</span><span class="p">,</span> <span class="s1">'Sam'</span><span class="p">)</span>
-    <span class="p">)</span>
+    <span class="s2">"UPDATE users SET age = ? WHERE user_name = ?"</span><span class="p">,</span>
+    <span class="k">array</span><span class="p">(</span><span class="s1">'arguments'</span> <span class="o">=&gt;</span> <span class="k">array</span><span class="p">(</span><span class="mi">41</span><span class="p">,</span> <span class="s1">'Sam'</span><span class="p">))</span>
 <span class="p">);</span>
 </code></pre>
 <p>For frequently executed queries, it’s strongly recommended to use prepared statements. As a rule of thumb, if your application is sending a request more than once, a prepared statement is almost always the right choice.</p>
@@ -518,7 +534,7 @@
 <span class="nv">$statement</span> <span class="o">=</span> <span class="nv">$session</span><span class="o">-&gt;</span><span class="na">prepare</span><span class="p">(</span><span class="s1">'INSERT INTO users (username, email) VALUES (?, ?)'</span><span class="p">);</span>
 
 <span class="nv">$session</span><span class="o">-&gt;</span><span class="na">execute</span><span class="p">(</span><span class="nv">$statement</span><span class="p">,</span> <span class="k">array</span><span class="p">(</span>
-    <span class="s1">'arguments'</span> <span class="o">=&gt;</span> <span class="k">array</span><span class="p">(</span><span class="s1">'user1'</span><span class="p">,</span> <span class="s1">'user1@mycompany.com'</span><span class="p">)</span>
+    <span class="s1">'arguments'</span> <span class="o">=&gt;</span> <span class="k">array</span><span class="p">(</span><span class="s1">'avalanche123'</span><span class="p">,</span> <span class="s1">'bulat.shakirzyanov@datastax.com'</span><span class="p">)</span>
 <span class="p">));</span>
 </code></pre>
 <p>A prepared statement can be run many times, but the CQL parsing will only be done once on each node. Use prepared statements for queries you run over and over again.</p>
@@ -539,8 +555,8 @@
 
 <span class="c1">// execute all statements in background
 </span><span class="k">foreach</span> <span class="p">(</span><span class="nv">$data</span> <span class="k">as</span> <span class="nv">$arguments</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nv">$futures</span><span class="p">[]</span><span class="o">=</span> <span class="nv">$session</span><span class="o">-&gt;</span><span class="na">executeAsync</span><span class="p">(</span><span class="nv">$statement</span><span class="p">,</span> <span class="k">array</span><span class="p">(</span>
-                    <span class="s1">'arguments'</span> <span class="o">=&gt;</span> <span class="nv">$arguments</span>
+    <span class="nv">$futures</span><span class="p">[]</span> <span class="o">=</span> <span class="nv">$session</span><span class="o">-&gt;</span><span class="na">executeAsync</span><span class="p">(</span><span class="nv">$statement</span><span class="p">,</span> <span class="k">array</span><span class="p">(</span>
+                     <span class="s1">'arguments'</span> <span class="o">=&gt;</span> <span class="nv">$arguments</span>
                 <span class="p">));</span>
 <span class="p">}</span>
 
@@ -558,25 +574,23 @@
 <p>There is no special facility for creating keyspaces and tables, they are created by executing CQL:</p>
 <pre class="highlight"><code><span class="cp">&lt;?php</span>
 
-<span class="nv">$createKeyspace</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Cassandra\SimpleStatement</span><span class="p">(</span><span class="sh">&lt;&lt;&lt;EOD
+<span class="nv">$createKeyspace</span> <span class="o">=</span> <span class="sh">&lt;&lt;&lt;EOD
 CREATE KEYSPACE measurements
 WITH replication = {
   'class': 'SimpleStrategy',
   'replication_factor': 1
 }
-EOD
-</span><span class="p">);</span>
-
-<span class="nv">$createTable</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Cassandra\SimpleStatement</span><span class="p">(</span><span class="sh">&lt;&lt;&lt;EOD
+EOD;
+</span>
+<span class="nv">$createTable</span> <span class="o">=</span> <span class="sh">&lt;&lt;&lt;EOD
 CREATE TABLE events (
   id INT,
   date DATE,
   comment VARCHAR,
   PRIMARY KEY (id)
 )
-EOD
-</span><span class="p">);</span>
-
+EOD;
+</span>
 <span class="nv">$session</span><span class="o">-&gt;</span><span class="na">execute</span><span class="p">(</span><span class="nv">$createKeyspace</span><span class="p">);</span>
 <span class="nv">$session</span><span class="o">-&gt;</span><span class="na">execute</span><span class="p">(</span><span class="s1">'USE measurements'</span><span class="p">);</span>
 <span class="nv">$session</span><span class="o">-&gt;</span><span class="na">execute</span><span class="p">(</span><span class="nv">$createTable</span><span class="p">);</span>
@@ -596,11 +610,12 @@ EOD
 <span class="nv">$statement</span> <span class="o">=</span> <span class="nv">$session</span><span class="o">-&gt;</span><span class="na">prepare</span><span class="p">(</span><span class="s2">"UPDATE users SET name = ? WHERE user_id = ?"</span><span class="p">);</span>
 <span class="nv">$batch</span><span class="o">-&gt;</span><span class="na">add</span><span class="p">(</span><span class="nv">$statement</span><span class="p">,</span> <span class="k">array</span><span class="p">(</span><span class="s1">'Sue'</span><span class="p">,</span> <span class="s1">'unicorn31'</span><span class="p">));</span>
 
-<span class="nv">$statement</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Cassandra\SimpleStatement</span><span class="p">(</span><span class="s2">"UPDATE users SET age = 19 WHERE user_id = 'unicorn31'"</span><span class="p">);</span>
-<span class="nv">$batch</span><span class="o">-&gt;</span><span class="na">add</span><span class="p">(</span><span class="nv">$statement</span><span class="p">);</span>
+<span class="nv">$batch</span><span class="o">-&gt;</span><span class="na">add</span><span class="p">(</span><span class="s2">"UPDATE users SET age = 19 WHERE user_id = 'unicorn31'"</span><span class="p">);</span>
 
-<span class="nv">$statement</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Cassandra\SimpleStatement</span><span class="p">(</span><span class="s2">"INSERT INTO activity (user_id, what, when) VALUES (?, 'login', NOW())"</span><span class="p">);</span>
-<span class="nv">$batch</span><span class="o">-&gt;</span><span class="na">add</span><span class="p">(</span><span class="nv">$statement</span><span class="p">,</span> <span class="k">array</span><span class="p">(</span><span class="s1">'unicorn31'</span><span class="p">));</span>
+<span class="nv">$batch</span><span class="o">-&gt;</span><span class="na">add</span><span class="p">(</span>
+    <span class="s2">"INSERT INTO activity (user_id, what, when) VALUES (?, 'login', NOW())"</span><span class="p">,</span>
+    <span class="k">array</span><span class="p">(</span><span class="s1">'unicorn31'</span><span class="p">)</span>
+<span class="p">);</span>
 
 <span class="nv">$session</span><span class="o">-&gt;</span><span class="na">execute</span><span class="p">(</span><span class="nv">$batch</span><span class="p">);</span>
 </code></pre>
@@ -628,10 +643,11 @@ EOD
                <span class="o">-&gt;</span><span class="na">build</span><span class="p">();</span>
 <span class="nv">$session</span> <span class="o">=</span> <span class="nv">$cluster</span><span class="o">-&gt;</span><span class="na">connect</span><span class="p">();</span>
 </code></pre>
-<p>You can also override the page size on a per-execute basis by adding the <code>page_size</code> option to <a href="../api/Cassandra/class.ExecutionOptions/"><code>Cassandra\ExecutionOptions</code></a>:</p>
+<p>You can also override the page size on a per-execute basis by adding the <code>page_size</code> execution option to a call to
+<a href="../api/Cassandra/interface.Session/#method-executeAsync"><code>Cassandra\Session.executeAsync</code></a> or <a href="../api/Cassandra/interface.Session/#method-execute"><code>Cassandra\Session.execute</code></a>:</p>
 <pre class="highlight"><code><span class="cp">&lt;?php</span>
 
-<span class="nv">$statement</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Cassandra\SimpleStatement</span><span class="p">(</span><span class="s2">"SELECT * FROM large_table WHERE id = 'partition_with_lots_of_data'"</span><span class="p">);</span>
+<span class="nv">$statement</span> <span class="o">=</span> <span class="s2">"SELECT * FROM large_table WHERE id = 'partition_with_lots_of_data'"</span><span class="p">;</span>
 <span class="nv">$result</span>    <span class="o">=</span> <span class="nv">$session</span><span class="o">-&gt;</span><span class="na">execute</span><span class="p">(</span><span class="nv">$statement</span><span class="p">,</span> <span class="k">array</span><span class="p">(</span><span class="s1">'page_size'</span> <span class="o">=&gt;</span> <span class="mi">100</span><span class="p">));</span>
 
 <span class="k">while</span> <span class="p">(</span><span class="nv">$result</span><span class="p">)</span> <span class="p">{</span>
@@ -656,11 +672,11 @@ EOD
 </code></pre>
 <p><a href="../api/Cassandra/Cluster/class.Builder/#method.withDefaultConsistency">Read more <code>Cassandra\Cluster\Builder::withDefaultConsistency()</code></a></p>
 
-<p>Consistency can also be passed via <code>Cassandra\ExecutionOptions</code>.</p>
+<p>Consistency can also be passed via execution options.</p>
 <pre class="highlight"><code><span class="cp">&lt;?php</span>
 
 <span class="nv">$session</span><span class="o">-&gt;</span><span class="na">execute</span><span class="p">(</span>
-    <span class="k">new</span> <span class="nx">Cassandra\SimpleStatement</span><span class="p">(</span><span class="s1">'SELECT * FROM users'</span><span class="p">),</span>
+    <span class="s1">'SELECT * FROM users'</span><span class="p">,</span>
     <span class="k">array</span><span class="p">(</span><span class="s1">'consistency'</span> <span class="o">=&gt;</span> <span class="nx">Cassandra</span><span class="o">::</span><span class="na">CONSISTENCY_LOCAL_QUORUM</span><span class="p">)</span>
 <span class="p">);</span>
 
@@ -670,8 +686,8 @@ EOD
 <span class="p">));</span>
 
 <span class="nv">$batch</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Cassandra\BatchStatement</span><span class="p">();</span>
-<span class="nv">$batch</span><span class="o">-&gt;</span><span class="na">add</span><span class="p">(</span><span class="k">new</span> <span class="nx">Cassandra\SimpleStatement</span><span class="p">(</span><span class="s2">"UPDATE users SET email = 'sue@foobar.com' WHERE id = 'sue'"</span><span class="p">));</span>
-<span class="nv">$batch</span><span class="o">-&gt;</span><span class="na">add</span><span class="p">(</span><span class="k">new</span> <span class="nx">Cassandra\SimpleStatement</span><span class="p">(</span><span class="s2">"UPDATE users SET email = 'tom@foobar.com' WHERE id = 'tom'"</span><span class="p">));</span>
+<span class="nv">$batch</span><span class="o">-&gt;</span><span class="na">add</span><span class="p">(</span><span class="s2">"UPDATE users SET email = 'sue@foobar.com' WHERE id = 'sue'"</span><span class="p">);</span>
+<span class="nv">$batch</span><span class="o">-&gt;</span><span class="na">add</span><span class="p">(</span><span class="s2">"UPDATE users SET email = 'tom@foobar.com' WHERE id = 'tom'"</span><span class="p">);</span>
 <span class="nv">$session</span><span class="o">-&gt;</span><span class="na">execute</span><span class="p">(</span><span class="nv">$batch</span><span class="p">,</span> <span class="k">array</span><span class="p">(</span>
     <span class="s1">'consistency'</span> <span class="o">=&gt;</span> <span class="nx">Cassandra</span><span class="o">::</span><span class="na">CONSISTENCY_LOCAL_QUORUM</span>
 <span class="p">));</span>
@@ -743,7 +759,7 @@ Schema metadata includes information about keyspace, tables and columns and it a
 <h3 id="data-types" class="target">Data Types<a class="anchor" href="#data-types" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
 </h3>
 
-<p>The PHP driver for Apache Cassandra supports <a href="datatypes/">a variety of datatypes</a>.</p>
+<p>The PHP driver for Apache Cassandra supports <a href="core/datatypes/">a variety of datatypes</a>.</p>
 
 <p>You can also use the rich type metadata API to define and inspect types, as well as validate data objects.</p>
 
@@ -751,7 +767,7 @@ Schema metadata includes information about keyspace, tables and columns and it a
 <pre class="highlight"><code><span class="cp">&lt;?php</span>
 
 <span class="nv">$map</span> <span class="o">=</span> <span class="nx">Cassandra\Type</span><span class="o">::</span><span class="na">map</span><span class="p">(</span><span class="nx">Cassandra\Type</span><span class="o">::</span><span class="na">varchar</span><span class="p">(),</span> <span class="nx">Cassandra\Type</span><span class="o">::</span><span class="na">int</span><span class="p">())</span>
-                     <span class="o">-&gt;</span><span class="na">create</span><span class="p">(</span><span class="s1">'a'</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">'b'</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s1">'c'</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="s1">'d'</span><span class="p">,</span> <span class="mi">4</span><span class="p">);</span>
+           <span class="o">-&gt;</span><span class="na">create</span><span class="p">(</span><span class="s1">'a'</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">'b'</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s1">'c'</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="s1">'d'</span><span class="p">,</span> <span class="mi">4</span><span class="p">);</span>
 
 <span class="nb">var_dump</span><span class="p">(</span><span class="nb">array_combine</span><span class="p">(</span><span class="nv">$map</span><span class="o">-&gt;</span><span class="na">keys</span><span class="p">(),</span> <span class="nv">$map</span><span class="o">-&gt;</span><span class="na">values</span><span class="p">()));</span>
 </code></pre>

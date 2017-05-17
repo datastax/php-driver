@@ -84,7 +84,7 @@
   
   <li class="active">
     <a href="../">
-      Features <small>page</small>
+      Core <small>page</small>
       
       
       <span class="glyphicon glyphicon-minus-sign pull-right" aria-hidden="true"></span>
@@ -228,6 +228,24 @@
   
   
   <li>
+    <a href="../duration_collections/">
+      Duration <small>feature</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../duration/">
+      Duration <small>feature</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
     <a href="../materialized_view_metadata/">
       Materialized View Metadata <small>feature</small>
       
@@ -305,7 +323,7 @@
                 
                 
                 
-                <li><a href="../">Features</a></li>
+                <li><a href="../">Core</a></li>
                 
                 
                 
@@ -350,114 +368,41 @@
   <span class="p">[</span><span class="s1">'2014-09-11 10:09:08+0000'</span><span class="p">,</span> <span class="s1">'2014-09-12 10:09:00+0000'</span><span class="p">],</span>
   <span class="p">{</span><span class="s1">'2014-09-11 10:09:08+0000'</span><span class="p">:</span> <span class="mi">37</span><span class="p">.</span><span class="mi">397357</span><span class="p">},</span>
   <span class="p">{</span><span class="s1">'200.199.198.197'</span><span class="p">,</span> <span class="s1">'192.168.1.15'</span><span class="p">}</span>
-<span class="p">)</span>
+<span class="p">);</span>
 </code></pre>
 </dd>
 <dt>And </dt>
 <dd>the following example:<pre class="highlight"><code><span class="cp">&lt;?php</span>
-<span class="nv">$cluster</span>   <span class="o">=</span> <span class="nx">Cassandra</span><span class="o">::</span><span class="na">cluster</span><span class="p">()</span>
-               <span class="o">-&gt;</span><span class="na">withContactPoints</span><span class="p">(</span><span class="s1">'127.0.0.1'</span><span class="p">)</span>
-               <span class="o">-&gt;</span><span class="na">build</span><span class="p">();</span>
+<span class="nv">$cluster</span>   <span class="o">=</span> <span class="nx">Cassandra</span><span class="o">::</span><span class="na">cluster</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">build</span><span class="p">();</span>
 <span class="nv">$session</span>   <span class="o">=</span> <span class="nv">$cluster</span><span class="o">-&gt;</span><span class="na">connect</span><span class="p">(</span><span class="s2">"simplex"</span><span class="p">);</span>
-<span class="nv">$statement</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Cassandra\SimpleStatement</span><span class="p">(</span><span class="s2">"SELECT * FROM user"</span><span class="p">);</span>
-<span class="nv">$result</span>    <span class="o">=</span> <span class="nv">$session</span><span class="o">-&gt;</span><span class="na">execute</span><span class="p">(</span><span class="nv">$statement</span><span class="p">);</span>
+<span class="nv">$result</span>    <span class="o">=</span> <span class="nv">$session</span><span class="o">-&gt;</span><span class="na">execute</span><span class="p">(</span><span class="s2">"SELECT * FROM user"</span><span class="p">);</span>
 <span class="nv">$row</span>       <span class="o">=</span> <span class="nv">$result</span><span class="o">-&gt;</span><span class="na">first</span><span class="p">();</span>
 
-<span class="k">echo</span> <span class="s2">"Logins: "</span> <span class="o">.</span> <span class="nb">var_export</span><span class="p">(</span><span class="nv">$row</span><span class="p">[</span><span class="s1">'logins'</span><span class="p">],</span> <span class="kc">true</span><span class="p">)</span> <span class="o">.</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">;</span>
-<span class="k">echo</span> <span class="s2">"Locations: "</span> <span class="o">.</span> <span class="nb">var_export</span><span class="p">(</span><span class="nv">$row</span><span class="p">[</span><span class="s1">'locations'</span><span class="p">],</span> <span class="kc">true</span><span class="p">)</span> <span class="o">.</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">;</span>
-<span class="k">echo</span> <span class="s2">"Ip Addresses: "</span> <span class="o">.</span> <span class="nb">var_export</span><span class="p">(</span><span class="nv">$row</span><span class="p">[</span><span class="s1">'ip_addresses'</span><span class="p">],</span> <span class="kc">true</span><span class="p">)</span> <span class="o">.</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">;</span>
+<span class="k">echo</span> <span class="s2">"Logins:"</span> <span class="o">.</span> <span class="nx">PHP_EOL</span><span class="p">;</span>
+<span class="k">foreach</span> <span class="p">(</span><span class="nv">$row</span><span class="p">[</span><span class="s1">'logins'</span><span class="p">]</span> <span class="k">as</span> <span class="nv">$login</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">echo</span> <span class="s2">"  </span><span class="si">{</span><span class="nv">$login</span><span class="si">}</span><span class="s2">"</span> <span class="o">.</span> <span class="nx">PHP_EOL</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="k">echo</span> <span class="s2">"Locations:"</span> <span class="o">.</span> <span class="nx">PHP_EOL</span><span class="p">;</span>
+<span class="k">foreach</span> <span class="p">(</span><span class="nv">$row</span><span class="p">[</span><span class="s1">'locations'</span><span class="p">]</span> <span class="k">as</span> <span class="nv">$key</span> <span class="o">=&gt;</span> <span class="nv">$location</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">echo</span> <span class="s2">"  </span><span class="si">{</span><span class="nv">$key</span><span class="si">}</span><span class="s2"> =&gt; </span><span class="si">{</span><span class="nv">$location</span><span class="si">}</span><span class="s2">"</span> <span class="o">.</span> <span class="nx">PHP_EOL</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="k">echo</span> <span class="s2">"Ip Addresses:"</span> <span class="o">.</span> <span class="nx">PHP_EOL</span><span class="p">;</span>
+<span class="k">foreach</span> <span class="p">(</span><span class="nv">$row</span><span class="p">[</span><span class="s1">'ip_addresses'</span><span class="p">]</span> <span class="k">as</span> <span class="nv">$ip_address</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">echo</span> <span class="s2">"  </span><span class="si">{</span><span class="nv">$ip_address</span><span class="si">}</span><span class="s2">"</span> <span class="o">.</span> <span class="nx">PHP_EOL</span><span class="p">;</span>
+<span class="p">}</span>
 </code></pre>
 </dd>
 <dt>When </dt>
 <dd>it is executed</dd>
 <dt>Then </dt>
-<dd>its output should contain:<pre><code>Logins: Cassandra\Collection::__set_state(array(
-   'type' =&gt;
-  Cassandra\Type\Collection::__set_state(array(
-     'valueType' =&gt;
-    Cassandra\Type\Scalar::__set_state(array(
-       'name' =&gt; 'timestamp',
-    )),
-  )),
-   'values' =&gt;
-  array (
-    0 =&gt;
-    Cassandra\Timestamp::__set_state(array(
-       'type' =&gt;
-      Cassandra\Type\Scalar::__set_state(array(
-         'name' =&gt; 'timestamp',
-      )),
-       'seconds' =&gt; 1410430148,
-       'microseconds' =&gt; 0,
-    )),
-    1 =&gt;
-    Cassandra\Timestamp::__set_state(array(
-       'type' =&gt;
-      Cassandra\Type\Scalar::__set_state(array(
-         'name' =&gt; 'timestamp',
-      )),
-       'seconds' =&gt; 1410516540,
-       'microseconds' =&gt; 0,
-    )),
-  ),
-))
-Locations: Cassandra\Map::__set_state(array(
-   'type' =&gt;
-  Cassandra\Type\Map::__set_state(array(
-     'keyType' =&gt;
-    Cassandra\Type\Scalar::__set_state(array(
-       'name' =&gt; 'timestamp',
-    )),
-     'valueType' =&gt;
-    Cassandra\Type\Scalar::__set_state(array(
-       'name' =&gt; 'double',
-    )),
-  )),
-   'keys' =&gt;
-  array (
-    0 =&gt;
-    Cassandra\Timestamp::__set_state(array(
-       'type' =&gt;
-      Cassandra\Type\Scalar::__set_state(array(
-         'name' =&gt; 'timestamp',
-      )),
-       'seconds' =&gt; 1410430148,
-       'microseconds' =&gt; 0,
-    )),
-  ),
-   'values' =&gt;
-  array (
-    0 =&gt; 37.397357,
-  ),
-))
-Ip Addresses: Cassandra\Set::__set_state(array(
-   'type' =&gt;
-  Cassandra\Type\Set::__set_state(array(
-     'valueType' =&gt;
-    Cassandra\Type\Scalar::__set_state(array(
-       'name' =&gt; 'inet',
-    )),
-  )),
-   'values' =&gt;
-  array (
-    0 =&gt;
-    Cassandra\Inet::__set_state(array(
-       'type' =&gt;
-      Cassandra\Type\Scalar::__set_state(array(
-         'name' =&gt; 'inet',
-      )),
-       'address' =&gt; '192.168.1.15',
-    )),
-    1 =&gt;
-    Cassandra\Inet::__set_state(array(
-       'type' =&gt;
-      Cassandra\Type\Scalar::__set_state(array(
-         'name' =&gt; 'inet',
-      )),
-       'address' =&gt; '200.199.198.197',
-    )),
-  ),
-))
+<dd>its output should contain:<pre><code>Logins:
+  1410430148000
+  1410516540000
+Locations:
+  1410430148000 =&gt; 37.397357
+Ip Addresses:
+  192.168.1.15
+  200.199.198.197
 </code></pre>
 </dd>
 </dl>
@@ -480,12 +425,8 @@ Ip Addresses: Cassandra\Set::__set_state(array(
 </dd>
 <dt>And </dt>
 <dd>the following example:<pre class="highlight"><code><span class="cp">&lt;?php</span>
-<span class="nv">$cluster</span>   <span class="o">=</span> <span class="nx">Cassandra</span><span class="o">::</span><span class="na">cluster</span><span class="p">()</span>
-               <span class="o">-&gt;</span><span class="na">withContactPoints</span><span class="p">(</span><span class="s1">'127.0.0.1'</span><span class="p">)</span>
-               <span class="o">-&gt;</span><span class="na">build</span><span class="p">();</span>
+<span class="nv">$cluster</span>   <span class="o">=</span> <span class="nx">Cassandra</span><span class="o">::</span><span class="na">cluster</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">build</span><span class="p">();</span>
 <span class="nv">$session</span>   <span class="o">=</span> <span class="nv">$cluster</span><span class="o">-&gt;</span><span class="na">connect</span><span class="p">(</span><span class="s2">"simplex"</span><span class="p">);</span>
-<span class="nv">$statement</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Cassandra\SimpleStatement</span><span class="p">(</span>
-                <span class="s2">"INSERT INTO users (id, name, addresses) VALUES (?, ?, ?)"</span><span class="p">);</span>
 
 <span class="nv">$addressType</span> <span class="o">=</span> <span class="nx">Cassandra\Type</span><span class="o">::</span><span class="na">map</span><span class="p">(</span><span class="nx">Cassandra\Type</span><span class="o">::</span><span class="na">text</span><span class="p">(),</span> <span class="nx">Cassandra\Type</span><span class="o">::</span><span class="na">text</span><span class="p">());</span>
 <span class="nv">$addressesType</span> <span class="o">=</span> <span class="nx">Cassandra\Type</span><span class="o">::</span><span class="na">map</span><span class="p">(</span><span class="nx">Cassandra\Type</span><span class="o">::</span><span class="na">text</span><span class="p">(),</span> <span class="nv">$addressType</span><span class="p">);</span>
@@ -522,17 +463,23 @@ Ip Addresses: Cassandra\Set::__set_state(array(
 <span class="p">);</span>
 
 <span class="k">foreach</span> <span class="p">(</span><span class="nv">$users</span> <span class="k">as</span> <span class="nv">$user</span><span class="p">)</span> <span class="p">{</span>
-  <span class="nv">$options</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span><span class="s1">'arguments'</span> <span class="o">=&gt;</span> <span class="nv">$user</span><span class="p">);</span>
-  <span class="nv">$session</span><span class="o">-&gt;</span><span class="na">execute</span><span class="p">(</span><span class="nv">$statement</span><span class="p">,</span> <span class="nv">$options</span><span class="p">);</span>
+    <span class="nv">$options</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span><span class="s1">'arguments'</span> <span class="o">=&gt;</span> <span class="nv">$user</span><span class="p">);</span>
+    <span class="nv">$session</span><span class="o">-&gt;</span><span class="na">execute</span><span class="p">(</span><span class="s2">"INSERT INTO users (id, name, addresses) VALUES (?, ?, ?)"</span><span class="p">,</span> <span class="nv">$options</span><span class="p">);</span>
 <span class="p">}</span>
 
-<span class="nv">$statement</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Cassandra\SimpleStatement</span><span class="p">(</span><span class="s2">"SELECT * FROM users"</span><span class="p">);</span>
-<span class="nv">$result</span>    <span class="o">=</span> <span class="nv">$session</span><span class="o">-&gt;</span><span class="na">execute</span><span class="p">(</span><span class="nv">$statement</span><span class="p">);</span>
+<span class="nv">$result</span> <span class="o">=</span> <span class="nv">$session</span><span class="o">-&gt;</span><span class="na">execute</span><span class="p">(</span><span class="s2">"SELECT * FROM users"</span><span class="p">);</span>
 
 <span class="k">foreach</span> <span class="p">(</span><span class="nv">$result</span> <span class="k">as</span> <span class="nv">$row</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">print</span> <span class="s1">'ID: '</span> <span class="o">.</span> <span class="nv">$row</span><span class="p">[</span><span class="s1">'id'</span><span class="p">]</span> <span class="o">.</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">;</span>
-    <span class="k">print</span> <span class="s1">'Name: '</span> <span class="o">.</span> <span class="nv">$row</span><span class="p">[</span><span class="s1">'name'</span><span class="p">]</span> <span class="o">.</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">;</span>
-    <span class="k">print</span> <span class="s1">'Addresses: '</span> <span class="o">.</span> <span class="nb">var_export</span><span class="p">(</span><span class="nv">$row</span><span class="p">[</span><span class="s1">'addresses'</span><span class="p">],</span> <span class="kc">true</span><span class="p">)</span><span class="o">.</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">;</span>
+    <span class="k">echo</span> <span class="s2">"ID: </span><span class="si">{</span><span class="nv">$row</span><span class="p">[</span><span class="s1">'id'</span><span class="p">]}</span><span class="s2">" . PHP_EOL;
+    echo "</span><span class="nx">Name</span><span class="o">:</span> <span class="p">{</span><span class="nv">$row</span><span class="p">[</span><span class="s1">'name'</span><span class="p">]}</span><span class="s2">" . PHP_EOL;
+    echo "</span><span class="nx">Addresses</span><span class="s2">" . PHP_EOL;
+    </span><span class="nv">$addresses</span><span class="s2"> = </span><span class="nv">$row['addresses']</span><span class="s2">;
+    foreach (</span><span class="nv">$addresses-&gt;keys</span><span class="s2">() as </span><span class="nv">$type</span><span class="s2">) {
+        echo "</span>  <span class="p">{</span><span class="nv">$type</span><span class="si">}</span><span class="s2">:"</span> <span class="o">.</span> <span class="nx">PHP_EOL</span><span class="p">;</span>
+        <span class="k">foreach</span> <span class="p">(</span><span class="nv">$addresses</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="nv">$type</span><span class="p">)</span> <span class="k">as</span> <span class="nv">$name</span> <span class="o">=&gt;</span> <span class="nv">$value</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">echo</span> <span class="s2">"    </span><span class="si">{</span><span class="nv">$name</span><span class="si">}</span><span class="s2"> =&gt; </span><span class="si">{</span><span class="nv">$value</span><span class="si">}</span><span class="s2">"</span> <span class="o">.</span> <span class="nx">PHP_EOL</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
 <span class="p">}</span>
 </code></pre>
 </dd>
@@ -541,169 +488,25 @@ Ip Addresses: Cassandra\Set::__set_state(array(
 <dt>Then </dt>
 <dd>its output should contain:<pre><code>ID: 56357d2b-4586-433c-ad24-afa9918bc415
 Name: Charles Wallace
-Addresses: Cassandra\Map::__set_state(array(
-   'type' =&gt;
-  Cassandra\Type\Map::__set_state(array(
-     'keyType' =&gt;
-    Cassandra\Type\Scalar::__set_state(array(
-       'name' =&gt; 'varchar',
-    )),
-     'valueType' =&gt;
-    Cassandra\Type\Map::__set_state(array(
-       'keyType' =&gt;
-      Cassandra\Type\Scalar::__set_state(array(
-         'name' =&gt; 'varchar',
-      )),
-       'valueType' =&gt;
-      Cassandra\Type\Scalar::__set_state(array(
-         'name' =&gt; 'varchar',
-      )),
-    )),
-  )),
-   'keys' =&gt;
-  array (
-    0 =&gt; 'home',
-  ),
-   'values' =&gt;
-  array (
-    0 =&gt;
-    Cassandra\Map::__set_state(array(
-       'type' =&gt;
-      Cassandra\Type\Map::__set_state(array(
-         'keyType' =&gt;
-        Cassandra\Type\Scalar::__set_state(array(
-           'name' =&gt; 'varchar',
-        )),
-         'valueType' =&gt;
-        Cassandra\Type\Scalar::__set_state(array(
-           'name' =&gt; 'varchar',
-        )),
-      )),
-       'keys' =&gt;
-      array (
-        0 =&gt; 'city',
-        1 =&gt; 'street',
-        2 =&gt; 'zip',
-      ),
-       'values' =&gt;
-      array (
-        0 =&gt; '85023',
-        1 =&gt; '9042 Cassandra Lane',
-        2 =&gt; 'Phoenix',
-      ),
-    )),
-  ),
-))
+Addresses
+  home:
+    city =&gt; Phoenix
+    street =&gt; 9042 Cassandra Lane
+    zip =&gt; 85023
 ID: ce359590-8528-4682-a9f3-add53fc9aa09
 Name: Kevin Malone
-Addresses: Cassandra\Map::__set_state(array(
-   'type' =&gt;
-  Cassandra\Type\Map::__set_state(array(
-     'keyType' =&gt;
-    Cassandra\Type\Scalar::__set_state(array(
-       'name' =&gt; 'varchar',
-    )),
-     'valueType' =&gt;
-    Cassandra\Type\Map::__set_state(array(
-       'keyType' =&gt;
-      Cassandra\Type\Scalar::__set_state(array(
-         'name' =&gt; 'varchar',
-      )),
-       'valueType' =&gt;
-      Cassandra\Type\Scalar::__set_state(array(
-         'name' =&gt; 'varchar',
-      )),
-    )),
-  )),
-   'keys' =&gt;
-  array (
-    0 =&gt; 'home',
-  ),
-   'values' =&gt;
-  array (
-    0 =&gt;
-    Cassandra\Map::__set_state(array(
-       'type' =&gt;
-      Cassandra\Type\Map::__set_state(array(
-         'keyType' =&gt;
-        Cassandra\Type\Scalar::__set_state(array(
-           'name' =&gt; 'varchar',
-        )),
-         'valueType' =&gt;
-        Cassandra\Type\Scalar::__set_state(array(
-           'name' =&gt; 'varchar',
-        )),
-      )),
-       'keys' =&gt;
-      array (
-        0 =&gt; 'city',
-        1 =&gt; 'street',
-        2 =&gt; 'zip',
-      ),
-       'values' =&gt;
-      array (
-        0 =&gt; '1000 Database Road',
-        1 =&gt; '10025',
-        2 =&gt; 'New York',
-      ),
-    )),
-  ),
-))
+Addresses
+  home:
+    city =&gt; New York
+    street =&gt; 1000 Database Road
+    zip =&gt; 10025
 ID: 7d64dca1-dd4d-4f3c-bec4-6a88fa082a13
 Name: Michael Scott
-Addresses: Cassandra\Map::__set_state(array(
-   'type' =&gt;
-  Cassandra\Type\Map::__set_state(array(
-     'keyType' =&gt;
-    Cassandra\Type\Scalar::__set_state(array(
-       'name' =&gt; 'varchar',
-    )),
-     'valueType' =&gt;
-    Cassandra\Type\Map::__set_state(array(
-       'keyType' =&gt;
-      Cassandra\Type\Scalar::__set_state(array(
-         'name' =&gt; 'varchar',
-      )),
-       'valueType' =&gt;
-      Cassandra\Type\Scalar::__set_state(array(
-         'name' =&gt; 'varchar',
-      )),
-    )),
-  )),
-   'keys' =&gt;
-  array (
-    0 =&gt; 'work',
-  ),
-   'values' =&gt;
-  array (
-    0 =&gt;
-    Cassandra\Map::__set_state(array(
-       'type' =&gt;
-      Cassandra\Type\Map::__set_state(array(
-         'keyType' =&gt;
-        Cassandra\Type\Scalar::__set_state(array(
-           'name' =&gt; 'varchar',
-        )),
-         'valueType' =&gt;
-        Cassandra\Type\Scalar::__set_state(array(
-           'name' =&gt; 'varchar',
-        )),
-      )),
-       'keys' =&gt;
-      array (
-        0 =&gt; 'city',
-        1 =&gt; 'street',
-        2 =&gt; 'zip',
-      ),
-       'values' =&gt;
-      array (
-        0 =&gt; '20000 Log Ave',
-        1 =&gt; '95054',
-        2 =&gt; 'Santa Clara',
-      ),
-    )),
-  ),
-))
+Addresses
+  work:
+    city =&gt; Santa Clara
+    street =&gt; 20000 Log Ave
+    zip =&gt; 95054
 </code></pre>
 </dd>
 </dl>

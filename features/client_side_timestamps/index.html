@@ -84,7 +84,7 @@
   
   <li class="active">
     <a href="../">
-      Features <small>page</small>
+      Core <small>page</small>
       
       
       <span class="glyphicon glyphicon-minus-sign pull-right" aria-hidden="true"></span>
@@ -228,6 +228,24 @@
   
   
   <li>
+    <a href="../duration_collections/">
+      Duration <small>feature</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../duration/">
+      Duration <small>feature</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
     <a href="../materialized_view_metadata/">
       Materialized View Metadata <small>feature</small>
       
@@ -305,7 +323,7 @@
                 
                 
                 
-                <li><a href="../">Features</a></li>
+                <li><a href="../">Core</a></li>
                 
                 
                 
@@ -333,7 +351,7 @@ allows for timestamps to be assigned client-side in two ways:</p>
 <li>By providing a client-side timestamp generator such as
 <code>Cassandra\TimestampGenerator\Monotonic()</code>.</li>
 <li>Explicitly assigning a ‘timestamp’ when executing a statement or batch
-using <code>Cassandra\ExecutionOptions</code>.</li>
+using execution options.</li>
 </ul>
 <h2 id="background" class="target">Background<a class="anchor" href="#background" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
 </h2>
@@ -366,10 +384,6 @@ using <code>Cassandra\ExecutionOptions</code>.</li>
                <span class="o">-&gt;</span><span class="na">withContactPoints</span><span class="p">(</span><span class="s1">'127.0.0.1'</span><span class="p">)</span>
                <span class="o">-&gt;</span><span class="na">build</span><span class="p">();</span>
 <span class="nv">$session</span>   <span class="o">=</span> <span class="nv">$cluster</span><span class="o">-&gt;</span><span class="na">connect</span><span class="p">(</span><span class="s2">"simplex"</span><span class="p">);</span>
-<span class="nv">$simple</span>    <span class="o">=</span> <span class="k">new</span> <span class="nx">Cassandra\SimpleStatement</span><span class="p">(</span>
-               <span class="s2">"INSERT INTO playlists (id, song_id, artist, title, album) "</span> <span class="o">.</span>
-               <span class="s2">"VALUES (62c36092-82a1-3a00-93d1-46196ee77204, ?, ?, ?, ?)"</span>
-             <span class="p">);</span>
 
 <span class="nv">$arguments</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span>
     <span class="s1">'song_id'</span> <span class="o">=&gt;</span> <span class="k">new</span> <span class="nx">Cassandra\Uuid</span><span class="p">(</span><span class="s1">'756716f7-2e54-4715-9f00-91dcbea6cf50'</span><span class="p">),</span>
@@ -381,11 +395,13 @@ using <code>Cassandra\ExecutionOptions</code>.</li>
     <span class="s1">'arguments'</span> <span class="o">=&gt;</span> <span class="nv">$arguments</span><span class="p">,</span>
     <span class="s1">'timestamp'</span> <span class="o">=&gt;</span> <span class="mi">1234</span>
 <span class="p">);</span>
-<span class="nv">$session</span><span class="o">-&gt;</span><span class="na">execute</span><span class="p">(</span><span class="nv">$simple</span><span class="p">,</span> <span class="nv">$options</span><span class="p">);</span>
+<span class="nv">$session</span><span class="o">-&gt;</span><span class="na">execute</span><span class="p">(</span>
+    <span class="s2">"INSERT INTO playlists (id, song_id, artist, title, album) "</span> <span class="o">.</span>
+    <span class="s2">"VALUES (62c36092-82a1-3a00-93d1-46196ee77204, ?, ?, ?, ?)"</span><span class="p">,</span>
+    <span class="nv">$options</span>
+<span class="p">);</span>
 
-<span class="nv">$statement</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Cassandra\SimpleStatement</span><span class="p">(</span>
-  <span class="s2">"SELECT artist, title, album, WRITETIME(song_id) FROM simplex.playlists"</span><span class="p">);</span>
-<span class="nv">$result</span>    <span class="o">=</span> <span class="nv">$session</span><span class="o">-&gt;</span><span class="na">execute</span><span class="p">(</span><span class="nv">$statement</span><span class="p">);</span>
+<span class="nv">$result</span> <span class="o">=</span> <span class="nv">$session</span><span class="o">-&gt;</span><span class="na">execute</span><span class="p">(</span><span class="s2">"SELECT artist, title, album, WRITETIME(song_id) FROM simplex.playlists"</span><span class="p">);</span>
 
 <span class="k">foreach</span> <span class="p">(</span><span class="nv">$result</span> <span class="k">as</span> <span class="nv">$row</span><span class="p">)</span> <span class="p">{</span>
   <span class="k">echo</span> <span class="nv">$row</span><span class="p">[</span><span class="s1">'artist'</span><span class="p">]</span> <span class="o">.</span> <span class="s2">": "</span> <span class="o">.</span> <span class="nv">$row</span><span class="p">[</span><span class="s1">'title'</span><span class="p">]</span> <span class="o">.</span> <span class="s2">" / "</span> <span class="o">.</span> <span class="nv">$row</span><span class="p">[</span><span class="s1">'album'</span><span class="p">]</span> <span class="o">.</span> <span class="s2">" ("</span><span class="o">.</span> <span class="nv">$row</span><span class="p">[</span><span class="s1">'writetime(song_id)'</span><span class="p">]</span> <span class="o">.</span> <span class="s2">")</span><span class="se">\n</span><span class="s2">"</span><span class="p">;</span>
@@ -404,19 +420,12 @@ using <code>Cassandra\ExecutionOptions</code>.</li>
 <dl class="steps">
 <dt>Given </dt>
 <dd>the following example:<pre class="highlight"><code><span class="cp">&lt;?php</span>
-<span class="nv">$cluster</span>   <span class="o">=</span> <span class="nx">Cassandra</span><span class="o">::</span><span class="na">cluster</span><span class="p">()</span>
-               <span class="o">-&gt;</span><span class="na">withContactPoints</span><span class="p">(</span><span class="s1">'127.0.0.1'</span><span class="p">)</span>
-               <span class="o">-&gt;</span><span class="na">build</span><span class="p">();</span>
-<span class="nv">$session</span>   <span class="o">=</span> <span class="nv">$cluster</span><span class="o">-&gt;</span><span class="na">connect</span><span class="p">(</span><span class="s2">"simplex"</span><span class="p">);</span>
-<span class="nv">$prepared</span>  <span class="o">=</span> <span class="nv">$session</span><span class="o">-&gt;</span><span class="na">prepare</span><span class="p">(</span>
-               <span class="s2">"INSERT INTO playlists (id, song_id, artist, title, album) "</span> <span class="o">.</span>
-               <span class="s2">"VALUES (62c36092-82a1-3a00-93d1-46196ee77204, ?, ?, ?, ?)"</span>
-             <span class="p">);</span>
-<span class="nv">$simple</span>    <span class="o">=</span> <span class="k">new</span> <span class="nx">Cassandra\SimpleStatement</span><span class="p">(</span>
-               <span class="s2">"INSERT INTO playlists (id, song_id, artist, title, album) "</span> <span class="o">.</span>
-               <span class="s2">"VALUES (62c36092-82a1-3a00-93d1-46196ee77204, ?, ?, ?, ?)"</span>
-             <span class="p">);</span>
-<span class="nv">$batch</span>     <span class="o">=</span> <span class="k">new</span> <span class="nx">Cassandra\BatchStatement</span><span class="p">(</span><span class="nx">Cassandra</span><span class="o">::</span><span class="na">BATCH_LOGGED</span><span class="p">);</span>
+<span class="nv">$cluster</span>     <span class="o">=</span> <span class="nx">Cassandra</span><span class="o">::</span><span class="na">cluster</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">build</span><span class="p">();</span>
+<span class="nv">$session</span>     <span class="o">=</span> <span class="nv">$cluster</span><span class="o">-&gt;</span><span class="na">connect</span><span class="p">(</span><span class="s2">"simplex"</span><span class="p">);</span>
+<span class="nv">$insertQuery</span> <span class="o">=</span> <span class="s2">"INSERT INTO playlists (id, song_id, artist, title, album) "</span> <span class="o">.</span>
+               <span class="s2">"VALUES (62c36092-82a1-3a00-93d1-46196ee77204, ?, ?, ?, ?)"</span><span class="p">;</span>
+<span class="nv">$prepared</span>    <span class="o">=</span> <span class="nv">$session</span><span class="o">-&gt;</span><span class="na">prepare</span><span class="p">(</span><span class="nv">$insertQuery</span><span class="p">);</span>
+<span class="nv">$batch</span>       <span class="o">=</span> <span class="k">new</span> <span class="nx">Cassandra\BatchStatement</span><span class="p">(</span><span class="nx">Cassandra</span><span class="o">::</span><span class="na">BATCH_LOGGED</span><span class="p">);</span>
 
 <span class="nv">$batch</span><span class="o">-&gt;</span><span class="na">add</span><span class="p">(</span><span class="nv">$prepared</span><span class="p">,</span> <span class="k">array</span><span class="p">(</span>
     <span class="s1">'song_id'</span> <span class="o">=&gt;</span> <span class="k">new</span> <span class="nx">Cassandra\Uuid</span><span class="p">(</span><span class="s1">'756716f7-2e54-4715-9f00-91dcbea6cf50'</span><span class="p">),</span>
@@ -425,7 +434,7 @@ using <code>Cassandra\ExecutionOptions</code>.</li>
     <span class="s1">'artist'</span>  <span class="o">=&gt;</span> <span class="s1">'Joséphine Baker'</span>
 <span class="p">));</span>
 
-<span class="nv">$batch</span><span class="o">-&gt;</span><span class="na">add</span><span class="p">(</span><span class="nv">$simple</span><span class="p">,</span> <span class="k">array</span><span class="p">(</span>
+<span class="nv">$batch</span><span class="o">-&gt;</span><span class="na">add</span><span class="p">(</span><span class="nv">$insertQuery</span><span class="p">,</span> <span class="k">array</span><span class="p">(</span>
     <span class="k">new</span> <span class="nx">Cassandra\Uuid</span><span class="p">(</span><span class="s1">'f6071e72-48ec-4fcb-bf3e-379c8a696488'</span><span class="p">),</span>
     <span class="s1">'Willi Ostermann'</span><span class="p">,</span> <span class="s1">'Die Mösch'</span><span class="p">,</span> <span class="s1">'In Gold'</span><span class="p">,</span>
 <span class="p">));</span>
@@ -439,9 +448,7 @@ using <code>Cassandra\ExecutionOptions</code>.</li>
 
 <span class="nv">$session</span><span class="o">-&gt;</span><span class="na">execute</span><span class="p">(</span><span class="nv">$batch</span><span class="p">,</span> <span class="nv">$options</span><span class="p">);</span>
 
-<span class="nv">$statement</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Cassandra\SimpleStatement</span><span class="p">(</span>
-  <span class="s2">"SELECT artist, title, album, WRITETIME(song_id) FROM simplex.playlists"</span><span class="p">);</span>
-<span class="nv">$result</span>    <span class="o">=</span> <span class="nv">$session</span><span class="o">-&gt;</span><span class="na">execute</span><span class="p">(</span><span class="nv">$statement</span><span class="p">);</span>
+<span class="nv">$result</span> <span class="o">=</span> <span class="nv">$session</span><span class="o">-&gt;</span><span class="na">execute</span><span class="p">(</span><span class="s2">"SELECT artist, title, album, WRITETIME(song_id) FROM simplex.playlists"</span><span class="p">);</span>
 
 <span class="k">foreach</span> <span class="p">(</span><span class="nv">$result</span> <span class="k">as</span> <span class="nv">$row</span><span class="p">)</span> <span class="p">{</span>
   <span class="k">echo</span> <span class="nv">$row</span><span class="p">[</span><span class="s1">'artist'</span><span class="p">]</span> <span class="o">.</span> <span class="s2">": "</span> <span class="o">.</span> <span class="nv">$row</span><span class="p">[</span><span class="s1">'title'</span><span class="p">]</span> <span class="o">.</span> <span class="s2">" / "</span> <span class="o">.</span> <span class="nv">$row</span><span class="p">[</span><span class="s1">'album'</span><span class="p">]</span> <span class="o">.</span> <span class="s2">" ("</span><span class="o">.</span> <span class="nv">$row</span><span class="p">[</span><span class="s1">'writetime(song_id)'</span><span class="p">]</span> <span class="o">.</span> <span class="s2">")</span><span class="se">\n</span><span class="s2">"</span><span class="p">;</span>
@@ -473,10 +480,6 @@ using <code>Cassandra\ExecutionOptions</code>.</li>
                <span class="o">-&gt;</span><span class="na">withTimestampGenerator</span><span class="p">(</span><span class="k">new</span> <span class="nx">Cassandra\TimestampGenerator\Monotonic</span><span class="p">())</span>
                <span class="o">-&gt;</span><span class="na">build</span><span class="p">();</span>
 <span class="nv">$session</span>   <span class="o">=</span> <span class="nv">$cluster</span><span class="o">-&gt;</span><span class="na">connect</span><span class="p">(</span><span class="s2">"simplex"</span><span class="p">);</span>
-<span class="nv">$simple</span>    <span class="o">=</span> <span class="k">new</span> <span class="nx">Cassandra\SimpleStatement</span><span class="p">(</span>
-               <span class="s2">"INSERT INTO playlists (id, song_id, artist, title, album) "</span> <span class="o">.</span>
-               <span class="s2">"VALUES (62c36092-82a1-3a00-93d1-46196ee77204, ?, ?, ?, ?)"</span>
-             <span class="p">);</span>
 
 <span class="k">for</span> <span class="p">(</span><span class="nv">$i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nv">$i</span> <span class="o">&lt;</span> <span class="mi">10</span><span class="p">;</span> <span class="nv">$i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
     <span class="nv">$arguments</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span>
@@ -489,12 +492,14 @@ using <code>Cassandra\ExecutionOptions</code>.</li>
         <span class="s1">'arguments'</span> <span class="o">=&gt;</span> <span class="nv">$arguments</span><span class="p">,</span>
         <span class="s1">'timestamp'</span> <span class="o">=&gt;</span> <span class="mi">1234</span>
     <span class="p">);</span>
-    <span class="nv">$session</span><span class="o">-&gt;</span><span class="na">execute</span><span class="p">(</span><span class="nv">$simple</span><span class="p">,</span> <span class="nv">$options</span><span class="p">);</span>
+    <span class="nv">$session</span><span class="o">-&gt;</span><span class="na">execute</span><span class="p">(</span>
+        <span class="s2">"INSERT INTO playlists (id, song_id, artist, title, album) "</span> <span class="o">.</span>
+        <span class="s2">"VALUES (62c36092-82a1-3a00-93d1-46196ee77204, ?, ?, ?, ?)"</span><span class="p">,</span>
+        <span class="nv">$options</span>
+    <span class="p">);</span>
 <span class="p">}</span>
 
-<span class="nv">$statement</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Cassandra\SimpleStatement</span><span class="p">(</span>
-  <span class="s2">"SELECT artist, title, album, song_id FROM simplex.playlists"</span><span class="p">);</span>
-<span class="nv">$result</span>    <span class="o">=</span> <span class="nv">$session</span><span class="o">-&gt;</span><span class="na">execute</span><span class="p">(</span><span class="nv">$statement</span><span class="p">);</span>
+<span class="nv">$result</span> <span class="o">=</span> <span class="nv">$session</span><span class="o">-&gt;</span><span class="na">execute</span><span class="p">(</span><span class="s2">"SELECT artist, title, album, song_id FROM simplex.playlists"</span><span class="p">);</span>
 
 <span class="k">foreach</span> <span class="p">(</span><span class="nv">$result</span> <span class="k">as</span> <span class="nv">$row</span><span class="p">)</span> <span class="p">{</span>
   <span class="k">echo</span> <span class="nv">$row</span><span class="p">[</span><span class="s1">'artist'</span><span class="p">]</span> <span class="o">.</span> <span class="s2">": "</span> <span class="o">.</span> <span class="nv">$row</span><span class="p">[</span><span class="s1">'title'</span><span class="p">]</span> <span class="o">.</span> <span class="s2">" / "</span> <span class="o">.</span> <span class="nv">$row</span><span class="p">[</span><span class="s1">'album'</span><span class="p">]</span> <span class="o">.</span> <span class="s2">" ("</span><span class="o">.</span> <span class="nv">$row</span><span class="p">[</span><span class="s1">'song_id'</span><span class="p">]</span> <span class="o">.</span> <span class="s2">")</span><span class="se">\n</span><span class="s2">"</span><span class="p">;</span>

@@ -84,7 +84,7 @@
   
   <li class="active">
     <a href="../../">
-      Features <small>page</small>
+      Core <small>page</small>
       
       
       <span class="glyphicon glyphicon-minus-sign pull-right" aria-hidden="true"></span>
@@ -258,6 +258,24 @@
   
   
   <li>
+    <a href="../../duration_collections/">
+      Duration <small>feature</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../../duration/">
+      Duration <small>feature</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
     <a href="../../materialized_view_metadata/">
       Materialized View Metadata <small>feature</small>
       
@@ -335,7 +353,7 @@
                 
                 
                 
-                <li><a href="../../">Features</a></li>
+                <li><a href="../../">Core</a></li>
                 
                 
                 
@@ -440,7 +458,7 @@ Cassandra cluster</p>
 <span class="nv">$french_session</span>   <span class="o">=</span> <span class="nv">$cluster</span><span class="o">-&gt;</span><span class="na">connect</span><span class="p">(</span><span class="s2">"french"</span><span class="p">);</span>
 <span class="nv">$german_session</span>   <span class="o">=</span> <span class="nv">$cluster</span><span class="o">-&gt;</span><span class="na">connect</span><span class="p">(</span><span class="s2">"german"</span><span class="p">);</span>
 <span class="nv">$uk_session</span>       <span class="o">=</span> <span class="nv">$cluster</span><span class="o">-&gt;</span><span class="na">connect</span><span class="p">(</span><span class="s2">"uk"</span><span class="p">);</span>
-<span class="nv">$statement</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Cassandra\SimpleStatement</span><span class="p">(</span><span class="s2">"SELECT * FROM playlists"</span><span class="p">);</span>
+<span class="nv">$statement</span> <span class="o">=</span> <span class="s2">"SELECT * FROM playlists"</span><span class="p">;</span>
 
 <span class="nv">$row</span> <span class="o">=</span> <span class="nv">$french_session</span><span class="o">-&gt;</span><span class="na">execute</span><span class="p">(</span><span class="nv">$statement</span><span class="p">);</span>
 <span class="k">echo</span> <span class="s2">"French session contains "</span> <span class="o">.</span> <span class="nv">$row</span><span class="o">-&gt;</span><span class="na">count</span><span class="p">()</span> <span class="o">.</span> <span class="s2">" rows</span><span class="se">\n</span><span class="s2">"</span><span class="p">;</span>

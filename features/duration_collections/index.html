@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <meta name="description" content="DataStax PHP Driver for Apache Cassandra">
+    <meta name="author" content="DataStax">
+
+    <title>DataStax PHP Driver - Duration</title>
+
+    <link rel="icon" href="../../favicon.ico">
+    <link rel="apple-touch-icon" href="../../favicon.png">
+    <link href="../../css/style.css" rel="stylesheet">
+    <link href="../../css/pygments.css" rel="stylesheet">
+    <link href="../../css/hotkeys.css" rel="stylesheet">
+
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  </head>
+  <body ng-app="docs">
+    <div class="navbar">
+      <div class="container-fluid">
+        <div class="row row-offcanvas row-offcanvas-left">
+          <div class="col-sm-3 text-center">
+            <a class="ds-home" href="../../"><img alt="Brand" src="../../img/logo.png"></a>
+            <ul class="list-inline ds-sites" role="nav">
+              <li><a href="https://academy.datastax.com/" class="navbar-link">DataStax Academy</a></li>
+              <li><a href="http://www.datastax.com/dev/blog" class="navbar-link">Tech Blog</a></li>
+              <li><a href="http://www.datastax.com/what-we-offer/products-services/support" class="navbar-link">Support</a></li>
+            </ul>
+          </div>
+          <div class="col-md-5">
+            <p class="lead pubtitle">DataStax PHP Driver</p>
+            
+            <div class="text-info">
+              <span class="text-warning">Attention:</span> Viewing documentation for version
+              <div class="btn-group">
+                <button id="current-version" class="btn btn-default btn-sm dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  1.3
+                  <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu" role="menu" aria-labelledby="current-version">
+                
+                  <li class="disabled"><a href="./">1.3</a></li>
+                
+                  <li><a href="../../1.2/">1.2</a></li>
+                
+                  <li><a href="../../1.1/">1.1</a></li>
+                
+                  <li><a href="../../1.0/">1.0</a></li>
+                
+                </ul>
+              </div>
+            </div>
+            
+          </div>
+          <div class="col-md-4">
+            <form id="search" class="form-search dropdown visible-lg-inline-block" ng-controller="search" ng-class="{open: hasResults}" role="search" ng-submit="submit()" data-spy="affix" data-offset-top="130">
+              <div class="form-group has-feedback">
+                <input type="search" class="form-control input-sm mousetrap" placeholder="Search..." ng-model="q" ng-change="search('1.3')" ng-disabled="!searchReady" disabled data-hotkey="{down: moveDown, up: moveUp, esc: reset}" data-search>
+              </div>
+              <ul class="dropdown-menu search-results" role="menu">
+                <li ng-repeat="result in results" ng-class="{'bg-warning': $index == current}"><a ng-href="{{basePath}}{{result.path}}"><span ng-bind-html="summary(result)"></span></a></li>
+              </ul>
+            </form>
+            <a href="http://www.datastax.com/download" class="btn btn-primary btn-sm">Download</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container-fluid" id="content">
+      <div class="row">
+        <div class="col-md-3">
+          <div id="navigation" class="side-nav" role="tablist" aria-multiselectable="true">
+            <h3><a href="../../">Contents</a></h3>
+            <ul class="nav nav-pills nav-stacked">
+  
+  
+  <li class="active">
+    <a href="../">
+      Core <small>page</small>
+      
+      
+      <span class="glyphicon glyphicon-minus-sign pull-right" aria-hidden="true"></span>
+      
+      
+    </a>
+    <ul class="nav nav-pills nav-stacked">
+  
+  
+  <li>
+    <a href="../datatypes/">
+      Datatypes <small>feature</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../consistency_level/">
+      Consistency Level <small>feature</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../client_side_timestamps/">
+      Client-side timestamps <small>feature</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../simple_statements/">
+      Simple Statements <small>feature</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../prepared_statements/">
+      Prepared Statements <small>feature</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../batch_statements/">
+      Batch statements <small>feature</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../logging/">
+      Logging <small>feature</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../result_paging/">
+      Result paging <small>feature</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../schema_metadata/">
+      Schema Metadata <small>feature</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../sessions/">
+      Sessions <small>page</small>
+      
+      
+      <span class="glyphicon glyphicon-plus-sign pull-right" aria-hidden="true"></span>
+      
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../ssl_encryption/">
+      SSL encryption <small>feature</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../user_defined_types/">
+      User defined types <small>feature</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../tuples/">
+      Tuples <small>feature</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../collections/">
+      Collections <small>feature</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li class="active">
+    <a href="./" class="current">
+      Duration <small>feature</small>
+      
+    </a>
+    <ul class="nav nav-pills nav-stacked">
+  
+</ul>
+
+  </li>
+  
+  
+  <li>
+    <a href="../duration/">
+      Duration <small>feature</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../materialized_view_metadata/">
+      Materialized View Metadata <small>feature</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../retry_polices/">
+      Retry Policies <small>feature</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../secondary_index_metadata/">
+      Secondary Index Metadata <small>feature</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../simple_string_queries/">
+      Simple string queries <small>feature</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../function_and_aggregate_metadata/">
+      User-defined Function (UDF) and Aggregate Metadata (UDA) <small>feature</small>
+      
+    </a>
+    
+  </li>
+  
+</ul>
+
+  </li>
+  
+  
+  <li>
+    <a href="../../api/">
+      API docs <small>index</small>
+      
+      
+      <span class="glyphicon glyphicon-plus-sign pull-right" aria-hidden="true"></span>
+      
+      
+    </a>
+    
+  </li>
+  
+</ul>
+
+          </div>
+        </div>
+        <div class="col-md-9 content">
+          <div class="crumbs-wrapper">
+            <nav id="crumbs" data-spy="affix" data-offset-top="130">
+              <ol class="breadcrumb">
+                
+                
+                
+                <li><a href="../../">Home</a></li>
+                
+                
+                
+                
+                
+                <li><a href="../">Core</a></li>
+                
+                
+                
+                
+                
+                <li class="active">Duration</li>
+                
+                
+                
+              </ol>
+            </nav>
+          </div>
+          
+<div class="feature-section">
+<div class="pull-right"><span class="label label-primary">since cassadra v3.10</span></div>
+<h1 id="duration" class="target">Duration<a class="anchor" href="#duration" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+</h1>
+<p>PHP Driver supports the <code>Duration</code> datatype in collections</p>
+<h2 id="background" class="target">Background<a class="anchor" href="#background" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+</h2>
+<dl class="steps">
+<dt>Given </dt>
+<dd>a running Cassandra cluster</dd>
+</dl>
+<h2 id="use-the-duration-type-in-collections" class="target">Use the duration type in collections<a class="anchor" href="#use-the-duration-type-in-collections" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+</h2>
+<dl class="steps">
+<dt>Given </dt>
+<dd>the following schema:<pre class="highlight"><code><span class="k">CREATE</span> <span class="k">KEYSPACE</span> <span class="n">simplex</span> <span class="k">WITH</span> <span class="n">replication</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="s1">'class'</span><span class="p">:</span> <span class="s1">'SimpleStrategy'</span><span class="p">,</span>
+  <span class="s1">'replication_factor'</span><span class="p">:</span> <span class="mi">1</span>
+<span class="p">};</span>
+<span class="k">USE</span> <span class="n">simplex</span><span class="p">;</span>
+<span class="k">CREATE</span> <span class="k">TYPE</span> <span class="n">duration_user_type</span> <span class="p">(</span><span class="n">duration1</span> <span class="n">duration</span><span class="p">,</span> <span class="n">duration2</span> <span class="n">duration</span><span class="p">);</span>
+<span class="k">CREATE</span> <span class="k">TABLE</span> <span class="n">durations</span> <span class="p">(</span><span class="n">k</span> <span class="k">text</span> <span class="k">PRIMARY</span> <span class="k">KEY</span><span class="p">,</span>
+                        <span class="n">duration_list</span> <span class="k">list</span><span class="o">&lt;</span><span class="n">duration</span><span class="o">&gt;</span><span class="p">,</span>
+                        <span class="n">duration_tuple</span> <span class="n">tuple</span><span class="o">&lt;</span><span class="n">duration</span><span class="p">,</span> <span class="n">duration</span><span class="o">&gt;</span><span class="p">,</span>
+                        <span class="n">duration_udt</span> <span class="n">duration_user_type</span><span class="p">);</span>
+</code></pre>
+</dd>
+<dt>And </dt>
+<dd>the following example:<pre><code>&lt;?php
+$cluster = Cassandra::cluster()-&gt;build();
+$session = $cluster-&gt;connect("simplex");
+
+# Construct collection arguments
+
+$list = Cassandra\Type::collection(Cassandra\Type::duration())-&gt;create(
+    new Cassandra\Duration(1, 2, 3)
+);
+$list-&gt;add(new Cassandra\Duration(4, 5, 6));
+
+$tuple = Cassandra\Type::tuple(Cassandra\Type::duration(), Cassandra\Type::duration())-&gt;create(
+    new Cassandra\Duration(1, 2, 3), new Cassandra\Duration(4, 5, 6)
+);
+
+$udt = Cassandra\Type::userType('duration1', Cassandra\Type::duration(), 'duration2', Cassandra\Type::duration())-&gt;create(
+    'duration1', new Cassandra\Duration(1, 2, 3)
+);
+$udt-&gt;set('duration2', new Cassandra\Duration(4, 5, 6));
+
+
+# Insert collections containing durations into table
+$options = array('arguments' =&gt;
+    array('key1', $list, $tuple, $udt)
+);
+$session-&gt;execute("INSERT INTO durations
+    (k, duration_list, duration_tuple, duration_udt) VALUES
+    (?, ?, ?, ?)", $options);
+# Select collections from table and print as WKT
+$rows = $session-&gt;execute("SELECT * FROM durations WHERE k = 'key1'");
+$row = $rows-&gt;first();
+
+
+$rows = $session-&gt;execute("SELECT * FROM durations WHERE k = 'key1'");
+$row = $rows-&gt;first();
+
+echo 'The list contains durations: [' . implode(', ', $row['duration_list']-&gt;values()) . ']' . PHP_EOL;
+echo 'The tuple contains durations: (' . implode(', ', $row['duration_tuple']-&gt;values()) . ')' . PHP_EOL;
+$asWkt = array_map(function($k, $v) { return $k . ': ' . $v; },
+    array_keys($row["duration_udt"]-&gt;values()), $row["duration_udt"]-&gt;values());
+echo 'The udt contains durations: {' . implode(', ', $asWkt) . '}' . PHP_EOL;
+</code></pre>
+</dd>
+<dt>When </dt>
+<dd>it is executed</dd>
+<dt>Then </dt>
+<dd>its output should contain these lines in any order:<pre><code>The list contains durations: [1mo2d3ns, 4mo5d6ns]
+The tuple contains durations: (1mo2d3ns, 4mo5d6ns)
+The udt contains durations: {duration1: 1mo2d3ns, duration2: 4mo5d6ns}
+</code></pre>
+</dd>
+</dl>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+    <footer class="container text-muted">
+      <ul class="list-inline">
+      
+        
+        <li>
+          <a href="http://downloads.datastax.com/php-driver/">Binaries</a>
+        </li>
+      
+        <li>·</li>
+        <li>
+          <a href="https://github.com/datastax/php-driver/">Code</a>
+        </li>
+      
+        <li>·</li>
+        <li>
+          <a href="http://datastax.github.io/php-driver/">Docs</a>
+        </li>
+      
+        <li>·</li>
+        <li>
+          <a href="https://datastax-oss.atlassian.net/browse/PHP/">Issues</a>
+        </li>
+      
+        <li>·</li>
+        <li>
+          <a href="https://groups.google.com/a/lists.datastax.com/forum/#!forum/php-driver-user">Mailing List</a>
+        </li>
+      
+        <li>·</li>
+        <li>
+          <a href="irc://irc.freenode.net/datastax-drivers">IRC Channel</a>
+        </li>
+      
+        <li>·</li>
+        <li>
+          <a href="https://github.com/datastax/php-driver/releases">Releases</a>
+        </li>
+      
+      </ul>
+    </footer>
+    
+
+    <script src="../../js/jquery.js"></script>
+    <script src="../../js/bootstrap.js"></script>
+    <script src="../../js/angular.js"></script>
+    <script src="../../js/mousetrap.js"></script>
+    <script src="../../js/hotkeys.js"></script>
+    <script src="../../js/ZeroClipboard.js"></script>
+    <script src="../../js/lunr.js"></script>
+    <script src="../../js/app.js"></script>
+  </body>
+</html>
