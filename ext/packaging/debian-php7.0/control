@@ -4,7 +4,8 @@ Priority: optional
 Maintainer: Michael Penick <michael.penick@datastax.com>
 Build-Depends: debhelper (>= 9~),
                dh-php (>= 0.10~),
-               php-all-dev,
+               php7.0-dev,
+               dh-php,
                pkg-config,
                cassandra-cpp-driver-dev (>= 2.7.0)
 Homepage: http://datastax.github.io/php-driver/
