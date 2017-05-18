@@ -351,8 +351,8 @@ php_driver_set_compare(zval *obj1, zval *obj2 TSRMLS_DC)
   result = php_driver_type_compare(type1, type2 TSRMLS_CC);
   if (result != 0) return result;
 
-  if (HASH_COUNT(set1->entries) != HASH_COUNT(set1->entries)) {
-   return HASH_COUNT(set1->entries) < HASH_COUNT(set1->entries) ? -1 : 1;
+  if (HASH_COUNT(set1->entries) != HASH_COUNT(set2->entries)) {
+   return HASH_COUNT(set1->entries) < HASH_COUNT(set2->entries) ? -1 : 1;
   }
 
   HASH_ITER(hh, set1->entries, curr, temp) {

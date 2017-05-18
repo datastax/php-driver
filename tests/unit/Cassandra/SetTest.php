@@ -331,4 +331,12 @@ class SetTest extends \PHPUnit_Framework_TestCase
                   Type::set($setType)->create($setType->create(4, 5, 6))),
         );
     }
+
+    public function testCompareNotEqualDifferentCount()
+    {
+        $this->assertTrue(Type::set(Type::int())->create(1) <
+                          Type::set(Type::int())->create(1, 2));
+        $this->assertTrue(Type::set(Type::int())->create(1, 2) >
+                          Type::set(Type::int())->create(1));
+    }
 }
