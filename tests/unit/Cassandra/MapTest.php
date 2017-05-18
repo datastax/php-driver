@@ -286,10 +286,19 @@ class MapTest extends \PHPUnit_Framework_TestCase
     {
         $setType = Type::set(Type::int());
         return array(
+            // Different types
             array(Type::map(Type::int(), Type::int())->create(),
                   Type::map(Type::int(), Type::varchar())->create()),
+            // Different number of keys
             array(Type::map(Type::int(), Type::varchar())->create(1, 'a', 2, 'b', 3, 'c'),
                   Type::map(Type::int(), Type::varchar())->create(1, 'a')),
+            // Different keys with same values
+            array(Type::map(Type::int(), Type::varchar())->create(1, 'a', 2, 'b', 3, 'c'),
+                  Type::map(Type::int(), Type::varchar())->create(4, 'a', 5, 'b', 6, 'c')),
+            // Different values with same keys
+            array(Type::map(Type::int(), Type::varchar())->create(1, 'a', 2, 'b', 3, 'c'),
+                  Type::map(Type::int(), Type::varchar())->create(1, 'd', 2, 'e', 3, 'f')),
+            // Composite keys
             array(Type::map($setType, Type::varchar())->create($setType->create(4, 5, 6), 'a', $setType->create(7, 8, 9), 'b'),
                   Type::map($setType, Type::varchar())->create($setType->create(1, 2, 3), 'a', $setType->create(4, 5, 6), 'b'))
         );
