@@ -303,4 +303,12 @@ class MapTest extends \PHPUnit_Framework_TestCase
                   Type::map($setType, Type::varchar())->create($setType->create(1, 2, 3), 'a', $setType->create(4, 5, 6), 'b'))
         );
     }
+
+    public function testCompareNotEqualDifferentCount()
+    {
+        $this->assertTrue(Type::map(Type::int(), Type::varchar())->create(1, 'a') <
+                          Type::map(Type::int(), Type::varchar())->create(1, 'a', 2, 'b'));
+        $this->assertTrue(Type::map(Type::int(), Type::varchar())->create(1, 'a', 2, 'b') >
+                          Type::map(Type::int(), Type::varchar())->create(1, 'a'));
+    }
 }

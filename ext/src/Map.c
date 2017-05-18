@@ -513,8 +513,8 @@ php_driver_map_compare(zval *obj1, zval *obj2 TSRMLS_DC)
   result = php_driver_type_compare(type1, type2 TSRMLS_CC);
   if (result != 0) return result;
 
-  if (HASH_COUNT(map1->entries) != HASH_COUNT(map1->entries)) {
-   return HASH_COUNT(map1->entries) < HASH_COUNT(map1->entries) ? -1 : 1;
+  if (HASH_COUNT(map1->entries) != HASH_COUNT(map2->entries)) {
+   return HASH_COUNT(map1->entries) < HASH_COUNT(map2->entries) ? -1 : 1;
   }
 
   HASH_ITER(hh, map1->entries, curr, temp) {
