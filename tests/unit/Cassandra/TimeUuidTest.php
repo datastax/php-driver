@@ -54,4 +54,32 @@ class TimeUuidTest extends \PHPUnit_Framework_TestCase
             array(new TimeUuid(0), new TimeUuid(2))
         );
     }
+
+    /**
+     * TimeUuid can be created from string
+     */
+    public function testInitFromStringType1()
+    {
+        new TimeUuid('5f344f20-52a3-11e7-915b-5f4f349b532d');
+    }
+
+    /**
+     * TimeUuid cannot be created from UUID type 4
+     * @expectedException         Cassandra\Exception\InvalidArgumentException
+     * @expectedExceptionMessage  UUID must be of type 1, type 4 given
+     */
+    public function testInitFromStringType4()
+    {
+        new TimeUuid('65f9e722-036a-4029-b03b-a9046b23b4c9');
+    }
+
+    /**
+     * TimeUuid cannot be created from invalid string
+     * @expectedException         Cassandra\Exception\InvalidArgumentException
+     * @expectedExceptionMessage  Invalid UUID
+     */
+    public function testInitFromInvalidString()
+    {
+        new TimeUuid('invalid');
+    }
 }
