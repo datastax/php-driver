@@ -29,6 +29,7 @@ php_driver_timeuuid_init(INTERNAL_FUNCTION_PARAMETERS)
 {
   php_driver_uuid *self;
   zval *param;
+  int version;
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "|z", &param) == FAILURE) {
     return;
@@ -60,7 +61,7 @@ php_driver_timeuuid_init(INTERNAL_FUNCTION_PARAMETERS)
           return;
         }
 
-        int version = cass_uuid_version(self->uuid);
+        version = cass_uuid_version(self->uuid);
         if (version != 1) {
           zend_throw_exception_ex(php_driver_invalid_argument_exception_ce, 0 TSRMLS_CC, "UUID must be of type 1, type %d given", version);
         }
