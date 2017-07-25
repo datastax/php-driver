@@ -14,6 +14,8 @@ This is a wrapper around [the DataStax C/C++ Driver for Apache Cassandra and Dat
 * Mailing List: [https://groups.google.com/a/lists.datastax.com/forum/#!forum/php-driver-user](https://groups.google.com/a/lists.datastax.com/forum/#!forum/php-driver-user)
 * IRC: #datastax-drivers on [irc.freenode.net](http://freenode.net>)
 
+__Note__: DataStax products do not support big-endian systems.
+
 ## What's new in v1.2.0/v1.3.0:
 
 * Support for [`duration`](http://datastax.github.io/php-driver/api/Cassandra/class.Duration/)
