@@ -82,4 +82,14 @@ class TimeUuidTest extends \PHPUnit_Framework_TestCase
     {
         new TimeUuid('invalid');
     }
+
+    /**
+     * TimeUuid requires string or integer in constructor
+     * @expectedException         Cassandra\Exception\InvalidArgumentException
+     * @expectedExceptionMessage  Invalid argument
+     */
+    public function testInitInvalidArgument()
+    {
+        new TimeUuid(new \Datetime());
+    }
 }
