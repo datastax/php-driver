@@ -23,9 +23,11 @@
       "homepage": "http://avalanche123.com"
     }
   ],
-  "require-dev": {
+  "require": {
     "php": ">=5.5.0",
-    "ext-cassandra": "*",
+    "ext-cassandra": "*"
+  },
+  "require-dev": {
     "behat/behat": "~3.0.6",
     "phpunit/php-code-coverage": "~2.0",
     "phpunit/php-token-stream": "~1.3",
