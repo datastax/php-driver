@@ -74,7 +74,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
     public function prepareTestFolders()
     {
         $dir = sys_get_temp_dir().DIRECTORY_SEPARATOR.'php-driver'.DIRECTORY_SEPARATOR.
-            md5(microtime() * rand(0, 10000));
+            md5((int)microtime() * rand(0, 10000));
         $phpFinder = new PhpExecutableFinder();
         if (false === $php = $phpFinder->find()) {
             throw new \RuntimeException('Unable to find the PHP executable.');
