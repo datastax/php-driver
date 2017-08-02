@@ -1,5 +1,5 @@
 @ECHO OFF
-REM Copyright 2015-2016 DataStax
+REM Copyright 2015-2017 DataStax
 REM
 REM Licensed under the Apache License, Version 2.0 (the "License");
 REM you may not use this file except in compliance with the License.
