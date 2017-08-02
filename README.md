@@ -3,7 +3,7 @@
 [![Build Status: Linux](https://travis-ci.org/datastax/php-driver.svg)](https://travis-ci.org/datastax/php-driver)
 [![Build Status: Windows](https://ci.appveyor.com/api/projects/status/8vrxpkfl4xm2f3nm?svg=true)](https://ci.appveyor.com/project/DataStax/php-driver)
 
-A modern, [feature-rich](/features) and highly tunable PHP client library for
+A modern, feature-rich and highly tunable PHP client library for
 [Apache Cassandra] 2.1+ using exclusively Cassandra's binary protocol and
 Cassandra Query Language v3. _Use the [DSE PHP driver] for better compatibility
 and support for [DataStax Enterprise]_.
@@ -49,6 +49,7 @@ better compatibility.
 
 * [Home]
 * [API]
+* [Features]
 
 ## Getting Help
 
@@ -99,7 +100,7 @@ of the process.
 The DataStax PHP Driver uses the amazing [Behat Framework] for both end-to-end,
 or acceptance testing and documentation. All of the features supported by the
 driver have appropriate acceptance tests with [easy-to-copy code examples in
-the `features/` directory][feature-examples].
+the `features/` directory][Features].
 
 ## Running tests
 
@@ -149,7 +150,7 @@ specific language governing permissions and limitations under the License.
 [installing-details]: https://github.com/datastax/php-driver/blob/master/ext/README.md
 [contribution-policy]: https://github.com/datastax/php-driver/blob/master/CONTRIBUTING.md
 [Behat Framework]: http://docs.behat.org
-[feature-examples]: /features
+[Features]: /features
 [`duration`]: http://docs.datastax.com/en/developer/php-driver/latest/api/Cassandra/class.Duration
 [simple string]: /features/simple_string_queries
 [`tinyint` and `smallint`]: /features/datatypes/#using-cassandra-the-tinyint-and-smallint-types
