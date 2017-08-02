@@ -3,32 +3,63 @@
 [![Build Status: Linux](https://travis-ci.org/datastax/php-driver.svg)](https://travis-ci.org/datastax/php-driver)
 [![Build Status: Windows](https://ci.appveyor.com/api/projects/status/8vrxpkfl4xm2f3nm?svg=true)](https://ci.appveyor.com/project/DataStax/php-driver)
 
-A modern, [feature-rich](features) and highly tunable PHP client library for [Apache Cassandra](http://cassandra.apache.org/) (1.2+) and [DataStax Enterprise](http://www.datastax.com/products/products-index) (3.1+) using exclusively Cassandra's binary protocol and Cassandra Query Language v3.
+A modern, [feature-rich](/features) and highly tunable PHP client library for
+[Apache Cassandra] 2.1+ using exclusively Cassandra's binary protocol and
+Cassandra Query Language v3. _Use the [DSE PHP driver] for better compatibility
+and support for [DataStax Enterprise]_.
 
-This is a wrapper around [the DataStax C/C++ Driver for Apache Cassandra and DataStax Enterprise](http://datastax.github.io/cpp-driver/).
-
-* Binaries: [http://downloads.datastax.com/php-driver/](http://downloads.datastax.com/php-driver/)
-* Docs: [http://datastax.github.io/php-driver/](http://datastax.github.io/php-driver/)
-* Code: [https://github.com/datastax/php-driver](https://github.com/datastax/php-driver)
-* Jira: [https://datastax-oss.atlassian.net/browse/PHP](https://datastax-oss.atlassian.net/browse/PHP)
-* Mailing List: [https://groups.google.com/a/lists.datastax.com/forum/#!forum/php-driver-user](https://groups.google.com/a/lists.datastax.com/forum/#!forum/php-driver-user)
-* IRC: #datastax-drivers on [irc.freenode.net](http://freenode.net>)
+This is a wrapper around the [DataStax C/C++ Driver for Apache Cassandra].
 
 __Note__: DataStax products do not support big-endian systems.
 
-## What's new in v1.2.0/v1.3.0:
+## Getting the Driver
 
-* Support for [`duration`](http://datastax.github.io/php-driver/api/Cassandra/class.Duration/)
-* `Session::execute()` and `Session::executeAsync()` now support a [simple string](http://datastax.github.io/php-driver/features/simple_string_queries/) for the query CQL and a simple array for the query execution option.
+Binary versions of the driver are available for multiple operating systems and
+multiple versions of PHP which can be obtained from the
+[DataStax download server]. The source code is made available via [GitHub]. _If
+using [DataStax Enterprise] use the [DSE PHP driver] instead_.
+
+## What's new in v1.2.0/v1.3.0
+
+* Support for [`duration`]
+* `Session::execute()` and `Session::executeAsync()` now support a
+  [simple string] for the query CQL and a simple array for the query execution
+  option
 * Full support for Apache Cassandra 2.2 and 3.0+
-* Support for [`tinyint` and `smallint`](http://datastax.github.io/php-driver/features/datatypes/#using-cassandra-the-tinyint-and-smallint-types)
-* Support for [`date`](http://datastax.github.io/php-driver/features/datatypes/#using-cassandra-date-type) and [`time`](http://datastax.github.io/php-driver/features/datatypes/#using-cassandra-time-type)
-* Support for [user-defined function and aggregate](http://datastax.github.io/php-driver/features/function_and_aggregate_metadata) metadata
-* Support for [secondary index](http://datastax.github.io/php-driver/features/secondary_index_metadata) and [materialize view](http://datastax.github.io/php-driver/features/function_and_aggregate_metadata) metadata
+* Support for [`tinyint` and `smallint`]
+* Support for [`date`] and [`time`]
+* Support for [user-defined function and aggregate] metadata
+* Support for [secondary index] and [materialized view] metadata
+
+## Compatibility
+
+This driver works exclusively with the Cassandra Query Language v3 (CQL3) and
+Cassandra's native protocol. The current version works with:
+
+* Apache Cassandra versions 2.1, 2.2 and 3.0+
+* PHP 5.6, PHP 7.0, and PHP 7.1
+  * 32-bit (x86) and 64-bit (x64)
+  * Thread safe (TS) and non-thread safe (NTS)
+* Compilers: GCC 4.1.2+, Clang 3.4+, and MSVC 2010/2012/2013/2015
+
+If using [DataStax Enterprise] the [DSE PHP driver] provides more features and
+better compatibility.
+
+## Documentation
+
+* [Home]
+* [API]
+
+## Getting Help
+
+* JIRA: https://datastax-oss.atlassian.net/browse/PHP
+* Mailing List: https://groups.google.com/a/lists.datastax.com/forum/#!forum/php-driver-user
+* DataStax Academy via Slack: https://academy.datastax.com/slack
 
 ## Feedback Requested
 
-**Help us focus our efforts!** [Provide your input](http://goo.gl/forms/HbSiIJ2tLP) on the PHP Driver Platform and Runtime Survey (we kept it short).
+**Help us focus our efforts!** [Provide your input] on the PHP Driver Platform
+and Runtime Survey (we kept it short).
 
 ## Quick Start
 
@@ -55,28 +86,20 @@ foreach ($result as $row) {                       // results and rows implement 
 pecl install cassandra
 ```
 
-[Read detailed instructions on building and installing the extension](https://github.com/datastax/php-driver/blob/master/ext/README.md)
-
-## Compatibility
-
-This driver works exclusively with the Cassandra Query Language v3 (CQL3) and
-Cassandra's native protocol. The current version works with:
-
-* Apache Cassandra versions 1.2, 2.0, 2.1, 2.2 and 3.0+
-* DataStax Enterprise 3.1, 3.2, 4.0 and 4.5
-* PHP 5.5+ and PHP 7.0+
-* Compilers: GCC 4.1.2+, Clang 3.4+, and MSVC 2010/2012/2013/2015
+[Read detailed instructions on building and installing the
+extension][installing-details]
 
 ## Contributing
 
-[Read our contribution policy](https://github.com/datastax/php-driver/blob/master/CONTRIBUTING.md) for a detailed description of the process.
+[Read our contribution policy][contribution-policy] for a detailed description
+of the process.
 
 ## Code examples
 
-The DataStax PHP Driver uses the amazing [Behat Framework](http://docs.behat.org/)
-for both end-to-end, or acceptance, testing and documentation. All of the features
-supported by the driver have appropriate acceptance tests with [easy-to-copy code
-examples in the `features/` directory](https://github.com/datastax/php-driver/tree/master/features).
+The DataStax PHP Driver uses the amazing [Behat Framework] for both end-to-end,
+or acceptance testing and documentation. All of the features supported by the
+driver have appropriate acceptance tests with [easy-to-copy code examples in
+the `features/` directory][feature-examples].
 
 ## Running tests
 
@@ -101,10 +124,37 @@ cd /usr/local/src/php-driver
 
 ## Copyright
 
-Copyright 2015-2016 DataStax, Inc.
+Copyright 2015-2017 DataStax, Inc.
 
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at
+Licensed under the Apache License, Version 2.0 (the "License"); you may not use
+this file except in compliance with the License. You may obtain a copy of the
+License at
 
-[http://www.apache.org/licenses/LICENSE-2.0](http://www.apache.org/licenses/LICENSE-2.0)
+http://www.apache.org/licenses/LICENSE-2.0
 
-Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
+Unless required by applicable law or agreed to in writing, software distributed
+under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+CONDITIONS OF ANY KIND, either express or implied. See the License for the
+specific language governing permissions and limitations under the License.
+
+[Apache Cassandra]: http://cassandra.apache.org
+[DSE PHP driver]: http://docs.datastax.com/en/developer/php-driver-dse/latest
+[DataStax Enterprise]: http://www.datastax.com/products/datastax-enterprise
+[DataStax C/C++ Driver for Apache Cassandra]: http://docs.datastax.com/en/developer/cpp-driver/latest
+[DataStax download server]: http://downloads.datastax.com/php-driver
+[GitHub]: https://github.com/datastax/php-driver
+[Home]: http://docs.datastax.com/en/developer/php-driver/latest
+[API]: http://docs.datastax.com/en/developer/php-driver/latest/api
+[Provide your input]: http://goo.gl/forms/HbSiIJ2tLP
+[installing-details]: https://github.com/datastax/php-driver/blob/master/ext/README.md
+[contribution-policy]: https://github.com/datastax/php-driver/blob/master/CONTRIBUTING.md
+[Behat Framework]: http://docs.behat.org
+[feature-examples]: /features
+[`duration`]: http://docs.datastax.com/en/developer/php-driver/latest/api/Cassandra/class.Duration
+[simple string]: /features/simple_string_queries
+[`tinyint` and `smallint`]: /features/datatypes/#using-cassandra-the-tinyint-and-smallint-types
+[`date`]: /features/datatypes/#using-cassandra-date-type
+[`time`]: /features/datatypes/#using-cassandra-time-type
+[user-defined function and aggregate]: /features/function_and_aggregate_metadata
+[secondary index]: /features/secondary_index_metadata
+[materialized view]: /features/materialized_view_metadata
