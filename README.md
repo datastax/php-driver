@@ -3,10 +3,10 @@
 [![Build Status: Linux](https://travis-ci.org/datastax/php-driver.svg)](https://travis-ci.org/datastax/php-driver)
 [![Build Status: Windows](https://ci.appveyor.com/api/projects/status/8vrxpkfl4xm2f3nm?svg=true)](https://ci.appveyor.com/project/DataStax/php-driver)
 
-A modern, feature-rich and highly tunable PHP client library for
+A modern, [feature-rich][Features] and highly tunable PHP client library for
 [Apache Cassandra] 2.1+ using exclusively Cassandra's binary protocol and
-Cassandra Query Language v3. _Use the [DSE PHP driver] for better compatibility
-and support for [DataStax Enterprise]_.
+Cassandra Query Language v3. __Use the [DSE PHP driver] for better compatibility
+and support for [DataStax Enterprise]__.
 
 This is a wrapper around the [DataStax C/C++ Driver for Apache Cassandra].
 
@@ -14,10 +14,10 @@ __Note__: DataStax products do not support big-endian systems.
 
 ## Getting the Driver
 
-Binary versions of the driver are available for multiple operating systems and
-multiple versions of PHP which can be obtained from the
-[DataStax download server]. The source code is made available via [GitHub]. _If
-using [DataStax Enterprise] use the [DSE PHP driver] instead_.
+Binary versions of the driver, available for multiple operating systems and
+multiple versions of PHP, can be obtained from our [download server]. The
+source code is made available via [GitHub]. __If using [DataStax Enterprise]
+use the [DSE PHP driver] instead__.
 
 ## What's new in v1.2.0/v1.3.0
 
@@ -151,11 +151,11 @@ specific language governing permissions and limitations under the License.
 [contribution-policy]: https://github.com/datastax/php-driver/blob/master/CONTRIBUTING.md
 [Behat Framework]: http://docs.behat.org
 [Features]: /features
-[`duration`]: http://docs.datastax.com/en/developer/php-driver/latest/api/Cassandra/class.Duration
-[simple string]: /features/simple_string_queries
-[`tinyint` and `smallint`]: /features/datatypes/#using-cassandra-the-tinyint-and-smallint-types
-[`date`]: /features/datatypes/#using-cassandra-date-type
-[`time`]: /features/datatypes/#using-cassandra-time-type
-[user-defined function and aggregate]: /features/function_and_aggregate_metadata
-[secondary index]: /features/secondary_index_metadata
-[materialized view]: /features/materialized_view_metadata
+[`duration`]: /features/duration.feature
+[simple string]: /features/simple_string_queries.feature
+[`tinyint` and `smallint`]: /features/datatypes.feature#L92
+[`date`]: /features/datatypes.feature#L135
+[`time`]: /features/datatypes.feature#L170
+[user-defined function and aggregate]: /features/function_and_aggregate_metadata.feature
+[secondary index]: /features/secondary_index_metadata.feature
+[materialized view]: /features/materialized_view_metadata.feature

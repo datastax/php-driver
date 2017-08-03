@@ -18,8 +18,13 @@ sections:
     config: |
       RECURSIVE     = YES
       FILE_PATTERNS = *.php
-      EXCLUDE = ext/doc/generate_doc.php ext/doc/generate_doc_yaml.php
+      EXCLUDE = ext/doc/generate_doc.php generate_doc_common.php ext/doc/generate_doc_yaml.php
       INPUT_FILTER  = ./doxygen.rb
+rewrites:
+  - \.feature: ''
+  - \#L92: '#using-cassandra-the-tinyint-and-smallint-types'
+  - \#L135: '#using-cassandra-date-type'
+  - \#L170: '#using-cassandra-time-type'
 links:
   - title: Binaries
     href:  http://downloads.datastax.com/php-driver
