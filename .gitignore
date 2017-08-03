@@ -11,4 +11,5 @@
 # Files to ignore
 /cassandra.log
 /composer.phar
+/composer.lock
 /tmp/*
