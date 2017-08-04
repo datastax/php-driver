@@ -64,37 +64,44 @@ class SetTest extends \PHPUnit_Framework_TestCase
     /**
      * @dataProvider scalarTypes
      */
-    public function testScalarKeys($type, $value, $valueCopy)
+    public function testScalarKeys($type, $values)
     {
-        $map = Type::set($type)->create();
-        $map->add($value);
-        $this->assertEquals(1, count($map));
-        $this->assertTrue($map->has($value));
-        $this->assertTrue($map->has($valueCopy));
-        $map->remove($value);
-        $this->assertEquals(0, count($map));
+        $set = Type::set($type)->create();
+        foreach($values as $value) {
+            $set->add($value);
+        }
+        $this->assertEquals(count($values), count($set));
+
+        foreach($values as $value) {
+            $this->assertTrue($set->has($value));
+        }
+
+        foreach($values as $value) {
+            $set->remove($value);
+        }
+        $this->assertEquals(0, count($set));
     }
 
     public function scalarTypes()
     {
         return array(
-            array(Type::ascii(), "ascii", "ascii"),
-            array(Type::bigint(), new Bigint("9223372036854775807"), new Bigint("9223372036854775807")),
-            array(Type::blob(), new Blob("blob"), new Blob("blob")),
-            array(Type::boolean(), true, true),
-            array(Type::counter(), new Bigint(123), new Bigint(123)),
-            array(Type::decimal(), new Decimal("3.14159265359"), new Decimal("3.14159265359")),
-            array(Type::double(), 3.14159, 3.14159),
-            array(Type::float(), new Float(3.14159), new Float(3.14159)),
-            array(Type::inet(), new Inet("127.0.0.1"), new Inet("127.0.0.1")),
-            array(Type::int(), 123, 123),
-            array(Type::text(), "text", "text"),
-            array(Type::timestamp(), new Timestamp(123), new Timestamp(123)),
-            array(Type::timeuuid(), new Timeuuid(0), new Timeuuid(0)),
-            array(Type::uuid(), new Uuid("03398c99-c635-4fad-b30a-3b2c49f785c2"), new Uuid("03398c99-c635-4fad-b30a-3b2c49f785c2")),
-            array(Type::varchar(), "varchar", "varchar"),
-            array(Type::varint(), new Varint("9223372036854775808"), new Varint("9223372036854775808")),
-            array(Type::duration(), new Duration(1, 2, 3), new Duration(1, 2, 3))
+            array(Type::ascii(), array("ascii")),
+            array(Type::bigint(), array(new Bigint("9223372036854775807"))),
+            array(Type::blob(), array(new Blob("blob"))),
+            array(Type::boolean(), array(true, false)),
+            array(Type::counter(), array(new Bigint(123))),
+            array(Type::decimal(), array(new Decimal("3.14159265359"))),
+            array(Type::double(), array(3.14159)),
+            array(Type::float(), array(new Float(3.14159))),
+            array(Type::inet(), array(new Inet("127.0.0.1"))),
+            array(Type::int(), array(123)),
+            array(Type::text(), array("text")),
+            array(Type::timestamp(), array(new Timestamp(123))),
+            array(Type::timeuuid(), array(new Timeuuid(0))),
+            array(Type::uuid(), array(new Uuid("03398c99-c635-4fad-b30a-3b2c49f785c2"))),
+            array(Type::varchar(), array("varchar")),
+            array(Type::varint(), array(new Varint("9223372036854775808"))),
+            array(Type::duration(), array(new Duration(1, 2, 3)))
         );
     }
 

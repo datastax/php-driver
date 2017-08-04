@@ -47,7 +47,7 @@ php_driver_value_hash(zval* zvalue TSRMLS_DC) {
 
 #if PHP_MAJOR_VERSION >= 7
   case IS_TRUE: return 1;
-  case IS_FALSE: return 1;
+  case IS_FALSE: return 0;
 #else
   case IS_BOOL: return Z_BVAL_P(zvalue);
 #endif
