@@ -32,8 +32,7 @@ configuration:
 #  - Debug
   - Release
 environment:
-  LIBUV_VERSION: 1.11.0
-  OPENSSL_VERSION: 1.0.2k
+  LIBUV_VERSION: 1.13.1
   CPP_DRIVER_DEPENDENCIES_DOWNLOAD_URL_PREFIX: https://raw.githubusercontent.com/mikefero/cpp-driver-msvc-libs/master
   PHP_BINARY_TOOLS_ARCHIVE: php-sdk-binary-tools-20110915.zip
   PHP_BINARY_TOOLS_DIR: C:/projects
@@ -44,30 +43,42 @@ environment:
   COMPOSER_CACHE_DIR: C:/projects/dependencies/composer
   CONFIGURATION_COMPLETE: False
   matrix:
-    - PHP: 7.0
-      PHP_VERSION: 7.0.19
-      THREAD_SAFE: True
-      CMAKE_GENERATOR: Visual Studio 14 2015
-      VISUAL_STUDIO_INTERNAL_VERSION: 140
-      VISUAL_STUDIO_SHORTHAND_VERSION: 14
-    - PHP: 7.0
-      PHP_VERSION: 7.0.19
-      THREAD_SAFE: False
-      CMAKE_GENERATOR: Visual Studio 14 2015
-      VISUAL_STUDIO_INTERNAL_VERSION: 140
-      VISUAL_STUDIO_SHORTHAND_VERSION: 14
     - PHP: 5.6
-      PHP_VERSION: 5.6.30
+      PHP_VERSION: 5.6.31
       THREAD_SAFE: True
       CMAKE_GENERATOR: Visual Studio 11 2012
       VISUAL_STUDIO_INTERNAL_VERSION: 110
       VISUAL_STUDIO_SHORTHAND_VERSION: 11
     - PHP: 5.6
-      PHP_VERSION: 5.6.30
+      PHP_VERSION: 5.6.31
       THREAD_SAFE: False
       CMAKE_GENERATOR: Visual Studio 11 2012
       VISUAL_STUDIO_INTERNAL_VERSION: 110
       VISUAL_STUDIO_SHORTHAND_VERSION: 11
+    - PHP: 7.0
+      PHP_VERSION: 7.0.21
+      THREAD_SAFE: True
+      CMAKE_GENERATOR: Visual Studio 14 2015
+      VISUAL_STUDIO_INTERNAL_VERSION: 140
+      VISUAL_STUDIO_SHORTHAND_VERSION: 14
+    - PHP: 7.0
+      PHP_VERSION: 7.0.21
+      THREAD_SAFE: False
+      CMAKE_GENERATOR: Visual Studio 14 2015
+      VISUAL_STUDIO_INTERNAL_VERSION: 140
+      VISUAL_STUDIO_SHORTHAND_VERSION: 14
+    - PHP: 7.1
+      PHP_VERSION: 7.1.7
+      THREAD_SAFE: True
+      CMAKE_GENERATOR: Visual Studio 14 2015
+      VISUAL_STUDIO_INTERNAL_VERSION: 140
+      VISUAL_STUDIO_SHORTHAND_VERSION: 14
+    - PHP: 7.1
+      PHP_VERSION: 7.1.7
+      THREAD_SAFE: False
+      CMAKE_GENERATOR: Visual Studio 14 2015
+      VISUAL_STUDIO_INTERNAL_VERSION: 140
+      VISUAL_STUDIO_SHORTHAND_VERSION: 14
 
 init:
   - ps: |
@@ -100,6 +111,13 @@ init:
         $env:ENABLE_DEBUG="--enable-debug"
       }
 
+      # Determine if OpenSSL extension should have default linking enabled
+      If ($env:PHP -Match "5.6") {
+        $env:WITH_OPENSSL_DEFAULT_SHARED="--with-openssl"
+      } Else {
+        $env:WITH_OPENSSL_DEFAULT_SHARED="--with-openssl=shared"
+      }
+
       # Assign common use environment variables
       $env:LIB_ARCHITECTURE="lib$($env:ARCHITECTURE)"
       $env:WINDOWS_ARCHITECTURE="win$($env:ARCHITECTURE)"
@@ -108,6 +126,7 @@ init:
       # Generate the PHP environment variable
       $env:PHP_DEPENDENCIES_ARCHIVE="deps-$($env:PHP)-vc$($env:VISUAL_STUDIO_SHORTHAND_VERSION)-$($env:PLATFORM).7z"
       $env:PHP_ARCHIVE="php-$($env:PHP_VERSION).zip"
+      $env:PHP_DEPENDENCIES_DIR="$($env:PHP_SDK_LOCATION_PREFIX)/deps"
 
       # Generate the environment for the dependencies root directory
       $env:DEPENDENCIES_LOCATION="$($env:DEPENDENCIES_LOCATION_PREFIX)/$($env:Platform)/$($env:VISUAL_STUDIO_INTERNAL_VERSION)"
@@ -116,9 +135,9 @@ init:
       $env:LIBUV_ARCHIVE="libuv-$($env:LIBUV_VERSION)-$($env:WINDOWS_ARCHITECTURE)-msvc$($env:VISUAL_STUDIO_INTERNAL_VERSION).zip"
       $env:LIBUV_ROOT_DIR="$($env:DEPENDENCIES_LOCATION)/libuv-$($env:LIBUV_VERSION)"
 
-      # Generate the OpenSSL environment variables
-      $env:OPENSSL_ARCHIVE="openssl-$($env:OPENSSL_VERSION)-$($env:WINDOWS_ARCHITECTURE)-msvc$($env:VISUAL_STUDIO_INTERNAL_VERSION).zip"
-      $env:OPENSSL_ROOT_DIR="$($env:DEPENDENCIES_LOCATION)/openssl-$($env:OPENSSL_VERSION)"
+      # Generate the OpenSSL and zlib environment variables
+      $env:OPENSSL_ROOT_DIR="$($env:PHP_DEPENDENCIES_DIR)"
+      $env:ZLIB_ROOT_DIR="$($env:PHP_DEPENDENCIES_DIR)"
 
       # Generate the archive name for the driver artifact
       $env:DRIVER_ARTIFACT_ARCHIVE="cassandra-php-driver-ci-artifact-$($env:APPVEYOR_BUILD_VERSION)-$($env:PHP)-$($env:TS_OR_NTS)-vc$($env:VISUAL_STUDIO_SHORTHAND_VERSION)-$($env:PLATFORM).zip"
@@ -164,21 +183,6 @@ install:
         Remove-Item $env:LIBUV_ARCHIVE
       }
 
-      # Determine if OpenSSL should be installed (cached)
-      If (!(Test-Path -Path "openssl-$($env:OPENSSL_VERSION)")) {
-        # Download and extract the dependency
-        Start-FileDownload "$($env:CPP_DRIVER_DEPENDENCIES_DOWNLOAD_URL_PREFIX)/openssl/$($env:OPENSSL_VERSION)/$($env:OPENSSL_ARCHIVE)" -FileName $env:OPENSSL_ARCHIVE
-        7z -o"openssl-$($env:OPENSSL_VERSION)" x $env:OPENSSL_ARCHIVE
-
-        # Only keep the static libaries
-        Move-Item "openssl-$($env:OPENSSL_VERSION)/static/lib" "openssl-$($env:OPENSSL_VERSION)/lib"
-        Remove-Item "openssl-$($env:OPENSSL_VERSION)/static" -Force -Recurse
-        Remove-Item "openssl-$($env:OPENSSL_VERSION)/shared" -Force -Recurse
-
-        # Delete the binary archive
-        Remove-Item $env:OPENSSL_ARCHIVE
-      }
-
       # Remove pre-installed OpenSSL (resolve conflicts)
       Remove-Item "C:/OpenSSL-*" -Force -Recurse
 
@@ -186,12 +190,10 @@ install:
       New-Item -ItemType Directory -Force -Path "$($env:PHP_SDK_LOCATION_PREFIX)"
       7z -o"$($env:PHP_SDK_LOCATION_PREFIX)" x "$($env:DEPENDENCIES_LOCATION_PREFIX)/$($env:PHP_BINARY_TOOLS_ARCHIVE)"
       7z -o"$($env:PHP_SDK_LOCATION_PREFIX)" x "$($env:DEPENDENCIES_LOCATION_PREFIX)/$($env:PHP_ARCHIVE)"
-      7z -o"$($env:PHP_SDK_LOCATION_PREFIX)" x $env:PHP_DEPENDENCIES_ARCHIVE
+      7z -o"$($env:PHP_SDK_LOCATION_PREFIX)" x "$($env:PHP_DEPENDENCIES_ARCHIVE)"
       $env:PHP_SOURCE_DIR="$($env:PHP_SDK_LOCATION_PREFIX)/php-src-php-$($env:PHP_VERSION)"
-      $env:PHP_DEPENDENCIES_DIR="$($env:PHP_SDK_LOCATION_PREFIX)/deps"
       $env:PATH+=";$($env:PHP_SDK_LOCATION_PREFIX)/bin"
       Copy-Item "libuv-$($env:LIBUV_VERSION)/*" "$($env:PHP_DEPENDENCIES_DIR)" -Force -Recurse
-      Copy-Item "openssl-$($env:OPENSSL_VERSION)/*" "$($env:PHP_DEPENDENCIES_DIR)" -Force -Recurse
 
       # Move back to original directory
       Pop-Location
@@ -216,7 +218,7 @@ before_build:
         Push-Location build
 
         # Configure the build via CMake
-        cmake -G "$($env:CMAKE_GENERATOR)$($env:CMAKE_GENERATOR_SUFFIX)" -DCMAKE_INSTALL_PREFIX="$($env:DEPENDENCIES_LOCATION)/$($env:CPP_DRIVER_VERSION)/$($env:CPP_DRIVER_VERSION_SHA)" -DCASS_MULTICORE_COMPILATION=ON -DCMAKE_BUILD_TYPE=$env:CONFIGURATION -DCASS_BUILD_STATIC=ON -DCASS_USE_STATIC_LIBS=ON ..
+        cmake -G "$($env:CMAKE_GENERATOR)$($env:CMAKE_GENERATOR_SUFFIX)" -DCMAKE_INSTALL_PREFIX="$($env:DEPENDENCIES_LOCATION)/$($env:CPP_DRIVER_VERSION)/$($env:CPP_DRIVER_VERSION_SHA)" -DCASS_MULTICORE_COMPILATION=ON -DCMAKE_BUILD_TYPE=$env:CONFIGURATION -DCASS_BUILD_STATIC=On -DCASS_USE_STATIC_LIBS=On -DCASS_USE_ZLIB=On ..
 
         # Move back to C/C++ directory
         Pop-Location
@@ -235,7 +237,7 @@ before_build:
       Push-Location "$($env:PHP_SOURCE_DIR)"
   # Configure PHP and the PHP driver extension
   - cmd: buildconf.bat --force --add-modules-dir="%APPVEYOR_BUILD_FOLDER%"
-  - cmd: configure.bat --with-prefix="%APPVEYOR_BUILD_FOLDER%\%CONFIGURATION%" --disable-all --enable-cli --enable-com-dotnet --enable-session --enable-zlib --with-gmp --with-openssl=static --enable-cassandra=shared --enable-phar --enable-json --enable-filter --enable-hash --enable-ctype --enable-mbstring --enable-mbregex --enable-mbregex-backtrack --enable-tokenizer --enable-zip --with-libxml --with-dom --with-iconv %ENABLE_DISABLE_THREAD_SAFETY% %ENABLE_DEBUG%
+  - cmd: configure.bat --with-prefix="%APPVEYOR_BUILD_FOLDER%\%CONFIGURATION%" --disable-all --enable-cli --enable-com-dotnet --enable-session --enable-zlib --with-gmp %WITH_OPENSSL_DEFAULT_SHARED% --enable-cassandra=shared --enable-phar --enable-json --enable-filter --enable-hash --enable-ctype --enable-mbstring --enable-mbregex --enable-mbregex-backtrack --enable-tokenizer --enable-zip --with-libxml --with-dom --with-iconv %ENABLE_DISABLE_THREAD_SAFETY% %ENABLE_DEBUG%
   - ps: $env:CONFIGURATION_COMPLETE=$TRUE
 
 build_script:
@@ -249,18 +251,21 @@ build_script:
       # Move back to working directory
       Pop-Location
 
+      # Copy OpenSSL libraries for artifact and test execution
+      Copy-Item "$($env:PHP_DEPENDENCIES_DIR)/bin/libeay32.dll" "$($env:CONFIGURATION)" -Force -Recurse
+      Copy-Item "$($env:PHP_DEPENDENCIES_DIR)/bin/ssleay32.dll" "$($env:CONFIGURATION)" -Force -Recurse
+
       # Configure PHP to use the PHP driver extension
-      If (Test-Path -Path $env:CONFIGURATION/ext) {
-        Add-Content "$($env:CONFIGURATION)/php.ini" "extension=ext\php_cassandra.dll"
-      } Else {
-        Add-Content "$($env:CONFIGURATION)/php.ini" "extension=.\php_cassandra.dll"
+      Add-Content "$($env:CONFIGURATION)/php.ini" "extension=ext\php_cassandra.dll"
+      If ($env:PHP -NotMatch "5.6") {
+        Add-Content "$($env:CONFIGURATION)/php.ini" "extension=ext\php_openssl.dll"
       }
 
 after_build:
   - ps: |
-      # Create the artifact structure for the driver
+      # Create the artifact structure for the driver (Copy OpenSSL libraries)
       New-Item -ItemType Directory -Force -Path $env:TEMP/php-driver-artifact
-      Copy-Item $env:CONFIGURATION/php*.* $env:TEMP/php-driver-artifact
+      Copy-Item $env:CONFIGURATION/*.* $env:TEMP/php-driver-artifact
       If (Test-Path -Path $env:CONFIGURATION/ext) {
         Copy-Item $env:CONFIGURATION/ext $env:TEMP/php-driver-artifact -Recurse
       }
