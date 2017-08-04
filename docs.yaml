@@ -18,7 +18,7 @@ sections:
     config: |
       RECURSIVE     = YES
       FILE_PATTERNS = *.php
-      EXCLUDE = ext/doc/generate_doc.php generate_doc_common.php ext/doc/generate_doc_yaml.php
+      EXCLUDE = ext/doc/generate_doc.php ext/doc/generate_doc_common.php ext/doc/generate_doc_yaml.php
       INPUT_FILTER  = ./doxygen.rb
 rewrites:
   - \.feature: ''
