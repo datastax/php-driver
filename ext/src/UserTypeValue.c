@@ -144,7 +144,6 @@ PHP_METHOD(UserTypeValue, type)
 PHP_METHOD(UserTypeValue, values)
 {
   php_driver_user_type_value *self = NULL;
-  array_init(return_value);
   self = PHP_DRIVER_GET_USER_TYPE_VALUE(getThis());
 
   array_init(return_value);

@@ -139,7 +139,7 @@ PHP_METHOD(Timestamp, toDateTime)
   php_date_initialize(datetime_obj, str, str_len, NULL, NULL, 0 TSRMLS_CC);
   efree(str);
 
-  RETVAL_ZVAL(datetime, 0, 0);
+  RETVAL_ZVAL(datetime, 0, 1);
 }
 /* }}} */
 
