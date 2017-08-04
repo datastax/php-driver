@@ -18,21 +18,26 @@ sections:
     config: |
       RECURSIVE     = YES
       FILE_PATTERNS = *.php
-      EXCLUDE = ext/doc/generate_doc.php ext/doc/generate_doc_yaml.php
+      EXCLUDE = ext/doc/generate_doc.php ext/doc/generate_doc_common.php ext/doc/generate_doc_yaml.php
       INPUT_FILTER  = ./doxygen.rb
+rewrites:
+  - \.feature: ''
+  - \#L92: '#using-cassandra-the-tinyint-and-smallint-types'
+  - \#L135: '#using-cassandra-date-type'
+  - \#L170: '#using-cassandra-time-type'
 links:
   - title: Binaries
-    href:  http://downloads.datastax.com/php-driver/
+    href:  http://downloads.datastax.com/php-driver
   - title: Code
-    href:  https://github.com/datastax/php-driver/
+    href:  https://github.com/datastax/php-driver
   - title: Docs
-    href:  http://datastax.github.io/php-driver/
+    href:  http://docs.datastax.com/en/developer/php-driver
   - title: Issues
-    href:  https://datastax-oss.atlassian.net/browse/PHP/
+    href:  https://datastax-oss.atlassian.net/browse/PHP
   - title: Mailing List
     href:  https://groups.google.com/a/lists.datastax.com/forum/#!forum/php-driver-user
-  - title: IRC Channel
-    href:  irc://irc.freenode.net/datastax-drivers
+  - title: Slack
+    href:  https://academy.datastax.com/slack
   - title: Releases
     href:  https://github.com/datastax/php-driver/releases
 rewrites:
