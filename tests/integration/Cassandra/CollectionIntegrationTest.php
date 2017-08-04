@@ -38,14 +38,23 @@ class CollectionIntegrationTest extends CollectionsIntegrationTest
      * Data provider for lists with scalar types
      */
     public function collectionWithScalarTypes() {
-        return array_map(function ($cassandraType) {
-            $listType = Type::collection($cassandraType[0]);
-            $list = $listType->create();
-            foreach ($cassandraType[1] as $value) {
-                $list->add($value);
-            }
-            return array($listType, $list);
-        }, $this->scalarCassandraTypes());
+        return array_merge(
+            array_map(function ($cassandraType) {
+                $listType = Type::collection($cassandraType[0]);
+                $list = $listType->create();
+                foreach ($cassandraType[1] as $value) {
+                    $list->add($value);
+                }
+                return array($listType, $list);
+            }, $this->scalarCassandraTypes()),
+            array_map(function ($cassandraType) {
+                $list = new Collection($cassandraType[0]);
+                foreach ($cassandraType[1] as $value) {
+                    $list->add($value);
+                }
+                return array($list->type(), $list);
+            }, $this->constantScalarCassandraTypes())
+        );
     }
 
     /**

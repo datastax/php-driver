@@ -67,7 +67,16 @@ class MapIntegrationTest extends CollectionsIntegrationTest
             return array($mapType, $map);
         }, $this->scalarCassandraTypes());
 
-        return array_merge($mapKeyTypes, $mapValueTypes);
+        $mapConstantScalarTypes = array_map(function ($cassandraType) {
+            $map = new Map($cassandraType[0], $cassandraType[0]);
+            $values = $cassandraType[1];
+            for ($i = 0; $i < count($cassandraType[1]); $i++) {
+                $map->set($values[$i], $values[$i]);
+            }
+            return array($map->type(), $map);
+        }, $this->constantScalarCassandraTypes());
+
+        return array_merge($mapKeyTypes, $mapValueTypes, $mapConstantScalarTypes);
     }
 
     /**

@@ -40,6 +40,7 @@ abstract class DatatypeIntegrationTests extends BasicIntegrationTest {
                                           new Duration(-1, 0, -(2 ** 31)),
                                           new Duration((2 ** 31) - 1, 1, 0),
                                           new Duration(-(2 ** 31), -1, 0))),
+            array(Type::int(), array(1, 2, 99)),
             array(Type::float(), array(new Float(1.0), new Float(2.2), new Float(2.2))),
             array(Type::inet(), array(new Inet("127.0.0.1"), new Inet("127.0.0.2"), new Inet("127.0.0.3"))),
             array(Type::smallint(), array(Smallint::min(), Smallint::max(), new Smallint(0), new Smallint(74))),
@@ -54,6 +55,40 @@ abstract class DatatypeIntegrationTests extends BasicIntegrationTest {
             array(Type::varchar(), array("a", "b", "c", "x", "y", "z")),
             array(Type::varint(), array(new Varint(1), new Varint(2), new Varint(3))),
         );
+    }
+
+    /**
+     * Global constant scalar Cassandra types to be used by data providers
+     */
+    public function constantScalarCassandraTypes() {
+        $constants = array(
+            \Cassandra::TYPE_TEXT,
+            \Cassandra::TYPE_ASCII,
+            \Cassandra::TYPE_VARCHAR,
+            \Cassandra::TYPE_BIGINT,
+            \Cassandra::TYPE_SMALLINT,
+            \Cassandra::TYPE_TINYINT,
+            \Cassandra::TYPE_BLOB,
+            \Cassandra::TYPE_BOOLEAN,
+            \Cassandra::TYPE_DECIMAL,
+            \Cassandra::TYPE_DOUBLE,
+            \Cassandra::TYPE_FLOAT,
+            \Cassandra::TYPE_INT,
+            \Cassandra::TYPE_TIMESTAMP,
+            \Cassandra::TYPE_UUID,
+            \Cassandra::TYPE_VARINT,
+            \Cassandra::TYPE_TIMEUUID,
+            \Cassandra::TYPE_INET
+        );
+        $scalarCassandraTypes = $this->scalarCassandraTypes();
+
+        return array_map(function($type) use ($scalarCassandraTypes) {
+            $match = array_filter($scalarCassandraTypes, function($item) use ($type) {
+                return (string)$item[0] === $type;
+            });
+            assert(isset($match) && count($match) > 0);
+            return array($type, current($match)[1]);
+        }, $constants);
     }
 
     /**

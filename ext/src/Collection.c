@@ -97,7 +97,7 @@ PHP_METHOD(Collection, __construct)
     CassValueType value_type;
     if (!php_driver_value_type(Z_STRVAL_P(type), &value_type TSRMLS_CC))
       return;
-    self->type = php_driver_type_set_from_value_type(value_type TSRMLS_CC);
+    self->type = php_driver_type_collection_from_value_type(value_type TSRMLS_CC);
   } else if (Z_TYPE_P(type) == IS_OBJECT &&
              instanceof_function(Z_OBJCE_P(type), php_driver_type_ce TSRMLS_CC)) {
     if (!php_driver_type_validate(type, "type" TSRMLS_CC)) {
