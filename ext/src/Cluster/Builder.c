@@ -29,6 +29,7 @@ zend_class_entry *php_driver_cluster_builder_ce = NULL;
 
 PHP_METHOD(ClusterBuilder, build)
 {
+  CassError rc;
   php_driver_cluster* cluster;
   php_driver_cluster_builder *self = PHP_DRIVER_GET_CLUSTER_BUILDER(getThis());
 
@@ -125,7 +126,16 @@ PHP_METHOD(ClusterBuilder, build)
   cass_cluster_set_tcp_nodelay(cluster->cluster, self->enable_tcp_nodelay);
   cass_cluster_set_tcp_keepalive(cluster->cluster, self->enable_tcp_keepalive, self->tcp_keepalive_delay);
   cass_cluster_set_use_schema(cluster->cluster, self->enable_schema);
-  ASSERT_SUCCESS(cass_cluster_set_use_hostname_resolution(cluster->cluster, self->enable_hostname_resolution));
+
+  rc = cass_cluster_set_use_hostname_resolution(cluster->cluster, self->enable_hostname_resolution);
+  if (rc == CASS_ERROR_LIB_NOT_IMPLEMENTED) {
+    if (self->enable_hostname_resolution) {
+      php_error_docref0(NULL TSRMLS_CC, E_WARNING,
+                        "The underlying C/C++ driver does not implement hostname resolution it will be disabled");
+    }
+  } else {
+    ASSERT_SUCCESS(rc);
+  }
   ASSERT_SUCCESS(cass_cluster_set_use_randomized_contact_points(cluster->cluster, self->enable_randomized_contact_points));
   cass_cluster_set_connection_heartbeat_interval(cluster->cluster, self->connection_heartbeat_interval);
 

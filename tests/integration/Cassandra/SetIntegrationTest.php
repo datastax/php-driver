@@ -47,14 +47,23 @@ class SetIntegrationTest extends CollectionsIntegrationTest
             }
         );
 
-        return array_map(function ($cassandraType) {
-            $setType = Type::set($cassandraType[0]);
-            $set = $setType->create();
-            foreach ($cassandraType[1] as $value) {
-                $set->add($value);
-            }
-            return array($setType, $set);
-        }, $scalarCassandraTypes);
+        return array_merge(
+            array_map(function ($cassandraType) {
+                $setType = Type::set($cassandraType[0]);
+                $set = $setType->create();
+                foreach ($cassandraType[1] as $value) {
+                    $set->add($value);
+                }
+                return array($setType, $set);
+            }, $scalarCassandraTypes),
+            array_map(function ($cassandraType) {
+                $set = new Set($cassandraType[0]);
+                foreach ($cassandraType[1] as $value) {
+                    $set->add($value);
+                }
+                return array($set->type(), $set);
+            }, $this->constantScalarCassandraTypes())
+        );
     }
 
     /**
