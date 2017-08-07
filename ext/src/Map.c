@@ -524,7 +524,7 @@ php_driver_map_compare(zval *obj1, zval *obj2 TSRMLS_DC)
       return 1;
     }
     result = php_driver_value_compare(PHP5TO7_ZVAL_MAYBE_P(curr->value),
-                                      PHP5TO7_ZVAL_MAYBE_P(entry->value));
+                                      PHP5TO7_ZVAL_MAYBE_P(entry->value) TSRMLS_CC);
     if (result != 0) return result;
   }
 
