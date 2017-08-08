@@ -36,7 +36,7 @@ REM Argument constants
 SET ARGUMENT_BUILD_TYPE_DEBUG=--DEBUG
 SET ARGUMENT_BUILD_TYPE_RELEASE=--RELEASE
 SET ARGUMENT_DISABLE_CLEAN_BUILD=--DISABLE-CLEAN
-SET ARGUMENT_DISABLE_THREAD_SAFETY=--DISABLE-THREAD-SAFETY
+SET ARGUMENT_ENABLE_THREAD_SAFETY=--ENABLE-THREAD-SAFETY
 SET ARGUMENT_ENABLE_TEST_CONFIGURATION=--ENABLE-TEST-CONFIGURATION
 SET ARGUMENT_ENABLE_BUILD_PACKAGES=--ENABLE-PACKAGES
 SET ARGUMENT_PHP_VERSION=--PHP-VERSION
@@ -159,7 +159,7 @@ REM Build defaults (can be updated via command line)
 SET BUILD_TYPE=%BUILD_TYPE_RELEASE%
 SET ENABLE_BUILD_PACKAGES=%FALSE%
 SET ENABLE_CLEAN_BUILD=%TRUE%
-SET ENABLE_THREAD_SAFETY=%TRUE%
+SET ENABLE_THREAD_SAFETY=%FALSE%
 SET ENABLE_TEST_CONFIGURATION=%FALSE%
 SET PHP_VERSION=7_1
 SET LIBRARY_TYPE=%LIBRARY_TYPE_SHARED%
@@ -223,7 +223,7 @@ IF NOT [%1] == [] (
     ) ELSE (
       REM Ensure the PHP version is valid
       IF NOT "%2" == "5.6" (
-         IF NOT "%2" == "7.0" (
+        IF NOT "%2" == "7.0" (
           IF NOT "%2" == "7.1" (
             ECHO Invalid Version: Version not within range [5.6, 7.0, and 7.1]
             EXIT /B !EXIT_CODE_INVALID_VERSION!
@@ -251,8 +251,8 @@ IF NOT [%1] == [] (
   )
 
   REM Disable thread safety
-  IF "!ARGUMENT!" == "!ARGUMENT_DISABLE_THREAD_SAFETY!" (
-    SET ENABLE_THREAD_SAFETY=!FALSE!
+  IF "!ARGUMENT!" == "!ARGUMENT_ENABLE_THREAD_SAFETY!" (
+    SET ENABLE_THREAD_SAFETY=!TRUE!
   )
 
   REM Enable the use of Boost atomics library in the cpp-driver
@@ -910,7 +910,7 @@ REM Display the help message and exit with error code
   ECHO     !ARGUMENT_BUILD_TYPE_DEBUG!                       Enable debug build
   ECHO     !ARGUMENT_BUILD_TYPE_RELEASE!                     Enable release build ^(default^)
   ECHO     !ARGUMENT_DISABLE_CLEAN_BUILD!               Disable clean build
-  ECHO     !ARGUMENT_DISABLE_THREAD_SAFETY!       Disable thread safety
+  ECHO     !ARGUMENT_ENABLE_THREAD_SAFETY!        Enable thread safety
   ECHO     !ARGUMENT_ENABLE_BUILD_PACKAGES! [version]   Enable package generation ^(5.6, 7.0, 7.1^) ^(*^)
   ECHO     !ARGUMENT_ENABLE_TEST_CONFIGURATION!   Enable test configuration build
   ECHO     !ARGUMENT_PHP_VERSION! [version]       PHP version 5.6, 7.0 and 7.1

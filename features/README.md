@@ -1,4 +1,4 @@
-# Core
+# Features
 
 ## Usage
 
