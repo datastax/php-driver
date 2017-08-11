@@ -1,3 +1,25 @@
+# 1.3.2
+
+Features:
+
+* [PHP-155] Support for PHP 7.1
+
+Bug Fixes:
+
+* [PHP-189] Set of map : bad hash calculation
+* [PHP-172] php_driver_value_hash hashes IS_TRUE and IS_FALSE to 1 in PHP7
+* [PHP-163] Disable hostname resolution if compiling against libuv 0.10
+* [PHP-159] Driver version Number (composer)
+* [PHP-142] Memory Leak in Cassandra\Timestamp::toDateTime() and Cassandra\UserTypeValue::values()
+* [PHP-118] Unable to bind list values using global type constants
+
+Documentation:
+
+* [PHP-196] Update building and testing documentation
+* [PHP-191] Updates to README files
+* [PHP-117] Broken links in documentor-generated docs
+* [PHP-102] Documentation improvements
+
 # 1.3.1
 
 Bug Fixes:
