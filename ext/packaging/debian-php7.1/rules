@@ -1,0 +1,49 @@
+#!/usr/bin/make -f
+
+# Copied from dh-php: /usr/share/dh-php/pkg-pecl.mk
+
+# See debhelper(7) (uncomment to enable)
+# output every command that modifies files on the build system.
+#DH_VERBOSE = 1
+
+# see EXAMPLES in dpkg-buildflags(1) and read /usr/share/dpkg/*
+DPKG_EXPORT_BUILDFLAGS = 1
+include /usr/share/dpkg/default.mk
+
+# see FEATURE AREAS in dpkg-buildflags(1)
+export DEB_BUILD_MAINT_OPTIONS = hardening=+all
+
+# see ENVIRONMENT in dpkg-buildflags(1)
+# package maintainers to append CFLAGS
+export DEB_CFLAGS_MAINT_APPEND  = -Wall
+# package maintainers to append LDFLAGS
+export DEB_LDFLAGS_MAINT_APPEND = -Wl,--as-needed
+
+# Don't ever use RPATH on Debian
+export PHP_RPATH=no
+
+export DH_PHP_VERSIONS = $(PHP_VERSION)
+
+PECL_NAME := cassandra-driver
+INSTALL_ROOT = $(CURDIR)/debian/php$(PHP_VERSION)-cassandra-driver
+
+%:
+	dh $@ --with php
+
+override_dh_auto_configure:
+	phpize$(PHP_VERSION)
+	dh_auto_configure -- --with-cassandra --with-php-config=/usr/bin/php-config$(PHP_VERSION) $(PECL_CONFIGURE_MAINT_APPEND)
+
+override_dh_auto_build:
+	dh_auto_build  -- -j$(NUMJOBS)
+
+override_dh_auto_install:
+	dh_auto_install -- INSTALL_ROOT=$(INSTALL_ROOT)
+
+override_dh_gencontrol: ,:=,
+override_dh_gencontrol:
+	dh_gencontrol -- "-Vphp:Provides=$(addprefix php,$(addsuffix -$(PECL_NAME)$(,) ,$(PHP_VERSION)))"
+
+override_dh_php:
+	dh_php -p php$(PHP_VERSION)-$(PECL_NAME)
+

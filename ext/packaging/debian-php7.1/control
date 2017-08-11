@@ -1,0 +1,22 @@
+Source: php7.1-cassandra-driver
+Section: php
+Priority: optional
+Maintainer: Michael Penick <michael.penick@datastax.com>
+Build-Depends: debhelper (>= 9~),
+               dh-php (>= 0.10~),
+               php7.1-dev,
+               dh-php,
+               pkg-config,
+               cassandra-cpp-driver-dev (>= 2.7.0)
+Homepage: http://datastax.github.io/php-driver/
+
+Package: php7.1-cassandra-driver
+Architecture: any
+Depends: ${misc:Depends},
+         ${php:Depends},
+         ${shlibs:Depends},
+         cassandra-cpp-driver (>= 2.7.0)
+Provides: ${php:Provides}
+Description: Modern, feature-rich and highly tunable PHP client library for
+ Apache Cassandra (1.2+) and DataStax Enterprise (3.1+) using exclusively
+ Cassandra's binary protocol and Cassandra Query Language v3.
