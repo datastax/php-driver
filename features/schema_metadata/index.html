@@ -82,9 +82,18 @@
             <ul class="nav nav-pills nav-stacked">
   
   
+  <li>
+    <a href="../../building/">
+      Building PHP Extension <small>page</small>
+      
+    </a>
+    
+  </li>
+  
+  
   <li class="active">
     <a href="../">
-      Core <small>page</small>
+      Features <small>page</small>
       
       
       <span class="glyphicon glyphicon-minus-sign pull-right" aria-hidden="true"></span>
@@ -323,7 +332,7 @@
                 
                 
                 
-                <li><a href="../">Core</a></li>
+                <li><a href="../">Features</a></li>
                 
                 
                 
@@ -348,9 +357,9 @@ columns.</p>
 <dt>Given </dt>
 <dd>a running Cassandra cluster</dd>
 <dt>And </dt>
-<dd>the following schema:<pre class="highlight"><code><span class="k">CREATE</span> <span class="k">KEYSPACE</span> <span class="n">simplex</span> <span class="k">WITH</span> <span class="n">replication</span> <span class="o">=</span> <span class="p">{</span>
-  <span class="s1">'class'</span><span class="p">:</span> <span class="s1">'SimpleStrategy'</span><span class="p">,</span>
-  <span class="s1">'replication_factor'</span><span class="p">:</span> <span class="mi">1</span>
+<dd>the following schema:<span class="k">CREATE</span> <span class="k">KEYSPACE</span> <span class="n">simplex</span> <span class="k">WITH</span> <span class="n">replication</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="s1">‘class’</span><span class="p">:</span> <span class="s1">‘SimpleStrategy’</span><span class="p">,</span>
+  <span class="s1">‘replication_factor’</span><span class="p">:</span> <span class="mi">1</span>
 <span class="p">}</span> <span class="k">AND</span> <span class="n">DURABLE_WRITES</span> <span class="o">=</span> <span class="k">false</span><span class="p">;</span>
 <span class="k">USE</span> <span class="n">simplex</span><span class="p">;</span>
 <span class="k">CREATE</span> <span class="k">TABLE</span> <span class="k">values</span> <span class="p">(</span>
@@ -374,38 +383,36 @@ columns.</p>
   <span class="n">set_value</span> <span class="k">Set</span><span class="o">&lt;</span><span class="k">float</span><span class="o">&gt;</span>
 <span class="p">)</span> <span class="k">WITH</span>
     <span class="n">bloom_filter_fp_chance</span><span class="o">=</span><span class="mi">0</span><span class="p">.</span><span class="mi">5</span> <span class="k">AND</span>
-    <span class="n">caching</span><span class="o">=</span><span class="s1">'ALL'</span> <span class="k">AND</span>
-    <span class="n">comment</span><span class="o">=</span><span class="s1">'Schema Metadata Feature'</span> <span class="k">AND</span>
-    <span class="n">compaction</span><span class="o">=</span><span class="p">{</span><span class="s1">'class'</span><span class="p">:</span> <span class="s1">'LeveledCompactionStrategy'</span><span class="p">,</span> <span class="s1">'sstable_size_in_mb'</span> <span class="p">:</span> <span class="mi">37</span><span class="p">}</span> <span class="k">AND</span>
-    <span class="n">compression</span><span class="o">=</span><span class="p">{</span><span class="s1">'sstable_compression'</span><span class="p">:</span> <span class="s1">'DeflateCompressor'</span><span class="p">}</span> <span class="k">AND</span>
+    <span class="n">caching</span><span class="o">=</span><span class="s1">‘ALL’</span> <span class="k">AND</span>
+    <span class="n">comment</span><span class="o">=</span><span class="s1">‘Schema Metadata Feature’</span> <span class="k">AND</span>
+    <span class="n">compaction</span><span class="o">=</span><span class="p">{</span><span class="s1">‘class’</span><span class="p">:</span> <span class="s1">‘LeveledCompactionStrategy’</span><span class="p">,</span> <span class="s1">‘sstable_size_in_mb’</span> <span class="p">:</span> <span class="mi">37</span><span class="p">}</span> <span class="k">AND</span>
+    <span class="n">compression</span><span class="o">=</span><span class="p">{</span><span class="s1">‘sstable_compression’</span><span class="p">:</span> <span class="s1">‘DeflateCompressor’</span><span class="p">}</span> <span class="k">AND</span>
     <span class="n">dclocal_read_repair_chance</span><span class="o">=</span><span class="mi">0</span><span class="p">.</span><span class="mi">25</span> <span class="k">AND</span>
     <span class="n">gc_grace_seconds</span><span class="o">=</span><span class="mi">3600</span> <span class="k">AND</span>
-    <span class="n">populate_io_cache_on_flush</span><span class="o">=</span><span class="s1">'true'</span> <span class="k">AND</span>
+    <span class="n">populate_io_cache_on_flush</span><span class="o">=</span><span class="s1">‘true’</span> <span class="k">AND</span>
     <span class="n">read_repair_chance</span><span class="o">=</span><span class="mi">0</span><span class="p">.</span><span class="mi">75</span> <span class="k">AND</span>
-    <span class="n">replicate_on_write</span><span class="o">=</span><span class="s1">'false'</span><span class="p">;</span>
-</code></pre>
+    <span class="n">replicate_on_write</span><span class="o">=</span><span class="s1">‘false’</span><span class="p">;</span>
 </dd>
 </dl>
 <h2 id="getting-keyspace-metadata" class="target">Getting keyspace metadata<a class="anchor" href="#getting-keyspace-metadata" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
 </h2>
 <dl class="steps">
 <dt>Given </dt>
-<dd>the following example:<pre class="highlight"><code><span class="cp">&lt;?php</span>
+<dd>the following example:<span class="cp">&lt;?php</span>
 <span class="nv">$cluster</span>  <span class="o">=</span> <span class="nx">Cassandra</span><span class="o">::</span><span class="na">cluster</span><span class="p">()</span>
-                   <span class="o">-&gt;</span><span class="na">withContactPoints</span><span class="p">(</span><span class="s1">'127.0.0.1'</span><span class="p">)</span>
+                   <span class="o">-&gt;</span><span class="na">withContactPoints</span><span class="p">(</span><span class="s1">‘127.0.0.1’</span><span class="p">)</span>
                    <span class="o">-&gt;</span><span class="na">build</span><span class="p">();</span>
-<span class="nv">$session</span>  <span class="o">=</span> <span class="nv">$cluster</span><span class="o">-&gt;</span><span class="na">connect</span><span class="p">(</span><span class="s2">"simplex"</span><span class="p">);</span>
+<span class="nv">$session</span>  <span class="o">=</span> <span class="nv">$cluster</span><span class="o">-&gt;</span><span class="na">connect</span><span class="p">(</span><span class="s2">“simplex”</span><span class="p">);</span>
 
 <span class="nv">$schema</span>   <span class="o">=</span> <span class="nv">$session</span><span class="o">-&gt;</span><span class="na">schema</span><span class="p">();</span>
-<span class="nv">$keyspace</span> <span class="o">=</span> <span class="nv">$schema</span><span class="o">-&gt;</span><span class="na">keyspace</span><span class="p">(</span><span class="s2">"simplex"</span><span class="p">);</span>
+<span class="nv">$keyspace</span> <span class="o">=</span> <span class="nv">$schema</span><span class="o">-&gt;</span><span class="na">keyspace</span><span class="p">(</span><span class="s2">“simplex”</span><span class="p">);</span>
 
-<span class="k">echo</span> <span class="s2">"Name: "</span> <span class="o">.</span> <span class="nv">$keyspace</span><span class="o">-&gt;</span><span class="na">name</span><span class="p">()</span> <span class="o">.</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">;</span>
-<span class="k">echo</span> <span class="s2">"Replication Class: "</span> <span class="o">.</span> <span class="nv">$keyspace</span><span class="o">-&gt;</span><span class="na">replicationClassName</span><span class="p">()</span> <span class="o">.</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">;</span>
+<span class="k">echo</span> <span class="s2">“Name: ”</span> <span class="o">.</span> <span class="nv">$keyspace</span><span class="o">-&gt;</span><span class="na">name</span><span class="p">()</span> <span class="o">.</span> <span class="s2">“</span><span class="se">\n</span><span class="s2">”</span><span class="p">;</span>
+<span class="k">echo</span> <span class="s2">“Replication Class: ”</span> <span class="o">.</span> <span class="nv">$keyspace</span><span class="o">-&gt;</span><span class="na">replicationClassName</span><span class="p">()</span> <span class="o">.</span> <span class="s2">“</span><span class="se">\n</span><span class="s2">”</span><span class="p">;</span>
 <span class="k">foreach</span> <span class="p">(</span><span class="nv">$keyspace</span><span class="o">-&gt;</span><span class="na">replicationOptions</span><span class="p">()</span> <span class="k">as</span> <span class="nv">$key</span> <span class="o">=&gt;</span> <span class="nv">$value</span><span class="p">)</span> <span class="p">{</span>
-  <span class="k">echo</span> <span class="s2">"  "</span> <span class="o">.</span> <span class="nv">$key</span> <span class="o">.</span> <span class="s2">":"</span> <span class="o">.</span> <span class="nv">$value</span> <span class="o">.</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">;</span>
+  <span class="k">echo</span> <span class="s2">“  ”</span> <span class="o">.</span> <span class="nv">$key</span> <span class="o">.</span> <span class="s2">“:”</span> <span class="o">.</span> <span class="nv">$value</span> <span class="o">.</span> <span class="s2">“</span><span class="se">\n</span><span class="s2">”</span><span class="p">;</span>
 <span class="p">}</span>
-<span class="k">echo</span> <span class="s2">"Has Durable Writes: "</span> <span class="o">.</span> <span class="p">(</span><span class="nv">$keyspace</span><span class="o">-&gt;</span><span class="na">hasDurableWrites</span><span class="p">()</span> <span class="o">?</span> <span class="s2">"True"</span> <span class="o">:</span> <span class="s2">"False"</span> <span class="p">)</span><span class="o">.</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">;</span>
-</code></pre>
+<span class="k">echo</span> <span class="s2">“Has Durable Writes: ”</span> <span class="o">.</span> <span class="p">(</span><span class="nv">$keyspace</span><span class="o">-&gt;</span><span class="na">hasDurableWrites</span><span class="p">()</span> <span class="o">?</span> <span class="s2">“True”</span> <span class="o">:</span> <span class="s2">“False”</span> <span class="p">)</span><span class="o">.</span> <span class="s2">“</span><span class="se">\n</span><span class="s2">”</span><span class="p">;</span>
 </dd>
 <dt>When </dt>
 <dd>it is executed</dd>
@@ -421,32 +428,31 @@ Has Durable Writes: False
 </h2>
 <dl class="steps">
 <dt>Given </dt>
-<dd>the following example:<pre class="highlight"><code><span class="cp">&lt;?php</span>
+<dd>the following example:<span class="cp">&lt;?php</span>
 <span class="nv">$cluster</span> <span class="o">=</span> <span class="nx">Cassandra</span><span class="o">::</span><span class="na">cluster</span><span class="p">()</span>
-                   <span class="o">-&gt;</span><span class="na">withContactPoints</span><span class="p">(</span><span class="s1">'127.0.0.1'</span><span class="p">)</span>
+                   <span class="o">-&gt;</span><span class="na">withContactPoints</span><span class="p">(</span><span class="s1">‘127.0.0.1’</span><span class="p">)</span>
                    <span class="o">-&gt;</span><span class="na">build</span><span class="p">();</span>
-<span class="nv">$session</span> <span class="o">=</span> <span class="nv">$cluster</span><span class="o">-&gt;</span><span class="na">connect</span><span class="p">(</span><span class="s2">"simplex"</span><span class="p">);</span>
+<span class="nv">$session</span> <span class="o">=</span> <span class="nv">$cluster</span><span class="o">-&gt;</span><span class="na">connect</span><span class="p">(</span><span class="s2">“simplex”</span><span class="p">);</span>
 
 <span class="nv">$schema</span>  <span class="o">=</span> <span class="nv">$session</span><span class="o">-&gt;</span><span class="na">schema</span><span class="p">();</span>
-<span class="nv">$table</span>   <span class="o">=</span> <span class="nv">$schema</span><span class="o">-&gt;</span><span class="na">keyspace</span><span class="p">(</span><span class="s2">"simplex"</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">table</span><span class="p">(</span><span class="s2">"values"</span><span class="p">);</span>
+<span class="nv">$table</span>   <span class="o">=</span> <span class="nv">$schema</span><span class="o">-&gt;</span><span class="na">keyspace</span><span class="p">(</span><span class="s2">“simplex”</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">table</span><span class="p">(</span><span class="s2">“values”</span><span class="p">);</span>
 
-<span class="k">echo</span> <span class="s2">"Name: "</span> <span class="o">.</span> <span class="nv">$table</span><span class="o">-&gt;</span><span class="na">name</span><span class="p">()</span> <span class="o">.</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">;</span>
-<span class="k">echo</span> <span class="s2">"Bloom Filter: "</span> <span class="o">.</span> <span class="nv">$table</span><span class="o">-&gt;</span><span class="na">bloomFilterFPChance</span><span class="p">()</span> <span class="o">.</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">;</span>
-<span class="nv">$patterns</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span><span class="s1">'/{/'</span><span class="p">,</span> <span class="s1">'/"/'</span><span class="p">,</span> <span class="s1">'/:/'</span><span class="p">,</span> <span class="s1">'/keys/'</span><span class="p">);</span>
-<span class="nv">$table_caching</span> <span class="o">=</span> <span class="nb">explode</span><span class="p">(</span><span class="s2">","</span><span class="p">,</span> <span class="nv">$table</span><span class="o">-&gt;</span><span class="na">caching</span><span class="p">());</span>
-<span class="k">echo</span> <span class="s2">"Caching: "</span> <span class="o">.</span> <span class="nb">preg_replace</span><span class="p">(</span><span class="nv">$patterns</span><span class="p">,</span> <span class="s2">""</span><span class="p">,</span> <span class="nv">$table_caching</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">.</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">;</span>
-<span class="k">echo</span> <span class="s2">"Comment: "</span> <span class="o">.</span> <span class="nv">$table</span><span class="o">-&gt;</span><span class="na">comment</span><span class="p">()</span> <span class="o">.</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">;</span>
-<span class="k">echo</span> <span class="s2">"Compaction Class: "</span> <span class="o">.</span> <span class="nv">$table</span><span class="o">-&gt;</span><span class="na">compactionStrategyClassName</span><span class="p">()</span> <span class="o">.</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">;</span>
+<span class="k">echo</span> <span class="s2">“Name: ”</span> <span class="o">.</span> <span class="nv">$table</span><span class="o">-&gt;</span><span class="na">name</span><span class="p">()</span> <span class="o">.</span> <span class="s2">“</span><span class="se">\n</span><span class="s2">”</span><span class="p">;</span>
+<span class="k">echo</span> <span class="s2">“Bloom Filter: ”</span> <span class="o">.</span> <span class="nv">$table</span><span class="o">-&gt;</span><span class="na">bloomFilterFPChance</span><span class="p">()</span> <span class="o">.</span> <span class="s2">“</span><span class="se">\n</span><span class="s2">”</span><span class="p">;</span>
+<span class="nv">$patterns</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span><span class="s1">‘/{/’</span><span class="p">,</span> <span class="s1">‘/“/’</span><span class="p">,</span> <span class="s1">‘/:/’</span><span class="p">,</span> <span class="s1">‘/keys/’</span><span class="p">);</span>
+<span class="nv">$table_caching</span> <span class="o">=</span> <span class="nb">explode</span><span class="p">(</span><span class="s2">”,“</span><span class="p">,</span> <span class="nv">$table</span><span class="o">-&gt;</span><span class="na">caching</span><span class="p">());</span>
+<span class="k">echo</span> <span class="s2">&#8220;Caching: ”</span> <span class="o">.</span> <span class="nb">preg_replace</span><span class="p">(</span><span class="nv">$patterns</span><span class="p">,</span> <span class="s2">“”</span><span class="p">,</span> <span class="nv">$table_caching</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">.</span> <span class="s2">“</span><span class="se">\n</span><span class="s2">”</span><span class="p">;</span>
+<span class="k">echo</span> <span class="s2">“Comment: ”</span> <span class="o">.</span> <span class="nv">$table</span><span class="o">-&gt;</span><span class="na">comment</span><span class="p">()</span> <span class="o">.</span> <span class="s2">“</span><span class="se">\n</span><span class="s2">”</span><span class="p">;</span>
+<span class="k">echo</span> <span class="s2">“Compaction Class: ”</span> <span class="o">.</span> <span class="nv">$table</span><span class="o">-&gt;</span><span class="na">compactionStrategyClassName</span><span class="p">()</span> <span class="o">.</span> <span class="s2">“</span><span class="se">\n</span><span class="s2">”</span><span class="p">;</span>
 <span class="k">foreach</span> <span class="p">(</span><span class="nv">$table</span><span class="o">-&gt;</span><span class="na">compactionStrategyOptions</span><span class="p">()</span> <span class="k">as</span> <span class="nv">$key</span> <span class="o">=&gt;</span> <span class="nv">$value</span><span class="p">)</span> <span class="p">{</span>
-  <span class="k">echo</span> <span class="s2">"  "</span> <span class="o">.</span> <span class="nv">$key</span> <span class="o">.</span> <span class="s2">":"</span> <span class="o">.</span> <span class="nv">$value</span> <span class="o">.</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">;</span>
+  <span class="k">echo</span> <span class="s2">“  ”</span> <span class="o">.</span> <span class="nv">$key</span> <span class="o">.</span> <span class="s2">“:”</span> <span class="o">.</span> <span class="nv">$value</span> <span class="o">.</span> <span class="s2">“</span><span class="se">\n</span><span class="s2">”</span><span class="p">;</span>
 <span class="p">}</span>
 <span class="k">foreach</span> <span class="p">(</span><span class="nv">$table</span><span class="o">-&gt;</span><span class="na">compressionParameters</span><span class="p">()</span> <span class="k">as</span> <span class="nv">$key</span> <span class="o">=&gt;</span> <span class="nv">$value</span><span class="p">)</span> <span class="p">{</span>
-  <span class="k">echo</span> <span class="s2">"  "</span> <span class="o">.</span> <span class="nv">$key</span> <span class="o">.</span> <span class="s2">":"</span> <span class="o">.</span> <span class="nv">$value</span> <span class="o">.</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">;</span>
+  <span class="k">echo</span> <span class="s2">“  ”</span> <span class="o">.</span> <span class="nv">$key</span> <span class="o">.</span> <span class="s2">“:”</span> <span class="o">.</span> <span class="nv">$value</span> <span class="o">.</span> <span class="s2">“</span><span class="se">\n</span><span class="s2">”</span><span class="p">;</span>
 <span class="p">}</span>
-<span class="k">echo</span> <span class="s2">"DC/Local Read Repair Chance: "</span> <span class="o">.</span> <span class="nv">$table</span><span class="o">-&gt;</span><span class="na">localReadRepairChance</span><span class="p">()</span> <span class="o">.</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">;</span>
-<span class="k">echo</span> <span class="s2">"Garbage Collection Grace Seconds: "</span> <span class="o">.</span> <span class="nv">$table</span><span class="o">-&gt;</span><span class="na">gcGraceSeconds</span><span class="p">()</span> <span class="o">.</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">;</span>
-<span class="k">echo</span> <span class="s2">"Read Repair Chance: "</span> <span class="o">.</span> <span class="nv">$table</span><span class="o">-&gt;</span><span class="na">readRepairChance</span><span class="p">()</span> <span class="o">.</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">;</span>
-</code></pre>
+<span class="k">echo</span> <span class="s2">“DC/Local Read Repair Chance: ”</span> <span class="o">.</span> <span class="nv">$table</span><span class="o">-&gt;</span><span class="na">localReadRepairChance</span><span class="p">()</span> <span class="o">.</span> <span class="s2">“</span><span class="se">\n</span><span class="s2">”</span><span class="p">;</span>
+<span class="k">echo</span> <span class="s2">“Garbage Collection Grace Seconds: ”</span> <span class="o">.</span> <span class="nv">$table</span><span class="o">-&gt;</span><span class="na">gcGraceSeconds</span><span class="p">()</span> <span class="o">.</span> <span class="s2">“</span><span class="se">\n</span><span class="s2">”</span><span class="p">;</span>
+<span class="k">echo</span> <span class="s2">“Read Repair Chance: ”</span> <span class="o">.</span> <span class="nv">$table</span><span class="o">-&gt;</span><span class="na">readRepairChance</span><span class="p">()</span> <span class="o">.</span> <span class="s2">“</span><span class="se">\n</span><span class="s2">”</span><span class="p">;</span>
 </dd>
 <dt>When </dt>
 <dd>it is executed</dd>
@@ -469,18 +475,17 @@ Read Repair Chance: 0.75
 </h2>
 <dl class="steps">
 <dt>Given </dt>
-<dd>the following example:<pre class="highlight"><code><span class="cp">&lt;?php</span>
+<dd>the following example:<span class="cp">&lt;?php</span>
 <span class="nv">$cluster</span> <span class="o">=</span> <span class="nx">Cassandra</span><span class="o">::</span><span class="na">cluster</span><span class="p">()</span>
-                   <span class="o">-&gt;</span><span class="na">withContactPoints</span><span class="p">(</span><span class="s1">'127.0.0.1'</span><span class="p">)</span>
+                   <span class="o">-&gt;</span><span class="na">withContactPoints</span><span class="p">(</span><span class="s1">‘127.0.0.1’</span><span class="p">)</span>
                    <span class="o">-&gt;</span><span class="na">build</span><span class="p">();</span>
-<span class="nv">$session</span> <span class="o">=</span> <span class="nv">$cluster</span><span class="o">-&gt;</span><span class="na">connect</span><span class="p">(</span><span class="s2">"simplex"</span><span class="p">);</span>
+<span class="nv">$session</span> <span class="o">=</span> <span class="nv">$cluster</span><span class="o">-&gt;</span><span class="na">connect</span><span class="p">(</span><span class="s2">“simplex”</span><span class="p">);</span>
 
 <span class="nv">$schema</span>  <span class="o">=</span> <span class="nv">$session</span><span class="o">-&gt;</span><span class="na">schema</span><span class="p">();</span>
-<span class="nv">$table</span>   <span class="o">=</span> <span class="nv">$schema</span><span class="o">-&gt;</span><span class="na">keyspace</span><span class="p">(</span><span class="s2">"simplex"</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">table</span><span class="p">(</span><span class="s2">"values"</span><span class="p">);</span>
+<span class="nv">$table</span>   <span class="o">=</span> <span class="nv">$schema</span><span class="o">-&gt;</span><span class="na">keyspace</span><span class="p">(</span><span class="s2">“simplex”</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">table</span><span class="p">(</span><span class="s2">“values”</span><span class="p">);</span>
 
-<span class="k">echo</span> <span class="s2">"Populate I/O Cache on Flush: "</span> <span class="o">.</span> <span class="p">(</span><span class="nv">$table</span><span class="o">-&gt;</span><span class="na">populateIOCacheOnFlush</span><span class="p">()</span> <span class="o">?</span> <span class="s2">"True"</span> <span class="o">:</span> <span class="s2">"False"</span><span class="p">)</span> <span class="o">.</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">;</span>
-<span class="k">echo</span> <span class="s2">"Replicate on Write: "</span> <span class="o">.</span> <span class="p">(</span><span class="nv">$table</span><span class="o">-&gt;</span><span class="na">replicateOnWrite</span><span class="p">()</span> <span class="o">?</span> <span class="s2">"True"</span> <span class="o">:</span> <span class="s2">"False"</span><span class="p">)</span> <span class="o">.</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">;</span>
-</code></pre>
+<span class="k">echo</span> <span class="s2">“Populate I/O Cache on Flush: ”</span> <span class="o">.</span> <span class="p">(</span><span class="nv">$table</span><span class="o">-&gt;</span><span class="na">populateIOCacheOnFlush</span><span class="p">()</span> <span class="o">?</span> <span class="s2">“True”</span> <span class="o">:</span> <span class="s2">“False”</span><span class="p">)</span> <span class="o">.</span> <span class="s2">“</span><span class="se">\n</span><span class="s2">”</span><span class="p">;</span>
+<span class="k">echo</span> <span class="s2">“Replicate on Write: ”</span> <span class="o">.</span> <span class="p">(</span><span class="nv">$table</span><span class="o">-&gt;</span><span class="na">replicateOnWrite</span><span class="p">()</span> <span class="o">?</span> <span class="s2">“True”</span> <span class="o">:</span> <span class="s2">“False”</span><span class="p">)</span> <span class="o">.</span> <span class="s2">“</span><span class="se">\n</span><span class="s2">”</span><span class="p">;</span>
 </dd>
 <dt>When </dt>
 <dd>it is executed</dd>
@@ -495,18 +500,17 @@ Replicate on Write: False
 </h2>
 <dl class="steps">
 <dt>Given </dt>
-<dd>the following example:<pre class="highlight"><code><span class="cp">&lt;?php</span>
+<dd>the following example:<span class="cp">&lt;?php</span>
 <span class="nv">$cluster</span> <span class="o">=</span> <span class="nx">Cassandra</span><span class="o">::</span><span class="na">cluster</span><span class="p">()</span>
-                   <span class="o">-&gt;</span><span class="na">withContactPoints</span><span class="p">(</span><span class="s1">'127.0.0.1'</span><span class="p">)</span>
+                   <span class="o">-&gt;</span><span class="na">withContactPoints</span><span class="p">(</span><span class="s1">‘127.0.0.1’</span><span class="p">)</span>
                    <span class="o">-&gt;</span><span class="na">build</span><span class="p">();</span>
-<span class="nv">$session</span> <span class="o">=</span> <span class="nv">$cluster</span><span class="o">-&gt;</span><span class="na">connect</span><span class="p">(</span><span class="s2">"simplex"</span><span class="p">);</span>
-<span class="nv">$cql</span> <span class="o">=</span> <span class="s2">"ALTER TABLE values WITH index_interval = '512'"</span><span class="p">;</span>
+<span class="nv">$session</span> <span class="o">=</span> <span class="nv">$cluster</span><span class="o">-&gt;</span><span class="na">connect</span><span class="p">(</span><span class="s2">“simplex”</span><span class="p">);</span>
+<span class="nv">$cql</span> <span class="o">=</span> <span class="s2">“ALTER TABLE values WITH index_interval = ‘512’”</span><span class="p">;</span>
 <span class="nv">$session</span><span class="o">-&gt;</span><span class="na">execute</span><span class="p">(</span><span class="nv">$cql</span><span class="p">);</span>
 <span class="nv">$schema</span>  <span class="o">=</span> <span class="nv">$session</span><span class="o">-&gt;</span><span class="na">schema</span><span class="p">();</span>
-<span class="nv">$table</span>   <span class="o">=</span> <span class="nv">$schema</span><span class="o">-&gt;</span><span class="na">keyspace</span><span class="p">(</span><span class="s2">"simplex"</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">table</span><span class="p">(</span><span class="s2">"values"</span><span class="p">);</span>
+<span class="nv">$table</span>   <span class="o">=</span> <span class="nv">$schema</span><span class="o">-&gt;</span><span class="na">keyspace</span><span class="p">(</span><span class="s2">“simplex”</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">table</span><span class="p">(</span><span class="s2">“values”</span><span class="p">);</span>
 
-<span class="k">echo</span> <span class="s2">"Index Interval: "</span> <span class="o">.</span> <span class="nv">$table</span><span class="o">-&gt;</span><span class="na">indexInterval</span><span class="p">()</span> <span class="o">.</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">;</span>
-</code></pre>
+<span class="k">echo</span> <span class="s2">“Index Interval: ”</span> <span class="o">.</span> <span class="nv">$table</span><span class="o">-&gt;</span><span class="na">indexInterval</span><span class="p">()</span> <span class="o">.</span> <span class="s2">“</span><span class="se">\n</span><span class="s2">”</span><span class="p">;</span>
 </dd>
 <dt>When </dt>
 <dd>it is executed</dd>
@@ -520,22 +524,21 @@ Replicate on Write: False
 </h2>
 <dl class="steps">
 <dt>Given </dt>
-<dd>the following example:<pre class="highlight"><code><span class="cp">&lt;?php</span>
+<dd>the following example:<span class="cp">&lt;?php</span>
 <span class="nv">$cluster</span> <span class="o">=</span> <span class="nx">Cassandra</span><span class="o">::</span><span class="na">cluster</span><span class="p">()</span>
-                   <span class="o">-&gt;</span><span class="na">withContactPoints</span><span class="p">(</span><span class="s1">'127.0.0.1'</span><span class="p">)</span>
+                   <span class="o">-&gt;</span><span class="na">withContactPoints</span><span class="p">(</span><span class="s1">‘127.0.0.1’</span><span class="p">)</span>
                    <span class="o">-&gt;</span><span class="na">build</span><span class="p">();</span>
-<span class="nv">$session</span> <span class="o">=</span> <span class="nv">$cluster</span><span class="o">-&gt;</span><span class="na">connect</span><span class="p">(</span><span class="s2">"simplex"</span><span class="p">);</span>
-<span class="nv">$cql</span> <span class="o">=</span> <span class="s2">"ALTER TABLE values WITH default_time_to_live = '10000' AND "</span>
-       <span class="o">.</span> <span class="s2">"memtable_flush_period_in_ms = '100' AND "</span>
-       <span class="o">.</span> <span class="s2">"speculative_retry = '10ms'"</span><span class="p">;</span>
+<span class="nv">$session</span> <span class="o">=</span> <span class="nv">$cluster</span><span class="o">-&gt;</span><span class="na">connect</span><span class="p">(</span><span class="s2">“simplex”</span><span class="p">);</span>
+<span class="nv">$cql</span> <span class="o">=</span> <span class="s2">“ALTER TABLE values WITH default_time_to_live = ‘10000’ AND ”</span>
+       <span class="o">.</span> <span class="s2">“memtable_flush_period_in_ms = ‘100’ AND ”</span>
+       <span class="o">.</span> <span class="s2">“speculative_retry = ‘10ms’”</span><span class="p">;</span>
 <span class="nv">$session</span><span class="o">-&gt;</span><span class="na">execute</span><span class="p">(</span><span class="nv">$cql</span><span class="p">);</span>
 <span class="nv">$schema</span>  <span class="o">=</span> <span class="nv">$session</span><span class="o">-&gt;</span><span class="na">schema</span><span class="p">();</span>
-<span class="nv">$table</span>   <span class="o">=</span> <span class="nv">$schema</span><span class="o">-&gt;</span><span class="na">keyspace</span><span class="p">(</span><span class="s2">"simplex"</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">table</span><span class="p">(</span><span class="s2">"values"</span><span class="p">);</span>
+<span class="nv">$table</span>   <span class="o">=</span> <span class="nv">$schema</span><span class="o">-&gt;</span><span class="na">keyspace</span><span class="p">(</span><span class="s2">“simplex”</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">table</span><span class="p">(</span><span class="s2">“values”</span><span class="p">);</span>
 
-<span class="k">echo</span> <span class="s2">"Default TTL: "</span> <span class="o">.</span> <span class="nv">$table</span><span class="o">-&gt;</span><span class="na">defaultTTL</span><span class="p">()</span> <span class="o">.</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">;</span>
-<span class="k">echo</span> <span class="s2">"Memtable Flush Period: "</span> <span class="o">.</span> <span class="nv">$table</span><span class="o">-&gt;</span><span class="na">memtableFlushPeriodMs</span><span class="p">()</span> <span class="o">.</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">;</span>
-<span class="k">echo</span> <span class="s2">"Speculative Retry: "</span> <span class="o">.</span> <span class="nb">intval</span><span class="p">(</span><span class="nv">$table</span><span class="o">-&gt;</span><span class="na">speculativeRetry</span><span class="p">())</span> <span class="o">.</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">;</span>
-</code></pre>
+<span class="k">echo</span> <span class="s2">“Default TTL: ”</span> <span class="o">.</span> <span class="nv">$table</span><span class="o">-&gt;</span><span class="na">defaultTTL</span><span class="p">()</span> <span class="o">.</span> <span class="s2">“</span><span class="se">\n</span><span class="s2">”</span><span class="p">;</span>
+<span class="k">echo</span> <span class="s2">“Memtable Flush Period: ”</span> <span class="o">.</span> <span class="nv">$table</span><span class="o">-&gt;</span><span class="na">memtableFlushPeriodMs</span><span class="p">()</span> <span class="o">.</span> <span class="s2">“</span><span class="se">\n</span><span class="s2">”</span><span class="p">;</span>
+<span class="k">echo</span> <span class="s2">“Speculative Retry: ”</span> <span class="o">.</span> <span class="nb">intval</span><span class="p">(</span><span class="nv">$table</span><span class="o">-&gt;</span><span class="na">speculativeRetry</span><span class="p">())</span> <span class="o">.</span> <span class="s2">“</span><span class="se">\n</span><span class="s2">”</span><span class="p">;</span>
 </dd>
 <dt>When </dt>
 <dd>it is executed</dd>
@@ -551,20 +554,19 @@ Speculative Retry: 10
 </h2>
 <dl class="steps">
 <dt>Given </dt>
-<dd>the following example:<pre class="highlight"><code><span class="cp">&lt;?php</span>
+<dd>the following example:<span class="cp">&lt;?php</span>
 <span class="nv">$cluster</span> <span class="o">=</span> <span class="nx">Cassandra</span><span class="o">::</span><span class="na">cluster</span><span class="p">()</span>
-                   <span class="o">-&gt;</span><span class="na">withContactPoints</span><span class="p">(</span><span class="s1">'127.0.0.1'</span><span class="p">)</span>
+                   <span class="o">-&gt;</span><span class="na">withContactPoints</span><span class="p">(</span><span class="s1">‘127.0.0.1’</span><span class="p">)</span>
                    <span class="o">-&gt;</span><span class="na">build</span><span class="p">();</span>
-<span class="nv">$session</span> <span class="o">=</span> <span class="nv">$cluster</span><span class="o">-&gt;</span><span class="na">connect</span><span class="p">(</span><span class="s2">"simplex"</span><span class="p">);</span>
-<span class="nv">$cql</span> <span class="o">=</span> <span class="s2">"ALTER TABLE values WITH max_index_interval = '16' AND "</span>
-       <span class="o">.</span> <span class="s2">"min_index_interval = '4'"</span><span class="p">;</span>
+<span class="nv">$session</span> <span class="o">=</span> <span class="nv">$cluster</span><span class="o">-&gt;</span><span class="na">connect</span><span class="p">(</span><span class="s2">“simplex”</span><span class="p">);</span>
+<span class="nv">$cql</span> <span class="o">=</span> <span class="s2">“ALTER TABLE values WITH max_index_interval = ‘16’ AND ”</span>
+       <span class="o">.</span> <span class="s2">“min_index_interval = ‘4’”</span><span class="p">;</span>
 <span class="nv">$session</span><span class="o">-&gt;</span><span class="na">execute</span><span class="p">(</span><span class="nv">$cql</span><span class="p">);</span>
 <span class="nv">$schema</span>  <span class="o">=</span> <span class="nv">$session</span><span class="o">-&gt;</span><span class="na">schema</span><span class="p">();</span>
-<span class="nv">$table</span>   <span class="o">=</span> <span class="nv">$schema</span><span class="o">-&gt;</span><span class="na">keyspace</span><span class="p">(</span><span class="s2">"simplex"</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">table</span><span class="p">(</span><span class="s2">"values"</span><span class="p">);</span>
+<span class="nv">$table</span>   <span class="o">=</span> <span class="nv">$schema</span><span class="o">-&gt;</span><span class="na">keyspace</span><span class="p">(</span><span class="s2">“simplex”</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">table</span><span class="p">(</span><span class="s2">“values”</span><span class="p">);</span>
 
-<span class="k">echo</span> <span class="s2">"Maximum Index Interval: "</span> <span class="o">.</span> <span class="nv">$table</span><span class="o">-&gt;</span><span class="na">maxIndexInterval</span><span class="p">()</span> <span class="o">.</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">;</span>
-<span class="k">echo</span> <span class="s2">"Minimum Index Interval: "</span> <span class="o">.</span> <span class="nv">$table</span><span class="o">-&gt;</span><span class="na">minIndexInterval</span><span class="p">()</span> <span class="o">.</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">;</span>
-</code></pre>
+<span class="k">echo</span> <span class="s2">“Maximum Index Interval: ”</span> <span class="o">.</span> <span class="nv">$table</span><span class="o">-&gt;</span><span class="na">maxIndexInterval</span><span class="p">()</span> <span class="o">.</span> <span class="s2">“</span><span class="se">\n</span><span class="s2">”</span><span class="p">;</span>
+<span class="k">echo</span> <span class="s2">“Minimum Index Interval: ”</span> <span class="o">.</span> <span class="nv">$table</span><span class="o">-&gt;</span><span class="na">minIndexInterval</span><span class="p">()</span> <span class="o">.</span> <span class="s2">“</span><span class="se">\n</span><span class="s2">”</span><span class="p">;</span>
 </dd>
 <dt>When </dt>
 <dd>it is executed</dd>
@@ -579,17 +581,16 @@ Minimum Index Interval: 4
 </h2>
 <dl class="steps">
 <dt>Given </dt>
-<dd>the following example:<pre class="highlight"><code><span class="cp">&lt;?php</span>
+<dd>the following example:<span class="cp">&lt;?php</span>
 <span class="nv">$cluster</span>   <span class="o">=</span> <span class="nx">Cassandra</span><span class="o">::</span><span class="na">cluster</span><span class="p">()</span>
-                   <span class="o">-&gt;</span><span class="na">withContactPoints</span><span class="p">(</span><span class="s1">'127.0.0.1'</span><span class="p">)</span>
+                   <span class="o">-&gt;</span><span class="na">withContactPoints</span><span class="p">(</span><span class="s1">‘127.0.0.1’</span><span class="p">)</span>
                    <span class="o">-&gt;</span><span class="na">build</span><span class="p">();</span>
-<span class="nv">$session</span>   <span class="o">=</span> <span class="nv">$cluster</span><span class="o">-&gt;</span><span class="na">connect</span><span class="p">(</span><span class="s2">"simplex"</span><span class="p">);</span>
+<span class="nv">$session</span>   <span class="o">=</span> <span class="nv">$cluster</span><span class="o">-&gt;</span><span class="na">connect</span><span class="p">(</span><span class="s2">“simplex”</span><span class="p">);</span>
 <span class="nv">$schema</span>    <span class="o">=</span> <span class="nv">$session</span><span class="o">-&gt;</span><span class="na">schema</span><span class="p">();</span>
-<span class="nv">$table</span>     <span class="o">=</span> <span class="nv">$schema</span><span class="o">-&gt;</span><span class="na">keyspace</span><span class="p">(</span><span class="s2">"simplex"</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">table</span><span class="p">(</span><span class="s2">"values"</span><span class="p">);</span>
+<span class="nv">$table</span>     <span class="o">=</span> <span class="nv">$schema</span><span class="o">-&gt;</span><span class="na">keyspace</span><span class="p">(</span><span class="s2">“simplex”</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">table</span><span class="p">(</span><span class="s2">“values”</span><span class="p">);</span>
 <span class="k">foreach</span> <span class="p">(</span><span class="nv">$table</span><span class="o">-&gt;</span><span class="na">columns</span><span class="p">()</span> <span class="k">as</span> <span class="nv">$column</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">echo</span> <span class="nv">$column</span><span class="o">-&gt;</span><span class="na">name</span><span class="p">()</span> <span class="o">.</span> <span class="s1">': '</span> <span class="o">.</span> <span class="nv">$column</span><span class="o">-&gt;</span><span class="na">type</span><span class="p">()</span> <span class="o">.</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">;</span>
+    <span class="k">echo</span> <span class="nv">$column</span><span class="o">-&gt;</span><span class="na">name</span><span class="p">()</span> <span class="o">.</span> <span class="s1">‘: ’</span> <span class="o">.</span> <span class="nv">$column</span><span class="o">-&gt;</span><span class="na">type</span><span class="p">()</span> <span class="o">.</span> <span class="s2">“</span><span class="se">\n</span><span class="s2">”</span><span class="p">;</span>
 <span class="p">}</span>
-</code></pre>
 </dd>
 <dt>When </dt>
 <dd>it is executed</dd>
@@ -620,30 +621,28 @@ varint_value: varint
 </h2>
 <dl class="steps">
 <dt>Given </dt>
-<dd>the following schema:<pre class="highlight"><code>CREATE KEYSPACE simplex WITH replication = {
-  'class': 'SimpleStrategy',
-  'replication_factor': 1
-};
-USE simplex;
-CREATE TYPE type1 (a int, b text);
-CREATE TYPE type2 (a map<span class="nt">&lt;text</span><span class="err">,</span> <span class="na">int</span><span class="nt">&gt;</span>, b bigint);
-CREATE TYPE type3 (a map<span class="nt">&lt;text</span><span class="err">,</span> <span class="na">frozen</span><span class="err">&lt;</span><span class="na">set</span><span class="err">&lt;</span><span class="na">varint</span><span class="nt">&gt;</span>&gt;&gt;, b list<span class="nt">&lt;uuid&gt;</span>);
-</code></pre>
+<dd>the following schema:<span class="nx">CREATE</span> <span class="nx">KEYSPACE</span> <span class="nx">simplex</span> <span class="nx">WITH</span> <span class="nx">replication</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="s1">‘class’</span><span class="o">:</span> <span class="s1">‘SimpleStrategy’</span><span class="p">,</span>
+  <span class="s1">‘replication_factor’</span><span class="o">:</span> <span class="mi">1</span>
+<span class="p">};</span>
+<span class="nx">USE</span> <span class="nx">simplex</span><span class="p">;</span>
+<span class="nx">CREATE</span> <span class="nx">TYPE</span> <span class="nx">type1</span> <span class="p">(</span><span class="nx">a</span> <span class="nx">int</span><span class="p">,</span> <span class="nx">b</span> <span class="nx">text</span><span class="p">);</span>
+<span class="nx">CREATE</span> <span class="nx">TYPE</span> <span class="nx">type2</span> <span class="p">(</span><span class="nx">a</span> <span class="nx">map</span><span class="o">&lt;</span><span class="nx">text</span><span class="p">,</span> <span class="nx">int</span><span class="o">&gt;</span><span class="p">,</span> <span class="nx">b</span> <span class="nx">bigint</span><span class="p">);</span>
+<span class="nx">CREATE</span> <span class="nx">TYPE</span> <span class="nx">type3</span> <span class="p">(</span><span class="nx">a</span> <span class="nx">map</span><span class="o">&lt;</span><span class="nx">text</span><span class="p">,</span> <span class="nx">frozen</span><span class="o">&lt;</span><span class="nx">set</span><span class="o">&lt;</span><span class="nx">varint</span><span class="o">&gt;&gt;&gt;</span><span class="p">,</span> <span class="nx">b</span> <span class="k">list</span><span class="o">&lt;</span><span class="nx">uuid</span><span class="o">&gt;</span><span class="p">);</span>
 </dd>
 <dt>And </dt>
-<dd>the following example:<pre class="highlight"><code><span class="cp">&lt;?php</span>
+<dd>the following example:<span class="cp">&lt;?php</span>
 <span class="nv">$cluster</span>   <span class="o">=</span> <span class="nx">Cassandra</span><span class="o">::</span><span class="na">cluster</span><span class="p">()</span>
-                   <span class="o">-&gt;</span><span class="na">withContactPoints</span><span class="p">(</span><span class="s1">'127.0.0.1'</span><span class="p">)</span>
+                   <span class="o">-&gt;</span><span class="na">withContactPoints</span><span class="p">(</span><span class="s1">‘127.0.0.1’</span><span class="p">)</span>
                    <span class="o">-&gt;</span><span class="na">build</span><span class="p">();</span>
-<span class="nv">$session</span>   <span class="o">=</span> <span class="nv">$cluster</span><span class="o">-&gt;</span><span class="na">connect</span><span class="p">(</span><span class="s2">"simplex"</span><span class="p">);</span>
+<span class="nv">$session</span>   <span class="o">=</span> <span class="nv">$cluster</span><span class="o">-&gt;</span><span class="na">connect</span><span class="p">(</span><span class="s2">“simplex”</span><span class="p">);</span>
 <span class="nv">$schema</span>    <span class="o">=</span> <span class="nv">$session</span><span class="o">-&gt;</span><span class="na">schema</span><span class="p">();</span>
-<span class="nv">$keyspace</span>  <span class="o">=</span> <span class="nv">$schema</span><span class="o">-&gt;</span><span class="na">keyspace</span><span class="p">(</span><span class="s2">"simplex"</span><span class="p">);</span>
+<span class="nv">$keyspace</span>  <span class="o">=</span> <span class="nv">$schema</span><span class="o">-&gt;</span><span class="na">keyspace</span><span class="p">(</span><span class="s2">“simplex”</span><span class="p">);</span>
 
 <span class="k">foreach</span> <span class="p">(</span><span class="nv">$keyspace</span><span class="o">-&gt;</span><span class="na">userTypes</span><span class="p">()</span> <span class="k">as</span> <span class="nv">$name</span> <span class="o">=&gt;</span> <span class="nv">$type</span><span class="p">)</span> <span class="p">{</span>
-  <span class="k">print</span> <span class="s2">"Name: </span><span class="nv">$type</span><span class="se">\n</span><span class="s2">"</span><span class="p">;</span>
-  <span class="k">print</span> <span class="s2">"Type: "</span> <span class="o">.</span> <span class="nb">var_export</span><span class="p">(</span><span class="nv">$type</span><span class="p">,</span> <span class="kc">true</span><span class="p">)</span> <span class="o">.</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">;</span>
+  <span class="k">print</span> <span class="s2">“Name: </span><span class="nv">$type</span><span class="se">\n</span><span class="s2">”</span><span class="p">;</span>
+  <span class="k">print</span> <span class="s2">“Type: ”</span> <span class="o">.</span> <span class="nb">var_export</span><span class="p">(</span><span class="nv">$type</span><span class="p">,</span> <span class="kc">true</span><span class="p">)</span> <span class="o">.</span> <span class="s2">“</span><span class="se">\n</span><span class="s2">”</span><span class="p">;</span>
 <span class="p">}</span>
-</code></pre>
 </dd>
 <dt>When </dt>
 <dd>it is executed</dd>
@@ -717,15 +716,14 @@ Type: Cassandra\Type\UserType::__set_state(array(
 </h2>
 <dl class="steps">
 <dt>Given </dt>
-<dd>the following example:<pre class="highlight"><code><span class="cp">&lt;?php</span>
+<dd>the following example:<span class="cp">&lt;?php</span>
 <span class="nv">$cluster</span>   <span class="o">=</span> <span class="nx">Cassandra</span><span class="o">::</span><span class="na">cluster</span><span class="p">()</span>
-                   <span class="o">-&gt;</span><span class="na">withContactPoints</span><span class="p">(</span><span class="s1">'127.0.0.1'</span><span class="p">)</span>
+                   <span class="o">-&gt;</span><span class="na">withContactPoints</span><span class="p">(</span><span class="s1">‘127.0.0.1’</span><span class="p">)</span>
                    <span class="o">-&gt;</span><span class="na">withSchemaMetadata</span><span class="p">(</span><span class="kc">false</span><span class="p">)</span>
                    <span class="o">-&gt;</span><span class="na">build</span><span class="p">();</span>
-<span class="nv">$session</span>   <span class="o">=</span> <span class="nv">$cluster</span><span class="o">-&gt;</span><span class="na">connect</span><span class="p">(</span><span class="s2">"simplex"</span><span class="p">);</span>
+<span class="nv">$session</span>   <span class="o">=</span> <span class="nv">$cluster</span><span class="o">-&gt;</span><span class="na">connect</span><span class="p">(</span><span class="s2">“simplex”</span><span class="p">);</span>
 <span class="nv">$schema</span>    <span class="o">=</span> <span class="nv">$session</span><span class="o">-&gt;</span><span class="na">schema</span><span class="p">();</span>
-<span class="k">print</span> <span class="nb">count</span><span class="p">(</span><span class="nv">$schema</span><span class="o">-&gt;</span><span class="na">keyspaces</span><span class="p">())</span> <span class="o">.</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">;</span>
-</code></pre>
+<span class="k">print</span> <span class="nb">count</span><span class="p">(</span><span class="nv">$schema</span><span class="o">-&gt;</span><span class="na">keyspaces</span><span class="p">())</span> <span class="o">.</span> <span class="s2">“</span><span class="se">\n</span><span class="s2">”</span><span class="p">;</span>
 </dd>
 <dt>When </dt>
 <dd>it is executed</dd>
@@ -746,22 +744,22 @@ Type: Cassandra\Type\UserType::__set_state(array(
       
         
         <li>
-          <a href="http://downloads.datastax.com/php-driver/">Binaries</a>
+          <a href="http://downloads.datastax.com/php-driver">Binaries</a>
         </li>
       
         <li>·</li>
         <li>
-          <a href="https://github.com/datastax/php-driver/">Code</a>
+          <a href="https://github.com/datastax/php-driver">Code</a>
         </li>
       
         <li>·</li>
         <li>
-          <a href="http://datastax.github.io/php-driver/">Docs</a>
+          <a href="http://docs.datastax.com/en/developer/php-driver">Docs</a>
         </li>
       
         <li>·</li>
         <li>
-          <a href="https://datastax-oss.atlassian.net/browse/PHP/">Issues</a>
+          <a href="https://datastax-oss.atlassian.net/browse/PHP">Issues</a>
         </li>
       
         <li>·</li>
@@ -771,7 +769,7 @@ Type: Cassandra\Type\UserType::__set_state(array(
       
         <li>·</li>
         <li>
-          <a href="irc://irc.freenode.net/datastax-drivers">IRC Channel</a>
+          <a href="https://academy.datastax.com/slack">Slack</a>
         </li>
       
         <li>·</li>

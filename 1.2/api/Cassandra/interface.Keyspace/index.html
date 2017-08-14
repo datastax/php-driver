@@ -95,6 +95,15 @@
   </li>
   
   
+  <li>
+    <a href="../../../building/">
+      Installing Cassandra PHP Extension <small>page</small>
+      
+    </a>
+    
+  </li>
+  
+  
   <li class="active">
     <a href="../../">
       API docs <small>index</small>
@@ -784,198 +793,6 @@
             </nav>
           </div>
           
-
-<div class="page-header">
-  <h1 id="interface-Keyspace" class="target">
-    <small>interface</small>
-    Keyspace
-  <a class="anchor" href="#interface-Keyspace" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
-</h1>
-</div>
-
-<p>A PHP representation of a keyspace</p>
-
-
-<h2 id="implemented-by" class="target">Implemented by<a class="anchor" href="#implemented-by" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
-</h2>
-<ul class="list-inline">
-  <li><code><a href="../class.DefaultKeyspace/">Cassandra\DefaultKeyspace</a></code></li>
-</ul>
-
-
-
-<h2 id="methods" class="target">Methods<a class="anchor" href="#methods" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
-</h2>
-
-<div class="methods-content">
-  <div class="panel panel-default member-definition">
-    <div class="panel-heading method-heading">
-      <code>string</code> <h3 id="method-name" class="target">name<a class="anchor" href="#method-name" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
-</h3> <big>(</big>  <big>)</big>
-    </div>
-    <div class="panel-body method-body">
-      <p>Returns keyspace name</p>
-
-      <dl class="tags">
-<dt class="tag-title">Returns:</dt>
-<dd class="tag-content"><table class="table table-striped return">
-<thead><tr>
-<th class="type">Type</th>
-<th class="details">Details</th>
-</tr></thead>
-<tbody><tr>
-<td><code>string</code></td>
-<td>
-<p>Name</p>
-</td>
-</tr></tbody>
-</table></dd>
-</dl>
-    </div>
-  </div>
-  <div class="panel panel-default member-definition">
-    <div class="panel-heading method-heading">
-      <code>string</code> <h3 id="method-replicationClassName" class="target">replicationClassName<a class="anchor" href="#method-replicationClassName" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
-</h3> <big>(</big>  <big>)</big>
-    </div>
-    <div class="panel-body method-body">
-      <p>Returns replication class name</p>
-
-      <dl class="tags">
-<dt class="tag-title">Returns:</dt>
-<dd class="tag-content"><table class="table table-striped return">
-<thead><tr>
-<th class="type">Type</th>
-<th class="details">Details</th>
-</tr></thead>
-<tbody><tr>
-<td><code>string</code></td>
-<td>
-<p>Replication class</p>
-</td>
-</tr></tbody>
-</table></dd>
-</dl>
-    </div>
-  </div>
-  <div class="panel panel-default member-definition">
-    <div class="panel-heading method-heading">
-      <code><a href="../class.Map/">Cassandra\Map</a></code> <h3 id="method-replicationOptions" class="target">replicationOptions<a class="anchor" href="#method-replicationOptions" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
-</h3> <big>(</big>  <big>)</big>
-    </div>
-    <div class="panel-body method-body">
-      <p>Returns replication options</p>
-
-      <dl class="tags">
-<dt class="tag-title">Returns:</dt>
-<dd class="tag-content"><table class="table table-striped return">
-<thead><tr>
-<th class="type">Type</th>
-<th class="details">Details</th>
-</tr></thead>
-<tbody><tr>
-<td><code><a href="../class.Map/">Cassandra\Map</a></code></td>
-<td>
-<p>Replication options</p>
-</td>
-</tr></tbody>
-</table></dd>
-</dl>
-    </div>
-  </div>
-  <div class="panel panel-default member-definition">
-    <div class="panel-heading method-heading">
-      <code>string</code> <h3 id="method-hasDurableWrites" class="target">hasDurableWrites<a class="anchor" href="#method-hasDurableWrites" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
-</h3> <big>(</big>  <big>)</big>
-    </div>
-    <div class="panel-body method-body">
-      <p>Returns whether the keyspace has durable writes enabled</p>
-
-      <dl class="tags">
-<dt class="tag-title">Returns:</dt>
-<dd class="tag-content"><table class="table table-striped return">
-<thead><tr>
-<th class="type">Type</th>
-<th class="details">Details</th>
-</tr></thead>
-<tbody><tr>
-<td><code>string</code></td>
-<td>
-<p>Whether durable writes are enabled</p>
-</td>
-</tr></tbody>
-</table></dd>
-</dl>
-    </div>
-  </div>
-  <div class="panel panel-default member-definition">
-    <div class="panel-heading method-heading">
-      <code><a href="../interface.Table/">Cassandra\Table</a> null</code> <h3 id="method-table" class="target">table<a class="anchor" href="#method-table" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
-</h3> <big>(</big> <code>string</code> $name <big>)</big>
-    </div>
-    <div class="panel-body method-body">
-      <p>Returns a table by name</p>
-
-      <dl class="tags">
-<dt class="tag-title">Parameters:</dt>
-<dd class="tag-content"><table class="table table-striped param">
-<thead><tr>
-<th class="name">Name</th>
-<th class="type">Type</th>
-<th class="details">Details</th>
-</tr></thead>
-<tbody><tr>
-<td><var>$name</var></td>
-<td><code>string</code></td>
-<td>
-<p><code><a href="../interface.Table/">Cassandra\Table</a></code> name</p>
-</td>
-</tr></tbody>
-</table></dd>
-<dt class="tag-title">Returns:</dt>
-<dd class="tag-content"><table class="table table-striped return">
-<thead><tr>
-<th class="type">Type</th>
-<th class="details">Details</th>
-</tr></thead>
-<tbody><tr>
-<td><code>Cassandra\Table|null</code></td>
-<td>
-<p><code><a href="../interface.Table/">Cassandra\Table</a></code> instance or null</p>
-</td>
-</tr></tbody>
-</table></dd>
-</dl>
-    </div>
-  </div>
-  <div class="panel panel-default member-definition">
-    <div class="panel-heading method-heading">
-      <code>array</code> <h3 id="method-tables" class="target">tables<a class="anchor" href="#method-tables" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
-</h3> <big>(</big>  <big>)</big>
-    </div>
-    <div class="panel-body method-body">
-      <p>Returns all tables defined in this keyspace</p>
-
-      <dl class="tags">
-<dt class="tag-title">Returns:</dt>
-<dd class="tag-content"><table class="table table-striped return">
-<thead><tr>
-<th class="type">Type</th>
-<th class="details">Details</th>
-</tr></thead>
-<tbody><tr>
-<td><code>array</code></td>
-<td>
-<p>An array of <code>Cassandra::Table</code> instances</p>
-</td>
-</tr></tbody>
-</table></dd>
-</dl>
-    </div>
-  </div>
-</div>
-
-
         </div>
       </div>
     </div>
@@ -986,22 +803,22 @@
       
         
         <li>
-          <a href="http://downloads.datastax.com/php-driver/">Binaries</a>
+          <a href="http://downloads.datastax.com/php-driver">Binaries</a>
         </li>
       
         <li>·</li>
         <li>
-          <a href="https://github.com/datastax/php-driver/">Code</a>
+          <a href="https://github.com/datastax/php-driver">Code</a>
         </li>
       
         <li>·</li>
         <li>
-          <a href="http://datastax.github.io/php-driver/">Docs</a>
+          <a href="http://docs.datastax.com/en/developer/php-driver">Docs</a>
         </li>
       
         <li>·</li>
         <li>
-          <a href="https://datastax-oss.atlassian.net/browse/PHP/">Issues</a>
+          <a href="https://datastax-oss.atlassian.net/browse/PHP">Issues</a>
         </li>
       
         <li>·</li>
@@ -1011,7 +828,7 @@
       
         <li>·</li>
         <li>
-          <a href="irc://irc.freenode.net/datastax-drivers">IRC Channel</a>
+          <a href="https://academy.datastax.com/slack">Slack</a>
         </li>
       
         <li>·</li>

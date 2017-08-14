@@ -83,8 +83,17 @@
   
   
   <li>
+    <a href="../../../../building/">
+      Building PHP Extension <small>page</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
     <a href="../../../../features/">
-      Core <small>page</small>
+      Features <small>page</small>
       
       
       <span class="glyphicon glyphicon-plus-sign pull-right" aria-hidden="true"></span>
@@ -791,15 +800,6 @@
     
   </li>
   
-  
-  <li>
-    <a href="../../../class.YamlClassDoc/">
-      YamlClassDoc <small>class</small>
-      
-    </a>
-    
-  </li>
-  
 </ul>
 
   </li>
@@ -847,37 +847,6 @@
             </nav>
           </div>
           
-
-<div class="page-header">
-  <h1 id="class-DowngradingConsistency" class="target">
-    <small>class</small>
-    DowngradingConsistency
-  <a class="anchor" href="#class-DowngradingConsistency" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
-</h1>
-</div>
-
-<p>A retry policy that will downgrade the consistency of a request in an attempt to save a request in cases where there is any chance of success. A write request will succeed if there is at least a single copy persisted and a read request will succeed if there is some data available even if it increases the risk of reading stale data. This policy will retry in the same scenarios as the default policy, and it will also retry in the following case:</p>
-
-<ul>
-<li>On a read timeout, if some replicas responded but is lower than required by the current consistency level then retry with a lower consistency level</li>
-<li>On a write timeout, Retry unlogged batches at a lower consistency level if at least one replica responded. For single queries and batch if any replicas responded then consider the request successful and swallow the error.</li>
-<li>On unavailable, retry at a lower consistency if at lease one replica responded.</li>
-</ul>
-
-<p>Important: This policy may attempt to retry requests with a lower consistency level. Using this policy can break consistency guarantees.</p>
-
-
-<h2 id="implements" class="target">Implements<a class="anchor" href="#implements" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
-</h2>
-<ul class="list-inline">
-  <li><code><a href="../../interface.RetryPolicy/">Cassandra\RetryPolicy</a></code></li>
-</ul>
-
-
-
-
-
-
         </div>
       </div>
     </div>
@@ -888,22 +857,22 @@
       
         
         <li>
-          <a href="http://downloads.datastax.com/php-driver/">Binaries</a>
+          <a href="http://downloads.datastax.com/php-driver">Binaries</a>
         </li>
       
         <li>·</li>
         <li>
-          <a href="https://github.com/datastax/php-driver/">Code</a>
+          <a href="https://github.com/datastax/php-driver">Code</a>
         </li>
       
         <li>·</li>
         <li>
-          <a href="http://datastax.github.io/php-driver/">Docs</a>
+          <a href="http://docs.datastax.com/en/developer/php-driver">Docs</a>
         </li>
       
         <li>·</li>
         <li>
-          <a href="https://datastax-oss.atlassian.net/browse/PHP/">Issues</a>
+          <a href="https://datastax-oss.atlassian.net/browse/PHP">Issues</a>
         </li>
       
         <li>·</li>
@@ -913,7 +882,7 @@
       
         <li>·</li>
         <li>
-          <a href="irc://irc.freenode.net/datastax-drivers">IRC Channel</a>
+          <a href="https://academy.datastax.com/slack">Slack</a>
         </li>
       
         <li>·</li>

@@ -95,6 +95,15 @@
   </li>
   
   
+  <li>
+    <a href="../../../building/">
+      Installing Cassandra PHP Extension <small>page</small>
+      
+    </a>
+    
+  </li>
+  
+  
   <li class="active">
     <a href="../../">
       API docs <small>index</small>
@@ -605,350 +614,6 @@
             </nav>
           </div>
           
-
-<div class="page-header">
-  <h1 id="interface-Session" class="target">
-    <small>interface</small>
-    Session
-  <a class="anchor" href="#interface-Session" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
-</h1>
-</div>
-
-<p>A session is used to prepare and execute statements.</p>
-<dl class="tags">
-<dt class="tag-title">See Also:</dt>
-<dd class="tag-content"><ul class="see"><li><code><a href="../interface.Cluster/#method-connect">Cluster::connect()</a></code></li></ul></dd>
-</dl>
-
-<h2 id="implemented-by" class="target">Implemented by<a class="anchor" href="#implemented-by" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
-</h2>
-<ul class="list-inline">
-  <li><code><a href="../class.DefaultSession/">Cassandra\DefaultSession</a></code></li>
-</ul>
-
-
-
-<h2 id="methods" class="target">Methods<a class="anchor" href="#methods" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
-</h2>
-
-<div class="methods-content">
-  <div class="panel panel-default member-definition">
-    <div class="panel-heading method-heading">
-      <code><a href="../interface.Schema/">Cassandra\Schema</a></code> <h3 id="method-schema" class="target">schema<a class="anchor" href="#method-schema" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
-</h3> <big>(</big>  <big>)</big>
-    </div>
-    <div class="panel-body method-body">
-      <p>Returns current schema.</p>
-
-<p>NOTE: the returned <code><a href="../interface.Schema/">Cassandra\Schema</a></code> instance will not be updated as the actual schema changes, instead an updated instance should be requested by calling <code><a href="#method-schema">Session::schema()</a></code> again.</p>
-
-      <dl class="tags">
-<dt class="tag-title">Returns:</dt>
-<dd class="tag-content"><table class="table table-striped return">
-<thead><tr>
-<th class="type">Type</th>
-<th class="details">Details</th>
-</tr></thead>
-<tbody><tr>
-<td><code><a href="../interface.Schema/">Cassandra\Schema</a></code></td>
-<td>
-<p>current schema.</p>
-</td>
-</tr></tbody>
-</table></dd>
-</dl>
-    </div>
-  </div>
-  <div class="panel panel-default member-definition">
-    <div class="panel-heading method-heading">
-      <code><a href="../class.Rows/">Cassandra\Rows</a></code> <h3 id="method-execute" class="target">execute<a class="anchor" href="#method-execute" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
-</h3> <big>(</big> <code><a href="../interface.Statement/">Cassandra\Statement</a></code> $statement, <code><a href="../class.ExecutionOptions/">Cassandra\ExecutionOptions</a></code> $options <big>=</big> <var>null</var> <big>)</big>
-    </div>
-    <div class="panel-body method-body">
-      <p>Executes a given statement and returns a result.</p>
-
-      <dl class="tags">
-<dt class="tag-title">Parameters:</dt>
-<dd class="tag-content"><table class="table table-striped param">
-<thead><tr>
-<th class="name">Name</th>
-<th class="type">Type</th>
-<th class="details">Details</th>
-</tr></thead>
-<tbody>
-<tr>
-<td><var>$statement</var></td>
-<td><code><a href="../interface.Statement/">Cassandra\Statement</a></code></td>
-<td>
-<p>statement to be executed</p>
-</td>
-</tr>
-<tr>
-<td><var>$options</var></td>
-<td><code><a href="../class.ExecutionOptions/">Cassandra\ExecutionOptions</a></code></td>
-<td>
-<p>execution options (optional)</p>
-</td>
-</tr>
-</tbody>
-</table></dd>
-<dt class="tag-title">Throws:</dt>
-<dd class="tag-content"><table class="table table-striped throw">
-<thead><tr>
-<th class="type">Type</th>
-<th class="details">Details</th>
-</tr></thead>
-<tbody><tr>
-<td><code><a href="../interface.Exception/">Cassandra\Exception</a></code></td>
-<td></td>
-</tr></tbody>
-</table></dd>
-<dt class="tag-title">Returns:</dt>
-<dd class="tag-content"><table class="table table-striped return">
-<thead><tr>
-<th class="type">Type</th>
-<th class="details">Details</th>
-</tr></thead>
-<tbody><tr>
-<td><code><a href="../class.Rows/">Cassandra\Rows</a></code></td>
-<td>
-<p>execution result</p>
-</td>
-</tr></tbody>
-</table></dd>
-</dl>
-    </div>
-  </div>
-  <div class="panel panel-default member-definition">
-    <div class="panel-heading method-heading">
-      <code><a href="../interface.Future/">Cassandra\Future</a></code> <h3 id="method-executeAsync" class="target">executeAsync<a class="anchor" href="#method-executeAsync" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
-</h3> <big>(</big> <code><a href="../interface.Statement/">Cassandra\Statement</a></code> $statement, <code><a href="../class.ExecutionOptions/">Cassandra\ExecutionOptions</a></code> $options <big>=</big> <var>null</var> <big>)</big>
-    </div>
-    <div class="panel-body method-body">
-      <p>Executes a given statement and returns a future result.</p>
-
-<p>Note that this method ignores timeout specified in the <code><a href="../class.ExecutionOptions/">Cassandra\ExecutionOptions</a></code>, you can provide one to <code><a href="../interface.Future/#method-get">Future::get()</a></code> instead.</p>
-
-      <dl class="tags">
-<dt class="tag-title">Parameters:</dt>
-<dd class="tag-content"><table class="table table-striped param">
-<thead><tr>
-<th class="name">Name</th>
-<th class="type">Type</th>
-<th class="details">Details</th>
-</tr></thead>
-<tbody>
-<tr>
-<td><var>$statement</var></td>
-<td><code><a href="../interface.Statement/">Cassandra\Statement</a></code></td>
-<td>
-<p>statement to be executed</p>
-</td>
-</tr>
-<tr>
-<td><var>$options</var></td>
-<td><code><a href="../class.ExecutionOptions/">Cassandra\ExecutionOptions</a></code></td>
-<td>
-<p>execution options (optional)</p>
-</td>
-</tr>
-</tbody>
-</table></dd>
-<dt class="tag-title">Returns:</dt>
-<dd class="tag-content"><table class="table table-striped return">
-<thead><tr>
-<th class="type">Type</th>
-<th class="details">Details</th>
-</tr></thead>
-<tbody><tr>
-<td><code><a href="../interface.Future/">Cassandra\Future</a></code></td>
-<td>
-<p>future result</p>
-</td>
-</tr></tbody>
-</table></dd>
-</dl>
-    </div>
-  </div>
-  <div class="panel panel-default member-definition">
-    <div class="panel-heading method-heading">
-      <code><a href="../class.PreparedStatement/">Cassandra\PreparedStatement</a></code> <h3 id="method-prepare" class="target">prepare<a class="anchor" href="#method-prepare" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
-</h3> <big>(</big> <code>string</code> $cql, <code><a href="../class.ExecutionOptions/">Cassandra\ExecutionOptions</a></code> $options <big>=</big> <var>null</var> <big>)</big>
-    </div>
-    <div class="panel-body method-body">
-      <p>Creates a prepared statement from a given CQL string.</p>
-
-<p>Note that this method only uses the ExecutionOptions::$timeout option, all other options will be ignored.</p>
-
-      <dl class="tags">
-<dt class="tag-title">Parameters:</dt>
-<dd class="tag-content"><table class="table table-striped param">
-<thead><tr>
-<th class="name">Name</th>
-<th class="type">Type</th>
-<th class="details">Details</th>
-</tr></thead>
-<tbody>
-<tr>
-<td><var>$cql</var></td>
-<td><code>string</code></td>
-<td>
-<p>CQL statement string</p>
-</td>
-</tr>
-<tr>
-<td><var>$options</var></td>
-<td><code><a href="../class.ExecutionOptions/">Cassandra\ExecutionOptions</a></code></td>
-<td>
-<p>execution options (optional)</p>
-</td>
-</tr>
-</tbody>
-</table></dd>
-<dt class="tag-title">Throws:</dt>
-<dd class="tag-content"><table class="table table-striped throw">
-<thead><tr>
-<th class="type">Type</th>
-<th class="details">Details</th>
-</tr></thead>
-<tbody><tr>
-<td><code><a href="../interface.Exception/">Cassandra\Exception</a></code></td>
-<td></td>
-</tr></tbody>
-</table></dd>
-<dt class="tag-title">Returns:</dt>
-<dd class="tag-content"><table class="table table-striped return">
-<thead><tr>
-<th class="type">Type</th>
-<th class="details">Details</th>
-</tr></thead>
-<tbody><tr>
-<td><code><a href="../class.PreparedStatement/">Cassandra\PreparedStatement</a></code></td>
-<td>
-<p>prepared statement</p>
-</td>
-</tr></tbody>
-</table></dd>
-</dl>
-    </div>
-  </div>
-  <div class="panel panel-default member-definition">
-    <div class="panel-heading method-heading">
-      <code><a href="../interface.Future/">Cassandra\Future</a></code> <h3 id="method-prepareAsync" class="target">prepareAsync<a class="anchor" href="#method-prepareAsync" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
-</h3> <big>(</big> <code>string</code> $cql, <code><a href="../class.ExecutionOptions/">Cassandra\ExecutionOptions</a></code> $options <big>=</big> <var>null</var> <big>)</big>
-    </div>
-    <div class="panel-body method-body">
-      <p>Asynchronously prepares a statement and returns a future prepared statement.</p>
-
-<p>Note that all options passed to this method will be ignored.</p>
-
-      <dl class="tags">
-<dt class="tag-title">Parameters:</dt>
-<dd class="tag-content"><table class="table table-striped param">
-<thead><tr>
-<th class="name">Name</th>
-<th class="type">Type</th>
-<th class="details">Details</th>
-</tr></thead>
-<tbody>
-<tr>
-<td><var>$cql</var></td>
-<td><code>string</code></td>
-<td>
-<p>CQL string to be prepared</p>
-</td>
-</tr>
-<tr>
-<td><var>$options</var></td>
-<td><code><a href="../class.ExecutionOptions/">Cassandra\ExecutionOptions</a></code></td>
-<td>
-<p>preparation options</p>
-</td>
-</tr>
-</tbody>
-</table></dd>
-<dt class="tag-title">Returns:</dt>
-<dd class="tag-content"><table class="table table-striped return">
-<thead><tr>
-<th class="type">Type</th>
-<th class="details">Details</th>
-</tr></thead>
-<tbody><tr>
-<td><code><a href="../interface.Future/">Cassandra\Future</a></code></td>
-<td>
-<p>statement</p>
-</td>
-</tr></tbody>
-</table></dd>
-</dl>
-    </div>
-  </div>
-  <div class="panel panel-default member-definition">
-    <div class="panel-heading method-heading">
-      <code>void</code> <h3 id="method-close" class="target">close<a class="anchor" href="#method-close" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
-</h3> <big>(</big> <code>float</code> $timeout <big>=</big> <var>null</var> <big>)</big>
-    </div>
-    <div class="panel-body method-body">
-      <p>Closes current session and all of its connections.</p>
-
-      <dl class="tags">
-<dt class="tag-title">Parameters:</dt>
-<dd class="tag-content"><table class="table table-striped param">
-<thead><tr>
-<th class="name">Name</th>
-<th class="type">Type</th>
-<th class="details">Details</th>
-</tr></thead>
-<tbody><tr>
-<td><var>$timeout</var></td>
-<td><code>float</code></td>
-<td>
-<p>Timeout to wait for closure in seconds</p>
-</td>
-</tr></tbody>
-</table></dd>
-<dt class="tag-title">Returns:</dt>
-<dd class="tag-content"><table class="table table-striped return">
-<thead><tr>
-<th class="type">Type</th>
-<th class="details">Details</th>
-</tr></thead>
-<tbody><tr>
-<td><code>void</code></td>
-<td></td>
-</tr></tbody>
-</table></dd>
-</dl>
-    </div>
-  </div>
-  <div class="panel panel-default member-definition">
-    <div class="panel-heading method-heading">
-      <code><a href="../interface.Future/">Cassandra\Future</a></code> <h3 id="method-closeAsync" class="target">closeAsync<a class="anchor" href="#method-closeAsync" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
-</h3> <big>(</big>  <big>)</big>
-    </div>
-    <div class="panel-body method-body">
-      <p>Asynchronously closes current session once all pending requests have finished.</p>
-
-      <dl class="tags">
-<dt class="tag-title">Returns:</dt>
-<dd class="tag-content"><table class="table table-striped return">
-<thead><tr>
-<th class="type">Type</th>
-<th class="details">Details</th>
-</tr></thead>
-<tbody><tr>
-<td><code><a href="../interface.Future/">Cassandra\Future</a></code></td>
-<td>
-<p>future</p>
-</td>
-</tr></tbody>
-</table></dd>
-</dl>
-    </div>
-  </div>
-</div>
-
-
         </div>
       </div>
     </div>
@@ -959,22 +624,22 @@
       
         
         <li>
-          <a href="http://downloads.datastax.com/php-driver/">Binaries</a>
+          <a href="http://downloads.datastax.com/php-driver">Binaries</a>
         </li>
       
         <li>·</li>
         <li>
-          <a href="https://github.com/datastax/php-driver/">Code</a>
+          <a href="https://github.com/datastax/php-driver">Code</a>
         </li>
       
         <li>·</li>
         <li>
-          <a href="http://datastax.github.io/php-driver/">Docs</a>
+          <a href="http://docs.datastax.com/en/developer/php-driver">Docs</a>
         </li>
       
         <li>·</li>
         <li>
-          <a href="https://datastax-oss.atlassian.net/browse/PHP/">Issues</a>
+          <a href="https://datastax-oss.atlassian.net/browse/PHP">Issues</a>
         </li>
       
         <li>·</li>
@@ -984,7 +649,7 @@
       
         <li>·</li>
         <li>
-          <a href="irc://irc.freenode.net/datastax-drivers">IRC Channel</a>
+          <a href="https://academy.datastax.com/slack">Slack</a>
         </li>
       
         <li>·</li>

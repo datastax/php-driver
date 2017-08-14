@@ -96,6 +96,15 @@
   
   
   <li>
+    <a href="building/">
+      Installing Cassandra PHP Extension <small>page</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
     <a href="api/">
       API docs <small>index</small>
       
@@ -137,7 +146,7 @@
 <p>This is a wrapper around <a href="http://datastax.github.io/cpp-driver/">the DataStax C/C++ Driver for Apache Cassandra and DataStax Enterprise</a>.</p>
 
 <ul>
-<li>Binaries: <a href="http://downloads.datastax.com/php-driver/1.0.0/">http://downloads.datastax.com/php-driver/1.0.0</a>
+<li>Binaries: <a href="http://downloads.datastax.com/php-driver/">http://downloads.datastax.com/php-driver/1.0.0</a>
 </li>
 <li>Docs: <a href="./">http://datastax.github.io/php-driver/</a>
 </li>
@@ -170,25 +179,23 @@
 
 <h2 id="quick-start" class="target">Quick Start<a class="anchor" href="#quick-start" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
 </h2>
-<pre class="highlight"><code><span class="cp">&lt;?php</span>
+<span class="cp">&lt;?php</span>
 <span class="nv">$cluster</span>   <span class="o">=</span> <span class="nx">Cassandra</span><span class="o">::</span><span class="na">cluster</span><span class="p">()</span>                 <span class="c1">// connects to localhost by default
 </span>                 <span class="o">-&gt;</span><span class="na">build</span><span class="p">();</span>
-<span class="nv">$keyspace</span>  <span class="o">=</span> <span class="s1">'system'</span><span class="p">;</span>
+<span class="nv">$keyspace</span>  <span class="o">=</span> <span class="s1">‘system’</span><span class="p">;</span>
 <span class="nv">$session</span>   <span class="o">=</span> <span class="nv">$cluster</span><span class="o">-&gt;</span><span class="na">connect</span><span class="p">(</span><span class="nv">$keyspace</span><span class="p">);</span>        <span class="c1">// create session, optionally scoped to a keyspace
 </span><span class="nv">$statement</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Cassandra\SimpleStatement</span><span class="p">(</span>       <span class="c1">// also supports prepared and batch statements
-</span>    <span class="s1">'SELECT keyspace_name, columnfamily_name FROM schema_columnfamilies'</span>
+</span>    <span class="s1">‘SELECT keyspace_name, columnfamily_name FROM schema_columnfamilies’</span>
 <span class="p">);</span>
 <span class="nv">$future</span>    <span class="o">=</span> <span class="nv">$session</span><span class="o">-&gt;</span><span class="na">executeAsync</span><span class="p">(</span><span class="nv">$statement</span><span class="p">);</span>  <span class="c1">// fully asynchronous and easy parallel execution
 </span><span class="nv">$result</span>    <span class="o">=</span> <span class="nv">$future</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">();</span>                      <span class="c1">// wait for the result, with an optional timeout
 </span>
 <span class="k">foreach</span> <span class="p">(</span><span class="nv">$result</span> <span class="k">as</span> <span class="nv">$row</span><span class="p">)</span> <span class="p">{</span>                       <span class="c1">// results and rows implement Iterator, Countable and ArrayAccess
-</span>    <span class="nb">printf</span><span class="p">(</span><span class="s2">"The keyspace %s has a table called %s</span><span class="se">\n</span><span class="s2">"</span><span class="p">,</span> <span class="nv">$row</span><span class="p">[</span><span class="s1">'keyspace_name'</span><span class="p">],</span> <span class="nv">$row</span><span class="p">[</span><span class="s1">'columnfamily_name'</span><span class="p">]);</span>
+</span>    <span class="nb">printf</span><span class="p">(</span><span class="s2">“The keyspace %s has a table called %s</span><span class="se">\n</span><span class="s2">”</span><span class="p">,</span> <span class="nv">$row</span><span class="p">[</span><span class="s1">‘keyspace_name’</span><span class="p">],</span> <span class="nv">$row</span><span class="p">[</span><span class="s1">‘columnfamily_name’</span><span class="p">]);</span>
 <span class="p">}</span>
-</code></pre>
 <h2 id="installation" class="target">Installation<a class="anchor" href="#installation" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
 </h2>
-<pre class="highlight"><code>pecl install cassandra
-</code></pre>
+pecl install cassandra
 <p><a href="https://github.com/datastax/php-driver/blob/master/ext/README.md">Read detailed instructions on building and installing the extension</a></p>
 
 <h2 id="compatibility" class="target">Compatibility<a class="anchor" href="#compatibility" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
@@ -224,17 +231,15 @@ examples in the <code>features/</code> directory</a>.</p>
 
 <p>For your convenience a <code>Vagrantfile</code> with configuration ready for testing is
 available. To execute tests, run the following:</p>
-<pre class="highlight"><code>git clone https://github.com/datastax/php-driver.git
+git clone https://github.com/datastax/php-driver.git
 <span class="nb">cd </span>php-driver
-git submodule update --init
+git submodule update <span class="nt">–init</span>
 vagrant up
 vagrant ssh
-</code></pre>
 <p>Once you’ve logged in to the vagrant VM, run:</p>
-<pre class="highlight"><code><span class="nb">cd</span> /usr/local/src/php-driver
+<span class="nb">cd</span> /usr/local/src/php-driver
 ./bin/behat
 ./bin/phpunit
-</code></pre>
 <h2 id="copyright" class="target">Copyright<a class="anchor" href="#copyright" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
 </h2>
 
@@ -257,22 +262,22 @@ vagrant ssh
       
         
         <li>
-          <a href="http://downloads.datastax.com/php-driver/">Binaries</a>
+          <a href="http://downloads.datastax.com/php-driver">Binaries</a>
         </li>
       
         <li>·</li>
         <li>
-          <a href="https://github.com/datastax/php-driver/">Code</a>
+          <a href="https://github.com/datastax/php-driver">Code</a>
         </li>
       
         <li>·</li>
         <li>
-          <a href="http://datastax.github.io/php-driver/">Docs</a>
+          <a href="http://docs.datastax.com/en/developer/php-driver">Docs</a>
         </li>
       
         <li>·</li>
         <li>
-          <a href="https://datastax-oss.atlassian.net/browse/PHP/">Issues</a>
+          <a href="https://datastax-oss.atlassian.net/browse/PHP">Issues</a>
         </li>
       
         <li>·</li>
@@ -282,7 +287,7 @@ vagrant ssh
       
         <li>·</li>
         <li>
-          <a href="irc://irc.freenode.net/datastax-drivers">IRC Channel</a>
+          <a href="https://academy.datastax.com/slack">Slack</a>
         </li>
       
         <li>·</li>

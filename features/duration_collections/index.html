@@ -82,9 +82,18 @@
             <ul class="nav nav-pills nav-stacked">
   
   
+  <li>
+    <a href="../../building/">
+      Building PHP Extension <small>page</small>
+      
+    </a>
+    
+  </li>
+  
+  
   <li class="active">
     <a href="../">
-      Core <small>page</small>
+      Features <small>page</small>
       
       
       <span class="glyphicon glyphicon-minus-sign pull-right" aria-hidden="true"></span>
@@ -323,7 +332,7 @@
                 
                 
                 
-                <li><a href="../">Core</a></li>
+                <li><a href="../">Features</a></li>
                 
                 
                 
@@ -352,9 +361,9 @@
 </h2>
 <dl class="steps">
 <dt>Given </dt>
-<dd>the following schema:<pre class="highlight"><code><span class="k">CREATE</span> <span class="k">KEYSPACE</span> <span class="n">simplex</span> <span class="k">WITH</span> <span class="n">replication</span> <span class="o">=</span> <span class="p">{</span>
-  <span class="s1">'class'</span><span class="p">:</span> <span class="s1">'SimpleStrategy'</span><span class="p">,</span>
-  <span class="s1">'replication_factor'</span><span class="p">:</span> <span class="mi">1</span>
+<dd>the following schema:<span class="k">CREATE</span> <span class="k">KEYSPACE</span> <span class="n">simplex</span> <span class="k">WITH</span> <span class="n">replication</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="s1">‘class’</span><span class="p">:</span> <span class="s1">‘SimpleStrategy’</span><span class="p">,</span>
+  <span class="s1">‘replication_factor’</span><span class="p">:</span> <span class="mi">1</span>
 <span class="p">};</span>
 <span class="k">USE</span> <span class="n">simplex</span><span class="p">;</span>
 <span class="k">CREATE</span> <span class="k">TYPE</span> <span class="n">duration_user_type</span> <span class="p">(</span><span class="n">duration1</span> <span class="n">duration</span><span class="p">,</span> <span class="n">duration2</span> <span class="n">duration</span><span class="p">);</span>
@@ -362,7 +371,6 @@
                         <span class="n">duration_list</span> <span class="k">list</span><span class="o">&lt;</span><span class="n">duration</span><span class="o">&gt;</span><span class="p">,</span>
                         <span class="n">duration_tuple</span> <span class="n">tuple</span><span class="o">&lt;</span><span class="n">duration</span><span class="p">,</span> <span class="n">duration</span><span class="o">&gt;</span><span class="p">,</span>
                         <span class="n">duration_udt</span> <span class="n">duration_user_type</span><span class="p">);</span>
-</code></pre>
 </dd>
 <dt>And </dt>
 <dd>the following example:<pre><code>&lt;?php
@@ -429,22 +437,22 @@ The udt contains durations: {duration1: 1mo2d3ns, duration2: 4mo5d6ns}
       
         
         <li>
-          <a href="http://downloads.datastax.com/php-driver/">Binaries</a>
+          <a href="http://downloads.datastax.com/php-driver">Binaries</a>
         </li>
       
         <li>·</li>
         <li>
-          <a href="https://github.com/datastax/php-driver/">Code</a>
+          <a href="https://github.com/datastax/php-driver">Code</a>
         </li>
       
         <li>·</li>
         <li>
-          <a href="http://datastax.github.io/php-driver/">Docs</a>
+          <a href="http://docs.datastax.com/en/developer/php-driver">Docs</a>
         </li>
       
         <li>·</li>
         <li>
-          <a href="https://datastax-oss.atlassian.net/browse/PHP/">Issues</a>
+          <a href="https://datastax-oss.atlassian.net/browse/PHP">Issues</a>
         </li>
       
         <li>·</li>
@@ -454,7 +462,7 @@ The udt contains durations: {duration1: 1mo2d3ns, duration2: 4mo5d6ns}
       
         <li>·</li>
         <li>
-          <a href="irc://irc.freenode.net/datastax-drivers">IRC Channel</a>
+          <a href="https://academy.datastax.com/slack">Slack</a>
         </li>
       
         <li>·</li>

@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <meta name="description" content="DataStax PHP Driver for Apache Cassandra">
+    <meta name="author" content="DataStax">
+
+    <title>DataStax PHP Driver - Building PHP Extension</title>
+
+    <link rel="icon" href="../favicon.ico">
+    <link rel="apple-touch-icon" href="../favicon.png">
+    <link href="../css/style.css" rel="stylesheet">
+    <link href="../css/pygments.css" rel="stylesheet">
+    <link href="../css/hotkeys.css" rel="stylesheet">
+
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  </head>
+  <body ng-app="docs">
+    <div class="navbar">
+      <div class="container-fluid">
+        <div class="row row-offcanvas row-offcanvas-left">
+          <div class="col-sm-3 text-center">
+            <a class="ds-home" href="../"><img alt="Brand" src="../img/logo.png"></a>
+            <ul class="list-inline ds-sites" role="nav">
+              <li><a href="https://academy.datastax.com/" class="navbar-link">DataStax Academy</a></li>
+              <li><a href="http://www.datastax.com/dev/blog" class="navbar-link">Tech Blog</a></li>
+              <li><a href="http://www.datastax.com/what-we-offer/products-services/support" class="navbar-link">Support</a></li>
+            </ul>
+          </div>
+          <div class="col-md-5">
+            <p class="lead pubtitle">DataStax PHP Driver</p>
+            
+            <div class="text-info">
+              <span class="text-warning">Attention:</span> Viewing documentation for version
+              <div class="btn-group">
+                <button id="current-version" class="btn btn-default btn-sm dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  1.3
+                  <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu" role="menu" aria-labelledby="current-version">
+                
+                  <li class="disabled"><a href="./">1.3</a></li>
+                
+                  <li><a href="../1.2/building/">1.2</a></li>
+                
+                  <li><a href="../1.1/building/">1.1</a></li>
+                
+                  <li><a href="../1.0/building/">1.0</a></li>
+                
+                </ul>
+              </div>
+            </div>
+            
+          </div>
+          <div class="col-md-4">
+            <form id="search" class="form-search dropdown visible-lg-inline-block" ng-controller="search" ng-class="{open: hasResults}" role="search" ng-submit="submit()" data-spy="affix" data-offset-top="130">
+              <div class="form-group has-feedback">
+                <input type="search" class="form-control input-sm mousetrap" placeholder="Search..." ng-model="q" ng-change="search('1.3')" ng-disabled="!searchReady" disabled data-hotkey="{down: moveDown, up: moveUp, esc: reset}" data-search>
+              </div>
+              <ul class="dropdown-menu search-results" role="menu">
+                <li ng-repeat="result in results" ng-class="{'bg-warning': $index == current}"><a ng-href="{{basePath}}{{result.path}}"><span ng-bind-html="summary(result)"></span></a></li>
+              </ul>
+            </form>
+            <a href="http://www.datastax.com/download" class="btn btn-primary btn-sm">Download</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container-fluid" id="content">
+      <div class="row">
+        <div class="col-md-3">
+          <div id="navigation" class="side-nav" role="tablist" aria-multiselectable="true">
+            <h3><a href="../">Contents</a></h3>
+            <ul class="nav nav-pills nav-stacked">
+  
+  
+  <li class="active">
+    <a href="./" class="current">
+      Building PHP Extension <small>page</small>
+      
+    </a>
+    <ul class="nav nav-pills nav-stacked">
+  
+</ul>
+
+  </li>
+  
+  
+  <li>
+    <a href="../features/">
+      Features <small>page</small>
+      
+      
+      <span class="glyphicon glyphicon-plus-sign pull-right" aria-hidden="true"></span>
+      
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
+    <a href="../api/">
+      API docs <small>index</small>
+      
+      
+      <span class="glyphicon glyphicon-plus-sign pull-right" aria-hidden="true"></span>
+      
+      
+    </a>
+    
+  </li>
+  
+</ul>
+
+          </div>
+        </div>
+        <div class="col-md-9 content">
+          <div class="crumbs-wrapper">
+            <nav id="crumbs" data-spy="affix" data-offset-top="130">
+              <ol class="breadcrumb">
+                
+                
+                
+                <li><a href="../">Home</a></li>
+                
+                
+                
+                
+                
+                <li class="active">Building PHP Extension</li>
+                
+                
+                
+              </ol>
+            </nav>
+          </div>
+          
+
+<h1 id="building-php-extension" class="target">Building PHP Extension<a class="anchor" href="#building-php-extension" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+</h1>
+
+<p>The PHP driver is implemented as a native PHP extension and leverages the
+<a href="http://docs.datastax.com/en/developer/cpp-driver/latest">C/C++ driver</a>. The driver will build on most standard
+Unix-like and Microsoft Windows platforms.</p>
+
+<p>Packages are available for the following platforms:</p>
+
+<ul>
+<li><a href="http://downloads.datastax.com/php-driver/centos/6/cassandra">CentOS 6</a></li>
+<li><a href="http://downloads.datastax.com/php-driver/centos/7/cassandra">CentOS 7</a></li>
+<li><a href="http://downloads.datastax.com/php-driver/ubuntu/14.04/cassandra">Ubuntu 14.04 LTS</a></li>
+<li><a href="http://downloads.datastax.com/php-driver/ubuntu/16.04/cassandra">Ubuntu 16.04 LTS</a></li>
+<li><a href="http://downloads.datastax.com/php-driver/windows/cassandra">Windows</a></li>
+</ul>
+
+<p><strong>NOTE</strong>: The build procedures only need to be performed for driver development
+          or if your system doesn’t have packages available for download and
+          installation.</p>
+
+<h2 id="compatibility" class="target">Compatibility<a class="anchor" href="#compatibility" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+</h2>
+
+<ul>
+<li>PHP 5.6, PHP 7.0, and PHP 7.1
+
+<ul>
+<li>32-bit (x86) and 64-bit (x64)</li>
+<li>Thread safe (TS) and non-thread safe (NTS)</li>
+</ul>
+</li>
+<li>Compilers: GCC 4.1.2+, Clang 3.4+, and MSVC 2012/2015</li>
+</ul>
+
+<h2 id="dependencies" class="target">Dependencies<a class="anchor" href="#dependencies" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+</h2>
+
+<p>The PHP Extension depends on the following software:</p>
+
+<ul>
+<li>
+<a href="http://docs.datastax.com/en/developer/cpp-driver/latest/topics/building">The C/C++ driver</a>
+
+<ul>
+<li>
+<a href="http://www.cmake.org/download">CMake</a> v2.6.4+</li>
+<li>
+<a href="http://libuv.org">libuv</a> 1.x</li>
+<li>
+<a href="https://www.openssl.org">OpenSSL</a> v1.0.x or v1.1.x</li>
+</ul>
+</li>
+<li><a href="https://gmplib.org">The GNU Multiple Precision Arithmetic Library</a></li>
+</ul>
+
+<h2 id="linux-mac-os" class="target">Linux/Mac OS<a class="anchor" href="#linux-mac-os" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+</h2>
+
+<p>The driver is known to build on CentOS/RHEL 6/7, Mac OS X 10.10/10.11 (Yosemite
+and El Capitan), Mac OS 10.12 (Sierra), and Ubuntu 14.04/16.04 LTS.</p>
+
+<p><strong>NOTE</strong>: The driver will also build on most standard Unix-like systems using
+          GCC 4.1.2+ or Clang 3.4+.</p>
+
+<h3 id="installing-dependencies" class="target">Installing dependencies<a class="anchor" href="#installing-dependencies" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+</h3>
+
+<h4 id="initial-environment-setup" class="target">Initial environment setup<a class="anchor" href="#initial-environment-setup" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+</h4>
+
+<h5 id="centos-rhel-6-yum" class="target">CentOS/RHEL 6 (Yum)<a class="anchor" href="#centos-rhel-6-yum" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+</h5>
+
+<p>CentOS/RHEL 6 ships with PHP v5.3.x as the default version of PHP; which is not
+supported. A supported version of PHP can be installed by performing the
+following:</p>
+yum install epel-release
+rpm <span class="nt">-Uvh</span> https://mirror.webtatic.com/yum/el6/latest.rpm
+<p>Once completed PHP v5.6.x, v7.0.x, or v7.1.x can be installed:</p>
+yum install automake cmake gcc-c++ git libtool pcre-devel php71w-devel php71w-pear
+<h5 id="centos-rhel-7-yum" class="target">CentOS/RHEL 7 (Yum)<a class="anchor" href="#centos-rhel-7-yum" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+</h5>
+
+<p>CentOS/RHEL 7 ships with PHP v5.4.x as the default version of PHP; which is not
+supported. A supported version of PHP can be installed by performing the
+following:</p>
+yum install epel-release
+rpm <span class="nt">-Uvh</span> https://mirror.webtatic.com/yum/el7/latest.rpm
+<p>Once completed PHP v5.6.x, v7.0.x, or v7.1.x can be installed:</p>
+yum install automake cmake gcc-c++ git libtool pcre-devel php71w-devel php71w-pear
+<h5 id="ubuntu-14-04-apt" class="target">Ubuntu 14.04 (APT)<a class="anchor" href="#ubuntu-14-04-apt" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+</h5>
+
+<p>Ubuntu 14.04 LTS (Debian 8) ships with PHP v5.5.x as the default version of
+PHP; which is not supported. A supported version of PHP can be installed by
+performing the following:</p>
+add-apt-repository ppa:ondrej/php
+apt-get update
+<p>Once completed PHP v5.6.x, v7.0.x, or v7.1.x can be installed:</p>
+apt-get install build-essential cmake git libpcre3-dev php7.1-dev
+<h5 id="ubuntu-16-04-apt" class="target">Ubuntu 16.04 (APT)<a class="anchor" href="#ubuntu-16-04-apt" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+</h5>
+
+<p>Starting with Ubuntu 16.04 LTS (Debian 9) PHP v5.5.x has been removed as the
+default version of PHP and has been replaced with either PHP v7.0.x or PHP
+v7.1.x:</p>
+apt-get install build-essential cmake git libpcre3-dev php7.1-dev
+<h5 id="mac-os-brew" class="target">Mac OS (Brew)<a class="anchor" href="#mac-os-brew" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+</h5>
+brew update
+brew upgrade
+brew tap homebrew/homebrew-php
+brew install autoconf automake libtool php71 <span class="nt">–with-pear</span>
+<h4 id="gnu-multiple-precision-arithmetic" class="target">GNU Multiple Precision Arithmetic<a class="anchor" href="#gnu-multiple-precision-arithmetic" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+</h4>
+
+<h5 id="centos-rhel-yum" class="target">CentOS/RHEL (Yum)<a class="anchor" href="#centos-rhel-yum" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+</h5>
+yum install gmp-devel
+<h5 id="ubuntu-apt" class="target">Ubuntu (APT)<a class="anchor" href="#ubuntu-apt" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+</h5>
+apt-get install libgmp-dev
+<h5 id="mac-os-brew" class="target">Mac OS (Brew)<a class="anchor" href="#mac-os-brew" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+</h5>
+brew install gmp
+<h4 id="libuv" class="target">libuv<a class="anchor" href="#libuv" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+</h4>
+
+<p>libuv v1.x should be used in order to ensure all features of the C/C++ driver
+and the PHP driver are available. When using a package manager for your
+operating system make sure you install v1.x; if available.</p>
+
+<h5 id="centos-rhel-and-ubuntu-packages" class="target">CentOS/RHEL and Ubuntu packages<a class="anchor" href="#centos-rhel-and-ubuntu-packages" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+</h5>
+
+<p>Packages are available from our <a href="http://downloads.datastax.com">download server</a>:</p>
+
+<ul>
+<li><a href="http://downloads.datastax.com/cpp-driver/centos/6/dependencies/libuv">CentOS 6</a></li>
+<li><a href="http://downloads.datastax.com/cpp-driver/centos/7/dependencies/libuv">CentOS 7</a></li>
+<li><a href="http://downloads.datastax.com/cpp-driver/ubuntu/14.04/dependencies/libuv">Ubuntu 14.04 LTS</a></li>
+<li><a href="http://downloads.datastax.com/cpp-driver/ubuntu/16.04/dependencies/libuv">Ubuntu 16.04 LTS</a></li>
+</ul>
+
+<h5 id="mac-os-brew" class="target">Mac OS (Brew)<a class="anchor" href="#mac-os-brew" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+</h5>
+brew install libuv
+<h5 id="manually-build-and-install" class="target">Manually build and install<a class="anchor" href="#manually-build-and-install" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+</h5>
+
+<p><u>The following procedures should be performed if packages are not available for
+your system.</u></p>
+<span class="nb">pushd</span> /tmp
+wget http://dist.libuv.org/dist/v1.13.1/libuv-v1.13.1.tar.gz
+<span class="nb">tar </span>xzf libuv-v1.13.1.tar.gz
+<span class="nb">pushd </span>libuv-v1.13.1
+sh autogen.sh
+./configure
+make install
+<span class="nb">popd
+popd</span>
+<h4 id="openssl" class="target">OpenSSL<a class="anchor" href="#openssl" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+</h4>
+
+<h5 id="centos-yum" class="target">CentOS (Yum)<a class="anchor" href="#centos-yum" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+</h5>
+yum install openssl-devel
+<h5 id="ubuntu-apt" class="target">Ubuntu (APT)<a class="anchor" href="#ubuntu-apt" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+</h5>
+apt-get install libssl-dev
+<h5 id="mac-os-brew" class="target">Mac OS (Brew)<a class="anchor" href="#mac-os-brew" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+</h5>
+brew install openssl
+<p><strong>NOTE</strong>: For Mac OS X 10.11 (El Capitan) and Mac OS 10.12 (Sierra) a link
+          needs to be created in order to make OpenSSL available to the
+          building libraries:</p>
+brew link <span class="nt">–force</span> openssl
+<h4 id="c-c-driver" class="target">C/C++ driver<a class="anchor" href="#c-c-driver" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+</h4>
+
+<h5 id="centos-rhel-and-ubuntu-packages" class="target">CentOS/RHEL and Ubuntu packages<a class="anchor" href="#centos-rhel-and-ubuntu-packages" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+</h5>
+
+<p>Packages are available from our <a href="http://downloads.datastax.com">download server</a> and the latest version of the
+driver be used:</p>
+
+<ul>
+<li><a href="http://downloads.datastax.com/cpp-driver/centos/6/cassandra">CentOS 6</a></li>
+<li><a href="http://downloads.datastax.com/cpp-driver/centos/7/cassandra">CentOS 7</a></li>
+<li><a href="http://downloads.datastax.com/cpp-driver/ubuntu/14.04/cassandra">Ubuntu 14.04 LTS</a></li>
+<li><a href="http://downloads.datastax.com/cpp-driver/ubuntu/16.04/cassandra">Ubuntu 16.04 LTS</a></li>
+</ul>
+
+<h5 id="manually-build-and-install" class="target">Manually build and install<a class="anchor" href="#manually-build-and-install" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+</h5>
+
+<p><u>The following procedures should be performed if packages are not available for
+your system.</u></p>
+
+<p>The C/C++ driver is made available as a submodule; if preferred the source is
+also available <a href="https://github.com/datastax/cpp-driver">here</a>.</p>
+
+<h6 id="updating-source-tree-to-build-submodule" class="target">Updating source tree to build submodule<a class="anchor" href="#updating-source-tree-to-build-submodule" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+</h6>
+git update <span class="nt">–init</span> lib<span class="se">\c</span>pp-driver
+<h5 id="building-and-installing-the-c-c-driver" class="target">Building and installing the C/C++ driver<a class="anchor" href="#building-and-installing-the-c-c-driver" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+</h5>
+mkdir build
+<span class="nb">pushd </span>build
+cmake ..
+make
+make install
+<span class="nb">popd</span>
+<p><a href="http://docs.datastax.com/en/developer/cpp-driver/latest/topics/building">Refer to the official build documentation</a> for more
+detailed instructions.</p>
+
+<h3 id="building-and-installing-the-php-extension" class="target">Building and Installing the PHP extension<a class="anchor" href="#building-and-installing-the-php-extension" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+</h3>
+
+<h4 id="pecl" class="target">PECL<a class="anchor" href="#pecl" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+</h4>
+
+<p>The <a href="https://pecl.php.net">PHP Extension Community Library (PECL)</a> is a repository for PHP
+extensions. A database <a href="https://pecl.php.net/package/cassandra">package</a> which can ease building and
+installing the PHP extension can be installed with the following:</p>
+pecl install cassandra
+<h4 id="manually-build-and-install" class="target">Manually build and install<a class="anchor" href="#manually-build-and-install" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+</h4>
+
+<p><u>The following procedures should be performed if packages or PECL is not
+available for your system.</u></p>
+<span class="nb">pushd </span>ext
+phpize
+<span class="nb">popd
+</span>mkdir build
+<span class="nb">pushd </span>build
+../ext/configure
+make
+make install
+<span class="nb">popd</span>
+<h3 id="enabling-the-php-extension" class="target">Enabling the PHP extension<a class="anchor" href="#enabling-the-php-extension" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+</h3>
+
+<p>To determine where the <code>php.ini</code> file is located on your system run the
+following command:</p>
+php <span class="nt">-r</span> <span class="s2">“echo php_ini_loaded_file();”</span>
+<p>Edit the <code>php.ini</code> file and add the following line to enable the extension:</p>
+<pre><code>; DataStax PHP Driver for Apache Cassandra
+extension=cassandra.so
+</code></pre>
+<p>To verify the extension is being loaded the following command can be executed:</p>
+php <span class="nt">-i</span> | <span class="nb">grep</span> <span class="nt">-A</span> 10 <span class="s2">“^cassandra$”</span>
+<h3 id="enabling-testing-framework" class="target">Enabling testing framework<a class="anchor" href="#enabling-testing-framework" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+</h3>
+
+<p>In order to execute the <a href="http://behat.org">Behat</a> test suite and <a href="https://phpunit.de">PHPUnit</a> unit and integration
+tests <a href="https://getcomposer.org">Composer</a> must downloaded and installed:</p>
+curl <span class="nt">-sS</span> https://getcomposer.org/installer | php
+php composer.phar install
+<h2 id="windows" class="target">Windows<a class="anchor" href="#windows" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+</h2>
+
+<p>We provide a self-contained <a href="https://github.com/datastax/php-dse-driver/blob/master/ext/vc_build.bat">batch script</a> for building the PHP
+driver and all of its dependencies. In order to run it, you have to install the
+build dependencies and clone the repository with the DataStax PHP driver for
+Apache Cassandra.</p>
+
+<h3 id="obtaining-build-dependencies" class="target">Obtaining build dependencies<a class="anchor" href="#obtaining-build-dependencies" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+</h3>
+
+<ul>
+<li>Download and install <a href="http://gnuwin32.sourceforge.net/downlinks/bison.php">Bison</a>
+
+<ul>
+<li>Make sure Bison is in your system PATH and not installed in a directory with
+spaces (e.g. <code>%SYSTEMDRIVE%\GnuWin32</code>)</li>
+</ul>
+</li>
+<li>Download and install <a href="http://www.cmake.org/download">CMake</a>
+
+<ul>
+<li>Make sure to select the option “Add CMake to the system PATH for all users”
+or “Add CMake to the system PATH for current user”</li>
+</ul>
+</li>
+<li>Download and install <a href="http://git-scm.com/download/win">Git</a>
+
+<ul>
+<li>Make sure to select the option “Use Git from Windows Command Prompt” or
+manually add the git executable to the system PATH.</li>
+</ul>
+</li>
+<li>Download and install <a href="https://www.perl.org/get.html#win32">ActiveState Perl</a>
+
+<ul>
+<li>Make sure to select the option “Add Perl to PATH environment variable”</li>
+</ul>
+</li>
+<li>Download and install <a href="https://www.python.org/downloads">Python v2.7.x</a>
+
+<ul>
+<li>Make sure to select/install the feature “Add python.exe to Path”</li>
+</ul>
+</li>
+</ul>
+
+<h3 id="building-the-driver" class="target">Building the driver<a class="anchor" href="#building-the-driver" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+</h3>
+
+<p>The <a href="https://github.com/datastax/php-dse-driver/blob/master/ext/vc_build.bat">batch script</a> detects installed versions of Visual Studio to simplify the
+build process on Windows and select the correct version of Visual Studio for
+the PHP version the driver is being built for.</p>
+
+<p>First you will need to open a “Command Prompt” to execute the batch script.
+Running the batch script without any arguments will build the driver for PHP
+v7.1 and for the current system architecture (e.g. x64).</p>
+
+<p>To perform advanced build configuration, execute the batch script with the
+<code>--HELP</code> argument to display the options available.</p>
+<pre><code class="dos">Usage: VC_BUILD.BAT [OPTION...]
+
+    --DEBUG                           Enable debug build
+    --RELEASE                         Enable release build (default)
+    --DISABLE-CLEAN                   Disable clean build
+    --ENABLE-THREAD-SAFETY            Enable thread safety
+    --ENABLE-PACKAGES [version]       Enable package generation (5.6, 7.0, 7.1) (*)
+    --ENABLE-TEST-CONFIGURATION       Enable test configuration build
+    --PHP-VERSION [version]           PHP version 5.6, 7.0, and 7.1 (**)
+    --X86                             Target 32-bit build (***)
+    --X64                             Target 64-bit build (***)
+
+    C/C++ Driver Options
+      --USE-BOOST-ATOMIC              Use Boost atomic
+
+    --HELP                            Display this message
+
+*   Minimum supported officially released PHP binary installations
+**  Defaults to PHP v7.1 if --PHP-VERSION is not used
+*** Default target architecture is determined based on system architecture
+</code></pre>
+<h4 id="enable-testing" class="target">Enable testing<a class="anchor" href="#enable-testing" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+</h4>
+
+<p>Ensure the driver is built with –ENABLE-TEST-CONFIGURATION in order to execute
+the <a href="http://behat.org">Behat</a> test suite and <a href="https://phpunit.de">PHPUnit</a> unit and integration tests.</p>
+
+<h4 id="manual-php-step-by-step-windows-build" class="target">Manual/PHP step-by-step windows build<a class="anchor" href="#manual-php-step-by-step-windows-build" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+</h4>
+
+<p>The PHP driver extension can also be built using the
+<a href="https://wiki.php.net/internals/windows/stepbystepbuild">Build your own PHP on Windows</a> instructions followed by the
+<a href="https://wiki.php.net/internals/windows/stepbystepbuild#building_pecl_extensions">Building PECL extensions</a> instruction where the driver can be statically
+linked into the PHP executable or as an import (DLL) library. This process
+requires that the binary dependencies of the PHP driver extension be included
+in the<code>phpdev\vc##\x##\deps</code> directory along with the standard PHP library
+dependencies. Use <code>--enable-cassandra</code> to build library into the PHP executable
+and <code>--enable-cassandra=shared</code> for import (DLL) library.</p>
+
+<p>The PHP driver extension dependencies not included with the standard PHP
+library can be download <a href="http://downloads.datastax.com/cpp-driver/windows/cassandra">here</a>.</p>
+
+<p><strong>Note</strong>: The binary libraries downloaded/used must be compatible with the
+          MSVC compiler and the PHP driver extension.</p>
+
+<h1 id="testing-php-extension" class="target">Testing PHP Extension<a class="anchor" href="#testing-php-extension" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+</h1>
+
+<h2 id="features" class="target">Features<a class="anchor" href="#features" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+</h2>
+
+<h3 id="linux-mac-os" class="target">Linux/Mac OS<a class="anchor" href="#linux-mac-os" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+</h3>
+bin/behat
+<h3 id="windows" class="target">Windows<a class="anchor" href="#windows" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+</h3>
+<pre><code class="dos">bin\behat.bat
+</code></pre>
+<h2 id="unit-and-integration-tests" class="target">Unit and integration tests<a class="anchor" href="#unit-and-integration-tests" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+</h2>
+
+<h3 id="linux-mac-os" class="target">Linux/Mac OS<a class="anchor" href="#linux-mac-os" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+</h3>
+bin/phpunit
+<h3 id="windows" class="target">Windows<a class="anchor" href="#windows" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
+</h3>
+<pre><code class="dos">bin\phpunit.bat
+</code></pre>
+
+
+        </div>
+      </div>
+    </div>
+
+    
+    <footer class="container text-muted">
+      <ul class="list-inline">
+      
+        
+        <li>
+          <a href="http://downloads.datastax.com/php-driver">Binaries</a>
+        </li>
+      
+        <li>·</li>
+        <li>
+          <a href="https://github.com/datastax/php-driver">Code</a>
+        </li>
+      
+        <li>·</li>
+        <li>
+          <a href="http://docs.datastax.com/en/developer/php-driver">Docs</a>
+        </li>
+      
+        <li>·</li>
+        <li>
+          <a href="https://datastax-oss.atlassian.net/browse/PHP">Issues</a>
+        </li>
+      
+        <li>·</li>
+        <li>
+          <a href="https://groups.google.com/a/lists.datastax.com/forum/#!forum/php-driver-user">Mailing List</a>
+        </li>
+      
+        <li>·</li>
+        <li>
+          <a href="https://academy.datastax.com/slack">Slack</a>
+        </li>
+      
+        <li>·</li>
+        <li>
+          <a href="https://github.com/datastax/php-driver/releases">Releases</a>
+        </li>
+      
+      </ul>
+    </footer>
+    
+
+    <script src="../js/jquery.js"></script>
+    <script src="../js/bootstrap.js"></script>
+    <script src="../js/angular.js"></script>
+    <script src="../js/mousetrap.js"></script>
+    <script src="../js/hotkeys.js"></script>
+    <script src="../js/ZeroClipboard.js"></script>
+    <script src="../js/lunr.js"></script>
+    <script src="../js/app.js"></script>
+  </body>
+</html>

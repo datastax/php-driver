@@ -241,6 +241,15 @@
   
   
   <li>
+    <a href="../../building/">
+      Installing Cassandra PHP Extension <small>page</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
     <a href="../../api/">
       API docs <small>index</small>
       
@@ -293,17 +302,16 @@
 <dt>Given </dt>
 <dd>a running cassandra cluster with SSL encryption</dd>
 <dt>And </dt>
-<dd>the following example:<pre class="highlight"><code><span class="cp">&lt;?php</span>
+<dd>the following example:<span class="cp">&lt;?php</span>
 <span class="nv">$cluster</span> <span class="o">=</span> <span class="nx">Cassandra</span><span class="o">::</span><span class="na">cluster</span><span class="p">()</span>
-               <span class="o">-&gt;</span><span class="na">withContactPoints</span><span class="p">(</span><span class="s1">'127.0.0.1'</span><span class="p">)</span>
+               <span class="o">-&gt;</span><span class="na">withContactPoints</span><span class="p">(</span><span class="s1">‘127.0.0.1’</span><span class="p">)</span>
                <span class="o">-&gt;</span><span class="na">build</span><span class="p">();</span>
 
 <span class="k">try</span> <span class="p">{</span>
     <span class="nv">$session</span> <span class="o">=</span> <span class="nv">$cluster</span><span class="o">-&gt;</span><span class="na">connect</span><span class="p">();</span>
 <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="nx">Cassandra\Exception\RuntimeException</span> <span class="nv">$e</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">echo</span> <span class="s2">"Connection failure</span><span class="se">\n</span><span class="s2">"</span><span class="p">;</span>
+    <span class="k">echo</span> <span class="s2">“Connection failure</span><span class="se">\n</span><span class="s2">”</span><span class="p">;</span>
 <span class="p">}</span>
-</code></pre>
 </dd>
 <dt>When </dt>
 <dd>it is executed</dd>
@@ -318,22 +326,21 @@
 <dt>Given </dt>
 <dd>a running cassandra cluster with SSL encryption</dd>
 <dt>And </dt>
-<dd>the following example:<pre class="highlight"><code><span class="cp">&lt;?php</span>
+<dd>the following example:<span class="cp">&lt;?php</span>
 <span class="nv">$ssl</span>     <span class="o">=</span> <span class="nx">Cassandra</span><span class="o">::</span><span class="na">ssl</span><span class="p">()</span>
                <span class="o">-&gt;</span><span class="na">withVerifyFlags</span><span class="p">(</span><span class="nx">Cassandra</span><span class="o">::</span><span class="na">VERIFY_NONE</span><span class="p">)</span>
                <span class="o">-&gt;</span><span class="na">build</span><span class="p">();</span>
 <span class="nv">$cluster</span> <span class="o">=</span> <span class="nx">Cassandra</span><span class="o">::</span><span class="na">cluster</span><span class="p">()</span>
-               <span class="o">-&gt;</span><span class="na">withContactPoints</span><span class="p">(</span><span class="s1">'127.0.0.1'</span><span class="p">)</span>
+               <span class="o">-&gt;</span><span class="na">withContactPoints</span><span class="p">(</span><span class="s1">‘127.0.0.1’</span><span class="p">)</span>
                <span class="o">-&gt;</span><span class="na">withSSL</span><span class="p">(</span><span class="nv">$ssl</span><span class="p">)</span>
                <span class="o">-&gt;</span><span class="na">build</span><span class="p">();</span>
 
 <span class="k">try</span> <span class="p">{</span>
     <span class="nv">$session</span> <span class="o">=</span> <span class="nv">$cluster</span><span class="o">-&gt;</span><span class="na">connect</span><span class="p">();</span>
-    <span class="k">echo</span> <span class="s2">"Connection success</span><span class="se">\n</span><span class="s2">"</span><span class="p">;</span>
+    <span class="k">echo</span> <span class="s2">“Connection success</span><span class="se">\n</span><span class="s2">”</span><span class="p">;</span>
 <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="nx">Cassandra\Exception\RuntimeException</span> <span class="nv">$e</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">echo</span> <span class="s2">"Connection failure</span><span class="se">\n</span><span class="s2">"</span><span class="p">;</span>
+    <span class="k">echo</span> <span class="s2">“Connection failure</span><span class="se">\n</span><span class="s2">”</span><span class="p">;</span>
 <span class="p">}</span>
-</code></pre>
 </dd>
 <dt>When </dt>
 <dd>it is executed</dd>
@@ -348,23 +355,22 @@
 <dt>Given </dt>
 <dd>a running cassandra cluster with SSL encryption</dd>
 <dt>And </dt>
-<dd>the following example:<pre class="highlight"><code><span class="cp">&lt;?php</span>
+<dd>the following example:<span class="cp">&lt;?php</span>
 <span class="nv">$ssl</span>     <span class="o">=</span> <span class="nx">Cassandra</span><span class="o">::</span><span class="na">ssl</span><span class="p">()</span>
                <span class="o">-&gt;</span><span class="na">withVerifyFlags</span><span class="p">(</span><span class="nx">Cassandra</span><span class="o">::</span><span class="na">VERIFY_PEER_CERT</span><span class="p">)</span>
-               <span class="o">-&gt;</span><span class="na">withTrustedCerts</span><span class="p">(</span><span class="nb">getenv</span><span class="p">(</span><span class="s1">'SERVER_CERT'</span><span class="p">))</span>
+               <span class="o">-&gt;</span><span class="na">withTrustedCerts</span><span class="p">(</span><span class="nb">getenv</span><span class="p">(</span><span class="s1">‘SERVER_CERT’</span><span class="p">))</span>
                <span class="o">-&gt;</span><span class="na">build</span><span class="p">();</span>
 <span class="nv">$cluster</span> <span class="o">=</span> <span class="nx">Cassandra</span><span class="o">::</span><span class="na">cluster</span><span class="p">()</span>
-               <span class="o">-&gt;</span><span class="na">withContactPoints</span><span class="p">(</span><span class="s1">'127.0.0.1'</span><span class="p">)</span>
+               <span class="o">-&gt;</span><span class="na">withContactPoints</span><span class="p">(</span><span class="s1">‘127.0.0.1’</span><span class="p">)</span>
                <span class="o">-&gt;</span><span class="na">withSSL</span><span class="p">(</span><span class="nv">$ssl</span><span class="p">)</span>
                <span class="o">-&gt;</span><span class="na">build</span><span class="p">();</span>
 
 <span class="k">try</span> <span class="p">{</span>
     <span class="nv">$session</span> <span class="o">=</span> <span class="nv">$cluster</span><span class="o">-&gt;</span><span class="na">connect</span><span class="p">();</span>
-    <span class="k">echo</span> <span class="s2">"Connection success</span><span class="se">\n</span><span class="s2">"</span><span class="p">;</span>
+    <span class="k">echo</span> <span class="s2">“Connection success</span><span class="se">\n</span><span class="s2">”</span><span class="p">;</span>
 <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="nx">Cassandra\Exception\RuntimeException</span> <span class="nv">$e</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">echo</span> <span class="s2">"Connection failure</span><span class="se">\n</span><span class="s2">"</span><span class="p">;</span>
+    <span class="k">echo</span> <span class="s2">“Connection failure</span><span class="se">\n</span><span class="s2">”</span><span class="p">;</span>
 <span class="p">}</span>
-</code></pre>
 </dd>
 <dt>When </dt>
 <dd>it is executed with trusted cert in the env</dd>
@@ -379,25 +385,24 @@
 <dt>Given </dt>
 <dd>a running cassandra cluster with client certificate verification</dd>
 <dt>And </dt>
-<dd>the following example:<pre class="highlight"><code><span class="cp">&lt;?php</span>
+<dd>the following example:<span class="cp">&lt;?php</span>
 <span class="nv">$ssl</span>     <span class="o">=</span> <span class="nx">Cassandra</span><span class="o">::</span><span class="na">ssl</span><span class="p">()</span>
                <span class="o">-&gt;</span><span class="na">withVerifyFlags</span><span class="p">(</span><span class="nx">Cassandra</span><span class="o">::</span><span class="na">VERIFY_PEER_CERT</span><span class="p">)</span>
-               <span class="o">-&gt;</span><span class="na">withTrustedCerts</span><span class="p">(</span><span class="nb">getenv</span><span class="p">(</span><span class="s1">'SERVER_CERT'</span><span class="p">))</span>
-               <span class="o">-&gt;</span><span class="na">withClientCert</span><span class="p">(</span><span class="nb">getenv</span><span class="p">(</span><span class="s1">'CLIENT_CERT'</span><span class="p">))</span>
-               <span class="o">-&gt;</span><span class="na">withPrivateKey</span><span class="p">(</span><span class="nb">getenv</span><span class="p">(</span><span class="s1">'PRIVATE_KEY'</span><span class="p">),</span> <span class="nb">getenv</span><span class="p">(</span><span class="s1">'PASSPHRASE'</span><span class="p">))</span>
+               <span class="o">-&gt;</span><span class="na">withTrustedCerts</span><span class="p">(</span><span class="nb">getenv</span><span class="p">(</span><span class="s1">‘SERVER_CERT’</span><span class="p">))</span>
+               <span class="o">-&gt;</span><span class="na">withClientCert</span><span class="p">(</span><span class="nb">getenv</span><span class="p">(</span><span class="s1">‘CLIENT_CERT’</span><span class="p">))</span>
+               <span class="o">-&gt;</span><span class="na">withPrivateKey</span><span class="p">(</span><span class="nb">getenv</span><span class="p">(</span><span class="s1">‘PRIVATE_KEY’</span><span class="p">),</span> <span class="nb">getenv</span><span class="p">(</span><span class="s1">‘PASSPHRASE’</span><span class="p">))</span>
                <span class="o">-&gt;</span><span class="na">build</span><span class="p">();</span>
 <span class="nv">$cluster</span> <span class="o">=</span> <span class="nx">Cassandra</span><span class="o">::</span><span class="na">cluster</span><span class="p">()</span>
-               <span class="o">-&gt;</span><span class="na">withContactPoints</span><span class="p">(</span><span class="s1">'127.0.0.1'</span><span class="p">)</span>
+               <span class="o">-&gt;</span><span class="na">withContactPoints</span><span class="p">(</span><span class="s1">‘127.0.0.1’</span><span class="p">)</span>
                <span class="o">-&gt;</span><span class="na">withSSL</span><span class="p">(</span><span class="nv">$ssl</span><span class="p">)</span>
                <span class="o">-&gt;</span><span class="na">build</span><span class="p">();</span>
 
 <span class="k">try</span> <span class="p">{</span>
     <span class="nv">$session</span> <span class="o">=</span> <span class="nv">$cluster</span><span class="o">-&gt;</span><span class="na">connect</span><span class="p">();</span>
-    <span class="k">echo</span> <span class="s2">"Connection success</span><span class="se">\n</span><span class="s2">"</span><span class="p">;</span>
+    <span class="k">echo</span> <span class="s2">“Connection success</span><span class="se">\n</span><span class="s2">”</span><span class="p">;</span>
 <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="nx">Cassandra\Exception\RuntimeException</span> <span class="nv">$e</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">echo</span> <span class="s2">"Connection failure</span><span class="se">\n</span><span class="s2">"</span><span class="p">;</span>
+    <span class="k">echo</span> <span class="s2">“Connection failure</span><span class="se">\n</span><span class="s2">”</span><span class="p">;</span>
 <span class="p">}</span>
-</code></pre>
 </dd>
 <dt>When </dt>
 <dd>it is executed with trusted and client certs, private key and passphrase in the env</dd>
@@ -418,22 +423,22 @@
       
         
         <li>
-          <a href="http://downloads.datastax.com/php-driver/">Binaries</a>
+          <a href="http://downloads.datastax.com/php-driver">Binaries</a>
         </li>
       
         <li>·</li>
         <li>
-          <a href="https://github.com/datastax/php-driver/">Code</a>
+          <a href="https://github.com/datastax/php-driver">Code</a>
         </li>
       
         <li>·</li>
         <li>
-          <a href="http://datastax.github.io/php-driver/">Docs</a>
+          <a href="http://docs.datastax.com/en/developer/php-driver">Docs</a>
         </li>
       
         <li>·</li>
         <li>
-          <a href="https://datastax-oss.atlassian.net/browse/PHP/">Issues</a>
+          <a href="https://datastax-oss.atlassian.net/browse/PHP">Issues</a>
         </li>
       
         <li>·</li>
@@ -443,7 +448,7 @@
       
         <li>·</li>
         <li>
-          <a href="irc://irc.freenode.net/datastax-drivers">IRC Channel</a>
+          <a href="https://academy.datastax.com/slack">Slack</a>
         </li>
       
         <li>·</li>

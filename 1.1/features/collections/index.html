@@ -241,6 +241,15 @@
   
   
   <li>
+    <a href="../../building/">
+      Installing Cassandra PHP Extension <small>page</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
     <a href="../../api/">
       API docs <small>index</small>
       
@@ -297,9 +306,9 @@
 </h2>
 <dl class="steps">
 <dt>Given </dt>
-<dd>the following schema:<pre class="highlight"><code><span class="k">CREATE</span> <span class="k">KEYSPACE</span> <span class="n">simplex</span> <span class="k">WITH</span> <span class="n">replication</span> <span class="o">=</span> <span class="p">{</span>
-  <span class="s1">'class'</span><span class="p">:</span> <span class="s1">'SimpleStrategy'</span><span class="p">,</span>
-  <span class="s1">'replication_factor'</span><span class="p">:</span> <span class="mi">1</span>
+<dd>the following schema:<span class="k">CREATE</span> <span class="k">KEYSPACE</span> <span class="n">simplex</span> <span class="k">WITH</span> <span class="n">replication</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="s1">‘class’</span><span class="p">:</span> <span class="s1">‘SimpleStrategy’</span><span class="p">,</span>
+  <span class="s1">‘replication_factor’</span><span class="p">:</span> <span class="mi">1</span>
 <span class="p">};</span>
 <span class="k">USE</span> <span class="n">simplex</span><span class="p">;</span>
 <span class="k">CREATE</span> <span class="k">TABLE</span> <span class="k">user</span> <span class="p">(</span>
@@ -311,26 +320,24 @@
 <span class="k">INSERT</span> <span class="k">INTO</span> <span class="k">user</span> <span class="p">(</span><span class="n">id</span><span class="p">,</span> <span class="n">logins</span><span class="p">,</span> <span class="n">locations</span><span class="p">,</span> <span class="n">ip_addresses</span><span class="p">)</span>
 <span class="k">VALUES</span> <span class="p">(</span>
   <span class="mi">0</span><span class="p">,</span>
-  <span class="p">[</span><span class="s1">'2014-09-11 10:09:08+0000'</span><span class="p">,</span> <span class="s1">'2014-09-12 10:09:00+0000'</span><span class="p">],</span>
-  <span class="p">{</span><span class="s1">'2014-09-11 10:09:08+0000'</span><span class="p">:</span> <span class="mi">37</span><span class="p">.</span><span class="mi">397357</span><span class="p">},</span>
-  <span class="p">{</span><span class="s1">'200.199.198.197'</span><span class="p">,</span> <span class="s1">'192.168.1.15'</span><span class="p">}</span>
+  <span class="p">[</span><span class="s1">‘2014-09-11 10:09:08+0000’</span><span class="p">,</span> <span class="s1">‘2014-09-12 10:09:00+0000’</span><span class="p">],</span>
+  <span class="p">{</span><span class="s1">‘2014-09-11 10:09:08+0000’</span><span class="p">:</span> <span class="mi">37</span><span class="p">.</span><span class="mi">397357</span><span class="p">},</span>
+  <span class="p">{</span><span class="s1">‘200.199.198.197’</span><span class="p">,</span> <span class="s1">‘192.168.1.15’</span><span class="p">}</span>
 <span class="p">)</span>
-</code></pre>
 </dd>
 <dt>And </dt>
-<dd>the following example:<pre class="highlight"><code><span class="cp">&lt;?php</span>
+<dd>the following example:<span class="cp">&lt;?php</span>
 <span class="nv">$cluster</span>   <span class="o">=</span> <span class="nx">Cassandra</span><span class="o">::</span><span class="na">cluster</span><span class="p">()</span>
-               <span class="o">-&gt;</span><span class="na">withContactPoints</span><span class="p">(</span><span class="s1">'127.0.0.1'</span><span class="p">)</span>
+               <span class="o">-&gt;</span><span class="na">withContactPoints</span><span class="p">(</span><span class="s1">‘127.0.0.1’</span><span class="p">)</span>
                <span class="o">-&gt;</span><span class="na">build</span><span class="p">();</span>
-<span class="nv">$session</span>   <span class="o">=</span> <span class="nv">$cluster</span><span class="o">-&gt;</span><span class="na">connect</span><span class="p">(</span><span class="s2">"simplex"</span><span class="p">);</span>
-<span class="nv">$statement</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Cassandra\SimpleStatement</span><span class="p">(</span><span class="s2">"SELECT * FROM user"</span><span class="p">);</span>
+<span class="nv">$session</span>   <span class="o">=</span> <span class="nv">$cluster</span><span class="o">-&gt;</span><span class="na">connect</span><span class="p">(</span><span class="s2">“simplex”</span><span class="p">);</span>
+<span class="nv">$statement</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Cassandra\SimpleStatement</span><span class="p">(</span><span class="s2">“SELECT * FROM user”</span><span class="p">);</span>
 <span class="nv">$result</span>    <span class="o">=</span> <span class="nv">$session</span><span class="o">-&gt;</span><span class="na">execute</span><span class="p">(</span><span class="nv">$statement</span><span class="p">);</span>
 <span class="nv">$row</span>       <span class="o">=</span> <span class="nv">$result</span><span class="o">-&gt;</span><span class="na">first</span><span class="p">();</span>
 
-<span class="k">echo</span> <span class="s2">"Logins: "</span> <span class="o">.</span> <span class="nb">var_export</span><span class="p">(</span><span class="nv">$row</span><span class="p">[</span><span class="s1">'logins'</span><span class="p">],</span> <span class="kc">true</span><span class="p">)</span> <span class="o">.</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">;</span>
-<span class="k">echo</span> <span class="s2">"Locations: "</span> <span class="o">.</span> <span class="nb">var_export</span><span class="p">(</span><span class="nv">$row</span><span class="p">[</span><span class="s1">'locations'</span><span class="p">],</span> <span class="kc">true</span><span class="p">)</span> <span class="o">.</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">;</span>
-<span class="k">echo</span> <span class="s2">"Ip Addresses: "</span> <span class="o">.</span> <span class="nb">var_export</span><span class="p">(</span><span class="nv">$row</span><span class="p">[</span><span class="s1">'ip_addresses'</span><span class="p">],</span> <span class="kc">true</span><span class="p">)</span> <span class="o">.</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">;</span>
-</code></pre>
+<span class="k">echo</span> <span class="s2">“Logins: ”</span> <span class="o">.</span> <span class="nb">var_export</span><span class="p">(</span><span class="nv">$row</span><span class="p">[</span><span class="s1">‘logins’</span><span class="p">],</span> <span class="kc">true</span><span class="p">)</span> <span class="o">.</span> <span class="s2">“</span><span class="se">\n</span><span class="s2">”</span><span class="p">;</span>
+<span class="k">echo</span> <span class="s2">“Locations: ”</span> <span class="o">.</span> <span class="nb">var_export</span><span class="p">(</span><span class="nv">$row</span><span class="p">[</span><span class="s1">‘locations’</span><span class="p">],</span> <span class="kc">true</span><span class="p">)</span> <span class="o">.</span> <span class="s2">“</span><span class="se">\n</span><span class="s2">”</span><span class="p">;</span>
+<span class="k">echo</span> <span class="s2">“Ip Addresses: ”</span> <span class="o">.</span> <span class="nb">var_export</span><span class="p">(</span><span class="nv">$row</span><span class="p">[</span><span class="s1">‘ip_addresses’</span><span class="p">],</span> <span class="kc">true</span><span class="p">)</span> <span class="o">.</span> <span class="s2">“</span><span class="se">\n</span><span class="s2">”</span><span class="p">;</span>
 </dd>
 <dt>When </dt>
 <dd>it is executed</dd>
@@ -430,9 +437,9 @@ Ip Addresses: Cassandra\Set::__set_state(array(
 </h2>
 <dl class="steps">
 <dt>Given </dt>
-<dd>the following schema:<pre class="highlight"><code><span class="k">CREATE</span> <span class="k">KEYSPACE</span> <span class="n">simplex</span> <span class="k">WITH</span> <span class="n">replication</span> <span class="o">=</span> <span class="p">{</span>
-  <span class="s1">'class'</span><span class="p">:</span> <span class="s1">'SimpleStrategy'</span><span class="p">,</span>
-  <span class="s1">'replication_factor'</span><span class="p">:</span> <span class="mi">1</span>
+<dd>the following schema:<span class="k">CREATE</span> <span class="k">KEYSPACE</span> <span class="n">simplex</span> <span class="k">WITH</span> <span class="n">replication</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="s1">‘class’</span><span class="p">:</span> <span class="s1">‘SimpleStrategy’</span><span class="p">,</span>
+  <span class="s1">‘replication_factor’</span><span class="p">:</span> <span class="mi">1</span>
 <span class="p">};</span>
 <span class="k">USE</span> <span class="n">simplex</span><span class="p">;</span>
 <span class="k">CREATE</span> <span class="k">TABLE</span> <span class="k">users</span> <span class="p">(</span>
@@ -440,65 +447,63 @@ Ip Addresses: Cassandra\Set::__set_state(array(
   <span class="n">name</span> <span class="k">text</span><span class="p">,</span>
   <span class="n">addresses</span> <span class="k">map</span><span class="o">&lt;</span><span class="k">text</span><span class="p">,</span> <span class="n">frozen</span><span class="o">&lt;</span><span class="k">map</span><span class="o">&lt;</span><span class="k">text</span><span class="p">,</span> <span class="k">text</span><span class="o">&gt;&gt;&gt;</span>
 <span class="p">);</span>
-</code></pre>
 </dd>
 <dt>And </dt>
-<dd>the following example:<pre class="highlight"><code><span class="cp">&lt;?php</span>
+<dd>the following example:<span class="cp">&lt;?php</span>
 <span class="nv">$cluster</span>   <span class="o">=</span> <span class="nx">Cassandra</span><span class="o">::</span><span class="na">cluster</span><span class="p">()</span>
-               <span class="o">-&gt;</span><span class="na">withContactPoints</span><span class="p">(</span><span class="s1">'127.0.0.1'</span><span class="p">)</span>
+               <span class="o">-&gt;</span><span class="na">withContactPoints</span><span class="p">(</span><span class="s1">‘127.0.0.1’</span><span class="p">)</span>
                <span class="o">-&gt;</span><span class="na">build</span><span class="p">();</span>
-<span class="nv">$session</span>   <span class="o">=</span> <span class="nv">$cluster</span><span class="o">-&gt;</span><span class="na">connect</span><span class="p">(</span><span class="s2">"simplex"</span><span class="p">);</span>
+<span class="nv">$session</span>   <span class="o">=</span> <span class="nv">$cluster</span><span class="o">-&gt;</span><span class="na">connect</span><span class="p">(</span><span class="s2">“simplex”</span><span class="p">);</span>
 <span class="nv">$statement</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Cassandra\SimpleStatement</span><span class="p">(</span>
-                <span class="s2">"INSERT INTO users (id, name, addresses) VALUES (?, ?, ?)"</span><span class="p">);</span>
+                <span class="s2">“INSERT INTO users (id, name, addresses) VALUES (?, ?, ?)”</span><span class="p">);</span>
 
 <span class="nv">$addressType</span> <span class="o">=</span> <span class="nx">Cassandra\Type</span><span class="o">::</span><span class="na">map</span><span class="p">(</span><span class="nx">Cassandra\Type</span><span class="o">::</span><span class="na">text</span><span class="p">(),</span> <span class="nx">Cassandra\Type</span><span class="o">::</span><span class="na">text</span><span class="p">());</span>
 <span class="nv">$addressesType</span> <span class="o">=</span> <span class="nx">Cassandra\Type</span><span class="o">::</span><span class="na">map</span><span class="p">(</span><span class="nx">Cassandra\Type</span><span class="o">::</span><span class="na">text</span><span class="p">(),</span> <span class="nv">$addressType</span><span class="p">);</span>
 
 <span class="nv">$users</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span>
     <span class="k">array</span><span class="p">(</span>
-        <span class="k">new</span> <span class="nx">Cassandra\Uuid</span><span class="p">(</span><span class="s1">'56357d2b-4586-433c-ad24-afa9918bc415'</span><span class="p">),</span>
-        <span class="s1">'Charles Wallace'</span><span class="p">,</span>
+        <span class="k">new</span> <span class="nx">Cassandra\Uuid</span><span class="p">(</span><span class="s1">‘56357d2b-4586-433c-ad24-afa9918bc415’</span><span class="p">),</span>
+        <span class="s1">‘Charles Wallace’</span><span class="p">,</span>
         <span class="nv">$addressesType</span><span class="o">-&gt;</span><span class="na">create</span><span class="p">(</span>
-            <span class="s1">'home'</span><span class="p">,</span> <span class="nv">$addressType</span><span class="o">-&gt;</span><span class="na">create</span><span class="p">(</span>
-                <span class="s1">'city'</span><span class="p">,</span> <span class="s1">'Phoenix'</span><span class="p">,</span>
-                <span class="s1">'street'</span><span class="p">,</span> <span class="s1">'9042 Cassandra Lane'</span><span class="p">,</span>
-                <span class="s1">'zip'</span><span class="p">,</span> <span class="s1">'85023'</span><span class="p">))</span>
+            <span class="s1">‘home’</span><span class="p">,</span> <span class="nv">$addressType</span><span class="o">-&gt;</span><span class="na">create</span><span class="p">(</span>
+                <span class="s1">‘city’</span><span class="p">,</span> <span class="s1">‘Phoenix’</span><span class="p">,</span>
+                <span class="s1">‘street’</span><span class="p">,</span> <span class="s1">‘9042 Cassandra Lane’</span><span class="p">,</span>
+                <span class="s1">‘zip’</span><span class="p">,</span> <span class="s1">‘85023’</span><span class="p">))</span>
     <span class="p">),</span>
     <span class="k">array</span><span class="p">(</span>
-        <span class="k">new</span> <span class="nx">Cassandra\Uuid</span><span class="p">(</span><span class="s1">'ce359590-8528-4682-a9f3-add53fc9aa09'</span><span class="p">),</span>
-        <span class="s1">'Kevin Malone'</span><span class="p">,</span>
+        <span class="k">new</span> <span class="nx">Cassandra\Uuid</span><span class="p">(</span><span class="s1">‘ce359590-8528-4682-a9f3-add53fc9aa09’</span><span class="p">),</span>
+        <span class="s1">‘Kevin Malone’</span><span class="p">,</span>
         <span class="nv">$addressesType</span><span class="o">-&gt;</span><span class="na">create</span><span class="p">(</span>
-            <span class="s1">'home'</span><span class="p">,</span> <span class="nv">$addressType</span><span class="o">-&gt;</span><span class="na">create</span><span class="p">(</span>
-                <span class="s1">'city'</span><span class="p">,</span> <span class="s1">'New York'</span><span class="p">,</span>
-                <span class="s1">'street'</span><span class="p">,</span> <span class="s1">'1000 Database Road'</span><span class="p">,</span>
-                <span class="s1">'zip'</span><span class="p">,</span> <span class="s1">'10025'</span><span class="p">)</span>
+            <span class="s1">‘home’</span><span class="p">,</span> <span class="nv">$addressType</span><span class="o">-&gt;</span><span class="na">create</span><span class="p">(</span>
+                <span class="s1">‘city’</span><span class="p">,</span> <span class="s1">‘New York’</span><span class="p">,</span>
+                <span class="s1">‘street’</span><span class="p">,</span> <span class="s1">‘1000 Database Road’</span><span class="p">,</span>
+                <span class="s1">‘zip’</span><span class="p">,</span> <span class="s1">‘10025’</span><span class="p">)</span>
         <span class="p">)</span>
     <span class="p">),</span>
     <span class="k">array</span><span class="p">(</span>
-        <span class="k">new</span> <span class="nx">Cassandra\Uuid</span><span class="p">(</span><span class="s1">'7d64dca1-dd4d-4f3c-bec4-6a88fa082a13'</span><span class="p">),</span>
-        <span class="s1">'Michael Scott'</span><span class="p">,</span>
+        <span class="k">new</span> <span class="nx">Cassandra\Uuid</span><span class="p">(</span><span class="s1">‘7d64dca1-dd4d-4f3c-bec4-6a88fa082a13’</span><span class="p">),</span>
+        <span class="s1">‘Michael Scott’</span><span class="p">,</span>
         <span class="nv">$addressesType</span><span class="o">-&gt;</span><span class="na">create</span><span class="p">(</span>
-            <span class="s1">'work'</span><span class="p">,</span> <span class="nv">$addressType</span><span class="o">-&gt;</span><span class="na">create</span><span class="p">(</span>
-                <span class="s1">'city'</span><span class="p">,</span> <span class="s1">'Santa Clara'</span><span class="p">,</span>
-                <span class="s1">'street'</span><span class="p">,</span> <span class="s1">'20000 Log Ave'</span><span class="p">,</span>
-                <span class="s1">'zip'</span><span class="p">,</span> <span class="s1">'95054'</span><span class="p">))</span>
+            <span class="s1">‘work’</span><span class="p">,</span> <span class="nv">$addressType</span><span class="o">-&gt;</span><span class="na">create</span><span class="p">(</span>
+                <span class="s1">‘city’</span><span class="p">,</span> <span class="s1">‘Santa Clara’</span><span class="p">,</span>
+                <span class="s1">‘street’</span><span class="p">,</span> <span class="s1">‘20000 Log Ave’</span><span class="p">,</span>
+                <span class="s1">‘zip’</span><span class="p">,</span> <span class="s1">‘95054’</span><span class="p">))</span>
     <span class="p">)</span>
 <span class="p">);</span>
 
 <span class="k">foreach</span> <span class="p">(</span><span class="nv">$users</span> <span class="k">as</span> <span class="nv">$user</span><span class="p">)</span> <span class="p">{</span>
-  <span class="nv">$options</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Cassandra\ExecutionOptions</span><span class="p">(</span><span class="k">array</span><span class="p">(</span><span class="s1">'arguments'</span> <span class="o">=&gt;</span> <span class="nv">$user</span><span class="p">));</span>
+  <span class="nv">$options</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Cassandra\ExecutionOptions</span><span class="p">(</span><span class="k">array</span><span class="p">(</span><span class="s1">‘arguments’</span> <span class="o">=&gt;</span> <span class="nv">$user</span><span class="p">));</span>
   <span class="nv">$session</span><span class="o">-&gt;</span><span class="na">execute</span><span class="p">(</span><span class="nv">$statement</span><span class="p">,</span> <span class="nv">$options</span><span class="p">);</span>
 <span class="p">}</span>
 
-<span class="nv">$statement</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Cassandra\SimpleStatement</span><span class="p">(</span><span class="s2">"SELECT * FROM users"</span><span class="p">);</span>
+<span class="nv">$statement</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Cassandra\SimpleStatement</span><span class="p">(</span><span class="s2">“SELECT * FROM users”</span><span class="p">);</span>
 <span class="nv">$result</span>    <span class="o">=</span> <span class="nv">$session</span><span class="o">-&gt;</span><span class="na">execute</span><span class="p">(</span><span class="nv">$statement</span><span class="p">);</span>
 
 <span class="k">foreach</span> <span class="p">(</span><span class="nv">$result</span> <span class="k">as</span> <span class="nv">$row</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">print</span> <span class="s1">'ID: '</span> <span class="o">.</span> <span class="nv">$row</span><span class="p">[</span><span class="s1">'id'</span><span class="p">]</span> <span class="o">.</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">;</span>
-    <span class="k">print</span> <span class="s1">'Name: '</span> <span class="o">.</span> <span class="nv">$row</span><span class="p">[</span><span class="s1">'name'</span><span class="p">]</span> <span class="o">.</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">;</span>
-    <span class="k">print</span> <span class="s1">'Addresses: '</span> <span class="o">.</span> <span class="nb">var_export</span><span class="p">(</span><span class="nv">$row</span><span class="p">[</span><span class="s1">'addresses'</span><span class="p">],</span> <span class="kc">true</span><span class="p">)</span><span class="o">.</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">;</span>
+    <span class="k">print</span> <span class="s1">‘ID: ’</span> <span class="o">.</span> <span class="nv">$row</span><span class="p">[</span><span class="s1">‘id’</span><span class="p">]</span> <span class="o">.</span> <span class="s2">“</span><span class="se">\n</span><span class="s2">”</span><span class="p">;</span>
+    <span class="k">print</span> <span class="s1">‘Name: ’</span> <span class="o">.</span> <span class="nv">$row</span><span class="p">[</span><span class="s1">‘name’</span><span class="p">]</span> <span class="o">.</span> <span class="s2">“</span><span class="se">\n</span><span class="s2">”</span><span class="p">;</span>
+    <span class="k">print</span> <span class="s1">‘Addresses: ’</span> <span class="o">.</span> <span class="nb">var_export</span><span class="p">(</span><span class="nv">$row</span><span class="p">[</span><span class="s1">‘addresses’</span><span class="p">],</span> <span class="kc">true</span><span class="p">)</span><span class="o">.</span> <span class="s2">“</span><span class="se">\n</span><span class="s2">”</span><span class="p">;</span>
 <span class="p">}</span>
-</code></pre>
 </dd>
 <dt>When </dt>
 <dd>it is executed</dd>
@@ -683,22 +688,22 @@ Addresses: Cassandra\Map::__set_state(array(
       
         
         <li>
-          <a href="http://downloads.datastax.com/php-driver/">Binaries</a>
+          <a href="http://downloads.datastax.com/php-driver">Binaries</a>
         </li>
       
         <li>·</li>
         <li>
-          <a href="https://github.com/datastax/php-driver/">Code</a>
+          <a href="https://github.com/datastax/php-driver">Code</a>
         </li>
       
         <li>·</li>
         <li>
-          <a href="http://datastax.github.io/php-driver/">Docs</a>
+          <a href="http://docs.datastax.com/en/developer/php-driver">Docs</a>
         </li>
       
         <li>·</li>
         <li>
-          <a href="https://datastax-oss.atlassian.net/browse/PHP/">Issues</a>
+          <a href="https://datastax-oss.atlassian.net/browse/PHP">Issues</a>
         </li>
       
         <li>·</li>
@@ -708,7 +713,7 @@ Addresses: Cassandra\Map::__set_state(array(
       
         <li>·</li>
         <li>
-          <a href="irc://irc.freenode.net/datastax-drivers">IRC Channel</a>
+          <a href="https://academy.datastax.com/slack">Slack</a>
         </li>
       
         <li>·</li>

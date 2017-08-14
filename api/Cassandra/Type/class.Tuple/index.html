@@ -83,8 +83,17 @@
   
   
   <li>
+    <a href="../../../../building/">
+      Building PHP Extension <small>page</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
     <a href="../../../../features/">
-      Core <small>page</small>
+      Features <small>page</small>
       
       
       <span class="glyphicon glyphicon-plus-sign pull-right" aria-hidden="true"></span>
@@ -818,15 +827,6 @@
     
   </li>
   
-  
-  <li>
-    <a href="../../../class.YamlClassDoc/">
-      YamlClassDoc <small>class</small>
-      
-    </a>
-    
-  </li>
-  
 </ul>
 
   </li>
@@ -874,162 +874,6 @@
             </nav>
           </div>
           
-
-<div class="page-header">
-  <h1 id="class-Tuple" class="target">
-    <small>class</small>
-    Tuple
-  <a class="anchor" href="#class-Tuple" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
-</h1>
-</div>
-
-<p>A class that represents the tuple type. The tuple type is able to represent a composite type of one or more types accessed by index.</p>
-
-<h2 id="extends" class="target">Extends<a class="anchor" href="#extends" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
-</h2>
-<ul class="list-inline">
-  <li><code><a href="../../class.Type/">Cassandra\Type</a></code></li>
-</ul>
-
-
-
-
-
-<h2 id="methods" class="target">Methods<a class="anchor" href="#methods" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
-</h2>
-
-<div class="methods-content">
-  <div class="panel panel-default member-definition">
-    <div class="panel-heading method-heading">
-      <code>string</code> <h3 id="method-name" class="target">name<a class="anchor" href="#method-name" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
-</h3> <big>(</big>  <big>)</big>
-    </div>
-    <div class="panel-body method-body">
-      <p>Returns “tuple”</p>
-
-      <dl class="tags">
-<dt class="tag-title">Returns:</dt>
-<dd class="tag-content"><table class="table table-striped return">
-<thead><tr>
-<th class="type">Type</th>
-<th class="details">Details</th>
-</tr></thead>
-<tbody><tr>
-<td><code>string</code></td>
-<td>
-<p>“tuple”</p>
-</td>
-</tr></tbody>
-</table></dd>
-</dl>
-    </div>
-  </div>
-  <div class="panel panel-default member-definition">
-    <div class="panel-heading method-heading">
-      <code>string</code> <h3 id="method-__toString" class="target">__toString<a class="anchor" href="#method-__toString" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
-</h3> <big>(</big>  <big>)</big>
-    </div>
-    <div class="panel-body method-body">
-      <p>Returns type representation in CQL, e.g. <code>tuple&lt;varchar, int&gt;</code></p>
-
-      <dl class="tags">
-<dt class="tag-title">Returns:</dt>
-<dd class="tag-content"><table class="table table-striped return">
-<thead><tr>
-<th class="type">Type</th>
-<th class="details">Details</th>
-</tr></thead>
-<tbody><tr>
-<td><code>string</code></td>
-<td>
-<p><code><a href="../../class.Type/">Cassandra\Type</a></code> representation in CQL</p>
-</td>
-</tr></tbody>
-</table></dd>
-</dl>
-    </div>
-  </div>
-  <div class="panel panel-default member-definition">
-    <div class="panel-heading method-heading">
-      <code>array</code> <h3 id="method-types" class="target">types<a class="anchor" href="#method-types" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
-</h3> <big>(</big>  <big>)</big>
-    </div>
-    <div class="panel-body method-body">
-      <p>Returns types of values</p>
-
-      <dl class="tags">
-<dt class="tag-title">Returns:</dt>
-<dd class="tag-content"><table class="table table-striped return">
-<thead><tr>
-<th class="type">Type</th>
-<th class="details">Details</th>
-</tr></thead>
-<tbody><tr>
-<td><code>array</code></td>
-<td>
-<p>An array of types</p>
-</td>
-</tr></tbody>
-</table></dd>
-</dl>
-    </div>
-  </div>
-  <div class="panel panel-default member-definition">
-    <div class="panel-heading method-heading">
-      <code><a href="./">Type\Tuple</a></code> <h3 id="method-create" class="target">create<a class="anchor" href="#method-create" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
-</h3> <big>(</big> <code>mixed</code> $values <big>)</big>
-    </div>
-    <div class="panel-body method-body">
-      <p>Creates a new <code><a href="./">Type\Tuple</a></code> from the given values. When no values given, creates a tuple with null for the values.</p>
-
-      <dl class="tags">
-<dt class="tag-title">Parameters:</dt>
-<dd class="tag-content"><table class="table table-striped param">
-<thead><tr>
-<th class="name">Name</th>
-<th class="type">Type</th>
-<th class="details">Details</th>
-</tr></thead>
-<tbody><tr>
-<td><var>$values</var></td>
-<td><code>mixed</code></td>
-<td>
-<p>One or more values to be added to the tuple.</p>
-</td>
-</tr></tbody>
-</table></dd>
-<dt class="tag-title">Throws:</dt>
-<dd class="tag-content"><table class="table table-striped throw">
-<thead><tr>
-<th class="type">Type</th>
-<th class="details">Details</th>
-</tr></thead>
-<tbody><tr>
-<td><code><a href="../../Exception/class.InvalidArgumentException/">Exception\InvalidArgumentException</a></code></td>
-<td>
-<p>when values given are of a different type than what the tuple expects.</p>
-</td>
-</tr></tbody>
-</table></dd>
-<dt class="tag-title">Returns:</dt>
-<dd class="tag-content"><table class="table table-striped return">
-<thead><tr>
-<th class="type">Type</th>
-<th class="details">Details</th>
-</tr></thead>
-<tbody><tr>
-<td><code><a href="./">Type\Tuple</a></code></td>
-<td>
-<p>A tuple with given values.</p>
-</td>
-</tr></tbody>
-</table></dd>
-</dl>
-    </div>
-  </div>
-</div>
-
-
         </div>
       </div>
     </div>
@@ -1040,22 +884,22 @@
       
         
         <li>
-          <a href="http://downloads.datastax.com/php-driver/">Binaries</a>
+          <a href="http://downloads.datastax.com/php-driver">Binaries</a>
         </li>
       
         <li>·</li>
         <li>
-          <a href="https://github.com/datastax/php-driver/">Code</a>
+          <a href="https://github.com/datastax/php-driver">Code</a>
         </li>
       
         <li>·</li>
         <li>
-          <a href="http://datastax.github.io/php-driver/">Docs</a>
+          <a href="http://docs.datastax.com/en/developer/php-driver">Docs</a>
         </li>
       
         <li>·</li>
         <li>
-          <a href="https://datastax-oss.atlassian.net/browse/PHP/">Issues</a>
+          <a href="https://datastax-oss.atlassian.net/browse/PHP">Issues</a>
         </li>
       
         <li>·</li>
@@ -1065,7 +909,7 @@
       
         <li>·</li>
         <li>
-          <a href="irc://irc.freenode.net/datastax-drivers">IRC Channel</a>
+          <a href="https://academy.datastax.com/slack">Slack</a>
         </li>
       
         <li>·</li>

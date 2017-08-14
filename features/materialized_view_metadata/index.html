@@ -82,9 +82,18 @@
             <ul class="nav nav-pills nav-stacked">
   
   
+  <li>
+    <a href="../../building/">
+      Building PHP Extension <small>page</small>
+      
+    </a>
+    
+  </li>
+  
+  
   <li class="active">
     <a href="../">
-      Core <small>page</small>
+      Features <small>page</small>
       
       
       <span class="glyphicon glyphicon-minus-sign pull-right" aria-hidden="true"></span>
@@ -323,7 +332,7 @@
                 
                 
                 
-                <li><a href="../">Core</a></li>
+                <li><a href="../">Features</a></li>
                 
                 
                 
@@ -348,33 +357,31 @@
 <dt>Given </dt>
 <dd>a running Cassandra cluster</dd>
 <dt>And </dt>
-<dd>the following schema:<pre class="highlight"><code><span class="k">CREATE</span> <span class="k">KEYSPACE</span> <span class="n">simplex</span> <span class="k">WITH</span> <span class="n">replication</span> <span class="o">=</span> <span class="p">{</span>
-  <span class="s1">'class'</span><span class="p">:</span> <span class="s1">'SimpleStrategy'</span><span class="p">,</span>
-  <span class="s1">'replication_factor'</span><span class="p">:</span> <span class="mi">1</span>
+<dd>the following schema:<span class="k">CREATE</span> <span class="k">KEYSPACE</span> <span class="n">simplex</span> <span class="k">WITH</span> <span class="n">replication</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="s1">‘class’</span><span class="p">:</span> <span class="s1">‘SimpleStrategy’</span><span class="p">,</span>
+  <span class="s1">‘replication_factor’</span><span class="p">:</span> <span class="mi">1</span>
 <span class="p">}</span> <span class="k">AND</span> <span class="n">DURABLE_WRITES</span> <span class="o">=</span> <span class="k">false</span><span class="p">;</span>
 <span class="k">USE</span> <span class="n">simplex</span><span class="p">;</span>
 <span class="k">CREATE</span> <span class="k">TABLE</span> <span class="k">users</span> <span class="p">(</span><span class="n">id</span> <span class="k">int</span> <span class="k">PRIMARY</span> <span class="k">KEY</span><span class="p">,</span> <span class="n">name</span> <span class="k">text</span><span class="p">);</span>
 <span class="k">CREATE</span> <span class="n">MATERIALIZED</span> <span class="n">VIEW</span> <span class="k">IF</span> <span class="k">NOT</span> <span class="k">EXISTS</span> <span class="n">users_view</span> <span class="k">AS</span> <span class="k">SELECT</span> <span class="n">name</span> <span class="k">FROM</span> <span class="k">users</span> <span class="k">WHERE</span> <span class="n">name</span> <span class="n">IS</span> <span class="k">NOT</span> <span class="k">NULL</span> <span class="k">PRIMARY</span> <span class="k">KEY</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">id</span><span class="p">);</span>
-</code></pre>
 </dd>
 </dl>
 <h2 id="getting-a-materialized-view" class="target">Getting a materialized view<a class="anchor" href="#getting-a-materialized-view" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
 </h2>
 <dl class="steps">
 <dt>Given </dt>
-<dd>the following example:<pre class="highlight"><code><span class="cp">&lt;?php</span>
+<dd>the following example:<span class="cp">&lt;?php</span>
 <span class="nv">$cluster</span> <span class="o">=</span> <span class="nx">Cassandra</span><span class="o">::</span><span class="na">cluster</span><span class="p">()</span>
-                  <span class="o">-&gt;</span><span class="na">withContactPoints</span><span class="p">(</span><span class="s1">'127.0.0.1'</span><span class="p">)</span>
+                  <span class="o">-&gt;</span><span class="na">withContactPoints</span><span class="p">(</span><span class="s1">‘127.0.0.1’</span><span class="p">)</span>
                   <span class="o">-&gt;</span><span class="na">build</span><span class="p">();</span>
-<span class="nv">$session</span> <span class="o">=</span> <span class="nv">$cluster</span><span class="o">-&gt;</span><span class="na">connect</span><span class="p">(</span><span class="s2">"simplex"</span><span class="p">);</span>
+<span class="nv">$session</span> <span class="o">=</span> <span class="nv">$cluster</span><span class="o">-&gt;</span><span class="na">connect</span><span class="p">(</span><span class="s2">“simplex”</span><span class="p">);</span>
 <span class="nv">$schema</span> <span class="o">=</span> <span class="nv">$session</span><span class="o">-&gt;</span><span class="na">schema</span><span class="p">();</span>
-<span class="nv">$view</span> <span class="o">=</span> <span class="nv">$schema</span><span class="o">-&gt;</span><span class="na">keyspace</span><span class="p">(</span><span class="s2">"simplex"</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">materializedView</span><span class="p">(</span><span class="s2">"users_view"</span><span class="p">);</span>
+<span class="nv">$view</span> <span class="o">=</span> <span class="nv">$schema</span><span class="o">-&gt;</span><span class="na">keyspace</span><span class="p">(</span><span class="s2">“simplex”</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">materializedView</span><span class="p">(</span><span class="s2">“users_view”</span><span class="p">);</span>
 
-<span class="k">echo</span> <span class="s2">"Name: "</span> <span class="o">.</span> <span class="nv">$view</span><span class="o">-&gt;</span><span class="na">name</span><span class="p">()</span> <span class="o">.</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">;</span>
-<span class="k">echo</span> <span class="s2">"BaseTable: "</span> <span class="o">.</span> <span class="nv">$view</span><span class="o">-&gt;</span><span class="na">baseTable</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">name</span><span class="p">()</span> <span class="o">.</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">;</span>
-<span class="k">echo</span> <span class="s2">"DefaultTimeToLive: "</span> <span class="o">.</span> <span class="nv">$view</span><span class="o">-&gt;</span><span class="na">option</span><span class="p">(</span><span class="s2">"default_time_to_live"</span><span class="p">)</span> <span class="o">.</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">;</span>
-<span class="k">echo</span> <span class="s2">"Compression: "</span> <span class="o">.</span> <span class="nb">var_export</span><span class="p">(</span><span class="nv">$view</span><span class="o">-&gt;</span><span class="na">option</span><span class="p">(</span><span class="s2">"compression"</span><span class="p">),</span> <span class="kc">true</span><span class="p">)</span> <span class="o">.</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">;</span>
-</code></pre>
+<span class="k">echo</span> <span class="s2">“Name: ”</span> <span class="o">.</span> <span class="nv">$view</span><span class="o">-&gt;</span><span class="na">name</span><span class="p">()</span> <span class="o">.</span> <span class="s2">“</span><span class="se">\n</span><span class="s2">”</span><span class="p">;</span>
+<span class="k">echo</span> <span class="s2">“BaseTable: ”</span> <span class="o">.</span> <span class="nv">$view</span><span class="o">-&gt;</span><span class="na">baseTable</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">name</span><span class="p">()</span> <span class="o">.</span> <span class="s2">“</span><span class="se">\n</span><span class="s2">”</span><span class="p">;</span>
+<span class="k">echo</span> <span class="s2">“DefaultTimeToLive: ”</span> <span class="o">.</span> <span class="nv">$view</span><span class="o">-&gt;</span><span class="na">option</span><span class="p">(</span><span class="s2">“default_time_to_live”</span><span class="p">)</span> <span class="o">.</span> <span class="s2">“</span><span class="se">\n</span><span class="s2">”</span><span class="p">;</span>
+<span class="k">echo</span> <span class="s2">“Compression: ”</span> <span class="o">.</span> <span class="nb">var_export</span><span class="p">(</span><span class="nv">$view</span><span class="o">-&gt;</span><span class="na">option</span><span class="p">(</span><span class="s2">“compression”</span><span class="p">),</span> <span class="kc">true</span><span class="p">)</span> <span class="o">.</span> <span class="s2">“</span><span class="se">\n</span><span class="s2">”</span><span class="p">;</span>
 </dd>
 <dt>When </dt>
 <dd>it is executed</dd>
@@ -420,22 +427,22 @@ Compression: Cassandra\Map::__set_state(array(
       
         
         <li>
-          <a href="http://downloads.datastax.com/php-driver/">Binaries</a>
+          <a href="http://downloads.datastax.com/php-driver">Binaries</a>
         </li>
       
         <li>·</li>
         <li>
-          <a href="https://github.com/datastax/php-driver/">Code</a>
+          <a href="https://github.com/datastax/php-driver">Code</a>
         </li>
       
         <li>·</li>
         <li>
-          <a href="http://datastax.github.io/php-driver/">Docs</a>
+          <a href="http://docs.datastax.com/en/developer/php-driver">Docs</a>
         </li>
       
         <li>·</li>
         <li>
-          <a href="https://datastax-oss.atlassian.net/browse/PHP/">Issues</a>
+          <a href="https://datastax-oss.atlassian.net/browse/PHP">Issues</a>
         </li>
       
         <li>·</li>
@@ -445,7 +452,7 @@ Compression: Cassandra\Map::__set_state(array(
       
         <li>·</li>
         <li>
-          <a href="irc://irc.freenode.net/datastax-drivers">IRC Channel</a>
+          <a href="https://academy.datastax.com/slack">Slack</a>
         </li>
       
         <li>·</li>

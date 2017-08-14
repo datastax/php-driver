@@ -226,6 +226,15 @@
   
   
   <li>
+    <a href="../../../building/">
+      Installing Cassandra PHP Extension <small>page</small>
+      
+    </a>
+    
+  </li>
+  
+  
+  <li>
     <a href="../../../api/">
       API docs <small>index</small>
       
@@ -289,17 +298,17 @@ Cassandra cluster</p>
 </h2>
 <dl class="steps">
 <dt>Given </dt>
-<dd>the following schema:<pre class="highlight"><code><span class="k">CREATE</span> <span class="k">KEYSPACE</span> <span class="n">french</span> <span class="k">WITH</span> <span class="n">replication</span> <span class="o">=</span> <span class="p">{</span>
-  <span class="s1">'class'</span><span class="p">:</span> <span class="s1">'SimpleStrategy'</span><span class="p">,</span>
-  <span class="s1">'replication_factor'</span><span class="p">:</span> <span class="mi">1</span>
+<dd>the following schema:<span class="k">CREATE</span> <span class="k">KEYSPACE</span> <span class="n">french</span> <span class="k">WITH</span> <span class="n">replication</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="s1">‘class’</span><span class="p">:</span> <span class="s1">‘SimpleStrategy’</span><span class="p">,</span>
+  <span class="s1">‘replication_factor’</span><span class="p">:</span> <span class="mi">1</span>
 <span class="p">};</span>
 <span class="k">CREATE</span> <span class="k">KEYSPACE</span> <span class="n">german</span> <span class="k">WITH</span> <span class="n">replication</span> <span class="o">=</span> <span class="p">{</span>
-  <span class="s1">'class'</span><span class="p">:</span> <span class="s1">'SimpleStrategy'</span><span class="p">,</span>
-  <span class="s1">'replication_factor'</span><span class="p">:</span> <span class="mi">1</span>
+  <span class="s1">‘class’</span><span class="p">:</span> <span class="s1">‘SimpleStrategy’</span><span class="p">,</span>
+  <span class="s1">‘replication_factor’</span><span class="p">:</span> <span class="mi">1</span>
 <span class="p">};</span>
 <span class="k">CREATE</span> <span class="k">KEYSPACE</span> <span class="n">uk</span> <span class="k">WITH</span> <span class="n">replication</span> <span class="o">=</span> <span class="p">{</span>
-  <span class="s1">'class'</span><span class="p">:</span> <span class="s1">'SimpleStrategy'</span><span class="p">,</span>
-  <span class="s1">'replication_factor'</span><span class="p">:</span> <span class="mi">1</span>
+  <span class="s1">‘class’</span><span class="p">:</span> <span class="s1">‘SimpleStrategy’</span><span class="p">,</span>
+  <span class="s1">‘replication_factor’</span><span class="p">:</span> <span class="mi">1</span>
 <span class="p">};</span>
 <span class="k">CREATE</span> <span class="k">TABLE</span> <span class="n">french</span><span class="p">.</span><span class="n">playlists</span> <span class="p">(</span>
   <span class="n">id</span> <span class="k">uuid</span><span class="p">,</span>
@@ -329,45 +338,43 @@ Cassandra cluster</p>
 <span class="k">VALUES</span> <span class="p">(</span>
   <span class="mi">62c36092-82a1-3a00-93d1-46196ee77204</span><span class="p">,</span>
   <span class="mi">756716f7-2e54-4715-9f00-91dcbea6cf50</span><span class="p">,</span>
-  <span class="s1">'Joséphine Baker'</span><span class="p">,</span>
-  <span class="s1">'La Petite Tonkinoise'</span><span class="p">,</span>
-  <span class="s1">'Bye Bye Blackbird'</span>
+  <span class="s1">‘Joséphine Baker’</span><span class="p">,</span>
+  <span class="s1">‘La Petite Tonkinoise’</span><span class="p">,</span>
+  <span class="s1">‘Bye Bye Blackbird’</span>
 <span class="p">);</span>
 <span class="k">INSERT</span> <span class="k">INTO</span> <span class="n">german</span><span class="p">.</span><span class="n">playlists</span> <span class="p">(</span><span class="n">id</span><span class="p">,</span> <span class="n">song_id</span><span class="p">,</span> <span class="n">artist</span><span class="p">,</span> <span class="n">title</span><span class="p">,</span> <span class="n">album</span><span class="p">)</span>
 <span class="k">VALUES</span> <span class="p">(</span>
   <span class="mi">62c36092-82a1-3a00-93d1-46196ee77204</span><span class="p">,</span>
   <span class="mi">f6071e72-48ec-4fcb-bf3e-379c8a696488</span><span class="p">,</span>
-  <span class="s1">'Willi Ostermann'</span><span class="p">,</span>
-  <span class="s1">'Die Mösch'</span><span class="p">,</span>
-  <span class="s1">'In Gold'</span>
+  <span class="s1">‘Willi Ostermann’</span><span class="p">,</span>
+  <span class="s1">‘Die Mösch’</span><span class="p">,</span>
+  <span class="s1">‘In Gold’</span>
 <span class="p">);</span>
 <span class="k">INSERT</span> <span class="k">INTO</span> <span class="n">uk</span><span class="p">.</span><span class="n">playlists</span> <span class="p">(</span><span class="n">id</span><span class="p">,</span> <span class="n">song_id</span><span class="p">,</span> <span class="n">artist</span><span class="p">,</span> <span class="n">title</span><span class="p">,</span> <span class="n">album</span><span class="p">)</span>
 <span class="k">VALUES</span> <span class="p">(</span>
   <span class="mi">62c36092-82a1-3a00-93d1-46196ee77204</span><span class="p">,</span>
   <span class="mi">fbdf82ed-0063-4796-9c7c-a3d4f47b4b25</span><span class="p">,</span>
-  <span class="s1">'Mick Jager'</span><span class="p">,</span>
-  <span class="s1">'Memo From Turner'</span><span class="p">,</span>
-  <span class="s1">'Performance'</span>
+  <span class="s1">‘Mick Jager’</span><span class="p">,</span>
+  <span class="s1">‘Memo From Turner’</span><span class="p">,</span>
+  <span class="s1">‘Performance’</span>
 <span class="p">);</span>
-</code></pre>
 </dd>
 <dt>And </dt>
-<dd>the following example:<pre class="highlight"><code><span class="cp">&lt;?php</span>
+<dd>the following example:<span class="cp">&lt;?php</span>
 <span class="nv">$cluster</span>          <span class="o">=</span> <span class="nx">Cassandra</span><span class="o">::</span><span class="na">cluster</span><span class="p">()</span>
-                      <span class="o">-&gt;</span><span class="na">withContactPoints</span><span class="p">(</span><span class="s1">'127.0.0.1'</span><span class="p">)</span>
+                      <span class="o">-&gt;</span><span class="na">withContactPoints</span><span class="p">(</span><span class="s1">‘127.0.0.1’</span><span class="p">)</span>
                       <span class="o">-&gt;</span><span class="na">build</span><span class="p">();</span>
-<span class="nv">$french_session</span>   <span class="o">=</span> <span class="nv">$cluster</span><span class="o">-&gt;</span><span class="na">connect</span><span class="p">(</span><span class="s2">"french"</span><span class="p">);</span>
-<span class="nv">$german_session</span>   <span class="o">=</span> <span class="nv">$cluster</span><span class="o">-&gt;</span><span class="na">connect</span><span class="p">(</span><span class="s2">"german"</span><span class="p">);</span>
-<span class="nv">$uk_session</span>       <span class="o">=</span> <span class="nv">$cluster</span><span class="o">-&gt;</span><span class="na">connect</span><span class="p">(</span><span class="s2">"uk"</span><span class="p">);</span>
-<span class="nv">$statement</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Cassandra\SimpleStatement</span><span class="p">(</span><span class="s2">"SELECT * FROM playlists"</span><span class="p">);</span>
+<span class="nv">$french_session</span>   <span class="o">=</span> <span class="nv">$cluster</span><span class="o">-&gt;</span><span class="na">connect</span><span class="p">(</span><span class="s2">“french”</span><span class="p">);</span>
+<span class="nv">$german_session</span>   <span class="o">=</span> <span class="nv">$cluster</span><span class="o">-&gt;</span><span class="na">connect</span><span class="p">(</span><span class="s2">“german”</span><span class="p">);</span>
+<span class="nv">$uk_session</span>       <span class="o">=</span> <span class="nv">$cluster</span><span class="o">-&gt;</span><span class="na">connect</span><span class="p">(</span><span class="s2">“uk”</span><span class="p">);</span>
+<span class="nv">$statement</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Cassandra\SimpleStatement</span><span class="p">(</span><span class="s2">“SELECT * FROM playlists”</span><span class="p">);</span>
 
 <span class="nv">$row</span> <span class="o">=</span> <span class="nv">$french_session</span><span class="o">-&gt;</span><span class="na">execute</span><span class="p">(</span><span class="nv">$statement</span><span class="p">);</span>
-<span class="k">echo</span> <span class="s2">"French session contains "</span> <span class="o">.</span> <span class="nv">$row</span><span class="o">-&gt;</span><span class="na">count</span><span class="p">()</span> <span class="o">.</span> <span class="s2">" rows</span><span class="se">\n</span><span class="s2">"</span><span class="p">;</span>
+<span class="k">echo</span> <span class="s2">“French session contains ”</span> <span class="o">.</span> <span class="nv">$row</span><span class="o">-&gt;</span><span class="na">count</span><span class="p">()</span> <span class="o">.</span> <span class="s2">“ rows</span><span class="se">\n</span><span class="s2">”</span><span class="p">;</span>
 <span class="nv">$row</span> <span class="o">=</span> <span class="nv">$german_session</span><span class="o">-&gt;</span><span class="na">execute</span><span class="p">(</span><span class="nv">$statement</span><span class="p">);</span>
-<span class="k">echo</span> <span class="s2">"German session contains "</span> <span class="o">.</span> <span class="nv">$row</span><span class="o">-&gt;</span><span class="na">count</span><span class="p">()</span> <span class="o">.</span> <span class="s2">" rows</span><span class="se">\n</span><span class="s2">"</span><span class="p">;</span>
+<span class="k">echo</span> <span class="s2">“German session contains ”</span> <span class="o">.</span> <span class="nv">$row</span><span class="o">-&gt;</span><span class="na">count</span><span class="p">()</span> <span class="o">.</span> <span class="s2">“ rows</span><span class="se">\n</span><span class="s2">”</span><span class="p">;</span>
 <span class="nv">$row</span> <span class="o">=</span> <span class="nv">$uk_session</span><span class="o">-&gt;</span><span class="na">execute</span><span class="p">(</span><span class="nv">$statement</span><span class="p">);</span>
-<span class="k">echo</span> <span class="s2">"UK session contains "</span> <span class="o">.</span> <span class="nv">$row</span><span class="o">-&gt;</span><span class="na">count</span><span class="p">()</span> <span class="o">.</span> <span class="s2">" rows"</span><span class="p">;</span>
-</code></pre>
+<span class="k">echo</span> <span class="s2">“UK session contains ”</span> <span class="o">.</span> <span class="nv">$row</span><span class="o">-&gt;</span><span class="na">count</span><span class="p">()</span> <span class="o">.</span> <span class="s2">“ rows”</span><span class="p">;</span>
 </dd>
 <dt>When </dt>
 <dd>it is executed</dd>
@@ -390,22 +397,22 @@ UK session contains 1 rows
       
         
         <li>
-          <a href="http://downloads.datastax.com/php-driver/">Binaries</a>
+          <a href="http://downloads.datastax.com/php-driver">Binaries</a>
         </li>
       
         <li>·</li>
         <li>
-          <a href="https://github.com/datastax/php-driver/">Code</a>
+          <a href="https://github.com/datastax/php-driver">Code</a>
         </li>
       
         <li>·</li>
         <li>
-          <a href="http://datastax.github.io/php-driver/">Docs</a>
+          <a href="http://docs.datastax.com/en/developer/php-driver">Docs</a>
         </li>
       
         <li>·</li>
         <li>
-          <a href="https://datastax-oss.atlassian.net/browse/PHP/">Issues</a>
+          <a href="https://datastax-oss.atlassian.net/browse/PHP">Issues</a>
         </li>
       
         <li>·</li>
@@ -415,7 +422,7 @@ UK session contains 1 rows
       
         <li>·</li>
         <li>
-          <a href="irc://irc.freenode.net/datastax-drivers">IRC Channel</a>
+          <a href="https://academy.datastax.com/slack">Slack</a>
         </li>
       
         <li>·</li>

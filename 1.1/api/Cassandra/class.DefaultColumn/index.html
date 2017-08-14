@@ -95,6 +95,15 @@
   </li>
   
   
+  <li>
+    <a href="../../../building/">
+      Installing Cassandra PHP Extension <small>page</small>
+      
+    </a>
+    
+  </li>
+  
+  
   <li class="active">
     <a href="../../">
       API docs <small>index</small>
@@ -676,209 +685,6 @@
             </nav>
           </div>
           
-
-<div class="page-header">
-  <h1 id="class-DefaultColumn" class="target">
-    <small>class</small>
-    DefaultColumn
-  <a class="anchor" href="#class-DefaultColumn" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
-</h1>
-</div>
-
-<p>A PHP representation of a column</p>
-
-
-<h2 id="implements" class="target">Implements<a class="anchor" href="#implements" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
-</h2>
-<ul class="list-inline">
-  <li><code><a href="../interface.Column/">Cassandra\Column</a></code></li>
-</ul>
-
-
-
-
-<h2 id="methods" class="target">Methods<a class="anchor" href="#methods" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
-</h2>
-
-<div class="methods-content">
-  <div class="panel panel-default member-definition">
-    <div class="panel-heading method-heading">
-      <code>string</code> <h3 id="method-name" class="target">name<a class="anchor" href="#method-name" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
-</h3> <big>(</big>  <big>)</big>
-    </div>
-    <div class="panel-body method-body">
-      <p>Returns the name of the column.</p>
-
-      <dl class="tags">
-<dt class="tag-title">Returns:</dt>
-<dd class="tag-content"><table class="table table-striped return">
-<thead><tr>
-<th class="type">Type</th>
-<th class="details">Details</th>
-</tr></thead>
-<tbody><tr>
-<td><code>string</code></td>
-<td>
-<p>Name of the column or null</p>
-</td>
-</tr></tbody>
-</table></dd>
-</dl>
-    </div>
-  </div>
-  <div class="panel panel-default member-definition">
-    <div class="panel-heading method-heading">
-      <code><a href="../interface.Type/">Cassandra\Type</a></code> <h3 id="method-type" class="target">type<a class="anchor" href="#method-type" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
-</h3> <big>(</big>  <big>)</big>
-    </div>
-    <div class="panel-body method-body">
-      <p>Returns the type of the column.</p>
-
-      <dl class="tags">
-<dt class="tag-title">Returns:</dt>
-<dd class="tag-content"><table class="table table-striped return">
-<thead><tr>
-<th class="type">Type</th>
-<th class="details">Details</th>
-</tr></thead>
-<tbody><tr>
-<td><code><a href="../interface.Type/">Cassandra\Type</a></code></td>
-<td>
-<p><code><a href="../interface.Type/">Cassandra\Type</a></code> of the column</p>
-</td>
-</tr></tbody>
-</table></dd>
-</dl>
-    </div>
-  </div>
-  <div class="panel panel-default member-definition">
-    <div class="panel-heading method-heading">
-      <code>boolean</code> <h3 id="method-isReversed" class="target">isReversed<a class="anchor" href="#method-isReversed" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
-</h3> <big>(</big>  <big>)</big>
-    </div>
-    <div class="panel-body method-body">
-      <p>Returns whether the column is in descending or ascending order.</p>
-
-      <dl class="tags">
-<dt class="tag-title">Returns:</dt>
-<dd class="tag-content"><table class="table table-striped return">
-<thead><tr>
-<th class="type">Type</th>
-<th class="details">Details</th>
-</tr></thead>
-<tbody><tr>
-<td><code>boolean</code></td>
-<td>
-<p>Whether the column is stored in descending order.</p>
-</td>
-</tr></tbody>
-</table></dd>
-</dl>
-    </div>
-  </div>
-  <div class="panel panel-default member-definition">
-    <div class="panel-heading method-heading">
-      <code>boolean</code> <h3 id="method-isStatic" class="target">isStatic<a class="anchor" href="#method-isStatic" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
-</h3> <big>(</big>  <big>)</big>
-    </div>
-    <div class="panel-body method-body">
-      <p>Returns true for static columns.</p>
-
-      <dl class="tags">
-<dt class="tag-title">Returns:</dt>
-<dd class="tag-content"><table class="table table-striped return">
-<thead><tr>
-<th class="type">Type</th>
-<th class="details">Details</th>
-</tr></thead>
-<tbody><tr>
-<td><code>boolean</code></td>
-<td>
-<p>Whether the column is static</p>
-</td>
-</tr></tbody>
-</table></dd>
-</dl>
-    </div>
-  </div>
-  <div class="panel panel-default member-definition">
-    <div class="panel-heading method-heading">
-      <code>boolean</code> <h3 id="method-isFrozen" class="target">isFrozen<a class="anchor" href="#method-isFrozen" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
-</h3> <big>(</big>  <big>)</big>
-    </div>
-    <div class="panel-body method-body">
-      <p>Returns true for frozen columns.</p>
-
-      <dl class="tags">
-<dt class="tag-title">Returns:</dt>
-<dd class="tag-content"><table class="table table-striped return">
-<thead><tr>
-<th class="type">Type</th>
-<th class="details">Details</th>
-</tr></thead>
-<tbody><tr>
-<td><code>boolean</code></td>
-<td>
-<p>Whether the column is frozen</p>
-</td>
-</tr></tbody>
-</table></dd>
-</dl>
-    </div>
-  </div>
-  <div class="panel panel-default member-definition">
-    <div class="panel-heading method-heading">
-      <code>string</code> <h3 id="method-indexName" class="target">indexName<a class="anchor" href="#method-indexName" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
-</h3> <big>(</big>  <big>)</big>
-    </div>
-    <div class="panel-body method-body">
-      <p>Returns name of the index if defined.</p>
-
-      <dl class="tags">
-<dt class="tag-title">Returns:</dt>
-<dd class="tag-content"><table class="table table-striped return">
-<thead><tr>
-<th class="type">Type</th>
-<th class="details">Details</th>
-</tr></thead>
-<tbody><tr>
-<td><code>string</code></td>
-<td>
-<p>Name of the index if defined or null</p>
-</td>
-</tr></tbody>
-</table></dd>
-</dl>
-    </div>
-  </div>
-  <div class="panel panel-default member-definition">
-    <div class="panel-heading method-heading">
-      <code>string</code> <h3 id="method-indexOptions" class="target">indexOptions<a class="anchor" href="#method-indexOptions" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
-</h3> <big>(</big>  <big>)</big>
-    </div>
-    <div class="panel-body method-body">
-      <p>Returns index options if present.</p>
-
-      <dl class="tags">
-<dt class="tag-title">Returns:</dt>
-<dd class="tag-content"><table class="table table-striped return">
-<thead><tr>
-<th class="type">Type</th>
-<th class="details">Details</th>
-</tr></thead>
-<tbody><tr>
-<td><code>string</code></td>
-<td>
-<p>Index options if present or null</p>
-</td>
-</tr></tbody>
-</table></dd>
-</dl>
-    </div>
-  </div>
-</div>
-
-
         </div>
       </div>
     </div>
@@ -889,22 +695,22 @@
       
         
         <li>
-          <a href="http://downloads.datastax.com/php-driver/">Binaries</a>
+          <a href="http://downloads.datastax.com/php-driver">Binaries</a>
         </li>
       
         <li>·</li>
         <li>
-          <a href="https://github.com/datastax/php-driver/">Code</a>
+          <a href="https://github.com/datastax/php-driver">Code</a>
         </li>
       
         <li>·</li>
         <li>
-          <a href="http://datastax.github.io/php-driver/">Docs</a>
+          <a href="http://docs.datastax.com/en/developer/php-driver">Docs</a>
         </li>
       
         <li>·</li>
         <li>
-          <a href="https://datastax-oss.atlassian.net/browse/PHP/">Issues</a>
+          <a href="https://datastax-oss.atlassian.net/browse/PHP">Issues</a>
         </li>
       
         <li>·</li>
@@ -914,7 +720,7 @@
       
         <li>·</li>
         <li>
-          <a href="irc://irc.freenode.net/datastax-drivers">IRC Channel</a>
+          <a href="https://academy.datastax.com/slack">Slack</a>
         </li>
       
         <li>·</li>
