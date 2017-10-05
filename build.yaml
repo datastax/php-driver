@@ -6,7 +6,7 @@ schedules:
 architecture:
   - x64
 os:
-  - ubuntu/trusty64/cpp
+  - ubuntu/trusty64/cpp-php
   - ubuntu/xenial64
   - centos/6-64
   - centos/7-64
@@ -102,7 +102,31 @@ release:
                   find build -type f -name "*.${PACKAGE_TYPE}" -exec mv {} packages \; 
                   rm -rf build
                   PHP_TOKENS=($(echo ${PHP_VERSION} | tr "-" " "))
-                  sudo ${PACKAGE_UTILITY_REMOVE} ${PHP_TOKENS[0]}-common
+
+                  # Installing packaging and testing connection
+                  sudo ${PACKAGE_INSTALL} packages/${PHP_TOKENS[0]}*.${PACKAGE_TYPE}
+
+                  # Checking if cassandra php module is installed
+                  php -m | grep -q cassandra
+                  if [ $? -ne 0 ] ; then
+                    echo "cassandra php module not installed. Marking build as failure"
+                    exit 1
+                  fi 
+                  PROGRAM_OUTPUT=$(php <<EOF
+                  <?php
+                  try{
+                    Cassandra::cluster()->build()->connect();
+                  } catch (Cassandra\\Exception\\RuntimeException \$e) {
+                    echo 'Success'.PHP_EOL."";
+                  }     
+            EOF
+                  )
+                  # Throw error if connection test fails
+                  if [ $PROGRAM_OUTPUT != "Success" ]; then
+                    echo "Connection test failed. Marking build as failure."
+                    exit 1
+                  fi 
+                  sudo ${PACKAGE_UTILITY_REMOVE} ${PHP_TOKENS[0]}-common "${PHP_TOKENS[0]}-cassandra*"
                 done
             pushd packages
             # Uploading driver packages
