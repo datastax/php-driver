@@ -460,8 +460,7 @@ php5to7_string_compare(php5to7_string s1, php5to7_string s2)
 
 extern zend_module_entry php_driver_module_entry;
 
-#define cassandra_module_ptr &php_driver_module_entry
-#define phpext_cassandra_ptr cassandra_module_ptr
+#define phpext_cassandra_ptr &php_driver_module_entry
 
 PHP_MINIT_FUNCTION(php_driver);
 PHP_MSHUTDOWN_FUNCTION(php_driver);
