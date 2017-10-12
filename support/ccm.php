@@ -159,7 +159,9 @@ class CCM
         $this->dataCenterTwoNodes = $dataCenterTwoNodes;
 
         $clusters = $this->getClusters();
-        $clusterName = $this->clusterPrefix.'_'.$this->version.'_'.$dataCenterOneNodes.'-'.$dataCenterTwoNodes;
+        $clusterName = $this->clusterPrefix . '_'
+                       . str_replace(".", "-", $this->version) . '_'
+                       . $dataCenterOneNodes . '-' . $dataCenterTwoNodes;
 
         if ($this->ssl) {
             $clusterName .= "_ssl";
