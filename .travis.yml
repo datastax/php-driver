@@ -1,5 +1,6 @@
 language: php
-sudo: false
+dist: trusty
+sudo: true
 addons:
   apt:
     packages:
@@ -24,7 +25,7 @@ env:
     # Indicate the cached dependencies directory
     - CACHED_DEPENDENCIES_DIRECTORY=${HOME}/dependencies
     # Add libuv source build for container based TravisCI
-    - LIBUV_VERSION=1.13.1
+    - LIBUV_VERSION=1.14.1
     - LIBUV_ROOT_DIR=${CACHED_DEPENDENCIES_DIRECTORY}/libuv/${LIBUV_VERSION}
     - PHP_DRIVER_BUILD_DIRECTORY=/tmp/php-driver/build
     - CPP_DRIVER_SOURCE_DIRECTORY=${TRAVIS_BUILD_DIR}/lib/cpp-driver
