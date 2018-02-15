@@ -15,8 +15,10 @@ __Note__: DataStax products do not support big-endian systems.
 ## Getting the Driver
 
 Binary versions of the driver, available for multiple operating systems and
-multiple versions of PHP, can be obtained from our [download server]. The
-source code is made available via [GitHub]. __If using [DataStax Enterprise]
+multiple versions of PHP, can be obtained from [DataStax download server] (binary
+packages may have dependency on packages of [DataStax C/C++ Driver for Apache Cassandra] and
+its dependencies, so you may need to install them as well). The
+source code is made available via [GitHub]. __If you're using [DataStax Enterprise]
 use the [DSE PHP driver] instead__.
 
 ## What's new in v1.2.0/v1.3.0
