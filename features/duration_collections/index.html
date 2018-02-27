@@ -233,6 +233,15 @@
   </li>
   
   
+  <li>
+    <a href="../duration/">
+      Duration <small>feature</small>
+      
+    </a>
+    
+  </li>
+  
+  
   <li class="active">
     <a href="./" class="current">
       Duration <small>feature</small>
@@ -242,15 +251,6 @@
   
 </ul>
 
-  </li>
-  
-  
-  <li>
-    <a href="../duration/">
-      Duration <small>feature</small>
-      
-    </a>
-    
   </li>
   
   
@@ -361,9 +361,9 @@
 </h2>
 <dl class="steps">
 <dt>Given </dt>
-<dd>the following schema:<span class="k">CREATE</span> <span class="k">KEYSPACE</span> <span class="n">simplex</span> <span class="k">WITH</span> <span class="n">replication</span> <span class="o">=</span> <span class="p">{</span>
-  <span class="s1">‘class’</span><span class="p">:</span> <span class="s1">‘SimpleStrategy’</span><span class="p">,</span>
-  <span class="s1">‘replication_factor’</span><span class="p">:</span> <span class="mi">1</span>
+<dd>the following schema:<pre class="highlight"><code><span class="k">CREATE</span> <span class="k">KEYSPACE</span> <span class="n">simplex</span> <span class="k">WITH</span> <span class="n">replication</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="s1">'class'</span><span class="p">:</span> <span class="s1">'SimpleStrategy'</span><span class="p">,</span>
+  <span class="s1">'replication_factor'</span><span class="p">:</span> <span class="mi">1</span>
 <span class="p">};</span>
 <span class="k">USE</span> <span class="n">simplex</span><span class="p">;</span>
 <span class="k">CREATE</span> <span class="k">TYPE</span> <span class="n">duration_user_type</span> <span class="p">(</span><span class="n">duration1</span> <span class="n">duration</span><span class="p">,</span> <span class="n">duration2</span> <span class="n">duration</span><span class="p">);</span>
@@ -371,6 +371,7 @@
                         <span class="n">duration_list</span> <span class="k">list</span><span class="o">&lt;</span><span class="n">duration</span><span class="o">&gt;</span><span class="p">,</span>
                         <span class="n">duration_tuple</span> <span class="n">tuple</span><span class="o">&lt;</span><span class="n">duration</span><span class="p">,</span> <span class="n">duration</span><span class="o">&gt;</span><span class="p">,</span>
                         <span class="n">duration_udt</span> <span class="n">duration_user_type</span><span class="p">);</span>
+</code></pre>
 </dd>
 <dt>And </dt>
 <dd>the following example:<pre><code>&lt;?php

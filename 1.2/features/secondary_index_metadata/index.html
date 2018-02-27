@@ -329,31 +329,33 @@
 <dt>Given </dt>
 <dd>a running Cassandra cluster</dd>
 <dt>And </dt>
-<dd>the following schema:<span class="k">CREATE</span> <span class="k">KEYSPACE</span> <span class="n">simplex</span> <span class="k">WITH</span> <span class="n">replication</span> <span class="o">=</span> <span class="p">{</span>
-  <span class="s1">‘class’</span><span class="p">:</span> <span class="s1">‘SimpleStrategy’</span><span class="p">,</span>
-  <span class="s1">‘replication_factor’</span><span class="p">:</span> <span class="mi">1</span>
+<dd>the following schema:<pre class="highlight"><code><span class="k">CREATE</span> <span class="k">KEYSPACE</span> <span class="n">simplex</span> <span class="k">WITH</span> <span class="n">replication</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="s1">'class'</span><span class="p">:</span> <span class="s1">'SimpleStrategy'</span><span class="p">,</span>
+  <span class="s1">'replication_factor'</span><span class="p">:</span> <span class="mi">1</span>
 <span class="p">}</span> <span class="k">AND</span> <span class="n">DURABLE_WRITES</span> <span class="o">=</span> <span class="k">false</span><span class="p">;</span>
 <span class="k">USE</span> <span class="n">simplex</span><span class="p">;</span>
 <span class="k">CREATE</span> <span class="k">TABLE</span> <span class="k">users</span> <span class="p">(</span><span class="n">id</span> <span class="k">int</span> <span class="k">PRIMARY</span> <span class="k">KEY</span><span class="p">,</span> <span class="n">name</span> <span class="k">text</span><span class="p">);</span>
 <span class="k">CREATE</span> <span class="k">INDEX</span> <span class="k">IF</span> <span class="k">NOT</span> <span class="k">EXISTS</span> <span class="n">name_index</span> <span class="k">ON</span> <span class="k">users</span><span class="p">(</span><span class="n">name</span><span class="p">);</span>
+</code></pre>
 </dd>
 </dl>
 <h2 id="getting-a-index-metadata" class="target">Getting a index metadata<a class="anchor" href="#getting-a-index-metadata" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
 </h2>
 <dl class="steps">
 <dt>Given </dt>
-<dd>the following example:<span class="cp">&lt;?php</span>
+<dd>the following example:<pre class="highlight"><code><span class="cp">&lt;?php</span>
 <span class="nv">$cluster</span> <span class="o">=</span> <span class="nx">Cassandra</span><span class="o">::</span><span class="na">cluster</span><span class="p">()</span>
-                  <span class="o">-&gt;</span><span class="na">withContactPoints</span><span class="p">(</span><span class="s1">‘127.0.0.1’</span><span class="p">)</span>
+                  <span class="o">-&gt;</span><span class="na">withContactPoints</span><span class="p">(</span><span class="s1">'127.0.0.1'</span><span class="p">)</span>
                   <span class="o">-&gt;</span><span class="na">build</span><span class="p">();</span>
-<span class="nv">$session</span> <span class="o">=</span> <span class="nv">$cluster</span><span class="o">-&gt;</span><span class="na">connect</span><span class="p">(</span><span class="s2">“simplex”</span><span class="p">);</span>
+<span class="nv">$session</span> <span class="o">=</span> <span class="nv">$cluster</span><span class="o">-&gt;</span><span class="na">connect</span><span class="p">(</span><span class="s2">"simplex"</span><span class="p">);</span>
 <span class="nv">$schema</span> <span class="o">=</span> <span class="nv">$session</span><span class="o">-&gt;</span><span class="na">schema</span><span class="p">();</span>
-<span class="nv">$index</span> <span class="o">=</span> <span class="nv">$schema</span><span class="o">-&gt;</span><span class="na">keyspace</span><span class="p">(</span><span class="s2">“simplex”</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">table</span><span class="p">(</span><span class="s2">“users”</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">index</span><span class="p">(</span><span class="s2">“name_index”</span><span class="p">);</span>
+<span class="nv">$index</span> <span class="o">=</span> <span class="nv">$schema</span><span class="o">-&gt;</span><span class="na">keyspace</span><span class="p">(</span><span class="s2">"simplex"</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">table</span><span class="p">(</span><span class="s2">"users"</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">index</span><span class="p">(</span><span class="s2">"name_index"</span><span class="p">);</span>
 
-<span class="k">echo</span> <span class="s2">“Name: ”</span> <span class="o">.</span> <span class="nv">$index</span><span class="o">-&gt;</span><span class="na">name</span><span class="p">()</span> <span class="o">.</span> <span class="s2">“</span><span class="se">\n</span><span class="s2">”</span><span class="p">;</span>
-<span class="k">echo</span> <span class="s2">“Kind: ”</span> <span class="o">.</span> <span class="nv">$index</span><span class="o">-&gt;</span><span class="na">kind</span><span class="p">()</span> <span class="o">.</span> <span class="s2">“</span><span class="se">\n</span><span class="s2">”</span><span class="p">;</span>
-<span class="k">echo</span> <span class="s2">“Target: ”</span> <span class="o">.</span> <span class="nv">$index</span><span class="o">-&gt;</span><span class="na">target</span><span class="p">()</span> <span class="o">.</span> <span class="s2">“</span><span class="se">\n</span><span class="s2">”</span><span class="p">;</span>
-<span class="k">echo</span> <span class="s2">“IsCustom: ”</span> <span class="o">.</span> <span class="p">(</span><span class="nv">$index</span><span class="o">-&gt;</span><span class="na">isCustom</span><span class="p">()</span> <span class="o">?</span> <span class="s2">“true”</span> <span class="o">:</span> <span class="s2">“false”</span><span class="p">)</span> <span class="o">.</span> <span class="s2">“</span><span class="se">\n</span><span class="s2">”</span><span class="p">;</span>
+<span class="k">echo</span> <span class="s2">"Name: "</span> <span class="o">.</span> <span class="nv">$index</span><span class="o">-&gt;</span><span class="na">name</span><span class="p">()</span> <span class="o">.</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">;</span>
+<span class="k">echo</span> <span class="s2">"Kind: "</span> <span class="o">.</span> <span class="nv">$index</span><span class="o">-&gt;</span><span class="na">kind</span><span class="p">()</span> <span class="o">.</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">;</span>
+<span class="k">echo</span> <span class="s2">"Target: "</span> <span class="o">.</span> <span class="nv">$index</span><span class="o">-&gt;</span><span class="na">target</span><span class="p">()</span> <span class="o">.</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">;</span>
+<span class="k">echo</span> <span class="s2">"IsCustom: "</span> <span class="o">.</span> <span class="p">(</span><span class="nv">$index</span><span class="o">-&gt;</span><span class="na">isCustom</span><span class="p">()</span> <span class="o">?</span> <span class="s2">"true"</span> <span class="o">:</span> <span class="s2">"false"</span><span class="p">)</span> <span class="o">.</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">;</span>
+</code></pre>
 </dd>
 <dt>When </dt>
 <dd>it is executed</dd>
@@ -370,21 +372,22 @@ IsCustom: false
 </h2>
 <dl class="steps">
 <dt>Given </dt>
-<dd>the following example:<span class="cp">&lt;?php</span>
+<dd>the following example:<pre class="highlight"><code><span class="cp">&lt;?php</span>
 <span class="nv">$cluster</span>  <span class="o">=</span> <span class="nx">Cassandra</span><span class="o">::</span><span class="na">cluster</span><span class="p">()</span>
-                   <span class="o">-&gt;</span><span class="na">withContactPoints</span><span class="p">(</span><span class="s1">‘127.0.0.1’</span><span class="p">)</span>
+                   <span class="o">-&gt;</span><span class="na">withContactPoints</span><span class="p">(</span><span class="s1">'127.0.0.1'</span><span class="p">)</span>
                    <span class="o">-&gt;</span><span class="na">build</span><span class="p">();</span>
-<span class="nv">$session</span>  <span class="o">=</span> <span class="nv">$cluster</span><span class="o">-&gt;</span><span class="na">connect</span><span class="p">(</span><span class="s2">“simplex”</span><span class="p">);</span>
+<span class="nv">$session</span>  <span class="o">=</span> <span class="nv">$cluster</span><span class="o">-&gt;</span><span class="na">connect</span><span class="p">(</span><span class="s2">"simplex"</span><span class="p">);</span>
 
 <span class="nv">$schema</span>   <span class="o">=</span> <span class="nv">$session</span><span class="o">-&gt;</span><span class="na">schema</span><span class="p">();</span>
 
-<span class="nv">$index</span> <span class="o">=</span> <span class="nv">$schema</span><span class="o">-&gt;</span><span class="na">keyspace</span><span class="p">(</span><span class="s2">“simplex”</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">table</span><span class="p">(</span><span class="s2">“users”</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">index</span><span class="p">(</span><span class="s2">“name_index”</span><span class="p">);</span>
+<span class="nv">$index</span> <span class="o">=</span> <span class="nv">$schema</span><span class="o">-&gt;</span><span class="na">keyspace</span><span class="p">(</span><span class="s2">"simplex"</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">table</span><span class="p">(</span><span class="s2">"users"</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">index</span><span class="p">(</span><span class="s2">"name_index"</span><span class="p">);</span>
 
-<span class="k">echo</span> <span class="s2">“Name: ”</span> <span class="o">.</span> <span class="nv">$index</span><span class="o">-&gt;</span><span class="na">name</span><span class="p">()</span> <span class="o">.</span> <span class="s2">“</span><span class="se">\n</span><span class="s2">”</span><span class="p">;</span>
-<span class="k">echo</span> <span class="s2">“Kind: ”</span> <span class="o">.</span> <span class="nv">$index</span><span class="o">-&gt;</span><span class="na">kind</span><span class="p">()</span> <span class="o">.</span> <span class="s2">“</span><span class="se">\n</span><span class="s2">”</span><span class="p">;</span>
-<span class="k">echo</span> <span class="s2">“Target: ”</span> <span class="o">.</span> <span class="nv">$index</span><span class="o">-&gt;</span><span class="na">target</span><span class="p">()</span> <span class="o">.</span> <span class="s2">“</span><span class="se">\n</span><span class="s2">”</span><span class="p">;</span>
-<span class="k">echo</span> <span class="s2">“IsCustom: ”</span> <span class="o">.</span> <span class="p">(</span><span class="nv">$index</span><span class="o">-&gt;</span><span class="na">isCustom</span><span class="p">()</span> <span class="o">?</span> <span class="s2">“true”</span> <span class="o">:</span> <span class="s2">“false”</span><span class="p">)</span> <span class="o">.</span> <span class="s2">“</span><span class="se">\n</span><span class="s2">”</span><span class="p">;</span>
-<span class="k">echo</span> <span class="s2">“Options: ”</span> <span class="o">.</span> <span class="nb">var_export</span><span class="p">(</span><span class="nv">$index</span><span class="o">-&gt;</span><span class="na">options</span><span class="p">(),</span> <span class="kc">true</span><span class="p">)</span> <span class="o">.</span> <span class="s2">“</span><span class="se">\n</span><span class="s2">”</span><span class="p">;</span>
+<span class="k">echo</span> <span class="s2">"Name: "</span> <span class="o">.</span> <span class="nv">$index</span><span class="o">-&gt;</span><span class="na">name</span><span class="p">()</span> <span class="o">.</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">;</span>
+<span class="k">echo</span> <span class="s2">"Kind: "</span> <span class="o">.</span> <span class="nv">$index</span><span class="o">-&gt;</span><span class="na">kind</span><span class="p">()</span> <span class="o">.</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">;</span>
+<span class="k">echo</span> <span class="s2">"Target: "</span> <span class="o">.</span> <span class="nv">$index</span><span class="o">-&gt;</span><span class="na">target</span><span class="p">()</span> <span class="o">.</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">;</span>
+<span class="k">echo</span> <span class="s2">"IsCustom: "</span> <span class="o">.</span> <span class="p">(</span><span class="nv">$index</span><span class="o">-&gt;</span><span class="na">isCustom</span><span class="p">()</span> <span class="o">?</span> <span class="s2">"true"</span> <span class="o">:</span> <span class="s2">"false"</span><span class="p">)</span> <span class="o">.</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">;</span>
+<span class="k">echo</span> <span class="s2">"Options: "</span> <span class="o">.</span> <span class="nb">var_export</span><span class="p">(</span><span class="nv">$index</span><span class="o">-&gt;</span><span class="na">options</span><span class="p">(),</span> <span class="kc">true</span><span class="p">)</span> <span class="o">.</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">;</span>
+</code></pre>
 </dd>
 <dt>When </dt>
 <dd>it is executed</dd>
@@ -408,22 +411,23 @@ Options: array (
 </code></pre>
 </dd>
 <dt>And </dt>
-<dd>the following example:<span class="cp">&lt;?php</span>
+<dd>the following example:<pre class="highlight"><code><span class="cp">&lt;?php</span>
 <span class="nv">$cluster</span>  <span class="o">=</span> <span class="nx">Cassandra</span><span class="o">::</span><span class="na">cluster</span><span class="p">()</span>
-                   <span class="o">-&gt;</span><span class="na">withContactPoints</span><span class="p">(</span><span class="s1">‘127.0.0.1’</span><span class="p">)</span>
+                   <span class="o">-&gt;</span><span class="na">withContactPoints</span><span class="p">(</span><span class="s1">'127.0.0.1'</span><span class="p">)</span>
                    <span class="o">-&gt;</span><span class="na">build</span><span class="p">();</span>
-<span class="nv">$session</span>  <span class="o">=</span> <span class="nv">$cluster</span><span class="o">-&gt;</span><span class="na">connect</span><span class="p">(</span><span class="s2">“simplex”</span><span class="p">);</span>
+<span class="nv">$session</span>  <span class="o">=</span> <span class="nv">$cluster</span><span class="o">-&gt;</span><span class="na">connect</span><span class="p">(</span><span class="s2">"simplex"</span><span class="p">);</span>
 
 <span class="nv">$schema</span>   <span class="o">=</span> <span class="nv">$session</span><span class="o">-&gt;</span><span class="na">schema</span><span class="p">();</span>
 
-<span class="nv">$index</span> <span class="o">=</span> <span class="nv">$schema</span><span class="o">-&gt;</span><span class="na">keyspace</span><span class="p">(</span><span class="s2">“simplex”</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">table</span><span class="p">(</span><span class="s2">“users”</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">index</span><span class="p">(</span><span class="s2">“name_custom_index”</span><span class="p">);</span>
+<span class="nv">$index</span> <span class="o">=</span> <span class="nv">$schema</span><span class="o">-&gt;</span><span class="na">keyspace</span><span class="p">(</span><span class="s2">"simplex"</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">table</span><span class="p">(</span><span class="s2">"users"</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">index</span><span class="p">(</span><span class="s2">"name_custom_index"</span><span class="p">);</span>
 
-<span class="k">echo</span> <span class="s2">“Name: ”</span> <span class="o">.</span> <span class="nv">$index</span><span class="o">-&gt;</span><span class="na">name</span><span class="p">()</span> <span class="o">.</span> <span class="s2">“</span><span class="se">\n</span><span class="s2">”</span><span class="p">;</span>
-<span class="k">echo</span> <span class="s2">“Kind: ”</span> <span class="o">.</span> <span class="nv">$index</span><span class="o">-&gt;</span><span class="na">kind</span><span class="p">()</span> <span class="o">.</span> <span class="s2">“</span><span class="se">\n</span><span class="s2">”</span><span class="p">;</span>
-<span class="k">echo</span> <span class="s2">“Target: ”</span> <span class="o">.</span> <span class="nv">$index</span><span class="o">-&gt;</span><span class="na">target</span><span class="p">()</span> <span class="o">.</span> <span class="s2">“</span><span class="se">\n</span><span class="s2">”</span><span class="p">;</span>
-<span class="k">echo</span> <span class="s2">“IsCustom: ”</span> <span class="o">.</span> <span class="p">(</span><span class="nv">$index</span><span class="o">-&gt;</span><span class="na">isCustom</span><span class="p">()</span> <span class="o">?</span> <span class="s2">“true”</span> <span class="o">:</span> <span class="s2">“false”</span><span class="p">)</span> <span class="o">.</span> <span class="s2">“</span><span class="se">\n</span><span class="s2">”</span><span class="p">;</span>
-<span class="k">echo</span> <span class="s2">“ClassName: ”</span> <span class="o">.</span> <span class="nv">$index</span><span class="o">-&gt;</span><span class="na">className</span><span class="p">()</span> <span class="o">.</span> <span class="s2">“</span><span class="se">\n</span><span class="s2">”</span><span class="p">;</span>
-<span class="k">echo</span> <span class="s2">“Options: ”</span> <span class="o">.</span> <span class="nb">var_export</span><span class="p">(</span><span class="nv">$index</span><span class="o">-&gt;</span><span class="na">options</span><span class="p">(),</span> <span class="kc">true</span><span class="p">)</span> <span class="o">.</span> <span class="s2">“</span><span class="se">\n</span><span class="s2">”</span><span class="p">;</span>
+<span class="k">echo</span> <span class="s2">"Name: "</span> <span class="o">.</span> <span class="nv">$index</span><span class="o">-&gt;</span><span class="na">name</span><span class="p">()</span> <span class="o">.</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">;</span>
+<span class="k">echo</span> <span class="s2">"Kind: "</span> <span class="o">.</span> <span class="nv">$index</span><span class="o">-&gt;</span><span class="na">kind</span><span class="p">()</span> <span class="o">.</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">;</span>
+<span class="k">echo</span> <span class="s2">"Target: "</span> <span class="o">.</span> <span class="nv">$index</span><span class="o">-&gt;</span><span class="na">target</span><span class="p">()</span> <span class="o">.</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">;</span>
+<span class="k">echo</span> <span class="s2">"IsCustom: "</span> <span class="o">.</span> <span class="p">(</span><span class="nv">$index</span><span class="o">-&gt;</span><span class="na">isCustom</span><span class="p">()</span> <span class="o">?</span> <span class="s2">"true"</span> <span class="o">:</span> <span class="s2">"false"</span><span class="p">)</span> <span class="o">.</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">;</span>
+<span class="k">echo</span> <span class="s2">"ClassName: "</span> <span class="o">.</span> <span class="nv">$index</span><span class="o">-&gt;</span><span class="na">className</span><span class="p">()</span> <span class="o">.</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">;</span>
+<span class="k">echo</span> <span class="s2">"Options: "</span> <span class="o">.</span> <span class="nb">var_export</span><span class="p">(</span><span class="nv">$index</span><span class="o">-&gt;</span><span class="na">options</span><span class="p">(),</span> <span class="kc">true</span><span class="p">)</span> <span class="o">.</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">;</span>
+</code></pre>
 </dd>
 <dt>When </dt>
 <dd>it is executed</dd>

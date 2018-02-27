@@ -333,9 +333,9 @@
 </h2>
 <dl class="steps">
 <dt>Given </dt>
-<dd>the following schema:<span class="k">CREATE</span> <span class="k">KEYSPACE</span> <span class="n">simplex</span> <span class="k">WITH</span> <span class="n">replication</span> <span class="o">=</span> <span class="p">{</span>
-  <span class="s1">‘class’</span><span class="p">:</span> <span class="s1">‘SimpleStrategy’</span><span class="p">,</span>
-  <span class="s1">‘replication_factor’</span><span class="p">:</span> <span class="mi">1</span>
+<dd>the following schema:<pre class="highlight"><code><span class="k">CREATE</span> <span class="k">KEYSPACE</span> <span class="n">simplex</span> <span class="k">WITH</span> <span class="n">replication</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="s1">'class'</span><span class="p">:</span> <span class="s1">'SimpleStrategy'</span><span class="p">,</span>
+  <span class="s1">'replication_factor'</span><span class="p">:</span> <span class="mi">1</span>
 <span class="p">};</span>
 <span class="k">USE</span> <span class="n">simplex</span><span class="p">;</span>
 <span class="k">CREATE</span> <span class="k">TABLE</span> <span class="k">values</span> <span class="p">(</span>
@@ -375,33 +375,35 @@
   <span class="mi">4</span><span class="p">,</span>
   <span class="mi">67890656781923123918798273492834712837198237</span><span class="p">,</span>
   <span class="mi">1425691864001</span><span class="p">,</span>
-  <span class="n">varcharAsBlob</span><span class="p">(</span><span class="s1">‘0x000000’</span><span class="p">),</span>
+  <span class="n">varcharAsBlob</span><span class="p">(</span><span class="s1">'0x000000'</span><span class="p">),</span>
   <span class="mi">ab3352d9-4f7f-4007-a35a-e62aa7ab0b19</span><span class="p">,</span>
-  <span class="n">maxTimeuuid</span><span class="p">(</span><span class="s1">‘2015-03-11 14:47:10+0000’</span><span class="p">),</span>
-  <span class="s1">‘200.199.198.197’</span>
+  <span class="n">maxTimeuuid</span><span class="p">(</span><span class="s1">'2015-03-11 14:47:10+0000'</span><span class="p">),</span>
+  <span class="s1">'200.199.198.197'</span>
 <span class="p">)</span>
+</code></pre>
 </dd>
 <dt>And </dt>
-<dd>the following example:<span class="cp">&lt;?php</span>
+<dd>the following example:<pre class="highlight"><code><span class="cp">&lt;?php</span>
 <span class="nv">$cluster</span>   <span class="o">=</span> <span class="nx">Cassandra</span><span class="o">::</span><span class="na">cluster</span><span class="p">()</span>
-               <span class="o">-&gt;</span><span class="na">withContactPoints</span><span class="p">(</span><span class="s1">‘127.0.0.1’</span><span class="p">)</span>
+               <span class="o">-&gt;</span><span class="na">withContactPoints</span><span class="p">(</span><span class="s1">'127.0.0.1'</span><span class="p">)</span>
                <span class="o">-&gt;</span><span class="na">build</span><span class="p">();</span>
-<span class="nv">$session</span>   <span class="o">=</span> <span class="nv">$cluster</span><span class="o">-&gt;</span><span class="na">connect</span><span class="p">(</span><span class="s2">“simplex”</span><span class="p">);</span>
-<span class="nv">$statement</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Cassandra\SimpleStatement</span><span class="p">(</span><span class="s2">“SELECT * FROM values”</span><span class="p">);</span>
+<span class="nv">$session</span>   <span class="o">=</span> <span class="nv">$cluster</span><span class="o">-&gt;</span><span class="na">connect</span><span class="p">(</span><span class="s2">"simplex"</span><span class="p">);</span>
+<span class="nv">$statement</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Cassandra\SimpleStatement</span><span class="p">(</span><span class="s2">"SELECT * FROM values"</span><span class="p">);</span>
 <span class="nv">$result</span>    <span class="o">=</span> <span class="nv">$session</span><span class="o">-&gt;</span><span class="na">execute</span><span class="p">(</span><span class="nv">$statement</span><span class="p">);</span>
 <span class="nv">$row</span>       <span class="o">=</span> <span class="nv">$result</span><span class="o">-&gt;</span><span class="na">first</span><span class="p">();</span>
 
-<span class="k">echo</span> <span class="s2">“Bigint: ”</span> <span class="o">.</span> <span class="nb">var_export</span><span class="p">(</span><span class="nv">$row</span><span class="p">[</span><span class="s1">‘bigint_value’</span><span class="p">],</span> <span class="kc">true</span><span class="p">)</span> <span class="o">.</span> <span class="s2">“</span><span class="se">\n</span><span class="s2">”</span><span class="p">;</span>
-<span class="k">echo</span> <span class="s2">“Decimal: ”</span> <span class="o">.</span> <span class="nb">var_export</span><span class="p">(</span><span class="nv">$row</span><span class="p">[</span><span class="s1">‘decimal_value’</span><span class="p">],</span> <span class="kc">true</span><span class="p">)</span> <span class="o">.</span> <span class="s2">“</span><span class="se">\n</span><span class="s2">”</span><span class="p">;</span>
-<span class="k">echo</span> <span class="s2">“Double: ”</span> <span class="o">.</span> <span class="nb">sprintf</span><span class="p">(</span><span class="s1">‘%.13f’</span><span class="p">,</span> <span class="nv">$row</span><span class="p">[</span><span class="s1">‘double_value’</span><span class="p">])</span> <span class="o">.</span> <span class="s2">“</span><span class="se">\n</span><span class="s2">”</span><span class="p">;</span>
-<span class="k">echo</span> <span class="s2">“Float: ”</span> <span class="o">.</span> <span class="nb">var_export</span><span class="p">(</span><span class="nv">$row</span><span class="p">[</span><span class="s1">‘float_value’</span><span class="p">],</span> <span class="kc">true</span><span class="p">)</span> <span class="o">.</span> <span class="s2">“</span><span class="se">\n</span><span class="s2">”</span><span class="p">;</span>
-<span class="k">echo</span> <span class="s2">“Int: ”</span> <span class="o">.</span> <span class="nb">var_export</span><span class="p">(</span><span class="nv">$row</span><span class="p">[</span><span class="s1">‘int_value’</span><span class="p">],</span> <span class="kc">true</span><span class="p">)</span> <span class="o">.</span> <span class="s2">“</span><span class="se">\n</span><span class="s2">”</span><span class="p">;</span>
-<span class="k">echo</span> <span class="s2">“Varint: ”</span> <span class="o">.</span> <span class="nb">var_export</span><span class="p">(</span><span class="nv">$row</span><span class="p">[</span><span class="s1">‘varint_value’</span><span class="p">],</span> <span class="kc">true</span><span class="p">)</span> <span class="o">.</span> <span class="s2">“</span><span class="se">\n</span><span class="s2">”</span><span class="p">;</span>
-<span class="k">echo</span> <span class="s2">“Timestamp: ”</span> <span class="o">.</span> <span class="nb">var_export</span><span class="p">(</span><span class="nv">$row</span><span class="p">[</span><span class="s1">‘timestamp_value’</span><span class="p">],</span> <span class="kc">true</span><span class="p">)</span> <span class="o">.</span> <span class="s2">“</span><span class="se">\n</span><span class="s2">”</span><span class="p">;</span>
-<span class="k">echo</span> <span class="s2">“Blob: ”</span> <span class="o">.</span> <span class="nb">var_export</span><span class="p">(</span><span class="nv">$row</span><span class="p">[</span><span class="s1">‘blob_value’</span><span class="p">],</span> <span class="kc">true</span><span class="p">)</span> <span class="o">.</span> <span class="s2">“</span><span class="se">\n</span><span class="s2">”</span><span class="p">;</span>
-<span class="k">echo</span> <span class="s2">“Uuid: ”</span> <span class="o">.</span> <span class="nb">var_export</span><span class="p">(</span><span class="nv">$row</span><span class="p">[</span><span class="s1">‘uuid_value’</span><span class="p">],</span> <span class="kc">true</span><span class="p">)</span> <span class="o">.</span> <span class="s2">“</span><span class="se">\n</span><span class="s2">”</span><span class="p">;</span>
-<span class="k">echo</span> <span class="s2">“Timeuuid: ”</span> <span class="o">.</span> <span class="nb">var_export</span><span class="p">(</span><span class="nv">$row</span><span class="p">[</span><span class="s1">‘timeuuid_value’</span><span class="p">],</span> <span class="kc">true</span><span class="p">)</span> <span class="o">.</span> <span class="s2">“</span><span class="se">\n</span><span class="s2">”</span><span class="p">;</span>
-<span class="k">echo</span> <span class="s2">“Inet: ”</span> <span class="o">.</span> <span class="nb">var_export</span><span class="p">(</span><span class="nv">$row</span><span class="p">[</span><span class="s1">‘inet_value’</span><span class="p">],</span> <span class="kc">true</span><span class="p">)</span> <span class="o">.</span> <span class="s2">“</span><span class="se">\n</span><span class="s2">”</span><span class="p">;</span>
+<span class="k">echo</span> <span class="s2">"Bigint: "</span> <span class="o">.</span> <span class="nb">var_export</span><span class="p">(</span><span class="nv">$row</span><span class="p">[</span><span class="s1">'bigint_value'</span><span class="p">],</span> <span class="kc">true</span><span class="p">)</span> <span class="o">.</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">;</span>
+<span class="k">echo</span> <span class="s2">"Decimal: "</span> <span class="o">.</span> <span class="nb">var_export</span><span class="p">(</span><span class="nv">$row</span><span class="p">[</span><span class="s1">'decimal_value'</span><span class="p">],</span> <span class="kc">true</span><span class="p">)</span> <span class="o">.</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">;</span>
+<span class="k">echo</span> <span class="s2">"Double: "</span> <span class="o">.</span> <span class="nb">sprintf</span><span class="p">(</span><span class="s1">'%.13f'</span><span class="p">,</span> <span class="nv">$row</span><span class="p">[</span><span class="s1">'double_value'</span><span class="p">])</span> <span class="o">.</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">;</span>
+<span class="k">echo</span> <span class="s2">"Float: "</span> <span class="o">.</span> <span class="nb">var_export</span><span class="p">(</span><span class="nv">$row</span><span class="p">[</span><span class="s1">'float_value'</span><span class="p">],</span> <span class="kc">true</span><span class="p">)</span> <span class="o">.</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">;</span>
+<span class="k">echo</span> <span class="s2">"Int: "</span> <span class="o">.</span> <span class="nb">var_export</span><span class="p">(</span><span class="nv">$row</span><span class="p">[</span><span class="s1">'int_value'</span><span class="p">],</span> <span class="kc">true</span><span class="p">)</span> <span class="o">.</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">;</span>
+<span class="k">echo</span> <span class="s2">"Varint: "</span> <span class="o">.</span> <span class="nb">var_export</span><span class="p">(</span><span class="nv">$row</span><span class="p">[</span><span class="s1">'varint_value'</span><span class="p">],</span> <span class="kc">true</span><span class="p">)</span> <span class="o">.</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">;</span>
+<span class="k">echo</span> <span class="s2">"Timestamp: "</span> <span class="o">.</span> <span class="nb">var_export</span><span class="p">(</span><span class="nv">$row</span><span class="p">[</span><span class="s1">'timestamp_value'</span><span class="p">],</span> <span class="kc">true</span><span class="p">)</span> <span class="o">.</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">;</span>
+<span class="k">echo</span> <span class="s2">"Blob: "</span> <span class="o">.</span> <span class="nb">var_export</span><span class="p">(</span><span class="nv">$row</span><span class="p">[</span><span class="s1">'blob_value'</span><span class="p">],</span> <span class="kc">true</span><span class="p">)</span> <span class="o">.</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">;</span>
+<span class="k">echo</span> <span class="s2">"Uuid: "</span> <span class="o">.</span> <span class="nb">var_export</span><span class="p">(</span><span class="nv">$row</span><span class="p">[</span><span class="s1">'uuid_value'</span><span class="p">],</span> <span class="kc">true</span><span class="p">)</span> <span class="o">.</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">;</span>
+<span class="k">echo</span> <span class="s2">"Timeuuid: "</span> <span class="o">.</span> <span class="nb">var_export</span><span class="p">(</span><span class="nv">$row</span><span class="p">[</span><span class="s1">'timeuuid_value'</span><span class="p">],</span> <span class="kc">true</span><span class="p">)</span> <span class="o">.</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">;</span>
+<span class="k">echo</span> <span class="s2">"Inet: "</span> <span class="o">.</span> <span class="nb">var_export</span><span class="p">(</span><span class="nv">$row</span><span class="p">[</span><span class="s1">'inet_value'</span><span class="p">],</span> <span class="kc">true</span><span class="p">)</span> <span class="o">.</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">;</span>
+</code></pre>
 </dd>
 <dt>When </dt>
 <dd>it is executed</dd>
@@ -483,9 +485,9 @@ Inet: Cassandra\Inet::__set_state(array(
 </h2>
 <dl class="steps">
 <dt>Given </dt>
-<dd>the following schema:<span class="k">CREATE</span> <span class="k">KEYSPACE</span> <span class="n">simplex</span> <span class="k">WITH</span> <span class="n">replication</span> <span class="o">=</span> <span class="p">{</span>
-  <span class="s1">‘class’</span><span class="p">:</span> <span class="s1">‘SimpleStrategy’</span><span class="p">,</span>
-  <span class="s1">‘replication_factor’</span><span class="p">:</span> <span class="mi">1</span>
+<dd>the following schema:<pre class="highlight"><code><span class="k">CREATE</span> <span class="k">KEYSPACE</span> <span class="n">simplex</span> <span class="k">WITH</span> <span class="n">replication</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="s1">'class'</span><span class="p">:</span> <span class="s1">'SimpleStrategy'</span><span class="p">,</span>
+  <span class="s1">'replication_factor'</span><span class="p">:</span> <span class="mi">1</span>
 <span class="p">};</span>
 <span class="k">USE</span> <span class="n">simplex</span><span class="p">;</span>
 <span class="k">CREATE</span> <span class="k">TABLE</span> <span class="k">values</span> <span class="p">(</span>
@@ -493,26 +495,28 @@ Inet: Cassandra\Inet::__set_state(array(
   <span class="n">tinyint_value</span> <span class="n">tinyint</span><span class="p">,</span>
   <span class="n">smallint_value</span> <span class="n">smallint</span><span class="p">,</span>
 <span class="p">);</span>
+</code></pre>
 </dd>
 <dt>And </dt>
-<dd>the following example:<span class="cp">&lt;?php</span>
+<dd>the following example:<pre class="highlight"><code><span class="cp">&lt;?php</span>
 <span class="nv">$cluster</span>   <span class="o">=</span> <span class="nx">Cassandra</span><span class="o">::</span><span class="na">cluster</span><span class="p">()</span>
-               <span class="o">-&gt;</span><span class="na">withContactPoints</span><span class="p">(</span><span class="s1">‘127.0.0.1’</span><span class="p">)</span>
+               <span class="o">-&gt;</span><span class="na">withContactPoints</span><span class="p">(</span><span class="s1">'127.0.0.1'</span><span class="p">)</span>
                <span class="o">-&gt;</span><span class="na">build</span><span class="p">();</span>
-<span class="nv">$session</span>   <span class="o">=</span> <span class="nv">$cluster</span><span class="o">-&gt;</span><span class="na">connect</span><span class="p">(</span><span class="s2">“simplex”</span><span class="p">);</span>
+<span class="nv">$session</span>   <span class="o">=</span> <span class="nv">$cluster</span><span class="o">-&gt;</span><span class="na">connect</span><span class="p">(</span><span class="s2">"simplex"</span><span class="p">);</span>
 
-<span class="nv">$statement</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Cassandra\SimpleStatement</span><span class="p">(</span><span class="s2">“INSERT INTO values (id, tinyint_value, smallint_value) VALUES (?, ?, ?)”</span><span class="p">);</span>
-<span class="nv">$options</span>   <span class="o">=</span> <span class="k">new</span> <span class="nx">Cassandra\ExecutionOptions</span><span class="p">(</span><span class="k">array</span><span class="p">(</span><span class="s1">‘arguments’</span> <span class="o">=&gt;</span>
+<span class="nv">$statement</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Cassandra\SimpleStatement</span><span class="p">(</span><span class="s2">"INSERT INTO values (id, tinyint_value, smallint_value) VALUES (?, ?, ?)"</span><span class="p">);</span>
+<span class="nv">$options</span>   <span class="o">=</span> <span class="k">new</span> <span class="nx">Cassandra\ExecutionOptions</span><span class="p">(</span><span class="k">array</span><span class="p">(</span><span class="s1">'arguments'</span> <span class="o">=&gt;</span>
   <span class="k">array</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="k">new</span> <span class="nx">Cassandra\Tinyint</span><span class="p">(</span><span class="mi">127</span><span class="p">),</span> <span class="k">new</span> <span class="nx">Cassandra\Smallint</span><span class="p">(</span><span class="mi">32767</span><span class="p">))</span>
 <span class="p">));</span>
 <span class="nv">$session</span><span class="o">-&gt;</span><span class="na">execute</span><span class="p">(</span><span class="nv">$statement</span><span class="p">,</span> <span class="nv">$options</span><span class="p">);</span>
 
-<span class="nv">$statement</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Cassandra\SimpleStatement</span><span class="p">(</span><span class="s2">“SELECT * FROM values”</span><span class="p">);</span>
+<span class="nv">$statement</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Cassandra\SimpleStatement</span><span class="p">(</span><span class="s2">"SELECT * FROM values"</span><span class="p">);</span>
 <span class="nv">$result</span>    <span class="o">=</span> <span class="nv">$session</span><span class="o">-&gt;</span><span class="na">execute</span><span class="p">(</span><span class="nv">$statement</span><span class="p">);</span>
 <span class="nv">$row</span>       <span class="o">=</span> <span class="nv">$result</span><span class="o">-&gt;</span><span class="na">first</span><span class="p">();</span>
 
-<span class="k">echo</span> <span class="s2">“Tinyint: ”</span> <span class="o">.</span> <span class="nv">$row</span><span class="p">[</span><span class="s1">‘tinyint_value’</span><span class="p">]</span><span class="o">-&gt;</span><span class="na">value</span><span class="p">()</span> <span class="o">.</span> <span class="s2">“</span><span class="se">\n</span><span class="s2">”</span><span class="p">;</span>
-<span class="k">echo</span> <span class="s2">“Smallint: ”</span> <span class="o">.</span> <span class="nv">$row</span><span class="p">[</span><span class="s1">‘smallint_value’</span><span class="p">]</span><span class="o">-&gt;</span><span class="na">value</span><span class="p">()</span> <span class="o">.</span> <span class="s2">“</span><span class="se">\n</span><span class="s2">”</span><span class="p">;</span>
+<span class="k">echo</span> <span class="s2">"Tinyint: "</span> <span class="o">.</span> <span class="nv">$row</span><span class="p">[</span><span class="s1">'tinyint_value'</span><span class="p">]</span><span class="o">-&gt;</span><span class="na">value</span><span class="p">()</span> <span class="o">.</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">;</span>
+<span class="k">echo</span> <span class="s2">"Smallint: "</span> <span class="o">.</span> <span class="nv">$row</span><span class="p">[</span><span class="s1">'smallint_value'</span><span class="p">]</span><span class="o">-&gt;</span><span class="na">value</span><span class="p">()</span> <span class="o">.</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">;</span>
+</code></pre>
 </dd>
 <dt>When </dt>
 <dd>it is executed</dd>
@@ -527,32 +531,34 @@ Smallint: 32767
 </h2>
 <dl class="steps">
 <dt>Given </dt>
-<dd>the following schema:<span class="k">CREATE</span> <span class="k">KEYSPACE</span> <span class="n">simplex</span> <span class="k">WITH</span> <span class="n">replication</span> <span class="o">=</span> <span class="p">{</span>
-  <span class="s1">‘class’</span><span class="p">:</span> <span class="s1">‘SimpleStrategy’</span><span class="p">,</span>
-  <span class="s1">‘replication_factor’</span><span class="p">:</span> <span class="mi">1</span>
+<dd>the following schema:<pre class="highlight"><code><span class="k">CREATE</span> <span class="k">KEYSPACE</span> <span class="n">simplex</span> <span class="k">WITH</span> <span class="n">replication</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="s1">'class'</span><span class="p">:</span> <span class="s1">'SimpleStrategy'</span><span class="p">,</span>
+  <span class="s1">'replication_factor'</span><span class="p">:</span> <span class="mi">1</span>
 <span class="p">};</span>
 <span class="k">USE</span> <span class="n">simplex</span><span class="p">;</span>
 <span class="k">CREATE</span> <span class="k">TABLE</span> <span class="n">date_values</span> <span class="p">(</span>
   <span class="n">id</span> <span class="k">int</span> <span class="k">PRIMARY</span> <span class="k">KEY</span><span class="p">,</span>
   <span class="n">date_value</span> <span class="n">date</span>
 <span class="p">);</span>
+</code></pre>
 </dd>
 <dt>And </dt>
-<dd>the following example:<span class="cp">&lt;?php</span>
+<dd>the following example:<pre class="highlight"><code><span class="cp">&lt;?php</span>
 <span class="nv">$cluster</span>   <span class="o">=</span> <span class="nx">Cassandra</span><span class="o">::</span><span class="na">cluster</span><span class="p">()</span>
-               <span class="o">-&gt;</span><span class="na">withContactPoints</span><span class="p">(</span><span class="s1">‘127.0.0.1’</span><span class="p">)</span>
+               <span class="o">-&gt;</span><span class="na">withContactPoints</span><span class="p">(</span><span class="s1">'127.0.0.1'</span><span class="p">)</span>
                <span class="o">-&gt;</span><span class="na">build</span><span class="p">();</span>
-<span class="nv">$session</span>   <span class="o">=</span> <span class="nv">$cluster</span><span class="o">-&gt;</span><span class="na">connect</span><span class="p">(</span><span class="s2">“simplex”</span><span class="p">);</span>
+<span class="nv">$session</span>   <span class="o">=</span> <span class="nv">$cluster</span><span class="o">-&gt;</span><span class="na">connect</span><span class="p">(</span><span class="s2">"simplex"</span><span class="p">);</span>
 
-<span class="nv">$statement</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Cassandra\SimpleStatement</span><span class="p">(</span><span class="s2">“INSERT INTO date_values (id, date_value) VALUES (?, ?)”</span><span class="p">);</span>
-<span class="nv">$options</span>   <span class="o">=</span> <span class="k">new</span> <span class="nx">Cassandra\ExecutionOptions</span><span class="p">(</span><span class="k">array</span><span class="p">(</span><span class="s1">‘arguments’</span> <span class="o">=&gt;</span> <span class="k">array</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="k">new</span> <span class="nx">Cassandra\Date</span><span class="p">(</span><span class="mi">0</span><span class="p">))));</span>
+<span class="nv">$statement</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Cassandra\SimpleStatement</span><span class="p">(</span><span class="s2">"INSERT INTO date_values (id, date_value) VALUES (?, ?)"</span><span class="p">);</span>
+<span class="nv">$options</span>   <span class="o">=</span> <span class="k">new</span> <span class="nx">Cassandra\ExecutionOptions</span><span class="p">(</span><span class="k">array</span><span class="p">(</span><span class="s1">'arguments'</span> <span class="o">=&gt;</span> <span class="k">array</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="k">new</span> <span class="nx">Cassandra\Date</span><span class="p">(</span><span class="mi">0</span><span class="p">))));</span>
 <span class="nv">$session</span><span class="o">-&gt;</span><span class="na">execute</span><span class="p">(</span><span class="nv">$statement</span><span class="p">,</span> <span class="nv">$options</span><span class="p">);</span>
 
-<span class="nv">$statement</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Cassandra\SimpleStatement</span><span class="p">(</span><span class="s2">“SELECT * FROM date_values”</span><span class="p">);</span>
+<span class="nv">$statement</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Cassandra\SimpleStatement</span><span class="p">(</span><span class="s2">"SELECT * FROM date_values"</span><span class="p">);</span>
 <span class="nv">$result</span>    <span class="o">=</span> <span class="nv">$session</span><span class="o">-&gt;</span><span class="na">execute</span><span class="p">(</span><span class="nv">$statement</span><span class="p">);</span>
 <span class="nv">$row</span>       <span class="o">=</span> <span class="nv">$result</span><span class="o">-&gt;</span><span class="na">first</span><span class="p">();</span>
 
-<span class="k">echo</span> <span class="s2">“Date: ”</span> <span class="o">.</span> <span class="nv">$row</span><span class="p">[</span><span class="s1">‘date_value’</span><span class="p">]</span><span class="o">-&gt;</span><span class="na">toDateTime</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">format</span><span class="p">(</span><span class="s2">“Y-m-d H:i:s”</span><span class="p">)</span> <span class="o">.</span> <span class="s2">“</span><span class="se">\n</span><span class="s2">”</span><span class="p">;</span>
+<span class="k">echo</span> <span class="s2">"Date: "</span> <span class="o">.</span> <span class="nv">$row</span><span class="p">[</span><span class="s1">'date_value'</span><span class="p">]</span><span class="o">-&gt;</span><span class="na">toDateTime</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">format</span><span class="p">(</span><span class="s2">"Y-m-d H:i:s"</span><span class="p">)</span> <span class="o">.</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">;</span>
+</code></pre>
 </dd>
 <dt>When </dt>
 <dd>it is executed</dd>
@@ -566,33 +572,35 @@ Smallint: 32767
 </h2>
 <dl class="steps">
 <dt>Given </dt>
-<dd>the following schema:<span class="k">CREATE</span> <span class="k">KEYSPACE</span> <span class="n">simplex</span> <span class="k">WITH</span> <span class="n">replication</span> <span class="o">=</span> <span class="p">{</span>
-  <span class="s1">‘class’</span><span class="p">:</span> <span class="s1">‘SimpleStrategy’</span><span class="p">,</span>
-  <span class="s1">‘replication_factor’</span><span class="p">:</span> <span class="mi">1</span>
+<dd>the following schema:<pre class="highlight"><code><span class="k">CREATE</span> <span class="k">KEYSPACE</span> <span class="n">simplex</span> <span class="k">WITH</span> <span class="n">replication</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="s1">'class'</span><span class="p">:</span> <span class="s1">'SimpleStrategy'</span><span class="p">,</span>
+  <span class="s1">'replication_factor'</span><span class="p">:</span> <span class="mi">1</span>
 <span class="p">};</span>
 <span class="k">USE</span> <span class="n">simplex</span><span class="p">;</span>
 <span class="k">CREATE</span> <span class="k">TABLE</span> <span class="n">time_values</span> <span class="p">(</span>
   <span class="n">id</span> <span class="k">int</span> <span class="k">PRIMARY</span> <span class="k">KEY</span><span class="p">,</span>
   <span class="n">time_value</span> <span class="n">time</span>
 <span class="p">);</span>
+</code></pre>
 </dd>
 <dt>And </dt>
-<dd>the following example:<span class="cp">&lt;?php</span>
+<dd>the following example:<pre class="highlight"><code><span class="cp">&lt;?php</span>
 <span class="nv">$cluster</span>   <span class="o">=</span> <span class="nx">Cassandra</span><span class="o">::</span><span class="na">cluster</span><span class="p">()</span>
-               <span class="o">-&gt;</span><span class="na">withContactPoints</span><span class="p">(</span><span class="s1">‘127.0.0.1’</span><span class="p">)</span>
+               <span class="o">-&gt;</span><span class="na">withContactPoints</span><span class="p">(</span><span class="s1">'127.0.0.1'</span><span class="p">)</span>
                <span class="o">-&gt;</span><span class="na">build</span><span class="p">();</span>
-<span class="nv">$session</span>   <span class="o">=</span> <span class="nv">$cluster</span><span class="o">-&gt;</span><span class="na">connect</span><span class="p">(</span><span class="s2">“simplex”</span><span class="p">);</span>
+<span class="nv">$session</span>   <span class="o">=</span> <span class="nv">$cluster</span><span class="o">-&gt;</span><span class="na">connect</span><span class="p">(</span><span class="s2">"simplex"</span><span class="p">);</span>
 
-<span class="nv">$statement</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Cassandra\SimpleStatement</span><span class="p">(</span><span class="s2">“INSERT INTO time_values (id, time_value) VALUES (?, ?)”</span><span class="p">);</span>
-<span class="nv">$datetime</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">\DateTime</span><span class="p">(</span><span class="s2">“1970-01-01T00:00:01+0000”</span><span class="p">);</span>
-<span class="nv">$options</span>   <span class="o">=</span> <span class="k">new</span> <span class="nx">Cassandra\ExecutionOptions</span><span class="p">(</span><span class="k">array</span><span class="p">(</span><span class="s1">‘arguments’</span> <span class="o">=&gt;</span> <span class="k">array</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nx">Cassandra\Time</span><span class="o">::</span><span class="na">fromDateTime</span><span class="p">(</span><span class="nv">$datetime</span><span class="p">))));</span>
+<span class="nv">$statement</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Cassandra\SimpleStatement</span><span class="p">(</span><span class="s2">"INSERT INTO time_values (id, time_value) VALUES (?, ?)"</span><span class="p">);</span>
+<span class="nv">$datetime</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">\DateTime</span><span class="p">(</span><span class="s2">"1970-01-01T00:00:01+0000"</span><span class="p">);</span>
+<span class="nv">$options</span>   <span class="o">=</span> <span class="k">new</span> <span class="nx">Cassandra\ExecutionOptions</span><span class="p">(</span><span class="k">array</span><span class="p">(</span><span class="s1">'arguments'</span> <span class="o">=&gt;</span> <span class="k">array</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nx">Cassandra\Time</span><span class="o">::</span><span class="na">fromDateTime</span><span class="p">(</span><span class="nv">$datetime</span><span class="p">))));</span>
 <span class="nv">$session</span><span class="o">-&gt;</span><span class="na">execute</span><span class="p">(</span><span class="nv">$statement</span><span class="p">,</span> <span class="nv">$options</span><span class="p">);</span>
 
-<span class="nv">$statement</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Cassandra\SimpleStatement</span><span class="p">(</span><span class="s2">“SELECT * FROM time_values”</span><span class="p">);</span>
+<span class="nv">$statement</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Cassandra\SimpleStatement</span><span class="p">(</span><span class="s2">"SELECT * FROM time_values"</span><span class="p">);</span>
 <span class="nv">$result</span>    <span class="o">=</span> <span class="nv">$session</span><span class="o">-&gt;</span><span class="na">execute</span><span class="p">(</span><span class="nv">$statement</span><span class="p">);</span>
 <span class="nv">$row</span>       <span class="o">=</span> <span class="nv">$result</span><span class="o">-&gt;</span><span class="na">first</span><span class="p">();</span>
 
-<span class="k">echo</span> <span class="s2">“Time: ”</span> <span class="o">.</span> <span class="nv">$row</span><span class="p">[</span><span class="s1">‘time_value’</span><span class="p">]</span> <span class="o">.</span> <span class="s2">“</span><span class="se">\n</span><span class="s2">”</span><span class="p">;</span>
+<span class="k">echo</span> <span class="s2">"Time: "</span> <span class="o">.</span> <span class="nv">$row</span><span class="p">[</span><span class="s1">'time_value'</span><span class="p">]</span> <span class="o">.</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">;</span>
+</code></pre>
 </dd>
 <dt>When </dt>
 <dd>it is executed</dd>

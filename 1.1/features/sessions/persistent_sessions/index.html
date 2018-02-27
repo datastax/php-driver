@@ -338,9 +338,10 @@
 <dt>Given </dt>
 <dd>a running Cassandra cluster with 2 nodes</dd>
 <dt>And </dt>
-<dd>a file named &#8220;status.php&#8221; with:<span class="cp">&lt;?php</span>
+<dd>a file named &#8220;status.php&#8221; with:<pre class="highlight"><code><span class="cp">&lt;?php</span>
 
 <span class="k">echo</span> <span class="nb">phpinfo</span><span class="p">();</span>
+</code></pre>
 </dd>
 </dl>
 <h2 id="no-sessions-have-been-created" class="target">No sessions have been created<a class="anchor" href="#no-sessions-have-been-created" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
@@ -355,13 +356,14 @@
 </h2>
 <dl class="steps">
 <dt>Given </dt>
-<dd>a file named &#8220;connect.php&#8221; with:<span class="cp">&lt;?php</span>
+<dd>a file named &#8220;connect.php&#8221; with:<pre class="highlight"><code><span class="cp">&lt;?php</span>
 
 <span class="nv">$cluster</span> <span class="o">=</span> <span class="nx">Cassandra</span><span class="o">::</span><span class="na">cluster</span><span class="p">()</span>
-                   <span class="o">-&gt;</span><span class="na">withContactPoints</span><span class="p">(</span><span class="s1">‘127.0.0.1’</span><span class="p">)</span>
+                   <span class="o">-&gt;</span><span class="na">withContactPoints</span><span class="p">(</span><span class="s1">'127.0.0.1'</span><span class="p">)</span>
                    <span class="o">-&gt;</span><span class="na">withPersistentSessions</span><span class="p">(</span><span class="kc">true</span><span class="p">)</span>
                    <span class="o">-&gt;</span><span class="na">build</span><span class="p">();</span>
 <span class="nv">$session</span> <span class="o">=</span> <span class="nv">$cluster</span><span class="o">-&gt;</span><span class="na">connect</span><span class="p">();</span>
+</code></pre>
 </dd>
 <dt>When </dt>
 <dd>I go to &#8220;/connect.php&#8221; 5 times</dd>
@@ -374,22 +376,24 @@
 </h2>
 <dl class="steps">
 <dt>Given </dt>
-<dd>a file named &#8220;connect.php&#8221; with:<span class="cp">&lt;?php</span>
+<dd>a file named &#8220;connect.php&#8221; with:<pre class="highlight"><code><span class="cp">&lt;?php</span>
 
 <span class="nv">$cluster</span> <span class="o">=</span> <span class="nx">Cassandra</span><span class="o">::</span><span class="na">cluster</span><span class="p">()</span>
-                   <span class="o">-&gt;</span><span class="na">withContactPoints</span><span class="p">(</span><span class="s1">‘127.0.0.1’</span><span class="p">)</span>
+                   <span class="o">-&gt;</span><span class="na">withContactPoints</span><span class="p">(</span><span class="s1">'127.0.0.1'</span><span class="p">)</span>
                    <span class="o">-&gt;</span><span class="na">withPersistentSessions</span><span class="p">(</span><span class="kc">true</span><span class="p">)</span>
                    <span class="o">-&gt;</span><span class="na">build</span><span class="p">();</span>
 <span class="nv">$session</span> <span class="o">=</span> <span class="nv">$cluster</span><span class="o">-&gt;</span><span class="na">connect</span><span class="p">();</span>
+</code></pre>
 </dd>
 <dt>And </dt>
-<dd>a file named &#8220;connect_system.php&#8221; with:<span class="cp">&lt;?php</span>
+<dd>a file named &#8220;connect_system.php&#8221; with:<pre class="highlight"><code><span class="cp">&lt;?php</span>
 
 <span class="nv">$cluster</span> <span class="o">=</span> <span class="nx">Cassandra</span><span class="o">::</span><span class="na">cluster</span><span class="p">()</span>
-                   <span class="o">-&gt;</span><span class="na">withContactPoints</span><span class="p">(</span><span class="s1">‘127.0.0.1’</span><span class="p">)</span>
+                   <span class="o">-&gt;</span><span class="na">withContactPoints</span><span class="p">(</span><span class="s1">'127.0.0.1'</span><span class="p">)</span>
                    <span class="o">-&gt;</span><span class="na">withPersistentSessions</span><span class="p">(</span><span class="kc">true</span><span class="p">)</span>
                    <span class="o">-&gt;</span><span class="na">build</span><span class="p">();</span>
-<span class="nv">$session</span> <span class="o">=</span> <span class="nv">$cluster</span><span class="o">-&gt;</span><span class="na">connect</span><span class="p">(</span><span class="s2">“system”</span><span class="p">);</span>
+<span class="nv">$session</span> <span class="o">=</span> <span class="nv">$cluster</span><span class="o">-&gt;</span><span class="na">connect</span><span class="p">(</span><span class="s2">"system"</span><span class="p">);</span>
+</code></pre>
 </dd>
 <dt>When </dt>
 <dd>I go to &#8220;/connect.php&#8221;</dd>
@@ -404,13 +408,14 @@
 </h2>
 <dl class="steps">
 <dt>Given </dt>
-<dd>a file named &#8220;connect.php&#8221; with:<span class="cp">&lt;?php</span>
+<dd>a file named &#8220;connect.php&#8221; with:<pre class="highlight"><code><span class="cp">&lt;?php</span>
 
 <span class="nv">$cluster</span> <span class="o">=</span> <span class="nx">Cassandra</span><span class="o">::</span><span class="na">cluster</span><span class="p">()</span>
-                   <span class="o">-&gt;</span><span class="na">withContactPoints</span><span class="p">(</span><span class="s1">‘127.0.0.1’</span><span class="p">)</span>
+                   <span class="o">-&gt;</span><span class="na">withContactPoints</span><span class="p">(</span><span class="s1">'127.0.0.1'</span><span class="p">)</span>
                    <span class="o">-&gt;</span><span class="na">withPersistentSessions</span><span class="p">(</span><span class="kc">false</span><span class="p">)</span>
                    <span class="o">-&gt;</span><span class="na">build</span><span class="p">();</span>
 <span class="nv">$session</span> <span class="o">=</span> <span class="nv">$cluster</span><span class="o">-&gt;</span><span class="na">connect</span><span class="p">();</span>
+</code></pre>
 </dd>
 <dt>When </dt>
 <dd>I go to &#8220;/connect.php&#8221;</dd>

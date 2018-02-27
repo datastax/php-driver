@@ -233,15 +233,6 @@
   </li>
   
   
-  <li>
-    <a href="../duration_collections/">
-      Duration <small>feature</small>
-      
-    </a>
-    
-  </li>
-  
-  
   <li class="active">
     <a href="./" class="current">
       Duration <small>feature</small>
@@ -251,6 +242,15 @@
   
 </ul>
 
+  </li>
+  
+  
+  <li>
+    <a href="../duration_collections/">
+      Duration <small>feature</small>
+      
+    </a>
+    
   </li>
   
   
@@ -361,12 +361,13 @@
 </h2>
 <dl class="steps">
 <dt>Given </dt>
-<dd>the following schema:<span class="k">CREATE</span> <span class="k">KEYSPACE</span> <span class="n">simplex</span> <span class="k">WITH</span> <span class="n">replication</span> <span class="o">=</span> <span class="p">{</span>
-  <span class="s1">‘class’</span><span class="p">:</span> <span class="s1">‘SimpleStrategy’</span><span class="p">,</span>
-  <span class="s1">‘replication_factor’</span><span class="p">:</span> <span class="mi">1</span>
+<dd>the following schema:<pre class="highlight"><code><span class="k">CREATE</span> <span class="k">KEYSPACE</span> <span class="n">simplex</span> <span class="k">WITH</span> <span class="n">replication</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="s1">'class'</span><span class="p">:</span> <span class="s1">'SimpleStrategy'</span><span class="p">,</span>
+  <span class="s1">'replication_factor'</span><span class="p">:</span> <span class="mi">1</span>
 <span class="p">};</span>
 <span class="k">USE</span> <span class="n">simplex</span><span class="p">;</span>
 <span class="k">CREATE</span> <span class="k">TABLE</span> <span class="n">duration</span> <span class="p">(</span><span class="n">k</span> <span class="k">text</span> <span class="k">PRIMARY</span> <span class="k">KEY</span><span class="p">,</span> <span class="n">d</span> <span class="n">duration</span><span class="p">);</span>
+</code></pre>
 </dd>
 <dt>And </dt>
 <dd>the following example:<pre><code>&lt;?php

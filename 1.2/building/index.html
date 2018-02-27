@@ -169,22 +169,25 @@ you’ll find installation instructions for <a href="#linuxos-x">Linux/OS X</a> 
 
 <h4 id="homebrew" class="target">homebrew<a class="anchor" href="#homebrew" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
 </h4>
-brew install libuv cmake gmp git
+<pre class="highlight"><code>brew install libuv cmake gmp git
+</code></pre>
 <h4 id="apt-get" class="target">apt-get<a class="anchor" href="#apt-get" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
 </h4>
-<span class="nb">sudo </span>apt-get install g++ make cmake libuv-dev libssl-dev libgmp-dev php5 php5-dev openssl libpcre3-dev git
+<pre class="highlight"><code>sudo apt-get install g++ make cmake libuv-dev libssl-dev libgmp-dev php5 php5-dev openssl libpcre3-dev git
+</code></pre>
 <h4 id="yum" class="target">yum<a class="anchor" href="#yum" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
 </h4>
-<span class="nb">sudo </span>yum install automake cmake gcc gcc-c++ git libtool openssl-devel wget gmp gmp-devel boost php-devel pcre-devel git
+<pre class="highlight"><code>sudo yum install automake cmake gcc gcc-c++ git libtool openssl-devel wget gmp gmp-devel boost php-devel pcre-devel git
 <span class="nb">pushd</span> /tmp
 wget http://dist.libuv.org/dist/v1.8.0/libuv-v1.8.0.tar.gz
-<span class="nb">tar </span>xzf libuv-v1.8.0.tar.gz
+tar xzf libuv-v1.8.0.tar.gz
 <span class="nb">pushd </span>libuv-v1.8.0
 sh autogen.sh
 ./configure
-<span class="nb">sudo </span>make install
+sudo make install
 <span class="nb">popd
 popd</span>
+</code></pre>
 <p><a href="http://datastax.github.io/cpp-driver/topics/building/">Refer to the official documentation</a>
 for the DataStax C/C++ Driver for Apache Cassandra in case you’re having issues
 installing any of its dependencies.</p>
@@ -198,26 +201,30 @@ installing any of its dependencies.</p>
 <p>The PHP driver is published to the official PECL repository, in order to install it,
 you have to first <a href="http://datastax.github.io/cpp-driver/topics/building/">install the C/C++ driver v2.2.2+</a>
 and then run the following command.</p>
-pecl install cassandra
+<pre class="highlight"><code>pecl install cassandra
+</code></pre>
 <p>You can also use PECL to install the driver from source by specifying the
 provided <a href="package.xml">package.xml</a> file path as the argument to <code>pecl install</code> command.</p>
-git clone https://github.com/datastax/php-driver.git
+<pre class="highlight"><code>git clone https://github.com/datastax/php-driver.git
 <span class="nb">cd </span>php-driver
 pecl install ext/package.xml
+</code></pre>
 <h4 id="installing-with-submoduled-statically-compiled-version-of-the-c-c-driver" class="target">Installing with submoduled, statically compiled version of the C/C++ driver<a class="anchor" href="#installing-with-submoduled-statically-compiled-version-of-the-c-c-driver" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
 </h4>
-git clone https://github.com/datastax/php-driver.git
+<pre class="highlight"><code>git clone https://github.com/datastax/php-driver.git
 <span class="nb">cd </span>php-driver
-git submodule update <span class="nt">–init</span>
+git submodule update --init
 <span class="nb">cd </span>ext
 ./install.sh
+</code></pre>
 <p><strong>Note</strong> <a href="install.sh#L25-L35">The install.sh script</a> will also compile and
 statically link into the extension a submoduled version of the DataStax C/C++
 driver for Apache Cassandra. To use a version of cpp driver that you already
 have on your system, run <code>phpize</code>, <code>./configure</code> and <code>make install</code>.</p>
 
 <p>Don’t forget to enable the PHP extension after running <a href="install.sh">install.sh</a>:</p>
-<span class="nb">echo</span> <span class="nt">-e</span> <span class="s2">“; DataStax PHP Driver</span><span class="se">\n</span><span class="s2">extension=cassandra.so”</span> <span class="o">&gt;&gt;</span> <span class="sb">`</span>php <span class="nt">–ini</span> | <span class="nb">grep</span> <span class="s2">“Loaded Configuration”</span> | sed <span class="nt">-e</span> <span class="s2">“s|.*:</span><span class="se">\s</span><span class="s2">*||”</span><span class="sb">`</span>
+<pre class="highlight"><code><span class="nb">echo</span> -e <span class="s2">"; DataStax PHP Driver</span><span class="se">\n</span><span class="s2">extension=cassandra.so"</span> &gt;&gt; <span class="sb">`</span>php --ini | grep <span class="s2">"Loaded Configuration"</span> | sed -e <span class="s2">"s|.*:</span><span class="se">\s</span><span class="s2">*||"</span><span class="sb">`</span>
+</code></pre>
 <h2 id="windows" class="target">Windows<a class="anchor" href="#windows" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
 </h2>
 

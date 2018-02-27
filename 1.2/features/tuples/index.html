@@ -334,9 +334,9 @@
 </h2>
 <dl class="steps">
 <dt>Given </dt>
-<dd>the following schema:<span class="k">CREATE</span> <span class="k">KEYSPACE</span> <span class="n">simplex</span> <span class="k">WITH</span> <span class="n">replication</span> <span class="o">=</span> <span class="p">{</span>
-  <span class="s1">‘class’</span><span class="p">:</span> <span class="s1">‘SimpleStrategy’</span><span class="p">,</span>
-  <span class="s1">‘replication_factor’</span><span class="p">:</span> <span class="mi">1</span>
+<dd>the following schema:<pre class="highlight"><code><span class="k">CREATE</span> <span class="k">KEYSPACE</span> <span class="n">simplex</span> <span class="k">WITH</span> <span class="n">replication</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="s1">'class'</span><span class="p">:</span> <span class="s1">'SimpleStrategy'</span><span class="p">,</span>
+  <span class="s1">'replication_factor'</span><span class="p">:</span> <span class="mi">1</span>
 <span class="p">};</span>
 <span class="k">USE</span> <span class="n">simplex</span><span class="p">;</span>
 <span class="k">CREATE</span> <span class="k">TABLE</span> <span class="k">users</span> <span class="p">(</span>
@@ -344,50 +344,52 @@
   <span class="n">name</span> <span class="k">text</span><span class="p">,</span>
   <span class="n">address</span> <span class="n">tuple</span><span class="o">&lt;</span><span class="k">text</span><span class="p">,</span> <span class="k">text</span><span class="p">,</span> <span class="k">int</span><span class="o">&gt;</span>
 <span class="p">);</span>
+</code></pre>
 </dd>
 <dt>And </dt>
-<dd>the following example:<span class="cp">&lt;?php</span>
+<dd>the following example:<pre class="highlight"><code><span class="cp">&lt;?php</span>
 <span class="nv">$cluster</span>   <span class="o">=</span> <span class="nx">Cassandra</span><span class="o">::</span><span class="na">cluster</span><span class="p">()</span>
-               <span class="o">-&gt;</span><span class="na">withContactPoints</span><span class="p">(</span><span class="s1">‘127.0.0.1’</span><span class="p">)</span>
+               <span class="o">-&gt;</span><span class="na">withContactPoints</span><span class="p">(</span><span class="s1">'127.0.0.1'</span><span class="p">)</span>
                <span class="o">-&gt;</span><span class="na">build</span><span class="p">();</span>
-<span class="nv">$session</span>   <span class="o">=</span> <span class="nv">$cluster</span><span class="o">-&gt;</span><span class="na">connect</span><span class="p">(</span><span class="s2">“simplex”</span><span class="p">);</span>
+<span class="nv">$session</span>   <span class="o">=</span> <span class="nv">$cluster</span><span class="o">-&gt;</span><span class="na">connect</span><span class="p">(</span><span class="s2">"simplex"</span><span class="p">);</span>
 
 <span class="nv">$statement</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Cassandra\SimpleStatement</span><span class="p">(</span>
-                <span class="s2">“INSERT INTO users (id, name, address) VALUES (?, ?, ?)”</span><span class="p">);</span>
+                <span class="s2">"INSERT INTO users (id, name, address) VALUES (?, ?, ?)"</span><span class="p">);</span>
 
 <span class="nv">$tupleType</span> <span class="o">=</span> <span class="nx">Cassandra\Type</span><span class="o">::</span><span class="na">tuple</span><span class="p">(</span><span class="nx">Cassandra\Type</span><span class="o">::</span><span class="na">text</span><span class="p">(),</span> <span class="nx">Cassandra\Type</span><span class="o">::</span><span class="na">text</span><span class="p">(),</span> <span class="nx">Cassandra\Type</span><span class="o">::</span><span class="na">int</span><span class="p">());</span>
 
 <span class="nv">$users</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span>
     <span class="k">array</span><span class="p">(</span>
-        <span class="k">new</span> <span class="nx">Cassandra\Uuid</span><span class="p">(</span><span class="s1">‘56357d2b-4586-433c-ad24-afa9918bc415’</span><span class="p">),</span>
-        <span class="s1">‘Charles Wallace’</span><span class="p">,</span>
-        <span class="nv">$tupleType</span><span class="o">-&gt;</span><span class="na">create</span><span class="p">(</span><span class="s1">‘Phoenix’</span><span class="p">,</span> <span class="s1">‘9042 Cassandra Lane’</span><span class="p">,</span> <span class="mi">85023</span><span class="p">)</span>
+        <span class="k">new</span> <span class="nx">Cassandra\Uuid</span><span class="p">(</span><span class="s1">'56357d2b-4586-433c-ad24-afa9918bc415'</span><span class="p">),</span>
+        <span class="s1">'Charles Wallace'</span><span class="p">,</span>
+        <span class="nv">$tupleType</span><span class="o">-&gt;</span><span class="na">create</span><span class="p">(</span><span class="s1">'Phoenix'</span><span class="p">,</span> <span class="s1">'9042 Cassandra Lane'</span><span class="p">,</span> <span class="mi">85023</span><span class="p">)</span>
     <span class="p">),</span>
     <span class="k">array</span><span class="p">(</span>
-        <span class="k">new</span> <span class="nx">Cassandra\Uuid</span><span class="p">(</span><span class="s1">‘ce359590-8528-4682-a9f3-add53fc9aa09’</span><span class="p">),</span>
-        <span class="s1">‘Kevin Malone’</span><span class="p">,</span>
-        <span class="nv">$tupleType</span><span class="o">-&gt;</span><span class="na">create</span><span class="p">(</span><span class="s1">‘New York’</span><span class="p">,</span> <span class="s1">‘1000 Database Road’</span><span class="p">,</span> <span class="mi">10025</span><span class="p">)</span>
+        <span class="k">new</span> <span class="nx">Cassandra\Uuid</span><span class="p">(</span><span class="s1">'ce359590-8528-4682-a9f3-add53fc9aa09'</span><span class="p">),</span>
+        <span class="s1">'Kevin Malone'</span><span class="p">,</span>
+        <span class="nv">$tupleType</span><span class="o">-&gt;</span><span class="na">create</span><span class="p">(</span><span class="s1">'New York'</span><span class="p">,</span> <span class="s1">'1000 Database Road'</span><span class="p">,</span> <span class="mi">10025</span><span class="p">)</span>
     <span class="p">),</span>
     <span class="k">array</span><span class="p">(</span>
-        <span class="k">new</span> <span class="nx">Cassandra\Uuid</span><span class="p">(</span><span class="s1">‘7d64dca1-dd4d-4f3c-bec4-6a88fa082a13’</span><span class="p">),</span>
-        <span class="s1">‘Michael Scott’</span><span class="p">,</span>
-        <span class="nv">$tupleType</span><span class="o">-&gt;</span><span class="na">create</span><span class="p">(</span><span class="s1">‘Santa Clara’</span><span class="p">,</span> <span class="s1">‘20000 Log Ave’</span><span class="p">,</span> <span class="mi">95054</span><span class="p">)</span>
+        <span class="k">new</span> <span class="nx">Cassandra\Uuid</span><span class="p">(</span><span class="s1">'7d64dca1-dd4d-4f3c-bec4-6a88fa082a13'</span><span class="p">),</span>
+        <span class="s1">'Michael Scott'</span><span class="p">,</span>
+        <span class="nv">$tupleType</span><span class="o">-&gt;</span><span class="na">create</span><span class="p">(</span><span class="s1">'Santa Clara'</span><span class="p">,</span> <span class="s1">'20000 Log Ave'</span><span class="p">,</span> <span class="mi">95054</span><span class="p">)</span>
     <span class="p">)</span>
 <span class="p">);</span>
 
 <span class="k">foreach</span> <span class="p">(</span><span class="nv">$users</span> <span class="k">as</span> <span class="nv">$user</span><span class="p">)</span> <span class="p">{</span>
-  <span class="nv">$options</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Cassandra\ExecutionOptions</span><span class="p">(</span><span class="k">array</span><span class="p">(</span><span class="s1">‘arguments’</span> <span class="o">=&gt;</span> <span class="nv">$user</span><span class="p">));</span>
+  <span class="nv">$options</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Cassandra\ExecutionOptions</span><span class="p">(</span><span class="k">array</span><span class="p">(</span><span class="s1">'arguments'</span> <span class="o">=&gt;</span> <span class="nv">$user</span><span class="p">));</span>
   <span class="nv">$session</span><span class="o">-&gt;</span><span class="na">execute</span><span class="p">(</span><span class="nv">$statement</span><span class="p">,</span> <span class="nv">$options</span><span class="p">);</span>
 <span class="p">}</span>
 
-<span class="nv">$statement</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Cassandra\SimpleStatement</span><span class="p">(</span><span class="s2">“SELECT * FROM users”</span><span class="p">);</span>
+<span class="nv">$statement</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Cassandra\SimpleStatement</span><span class="p">(</span><span class="s2">"SELECT * FROM users"</span><span class="p">);</span>
 <span class="nv">$result</span>    <span class="o">=</span> <span class="nv">$session</span><span class="o">-&gt;</span><span class="na">execute</span><span class="p">(</span><span class="nv">$statement</span><span class="p">);</span>
 
 <span class="k">foreach</span> <span class="p">(</span><span class="nv">$result</span> <span class="k">as</span> <span class="nv">$row</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">print</span> <span class="s1">‘ID: ’</span> <span class="o">.</span> <span class="nv">$row</span><span class="p">[</span><span class="s1">‘id’</span><span class="p">]</span> <span class="o">.</span> <span class="s2">“</span><span class="se">\n</span><span class="s2">”</span><span class="p">;</span>
-    <span class="k">print</span> <span class="s1">‘Name: ’</span> <span class="o">.</span> <span class="nv">$row</span><span class="p">[</span><span class="s1">‘name’</span><span class="p">]</span> <span class="o">.</span> <span class="s2">“</span><span class="se">\n</span><span class="s2">”</span><span class="p">;</span>
-    <span class="k">print</span> <span class="s1">‘Address: ’</span> <span class="o">.</span> <span class="nb">var_export</span><span class="p">(</span><span class="nv">$row</span><span class="p">[</span><span class="s1">‘address’</span><span class="p">],</span> <span class="kc">true</span><span class="p">)</span><span class="o">.</span> <span class="s2">“</span><span class="se">\n</span><span class="s2">”</span><span class="p">;</span>
+    <span class="k">print</span> <span class="s1">'ID: '</span> <span class="o">.</span> <span class="nv">$row</span><span class="p">[</span><span class="s1">'id'</span><span class="p">]</span> <span class="o">.</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">;</span>
+    <span class="k">print</span> <span class="s1">'Name: '</span> <span class="o">.</span> <span class="nv">$row</span><span class="p">[</span><span class="s1">'name'</span><span class="p">]</span> <span class="o">.</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">;</span>
+    <span class="k">print</span> <span class="s1">'Address: '</span> <span class="o">.</span> <span class="nb">var_export</span><span class="p">(</span><span class="nv">$row</span><span class="p">[</span><span class="s1">'address'</span><span class="p">],</span> <span class="kc">true</span><span class="p">)</span><span class="o">.</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">;</span>
 <span class="p">}</span>
+</code></pre>
 </dd>
 <dt>When </dt>
 <dd>it is executed</dd>

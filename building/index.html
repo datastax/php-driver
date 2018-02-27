@@ -222,55 +222,66 @@ and El Capitan), Mac OS 10.12 (Sierra), and Ubuntu 14.04/16.04 LTS.</p>
 <p>CentOS/RHEL 6 ships with PHP v5.3.x as the default version of PHP; which is not
 supported. A supported version of PHP can be installed by performing the
 following:</p>
-yum install epel-release
-rpm <span class="nt">-Uvh</span> https://mirror.webtatic.com/yum/el6/latest.rpm
+<pre class="highlight"><code>yum install epel-release
+rpm -Uvh https://mirror.webtatic.com/yum/el6/latest.rpm
+</code></pre>
 <p>Once completed PHP v5.6.x, v7.0.x, or v7.1.x can be installed:</p>
-yum install automake cmake gcc-c++ git libtool pcre-devel php71w-devel php71w-pear
+<pre class="highlight"><code>yum install automake cmake gcc-c++ git libtool pcre-devel php71w-devel php71w-pear
+</code></pre>
 <h5 id="centos-rhel-7-yum" class="target">CentOS/RHEL 7 (Yum)<a class="anchor" href="#centos-rhel-7-yum" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
 </h5>
 
 <p>CentOS/RHEL 7 ships with PHP v5.4.x as the default version of PHP; which is not
 supported. A supported version of PHP can be installed by performing the
 following:</p>
-yum install epel-release
-rpm <span class="nt">-Uvh</span> https://mirror.webtatic.com/yum/el7/latest.rpm
+<pre class="highlight"><code>yum install epel-release
+rpm -Uvh https://mirror.webtatic.com/yum/el7/latest.rpm
+</code></pre>
 <p>Once completed PHP v5.6.x, v7.0.x, or v7.1.x can be installed:</p>
-yum install automake cmake gcc-c++ git libtool pcre-devel php71w-devel php71w-pear
+<pre class="highlight"><code>yum install automake cmake gcc-c++ git libtool pcre-devel php71w-devel php71w-pear
+</code></pre>
 <h5 id="ubuntu-14-04-apt" class="target">Ubuntu 14.04 (APT)<a class="anchor" href="#ubuntu-14-04-apt" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
 </h5>
 
 <p>Ubuntu 14.04 LTS (Debian 8) ships with PHP v5.5.x as the default version of
 PHP; which is not supported. A supported version of PHP can be installed by
 performing the following:</p>
-add-apt-repository ppa:ondrej/php
+<pre class="highlight"><code>add-apt-repository ppa:ondrej/php
 apt-get update
+</code></pre>
 <p>Once completed PHP v5.6.x, v7.0.x, or v7.1.x can be installed:</p>
-apt-get install build-essential cmake git libpcre3-dev php7.1-dev
+<pre class="highlight"><code>apt-get install build-essential cmake git libpcre3-dev php7.1-dev
+</code></pre>
 <h5 id="ubuntu-16-04-apt" class="target">Ubuntu 16.04 (APT)<a class="anchor" href="#ubuntu-16-04-apt" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
 </h5>
 
 <p>Starting with Ubuntu 16.04 LTS (Debian 9) PHP v5.5.x has been removed as the
 default version of PHP and has been replaced with either PHP v7.0.x or PHP
 v7.1.x:</p>
-apt-get install build-essential cmake git libpcre3-dev php7.1-dev
+<pre class="highlight"><code>apt-get install build-essential cmake git libpcre3-dev php7.1-dev
+</code></pre>
 <h5 id="mac-os-brew" class="target">Mac OS (Brew)<a class="anchor" href="#mac-os-brew" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
 </h5>
-brew update
+<pre class="highlight"><code>brew update
 brew upgrade
 brew tap homebrew/homebrew-php
-brew install autoconf automake libtool php71 <span class="nt">–with-pear</span>
+brew install autoconf automake libtool php71 --with-pear
+</code></pre>
 <h4 id="gnu-multiple-precision-arithmetic" class="target">GNU Multiple Precision Arithmetic<a class="anchor" href="#gnu-multiple-precision-arithmetic" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
 </h4>
 
 <h5 id="centos-rhel-yum" class="target">CentOS/RHEL (Yum)<a class="anchor" href="#centos-rhel-yum" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
 </h5>
-yum install gmp-devel
+<pre class="highlight"><code>yum install gmp-devel
+</code></pre>
 <h5 id="ubuntu-apt" class="target">Ubuntu (APT)<a class="anchor" href="#ubuntu-apt" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
 </h5>
-apt-get install libgmp-dev
+<pre class="highlight"><code>apt-get install libgmp-dev
+</code></pre>
 <h5 id="mac-os-brew" class="target">Mac OS (Brew)<a class="anchor" href="#mac-os-brew" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
 </h5>
-brew install gmp
+<pre class="highlight"><code>brew install gmp
+</code></pre>
 <h4 id="libuv" class="target">libuv<a class="anchor" href="#libuv" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
 </h4>
 
@@ -292,37 +303,43 @@ operating system make sure you install v1.x; if available.</p>
 
 <h5 id="mac-os-brew" class="target">Mac OS (Brew)<a class="anchor" href="#mac-os-brew" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
 </h5>
-brew install libuv
+<pre class="highlight"><code>brew install libuv
+</code></pre>
 <h5 id="manually-build-and-install" class="target">Manually build and install<a class="anchor" href="#manually-build-and-install" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
 </h5>
 
 <p><u>The following procedures should be performed if packages are not available for
 your system.</u></p>
-<span class="nb">pushd</span> /tmp
+<pre class="highlight"><code><span class="nb">pushd</span> /tmp
 wget http://dist.libuv.org/dist/v1.13.1/libuv-v1.13.1.tar.gz
-<span class="nb">tar </span>xzf libuv-v1.13.1.tar.gz
+tar xzf libuv-v1.13.1.tar.gz
 <span class="nb">pushd </span>libuv-v1.13.1
 sh autogen.sh
 ./configure
 make install
 <span class="nb">popd
 popd</span>
+</code></pre>
 <h4 id="openssl" class="target">OpenSSL<a class="anchor" href="#openssl" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
 </h4>
 
 <h5 id="centos-yum" class="target">CentOS (Yum)<a class="anchor" href="#centos-yum" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
 </h5>
-yum install openssl-devel
+<pre class="highlight"><code>yum install openssl-devel
+</code></pre>
 <h5 id="ubuntu-apt" class="target">Ubuntu (APT)<a class="anchor" href="#ubuntu-apt" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
 </h5>
-apt-get install libssl-dev
+<pre class="highlight"><code>apt-get install libssl-dev
+</code></pre>
 <h5 id="mac-os-brew" class="target">Mac OS (Brew)<a class="anchor" href="#mac-os-brew" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
 </h5>
-brew install openssl
+<pre class="highlight"><code>brew install openssl
+</code></pre>
 <p><strong>NOTE</strong>: For Mac OS X 10.11 (El Capitan) and Mac OS 10.12 (Sierra) a link
           needs to be created in order to make OpenSSL available to the
           building libraries:</p>
-brew link <span class="nt">–force</span> openssl
+<pre class="highlight"><code>brew link --force openssl
+</code></pre>
 <h4 id="c-c-driver" class="target">C/C++ driver<a class="anchor" href="#c-c-driver" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
 </h4>
 
@@ -350,15 +367,17 @@ also available <a href="https://github.com/datastax/cpp-driver">here</a>.</p>
 
 <h6 id="updating-source-tree-to-build-submodule" class="target">Updating source tree to build submodule<a class="anchor" href="#updating-source-tree-to-build-submodule" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
 </h6>
-git update <span class="nt">–init</span> lib<span class="se">\c</span>pp-driver
+<pre class="highlight"><code>git update --init lib<span class="se">\c</span>pp-driver
+</code></pre>
 <h5 id="building-and-installing-the-c-c-driver" class="target">Building and installing the C/C++ driver<a class="anchor" href="#building-and-installing-the-c-c-driver" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
 </h5>
-mkdir build
+<pre class="highlight"><code>mkdir build
 <span class="nb">pushd </span>build
 cmake ..
 make
 make install
 <span class="nb">popd</span>
+</code></pre>
 <p><a href="http://docs.datastax.com/en/developer/cpp-driver/latest/topics/building">Refer to the official build documentation</a> for more
 detailed instructions.</p>
 
@@ -371,13 +390,14 @@ detailed instructions.</p>
 <p>The <a href="https://pecl.php.net">PHP Extension Community Library (PECL)</a> is a repository for PHP
 extensions. A database <a href="https://pecl.php.net/package/cassandra">package</a> which can ease building and
 installing the PHP extension can be installed with the following:</p>
-pecl install cassandra
+<pre class="highlight"><code>pecl install cassandra
+</code></pre>
 <h4 id="manually-build-and-install" class="target">Manually build and install<a class="anchor" href="#manually-build-and-install" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
 </h4>
 
 <p><u>The following procedures should be performed if packages or PECL is not
 available for your system.</u></p>
-<span class="nb">pushd </span>ext
+<pre class="highlight"><code><span class="nb">pushd </span>ext
 phpize
 <span class="nb">popd
 </span>mkdir build
@@ -386,25 +406,29 @@ phpize
 make
 make install
 <span class="nb">popd</span>
+</code></pre>
 <h3 id="enabling-the-php-extension" class="target">Enabling the PHP extension<a class="anchor" href="#enabling-the-php-extension" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
 </h3>
 
 <p>To determine where the <code>php.ini</code> file is located on your system run the
 following command:</p>
-php <span class="nt">-r</span> <span class="s2">“echo php_ini_loaded_file();”</span>
+<pre class="highlight"><code>php -r <span class="s2">"echo php_ini_loaded_file();"</span>
+</code></pre>
 <p>Edit the <code>php.ini</code> file and add the following line to enable the extension:</p>
 <pre><code>; DataStax PHP Driver for Apache Cassandra
 extension=cassandra.so
 </code></pre>
 <p>To verify the extension is being loaded the following command can be executed:</p>
-php <span class="nt">-i</span> | <span class="nb">grep</span> <span class="nt">-A</span> 10 <span class="s2">“^cassandra$”</span>
+<pre class="highlight"><code>php -i | grep -A 10 <span class="s2">"^cassandra$"</span>
+</code></pre>
 <h3 id="enabling-testing-framework" class="target">Enabling testing framework<a class="anchor" href="#enabling-testing-framework" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
 </h3>
 
 <p>In order to execute the <a href="http://behat.org">Behat</a> test suite and <a href="https://phpunit.de">PHPUnit</a> unit and integration
 tests <a href="https://getcomposer.org">Composer</a> must downloaded and installed:</p>
-curl <span class="nt">-sS</span> https://getcomposer.org/installer | php
+<pre class="highlight"><code>curl -sS https://getcomposer.org/installer | php
 php composer.phar install
+</code></pre>
 <h2 id="windows" class="target">Windows<a class="anchor" href="#windows" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
 </h2>
 
@@ -518,7 +542,8 @@ library can be download <a href="http://downloads.datastax.com/cpp-driver/window
 
 <h3 id="linux-mac-os" class="target">Linux/Mac OS<a class="anchor" href="#linux-mac-os" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
 </h3>
-bin/behat
+<pre class="highlight"><code>bin/behat
+</code></pre>
 <h3 id="windows" class="target">Windows<a class="anchor" href="#windows" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
 </h3>
 <pre><code class="dos">bin\behat.bat
@@ -528,7 +553,8 @@ bin/behat
 
 <h3 id="linux-mac-os" class="target">Linux/Mac OS<a class="anchor" href="#linux-mac-os" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
 </h3>
-bin/phpunit
+<pre class="highlight"><code>bin/phpunit
+</code></pre>
 <h3 id="windows" class="target">Windows<a class="anchor" href="#windows" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
 </h3>
 <pre><code class="dos">bin\phpunit.bat

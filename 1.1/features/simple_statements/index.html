@@ -302,9 +302,9 @@
 <dt>Given </dt>
 <dd>a running Cassandra cluster</dd>
 <dt>And </dt>
-<dd>the following schema:<span class="k">CREATE</span> <span class="k">KEYSPACE</span> <span class="n">simplex</span> <span class="k">WITH</span> <span class="n">replication</span> <span class="o">=</span> <span class="p">{</span>
-  <span class="s1">‘class’</span><span class="p">:</span> <span class="s1">‘SimpleStrategy’</span><span class="p">,</span>
-  <span class="s1">‘replication_factor’</span><span class="p">:</span> <span class="mi">1</span>
+<dd>the following schema:<pre class="highlight"><code><span class="k">CREATE</span> <span class="k">KEYSPACE</span> <span class="n">simplex</span> <span class="k">WITH</span> <span class="n">replication</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="s1">'class'</span><span class="p">:</span> <span class="s1">'SimpleStrategy'</span><span class="p">,</span>
+  <span class="s1">'replication_factor'</span><span class="p">:</span> <span class="mi">1</span>
 <span class="p">};</span>
 <span class="k">USE</span> <span class="n">simplex</span><span class="p">;</span>
 <span class="k">CREATE</span> <span class="k">TABLE</span> <span class="n">playlists</span> <span class="p">(</span>
@@ -315,20 +315,22 @@
   <span class="n">song_id</span> <span class="k">uuid</span><span class="p">,</span>
   <span class="k">PRIMARY</span> <span class="k">KEY</span> <span class="p">(</span><span class="n">id</span><span class="p">,</span> <span class="n">title</span><span class="p">,</span> <span class="n">album</span><span class="p">,</span> <span class="n">artist</span><span class="p">)</span>
 <span class="p">);</span>
+</code></pre>
 </dd>
 </dl>
 <h2 id="simple-statements-are-initialized-with-a-cql-string" class="target">Simple statements are initialized with a CQL string<a class="anchor" href="#simple-statements-are-initialized-with-a-cql-string" aria-hidden="true"><span class="glyphicon glyphicon-link"></span></a>
 </h2>
 <dl class="steps">
 <dt>Given </dt>
-<dd>the following example:<span class="cp">&lt;?php</span>
+<dd>the following example:<pre class="highlight"><code><span class="cp">&lt;?php</span>
 <span class="nv">$cluster</span>   <span class="o">=</span> <span class="nx">Cassandra</span><span class="o">::</span><span class="na">cluster</span><span class="p">()</span>
-               <span class="o">-&gt;</span><span class="na">withContactPoints</span><span class="p">(</span><span class="s1">‘127.0.0.1’</span><span class="p">)</span>
+               <span class="o">-&gt;</span><span class="na">withContactPoints</span><span class="p">(</span><span class="s1">'127.0.0.1'</span><span class="p">)</span>
                <span class="o">-&gt;</span><span class="na">build</span><span class="p">();</span>
-<span class="nv">$session</span>   <span class="o">=</span> <span class="nv">$cluster</span><span class="o">-&gt;</span><span class="na">connect</span><span class="p">(</span><span class="s2">“simplex”</span><span class="p">);</span>
-<span class="nv">$statement</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Cassandra\SimpleStatement</span><span class="p">(</span><span class="s2">“SELECT * FROM playlists”</span><span class="p">);</span>
+<span class="nv">$session</span>   <span class="o">=</span> <span class="nv">$cluster</span><span class="o">-&gt;</span><span class="na">connect</span><span class="p">(</span><span class="s2">"simplex"</span><span class="p">);</span>
+<span class="nv">$statement</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Cassandra\SimpleStatement</span><span class="p">(</span><span class="s2">"SELECT * FROM playlists"</span><span class="p">);</span>
 <span class="nv">$result</span>    <span class="o">=</span> <span class="nv">$session</span><span class="o">-&gt;</span><span class="na">execute</span><span class="p">(</span><span class="nv">$statement</span><span class="p">);</span>
-<span class="k">echo</span> <span class="s2">“Result contains ”</span> <span class="o">.</span> <span class="nv">$result</span><span class="o">-&gt;</span><span class="na">count</span><span class="p">()</span> <span class="o">.</span> <span class="s2">“ rows”</span><span class="p">;</span>
+<span class="k">echo</span> <span class="s2">"Result contains "</span> <span class="o">.</span> <span class="nv">$result</span><span class="o">-&gt;</span><span class="na">count</span><span class="p">()</span> <span class="o">.</span> <span class="s2">" rows"</span><span class="p">;</span>
+</code></pre>
 </dd>
 <dt>When </dt>
 <dd>it is executed</dd>
@@ -342,48 +344,49 @@
 </h2>
 <dl class="steps">
 <dt>Given </dt>
-<dd>the following example:<span class="cp">&lt;?php</span>
+<dd>the following example:<pre class="highlight"><code><span class="cp">&lt;?php</span>
 <span class="nv">$cluster</span>   <span class="o">=</span> <span class="nx">Cassandra</span><span class="o">::</span><span class="na">cluster</span><span class="p">()</span>
-               <span class="o">-&gt;</span><span class="na">withContactPoints</span><span class="p">(</span><span class="s1">‘127.0.0.1’</span><span class="p">)</span>
+               <span class="o">-&gt;</span><span class="na">withContactPoints</span><span class="p">(</span><span class="s1">'127.0.0.1'</span><span class="p">)</span>
                <span class="o">-&gt;</span><span class="na">build</span><span class="p">();</span>
-<span class="nv">$session</span>   <span class="o">=</span> <span class="nv">$cluster</span><span class="o">-&gt;</span><span class="na">connect</span><span class="p">(</span><span class="s2">“simplex”</span><span class="p">);</span>
+<span class="nv">$session</span>   <span class="o">=</span> <span class="nv">$cluster</span><span class="o">-&gt;</span><span class="na">connect</span><span class="p">(</span><span class="s2">"simplex"</span><span class="p">);</span>
 <span class="nv">$statement</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Cassandra\SimpleStatement</span><span class="p">(</span>
-               <span class="s2">“INSERT INTO playlists (id, song_id, artist, title, album) ”</span> <span class="o">.</span>
-               <span class="s2">“VALUES (62c36092-82a1-3a00-93d1-46196ee77204, ?, ?, ?, ?)”</span>
+               <span class="s2">"INSERT INTO playlists (id, song_id, artist, title, album) "</span> <span class="o">.</span>
+               <span class="s2">"VALUES (62c36092-82a1-3a00-93d1-46196ee77204, ?, ?, ?, ?)"</span>
              <span class="p">);</span>
 
 <span class="nv">$songs</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span>
     <span class="k">array</span><span class="p">(</span>
-        <span class="k">new</span> <span class="nx">Cassandra\Uuid</span><span class="p">(</span><span class="s1">‘756716f7-2e54-4715-9f00-91dcbea6cf50’</span><span class="p">),</span>
-        <span class="s1">‘Joséphine Baker’</span><span class="p">,</span>
-        <span class="s1">‘La Petite Tonkinoise’</span><span class="p">,</span>
-        <span class="s1">‘Bye Bye Blackbird’</span>
+        <span class="k">new</span> <span class="nx">Cassandra\Uuid</span><span class="p">(</span><span class="s1">'756716f7-2e54-4715-9f00-91dcbea6cf50'</span><span class="p">),</span>
+        <span class="s1">'Joséphine Baker'</span><span class="p">,</span>
+        <span class="s1">'La Petite Tonkinoise'</span><span class="p">,</span>
+        <span class="s1">'Bye Bye Blackbird'</span>
     <span class="p">),</span>
     <span class="k">array</span><span class="p">(</span>
-        <span class="k">new</span> <span class="nx">Cassandra\Uuid</span><span class="p">(</span><span class="s1">‘f6071e72-48ec-4fcb-bf3e-379c8a696488’</span><span class="p">),</span>
-        <span class="s1">‘Willi Ostermann’</span><span class="p">,</span>
-        <span class="s1">‘Die Mösch’</span><span class="p">,</span>
-        <span class="s1">‘In Gold’</span>
+        <span class="k">new</span> <span class="nx">Cassandra\Uuid</span><span class="p">(</span><span class="s1">'f6071e72-48ec-4fcb-bf3e-379c8a696488'</span><span class="p">),</span>
+        <span class="s1">'Willi Ostermann'</span><span class="p">,</span>
+        <span class="s1">'Die Mösch'</span><span class="p">,</span>
+        <span class="s1">'In Gold'</span>
     <span class="p">),</span>
     <span class="k">array</span><span class="p">(</span>
-        <span class="k">new</span> <span class="nx">Cassandra\Uuid</span><span class="p">(</span><span class="s1">‘fbdf82ed-0063-4796-9c7c-a3d4f47b4b25’</span><span class="p">),</span>
-        <span class="s1">‘Mick Jager’</span><span class="p">,</span>
-        <span class="s1">‘Memo From Turner’</span><span class="p">,</span>
-        <span class="s1">‘Performance’</span>
+        <span class="k">new</span> <span class="nx">Cassandra\Uuid</span><span class="p">(</span><span class="s1">'fbdf82ed-0063-4796-9c7c-a3d4f47b4b25'</span><span class="p">),</span>
+        <span class="s1">'Mick Jager'</span><span class="p">,</span>
+        <span class="s1">'Memo From Turner'</span><span class="p">,</span>
+        <span class="s1">'Performance'</span>
     <span class="p">),</span>
 <span class="p">);</span>
 
 <span class="k">foreach</span> <span class="p">(</span><span class="nv">$songs</span> <span class="k">as</span> <span class="nv">$song</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nv">$options</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Cassandra\ExecutionOptions</span><span class="p">(</span><span class="k">array</span><span class="p">(</span><span class="s1">‘arguments’</span> <span class="o">=&gt;</span> <span class="nv">$song</span><span class="p">));</span>
+    <span class="nv">$options</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Cassandra\ExecutionOptions</span><span class="p">(</span><span class="k">array</span><span class="p">(</span><span class="s1">'arguments'</span> <span class="o">=&gt;</span> <span class="nv">$song</span><span class="p">));</span>
     <span class="nv">$session</span><span class="o">-&gt;</span><span class="na">execute</span><span class="p">(</span><span class="nv">$statement</span><span class="p">,</span> <span class="nv">$options</span><span class="p">);</span>
 <span class="p">}</span>
 
-<span class="nv">$statement</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Cassandra\SimpleStatement</span><span class="p">(</span><span class="s2">“SELECT * FROM simplex.playlists”</span><span class="p">);</span>
+<span class="nv">$statement</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Cassandra\SimpleStatement</span><span class="p">(</span><span class="s2">"SELECT * FROM simplex.playlists"</span><span class="p">);</span>
 <span class="nv">$result</span>    <span class="o">=</span> <span class="nv">$session</span><span class="o">-&gt;</span><span class="na">execute</span><span class="p">(</span><span class="nv">$statement</span><span class="p">);</span>
 
 <span class="k">foreach</span> <span class="p">(</span><span class="nv">$result</span> <span class="k">as</span> <span class="nv">$row</span><span class="p">)</span> <span class="p">{</span>
-  <span class="k">echo</span> <span class="nv">$row</span><span class="p">[</span><span class="s1">‘artist’</span><span class="p">]</span> <span class="o">.</span> <span class="s2">“: ”</span> <span class="o">.</span> <span class="nv">$row</span><span class="p">[</span><span class="s1">‘title’</span><span class="p">]</span> <span class="o">.</span> <span class="s2">“ / ”</span> <span class="o">.</span> <span class="nv">$row</span><span class="p">[</span><span class="s1">‘album’</span><span class="p">]</span> <span class="o">.</span> <span class="s2">“</span><span class="se">\n</span><span class="s2">”</span><span class="p">;</span>
+  <span class="k">echo</span> <span class="nv">$row</span><span class="p">[</span><span class="s1">'artist'</span><span class="p">]</span> <span class="o">.</span> <span class="s2">": "</span> <span class="o">.</span> <span class="nv">$row</span><span class="p">[</span><span class="s1">'title'</span><span class="p">]</span> <span class="o">.</span> <span class="s2">" / "</span> <span class="o">.</span> <span class="nv">$row</span><span class="p">[</span><span class="s1">'album'</span><span class="p">]</span> <span class="o">.</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">;</span>
 <span class="p">}</span>
+</code></pre>
 </dd>
 <dt>When </dt>
 <dd>it is executed</dd>
@@ -405,48 +408,49 @@
 </h2>
 <dl class="steps">
 <dt>Given </dt>
-<dd>the following example:<span class="cp">&lt;?php</span>
+<dd>the following example:<pre class="highlight"><code><span class="cp">&lt;?php</span>
 <span class="nv">$cluster</span>   <span class="o">=</span> <span class="nx">Cassandra</span><span class="o">::</span><span class="na">cluster</span><span class="p">()</span>
-               <span class="o">-&gt;</span><span class="na">withContactPoints</span><span class="p">(</span><span class="s1">‘127.0.0.1’</span><span class="p">)</span>
+               <span class="o">-&gt;</span><span class="na">withContactPoints</span><span class="p">(</span><span class="s1">'127.0.0.1'</span><span class="p">)</span>
                <span class="o">-&gt;</span><span class="na">build</span><span class="p">();</span>
-<span class="nv">$session</span>   <span class="o">=</span> <span class="nv">$cluster</span><span class="o">-&gt;</span><span class="na">connect</span><span class="p">(</span><span class="s2">“simplex”</span><span class="p">);</span>
+<span class="nv">$session</span>   <span class="o">=</span> <span class="nv">$cluster</span><span class="o">-&gt;</span><span class="na">connect</span><span class="p">(</span><span class="s2">"simplex"</span><span class="p">);</span>
 <span class="nv">$statement</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Cassandra\SimpleStatement</span><span class="p">(</span>
-               <span class="s2">“INSERT INTO playlists (id, song_id, artist, title, album) ”</span> <span class="o">.</span>
-               <span class="s2">“VALUES (62c36092-82a1-3a00-93d1-46196ee77204, ?, ?, ?, ?)”</span>
+               <span class="s2">"INSERT INTO playlists (id, song_id, artist, title, album) "</span> <span class="o">.</span>
+               <span class="s2">"VALUES (62c36092-82a1-3a00-93d1-46196ee77204, ?, ?, ?, ?)"</span>
              <span class="p">);</span>
 
 <span class="nv">$songs</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span>
     <span class="k">array</span><span class="p">(</span>
-        <span class="s1">‘song_id’</span> <span class="o">=&gt;</span> <span class="k">new</span> <span class="nx">Cassandra\Uuid</span><span class="p">(</span><span class="s1">‘756716f7-2e54-4715-9f00-91dcbea6cf50’</span><span class="p">),</span>
-        <span class="s1">‘artist’</span>  <span class="o">=&gt;</span> <span class="s1">‘Joséphine Baker’</span><span class="p">,</span>
-        <span class="s1">‘title’</span>   <span class="o">=&gt;</span> <span class="s1">‘La Petite Tonkinoise’</span><span class="p">,</span>
-        <span class="s1">‘album’</span>   <span class="o">=&gt;</span> <span class="s1">‘Bye Bye Blackbird’</span>
+        <span class="s1">'song_id'</span> <span class="o">=&gt;</span> <span class="k">new</span> <span class="nx">Cassandra\Uuid</span><span class="p">(</span><span class="s1">'756716f7-2e54-4715-9f00-91dcbea6cf50'</span><span class="p">),</span>
+        <span class="s1">'artist'</span>  <span class="o">=&gt;</span> <span class="s1">'Joséphine Baker'</span><span class="p">,</span>
+        <span class="s1">'title'</span>   <span class="o">=&gt;</span> <span class="s1">'La Petite Tonkinoise'</span><span class="p">,</span>
+        <span class="s1">'album'</span>   <span class="o">=&gt;</span> <span class="s1">'Bye Bye Blackbird'</span>
     <span class="p">),</span>
     <span class="k">array</span><span class="p">(</span>
-        <span class="s1">‘song_id’</span> <span class="o">=&gt;</span> <span class="k">new</span> <span class="nx">Cassandra\Uuid</span><span class="p">(</span><span class="s1">‘f6071e72-48ec-4fcb-bf3e-379c8a696488’</span><span class="p">),</span>
-        <span class="s1">‘artist’</span>  <span class="o">=&gt;</span> <span class="s1">‘Willi Ostermann’</span><span class="p">,</span>
-        <span class="s1">‘title’</span>   <span class="o">=&gt;</span> <span class="s1">‘Die Mösch’</span><span class="p">,</span>
-        <span class="s1">‘album’</span>   <span class="o">=&gt;</span> <span class="s1">‘In Gold’</span>
+        <span class="s1">'song_id'</span> <span class="o">=&gt;</span> <span class="k">new</span> <span class="nx">Cassandra\Uuid</span><span class="p">(</span><span class="s1">'f6071e72-48ec-4fcb-bf3e-379c8a696488'</span><span class="p">),</span>
+        <span class="s1">'artist'</span>  <span class="o">=&gt;</span> <span class="s1">'Willi Ostermann'</span><span class="p">,</span>
+        <span class="s1">'title'</span>   <span class="o">=&gt;</span> <span class="s1">'Die Mösch'</span><span class="p">,</span>
+        <span class="s1">'album'</span>   <span class="o">=&gt;</span> <span class="s1">'In Gold'</span>
     <span class="p">),</span>
     <span class="k">array</span><span class="p">(</span>
-        <span class="s1">‘song_id’</span> <span class="o">=&gt;</span> <span class="k">new</span> <span class="nx">Cassandra\Uuid</span><span class="p">(</span><span class="s1">‘fbdf82ed-0063-4796-9c7c-a3d4f47b4b25’</span><span class="p">),</span>
-        <span class="s1">‘artist’</span>  <span class="o">=&gt;</span> <span class="s1">‘Mick Jager’</span><span class="p">,</span>
-        <span class="s1">‘title’</span>   <span class="o">=&gt;</span> <span class="s1">‘Memo From Turner’</span><span class="p">,</span>
-        <span class="s1">‘album’</span>   <span class="o">=&gt;</span> <span class="s1">‘Performance’</span>
+        <span class="s1">'song_id'</span> <span class="o">=&gt;</span> <span class="k">new</span> <span class="nx">Cassandra\Uuid</span><span class="p">(</span><span class="s1">'fbdf82ed-0063-4796-9c7c-a3d4f47b4b25'</span><span class="p">),</span>
+        <span class="s1">'artist'</span>  <span class="o">=&gt;</span> <span class="s1">'Mick Jager'</span><span class="p">,</span>
+        <span class="s1">'title'</span>   <span class="o">=&gt;</span> <span class="s1">'Memo From Turner'</span><span class="p">,</span>
+        <span class="s1">'album'</span>   <span class="o">=&gt;</span> <span class="s1">'Performance'</span>
     <span class="p">),</span>
 <span class="p">);</span>
 
 <span class="k">foreach</span> <span class="p">(</span><span class="nv">$songs</span> <span class="k">as</span> <span class="nv">$song</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nv">$options</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Cassandra\ExecutionOptions</span><span class="p">(</span><span class="k">array</span><span class="p">(</span><span class="s1">‘arguments’</span> <span class="o">=&gt;</span> <span class="nv">$song</span><span class="p">));</span>
+    <span class="nv">$options</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Cassandra\ExecutionOptions</span><span class="p">(</span><span class="k">array</span><span class="p">(</span><span class="s1">'arguments'</span> <span class="o">=&gt;</span> <span class="nv">$song</span><span class="p">));</span>
     <span class="nv">$session</span><span class="o">-&gt;</span><span class="na">execute</span><span class="p">(</span><span class="nv">$statement</span><span class="p">,</span> <span class="nv">$options</span><span class="p">);</span>
 <span class="p">}</span>
 
-<span class="nv">$statement</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Cassandra\SimpleStatement</span><span class="p">(</span><span class="s2">“SELECT * FROM simplex.playlists”</span><span class="p">);</span>
+<span class="nv">$statement</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Cassandra\SimpleStatement</span><span class="p">(</span><span class="s2">"SELECT * FROM simplex.playlists"</span><span class="p">);</span>
 <span class="nv">$result</span>    <span class="o">=</span> <span class="nv">$session</span><span class="o">-&gt;</span><span class="na">execute</span><span class="p">(</span><span class="nv">$statement</span><span class="p">);</span>
 
 <span class="k">foreach</span> <span class="p">(</span><span class="nv">$result</span> <span class="k">as</span> <span class="nv">$row</span><span class="p">)</span> <span class="p">{</span>
-  <span class="k">echo</span> <span class="nv">$row</span><span class="p">[</span><span class="s1">‘artist’</span><span class="p">]</span> <span class="o">.</span> <span class="s2">“: ”</span> <span class="o">.</span> <span class="nv">$row</span><span class="p">[</span><span class="s1">‘title’</span><span class="p">]</span> <span class="o">.</span> <span class="s2">“ / ”</span> <span class="o">.</span> <span class="nv">$row</span><span class="p">[</span><span class="s1">‘album’</span><span class="p">]</span> <span class="o">.</span> <span class="s2">“</span><span class="se">\n</span><span class="s2">”</span><span class="p">;</span>
+  <span class="k">echo</span> <span class="nv">$row</span><span class="p">[</span><span class="s1">'artist'</span><span class="p">]</span> <span class="o">.</span> <span class="s2">": "</span> <span class="o">.</span> <span class="nv">$row</span><span class="p">[</span><span class="s1">'title'</span><span class="p">]</span> <span class="o">.</span> <span class="s2">" / "</span> <span class="o">.</span> <span class="nv">$row</span><span class="p">[</span><span class="s1">'album'</span><span class="p">]</span> <span class="o">.</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">;</span>
 <span class="p">}</span>
+</code></pre>
 </dd>
 <dt>When </dt>
 <dd>it is executed</dd>
@@ -468,42 +472,42 @@
 </h2>
 <dl class="steps">
 <dt>Given </dt>
-<dd>the following example:<span class="cp">&lt;?php</span>
+<dd>the following example:<pre class="highlight"><code><span class="cp">&lt;?php</span>
 <span class="nv">$cluster</span>   <span class="o">=</span> <span class="nx">Cassandra</span><span class="o">::</span><span class="na">cluster</span><span class="p">()</span>
-               <span class="o">-&gt;</span><span class="na">withContactPoints</span><span class="p">(</span><span class="s1">‘127.0.0.1’</span><span class="p">)</span>
+               <span class="o">-&gt;</span><span class="na">withContactPoints</span><span class="p">(</span><span class="s1">'127.0.0.1'</span><span class="p">)</span>
                <span class="o">-&gt;</span><span class="na">build</span><span class="p">();</span>
-<span class="nv">$session</span>   <span class="o">=</span> <span class="nv">$cluster</span><span class="o">-&gt;</span><span class="na">connect</span><span class="p">(</span><span class="s2">“simplex”</span><span class="p">);</span>
+<span class="nv">$session</span>   <span class="o">=</span> <span class="nv">$cluster</span><span class="o">-&gt;</span><span class="na">connect</span><span class="p">(</span><span class="s2">"simplex"</span><span class="p">);</span>
 <span class="nv">$statement</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Cassandra\SimpleStatement</span><span class="p">(</span>
-    <span class="s2">“INSERT INTO playlists (id, song_id, artist, title, album) ”</span> <span class="o">.</span>
-    <span class="s2">“VALUES (62c36092-82a1-3a00-93d1-46196ee77204, ?, ?, ?, ?)”</span>
+    <span class="s2">"INSERT INTO playlists (id, song_id, artist, title, album) "</span> <span class="o">.</span>
+    <span class="s2">"VALUES (62c36092-82a1-3a00-93d1-46196ee77204, ?, ?, ?, ?)"</span>
 <span class="p">);</span>
 
 <span class="nv">$songs</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span>
     <span class="k">array</span><span class="p">(</span>
-        <span class="s1">‘song_id’</span> <span class="o">=&gt;</span> <span class="k">new</span> <span class="nx">Cassandra\Uuid</span><span class="p">(</span><span class="s1">‘756716f7-2e54-4715-9f00-91dcbea6cf50’</span><span class="p">),</span>
-        <span class="s1">‘artist’</span>  <span class="o">=&gt;</span> <span class="s1">‘Joséphine Baker’</span><span class="p">,</span>
-        <span class="s1">‘title’</span>   <span class="o">=&gt;</span> <span class="s1">‘La Petite Tonkinoise’</span><span class="p">,</span>
-        <span class="s1">‘album’</span>   <span class="o">=&gt;</span> <span class="s1">‘Bye Bye Blackbird’</span>
+        <span class="s1">'song_id'</span> <span class="o">=&gt;</span> <span class="k">new</span> <span class="nx">Cassandra\Uuid</span><span class="p">(</span><span class="s1">'756716f7-2e54-4715-9f00-91dcbea6cf50'</span><span class="p">),</span>
+        <span class="s1">'artist'</span>  <span class="o">=&gt;</span> <span class="s1">'Joséphine Baker'</span><span class="p">,</span>
+        <span class="s1">'title'</span>   <span class="o">=&gt;</span> <span class="s1">'La Petite Tonkinoise'</span><span class="p">,</span>
+        <span class="s1">'album'</span>   <span class="o">=&gt;</span> <span class="s1">'Bye Bye Blackbird'</span>
     <span class="p">),</span>
 <span class="p">);</span>
 
 <span class="k">foreach</span> <span class="p">(</span><span class="nv">$songs</span> <span class="k">as</span> <span class="nv">$song</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nv">$options</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Cassandra\ExecutionOptions</span><span class="p">(</span><span class="k">array</span><span class="p">(</span><span class="s1">‘arguments’</span> <span class="o">=&gt;</span> <span class="nv">$song</span><span class="p">));</span>
+    <span class="nv">$options</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Cassandra\ExecutionOptions</span><span class="p">(</span><span class="k">array</span><span class="p">(</span><span class="s1">'arguments'</span> <span class="o">=&gt;</span> <span class="nv">$song</span><span class="p">));</span>
     <span class="nv">$session</span><span class="o">-&gt;</span><span class="na">execute</span><span class="p">(</span><span class="nv">$statement</span><span class="p">,</span> <span class="nv">$options</span><span class="p">);</span>
 <span class="p">}</span>
 
 <span class="nv">$statement</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Cassandra\SimpleStatement</span><span class="p">(</span>
-    <span class="s2">“SELECT * FROM simplex.playlists ”</span> <span class="o">.</span>
-    <span class="s2">“WHERE id = :id AND artist = :artist AND title = :title AND album = :album”</span>
+    <span class="s2">"SELECT * FROM simplex.playlists "</span> <span class="o">.</span>
+    <span class="s2">"WHERE id = :id AND artist = :artist AND title = :title AND album = :album"</span>
 <span class="p">);</span>
 
 <span class="nv">$options</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Cassandra\ExecutionOptions</span><span class="p">(</span>
-    <span class="k">array</span><span class="p">(</span><span class="s1">‘arguments’</span> <span class="o">=&gt;</span>
+    <span class="k">array</span><span class="p">(</span><span class="s1">'arguments'</span> <span class="o">=&gt;</span>
         <span class="k">array</span><span class="p">(</span>
-            <span class="s1">‘id’</span>     <span class="o">=&gt;</span> <span class="k">new</span> <span class="nx">Cassandra\Uuid</span><span class="p">(</span><span class="s1">‘62c36092-82a1-3a00-93d1-46196ee77204’</span><span class="p">),</span>
-            <span class="s1">‘artist’</span> <span class="o">=&gt;</span> <span class="s1">‘Joséphine Baker’</span><span class="p">,</span>
-            <span class="s1">‘title’</span>  <span class="o">=&gt;</span> <span class="s1">‘La Petite Tonkinoise’</span><span class="p">,</span>
-            <span class="s1">‘album’</span>  <span class="o">=&gt;</span> <span class="s1">‘Bye Bye Blackbird’</span>
+            <span class="s1">'id'</span>     <span class="o">=&gt;</span> <span class="k">new</span> <span class="nx">Cassandra\Uuid</span><span class="p">(</span><span class="s1">'62c36092-82a1-3a00-93d1-46196ee77204'</span><span class="p">),</span>
+            <span class="s1">'artist'</span> <span class="o">=&gt;</span> <span class="s1">'Joséphine Baker'</span><span class="p">,</span>
+            <span class="s1">'title'</span>  <span class="o">=&gt;</span> <span class="s1">'La Petite Tonkinoise'</span><span class="p">,</span>
+            <span class="s1">'album'</span>  <span class="o">=&gt;</span> <span class="s1">'Bye Bye Blackbird'</span>
         <span class="p">)</span>
     <span class="p">)</span>
 <span class="p">);</span>
@@ -511,7 +515,8 @@
 <span class="nv">$result</span> <span class="o">=</span> <span class="nv">$session</span><span class="o">-&gt;</span><span class="na">execute</span><span class="p">(</span><span class="nv">$statement</span><span class="p">,</span> <span class="nv">$options</span><span class="p">);</span>
 
 <span class="nv">$row</span> <span class="o">=</span> <span class="nv">$result</span><span class="o">-&gt;</span><span class="na">first</span><span class="p">();</span>
-<span class="k">echo</span> <span class="nv">$row</span><span class="p">[</span><span class="s1">‘artist’</span><span class="p">]</span> <span class="o">.</span> <span class="s2">“: ”</span> <span class="o">.</span> <span class="nv">$row</span><span class="p">[</span><span class="s1">‘title’</span><span class="p">]</span> <span class="o">.</span> <span class="s2">“ / ”</span> <span class="o">.</span> <span class="nv">$row</span><span class="p">[</span><span class="s1">‘album’</span><span class="p">]</span> <span class="o">.</span> <span class="s2">“</span><span class="se">\n</span><span class="s2">”</span><span class="p">;</span>
+<span class="k">echo</span> <span class="nv">$row</span><span class="p">[</span><span class="s1">'artist'</span><span class="p">]</span> <span class="o">.</span> <span class="s2">": "</span> <span class="o">.</span> <span class="nv">$row</span><span class="p">[</span><span class="s1">'title'</span><span class="p">]</span> <span class="o">.</span> <span class="s2">" / "</span> <span class="o">.</span> <span class="nv">$row</span><span class="p">[</span><span class="s1">'album'</span><span class="p">]</span> <span class="o">.</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">;</span>
+</code></pre>
 </dd>
 <dt>When </dt>
 <dd>it is executed</dd>

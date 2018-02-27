@@ -237,7 +237,7 @@
   
   
   <li>
-    <a href="../duration_collections/">
+    <a href="../duration/">
       Duration <small>feature</small>
       
     </a>
@@ -246,7 +246,7 @@
   
   
   <li>
-    <a href="../duration/">
+    <a href="../duration_collections/">
       Duration <small>feature</small>
       
     </a>
@@ -361,9 +361,9 @@
 </h2>
 <dl class="steps">
 <dt>Given </dt>
-<dd>the following schema:<span class="k">CREATE</span> <span class="k">KEYSPACE</span> <span class="n">simplex</span> <span class="k">WITH</span> <span class="n">replication</span> <span class="o">=</span> <span class="p">{</span>
-  <span class="s1">‘class’</span><span class="p">:</span> <span class="s1">‘SimpleStrategy’</span><span class="p">,</span>
-  <span class="s1">‘replication_factor’</span><span class="p">:</span> <span class="mi">1</span>
+<dd>the following schema:<pre class="highlight"><code><span class="k">CREATE</span> <span class="k">KEYSPACE</span> <span class="n">simplex</span> <span class="k">WITH</span> <span class="n">replication</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="s1">'class'</span><span class="p">:</span> <span class="s1">'SimpleStrategy'</span><span class="p">,</span>
+  <span class="s1">'replication_factor'</span><span class="p">:</span> <span class="mi">1</span>
 <span class="p">};</span>
 <span class="k">USE</span> <span class="n">simplex</span><span class="p">;</span>
 <span class="k">CREATE</span> <span class="k">TYPE</span> <span class="n">address</span> <span class="p">(</span><span class="n">street</span> <span class="k">text</span><span class="p">,</span> <span class="n">city</span> <span class="k">text</span><span class="p">,</span> <span class="n">zip</span> <span class="k">int</span><span class="p">);</span>
@@ -373,64 +373,66 @@
   <span class="n">name</span> <span class="k">text</span><span class="p">,</span>
   <span class="n">addresses</span> <span class="n">frozen</span><span class="o">&lt;</span><span class="n">addresses</span><span class="o">&gt;</span>
 <span class="p">);</span>
+</code></pre>
 </dd>
 <dt>And </dt>
-<dd>the following example:<span class="cp">&lt;?php</span>
+<dd>the following example:<pre class="highlight"><code><span class="cp">&lt;?php</span>
 <span class="nv">$cluster</span>   <span class="o">=</span> <span class="nx">Cassandra</span><span class="o">::</span><span class="na">cluster</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">build</span><span class="p">();</span>
-<span class="nv">$session</span>   <span class="o">=</span> <span class="nv">$cluster</span><span class="o">-&gt;</span><span class="na">connect</span><span class="p">(</span><span class="s2">“simplex”</span><span class="p">);</span>
-<span class="nv">$keyspace</span> <span class="o">=</span> <span class="nv">$session</span><span class="o">-&gt;</span><span class="na">schema</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">keyspace</span><span class="p">(</span><span class="s2">“simplex”</span><span class="p">);</span>
+<span class="nv">$session</span>   <span class="o">=</span> <span class="nv">$cluster</span><span class="o">-&gt;</span><span class="na">connect</span><span class="p">(</span><span class="s2">"simplex"</span><span class="p">);</span>
+<span class="nv">$keyspace</span> <span class="o">=</span> <span class="nv">$session</span><span class="o">-&gt;</span><span class="na">schema</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">keyspace</span><span class="p">(</span><span class="s2">"simplex"</span><span class="p">);</span>
 
-<span class="nv">$addressType</span> <span class="o">=</span> <span class="nv">$keyspace</span><span class="o">-&gt;</span><span class="na">userType</span><span class="p">(</span><span class="s2">“address”</span><span class="p">);</span>
-<span class="nv">$addressesType</span> <span class="o">=</span> <span class="nv">$keyspace</span><span class="o">-&gt;</span><span class="na">userType</span><span class="p">(</span><span class="s2">“addresses”</span><span class="p">);</span>
+<span class="nv">$addressType</span> <span class="o">=</span> <span class="nv">$keyspace</span><span class="o">-&gt;</span><span class="na">userType</span><span class="p">(</span><span class="s2">"address"</span><span class="p">);</span>
+<span class="nv">$addressesType</span> <span class="o">=</span> <span class="nv">$keyspace</span><span class="o">-&gt;</span><span class="na">userType</span><span class="p">(</span><span class="s2">"addresses"</span><span class="p">);</span>
 
 <span class="nv">$users</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span>
     <span class="k">array</span><span class="p">(</span>
-        <span class="k">new</span> <span class="nx">Cassandra\Uuid</span><span class="p">(</span><span class="s1">‘56357d2b-4586-433c-ad24-afa9918bc415’</span><span class="p">),</span>
-        <span class="s1">‘Charles Wallace’</span><span class="p">,</span>
+        <span class="k">new</span> <span class="nx">Cassandra\Uuid</span><span class="p">(</span><span class="s1">'56357d2b-4586-433c-ad24-afa9918bc415'</span><span class="p">),</span>
+        <span class="s1">'Charles Wallace'</span><span class="p">,</span>
         <span class="nv">$addressesType</span><span class="o">-&gt;</span><span class="na">create</span><span class="p">(</span>
-            <span class="s1">‘home’</span><span class="p">,</span> <span class="nv">$addressType</span><span class="o">-&gt;</span><span class="na">create</span><span class="p">(</span>
-                <span class="s1">‘city’</span><span class="p">,</span> <span class="s1">‘Phoenix’</span><span class="p">,</span>
-                <span class="s1">‘street’</span><span class="p">,</span> <span class="s1">‘9042 Cassandra Lane’</span><span class="p">,</span>
-                <span class="s1">‘zip’</span><span class="p">,</span> <span class="mi">85023</span><span class="p">))</span>
+            <span class="s1">'home'</span><span class="p">,</span> <span class="nv">$addressType</span><span class="o">-&gt;</span><span class="na">create</span><span class="p">(</span>
+                <span class="s1">'city'</span><span class="p">,</span> <span class="s1">'Phoenix'</span><span class="p">,</span>
+                <span class="s1">'street'</span><span class="p">,</span> <span class="s1">'9042 Cassandra Lane'</span><span class="p">,</span>
+                <span class="s1">'zip'</span><span class="p">,</span> <span class="mi">85023</span><span class="p">))</span>
     <span class="p">),</span>
     <span class="k">array</span><span class="p">(</span>
-        <span class="k">new</span> <span class="nx">Cassandra\Uuid</span><span class="p">(</span><span class="s1">‘ce359590-8528-4682-a9f3-add53fc9aa09’</span><span class="p">),</span>
-        <span class="s1">‘Kevin Malone’</span><span class="p">,</span>
+        <span class="k">new</span> <span class="nx">Cassandra\Uuid</span><span class="p">(</span><span class="s1">'ce359590-8528-4682-a9f3-add53fc9aa09'</span><span class="p">),</span>
+        <span class="s1">'Kevin Malone'</span><span class="p">,</span>
         <span class="nv">$addressesType</span><span class="o">-&gt;</span><span class="na">create</span><span class="p">(</span>
-            <span class="s1">‘home’</span><span class="p">,</span> <span class="nv">$addressType</span><span class="o">-&gt;</span><span class="na">create</span><span class="p">(</span>
-                <span class="s1">‘city’</span><span class="p">,</span> <span class="s1">‘New York’</span><span class="p">,</span>
-                <span class="s1">‘street’</span><span class="p">,</span> <span class="s1">‘1000 Database Road’</span><span class="p">,</span>
-                <span class="s1">‘zip’</span><span class="p">,</span> <span class="mi">10025</span><span class="p">),</span>
-            <span class="s1">‘work’</span><span class="p">,</span> <span class="nv">$addressType</span><span class="o">-&gt;</span><span class="na">create</span><span class="p">(</span>
-                <span class="s1">‘city’</span><span class="p">,</span> <span class="s1">‘New York’</span><span class="p">,</span>
-                <span class="s1">‘street’</span><span class="p">,</span> <span class="s1">‘60 SSTable Drive’</span><span class="p">,</span>
-                <span class="s1">‘zip’</span><span class="p">,</span> <span class="mi">10024</span><span class="p">)</span>
+            <span class="s1">'home'</span><span class="p">,</span> <span class="nv">$addressType</span><span class="o">-&gt;</span><span class="na">create</span><span class="p">(</span>
+                <span class="s1">'city'</span><span class="p">,</span> <span class="s1">'New York'</span><span class="p">,</span>
+                <span class="s1">'street'</span><span class="p">,</span> <span class="s1">'1000 Database Road'</span><span class="p">,</span>
+                <span class="s1">'zip'</span><span class="p">,</span> <span class="mi">10025</span><span class="p">),</span>
+            <span class="s1">'work'</span><span class="p">,</span> <span class="nv">$addressType</span><span class="o">-&gt;</span><span class="na">create</span><span class="p">(</span>
+                <span class="s1">'city'</span><span class="p">,</span> <span class="s1">'New York'</span><span class="p">,</span>
+                <span class="s1">'street'</span><span class="p">,</span> <span class="s1">'60 SSTable Drive'</span><span class="p">,</span>
+                <span class="s1">'zip'</span><span class="p">,</span> <span class="mi">10024</span><span class="p">)</span>
         <span class="p">)</span>
     <span class="p">),</span>
 <span class="p">);</span>
 
 <span class="k">foreach</span> <span class="p">(</span><span class="nv">$users</span> <span class="k">as</span> <span class="nv">$user</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nv">$options</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span><span class="s1">‘arguments’</span> <span class="o">=&gt;</span> <span class="nv">$user</span><span class="p">);</span>
-    <span class="nv">$session</span><span class="o">-&gt;</span><span class="na">execute</span><span class="p">(</span><span class="s2">“INSERT INTO users (id, name, addresses) VALUES (?, ?, ?)”</span><span class="p">,</span> <span class="nv">$options</span><span class="p">);</span>
+    <span class="nv">$options</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span><span class="s1">'arguments'</span> <span class="o">=&gt;</span> <span class="nv">$user</span><span class="p">);</span>
+    <span class="nv">$session</span><span class="o">-&gt;</span><span class="na">execute</span><span class="p">(</span><span class="s2">"INSERT INTO users (id, name, addresses) VALUES (?, ?, ?)"</span><span class="p">,</span> <span class="nv">$options</span><span class="p">);</span>
 <span class="p">}</span>
 
-<span class="nv">$result</span>    <span class="o">=</span> <span class="nv">$session</span><span class="o">-&gt;</span><span class="na">execute</span><span class="p">(</span><span class="s2">“SELECT * FROM users”</span><span class="p">);</span>
+<span class="nv">$result</span>    <span class="o">=</span> <span class="nv">$session</span><span class="o">-&gt;</span><span class="na">execute</span><span class="p">(</span><span class="s2">"SELECT * FROM users"</span><span class="p">);</span>
 
 <span class="k">foreach</span> <span class="p">(</span><span class="nv">$result</span> <span class="k">as</span> <span class="nv">$row</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">echo</span> <span class="s2">“ID: </span><span class="si">{</span><span class="nv">$row</span><span class="p">[</span><span class="s1">‘id’</span><span class="p">]</span><span class="si">}</span><span class="s2">”</span> <span class="o">.</span> <span class="nx">PHP_EOL</span><span class="p">;</span>
-    <span class="k">echo</span> <span class="s2">“Name: </span><span class="si">{</span><span class="nv">$row</span><span class="p">[</span><span class="s1">‘name’</span><span class="p">]</span><span class="si">}</span><span class="s2">”</span> <span class="o">.</span> <span class="nx">PHP_EOL</span><span class="p">;</span>
-    <span class="k">echo</span> <span class="s2">“Address:”</span> <span class="o">.</span> <span class="nx">PHP_EOL</span><span class="p">;</span>
-    <span class="k">foreach</span> <span class="p">(</span><span class="nv">$row</span><span class="p">[</span><span class="s1">‘addresses’</span><span class="p">]</span> <span class="k">as</span> <span class="nv">$type</span> <span class="o">=&gt;</span> <span class="nv">$address</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">echo</span> <span class="s2">“  </span><span class="si">{</span><span class="nv">$type</span><span class="si">}</span><span class="s2">:”</span> <span class="o">.</span> <span class="nx">PHP_EOL</span><span class="p">;</span>
+    <span class="k">echo</span> <span class="s2">"ID: </span><span class="si">{</span><span class="nv">$row</span><span class="p">[</span><span class="s1">'id'</span><span class="p">]}</span><span class="s2">" . PHP_EOL;
+    echo "</span><span class="nx">Name</span><span class="o">:</span> <span class="p">{</span><span class="nv">$row</span><span class="p">[</span><span class="s1">'name'</span><span class="p">]}</span><span class="s2">" . PHP_EOL;
+    echo "</span><span class="nx">Address</span><span class="o">:</span><span class="s2">" . PHP_EOL;
+    foreach (</span><span class="nv">$row['addresses']</span><span class="s2"> as </span><span class="nv">$type</span><span class="s2"> =&gt; </span><span class="nv">$address</span><span class="s2">) {
+        echo "</span>  <span class="p">{</span><span class="nv">$type</span><span class="si">}</span><span class="s2">:"</span> <span class="o">.</span> <span class="nx">PHP_EOL</span><span class="p">;</span>
         <span class="k">if</span> <span class="p">(</span><span class="nb">is_null</span><span class="p">(</span><span class="nv">$address</span><span class="p">))</span> <span class="p">{</span>
-            <span class="k">echo</span> <span class="s2">“    NULL”</span> <span class="o">.</span> <span class="nx">PHP_EOL</span><span class="p">;</span>
+            <span class="k">echo</span> <span class="s2">"    NULL"</span> <span class="o">.</span> <span class="nx">PHP_EOL</span><span class="p">;</span>
         <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
             <span class="k">foreach</span> <span class="p">(</span><span class="nv">$address</span> <span class="k">as</span> <span class="nv">$key</span> <span class="o">=&gt;</span> <span class="nv">$value</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">echo</span> <span class="s2">“    </span><span class="si">{</span><span class="nv">$key</span><span class="si">}</span><span class="s2"> =&gt; </span><span class="si">{</span><span class="nv">$value</span><span class="si">}</span><span class="s2">”</span> <span class="o">.</span> <span class="nx">PHP_EOL</span><span class="p">;</span>
+                <span class="k">echo</span> <span class="s2">"    </span><span class="si">{</span><span class="nv">$key</span><span class="si">}</span><span class="s2"> =&gt; </span><span class="si">{</span><span class="nv">$value</span><span class="si">}</span><span class="s2">"</span> <span class="o">.</span> <span class="nx">PHP_EOL</span><span class="p">;</span>
             <span class="p">}</span>
         <span class="p">}</span>
     <span class="p">}</span>
 <span class="p">}</span>
+</code></pre>
 </dd>
 <dt>When </dt>
 <dd>it is executed</dd>
@@ -462,9 +464,9 @@ Address:
 </h2>
 <dl class="steps">
 <dt>Given </dt>
-<dd>the following schema:<span class="k">CREATE</span> <span class="k">KEYSPACE</span> <span class="n">simplex</span> <span class="k">WITH</span> <span class="n">replication</span> <span class="o">=</span> <span class="p">{</span>
-  <span class="s1">‘class’</span><span class="p">:</span> <span class="s1">‘SimpleStrategy’</span><span class="p">,</span>
-  <span class="s1">‘replication_factor’</span><span class="p">:</span> <span class="mi">1</span>
+<dd>the following schema:<pre class="highlight"><code><span class="k">CREATE</span> <span class="k">KEYSPACE</span> <span class="n">simplex</span> <span class="k">WITH</span> <span class="n">replication</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="s1">'class'</span><span class="p">:</span> <span class="s1">'SimpleStrategy'</span><span class="p">,</span>
+  <span class="s1">'replication_factor'</span><span class="p">:</span> <span class="mi">1</span>
 <span class="p">};</span>
 <span class="k">USE</span> <span class="n">simplex</span><span class="p">;</span>
 <span class="k">CREATE</span> <span class="k">TYPE</span> <span class="n">address</span> <span class="p">(</span><span class="n">street</span> <span class="k">text</span><span class="p">,</span> <span class="n">city</span> <span class="k">text</span><span class="p">,</span> <span class="n">zip</span> <span class="k">int</span><span class="p">);</span>
@@ -474,71 +476,73 @@ Address:
   <span class="n">name</span> <span class="k">text</span><span class="p">,</span>
   <span class="n">addresses</span> <span class="n">frozen</span><span class="o">&lt;</span><span class="n">addresses</span><span class="o">&gt;</span>
 <span class="p">);</span>
+</code></pre>
 </dd>
 <dt>And </dt>
-<dd>the following example:<span class="cp">&lt;?php</span>
+<dd>the following example:<pre class="highlight"><code><span class="cp">&lt;?php</span>
 <span class="nv">$cluster</span>   <span class="o">=</span> <span class="nx">Cassandra</span><span class="o">::</span><span class="na">cluster</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">build</span><span class="p">();</span>
-<span class="nv">$session</span>   <span class="o">=</span> <span class="nv">$cluster</span><span class="o">-&gt;</span><span class="na">connect</span><span class="p">(</span><span class="s2">“simplex”</span><span class="p">);</span>
+<span class="nv">$session</span>   <span class="o">=</span> <span class="nv">$cluster</span><span class="o">-&gt;</span><span class="na">connect</span><span class="p">(</span><span class="s2">"simplex"</span><span class="p">);</span>
 
 <span class="nv">$addressType</span> <span class="o">=</span> <span class="nx">Cassandra\Type</span><span class="o">::</span><span class="na">userType</span><span class="p">(</span>
-    <span class="s1">‘street’</span><span class="p">,</span> <span class="nx">Cassandra\Type</span><span class="o">::</span><span class="na">text</span><span class="p">(),</span>
-    <span class="s1">‘city’</span><span class="p">,</span>   <span class="nx">Cassandra\Type</span><span class="o">::</span><span class="na">text</span><span class="p">(),</span>
-    <span class="s1">‘zip’</span><span class="p">,</span>    <span class="nx">Cassandra\Type</span><span class="o">::</span><span class="na">int</span><span class="p">()</span>
+    <span class="s1">'street'</span><span class="p">,</span> <span class="nx">Cassandra\Type</span><span class="o">::</span><span class="na">text</span><span class="p">(),</span>
+    <span class="s1">'city'</span><span class="p">,</span>   <span class="nx">Cassandra\Type</span><span class="o">::</span><span class="na">text</span><span class="p">(),</span>
+    <span class="s1">'zip'</span><span class="p">,</span>    <span class="nx">Cassandra\Type</span><span class="o">::</span><span class="na">int</span><span class="p">()</span>
 <span class="p">);</span>
 
 <span class="nv">$addressesType</span> <span class="o">=</span> <span class="nx">Cassandra\Type</span><span class="o">::</span><span class="na">userType</span><span class="p">(</span>
-    <span class="s1">‘home’</span><span class="p">,</span> <span class="nv">$addressType</span><span class="p">,</span>
-    <span class="s1">‘work’</span><span class="p">,</span> <span class="nv">$addressType</span>
+    <span class="s1">'home'</span><span class="p">,</span> <span class="nv">$addressType</span><span class="p">,</span>
+    <span class="s1">'work'</span><span class="p">,</span> <span class="nv">$addressType</span>
  <span class="p">);</span>
 
 <span class="nv">$users</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span>
     <span class="k">array</span><span class="p">(</span>
-        <span class="k">new</span> <span class="nx">Cassandra\Uuid</span><span class="p">(</span><span class="s1">‘56357d2b-4586-433c-ad24-afa9918bc415’</span><span class="p">),</span>
-        <span class="s1">‘Charles Wallace’</span><span class="p">,</span>
+        <span class="k">new</span> <span class="nx">Cassandra\Uuid</span><span class="p">(</span><span class="s1">'56357d2b-4586-433c-ad24-afa9918bc415'</span><span class="p">),</span>
+        <span class="s1">'Charles Wallace'</span><span class="p">,</span>
         <span class="nv">$addressesType</span><span class="o">-&gt;</span><span class="na">create</span><span class="p">(</span>
-            <span class="s1">‘home’</span><span class="p">,</span> <span class="nv">$addressType</span><span class="o">-&gt;</span><span class="na">create</span><span class="p">(</span>
-                <span class="s1">‘city’</span><span class="p">,</span> <span class="s1">‘Phoenix’</span><span class="p">,</span>
-                <span class="s1">‘street’</span><span class="p">,</span> <span class="s1">‘9042 Cassandra Lane’</span><span class="p">,</span>
-                <span class="s1">‘zip’</span><span class="p">,</span> <span class="mi">85023</span><span class="p">))</span>
+            <span class="s1">'home'</span><span class="p">,</span> <span class="nv">$addressType</span><span class="o">-&gt;</span><span class="na">create</span><span class="p">(</span>
+                <span class="s1">'city'</span><span class="p">,</span> <span class="s1">'Phoenix'</span><span class="p">,</span>
+                <span class="s1">'street'</span><span class="p">,</span> <span class="s1">'9042 Cassandra Lane'</span><span class="p">,</span>
+                <span class="s1">'zip'</span><span class="p">,</span> <span class="mi">85023</span><span class="p">))</span>
     <span class="p">),</span>
     <span class="k">array</span><span class="p">(</span>
-        <span class="k">new</span> <span class="nx">Cassandra\Uuid</span><span class="p">(</span><span class="s1">‘ce359590-8528-4682-a9f3-add53fc9aa09’</span><span class="p">),</span>
-        <span class="s1">‘Kevin Malone’</span><span class="p">,</span>
+        <span class="k">new</span> <span class="nx">Cassandra\Uuid</span><span class="p">(</span><span class="s1">'ce359590-8528-4682-a9f3-add53fc9aa09'</span><span class="p">),</span>
+        <span class="s1">'Kevin Malone'</span><span class="p">,</span>
         <span class="nv">$addressesType</span><span class="o">-&gt;</span><span class="na">create</span><span class="p">(</span>
-            <span class="s1">‘home’</span><span class="p">,</span> <span class="nv">$addressType</span><span class="o">-&gt;</span><span class="na">create</span><span class="p">(</span>
-                <span class="s1">‘city’</span><span class="p">,</span> <span class="s1">‘New York’</span><span class="p">,</span>
-                <span class="s1">‘street’</span><span class="p">,</span> <span class="s1">‘1000 Database Road’</span><span class="p">,</span>
-                <span class="s1">‘zip’</span><span class="p">,</span> <span class="mi">10025</span><span class="p">),</span>
-            <span class="s1">‘work’</span><span class="p">,</span> <span class="nv">$addressType</span><span class="o">-&gt;</span><span class="na">create</span><span class="p">(</span>
-                <span class="s1">‘city’</span><span class="p">,</span> <span class="s1">‘New York’</span><span class="p">,</span>
-                <span class="s1">‘street’</span><span class="p">,</span> <span class="s1">‘60 SSTable Drive’</span><span class="p">,</span>
-                <span class="s1">‘zip’</span><span class="p">,</span> <span class="mi">10024</span><span class="p">)</span>
+            <span class="s1">'home'</span><span class="p">,</span> <span class="nv">$addressType</span><span class="o">-&gt;</span><span class="na">create</span><span class="p">(</span>
+                <span class="s1">'city'</span><span class="p">,</span> <span class="s1">'New York'</span><span class="p">,</span>
+                <span class="s1">'street'</span><span class="p">,</span> <span class="s1">'1000 Database Road'</span><span class="p">,</span>
+                <span class="s1">'zip'</span><span class="p">,</span> <span class="mi">10025</span><span class="p">),</span>
+            <span class="s1">'work'</span><span class="p">,</span> <span class="nv">$addressType</span><span class="o">-&gt;</span><span class="na">create</span><span class="p">(</span>
+                <span class="s1">'city'</span><span class="p">,</span> <span class="s1">'New York'</span><span class="p">,</span>
+                <span class="s1">'street'</span><span class="p">,</span> <span class="s1">'60 SSTable Drive'</span><span class="p">,</span>
+                <span class="s1">'zip'</span><span class="p">,</span> <span class="mi">10024</span><span class="p">)</span>
         <span class="p">)</span>
     <span class="p">),</span>
 <span class="p">);</span>
 
 <span class="k">foreach</span> <span class="p">(</span><span class="nv">$users</span> <span class="k">as</span> <span class="nv">$user</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nv">$options</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span><span class="s1">‘arguments’</span> <span class="o">=&gt;</span> <span class="nv">$user</span><span class="p">);</span>
-    <span class="nv">$session</span><span class="o">-&gt;</span><span class="na">execute</span><span class="p">(</span><span class="s2">“INSERT INTO users (id, name, addresses) VALUES (?, ?, ?)”</span><span class="p">,</span> <span class="nv">$options</span><span class="p">);</span>
+    <span class="nv">$options</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span><span class="s1">'arguments'</span> <span class="o">=&gt;</span> <span class="nv">$user</span><span class="p">);</span>
+    <span class="nv">$session</span><span class="o">-&gt;</span><span class="na">execute</span><span class="p">(</span><span class="s2">"INSERT INTO users (id, name, addresses) VALUES (?, ?, ?)"</span><span class="p">,</span> <span class="nv">$options</span><span class="p">);</span>
 <span class="p">}</span>
 
-<span class="nv">$result</span>    <span class="o">=</span> <span class="nv">$session</span><span class="o">-&gt;</span><span class="na">execute</span><span class="p">(</span><span class="s2">“SELECT * FROM users”</span><span class="p">);</span>
+<span class="nv">$result</span>    <span class="o">=</span> <span class="nv">$session</span><span class="o">-&gt;</span><span class="na">execute</span><span class="p">(</span><span class="s2">"SELECT * FROM users"</span><span class="p">);</span>
 
 <span class="k">foreach</span> <span class="p">(</span><span class="nv">$result</span> <span class="k">as</span> <span class="nv">$row</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">echo</span> <span class="s2">“ID: </span><span class="si">{</span><span class="nv">$row</span><span class="p">[</span><span class="s1">‘id’</span><span class="p">]</span><span class="si">}</span><span class="s2">”</span> <span class="o">.</span> <span class="nx">PHP_EOL</span><span class="p">;</span>
-    <span class="k">echo</span> <span class="s2">“Name: </span><span class="si">{</span><span class="nv">$row</span><span class="p">[</span><span class="s1">‘name’</span><span class="p">]</span><span class="si">}</span><span class="s2">”</span> <span class="o">.</span> <span class="nx">PHP_EOL</span><span class="p">;</span>
-    <span class="k">echo</span> <span class="s2">“Address:”</span> <span class="o">.</span> <span class="nx">PHP_EOL</span><span class="p">;</span>
-    <span class="k">foreach</span> <span class="p">(</span><span class="nv">$row</span><span class="p">[</span><span class="s1">‘addresses’</span><span class="p">]</span> <span class="k">as</span> <span class="nv">$type</span> <span class="o">=&gt;</span> <span class="nv">$address</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">echo</span> <span class="s2">“  </span><span class="si">{</span><span class="nv">$type</span><span class="si">}</span><span class="s2">:”</span> <span class="o">.</span> <span class="nx">PHP_EOL</span><span class="p">;</span>
+    <span class="k">echo</span> <span class="s2">"ID: </span><span class="si">{</span><span class="nv">$row</span><span class="p">[</span><span class="s1">'id'</span><span class="p">]}</span><span class="s2">" . PHP_EOL;
+    echo "</span><span class="nx">Name</span><span class="o">:</span> <span class="p">{</span><span class="nv">$row</span><span class="p">[</span><span class="s1">'name'</span><span class="p">]}</span><span class="s2">" . PHP_EOL;
+    echo "</span><span class="nx">Address</span><span class="o">:</span><span class="s2">" . PHP_EOL;
+    foreach (</span><span class="nv">$row['addresses']</span><span class="s2"> as </span><span class="nv">$type</span><span class="s2"> =&gt; </span><span class="nv">$address</span><span class="s2">) {
+        echo "</span>  <span class="p">{</span><span class="nv">$type</span><span class="si">}</span><span class="s2">:"</span> <span class="o">.</span> <span class="nx">PHP_EOL</span><span class="p">;</span>
         <span class="k">if</span> <span class="p">(</span><span class="nb">is_null</span><span class="p">(</span><span class="nv">$address</span><span class="p">))</span> <span class="p">{</span>
-            <span class="k">echo</span> <span class="s2">“    NULL”</span> <span class="o">.</span> <span class="nx">PHP_EOL</span><span class="p">;</span>
+            <span class="k">echo</span> <span class="s2">"    NULL"</span> <span class="o">.</span> <span class="nx">PHP_EOL</span><span class="p">;</span>
         <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
             <span class="k">foreach</span> <span class="p">(</span><span class="nv">$address</span> <span class="k">as</span> <span class="nv">$key</span> <span class="o">=&gt;</span> <span class="nv">$value</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">echo</span> <span class="s2">“    </span><span class="si">{</span><span class="nv">$key</span><span class="si">}</span><span class="s2"> =&gt; </span><span class="si">{</span><span class="nv">$value</span><span class="si">}</span><span class="s2">”</span> <span class="o">.</span> <span class="nx">PHP_EOL</span><span class="p">;</span>
+                <span class="k">echo</span> <span class="s2">"    </span><span class="si">{</span><span class="nv">$key</span><span class="si">}</span><span class="s2"> =&gt; </span><span class="si">{</span><span class="nv">$value</span><span class="si">}</span><span class="s2">"</span> <span class="o">.</span> <span class="nx">PHP_EOL</span><span class="p">;</span>
             <span class="p">}</span>
         <span class="p">}</span>
     <span class="p">}</span>
 <span class="p">}</span>
+</code></pre>
 </dd>
 <dt>When </dt>
 <dd>it is executed</dd>
