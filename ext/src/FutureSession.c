@@ -37,7 +37,7 @@ PHP_METHOD(FutureSession, get)
 
   if (self->exception_message) {
     zend_throw_exception_ex(exception_class(self->exception_code),
-                            self->exception_code TSRMLS_CC, self->exception_message);
+                            self->exception_code TSRMLS_CC, "%s", self->exception_message);
     return;
   }
 
@@ -71,7 +71,7 @@ PHP_METHOD(FutureSession, get)
       }
 
       zend_throw_exception_ex(exception_class(self->exception_code),
-                              self->exception_code TSRMLS_CC, self->exception_message);
+                              self->exception_code TSRMLS_CC, "%s", self->exception_message);
       return;
     }
 
