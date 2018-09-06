@@ -49,12 +49,12 @@ final class BatchStatement implements Statement {
     /**
      * Adds a statement to this batch.
      *
-     * @param string|Statement $statement string or statement to add
+     * @param string|\Cassandra\Statement $statement string or statement to add
      * @param array|null $arguments positional or named arguments (optional)
      *
      * @throws Exception\InvalidArgumentException
      *
-     * @return BatchStatement self
+     * @return \Cassandra\BatchStatement self
      */
     public function add($statement, $arguments) { }
 

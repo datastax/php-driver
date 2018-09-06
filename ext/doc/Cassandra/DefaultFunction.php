@@ -47,7 +47,7 @@ final class DefaultFunction implements Function_ {
     /**
      * Returns the return type of the function
      *
-     * @return Type Return type of the function
+     * @return \Cassandra\Type Return type of the function
      */
     public function returnType() { }
 

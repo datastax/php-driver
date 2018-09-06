@@ -21,7 +21,7 @@ Decimal:
       comment: The type of this decimal.
       return:
         comment: ""
-        type: Type
+        type: \Cassandra\Type
     __toString:
       comment: String representation of this decimal.
       return:
@@ -42,61 +42,61 @@ Decimal:
       params:
         num:
           comment: ""
-          type: Numeric
+          type: \Cassandra\Numeric
       return:
         comment: ""
-        type: Numeric
+        type: \Cassandra\Numeric
     sub:
       comment: ""
       params:
         num:
           comment: ""
-          type: Numeric
+          type: \Cassandra\Numeric
       return:
         comment: ""
-        type: Numeric
+        type: \Cassandra\Numeric
     mul:
       comment: ""
       params:
         num:
           comment: ""
-          type: Numeric
+          type: \Cassandra\Numeric
       return:
         comment: ""
-        type: Numeric
+        type: \Cassandra\Numeric
     div:
       comment: ""
       params:
         num:
           comment: ""
-          type: Numeric
+          type: \Cassandra\Numeric
       return:
         comment: ""
-        type: Numeric
+        type: \Cassandra\Numeric
     mod:
       comment: ""
       params:
         num:
           comment: ""
-          type: Numeric
+          type: \Cassandra\Numeric
       return:
         comment: ""
-        type: Numeric
+        type: \Cassandra\Numeric
     abs:
       comment: ""
       return:
         comment: ""
-        type: Numeric
+        type: \Cassandra\Numeric
     neg:
       comment: ""
       return:
         comment: ""
-        type: Numeric
+        type: \Cassandra\Numeric
     sqrt:
       comment: ""
       return:
         comment: ""
-        type: Numeric
+        type: \Cassandra\Numeric
     toInt:
       comment: ""
       return:

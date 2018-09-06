@@ -13,7 +13,7 @@ Date:
       comment: The type of this date.
       return:
         comment: ""
-        type: Type
+        type: \Cassandra\Type
     seconds:
       comment: ""
       return:
@@ -24,7 +24,7 @@ Date:
       params:
         time:
           comment: An optional Time object that is added to the DateTime object.
-          type: Time
+          type: \Cassandra\Time
       return:
         comment: PHP representation
         type: \DateTime

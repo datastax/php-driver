@@ -31,7 +31,7 @@ final class DefaultCluster implements Cluster {
      * @param string $keyspace Optional keyspace name
      * @param int $timeout Optional timeout
      *
-     * @return Session Session instance
+     * @return \Cassandra\Session Session instance
      */
     public function connect($keyspace, $timeout) { }
 
@@ -40,7 +40,7 @@ final class DefaultCluster implements Cluster {
      *
      * @param string $keyspace Optional keyspace name
      *
-     * @return Future A Future Session instance
+     * @return \Cassandra\Future A Future Session instance
      */
     public function connectAsync($keyspace) { }
 

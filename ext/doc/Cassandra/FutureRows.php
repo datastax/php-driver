@@ -33,7 +33,7 @@ final class FutureRows implements Future {
      * @throws Exception\InvalidArgumentException
      * @throws Exception\TimeoutException
      *
-     * @return Rows|null The result set
+     * @return \Cassandra\Rows|null The result set
      */
     public function get($timeout) { }
 

@@ -35,7 +35,7 @@ final class Timestamp implements Value {
     /**
      * The type of this timestamp.
      *
-     * @return Type
+     * @return \Cassandra\Type
      */
     public function type() { }
 

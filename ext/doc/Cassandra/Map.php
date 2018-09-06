@@ -26,15 +26,15 @@ final class Map implements Value, \Countable, \Iterator, \ArrayAccess {
     /**
      * Creates a new map of a given key and value type.
      *
-     * @param Type $keyType
-     * @param Type $valueType
+     * @param \Cassandra\Type $keyType
+     * @param \Cassandra\Type $valueType
      */
     public function __construct($keyType, $valueType) { }
 
     /**
      * The type of this map.
      *
-     * @return Type
+     * @return \Cassandra\Type
      */
     public function type() { }
 

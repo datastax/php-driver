@@ -35,7 +35,7 @@ final class DefaultTable implements Table {
      *
      * @param string $name The name of the option
      *
-     * @return Value Value of an option by name
+     * @return \Cassandra\Value Value of an option by name
      */
     public function option($name) { }
 
@@ -126,14 +126,14 @@ final class DefaultTable implements Table {
     /**
      * Returns compaction strategy options
      *
-     * @return Map Compaction strategy options
+     * @return \Cassandra\Map Compaction strategy options
      */
     public function compactionStrategyOptions() { }
 
     /**
      * Returns compression parameters
      *
-     * @return Map Compression parameters
+     * @return \Cassandra\Map Compression parameters
      */
     public function compressionParameters() { }
 
@@ -170,7 +170,7 @@ final class DefaultTable implements Table {
      *
      * @param string $name Name of the column
      *
-     * @return Column Column instance
+     * @return \Cassandra\Column Column instance
      */
     public function column($name) { }
 
@@ -212,7 +212,7 @@ final class DefaultTable implements Table {
      *
      * @param string $name Index name
      *
-     * @return Index|null An index or null
+     * @return \Cassandra\Index|null An index or null
      */
     public function index($name) { }
 
@@ -228,7 +228,7 @@ final class DefaultTable implements Table {
      *
      * @param string $name Materialized view name
      *
-     * @return MaterizedView|null A materialized view or null
+     * @return \Cassandra\MaterizedView|null A materialized view or null
      */
     public function materializedView($name) { }
 

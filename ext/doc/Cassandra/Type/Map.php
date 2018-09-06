@@ -36,14 +36,14 @@ final class Map extends \Cassandra\Type {
     /**
      * Returns type of keys
      *
-     * @return Type Type of keys
+     * @return \Cassandra\Type Type of keys
      */
     public function keyType() { }
 
     /**
      * Returns type of values
      *
-     * @return Type Type of values
+     * @return \Cassandra\Type Type of values
      */
     public function valueType() { }
 
@@ -81,7 +81,7 @@ final class Map extends \Cassandra\Type {
      *                                            of a different type than what
      *                                            this map type expects.
      *
-     * @return Map A set with given values.
+     * @return \Cassandra\Map A set with given values.
      */
     public function create($value) { }
 

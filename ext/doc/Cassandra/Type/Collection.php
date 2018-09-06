@@ -36,7 +36,7 @@ final class Collection extends \Cassandra\Type {
     /**
      * Returns type of values
      *
-     * @return Type Type of values
+     * @return \Cassandra\Type Type of values
      */
     public function valueType() { }
 
@@ -57,7 +57,7 @@ final class Collection extends \Cassandra\Type {
      *                                            different type than what this
      *                                            list type expects.
      *
-     * @return Collection A list with given values.
+     * @return \Cassandra\Collection A list with given values.
      */
     public function create($value) { }
 

@@ -40,7 +40,7 @@ final class Blob implements Value {
     /**
      * The type of this blob.
      *
-     * @return Type
+     * @return \Cassandra\Type
      */
     public function type() { }
 

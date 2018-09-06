@@ -26,13 +26,13 @@ Session:
       params:
         statement:
           comment: string or statement to be executed.
-          type: string|Statement
+          type: string|\Cassandra\Statement
         options:
           comment: Options to control execution of the query.
-          type: array|ExecutionOptions|null
+          type: array|\Cassandra\ExecutionOptions|null
       return:
         comment: A collection of rows.
-        type: Rows
+        type: \Cassandra\Rows
     executeAsync:
       comment: |-
         Execute a query asynchronously. This method returns immediately, but
@@ -42,13 +42,13 @@ Session:
       params:
         statement:
           comment: string or statement to be executed.
-          type: string|Statement
+          type: string|\Cassandra\Statement
         options:
           comment: Options to control execution of the query.
-          type: array|ExecutionOptions|null
+          type: array|\Cassandra\ExecutionOptions|null
       return:
         comment: A future that can be used to retrieve the result.
-        type: FutureRows
+        type: \Cassandra\FutureRows
     prepare:
       comment: |
         Prepare a query for execution.
@@ -63,10 +63,10 @@ Session:
         options:
           comment: |
             Options to control preparing the query.
-          type: array|ExecutionOptions|null
+          type: array|\Cassandra\ExecutionOptions|null
       return:
         comment: A prepared statement that can be bound with parameters and executed.
-        type: PreparedStatement
+        type: \Cassandra\PreparedStatement
     prepareAsync:
       comment: |
         Asynchronously prepare a query for execution.
@@ -78,10 +78,10 @@ Session:
           type: string
         options:
           comment: Options to control preparing the query.
-          type: array|ExecutionOptions|null
+          type: array|\Cassandra\ExecutionOptions|null
       return:
         comment: A future that can be used to retrieve the prepared statement.
-        type: FuturePreparedStatement
+        type: \Cassandra\FuturePreparedStatement
     close:
       comment: |
         Close the session and all its connections.
@@ -99,12 +99,12 @@ Session:
       comment: Asynchronously close the session and all its connections.
       return:
         comment: A future that can be waited on.
-        type: FutureClose
+        type: \Cassandra\FutureClose
     schema:
       comment: Get a snapshot of the cluster's current schema.
       return:
         comment: A snapshot of the cluster's schema.
-        type: Schema
+        type: \Cassandra\Schema
     metrics:
       comment: Get performance and diagnostic metrics.
       return:

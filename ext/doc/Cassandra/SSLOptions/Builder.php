@@ -29,7 +29,7 @@ final class Builder {
     /**
      * Builds SSL options.
      *
-     * @return \SSLOptions ssl options configured accordingly.
+     * @return \Cassandra\SSLOptions ssl options configured accordingly.
      */
     public function build() { }
 
@@ -40,7 +40,7 @@ final class Builder {
      *
      * @throws \Exception\InvalidArgumentException
      *
-     * @return Builder self
+     * @return \Cassandra\SSLOptions\Builder self
      */
     public function withTrustedCerts($path) { }
 
@@ -51,7 +51,7 @@ final class Builder {
      *
      * @throws \Exception\InvalidArgumentException
      *
-     * @return Builder self
+     * @return \Cassandra\SSLOptions\Builder self
      */
     public function withVerifyFlags($flags) { }
 
@@ -65,7 +65,7 @@ final class Builder {
      *
      * @throws \Exception\InvalidArgumentException
      *
-     * @return Builder self
+     * @return \Cassandra\SSLOptions\Builder self
      */
     public function withClientCert($path) { }
 
@@ -78,7 +78,7 @@ final class Builder {
      *
      * @throws \Exception\InvalidArgumentException
      *
-     * @return Builder self
+     * @return \Cassandra\SSLOptions\Builder self
      */
     public function withPrivateKey($path, $passphrase) { }
 

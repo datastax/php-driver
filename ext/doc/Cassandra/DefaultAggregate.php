@@ -47,35 +47,35 @@ final class DefaultAggregate implements Aggregate {
     /**
      * Returns the state function of the aggregate
      *
-     * @return Function State public function of the aggregate
+     * @return \Cassandra\Function State public function of the aggregate
      */
     public function stateFunction() { }
 
     /**
      * Returns the final function of the aggregate
      *
-     * @return Function Final public function of the aggregate
+     * @return \Cassandra\Function Final public function of the aggregate
      */
     public function finalFunction() { }
 
     /**
      * Returns the initial condition of the aggregate
      *
-     * @return Value Initial condition of the aggregate
+     * @return \Cassandra\Value
      */
     public function initialCondition() { }
 
     /**
      * Returns the state type of the aggregate
      *
-     * @return Type State type of the aggregate
+     * @return \Cassandra\Type State type of the aggregate
      */
     public function stateType() { }
 
     /**
      * Returns the return type of the aggregate
      *
-     * @return Type Return type of the aggregate
+     * @return \Cassandra\Type Return type of the aggregate
      */
     public function returnType() { }
 

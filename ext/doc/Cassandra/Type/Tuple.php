@@ -57,7 +57,7 @@ final class Tuple extends \Cassandra\Type {
      *                                            different type than what the
      *                                            tuple expects.
      *
-     * @return Tuple A tuple with given values.
+     * @return \Cassandra\Tuple A tuple with given values.
      */
     public function create($values) { }
 

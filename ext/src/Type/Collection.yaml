@@ -18,7 +18,7 @@ Type\Collection:
       comment: Returns type of values
       return:
         comment: Type of values
-        type: Type
+        type: \Cassandra\Type
     create:
       comment: |-
         Creates a new Collection from the given values.  When no values
@@ -33,5 +33,5 @@ Type\Collection:
           type: mixed
       return:
         comment: ' A list with given values.'
-        type: Collection
+        type: \Cassandra\Collection
 ...

@@ -14,61 +14,61 @@ Numeric:
       params:
         num:
           comment: a number to add to this one
-          type: Numeric
+          type: \Cassandra\Numeric
       return:
         comment: sum
-        type: Numeric
+        type: \Cassandra\Numeric
     sub:
       comment: ""
       params:
         num:
           comment: a number to subtract from this one
-          type: Numeric
+          type: \Cassandra\Numeric
       return:
         comment: difference
-        type: Numeric
+        type: \Cassandra\Numeric
     mul:
       comment: ""
       params:
         num:
           comment: a number to multiply this one by
-          type: Numeric
+          type: \Cassandra\Numeric
       return:
         comment: product
-        type: Numeric
+        type: \Cassandra\Numeric
     div:
       comment: ""
       params:
         num:
           comment: a number to divide this one by
-          type: Numeric
+          type: \Cassandra\Numeric
       return:
         comment: quotient
-        type: Numeric
+        type: \Cassandra\Numeric
     mod:
       comment: ""
       params:
         num:
           comment: a number to divide this one by
-          type: Numeric
+          type: \Cassandra\Numeric
       return:
         comment: remainder
-        type: Numeric
+        type: \Cassandra\Numeric
     abs:
       comment: ""
       return:
         comment: absolute value
-        type: Numeric
+        type: \Cassandra\Numeric
     neg:
       comment: ""
       return:
         comment: negative value
-        type: Numeric
+        type: \Cassandra\Numeric
     sqrt:
       comment: ""
       return:
         comment: square root
-        type: Numeric
+        type: \Cassandra\Numeric
     toInt:
       comment: ""
       return:

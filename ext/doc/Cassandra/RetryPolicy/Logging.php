@@ -26,7 +26,7 @@ final class Logging implements \Cassandra\RetryPolicy {
     /**
      * Creates a new Logging retry policy.
      *
-     * @param RetryPolicy $childPolicy Any retry policy other than Logging
+     * @param \Cassandra\RetryPolicy $childPolicy Any retry policy other than Logging
      */
     public function __construct($childPolicy) { }
 

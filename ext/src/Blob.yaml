@@ -12,7 +12,7 @@ Blob:
       comment: The type of this blob.
       return:
         comment: ""
-        type: Type
+        type: \Cassandra\Type
     bytes:
       comment: Returns bytes as a hex string.
       return:
