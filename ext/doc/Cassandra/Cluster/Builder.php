@@ -323,6 +323,10 @@ final class Builder {
      * reverse IP lookup. This is useful for authentication (Kerberos) or
      * encryption SSL services that require a valid hostname for verification.
      *
+     * Important: It's possible that the underlying C/C++ driver does not
+     * support hostname resolution. A PHP warning will be emitted if the driver
+     * does not support hostname resolution.
+     *
      * @param bool $enabled whether the driver uses hostname resolution.
      *
      * @return Builder self

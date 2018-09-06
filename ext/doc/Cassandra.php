@@ -379,12 +379,12 @@ final class Cassandra {
     /**
      * The current version of the extension.
      */
-    const VERSION = '1.3.1';
+    const VERSION = '1.3.2';
 
     /**
      * The version of the cpp-driver the extension is compiled against.
      */
-    const CPP_DRIVER_VERSION = '2.7.0';
+    const CPP_DRIVER_VERSION = '2.9.0';
 
     /**
      * Creates a new cluster builder for constructing a Cluster object.

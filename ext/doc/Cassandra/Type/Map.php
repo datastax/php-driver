@@ -22,7 +22,7 @@ namespace Cassandra\Type;
  * A class that represents the map type. The map type contains two types that
  * represents the types of the key and value contained in the map.
  */
-final class Map extends Type {
+final class Map extends \Cassandra\Type {
 
     private function __construct() { }
 
