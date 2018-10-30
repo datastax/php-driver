@@ -2,6 +2,7 @@ title:    DataStax PHP Driver
 summary:  DataStax PHP Driver for Apache Cassandra
 homepage: http://datastax.github.io/php-driver/
 theme:    datastax
+swiftype_drivers: phpdrivers
 sections:
   - title:     Building PHP Extension
     prefix:    /building
