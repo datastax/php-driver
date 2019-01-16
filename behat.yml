@@ -7,7 +7,7 @@ default:
               tags: "~@cassandra-version-less-2.1&&~@cassandra-version-only-2.0&&~@broken"
             contexts:
                 - FeatureContext:
-                    cassandra_version: 3.11.0
+                    cassandra_version: "3.11.3"
 
 cassandra-version-3.0:
     formatters:
@@ -18,7 +18,7 @@ cassandra-version-3.0:
               tags: "~@cassandra-version-3.x&&~@cassandra-version-3.10&&~@cassandra-version-less-2.1&&~@cassandra-version-only-2.0&&~@broken"
             contexts:
                 - FeatureContext:
-                    cassandra_version: 3.0.14
+                    cassandra_version: "3.0.17"
 
 cassandra-version-2.2:
     formatters:
@@ -29,7 +29,7 @@ cassandra-version-2.2:
               tags: "~@cassandra-version-3.x&&~@cassandra-version-3.10&&~@cassandra-version-3.0&&~@cassandra-version-less-2.1&&~@cassandra-version-only-2.0&&~@broken"
             contexts:
                 - FeatureContext:
-                    cassandra_version: 2.2.10
+                    cassandra_version: "2.2.13"
 
 cassandra-version-2.1:
     formatters:
@@ -40,26 +40,4 @@ cassandra-version-2.1:
               tags: "~@cassandra-version-3.x&&~@cassandra-version-3.10&&~@cassandra-version-3.0&&~@cassandra-version-2.2&&~@cassandra-version-less-2.1&&~@cassandra-version-only-2.0&&~@broken"
             contexts:
                 - FeatureContext:
-                    cassandra_version: 2.1.18
-
-cassandra-version-2.0:
-    formatters:
-        pretty: true
-    suites:
-        default:
-            filters:
-              tags: "~@cassandra-version-3.x&&~@cassandra-version-3.10&&~@cassandra-version-3.0&&~@cassandra-version-2.2&&~@cassandra-version-2.1&&~@broken"
-            contexts:
-                - FeatureContext:
-                    cassandra_version: 2.0.17
-
-cassandra-version-1.2:
-    formatters:
-        pretty: true
-    suites:
-        default:
-            filters:
-              tags: "~@cassandra-version-3.x&&~@cassandra-version-3.10&&~@cassandra-version-3.0&&~@cassandra-version-2.2&&~@cassandra-version-2.0&&~@cassandra-version-2.1&&~@cassandra-version-only-2.0&&~broken"
-            contexts:
-                - FeatureContext:
-                    cassandra_version: 1.2.19
+                    cassandra_version: "2.1.20"
