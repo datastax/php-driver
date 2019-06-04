@@ -593,7 +593,7 @@ php_driver_user_type_set(CassUserType *ut,
   case CASS_VALUE_TYPE_TEXT:
   case CASS_VALUE_TYPE_ASCII:
   case CASS_VALUE_TYPE_VARCHAR:
-    CHECK_ERROR(cass_user_type_set_string_by_name_n(ut, name, Z_STRVAL_P(value), Z_STRLEN_P(value)));
+    CHECK_ERROR(cass_user_type_set_string_by_name_n(ut, name, strlen(name), Z_STRVAL_P(value), Z_STRLEN_P(value)));
     break;
   case CASS_VALUE_TYPE_BIGINT:
   case CASS_VALUE_TYPE_COUNTER:
