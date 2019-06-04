@@ -57,7 +57,7 @@ bind_argument_by_index(CassStatement *statement, size_t index, zval *value TSRML
     CHECK_RESULT(cass_statement_bind_null(statement, index));
 
   if (Z_TYPE_P(value) == IS_STRING)
-    CHECK_RESULT(cass_statement_bind_string(statement, index, Z_STRVAL_P(value)));
+    CHECK_RESULT(cass_statement_bind_bytes(statement, index, Z_STRVAL_P(value), Z_STRLEN_P(value)));
 
   if (Z_TYPE_P(value) == IS_DOUBLE)
     CHECK_RESULT(cass_statement_bind_double(statement, index, Z_DVAL_P(value)));
@@ -105,11 +105,6 @@ bind_argument_by_index(CassStatement *statement, size_t index, zval *value TSRML
     if (instanceof_function(Z_OBJCE_P(value), php_driver_time_ce TSRMLS_CC)) {
       php_driver_time *time = PHP_DRIVER_GET_TIME(value);
       CHECK_RESULT(cass_statement_bind_int64(statement, index, time->time));
-    }
-
-    if (instanceof_function(Z_OBJCE_P(value), php_driver_blob_ce TSRMLS_CC)) {
-      php_driver_blob *blob = PHP_DRIVER_GET_BLOB(value);
-      CHECK_RESULT(cass_statement_bind_bytes(statement, index, blob->data, blob->size));
     }
 
     if (instanceof_function(Z_OBJCE_P(value), php_driver_varint_ce TSRMLS_CC)) {
@@ -220,7 +215,7 @@ bind_argument_by_name(CassStatement *statement, const char *name,
   }
 
   if (Z_TYPE_P(value) == IS_STRING)
-    CHECK_RESULT(cass_statement_bind_string_by_name(statement, name, Z_STRVAL_P(value)));
+    CHECK_RESULT(cass_statement_bind_bytes_by_name(statement, name, Z_STRVAL_P(value), Z_STRLEN_P(value)));
 
   if (Z_TYPE_P(value) == IS_DOUBLE)
     CHECK_RESULT(cass_statement_bind_double_by_name(statement, name, Z_DVAL_P(value)));
@@ -268,11 +263,6 @@ bind_argument_by_name(CassStatement *statement, const char *name,
     if (instanceof_function(Z_OBJCE_P(value), php_driver_time_ce TSRMLS_CC)) {
       php_driver_time *time = PHP_DRIVER_GET_TIME(value);
       CHECK_RESULT(cass_statement_bind_int64_by_name(statement, name, time->time));
-    }
-
-    if (instanceof_function(Z_OBJCE_P(value), php_driver_blob_ce TSRMLS_CC)) {
-      php_driver_blob *blob = PHP_DRIVER_GET_BLOB(value);
-      CHECK_RESULT(cass_statement_bind_bytes_by_name(statement, name, blob->data, blob->size));
     }
 
     if (instanceof_function(Z_OBJCE_P(value), php_driver_varint_ce TSRMLS_CC)) {

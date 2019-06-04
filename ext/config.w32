@@ -100,7 +100,6 @@ if (PHP_CASSANDRA != "no") {
               "Aggregate.c " +
               "BatchStatement.c " +
               "Bigint.c " +
-              "Blob.c " +
               "Cluster.c " +
               "Collection.c " +
               "Column.c " +

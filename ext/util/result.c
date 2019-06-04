@@ -45,7 +45,6 @@ php_driver_value(const CassValue* value, const CassDataType* data_type, php5to7_
   php_driver_timestamp *timestamp = NULL;
   php_driver_date *date = NULL;
   php_driver_time *time = NULL;
-  php_driver_blob *blob = NULL;
   php_driver_inet *inet = NULL;
   php_driver_duration *duration = NULL;
   php_driver_collection *collection = NULL;
@@ -70,6 +69,7 @@ php_driver_value(const CassValue* value, const CassDataType* data_type, php5to7_
   case CASS_VALUE_TYPE_ASCII:
   case CASS_VALUE_TYPE_TEXT:
   case CASS_VALUE_TYPE_VARCHAR:
+  case CASS_VALUE_TYPE_BLOB:
     ASSERT_SUCCESS_BLOCK(cass_value_get_string(value, &v_string, &v_string_len),
       zval_ptr_dtor(out);
       return FAILURE;
@@ -131,17 +131,6 @@ php_driver_value(const CassValue* value, const CassDataType* data_type, php5to7_
       zval_ptr_dtor(out);
       return FAILURE;
     )
-    break;
-  case CASS_VALUE_TYPE_BLOB:
-    object_init_ex(PHP5TO7_ZVAL_MAYBE_DEREF(out), php_driver_blob_ce);
-    blob = PHP_DRIVER_GET_BLOB(PHP5TO7_ZVAL_MAYBE_DEREF(out));
-    ASSERT_SUCCESS_BLOCK(cass_value_get_bytes(value, &v_bytes, &v_bytes_len),
-      zval_ptr_dtor(out);
-      return FAILURE;
-    )
-    blob->data = emalloc(v_bytes_len * sizeof(cass_byte_t));
-    blob->size = v_bytes_len;
-    memcpy(blob->data, v_bytes, v_bytes_len);
     break;
   case CASS_VALUE_TYPE_VARINT:
     object_init_ex(PHP5TO7_ZVAL_MAYBE_DEREF(out), php_driver_varint_ce);

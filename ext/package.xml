@@ -40,8 +40,6 @@ protocol and Cassandra Query Language v3.
       <file role="src" name="src/BatchStatement.c" />
       <file role="src" name="src/Bigint.c" />
       <file role="src" name="src/Bigint.h" />
-      <file role="src" name="src/Blob.c" />
-      <file role="src" name="src/Blob.h" />
       <file role="src" name="src/Cluster.c" />
       <file role="src" name="src/Cluster/Builder.c" />
       <file role="src" name="src/Collection.c" />
@@ -194,7 +192,6 @@ protocol and Cassandra Query Language v3.
       <file role="doc" name="doc/Cassandra/Aggregate.php" />
       <file role="doc" name="doc/Cassandra/BatchStatement.php" />
       <file role="doc" name="doc/Cassandra/Bigint.php" />
-      <file role="doc" name="doc/Cassandra/Blob.php" />
       <file role="doc" name="doc/Cassandra/Cluster.php" />
       <file role="doc" name="doc/Cassandra/Cluster/Builder.php" />
       <file role="doc" name="doc/Cassandra/Collection.php" />

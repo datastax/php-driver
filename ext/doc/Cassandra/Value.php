@@ -24,7 +24,6 @@ namespace Cassandra;
  * @see Bigint
  * @see Smallint
  * @see Tinyint
- * @see Blob
  * @see Collection
  * @see Float
  * @see Inet

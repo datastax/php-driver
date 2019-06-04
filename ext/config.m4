@@ -38,7 +38,6 @@ if test "$PHP_CASSANDRA" != "no"; then
     src/Aggregate.c \
     src/BatchStatement.c \
     src/Bigint.c \
-    src/Blob.c \
     src/Cluster.c \
     src/Cluster/Builder.c \
     src/Collection.c \

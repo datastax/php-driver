@@ -121,7 +121,7 @@ class MapTest extends \PHPUnit_Framework_TestCase
         return array(
             array(Type::ascii(), array("ascii")),
             array(Type::bigint(), array(new Bigint("9223372036854775807"))),
-            array(Type::blob(), array(new Blob("blob"))),
+            array(Type::blob(), array("blob")),
             array(Type::boolean(), array(true, false)),
             array(Type::counter(), array(new Bigint(123))),
             array(Type::decimal(), array(new Decimal("3.14159265359"))),

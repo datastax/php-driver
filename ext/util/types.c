@@ -26,7 +26,6 @@
 #include "src/Bigint.h"
 #include "src/Smallint.h"
 #include "src/Tinyint.h"
-#include "src/Blob.h"
 #include "src/Decimal.h"
 #include "src/Duration.h"
 #include "src/Float.h"
