@@ -583,7 +583,7 @@ php_driver_user_type_set(CassUserType *ut,
   case CASS_VALUE_TYPE_TEXT:
   case CASS_VALUE_TYPE_ASCII:
   case CASS_VALUE_TYPE_VARCHAR:
-    CHECK_ERROR(cass_user_type_set_string_by_name_n(ut, name, Z_STRVAL_P(value), Z_STRLEN_P(value)));
+    CHECK_ERROR(cass_user_type_set_string_by_name_n(ut, name, strlen(name) + 1, Z_STRVAL_P(value), Z_STRLEN_P(value)));
     break;
   case CASS_VALUE_TYPE_BIGINT:
   case CASS_VALUE_TYPE_COUNTER:
@@ -599,7 +599,7 @@ php_driver_user_type_set(CassUserType *ut,
     CHECK_ERROR(cass_user_type_set_int8_by_name(ut, name, numeric->data.tinyint.value));
     break;
   case CASS_VALUE_TYPE_BLOB:
-    CHECK_ERROR(cass_user_type_set_bytes_by_name(ut, name, Z_STRVAL_P(value)), Z_STRLEN_P(value));
+    CHECK_ERROR(cass_user_type_set_bytes_by_name(ut, name, Z_STRVAL_P(value), Z_STRLEN_P(value)));
     break;
   case CASS_VALUE_TYPE_BOOLEAN:
 #if PHP_MAJOR_VERSION >= 7
