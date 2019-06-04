@@ -568,6 +568,12 @@ php_driver_ascii_init(INTERNAL_FUNCTION_PARAMETERS)
 }
 
 static void
+php_driver_blob_init(INTERNAL_FUNCTION_PARAMETERS)
+{
+  php_driver_varchar_init(INTERNAL_FUNCTION_PARAM_PASSTHRU);
+}
+
+static void
 php_driver_boolean_init(INTERNAL_FUNCTION_PARAMETERS)
 {
   zend_bool value;
