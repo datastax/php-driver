@@ -165,25 +165,25 @@ install:
       # Determine if PHP archive should be downloaded (cached)
       If (!(Test-Path -Path "$($env:DEPENDENCIES_LOCATION_PREFIX)/$($env:PHP_ARCHIVE)")) {
         # Download the PHP archive
-        Start-FileDownload "$($env:PHP_DOWNLOAD_URL_PREFIX)/$($env:PHP_ARCHIVE)" -FileName "$($env:DEPENDENCIES_LOCATION_PREFIX)/$($env:PHP_ARCHIVE)"
+        cmd /c curl -fsS -o "$($env:DEPENDENCIES_LOCATION_PREFIX)/$($env:PHP_ARCHIVE)" "$($env:PHP_DOWNLOAD_URL_PREFIX)/$($env:PHP_ARCHIVE)"
       }
 
       # Determine if PHP binary tools archive should be downloaded (cached)
       If (!(Test-Path -Path "$($env:DEPENDENCIES_LOCATION_PREFIX)/$($env:PHP_BINARY_TOOLS_ARCHIVE)")) {
         # Download the PHP binary tools archive
-        Start-FileDownload "$($env:PHP_SDK_DEPENDENCIES_DOWNLOAD_URL_PREFIX)/$($env:PHP_BINARY_TOOLS_ARCHIVE)" -FileName "$($env:DEPENDENCIES_LOCATION_PREFIX)/$($env:PHP_BINARY_TOOLS_ARCHIVE)"
+        cmd /c curl -fsS -o "$($env:DEPENDENCIES_LOCATION_PREFIX)/$($env:PHP_BINARY_TOOLS_ARCHIVE)" "$($env:PHP_SDK_DEPENDENCIES_DOWNLOAD_URL_PREFIX)/$($env:PHP_BINARY_TOOLS_ARCHIVE)"
       }
 
       # Determine if PHP libraries archive should be downloaded (cached)
       If (!(Test-Path -Path "$($env:PHP_DEPENDENCIES_ARCHIVE)")) {
         # Download the PHP dependencies archive
-        Start-FileDownload "$($env:PHP_SDK_DEPENDENCIES_DOWNLOAD_URL_PREFIX)/$($env:PHP_DEPENDENCIES_ARCHIVE)" -FileName $env:PHP_DEPENDENCIES_ARCHIVE
+        cmd /c curl -fsS -o "$($env:PHP_DEPENDENCIES_ARCHIVE)" "$($env:PHP_SDK_DEPENDENCIES_DOWNLOAD_URL_PREFIX)/$($env:PHP_DEPENDENCIES_ARCHIVE)"
       }
 
       # Determine if libuv should be installed (cached)
       If (!(Test-Path -Path "libuv-$($env:LIBUV_VERSION)")) {
         # Download and extract the dependency
-        Start-FileDownload "$($env:CPP_DRIVER_DEPENDENCIES_DOWNLOAD_URL_PREFIX)/libuv/$($env:LIBUV_VERSION)/$($env:LIBUV_ARCHIVE)" -FileName $env:LIBUV_ARCHIVE
+        cmd /c curl -fsS -o "$($env:LIBUV_ARCHIVE)" "$($env:CPP_DRIVER_DEPENDENCIES_DOWNLOAD_URL_PREFIX)/libuv/$($env:LIBUV_VERSION)/$($env:LIBUV_ARCHIVE)"
         7z -o"libuv-$($env:LIBUV_VERSION)" x $env:LIBUV_ARCHIVE
 
         # Only keep the static libraries
