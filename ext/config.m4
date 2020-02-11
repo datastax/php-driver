@@ -267,19 +267,19 @@ if test "$PHP_CASSANDRA" != "no"; then
   PHP_ADD_LIBRARY(m,, CASSANDRA_SHARED_LIBADD)
 
   if test "$PHP_CASSANDRA" != "yes"; then
-    if test -f $PHP_CASSANDRA/include/cassandra.h; then
+    if test -f $PHP_CASSANDRA/include/cassandra/cassandra.h; then
       CPP_DRIVER_DIR=$PHP_CASSANDRA
     fi
   else
     for i in /usr/local /usr; do
-      if test -f $i/include/cassandra.h; then
+      if test -f $i/include/cassandra/cassandra.h; then
         CPP_DRIVER_DIR=$i
       fi
     done
   fi
 
   AC_MSG_CHECKING([for supported DataStax C/C++ driver version])
-  PHP_CASSANDRA_FOUND_CASSANDRA_VERSION=`$AWK '/CASS_VERSION_MAJOR/ {printf $3"."} /CASS_VERSION_MINOR/ {printf $3"."} /CASS_VERSION_PATCH/ {printf $3}' $CPP_DRIVER_DIR/include/cassandra.h`
+  PHP_CASSANDRA_FOUND_CASSANDRA_VERSION=`$AWK '/CASS_VERSION_MAJOR/ {printf $3"."} /CASS_VERSION_MINOR/ {printf $3"."} /CASS_VERSION_PATCH/ {printf $3}' $CPP_DRIVER_DIR/include/cassandra/cassandra.h`
   PHP_CASSANDRA_FOUND_CASSANDRA_VERSION_NUMBER=`echo "${PHP_CASSANDRA_FOUND_CASSANDRA_VERSION}" | $AWK 'BEGIN { FS = "."; } { printf "%d", ([$]1 * 100 + [$]2) * 100 + [$]3;}'`
   if test "$PHP_CASSANDRA_FOUND_CASSANDRA_VERSION_NUMBER" -lt "20700"; then
   AC_MSG_ERROR([not supported. Driver version 2.7.0+ required (found $PHP_CASSANDRA_FOUND_CASSANDRA_VERSION)])
