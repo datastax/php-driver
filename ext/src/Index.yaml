@@ -25,7 +25,7 @@ Index:
           type: string
       return:
         comment: Value of an option by name
-        type: Value
+        type: \Cassandra\Value
     options:
       comment: Returns all the index's options
       return:

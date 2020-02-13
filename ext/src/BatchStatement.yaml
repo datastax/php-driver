@@ -33,11 +33,11 @@ BatchStatement:
       params:
         statement:
           comment: string or statement to add
-          type: string|Statement
+          type: string|\Cassandra\Statement
         arguments:
           comment: positional or named arguments (optional)
           type: array|null
       return:
         comment: self
-        type: BatchStatement
+        type: \Cassandra\BatchStatement
 ...

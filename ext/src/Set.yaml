@@ -7,12 +7,12 @@ Set:
       params:
         type:
           comment: ""
-          type: Type
+          type: \Cassandra\Type
     type:
       comment: The type of this set.
       return:
         comment: ""
-        type: Type
+        type: \Cassandra\Type
     values:
       comment: Array of values in this set.
       return:

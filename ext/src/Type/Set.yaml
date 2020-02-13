@@ -18,7 +18,7 @@ Type\Set:
       comment: Returns type of values
       return:
         comment: Type of values
-        type: Type
+        type: \Cassandra\Type
     create:
       comment: |-
         Creates a new Set from the given values.
@@ -33,5 +33,5 @@ Type\Set:
           type: mixed
       return:
         comment: '   A set with given values.'
-        type: Set
+        type: \Cassandra\Set
 ...

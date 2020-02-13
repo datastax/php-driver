@@ -12,12 +12,12 @@ Time:
       comment: Creates a new Time object with the current time.
       return:
         comment: ""
-        type: Time
+        type: \Cassandra\Time
     type:
       comment: The type of this date.
       return:
         comment: ""
-        type: Type
+        type: \Cassandra\Type
     nanoseconds:
       comment: |2-
                     the last full second since the last full minute since the
@@ -40,8 +40,8 @@ Time:
       params:
         datetime:
           comment: ""
-          type: DateTime
+          type: \DateTime
       return:
         comment: ""
-        type: Time
+        type: \Cassandra\Time
 ...

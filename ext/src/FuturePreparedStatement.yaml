@@ -14,5 +14,5 @@ FuturePreparedStatement:
           type: int|double|null
       return:
         comment: A prepared statement
-        type: PreparedStatement
+        type: \Cassandra\PreparedStatement
 ...

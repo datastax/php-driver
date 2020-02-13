@@ -24,16 +24,16 @@ namespace Cassandra;
 final class Duration implements Value {
 
     /**
-     * @param long|double|string|Bigint $months Months attribute of the duration.
-     * @param long|double|string|Bigint $days Days attribute of the duration.
-     * @param long|double|string|Bigint $nanos Nanos attribute of the duration.
+     * @param long|double|string|\Cassandra\Bigint $months Months attribute of the duration.
+     * @param long|double|string|\Cassandra\Bigint $days Days attribute of the duration.
+     * @param long|double|string|\Cassandra\Bigint $nanos Nanos attribute of the duration.
      */
     public function __construct($months, $days, $nanos) { }
 
     /**
      * The type of represented by the value.
      *
-     * @return Type the Cassandra type for Duration
+     * @return \Cassandra\Type the Cassandra type for Duration
      */
     public function type() { }
 

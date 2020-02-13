@@ -40,7 +40,7 @@ interface Keyspace {
     /**
      * Returns replication options
      *
-     * @return Map Replication options
+     * @return \Cassandra\Map Replication options
      */
     public function replicationOptions();
 
@@ -56,7 +56,7 @@ interface Keyspace {
      *
      * @param string $name Table name
      *
-     * @return Table|null Table instance or null
+     * @return \Cassandra\Table|null Table instance or null
      */
     public function table($name);
 
@@ -72,7 +72,7 @@ interface Keyspace {
      *
      * @param string $name User type name
      *
-     * @return Type\UserType|null A user type or null
+     * @return \Cassandra\Type\UserType|null A user type or null
      */
     public function userType($name);
 
@@ -88,7 +88,7 @@ interface Keyspace {
      *
      * @param string $name Materialized view name
      *
-     * @return MaterizedView|null A materialized view or null
+     * @return \Cassandra\MaterizedView|null A materialized view or null
      */
     public function materializedView($name);
 
@@ -103,9 +103,9 @@ interface Keyspace {
      * Get a function by name and signature
      *
      * @param string $name Function name
-     * @param string|Type $params Function arguments
+     * @param string|\Cassandra\Type $params Function arguments
      *
-     * @return Function|null A function or null
+     * @return \Cassandra\Function|null A function or null
      */
     public function function_($name, ...$params);
 
@@ -120,9 +120,9 @@ interface Keyspace {
      * Get an aggregate by name and signature
      *
      * @param string $name Aggregate name
-     * @param string|Type $params Aggregate arguments
+     * @param string|\Cassandra\Type $params Aggregate arguments
      *
-     * @return Aggregate|null An aggregate or null
+     * @return \Cassandra\Aggregate|null An aggregate or null
      */
     public function aggregate($name, ...$params);
 

@@ -10,7 +10,7 @@ Schema:
           type: string
       return:
         comment: Keyspace instance or null
-        type: Keyspace
+        type: \Cassandra\Keyspace
     keyspaces:
       comment: Returns all keyspaces defined in the schema.
       return:

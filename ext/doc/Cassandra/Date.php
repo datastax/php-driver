@@ -33,7 +33,7 @@ final class Date implements Value {
     /**
      * The type of this date.
      *
-     * @return Type
+     * @return \Cassandra\Type
      */
     public function type() { }
 
@@ -45,7 +45,7 @@ final class Date implements Value {
     /**
      * Converts current date to PHP DateTime.
      *
-     * @param Time $time An optional Time object that is added to the DateTime object.
+     * @param \Cassandra\Time $time An optional Time object that is added to the DateTime object.
      *
      * @return \DateTime PHP representation
      */

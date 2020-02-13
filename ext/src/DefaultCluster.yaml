@@ -16,7 +16,7 @@ DefaultCluster:
           type: int
       return:
         comment: ""
-        type: Session
+        type: \Cassandra\Session
     connectAsync:
       comment: ""
       params:
@@ -25,5 +25,5 @@ DefaultCluster:
           type: string
       return:
         comment: ""
-        type: Future
+        type: \Cassandra\Future
 ...

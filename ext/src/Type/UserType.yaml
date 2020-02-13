@@ -41,7 +41,7 @@ Type\UserType:
           type: mixed
       return:
         comment: ' A user type value with given name/value pairs.'
-        type: UserTypeValue
+        type: \Cassandra\UserTypeValue
     withName:
       comment: Associate the user type with a name.
       params:

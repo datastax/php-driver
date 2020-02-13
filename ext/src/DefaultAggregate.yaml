@@ -21,27 +21,27 @@ DefaultAggregate:
       comment: ""
       return:
         comment: Final public function of the aggregate
-        type: Function
+        type: \Cassandra\Function
     stateFunction:
       comment: ""
       return:
         comment: State public function of the aggregate
-        type: Function
+        type: \Cassandra\Function
     initialCondition:
       comment: ""
       return:
         comment: ""
-        type: Value
+        type: \Cassandra\Value
     returnType:
       comment: ""
       return:
         comment: ""
-        type: Type
+        type: \Cassandra\Type
     stateType:
       comment: ""
       return:
         comment: ""
-        type: Type
+        type: \Cassandra\Type
     signature:
       comment: ""
       return:

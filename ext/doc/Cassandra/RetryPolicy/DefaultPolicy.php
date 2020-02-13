@@ -28,6 +28,6 @@ namespace Cassandra\RetryPolicy;
  *
  * In all other cases the error will be returned.
  */
-final class DefaultPolicy implements RetryPolicy {
+final class DefaultPolicy implements \Cassandra\RetryPolicy {
 
 }

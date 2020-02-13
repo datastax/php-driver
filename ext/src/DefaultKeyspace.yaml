@@ -16,7 +16,7 @@ DefaultKeyspace:
       comment: ""
       return:
         comment: ""
-        type: Map
+        type: \Cassandra\Map
     hasDurableWrites:
       comment: ""
       return:
@@ -30,7 +30,7 @@ DefaultKeyspace:
           type: string
       return:
         comment: ""
-        type: Table
+        type: \Cassandra\Table
     tables:
       comment: ""
       return:
@@ -44,7 +44,7 @@ DefaultKeyspace:
           type: string
       return:
         comment: ""
-        type: Type\UserType|null
+        type: \Cassandra\Type\UserType|null
     userTypes:
       comment: ""
       return:
@@ -58,7 +58,7 @@ DefaultKeyspace:
           type: string
       return:
         comment: ""
-        type: MaterizedView|null
+        type: \Cassandra\MaterizedView|null
     materializedViews:
       comment: ""
       return:
@@ -72,10 +72,10 @@ DefaultKeyspace:
           type: string
         '...':
           comment: ""
-          type: string|Type
+          type: string|\Cassandra\Type
       return:
         comment: ""
-        type: Function|null
+        type: \Cassandra\Function|null
     functions:
       comment: ""
       return:
@@ -89,10 +89,10 @@ DefaultKeyspace:
           type: string
         '...':
           comment: ""
-          type: string|Type
+          type: string|\Cassandra\Type
       return:
         comment: ""
-        type: Aggregate|null
+        type: \Cassandra\Aggregate|null
     aggregates:
       comment: ""
       return:

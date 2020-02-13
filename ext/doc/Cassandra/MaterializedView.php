@@ -26,7 +26,7 @@ abstract class MaterializedView implements Table {
     /**
      * Returns the base table of the view
      *
-     * @return Table Base table of the view
+     * @return \Cassandra\Table Base table of the view
      */
     public abstract function baseTable();
 
@@ -42,7 +42,7 @@ abstract class MaterializedView implements Table {
      *
      * @param string $name The name of the option
      *
-     * @return Value Value of an option by name
+     * @return \Cassandra\Value Value of an option by name
      */
     public abstract function option($name);
 
@@ -134,14 +134,14 @@ abstract class MaterializedView implements Table {
     /**
      * Returns compaction strategy options
      *
-     * @return Map Compaction strategy options
+     * @return \Cassandra\Map Compaction strategy options
      */
     public abstract function compactionStrategyOptions();
 
     /**
      * Returns compression parameters
      *
-     * @return Map Compression parameters
+     * @return \Cassandra\Map Compression parameters
      */
     public abstract function compressionParameters();
 
@@ -178,7 +178,7 @@ abstract class MaterializedView implements Table {
      *
      * @param string $name Name of the column
      *
-     * @return Column Column instance
+     * @return \Cassandra\Column Column instance
      */
     public abstract function column($name);
 

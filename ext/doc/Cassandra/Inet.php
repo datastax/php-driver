@@ -40,7 +40,7 @@ final class Inet implements Value {
     /**
      * The type of this inet.
      *
-     * @return Type
+     * @return \Cassandra\Type
      */
     public function type() { }
 

@@ -15,7 +15,7 @@ DefaultTable:
           type: string
       return:
         comment: ""
-        type: Value
+        type: \Cassandra\Value
     options:
       comment: ""
       return:
@@ -80,12 +80,12 @@ DefaultTable:
       comment: ""
       return:
         comment: ""
-        type: Map
+        type: \Cassandra\Map
     compressionParameters:
       comment: ""
       return:
         comment: ""
-        type: Map
+        type: \Cassandra\Map
     populateIOCacheOnFlush:
       comment: ""
       return:
@@ -114,7 +114,7 @@ DefaultTable:
           type: string
       return:
         comment: ""
-        type: Column
+        type: \Cassandra\Column
     columns:
       comment: ""
       return:
@@ -148,7 +148,7 @@ DefaultTable:
           type: string
       return:
         comment: An index or null
-        type: Index|null
+        type: \Cassandra\Index|null
     indexes:
       comment: Gets all indexes
       return:
@@ -162,7 +162,7 @@ DefaultTable:
           type: string
       return:
         comment: A materialized view or null
-        type: MaterizedView|null
+        type: \Cassandra\MaterizedView|null
     materializedViews:
       comment: Gets all materialized views
       return:

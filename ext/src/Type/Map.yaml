@@ -18,12 +18,12 @@ Type\Map:
       comment: Returns type of keys
       return:
         comment: Type of keys
-        type: Type
+        type: \Cassandra\Type
     valueType:
       comment: Returns type of values
       return:
         comment: Type of values
-        type: Type
+        type: \Cassandra\Type
     create:
       comment: |-
         Creates a new Map from the given values.
@@ -54,5 +54,5 @@ Type\Map:
           type: mixed
       return:
         comment: '   A set with given values.'
-        type: Map
+        type: \Cassandra\Map
 ...

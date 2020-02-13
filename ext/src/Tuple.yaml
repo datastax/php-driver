@@ -12,7 +12,7 @@ Tuple:
       comment: The type of this tuple.
       return:
         comment: ""
-        type: Type
+        type: \Cassandra\Type
     values:
       comment: Array of values in this tuple.
       return:

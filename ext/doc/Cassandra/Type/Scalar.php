@@ -21,7 +21,7 @@ namespace Cassandra\Type;
 /**
  * A class that represents a primitive type (e.g. `varchar` or `bigint`)
  */
-final class Scalar extends Type {
+final class Scalar extends \Cassandra\Type {
 
     private function __construct() { }
 

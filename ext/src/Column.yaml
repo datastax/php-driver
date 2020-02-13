@@ -11,7 +11,7 @@ Column:
       comment: Returns the type of the column.
       return:
         comment: Type of the column
-        type: Type
+        type: \Cassandra\Type
     isReversed:
       comment: Returns whether the column is in descending or ascending order.
       return:

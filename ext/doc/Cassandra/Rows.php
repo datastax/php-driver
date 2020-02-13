@@ -142,14 +142,14 @@ final class Rows implements \Iterator, \ArrayAccess {
      *
      * @param float|null $timeout
      *
-     * @return Rows|null loads and returns next result page
+     * @return \Cassandra\Rows|null loads and returns next result page
      */
     public function nextPage($timeout) { }
 
     /**
      * Get the next page of results asynchronously.
      *
-     * @return Future returns future of the next result page
+     * @return \Cassandra\Future returns future of the next result page
      */
     public function nextPageAsync() { }
 

@@ -33,7 +33,7 @@ final class Tuple implements Value, \Countable, \Iterator {
     /**
      * The type of this tuple.
      *
-     * @return Type
+     * @return \Cassandra\Type
      */
     public function type() { }
 

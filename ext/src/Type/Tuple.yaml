@@ -33,5 +33,5 @@ Type\Tuple:
           type: mixed
       return:
         comment: A tuple with given values.
-        type: Tuple
+        type: \Cassandra\Tuple
 ...

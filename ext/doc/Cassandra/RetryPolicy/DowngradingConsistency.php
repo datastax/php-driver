@@ -39,6 +39,6 @@ namespace Cassandra\RetryPolicy;
  * Important: This policy may attempt to retry requests with a lower
  * consistency level. Using this policy can break consistency guarantees.
  */
-final class DowngradingConsistency implements RetryPolicy {
+final class DowngradingConsistency implements \Cassandra\RetryPolicy {
 
 }

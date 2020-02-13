@@ -12,7 +12,7 @@ Inet:
       comment: The type of this inet.
       return:
         comment: ""
-        type: Type
+        type: \Cassandra\Type
     address:
       comment: Returns the normalized string representation of the address.
       return:

@@ -123,12 +123,12 @@ Rows:
           type: float|null
       return:
         comment: loads and returns next result page
-        type: Rows|null
+        type: \Cassandra\Rows|null
     nextPageAsync:
       comment: Get the next page of results asynchronously.
       return:
         comment: returns future of the next result page
-        type: Future
+        type: \Cassandra\Future
     pagingStateToken:
       comment: Returns the raw paging state token.
       return:

@@ -13,5 +13,5 @@ FutureSession:
           type: int|double|null
       return:
         comment: A connected session
-        type: Session
+        type: \Cassandra\Session
 ...

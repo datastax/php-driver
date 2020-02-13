@@ -6,12 +6,12 @@ Tinyint:
       comment: Minimum possible Tinyint value
       return:
         comment: minimum value
-        type: Tinyint
+        type: \Cassandra\Tinyint
     max:
       comment: Maximum possible Tinyint value
       return:
         comment: maximum value
-        type: Tinyint
+        type: \Cassandra\Tinyint
     __construct:
       comment: Creates a new 8-bit signed integer.
       params:
@@ -23,61 +23,61 @@ Tinyint:
       params:
         num:
           comment: ""
-          type: Numeric
+          type: \Cassandra\Numeric
       return:
         comment: ""
-        type: Numeric
+        type: \Cassandra\Numeric
     sub:
       comment: ""
       params:
         num:
           comment: ""
-          type: Numeric
+          type: \Cassandra\Numeric
       return:
         comment: ""
-        type: Numeric
+        type: \Cassandra\Numeric
     mul:
       comment: ""
       params:
         num:
           comment: ""
-          type: Numeric
+          type: \Cassandra\Numeric
       return:
         comment: ""
-        type: Numeric
+        type: \Cassandra\Numeric
     div:
       comment: ""
       params:
         num:
           comment: ""
-          type: Numeric
+          type: \Cassandra\Numeric
       return:
         comment: ""
-        type: Numeric
+        type: \Cassandra\Numeric
     mod:
       comment: ""
       params:
         num:
           comment: ""
-          type: Numeric
+          type: \Cassandra\Numeric
       return:
         comment: ""
-        type: Numeric
+        type: \Cassandra\Numeric
     abs:
       comment: ""
       return:
         comment: ""
-        type: Numeric
+        type: \Cassandra\Numeric
     neg:
       comment: ""
       return:
         comment: ""
-        type: Numeric
+        type: \Cassandra\Numeric
     sqrt:
       comment: ""
       return:
         comment: ""
-        type: Numeric
+        type: \Cassandra\Numeric
     toInt:
       comment: ""
       return:
@@ -92,7 +92,7 @@ Tinyint:
       comment: The type of this value (tinyint).
       return:
         comment: ""
-        type: Type
+        type: \Cassandra\Type
     value:
       comment: Returns the integer value.
       return:

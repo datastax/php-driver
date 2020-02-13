@@ -21,7 +21,7 @@ namespace Cassandra\Exception;
 /**
  * Cassandra domain exception.
  */
-class RangeException extends \RangeException implements Exception {
+class RangeException extends \RangeException implements \Cassandra\Exception {
 
     /**
      * @param mixed $message
