@@ -6,31 +6,31 @@ DefaultSession:
       comment: ""
       return:
         comment: ""
-        type: Schema
+        type: \Cassandra\Schema
     execute:
       comment: ""
       return:
         comment: ""
-        type: Rows
+        type: \Cassandra\Rows
       params:
         statement:
           comment: ""
-          type: string|Statement
+          type: string|\Cassandra\Statement
         options:
           comment: ""
-          type: array|ExecutionOptions|null
+          type: array|\Cassandra\ExecutionOptions|null
     executeAsync:
       comment: ""
       params:
         statement:
           comment: ""
-          type: string|Statement
+          type: string|\Cassandra\Statement
         options:
           comment: ""
-          type: array|ExecutionOptions|null
+          type: array|\Cassandra\ExecutionOptions|null
       return:
         comment: ""
-        type: FutureRows
+        type: \Cassandra\FutureRows
     prepare:
       comment: ""
       params:
@@ -39,10 +39,10 @@ DefaultSession:
           type: string
         options:
           comment: ""
-          type: array|ExecutionOptions|null
+          type: array|\Cassandra\ExecutionOptions|null
       return:
         comment: ""
-        type: PreparedStatement
+        type: \Cassandra\PreparedStatement
     prepareAsync:
       comment: ""
       params:
@@ -51,10 +51,10 @@ DefaultSession:
           type: string
         options:
           comment: ""
-          type: array|ExecutionOptions|null
+          type: array|\Cassandra\ExecutionOptions|null
       return:
         comment: ""
-        type: FuturePreparedStatement
+        type: \Cassandra\FuturePreparedStatement
     close:
       comment: ""
       params:
@@ -68,7 +68,7 @@ DefaultSession:
       comment: ""
       return:
         comment: ""
-        type: FutureClose
+        type: \Cassandra\FutureClose
     metrics:
       comment: ""
       return:

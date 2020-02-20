@@ -9,7 +9,7 @@ Cluster\Builder:
       comment: Returns a Cluster Instance.
       return:
         comment: Cluster instance
-        type: \Cluster
+        type: \Cassandra\Cluster
     withDefaultConsistency:
       comment: |
         Configures default consistency for all requests.
@@ -19,7 +19,7 @@ Cluster\Builder:
           type: int
       return:
         comment: self
-        type: Builder
+        type: \Cassandra\Cluster\Builder
     withDefaultPageSize:
       comment: |
         Configures default page size for all results.
@@ -30,7 +30,7 @@ Cluster\Builder:
           type: int|null
       return:
         comment: self
-        type: Builder
+        type: \Cassandra\Cluster\Builder
     withDefaultTimeout:
       comment: |
         Configures default timeout for future resolution in blocking operations
@@ -41,7 +41,7 @@ Cluster\Builder:
           type: float|null
       return:
         comment: self
-        type: Builder
+        type: \Cassandra\Cluster\Builder
     withContactPoints:
       comment: |
         Configures the initial endpoints. Note that the driver will
@@ -52,7 +52,7 @@ Cluster\Builder:
           type: string
       return:
         comment: self
-        type: Builder
+        type: \Cassandra\Cluster\Builder
     withPort:
       comment: |
         Specify a different port to be used when connecting to the cluster.
@@ -64,12 +64,12 @@ Cluster\Builder:
           type: int
       return:
         comment: self
-        type: Builder
+        type: \Cassandra\Cluster\Builder
     withRoundRobinLoadBalancingPolicy:
       comment: Configures this cluster to use a round robin load balancing policy.
       return:
         comment: self
-        type: Builder
+        type: \Cassandra\Cluster\Builder
     withDatacenterAwareRoundRobinLoadBalancingPolicy:
       comment: |
         Configures this cluster to use a datacenter aware round robin load balancing policy.
@@ -86,7 +86,7 @@ Cluster\Builder:
           type: bool
       return:
         comment: self
-        type: Builder
+        type: \Cassandra\Cluster\Builder
     withTokenAwareRouting:
       comment: |
         Enable token aware routing.
@@ -96,7 +96,7 @@ Cluster\Builder:
           type: bool
       return:
         comment: self
-        type: Builder
+        type: \Cassandra\Cluster\Builder
     withCredentials:
       comment: |
         Configures plain-text authentication.
@@ -109,7 +109,7 @@ Cluster\Builder:
           type: string
       return:
         comment: self
-        type: Builder
+        type: \Cassandra\Cluster\Builder
     withConnectTimeout:
       comment: |
         Timeout used for establishing TCP connections.
@@ -119,7 +119,7 @@ Cluster\Builder:
           type: float
       return:
         comment: self
-        type: Builder
+        type: \Cassandra\Cluster\Builder
     withRequestTimeout:
       comment: |
         Timeout used for waiting for a response from a node.
@@ -129,17 +129,17 @@ Cluster\Builder:
           type: float
       return:
         comment: self
-        type: Builder
+        type: \Cassandra\Cluster\Builder
     withSSL:
       comment: |
         Set up ssl context.
       params:
         options:
           comment: a preconfigured ssl context
-          type: SSLOptions
+          type: \Cassandra\SSLOptions
       return:
         comment: self
-        type: Builder
+        type: \Cassandra\Cluster\Builder
     withPersistentSessions:
       comment: Enable persistent sessions and clusters.
       params:
@@ -148,7 +148,7 @@ Cluster\Builder:
           type: bool
       return:
         comment: self
-        type: Builder
+        type: \Cassandra\Cluster\Builder
     withProtocolVersion:
       comment: |-
         Force the driver to use a specific binary protocol version.
@@ -165,7 +165,7 @@ Cluster\Builder:
           type: int
       return:
         comment: self
-        type: Builder
+        type: \Cassandra\Cluster\Builder
     withIOThreads:
       comment: |
         Total number of IO threads to use for handling the requests.
@@ -178,7 +178,7 @@ Cluster\Builder:
           type: int
       return:
         comment: self
-        type: Builder
+        type: \Cassandra\Cluster\Builder
     withConnectionsPerHost:
       comment: |
         Set the size of connection pools used by the driver. Pools are fixed
@@ -196,7 +196,7 @@ Cluster\Builder:
           type: int
       return:
         comment: self
-        type: Builder
+        type: \Cassandra\Cluster\Builder
     withReconnectInterval:
       comment: |
         Specify interval in seconds that the driver should wait before attempting
@@ -207,7 +207,7 @@ Cluster\Builder:
           type: float
       return:
         comment: self
-        type: Builder
+        type: \Cassandra\Cluster\Builder
     withLatencyAwareRouting:
       comment: |
         Enables/disables latency-aware routing.
@@ -217,7 +217,7 @@ Cluster\Builder:
           type: bool
       return:
         comment: self
-        type: Builder
+        type: \Cassandra\Cluster\Builder
     withTCPNodelay:
       comment: |
         Disables nagle algorithm for lower latency.
@@ -227,7 +227,7 @@ Cluster\Builder:
           type: bool
       return:
         comment: self
-        type: Builder
+        type: \Cassandra\Cluster\Builder
     withTCPKeepalive:
       comment: Enables/disables TCP keepalive.
       params:
@@ -240,17 +240,17 @@ Cluster\Builder:
           type: float|null
       return:
         comment: self
-        type: Builder
+        type: \Cassandra\Cluster\Builder
     withRetryPolicy:
       comment: |
         Configures the retry policy.
       params:
         policy:
           comment: the retry policy to use.
-          type: Cluster\RetryPolicy
+          type: \Cassandra\RetryPolicy
       return:
         comment: self
-        type: Builder
+        type: \Cassandra\Cluster\Builder
     withTimestampGenerator:
       comment: Sets the timestamp generator.
       params:
@@ -258,10 +258,10 @@ Cluster\Builder:
           comment: |-
             A timestamp generator that will be used
             to generate timestamps for statements.
-          type: TimestampGenerator
+          type: \Cassandra\TimestampGenerator
       return:
         comment: self
-        type: Builder
+        type: \Cassandra\Cluster\Builder
     withSchemaMetadata:
       comment: |
         Enables/disables Schema Metadata.
@@ -276,7 +276,7 @@ Cluster\Builder:
           type: bool
       return:
         comment: self
-        type: Builder
+        type: \Cassandra\Cluster\Builder
     withHostnameResolution:
       comment: |
         Enables/disables Hostname Resolution.
@@ -294,7 +294,7 @@ Cluster\Builder:
           type: bool
       return:
         comment: self
-        type: Builder
+        type: \Cassandra\Cluster\Builder
     withRandomizedContactPoints:
       comment: |
         Enables/disables Randomized Contact Points.
@@ -310,7 +310,7 @@ Cluster\Builder:
           type: bool
       return:
         comment: self
-        type: Builder
+        type: \Cassandra\Cluster\Builder
     withConnectionHeartbeatInterval:
       comment: |
         Specify interval in seconds that the driver should wait before attempting
@@ -323,7 +323,7 @@ Cluster\Builder:
           type: float
       return:
         comment: self
-        type: Builder
+        type: \Cassandra\Cluster\Builder
     withBlackListHosts:
       comment: |
         Sets the blacklist hosts. Any host in the blacklist will be ignored and
@@ -335,7 +335,7 @@ Cluster\Builder:
           type: string
       return:
         comment: self
-        type: Builder
+        type: \Cassandra\Cluster\Builder
     withWhiteListHosts:
       comment: |
         Sets the whitelist hosts. Any host not in the whitelist will be ignored
@@ -347,7 +347,7 @@ Cluster\Builder:
           type: string
       return:
         comment: self
-        type: Builder
+        type: \Cassandra\Cluster\Builder
     withBlackListDCs:
       comment: |
         Sets the blacklist datacenters. Any datacenter in the blacklist will be
@@ -360,7 +360,7 @@ Cluster\Builder:
           type: string
       return:
         comment: self
-        type: Builder
+        type: \Cassandra\Cluster\Builder
     withWhiteListDCs:
       comment: |
         Sets the whitelist datacenters. Any host not in a whitelisted datacenter
@@ -372,5 +372,5 @@ Cluster\Builder:
           type: string
       return:
         comment: self
-        type: Builder
+        type: \Cassandra\Cluster\Builder
 ...

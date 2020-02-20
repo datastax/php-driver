@@ -40,7 +40,7 @@ final class Uuid implements Value, UuidInterface {
     /**
      * The type of this uuid.
      *
-     * @return Type
+     * @return \Cassandra\Type
      */
     public function type() { }
 

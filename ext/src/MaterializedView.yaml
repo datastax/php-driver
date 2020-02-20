@@ -6,7 +6,7 @@ MaterializedView:
       comment: Returns the base table of the view
       return:
         comment: Base table of the view
-        type: Table
+        type: \Cassandra\Table
     name:
       comment: Returns the name of this view
       return:
@@ -20,7 +20,7 @@ MaterializedView:
           type: string
       return:
         comment: ""
-        type: Value
+        type: \Cassandra\Value
     options:
       comment: Returns all the view's options
       return:
@@ -87,12 +87,12 @@ MaterializedView:
       comment: ""
       return:
         comment: ""
-        type: Map
+        type: \Cassandra\Map
     compressionParameters:
       comment: ""
       return:
         comment: ""
-        type: Map
+        type: \Cassandra\Map
     populateIOCacheOnFlush:
       comment: ""
       return:
@@ -121,7 +121,7 @@ MaterializedView:
           type: string
       return:
         comment: ""
-        type: Column
+        type: \Cassandra\Column
     columns:
       comment: Returns all columns in this view
       return:

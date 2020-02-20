@@ -21,7 +21,7 @@ DefaultFunction:
       comment: ""
       return:
         comment: ""
-        type: Type
+        type: \Cassandra\Type
     signature:
       comment: ""
       return:

@@ -22,7 +22,7 @@ namespace Cassandra\Type;
  * A class that represents a user type. The user type is able to represent a
  * composite type of one or more types accessed by name.
  */
-final class UserType extends Type {
+final class UserType extends \Cassandra\Type {
 
     private function __construct() { }
 
@@ -83,7 +83,7 @@ final class UserType extends Type {
      *                                            different types than what the
      *                                            user type expects.
      *
-     * @return UserTypeValue A user type value with given name/value pairs.
+     * @return \Cassandra\UserTypeValue A user type value with given name/value pairs.
      */
     public function create($value) { }
 

@@ -11,13 +11,13 @@ Cassandra:
         Creates a new cluster builder for constructing a Cluster object.
       return:
         comment: A cluster builder object with default settings
-        type: Cluster\Builder
+        type: \Cassandra\Cluster\Builder
     ssl:
       comment: |
         Creates a new ssl builder for constructing a SSLOptions object.
       return:
         comment: A SSL options builder with default settings
-        type: SSLOptions\Builder
+        type: \Cassandra\SSLOptions\Builder
   constants:
     CONSISTENCY_ANY:
       comment: |-

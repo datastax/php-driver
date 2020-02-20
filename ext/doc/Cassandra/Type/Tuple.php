@@ -22,7 +22,7 @@ namespace Cassandra\Type;
  * A class that represents the tuple type. The tuple type is able to represent
  * a composite type of one or more types accessed by index.
  */
-final class Tuple extends Type {
+final class Tuple extends \Cassandra\Type {
 
     private function __construct() { }
 
@@ -57,7 +57,7 @@ final class Tuple extends Type {
      *                                            different type than what the
      *                                            tuple expects.
      *
-     * @return Tuple A tuple with given values.
+     * @return \Cassandra\Tuple A tuple with given values.
      */
     public function create($values) { }
 

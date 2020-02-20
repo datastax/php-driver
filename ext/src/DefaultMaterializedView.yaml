@@ -15,7 +15,7 @@ DefaultMaterializedView:
           type: string
       return:
         comment: ""
-        type: Value
+        type: \Cassandra\Value
     options:
       comment: ""
       return:
@@ -80,12 +80,12 @@ DefaultMaterializedView:
       comment: ""
       return:
         comment: ""
-        type: Map
+        type: \Cassandra\Map
     compressionParameters:
       comment: ""
       return:
         comment: ""
-        type: Map
+        type: \Cassandra\Map
     populateIOCacheOnFlush:
       comment: ""
       return:
@@ -114,7 +114,7 @@ DefaultMaterializedView:
           type: string
       return:
         comment: ""
-        type: Column
+        type: \Cassandra\Column
     columns:
       comment: ""
       return:
@@ -144,5 +144,5 @@ DefaultMaterializedView:
       comment: ""
       return:
         comment: ""
-        type: Table
+        type: \Cassandra\Table
 ...

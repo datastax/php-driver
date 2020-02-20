@@ -22,7 +22,7 @@ namespace Cassandra\Type;
  * A class that represents the list type. The list type contains the type of the
  * elements contain in the list.
  */
-final class Collection extends Type {
+final class Collection extends \Cassandra\Type {
 
     private function __construct() { }
 
@@ -36,7 +36,7 @@ final class Collection extends Type {
     /**
      * Returns type of values
      *
-     * @return Type Type of values
+     * @return \Cassandra\Type Type of values
      */
     public function valueType() { }
 
@@ -57,7 +57,7 @@ final class Collection extends Type {
      *                                            different type than what this
      *                                            list type expects.
      *
-     * @return Collection A list with given values.
+     * @return \Cassandra\Collection A list with given values.
      */
     public function create($value) { }
 

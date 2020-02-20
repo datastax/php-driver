@@ -130,7 +130,7 @@ PHP_METHOD(ClusterBuilder, build)
   rc = cass_cluster_set_use_hostname_resolution(cluster->cluster, self->enable_hostname_resolution);
   if (rc == CASS_ERROR_LIB_NOT_IMPLEMENTED) {
     if (self->enable_hostname_resolution) {
-      php_error_docref0(NULL TSRMLS_CC, E_WARNING,
+      php_error_docref(NULL TSRMLS_CC, E_WARNING,
                         "The underlying C/C++ driver does not implement hostname resolution it will be disabled");
     }
   } else {

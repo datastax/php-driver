@@ -17,7 +17,7 @@ SSLOptions\Builder:
           type: string
       return:
         comment: self
-        type: Builder
+        type: \Cassandra\SSLOptions\Builder
     withVerifyFlags:
       comment: |
         Disable certificate verification.
@@ -29,7 +29,7 @@ SSLOptions\Builder:
           type: int
       return:
         comment: self
-        type: Builder
+        type: \Cassandra\SSLOptions\Builder
     withClientCert:
       comment: |
         Set client-side certificate chain.
@@ -44,7 +44,7 @@ SSLOptions\Builder:
           type: string
       return:
         comment: self
-        type: Builder
+        type: \Cassandra\SSLOptions\Builder
     withPrivateKey:
       comment: |
         Set client-side private key. This is used to authenticate the client on
@@ -60,10 +60,10 @@ SSLOptions\Builder:
           type: string|null
       return:
         comment: self
-        type: Builder
+        type: \Cassandra\SSLOptions\Builder
     build:
       comment: Builds SSL options.
       return:
         comment: ssl options configured accordingly.
-        type: \SSLOptions
+        type: \Cassandra\SSLOptions
 ...

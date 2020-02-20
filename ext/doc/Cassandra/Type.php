@@ -40,147 +40,147 @@ abstract class Type {
     /**
      * Get representation of ascii type
      *
-     * @return Type ascii type
+     * @return \Cassandra\Type ascii type
      */
     public static final function ascii() { }
 
     /**
      * Get representation of bigint type
      *
-     * @return Type bigint type
+     * @return \Cassandra\Type bigint type
      */
     public static final function bigint() { }
 
     /**
      * Get representation of smallint type
      *
-     * @return Type smallint type
+     * @return \Cassandra\Type smallint type
      */
     public static final function smallint() { }
 
     /**
      * Get representation of tinyint type
      *
-     * @return Type tinyint type
+     * @return \Cassandra\Type tinyint type
      */
     public static final function tinyint() { }
 
     /**
      * Get representation of blob type
      *
-     * @return Type blob type
+     * @return \Cassandra\Type blob type
      */
     public static final function blob() { }
 
     /**
      * Get representation of boolean type
      *
-     * @return Type boolean type
+     * @return \Cassandra\Type boolean type
      */
     public static final function boolean() { }
 
     /**
      * Get representation of counter type
      *
-     * @return Type counter type
+     * @return \Cassandra\Type counter type
      */
     public static final function counter() { }
 
     /**
      * Get representation of decimal type
      *
-     * @return Type decimal type
+     * @return \Cassandra\Type decimal type
      */
     public static final function decimal() { }
 
     /**
      * Get representation of double type
      *
-     * @return Type double type
+     * @return \Cassandra\Type double type
      */
     public static final function double() { }
 
     /**
      * Get representation of duration type
      *
-     * @return Type duration type
+     * @return \Cassandra\Type duration type
      */
     public static final function duration() { }
 
     /**
      * Get representation of float type
      *
-     * @return Type float type
+     * @return \Cassandra\Type float type
      */
     public static final function float() { }
 
     /**
      * Get representation of int type
      *
-     * @return Type int type
+     * @return \Cassandra\Type int type
      */
     public static final function int() { }
 
     /**
      * Get representation of text type
      *
-     * @return Type text type
+     * @return \Cassandra\Type text type
      */
     public static final function text() { }
 
     /**
      * Get representation of timestamp type
      *
-     * @return Type timestamp type
+     * @return \Cassandra\Type timestamp type
      */
     public static final function timestamp() { }
 
     /**
      * Get representation of date type
      *
-     * @return Type date type
+     * @return \Cassandra\Type date type
      */
     public static final function date() { }
 
     /**
      * Get representation of time type
      *
-     * @return Type time type
+     * @return \Cassandra\Type time type
      */
     public static final function time() { }
 
     /**
      * Get representation of uuid type
      *
-     * @return Type uuid type
+     * @return \Cassandra\Type uuid type
      */
     public static final function uuid() { }
 
     /**
      * Get representation of varchar type
      *
-     * @return Type varchar type
+     * @return \Cassandra\Type varchar type
      */
     public static final function varchar() { }
 
     /**
      * Get representation of varint type
      *
-     * @return Type varint type
+     * @return \Cassandra\Type varint type
      */
     public static final function varint() { }
 
     /**
      * Get representation of timeuuid type
      *
-     * @return Type timeuuid type
+     * @return \Cassandra\Type timeuuid type
      */
     public static final function timeuuid() { }
 
     /**
      * Get representation of inet type
      *
-     * @return Type inet type
+     * @return \Cassandra\Type inet type
      */
     public static final function inet() { }
 
@@ -196,9 +196,9 @@ abstract class Type {
      * var_dump($collection);
      * @endcode
      *
-     * @param Type $type The type of values
+     * @param \Cassandra\Type $type The type of values
      *
-     * @return Type The collection type
+     * @return \Cassandra\Type The collection type
      */
     public static final function collection($type) { }
 
@@ -214,9 +214,9 @@ abstract class Type {
      * var_dump($set);
      * @endcode
      *
-     * @param Type $type The types of values
+     * @param \Cassandra\Type $type The types of values
      *
-     * @return Type The set type
+     * @return \Cassandra\Type The set type
      */
     public static final function set($type) { }
 
@@ -232,10 +232,10 @@ abstract class Type {
      * var_dump($map);
      * @endcode
      *
-     * @param Type $keyType The type of keys
-     * @param Type $valueType The type of values
+     * @param \Cassandra\Type $keyType The type of keys
+     * @param \Cassandra\Type $valueType The type of values
      *
-     * @return Type The map type
+     * @return \Cassandra\Type The map type
      */
     public static final function map($keyType, $valueType) { }
 
@@ -251,9 +251,9 @@ abstract class Type {
      * var_dump($tuple);
      * @endcode
      *
-     * @param Type $types A variadic list of types
+     * @param \Cassandra\Type $types A variadic list of types
      *
-     * @return Type The tuple type
+     * @return \Cassandra\Type The tuple type
      */
     public static final function tuple($types) { }
 
@@ -269,9 +269,9 @@ abstract class Type {
      * var_dump($userType);
      * @endcode
      *
-     * @param Type $types A variadic list of name/type pairs
+     * @param \Cassandra\Type $types A variadic list of name/type pairs
      *
-     * @return Type The user type
+     * @return \Cassandra\Type The user type
      */
     public static final function userType($types) { }
 

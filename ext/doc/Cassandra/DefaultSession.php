@@ -41,12 +41,12 @@ final class DefaultSession implements Session {
      * | timestamp          | int\|string     | Either an integer or integer string timestamp that represents the number of microseconds since the epoch |
      * | execute_as         | string          | User to execute statement as                                                                             |
      *
-     * @param string|Statement $statement string or statement to be executed.
-     * @param array|ExecutionOptions|null $options Options to control execution of the query.
+     * @param string|\Cassandra\Statement $statement string or statement to be executed.
+     * @param array|\Cassandra\ExecutionOptions|null $options Options to control execution of the query.
      *
      * @throws Exception
      *
-     * @return Rows A collection of rows.
+     * @return \Cassandra\Rows A collection of rows.
      */
     public function execute($statement, $options) { }
 
@@ -54,10 +54,10 @@ final class DefaultSession implements Session {
      * Execute a query asynchronously. This method returns immediately, but
      * the query continues execution in the background.
      *
-     * @param string|Statement $statement string or statement to be executed.
-     * @param array|ExecutionOptions|null $options Options to control execution of the query.
+     * @param string|\Cassandra\Statement $statement string or statement to be executed.
+     * @param array|\Cassandra\ExecutionOptions|null $options Options to control execution of the query.
      *
-     * @return FutureRows A future that can be used to retrieve the result.
+     * @return \Cassandra\FutureRows A future that can be used to retrieve the result.
      *
      * @see Session::execute() for valid execution options
      */
@@ -67,11 +67,11 @@ final class DefaultSession implements Session {
      * Prepare a query for execution.
      *
      * @param string $cql The query to be prepared.
-     * @param array|ExecutionOptions|null $options Options to control preparing the query.
+     * @param array|\Cassandra\ExecutionOptions|null $options Options to control preparing the query.
      *
      * @throws Exception
      *
-     * @return PreparedStatement A prepared statement that can be bound with parameters and executed.
+     * @return \Cassandra\PreparedStatement A prepared statement that can be bound with parameters and executed.
      *
      * @see Session::execute() for valid execution options
      */
@@ -81,9 +81,9 @@ final class DefaultSession implements Session {
      * Asynchronously prepare a query for execution.
      *
      * @param string $cql The query to be prepared.
-     * @param array|ExecutionOptions|null $options Options to control preparing the query.
+     * @param array|\Cassandra\ExecutionOptions|null $options Options to control preparing the query.
      *
-     * @return FuturePreparedStatement A future that can be used to retrieve the prepared statement.
+     * @return \Cassandra\FuturePreparedStatement A future that can be used to retrieve the prepared statement.
      *
      * @see Session::execute() for valid execution options
      */
@@ -103,7 +103,7 @@ final class DefaultSession implements Session {
     /**
      * Asynchronously close the session and all its connections.
      *
-     * @return FutureClose A future that can be waited on.
+     * @return \Cassandra\FutureClose A future that can be waited on.
      */
     public function closeAsync() { }
 
@@ -117,7 +117,7 @@ final class DefaultSession implements Session {
     /**
      * Get a snapshot of the cluster's current schema.
      *
-     * @return Schema A snapshot of the cluster's schema.
+     * @return \Cassandra\Schema A snapshot of the cluster's schema.
      */
     public function schema() { }
 

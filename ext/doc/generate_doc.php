@@ -392,8 +392,9 @@ function writeClass($doc, $file, $class) {
     $parentClass = $class->getParentClass();
     if ($parentClass) {
         $parentClassName = $parentClass->getName();
-        if (startsWith($parentClassName, $namespace)) {
-            $parentClassName = $parentClass->getShortName();
+        if (startsWith($parentClassName, $namespace) && $parentClassName !== $namespace) {
+            $replacement = $namespace . '\\';
+            $parentClassName = substr_replace($parentClassName, '', 0, strlen($replacement));
         } else {
             $parentClassName = "\\" . $parentClassName;
         }
@@ -409,8 +410,9 @@ function writeClass($doc, $file, $class) {
                 continue;
             }
             $interfaceName = $interface->getName();
-            if (startsWith($interfaceName, $namespace)) {
-                $interfaceName = $interface->getShortName();
+            if (startsWith($interfaceName, $namespace) && $interfaceName !== $namespace) {
+                $replacement = $namespace . '\\';
+                $interfaceName = substr_replace($interfaceName, '', 0, strlen($replacement));
             } else {
                 $interfaceName = "\\" . $interfaceName;
             }

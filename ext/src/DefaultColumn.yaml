@@ -11,7 +11,7 @@ DefaultColumn:
       comment: ""
       return:
         comment: ""
-        type: Type
+        type: \Cassandra\Type
     isReversed:
       comment: ""
       return:

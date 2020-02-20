@@ -21,27 +21,27 @@ Aggregate:
       comment: Returns the final function of the aggregate
       return:
         comment: Final function of the aggregate
-        type: Function
+        type: \Cassandra\Function
     stateFunction:
       comment: Returns the state function of the aggregate
       return:
         comment: State function of the aggregate
-        type: Function
+        type: \Cassandra\Function
     initialCondition:
       comment: Returns the initial condition of the aggregate
       return:
         comment: Initial condition of the aggregate
-        type: Value
+        type: \CassandraValue
     returnType:
       comment: Returns the return type of the aggregate
       return:
         comment: Return type of the aggregate
-        type: Type
+        type: \Cassandra\Type
     stateType:
       comment: Returns the state type of the aggregate
       return:
         comment: State type of the aggregate
-        type: Type
+        type: \Cassandra\Type
     signature:
       comment: Returns the signature of the aggregate
       return:
