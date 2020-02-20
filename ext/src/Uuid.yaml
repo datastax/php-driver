@@ -17,7 +17,7 @@ Uuid:
       comment: The type of this uuid.
       return:
         comment: ""
-        type: Type
+        type: \Cassandra\Type
     uuid:
       comment: ""
       return:

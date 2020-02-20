@@ -27,6 +27,6 @@ namespace Cassandra\TimestampGenerator;
  * exceeded then a warning is logged and timestamps stop incrementing until
  * the next clock tick.
  */
-final class Monotonic implements TimestampGenerator {
+final class Monotonic implements \Cassandra\TimestampGenerator {
 
 }

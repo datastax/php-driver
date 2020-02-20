@@ -33,7 +33,7 @@ final class FutureSession implements Future {
      * @throws Exception\InvalidArgumentException
      * @throws Exception\TimeoutException
      *
-     * @return Session A connected session
+     * @return \Cassandra\Session A connected session
      */
     public function get($timeout) { }
 

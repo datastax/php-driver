@@ -16,7 +16,7 @@ Keyspace:
       comment: Returns replication options
       return:
         comment: Replication options
-        type: Map
+        type: \Cassandra\Map
     hasDurableWrites:
       comment: Returns whether the keyspace has durable writes enabled
       return:
@@ -30,7 +30,7 @@ Keyspace:
           type: string
       return:
         comment: Table instance or null
-        type: Table|null
+        type: \Cassandra\Table|null
     tables:
       comment: Returns all tables defined in this keyspace
       return:
@@ -44,7 +44,7 @@ Keyspace:
           type: string
       return:
         comment: A user type or null
-        type: Type\UserType|null
+        type: \Cassandra\Type\UserType|null
     userTypes:
       comment: Get all user types
       return:
@@ -58,7 +58,7 @@ Keyspace:
           type: string
       return:
         comment: A materialized view or null
-        type: MaterizedView|null
+        type: \Cassandra\MaterizedView|null
     materializedViews:
       comment: Gets all materialized views
       return:
@@ -72,10 +72,10 @@ Keyspace:
           type: string
         '...':
           comment: Function arguments
-          type: string|Type
+          type: string|\Cassandra\Type
       return:
         comment: A function or null
-        type: Function|null
+        type: \Cassandra\Function|null
     functions:
       comment: Get all functions
       return:
@@ -89,10 +89,10 @@ Keyspace:
           type: string
         '...':
           comment: Aggregate arguments
-          type: string|Type
+          type: string|\Cassandra\Type
       return:
         comment: An aggregate or null
-        type: Aggregate|null
+        type: \Cassandra\Aggregate|null
     aggregates:
       comment: Get all aggregates
       return:

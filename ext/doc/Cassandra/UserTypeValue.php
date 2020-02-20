@@ -33,7 +33,7 @@ final class UserTypeValue implements Value, \Countable, \Iterator {
     /**
      * The type of this user type value.
      *
-     * @return Type
+     * @return \Cassandra\Type
      */
     public function type() { }
 

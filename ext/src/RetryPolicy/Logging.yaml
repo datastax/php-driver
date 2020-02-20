@@ -7,5 +7,5 @@ RetryPolicy\Logging:
       params:
         childPolicy:
           comment: Any retry policy other than Logging
-          type: RetryPolicy
+          type: \Cassandra\RetryPolicy
 ...

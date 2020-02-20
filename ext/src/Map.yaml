@@ -7,15 +7,15 @@ Map:
       params:
         keyType:
           comment: ""
-          type: Type
+          type: \Cassandra\Type
         valueType:
           comment: ""
-          type: Type
+          type: \Cassandra\Type
     type:
       comment: The type of this map.
       return:
         comment: ""
-        type: Type
+        type: \Cassandra\Type
     keys:
       comment: Returns all keys in the map as an array.
       return:

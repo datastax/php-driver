@@ -24,8 +24,7 @@
     }
   ],
   "require": {
-    "php": ">=5.6.0",
-    "ext-cassandra": "^1.0.0"
+    "php": ">=5.6.0"
   },
   "require-dev": {
     "behat/behat": "~3.0.6",

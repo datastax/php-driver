@@ -38,7 +38,7 @@ final class Smallint implements Value, Numeric {
     /**
      * The type of this value (smallint).
      *
-     * @return Type
+     * @return \Cassandra\Type
      */
     public function type() { }
 
@@ -50,47 +50,47 @@ final class Smallint implements Value, Numeric {
     public function value() { }
 
     /**
-     * @param Numeric $num a number to add to this one
-     * @return Numeric sum
+     * @param \Cassandra\Numeric $num a number to add to this one
+     * @return \Cassandra\Numeric sum
      */
     public function add($num) { }
 
     /**
-     * @param Numeric $num a number to subtract from this one
-     * @return Numeric difference
+     * @param \Cassandra\Numeric $num a number to subtract from this one
+     * @return \Cassandra\Numeric difference
      */
     public function sub($num) { }
 
     /**
-     * @param Numeric $num a number to multiply this one by
-     * @return Numeric product
+     * @param \Cassandra\Numeric $num a number to multiply this one by
+     * @return \Cassandra\Numeric product
      */
     public function mul($num) { }
 
     /**
-     * @param Numeric $num a number to divide this one by
-     * @return Numeric quotient
+     * @param \Cassandra\Numeric $num a number to divide this one by
+     * @return \Cassandra\Numeric quotient
      */
     public function div($num) { }
 
     /**
-     * @param Numeric $num a number to divide this one by
-     * @return Numeric remainder
+     * @param \Cassandra\Numeric $num a number to divide this one by
+     * @return \Cassandra\Numeric remainder
      */
     public function mod($num) { }
 
     /**
-     * @return Numeric absolute value
+     * @return \Cassandra\Numeric absolute value
      */
     public function abs() { }
 
     /**
-     * @return Numeric negative value
+     * @return \Cassandra\Numeric negative value
      */
     public function neg() { }
 
     /**
-     * @return Numeric square root
+     * @return \Cassandra\Numeric square root
      */
     public function sqrt() { }
 
@@ -107,14 +107,14 @@ final class Smallint implements Value, Numeric {
     /**
      * Minimum possible Smallint value
      *
-     * @return Smallint minimum value
+     * @return \Cassandra\Smallint minimum value
      */
     public static function min() { }
 
     /**
      * Maximum possible Smallint value
      *
-     * @return Smallint maximum value
+     * @return \Cassandra\Smallint maximum value
      */
     public static function max() { }
 

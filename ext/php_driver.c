@@ -325,7 +325,7 @@ throw_invalid_argument(zval *object,
     if (cls_name) {
       zend_throw_exception_ex(php_driver_invalid_argument_exception_ce, 0 TSRMLS_CC,
                               "%s must be %s, an instance of %.*s given",
-                              object_name, expected_type, cls_len, cls_name);
+                              object_name, expected_type, (int)cls_len, cls_name);
 #if PHP_MAJOR_VERSION >= 7
       zend_string_release(str);
 #else
@@ -367,7 +367,11 @@ PHP_INI_MH(OnUpdateLogLevel)
     } else {
       php_error_docref(NULL TSRMLS_CC, E_NOTICE,
                        PHP_DRIVER_NAME " | Unknown log level '%s', using 'ERROR'",
+#if PHP_MAJOR_VERSION >= 7
+                       ZSTR_VAL(new_value));
+#else
                        new_value);
+#endif
       cass_log_set_level(CASS_LOG_ERROR);
     }
   }

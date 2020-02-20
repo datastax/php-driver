@@ -47,35 +47,35 @@ interface Aggregate {
     /**
      * Returns the final function of the aggregate
      *
-     * @return Function Final function of the aggregate
+     * @return \Cassandra\Function Final function of the aggregate
      */
     public function finalFunction();
 
     /**
      * Returns the state function of the aggregate
      *
-     * @return Function State function of the aggregate
+     * @return \Cassandra\Function State function of the aggregate
      */
     public function stateFunction();
 
     /**
      * Returns the initial condition of the aggregate
      *
-     * @return Value Initial condition of the aggregate
+     * @return \CassandraValue Initial condition of the aggregate
      */
     public function initialCondition();
 
     /**
      * Returns the return type of the aggregate
      *
-     * @return Type Return type of the aggregate
+     * @return \Cassandra\Type Return type of the aggregate
      */
     public function returnType();
 
     /**
      * Returns the state type of the aggregate
      *
-     * @return Type State type of the aggregate
+     * @return \Cassandra\Type State type of the aggregate
      */
     public function stateType();
 

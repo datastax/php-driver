@@ -6,23 +6,23 @@ Float:
       comment: Minimum possible Float value
       return:
         comment: minimum value
-        type: Float
+        type: \Cassandra\Float
     max:
       comment: Maximum possible Float value
       return:
         comment: maximum value
-        type: Float
+        type: \Cassandra\Float
     __construct:
       comment: Creates a new float.
       params:
         value:
           comment: A float value as a string, number or Float
-          type: double|int|string|Float
+          type: double|int|string|\Cassandra\Float
     type:
       comment: The type of this float.
       return:
         comment: ""
-        type: Type
+        type: \Cassandra\Type
     value:
       comment: Returns the float value.
       return:
@@ -38,61 +38,61 @@ Float:
       params:
         num:
           comment: ""
-          type: Numeric
+          type: \Cassandra\Numeric
       return:
         comment: ""
-        type: Numeric
+        type: \Cassandra\Numeric
     sub:
       comment: ""
       params:
         num:
           comment: ""
-          type: Numeric
+          type: \Cassandra\Numeric
       return:
         comment: ""
-        type: Numeric
+        type: \Cassandra\Numeric
     mul:
       comment: ""
       params:
         num:
           comment: ""
-          type: Numeric
+          type: \Cassandra\Numeric
       return:
         comment: ""
-        type: Numeric
+        type: \Cassandra\Numeric
     div:
       comment: ""
       params:
         num:
           comment: ""
-          type: Numeric
+          type: \Cassandra\Numeric
       return:
         comment: ""
-        type: Numeric
+        type: \Cassandra\Numeric
     mod:
       comment: ""
       params:
         num:
           comment: ""
-          type: Numeric
+          type: \Cassandra\Numeric
       return:
         comment: ""
-        type: Numeric
+        type: \Cassandra\Numeric
     abs:
       comment: ""
       return:
         comment: ""
-        type: Numeric
+        type: \Cassandra\Numeric
     neg:
       comment: ""
       return:
         comment: ""
-        type: Numeric
+        type: \Cassandra\Numeric
     sqrt:
       comment: ""
       return:
         comment: ""
-        type: Numeric
+        type: \Cassandra\Numeric
     toInt:
       comment: ""
       return:

@@ -33,7 +33,7 @@ final class Time implements Value {
     /**
      * The type of this date.
      *
-     * @return Type
+     * @return \Cassandra\Type
      */
     public function type() { }
 
@@ -43,8 +43,8 @@ final class Time implements Value {
     public function seconds() { }
 
     /**
-     * @param DateTime $datetime
-     * @return Time
+     * @param \DateTime $datetime
+     * @return \Cassandra\Time
      */
     public static function fromDateTime($datetime) { }
 

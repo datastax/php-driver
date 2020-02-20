@@ -7,18 +7,18 @@ Duration:
       params:
         months:
           comment: Months attribute of the duration.
-          type: long|double|string|Bigint
+          type: long|double|string|\Cassandra\Bigint
         days:
           comment: Days attribute of the duration.
-          type: long|double|string|Bigint
+          type: long|double|string|\Cassandra\Bigint
         nanos:
           comment: Nanos attribute of the duration.
-          type: long|double|string|Bigint
+          type: long|double|string|\Cassandra\Bigint
     type:
       comment: ""
       return:
         comment: the Cassandra type for Duration
-        type: Type
+        type: \Cassandra\Type
     months:
       comment: ""
       return:

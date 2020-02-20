@@ -15,7 +15,7 @@ Table:
           type: string
       return:
         comment: Value of an option by name
-        type: Value
+        type: \Cassandra\Value
     options:
       comment: Returns all the table's options
       return:
@@ -80,12 +80,12 @@ Table:
       comment: Returns compaction strategy options
       return:
         comment: Compaction strategy options
-        type: Map
+        type: \Cassandra\Map
     compressionParameters:
       comment: Returns compression parameters
       return:
         comment: Compression parameters
-        type: Map
+        type: \Cassandra\Map
     populateIOCacheOnFlush:
       comment: Returns whether or not the `populate_io_cache_on_flush` is true
       return:
@@ -114,7 +114,7 @@ Table:
           type: string
       return:
         comment: Column instance
-        type: Column
+        type: \Cassandra\Column
     columns:
       comment: Returns all columns in this table
       return:

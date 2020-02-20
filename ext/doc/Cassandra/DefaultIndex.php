@@ -49,7 +49,7 @@ final class DefaultIndex implements Index {
      *
      * @param string $name The name of the option
      *
-     * @return Value Value of an option by name
+     * @return \Cassandra\Value Value of an option by name
      */
     public function option($name) { }
 

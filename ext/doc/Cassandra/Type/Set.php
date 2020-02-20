@@ -22,7 +22,7 @@ namespace Cassandra\Type;
  * A class that represents the set type. The set type contains the type of the
  * elements contain in the set.
  */
-final class Set extends Type {
+final class Set extends \Cassandra\Type {
 
     private function __construct() { }
 
@@ -36,7 +36,7 @@ final class Set extends Type {
     /**
      * Returns type of values
      *
-     * @return Type Type of values
+     * @return \Cassandra\Type Type of values
      */
     public function valueType() { }
 
@@ -56,7 +56,7 @@ final class Set extends Type {
      *                                            different type than what this
      *                                            set type expects.
      *
-     * @return Set A set with given values.
+     * @return \Cassandra\Set A set with given values.
      */
     public function create($value) { }
 

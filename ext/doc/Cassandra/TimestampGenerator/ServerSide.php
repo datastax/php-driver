@@ -21,6 +21,6 @@ namespace Cassandra\TimestampGenerator;
 /**
  * A timestamp generator that allows the server-side to assign timestamps.
  */
-final class ServerSide implements TimestampGenerator {
+final class ServerSide implements \Cassandra\TimestampGenerator {
 
 }
