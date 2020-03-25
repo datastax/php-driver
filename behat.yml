@@ -7,7 +7,7 @@ default:
               tags: "~@cassandra-version-less-2.1&&~@cassandra-version-only-2.0&&~@broken"
             contexts:
                 - FeatureContext:
-                    cassandra_version: "3.11.3"
+                    cassandra_version: "3.11.6"
 
 cassandra-version-3.0:
     formatters:
@@ -18,7 +18,7 @@ cassandra-version-3.0:
               tags: "~@cassandra-version-3.x&&~@cassandra-version-3.10&&~@cassandra-version-less-2.1&&~@cassandra-version-only-2.0&&~@broken"
             contexts:
                 - FeatureContext:
-                    cassandra_version: "3.0.17"
+                    cassandra_version: "3.0.20"
 
 cassandra-version-2.2:
     formatters:
@@ -29,7 +29,7 @@ cassandra-version-2.2:
               tags: "~@cassandra-version-3.x&&~@cassandra-version-3.10&&~@cassandra-version-3.0&&~@cassandra-version-less-2.1&&~@cassandra-version-only-2.0&&~@broken"
             contexts:
                 - FeatureContext:
-                    cassandra_version: "2.2.13"
+                    cassandra_version: "2.2.16"
 
 cassandra-version-2.1:
     formatters:
@@ -40,4 +40,4 @@ cassandra-version-2.1:
               tags: "~@cassandra-version-3.x&&~@cassandra-version-3.10&&~@cassandra-version-3.0&&~@cassandra-version-2.2&&~@cassandra-version-less-2.1&&~@cassandra-version-only-2.0&&~@broken"
             contexts:
                 - FeatureContext:
-                    cassandra_version: "2.1.20"
+                    cassandra_version: "2.1.21"
