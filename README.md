@@ -1,3 +1,5 @@
+:warning: **The PHP driver is in maintenance mode. We are still accepting pull-requests and we will occasionally release critical bug fixes, but no ongoing active development is being done currently.**
+
 # DataStax PHP Driver for Apache Cassandra
 
 [![Build Status: Linux](https://travis-ci.org/datastax/php-driver.svg)](https://travis-ci.org/datastax/php-driver)
