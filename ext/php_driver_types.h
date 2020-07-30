@@ -38,7 +38,6 @@
 
 #if PHP_MAJOR_VERSION >= 7
   #define PHP_DRIVER_GET_NUMERIC(obj) php_driver_numeric_object_fetch(Z_OBJ_P(obj))
-  #define PHP_DRIVER_GET_BLOB(obj) php_driver_blob_object_fetch(Z_OBJ_P(obj))
   #define PHP_DRIVER_GET_TIMESTAMP(obj) php_driver_timestamp_object_fetch(Z_OBJ_P(obj))
   #define PHP_DRIVER_GET_DATE(obj) php_driver_date_object_fetch(Z_OBJ_P(obj))
   #define PHP_DRIVER_GET_TIME(obj) php_driver_time_object_fetch(Z_OBJ_P(obj))
@@ -76,7 +75,6 @@
   #define PHP_DRIVER_GET_DURATION(obj) php_driver_duration_object_fetch(Z_OBJ_P(obj))
 #else
   #define PHP_DRIVER_GET_NUMERIC(obj) ((php_driver_numeric *)zend_object_store_get_object((obj) TSRMLS_CC))
-  #define PHP_DRIVER_GET_BLOB(obj) ((php_driver_blob *)zend_object_store_get_object((obj) TSRMLS_CC))
   #define PHP_DRIVER_GET_TIMESTAMP(obj) ((php_driver_timestamp *)zend_object_store_get_object((obj) TSRMLS_CC))
   #define PHP_DRIVER_GET_DATE(obj) ((php_driver_date *)zend_object_store_get_object((obj) TSRMLS_CC))
   #define PHP_DRIVER_GET_TIME(obj) ((php_driver_time *)zend_object_store_get_object((obj) TSRMLS_CC))
@@ -159,11 +157,6 @@ PHP_DRIVER_END_OBJECT_TYPE(date)
 PHP_DRIVER_BEGIN_OBJECT_TYPE(time)
     cass_int64_t time;
 PHP_DRIVER_END_OBJECT_TYPE(time)
-
-PHP_DRIVER_BEGIN_OBJECT_TYPE(blob)
-  cass_byte_t *data;
-  size_t size;
-PHP_DRIVER_END_OBJECT_TYPE(blob)
 
 PHP_DRIVER_BEGIN_OBJECT_TYPE(uuid)
   CassUuid uuid;
@@ -517,7 +510,6 @@ extern PHP_DRIVER_API zend_class_entry *php_driver_numeric_ce;
 extern PHP_DRIVER_API zend_class_entry *php_driver_bigint_ce;
 extern PHP_DRIVER_API zend_class_entry *php_driver_smallint_ce;
 extern PHP_DRIVER_API zend_class_entry *php_driver_tinyint_ce;
-extern PHP_DRIVER_API zend_class_entry *php_driver_blob_ce;
 extern PHP_DRIVER_API zend_class_entry *php_driver_decimal_ce;
 extern PHP_DRIVER_API zend_class_entry *php_driver_float_ce;
 extern PHP_DRIVER_API zend_class_entry *php_driver_inet_ce;
@@ -570,7 +562,6 @@ void php_driver_define_Numeric(TSRMLS_D);
 void php_driver_define_Bigint(TSRMLS_D);
 void php_driver_define_Smallint(TSRMLS_D);
 void php_driver_define_Tinyint(TSRMLS_D);
-void php_driver_define_Blob(TSRMLS_D);
 void php_driver_define_Collection(TSRMLS_D);
 void php_driver_define_Decimal(TSRMLS_D);
 void php_driver_define_Float(TSRMLS_D);

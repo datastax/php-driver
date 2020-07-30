@@ -416,7 +416,6 @@ static PHP_GINIT_FUNCTION(php_driver)
   php_driver_globals->persistent_sessions = 0;
   PHP5TO7_ZVAL_UNDEF(php_driver_globals->type_varchar);
   PHP5TO7_ZVAL_UNDEF(php_driver_globals->type_text);
-  PHP5TO7_ZVAL_UNDEF(php_driver_globals->type_blob);
   PHP5TO7_ZVAL_UNDEF(php_driver_globals->type_ascii);
   PHP5TO7_ZVAL_UNDEF(php_driver_globals->type_bigint);
   PHP5TO7_ZVAL_UNDEF(php_driver_globals->type_smallint);
@@ -485,7 +484,6 @@ PHP_MINIT_FUNCTION(php_driver)
   php_driver_define_Bigint(TSRMLS_C);
   php_driver_define_Smallint(TSRMLS_C);
   php_driver_define_Tinyint(TSRMLS_C);
-  php_driver_define_Blob(TSRMLS_C);
   php_driver_define_Decimal(TSRMLS_C);
   php_driver_define_Float(TSRMLS_C);
   php_driver_define_Inet(TSRMLS_C);

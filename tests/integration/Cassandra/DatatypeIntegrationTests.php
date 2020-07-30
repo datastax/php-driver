@@ -29,7 +29,7 @@ abstract class DatatypeIntegrationTests extends BasicIntegrationTest {
         return array(
             array(Type::ascii(), array("a", "b", "c")),
             array(Type::bigint(), array(new Bigint("1"), new Bigint("2"), new Bigint("3"))),
-            array(Type::blob(), array(new Blob("x"), new Blob("y"), new Blob("z"))),
+            array(Type::blob(), array("a", "b", "c")),
             array(Type::boolean(), array(true, false, true, false)),
             array(Type::date(), array(new Date(), new Date(0), new Date(-86400), new Date(86400))),
             array(Type::decimal(), array(new Decimal(1.1), new Decimal(2.2), new Decimal(3.3))),

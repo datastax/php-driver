@@ -49,6 +49,7 @@ php_driver_validate_object(zval *object, zval *ztype TSRMLS_DC)
   case CASS_VALUE_TYPE_VARCHAR:
   case CASS_VALUE_TYPE_TEXT:
   case CASS_VALUE_TYPE_ASCII:
+  case CASS_VALUE_TYPE_BLOB:
     if (Z_TYPE_P(object) != IS_STRING) {
       EXPECTING_VALUE("a string");
     }
@@ -94,12 +95,6 @@ php_driver_validate_object(zval *object, zval *ztype TSRMLS_DC)
   case CASS_VALUE_TYPE_TINY_INT:
     if (!INSTANCE_OF(php_driver_tinyint_ce)) {
       EXPECTING_VALUE("an instance of " PHP_DRIVER_NAMESPACE "\\Tinyint");
-    }
-
-    return 1;
-  case CASS_VALUE_TYPE_BLOB:
-    if (!INSTANCE_OF(php_driver_blob_ce)) {
-      EXPECTING_VALUE("an instance of " PHP_DRIVER_NAMESPACE "\\Blob");
     }
 
     return 1;
@@ -282,7 +277,6 @@ static int
 php_driver_collection_append(CassCollection *collection, zval *value, CassValueType type TSRMLS_DC)
 {
   int result = 1;
-  php_driver_blob       *blob;
   php_driver_numeric    *numeric;
   php_driver_timestamp  *timestamp;
   php_driver_date       *date;
@@ -321,8 +315,7 @@ php_driver_collection_append(CassCollection *collection, zval *value, CassValueT
     CHECK_ERROR(cass_collection_append_int8(collection, numeric->data.tinyint.value));
     break;
   case CASS_VALUE_TYPE_BLOB:
-    blob = PHP_DRIVER_GET_BLOB(value);
-    CHECK_ERROR(cass_collection_append_bytes(collection, blob->data, blob->size));
+    CHECK_ERROR(cass_collection_append_bytes(collection, Z_STRVAL_P(value), Z_STRLEN_P(value)));
     break;
   case CASS_VALUE_TYPE_BOOLEAN:
 #if PHP_MAJOR_VERSION >= 7
@@ -420,7 +413,6 @@ static int
 php_driver_tuple_set(CassTuple *tuple, php5to7_ulong index, zval *value, CassValueType type TSRMLS_DC)
 {
   int result = 1;
-  php_driver_blob       *blob;
   php_driver_numeric    *numeric;
   php_driver_timestamp  *timestamp;
   php_driver_date       *date;
@@ -464,8 +456,7 @@ php_driver_tuple_set(CassTuple *tuple, php5to7_ulong index, zval *value, CassVal
     CHECK_ERROR(cass_tuple_set_int8(tuple, index, numeric->data.tinyint.value));
     break;
   case CASS_VALUE_TYPE_BLOB:
-    blob = PHP_DRIVER_GET_BLOB(value);
-    CHECK_ERROR(cass_tuple_set_bytes(tuple, index, blob->data, blob->size));
+    CHECK_ERROR(cass_tuple_set_bytes(tuple, index, Z_STRVAL_P(value), Z_STRLEN_P(value)));
     break;
   case CASS_VALUE_TYPE_BOOLEAN:
 #if PHP_MAJOR_VERSION >= 7
@@ -565,7 +556,6 @@ php_driver_user_type_set(CassUserType *ut,
                             CassValueType type TSRMLS_DC)
 {
   int result = 1;
-  php_driver_blob       *blob;
   php_driver_numeric    *numeric;
   php_driver_timestamp  *timestamp;
   php_driver_date       *date;
@@ -593,7 +583,7 @@ php_driver_user_type_set(CassUserType *ut,
   case CASS_VALUE_TYPE_TEXT:
   case CASS_VALUE_TYPE_ASCII:
   case CASS_VALUE_TYPE_VARCHAR:
-    CHECK_ERROR(cass_user_type_set_string_by_name(ut, name, Z_STRVAL_P(value)));
+    CHECK_ERROR(cass_user_type_set_string_by_name_n(ut, name, strlen(name) + 1, Z_STRVAL_P(value), Z_STRLEN_P(value)));
     break;
   case CASS_VALUE_TYPE_BIGINT:
   case CASS_VALUE_TYPE_COUNTER:
@@ -609,8 +599,7 @@ php_driver_user_type_set(CassUserType *ut,
     CHECK_ERROR(cass_user_type_set_int8_by_name(ut, name, numeric->data.tinyint.value));
     break;
   case CASS_VALUE_TYPE_BLOB:
-    blob = PHP_DRIVER_GET_BLOB(value);
-    CHECK_ERROR(cass_user_type_set_bytes_by_name(ut, name, blob->data, blob->size));
+    CHECK_ERROR(cass_user_type_set_bytes_by_name(ut, name, Z_STRVAL_P(value), Z_STRLEN_P(value)));
     break;
   case CASS_VALUE_TYPE_BOOLEAN:
 #if PHP_MAJOR_VERSION >= 7

@@ -1,3 +1,9 @@
+# 1.4.0
+
+Features:
+
+* [joeyhub] Nuked blob, in future objects should not represent types as it gobbles up memory and CPU plus makes the code 10 times larger than it needs to be.
+
 # 1.3.2
 
 Features:
