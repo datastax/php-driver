@@ -63,11 +63,6 @@ better compatibility.
 * Mailing List: https://groups.google.com/a/lists.datastax.com/forum/#!forum/php-driver-user
 * DataStax Academy via Slack: https://academy.datastax.com/slack
 
-## Feedback Requested
-
-**Help us focus our efforts!** [Provide your input] on the PHP Driver Platform
-and Runtime Survey (we kept it short).
-
 ## Quick Start
 
 ```php
@@ -152,7 +147,6 @@ specific language governing permissions and limitations under the License.
 [GitHub]: https://github.com/datastax/php-driver
 [Home]: http://docs.datastax.com/en/developer/php-driver/latest
 [API]: http://docs.datastax.com/en/developer/php-driver/latest/api
-[Provide your input]: http://goo.gl/forms/HbSiIJ2tLP
 [installing-details]: https://github.com/datastax/php-driver/blob/master/ext/README.md
 [contribution-policy]: https://github.com/datastax/php-driver/blob/master/CONTRIBUTING.md
 [Behat Framework]: http://docs.behat.org
