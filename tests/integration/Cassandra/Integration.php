@@ -27,7 +27,7 @@ class Integration {
     /**
      * Default Cassandra server version
      */
-    const DEFAULT_CASSANDRA_VERSION = "3.10";
+    const DEFAULT_CASSANDRA_VERSION = "3.11.6";
     /**
      * Default verbosity for CCM output
      */
@@ -129,7 +129,15 @@ class Integration {
 
         // Create the Cassandra cluster for the test
         //TODO: Need to add the ability to switch the Cassandra version (command line)
-        $this->ccm = new \CCM(self::DEFAULT_CASSANDRA_VERSION, self::DEFAULT_IS_CCM_SILENT);
+        $cassandra_version = self::DEFAULT_CASSANDRA_VERSION;
+        $ccm_is_silent = self::DEFAULT_IS_CCM_SILENT;
+        if (isset($_SERVER["VERSION"])) {
+            $cassandra_version = $_SERVER["VERSION"];
+        }
+        if (isset($_SERVER["VERBOSE"])) {
+            $ccm_is_silent = !filter_var($_SERVER["VERBOSE"], FILTER_VALIDATE_BOOLEAN);
+        }
+        $this->ccm = new \CCM($cassandra_version, $ccm_is_silent);
         $this->ccm->setup($numberDC1Nodes, $numberDC2Nodes);
         if ($isClientAuthentication) {
             $this->ccm->setupClientVerification();
