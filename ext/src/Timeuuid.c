@@ -183,7 +183,13 @@ static zend_function_entry php_driver_timeuuid_methods[] = {
 static php_driver_value_handlers php_driver_timeuuid_handlers;
 
 static HashTable *
-php_driver_timeuuid_gc(zval *object, php5to7_zval_gc table, int *n TSRMLS_DC)
+php_driver_timeuuid_gc(
+#if PHP_VERSION_ID >= 80000
+ zend_object *object,
+#else
+ zval *object,
+#endif
+ php5to7_zval_gc table, int *n TSRMLS_DC)
 {
   *table = NULL;
   *n = 0;
@@ -191,14 +197,26 @@ php_driver_timeuuid_gc(zval *object, php5to7_zval_gc table, int *n TSRMLS_DC)
 }
 
 static HashTable *
-php_driver_timeuuid_properties(zval *object TSRMLS_DC)
+php_driver_timeuuid_properties(
+#if PHP_VERSION_ID >= 80000
+ zend_object *object
+#else
+ zval *object TSRMLS_DC
+#endif
+)
 {
   char string[CASS_UUID_STRING_LENGTH];
   php5to7_zval type;
   php5to7_zval uuid;
   php5to7_zval version;
 
-  php_driver_uuid *self = PHP_DRIVER_GET_UUID(object);
+  php_driver_uuid *self = PHP_DRIVER_GET_UUID(
+#if PHP_VERSION_ID >= 80000
+        (zval*) object
+#else
+        object
+#endif
+  );
   HashTable      *props = zend_std_get_properties(object TSRMLS_CC);
 
   type = php_driver_type_scalar(CASS_VALUE_TYPE_TIMEUUID TSRMLS_CC);
@@ -276,7 +294,11 @@ php_driver_define_Timeuuid(TSRMLS_D)
 #if PHP_VERSION_ID >= 50400
   php_driver_timeuuid_handlers.std.get_gc          = php_driver_timeuuid_gc;
 #endif
+#if PHP_VERSION_ID >= 80000
+  php_driver_timeuuid_handlers.std.compare = php_driver_timeuuid_compare;
+#else
   php_driver_timeuuid_handlers.std.compare_objects = php_driver_timeuuid_compare;
+#endif
   php_driver_timeuuid_ce->ce_flags |= PHP5TO7_ZEND_ACC_FINAL;
   php_driver_timeuuid_ce->create_object = php_driver_timeuuid_new;
 

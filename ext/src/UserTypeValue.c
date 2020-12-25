@@ -55,17 +55,11 @@ php_driver_user_type_value_populate(php_driver_user_type_value *user_type_value,
     size_t name_len = strlen(name);
     (void) current;
     if (PHP5TO7_ZEND_HASH_FIND(&user_type_value->values, name, name_len + 1, value)) {
-      if (PHP5TO7_ADD_ASSOC_ZVAL_EX(array, name, name_len + 1, PHP5TO7_ZVAL_MAYBE_DEREF(value)) == SUCCESS) {
-        Z_TRY_ADDREF_P(PHP5TO7_ZVAL_MAYBE_DEREF(value));
-      } else {
-        break;
-      }
+      PHP5TO7_ADD_ASSOC_ZVAL_EX(array, name, name_len + 1, PHP5TO7_ZVAL_MAYBE_DEREF(value));
+      Z_TRY_ADDREF_P(PHP5TO7_ZVAL_MAYBE_DEREF(value));
     } else {
-      if (PHP5TO7_ADD_ASSOC_ZVAL_EX(array, name, name_len + 1, PHP5TO7_ZVAL_MAYBE_P(null)) == SUCCESS) {
-        Z_TRY_ADDREF_P(PHP5TO7_ZVAL_MAYBE_P(null));
-      } else {
-        break;
-      }
+      PHP5TO7_ADD_ASSOC_ZVAL_EX(array, name, name_len + 1, PHP5TO7_ZVAL_MAYBE_P(null));
+      Z_TRY_ADDREF_P(PHP5TO7_ZVAL_MAYBE_P(null));
     }
   } PHP5TO7_ZEND_HASH_FOREACH_END(&type->data.udt.types);
 
@@ -337,7 +331,13 @@ static zend_function_entry php_driver_user_type_value_methods[] = {
 static php_driver_value_handlers php_driver_user_type_value_handlers;
 
 static HashTable *
-php_driver_user_type_value_gc(zval *object, php5to7_zval_gc table, int *n TSRMLS_DC)
+php_driver_user_type_value_gc(
+#if PHP_VERSION_ID >= 80000
+ zend_object *object,
+#else
+ zval *object,
+#endif
+ php5to7_zval_gc table, int *n TSRMLS_DC)
 {
   *table = NULL;
   *n = 0;
@@ -345,11 +345,23 @@ php_driver_user_type_value_gc(zval *object, php5to7_zval_gc table, int *n TSRMLS
 }
 
 static HashTable *
-php_driver_user_type_value_properties(zval *object TSRMLS_DC)
+php_driver_user_type_value_properties(
+#if PHP_VERSION_ID >= 80000
+ zend_object *object
+#else
+ zval *object TSRMLS_DC
+#endif
+)
 {
   php5to7_zval values;
 
-  php_driver_user_type_value *self = PHP_DRIVER_GET_USER_TYPE_VALUE(object);
+  php_driver_user_type_value *self = PHP_DRIVER_GET_USER_TYPE_VALUE(
+#if PHP_VERSION_ID >= 80000
+        (zval*) object
+#else
+        object
+#endif
+  );
   HashTable                 *props = zend_std_get_properties(object TSRMLS_CC);
 
   PHP5TO7_ZEND_HASH_UPDATE(props,
@@ -472,7 +484,11 @@ void php_driver_define_UserTypeValue(TSRMLS_D)
 #if PHP_VERSION_ID >= 50400
   php_driver_user_type_value_handlers.std.get_gc          = php_driver_user_type_value_gc;
 #endif
+#if PHP_VERSION_ID >= 80000
+  php_driver_user_type_value_handlers.std.compare = php_driver_user_type_value_compare;
+#else
   php_driver_user_type_value_handlers.std.compare_objects = php_driver_user_type_value_compare;
+#endif
   php_driver_user_type_value_ce->ce_flags |= PHP5TO7_ZEND_ACC_FINAL;
   php_driver_user_type_value_ce->create_object = php_driver_user_type_value_new;
   zend_class_implements(php_driver_user_type_value_ce TSRMLS_CC, 2, spl_ce_Countable, zend_ce_iterator);

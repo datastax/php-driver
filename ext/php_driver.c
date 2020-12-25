@@ -598,18 +598,24 @@ PHP_MINFO_FUNCTION(php_driver)
 {
   char buf[256];
   php_info_print_table_start();
-  php_info_print_table_header(2, PHP_DRIVER_NAMESPACE " support", "enabled");
+
+  php_info_print_table_row(2, PHP_DRIVER_NAMESPACE " support", "enabled");
 
   snprintf(buf, sizeof(buf), "%d.%d.%d%s",
            CASS_VERSION_MAJOR, CASS_VERSION_MINOR, CASS_VERSION_PATCH,
-           strlen(CASS_VERSION_SUFFIX) > 0 ? "-" CASS_VERSION_SUFFIX : "");
+           (strlen(CASS_VERSION_SUFFIX) > 0 ? "-" CASS_VERSION_SUFFIX : ""));
   php_info_print_table_row(2, "C/C++ driver version", buf);
+
+  php_info_print_table_row(2, "PHP driver extension", "customized for persistent prepared statements");
 
   snprintf(buf, sizeof(buf), "%d", PHP_DRIVER_G(persistent_clusters));
   php_info_print_table_row(2, "Persistent Clusters", buf);
 
   snprintf(buf, sizeof(buf), "%d", PHP_DRIVER_G(persistent_sessions));
   php_info_print_table_row(2, "Persistent Sessions", buf);
+
+  snprintf(buf, sizeof(buf), "%d", PHP_DRIVER_G(persistent_prepared_statements));
+  php_info_print_table_row(2, "Persistent Prepared Statements", buf);
 
   php_info_print_table_end();
 

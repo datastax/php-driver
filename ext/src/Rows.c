@@ -412,7 +412,13 @@ static zend_function_entry php_driver_rows_methods[] = {
 static zend_object_handlers php_driver_rows_handlers;
 
 static HashTable *
-php_driver_rows_properties(zval *object TSRMLS_DC)
+php_driver_rows_properties(
+#if PHP_VERSION_ID >= 80000
+ zend_object *object
+#else
+ zval *object TSRMLS_DC
+#endif
+)
 {
   HashTable *props = zend_std_get_properties(object TSRMLS_CC);
 
@@ -475,6 +481,10 @@ void php_driver_define_Rows(TSRMLS_D)
 
   memcpy(&php_driver_rows_handlers, zend_get_std_object_handlers(), sizeof(zend_object_handlers));
   php_driver_rows_handlers.get_properties  = php_driver_rows_properties;
+#if PHP_VERSION_ID >= 80000
+  php_driver_rows_handlers.compare = php_driver_rows_compare;
+#else
   php_driver_rows_handlers.compare_objects = php_driver_rows_compare;
+#endif
   php_driver_rows_handlers.clone_obj = NULL;
 }

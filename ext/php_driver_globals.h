@@ -6,6 +6,7 @@ ZEND_BEGIN_MODULE_GLOBALS(php_driver)
   pid_t         uuid_gen_pid;
   unsigned int  persistent_clusters;
   unsigned int  persistent_sessions;
+  unsigned int  persistent_prepared_statements;
   php5to7_zval  type_varchar;
   php5to7_zval  type_text;
   php5to7_zval  type_blob;
@@ -27,6 +28,7 @@ ZEND_BEGIN_MODULE_GLOBALS(php_driver)
   php5to7_zval  type_smallint;
   php5to7_zval  type_tinyint;
   php5to7_zval  type_duration;
+  zend_resource stmt;
 ZEND_END_MODULE_GLOBALS(php_driver)
 
 ZEND_EXTERN_MODULE_GLOBALS(php_driver)
