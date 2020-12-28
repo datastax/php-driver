@@ -283,6 +283,12 @@ ZEND_BEGIN_ARG_INFO_EX(arginfo_value, 0, ZEND_RETURN_VALUE, 1)
   ZEND_ARG_INFO(0, value)
 ZEND_END_ARG_INFO()
 
+#if PHP_MAJOR_VERSION >= 8
+ZEND_BEGIN_ARG_INFO_EX(arginfo_values, 0, ZEND_RETURN_VALUE, 1)
+  ZEND_ARG_VARIADIC_INFO(0, value)
+ZEND_END_ARG_INFO()
+#endif
+
 ZEND_BEGIN_ARG_INFO_EX(arginfo_index, 0, ZEND_RETURN_VALUE, 1)
   ZEND_ARG_INFO(0, index)
 ZEND_END_ARG_INFO()
@@ -294,7 +300,11 @@ static zend_function_entry php_driver_collection_methods[] = {
   PHP_ME(Collection, __construct, arginfo__construct, ZEND_ACC_CTOR|ZEND_ACC_PUBLIC)
   PHP_ME(Collection, type, arginfo_none, ZEND_ACC_PUBLIC)
   PHP_ME(Collection, values, arginfo_none, ZEND_ACC_PUBLIC)
+#if PHP_MAJOR_VERSION >= 8
+  PHP_ME(Collection, add, arginfo_values, ZEND_ACC_PUBLIC)
+#else
   PHP_ME(Collection, add, arginfo_value, ZEND_ACC_PUBLIC)
+#endif
   PHP_ME(Collection, get, arginfo_index, ZEND_ACC_PUBLIC)
   PHP_ME(Collection, find, arginfo_value, ZEND_ACC_PUBLIC)
   /* Countable */
@@ -313,7 +323,7 @@ static php_driver_value_handlers php_driver_collection_handlers;
 
 static HashTable *
 php_driver_collection_gc(
-#if PHP_VERSION_ID >= 80000
+#if PHP_MAJOR_VERSION >= 8
         zend_object *object,
 #else
         zval *object,
@@ -327,7 +337,7 @@ php_driver_collection_gc(
 
 static HashTable *
 php_driver_collection_properties(
-#if PHP_VERSION_ID >= 80000
+#if PHP_MAJOR_VERSION >= 8
         zend_object *object
 #else
         zval *object TSRMLS_DC
@@ -336,13 +346,11 @@ php_driver_collection_properties(
 {
   php5to7_zval values;
 
-  php_driver_collection  *self = PHP_DRIVER_GET_COLLECTION(
-#if PHP_VERSION_ID >= 80000
-          (zval*) object
+#if PHP_MAJOR_VERSION >= 8
+  php_driver_collection  *self = PHP5TO7_ZEND_OBJECT_GET(collection, object);
 #else
-          object
+  php_driver_collection  *self = PHP_DRIVER_GET_COLLECTION(object);
 #endif
-  );
   HashTable             *props = zend_std_get_properties(object TSRMLS_CC);
 
   PHP5TO7_ZEND_HASH_UPDATE(props,
@@ -361,6 +369,9 @@ php_driver_collection_properties(
 static int
 php_driver_collection_compare(zval *obj1, zval *obj2 TSRMLS_DC)
 {
+#if PHP_MAJOR_VERSION >= 8
+  ZEND_COMPARE_OBJECTS_FALLBACK(obj1, obj2);
+#endif
   HashPosition pos1;
   HashPosition pos2;
   php5to7_zval *current1;
@@ -460,14 +471,10 @@ void php_driver_define_Collection(TSRMLS_D)
 #if PHP_VERSION_ID >= 50400
   php_driver_collection_handlers.std.get_gc          = php_driver_collection_gc;
 #endif
-#if PHP_VERSION_ID >= 80000
-  php_driver_collection_handlers.std.compare = php_driver_collection_compare;
-#else
-#if PHP_VERSION_ID >= 80000
+#if PHP_MAJOR_VERSION >= 8
   php_driver_collection_handlers.std.compare = php_driver_collection_compare;
 #else
   php_driver_collection_handlers.std.compare_objects = php_driver_collection_compare;
-#endif
 #endif
   php_driver_collection_ce->ce_flags |= PHP5TO7_ZEND_ACC_FINAL;
   php_driver_collection_ce->create_object = php_driver_collection_new;

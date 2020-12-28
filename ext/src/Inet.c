@@ -102,12 +102,13 @@ static php_driver_value_handlers php_driver_inet_handlers;
 
 static HashTable *
 php_driver_inet_gc(
-#if PHP_VERSION_ID >= 80000
- zend_object *object,
+#if PHP_MAJOR_VERSION >= 8
+        zend_object *object,
 #else
- zval *object,
+        zval *object,
 #endif
- php5to7_zval_gc table, int *n TSRMLS_DC)
+        php5to7_zval_gc table, int *n TSRMLS_DC
+)
 {
   *table = NULL;
   *n = 0;
@@ -116,10 +117,10 @@ php_driver_inet_gc(
 
 static HashTable *
 php_driver_inet_properties(
-#if PHP_VERSION_ID >= 80000
- zend_object *object
+#if PHP_MAJOR_VERSION >= 8
+        zend_object *object
 #else
- zval *object TSRMLS_DC
+        zval *object TSRMLS_DC
 #endif
 )
 {
@@ -127,13 +128,11 @@ php_driver_inet_properties(
   php5to7_zval type;
   php5to7_zval address;
 
-  php_driver_inet *self = PHP_DRIVER_GET_INET(
-#if PHP_VERSION_ID >= 80000
-        (zval*) object
+#if PHP_MAJOR_VERSION >= 8
+  php_driver_inet *self = PHP5TO7_ZEND_OBJECT_GET(inet, object);
 #else
-        object
+  php_driver_inet *self = PHP_DRIVER_GET_INET(object);
 #endif
-  );
   HashTable      *props = zend_std_get_properties(object TSRMLS_CC);
 
   type = php_driver_type_scalar(CASS_VALUE_TYPE_INET TSRMLS_CC);
@@ -151,6 +150,9 @@ php_driver_inet_properties(
 static int
 php_driver_inet_compare(zval *obj1, zval *obj2 TSRMLS_DC)
 {
+#if PHP_MAJOR_VERSION >= 8
+  ZEND_COMPARE_OBJECTS_FALLBACK(obj1, obj2);
+#endif
   php_driver_inet *inet1 = NULL;
   php_driver_inet *inet2 = NULL;
 
@@ -204,7 +206,7 @@ void php_driver_define_Inet(TSRMLS_D)
 #if PHP_VERSION_ID >= 50400
   php_driver_inet_handlers.std.get_gc          = php_driver_inet_gc;
 #endif
-#if PHP_VERSION_ID >= 80000
+#if PHP_MAJOR_VERSION >= 8
   php_driver_inet_handlers.std.compare = php_driver_inet_compare;
 #else
   php_driver_inet_handlers.std.compare_objects = php_driver_inet_compare;

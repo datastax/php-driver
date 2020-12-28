@@ -46,7 +46,7 @@ typedef int pid_t;
 #  error PHP 5.6.0 or later is required in order to build the driver
 #endif
 
-#if PHP_VERSION_ID >= 80000
+#if PHP_MAJOR_VERSION >= 8
   #ifndef TSRMLS_D
   #define TSRMLS_D void
   #define TSRMLS_DC

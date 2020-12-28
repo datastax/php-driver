@@ -1064,7 +1064,7 @@ static zend_object_handlers php_driver_cluster_builder_handlers;
 
 static HashTable*
 php_driver_cluster_builder_gc(
-#if PHP_VERSION_ID >= 80000
+#if PHP_MAJOR_VERSION >= 8
         zend_object *object,
 #else
         zval *object,
@@ -1079,7 +1079,7 @@ php_driver_cluster_builder_gc(
 
 static HashTable*
 php_driver_cluster_builder_properties(
-#if PHP_VERSION_ID >= 80000
+#if PHP_MAJOR_VERSION >= 8
   zend_object *object TSRMLS_DC
 #else
   zval *object TSRMLS_DC
@@ -1121,7 +1121,7 @@ php_driver_cluster_builder_properties(
   php5to7_zval connectionHeartbeatInterval;
 
   php_driver_cluster_builder *self = PHP_DRIVER_GET_CLUSTER_BUILDER(
-#if PHP_VERSION_ID >= 80000
+#if PHP_MAJOR_VERSION >= 8
   (zval*) object
 #else
   object
@@ -1461,10 +1461,10 @@ void php_driver_define_ClusterBuilder(TSRMLS_D)
 #if PHP_VERSION_ID >= 50400
   php_driver_cluster_builder_handlers.get_gc          = php_driver_cluster_builder_gc;
 #endif
-#if PHP_VERSION_ID >= 80000
+#if PHP_MAJOR_VERSION >= 8
   php_driver_cluster_builder_handlers.compare = php_driver_cluster_builder_compare;
 #else
-#if PHP_VERSION_ID >= 80000
+#if PHP_MAJOR_VERSION >= 8
   php_driver_cluster_builder_handlers.compare = php_driver_cluster_builder_compare;
 #else
   php_driver_cluster_builder_handlers.compare_objects = php_driver_cluster_builder_compare;

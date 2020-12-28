@@ -427,12 +427,13 @@ static php_driver_value_handlers php_driver_smallint_handlers;
 
 static HashTable *
 php_driver_smallint_gc(
-#if PHP_VERSION_ID >= 80000
- zend_object *object,
+#if PHP_MAJOR_VERSION >= 8
+        zend_object *object,
 #else
- zval *object,
+        zval *object,
 #endif
- php5to7_zval_gc table, int *n TSRMLS_DC)
+        php5to7_zval_gc table, int *n TSRMLS_DC
+)
 {
   *table = NULL;
   *n = 0;
@@ -441,23 +442,21 @@ php_driver_smallint_gc(
 
 static HashTable *
 php_driver_smallint_properties(
-#if PHP_VERSION_ID >= 80000
- zend_object *object
+#if PHP_MAJOR_VERSION >= 8
+        zend_object *object
 #else
- zval *object TSRMLS_DC
+        zval *object TSRMLS_DC
 #endif
 )
 {
   php5to7_zval type;
   php5to7_zval value;
 
-  php_driver_numeric *self = PHP_DRIVER_GET_NUMERIC(
-#if PHP_VERSION_ID >= 80000
-        (zval*) object
+#if PHP_MAJOR_VERSION >= 8
+  php_driver_numeric *self = PHP5TO7_ZEND_OBJECT_GET(numeric, object);
 #else
-        object
+  php_driver_numeric *self = PHP_DRIVER_GET_NUMERIC(object);
 #endif
-  );
   HashTable         *props = zend_std_get_properties(object TSRMLS_CC);
 
   type = php_driver_type_scalar(CASS_VALUE_TYPE_SMALL_INT TSRMLS_CC);
@@ -473,6 +472,9 @@ php_driver_smallint_properties(
 static int
 php_driver_smallint_compare(zval *obj1, zval *obj2 TSRMLS_DC)
 {
+#if PHP_MAJOR_VERSION >= 8
+  ZEND_COMPARE_OBJECTS_FALLBACK(obj1, obj2);
+#endif
   php_driver_numeric *smallint1 = NULL;
   php_driver_numeric *smallint2 = NULL;
 
@@ -499,20 +501,19 @@ php_driver_smallint_hash_value(zval *obj TSRMLS_DC)
 
 static int
 php_driver_smallint_cast(
-#if PHP_VERSION_ID >= 80000
- zend_object *object,
+#if PHP_MAJOR_VERSION >= 8
+        zend_object *object,
 #else
- zval *object,
+        zval *object,
 #endif
- zval *retval, int type TSRMLS_DC)
+        zval *retval, int type TSRMLS_DC
+)
 {
-  php_driver_numeric *self = PHP_DRIVER_GET_NUMERIC(
-#if PHP_VERSION_ID >= 80000
-        (zval*) object
+#if PHP_MAJOR_VERSION >= 8
+  php_driver_numeric *self = PHP5TO7_ZEND_OBJECT_GET(numeric, object);
 #else
-        object
+  php_driver_numeric *self = PHP_DRIVER_GET_NUMERIC(object);
 #endif
-  );
 
   switch (type) {
   case IS_LONG:
@@ -563,7 +564,7 @@ void php_driver_define_Smallint(TSRMLS_D)
 #if PHP_VERSION_ID >= 50400
   php_driver_smallint_handlers.std.get_gc          = php_driver_smallint_gc;
 #endif
-#if PHP_VERSION_ID >= 80000
+#if PHP_MAJOR_VERSION >= 8
   php_driver_smallint_handlers.std.compare = php_driver_smallint_compare;
 #else
   php_driver_smallint_handlers.std.compare_objects = php_driver_smallint_compare;

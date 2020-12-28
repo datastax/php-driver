@@ -300,12 +300,13 @@ static php_driver_value_handlers php_driver_set_handlers;
 
 static HashTable *
 php_driver_set_gc(
-#if PHP_VERSION_ID >= 80000
- zend_object *object,
+#if PHP_MAJOR_VERSION >= 8
+        zend_object *object,
 #else
- zval *object,
+        zval *object,
 #endif
- php5to7_zval_gc table, int *n TSRMLS_DC)
+        php5to7_zval_gc table, int *n TSRMLS_DC
+)
 {
   *table = NULL;
   *n = 0;
@@ -314,22 +315,20 @@ php_driver_set_gc(
 
 static HashTable *
 php_driver_set_properties(
-#if PHP_VERSION_ID >= 80000
- zend_object *object
+#if PHP_MAJOR_VERSION >= 8
+        zend_object *object
 #else
- zval *object TSRMLS_DC
+        zval *object TSRMLS_DC
 #endif
 )
 {
   php5to7_zval values;
 
-  php_driver_set *self = PHP_DRIVER_GET_SET(
-#if PHP_VERSION_ID >= 80000
-        (zval*) object
+#if PHP_MAJOR_VERSION >= 8
+  php_driver_set *self = PHP5TO7_ZEND_OBJECT_GET(set, object);
 #else
-        object
+  php_driver_set *self = PHP_DRIVER_GET_SET(object);
 #endif
-  );
   HashTable     *props = zend_std_get_properties(object TSRMLS_CC);
 
 
@@ -350,6 +349,9 @@ php_driver_set_properties(
 static int
 php_driver_set_compare(zval *obj1, zval *obj2 TSRMLS_DC)
 {
+#if PHP_MAJOR_VERSION >= 8
+  ZEND_COMPARE_OBJECTS_FALLBACK(obj1, obj2);
+#endif
   php_driver_set_entry *curr, *temp;
   php_driver_set *set1;
   php_driver_set *set2;
@@ -447,7 +449,7 @@ void php_driver_define_Set(TSRMLS_D)
 #if PHP_VERSION_ID >= 50400
   php_driver_set_handlers.std.get_gc          = php_driver_set_gc;
 #endif
-#if PHP_VERSION_ID >= 80000
+#if PHP_MAJOR_VERSION >= 8
   php_driver_set_handlers.std.compare = php_driver_set_compare;
 #else
   php_driver_set_handlers.std.compare_objects = php_driver_set_compare;

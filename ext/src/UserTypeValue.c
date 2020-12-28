@@ -300,9 +300,16 @@ ZEND_BEGIN_ARG_INFO_EX(arginfo__construct, 0, ZEND_RETURN_VALUE, 1)
   ZEND_ARG_INFO(0, types)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_value, 0, ZEND_RETURN_VALUE, 1)
+#if PHP_MAJOR_VERSION >= 8
+ZEND_BEGIN_ARG_INFO_EX(arginfo_name_value, 0, ZEND_RETURN_VALUE, 1)
+  ZEND_ARG_INFO(0, name)
   ZEND_ARG_INFO(0, value)
 ZEND_END_ARG_INFO()
+#else
+ZEND_BEGIN_ARG_INFO_EX(arginfo_value, 0, ZEND_RETURN_VALUE, 1)
+ZEND_ARG_INFO(0, value)
+ZEND_END_ARG_INFO()
+#endif
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_name, 0, ZEND_RETURN_VALUE, 1)
   ZEND_ARG_INFO(0, name)
@@ -315,7 +322,11 @@ static zend_function_entry php_driver_user_type_value_methods[] = {
   PHP_ME(UserTypeValue, __construct, arginfo__construct, ZEND_ACC_CTOR|ZEND_ACC_PUBLIC)
   PHP_ME(UserTypeValue, type, arginfo_none, ZEND_ACC_PUBLIC)
   PHP_ME(UserTypeValue, values, arginfo_none, ZEND_ACC_PUBLIC)
+#if PHP_MAJOR_VERSION >= 8
+  PHP_ME(UserTypeValue, set, arginfo_name_value, ZEND_ACC_PUBLIC)
+#else
   PHP_ME(UserTypeValue, set, arginfo_value, ZEND_ACC_PUBLIC)
+#endif
   PHP_ME(UserTypeValue, get, arginfo_name, ZEND_ACC_PUBLIC)
   /* Countable */
   PHP_ME(UserTypeValue, count, arginfo_none, ZEND_ACC_PUBLIC)
@@ -332,12 +343,13 @@ static php_driver_value_handlers php_driver_user_type_value_handlers;
 
 static HashTable *
 php_driver_user_type_value_gc(
-#if PHP_VERSION_ID >= 80000
- zend_object *object,
+#if PHP_MAJOR_VERSION >= 8
+        zend_object *object,
 #else
- zval *object,
+        zval *object,
 #endif
- php5to7_zval_gc table, int *n TSRMLS_DC)
+        php5to7_zval_gc table, int *n TSRMLS_DC
+)
 {
   *table = NULL;
   *n = 0;
@@ -346,22 +358,20 @@ php_driver_user_type_value_gc(
 
 static HashTable *
 php_driver_user_type_value_properties(
-#if PHP_VERSION_ID >= 80000
- zend_object *object
+#if PHP_MAJOR_VERSION >= 8
+        zend_object *object
 #else
- zval *object TSRMLS_DC
+        zval *object TSRMLS_DC
 #endif
 )
 {
   php5to7_zval values;
 
-  php_driver_user_type_value *self = PHP_DRIVER_GET_USER_TYPE_VALUE(
-#if PHP_VERSION_ID >= 80000
-        (zval*) object
+#if PHP_MAJOR_VERSION >= 8
+  php_driver_user_type_value *self = PHP5TO7_ZEND_OBJECT_GET(user_type_value, object);
 #else
-        object
+  php_driver_user_type_value *self = PHP_DRIVER_GET_USER_TYPE_VALUE(object);
 #endif
-  );
   HashTable                 *props = zend_std_get_properties(object TSRMLS_CC);
 
   PHP5TO7_ZEND_HASH_UPDATE(props,
@@ -380,6 +390,9 @@ php_driver_user_type_value_properties(
 static int
 php_driver_user_type_value_compare(zval *obj1, zval *obj2 TSRMLS_DC)
 {
+#if PHP_MAJOR_VERSION >= 8
+  ZEND_COMPARE_OBJECTS_FALLBACK(obj1, obj2);
+#endif
   HashPosition pos1;
   HashPosition pos2;
   php5to7_zval *current1;
@@ -484,7 +497,7 @@ void php_driver_define_UserTypeValue(TSRMLS_D)
 #if PHP_VERSION_ID >= 50400
   php_driver_user_type_value_handlers.std.get_gc          = php_driver_user_type_value_gc;
 #endif
-#if PHP_VERSION_ID >= 80000
+#if PHP_MAJOR_VERSION >= 8
   php_driver_user_type_value_handlers.std.compare = php_driver_user_type_value_compare;
 #else
   php_driver_user_type_value_handlers.std.compare_objects = php_driver_user_type_value_compare;

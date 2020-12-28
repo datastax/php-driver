@@ -47,10 +47,10 @@ static zend_object_handlers php_driver_future_value_handlers;
 
 static HashTable *
 php_driver_future_value_properties(
-#if PHP_VERSION_ID >= 80000
- zend_object *object
+#if PHP_MAJOR_VERSION >= 8
+        zend_object *object
 #else
- zval *object TSRMLS_DC
+        zval *object TSRMLS_DC
 #endif
 )
 {
@@ -62,6 +62,9 @@ php_driver_future_value_properties(
 static int
 php_driver_future_value_compare(zval *obj1, zval *obj2 TSRMLS_DC)
 {
+#if PHP_MAJOR_VERSION >= 8
+  ZEND_COMPARE_OBJECTS_FALLBACK(obj1, obj2);
+#endif
   if (Z_OBJCE_P(obj1) != Z_OBJCE_P(obj2))
     return 1; /* different classes */
 
@@ -103,7 +106,7 @@ void php_driver_define_FutureValue(TSRMLS_D)
 
   memcpy(&php_driver_future_value_handlers, zend_get_std_object_handlers(), sizeof(zend_object_handlers));
   php_driver_future_value_handlers.get_properties  = php_driver_future_value_properties;
-#if PHP_VERSION_ID >= 80000
+#if PHP_MAJOR_VERSION >= 8
   php_driver_future_value_handlers.compare = php_driver_future_value_compare;
 #else
   php_driver_future_value_handlers.compare_objects = php_driver_future_value_compare;

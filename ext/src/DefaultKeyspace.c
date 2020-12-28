@@ -517,12 +517,13 @@ static zend_object_handlers php_driver_default_keyspace_handlers;
 
 static HashTable *
 php_driver_type_default_keyspace_gc(
-#if PHP_VERSION_ID >= 80000
- zend_object *object,
+#if PHP_MAJOR_VERSION >= 8
+        zend_object *object,
 #else
- zval *object,
+        zval *object,
 #endif
- php5to7_zval_gc table, int *n TSRMLS_DC)
+        php5to7_zval_gc table, int *n TSRMLS_DC
+)
 {
   *table = NULL;
   *n = 0;
@@ -531,10 +532,10 @@ php_driver_type_default_keyspace_gc(
 
 static HashTable *
 php_driver_default_keyspace_properties(
-#if PHP_VERSION_ID >= 80000
- zend_object *object
+#if PHP_MAJOR_VERSION >= 8
+        zend_object *object
 #else
- zval *object TSRMLS_DC
+        zval *object TSRMLS_DC
 #endif
 )
 {
@@ -546,6 +547,9 @@ php_driver_default_keyspace_properties(
 static int
 php_driver_default_keyspace_compare(zval *obj1, zval *obj2 TSRMLS_DC)
 {
+#if PHP_MAJOR_VERSION >= 8
+  ZEND_COMPARE_OBJECTS_FALLBACK(obj1, obj2);
+#endif
   if (Z_OBJCE_P(obj1) != Z_OBJCE_P(obj2))
     return 1; /* different classes */
 
@@ -594,7 +598,7 @@ void php_driver_define_DefaultKeyspace(TSRMLS_D)
 #if PHP_VERSION_ID >= 50400
   php_driver_default_keyspace_handlers.get_gc          = php_driver_type_default_keyspace_gc;
 #endif
-#if PHP_VERSION_ID >= 80000
+#if PHP_MAJOR_VERSION >= 8
   php_driver_default_keyspace_handlers.compare = php_driver_default_keyspace_compare;
 #else
   php_driver_default_keyspace_handlers.compare_objects = php_driver_default_keyspace_compare;
