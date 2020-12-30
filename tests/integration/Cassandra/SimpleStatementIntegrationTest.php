@@ -18,6 +18,8 @@
 
 namespace Cassandra;
 
+use Cassandra\Exception\InvalidQueryException;
+
 /**
  * Simple statement integration tests.
  */
@@ -179,11 +181,11 @@ class SimpleStatementIntegrationTest extends BasicIntegrationTest {
      * @ticket PHP-67
      *
      * @cassandra-version-2.1
-     *
-     * @expectedException \Cassandra\Exception\InvalidQueryException
-     * @expectedExceptionMessage Invalid amount of bind variables
      */
     public function testByNameInvalidBindName() {
+        $this->expectException(InvalidQueryException::class);
+        $this->expectExceptionMessage('Invalid amount of bind variables');
+
         // Create the table
         $this->session->execute(new SimpleStatement(
             "CREATE TABLE {$this->tableNamePrefix} (key timeuuid PRIMARY KEY, value_int int)"
@@ -213,11 +215,11 @@ class SimpleStatementIntegrationTest extends BasicIntegrationTest {
      *
      * @cassandra-version-2.1
      * @cpp-driver-version-2.2.3
-     *
-     * @expectedException \Cassandra\Exception\InvalidQueryException
-     * @expectedExceptionMessage Invalid amount of bind variables
      */
     public function testCaseSensitiveByNameInvalidBindName() {
+        $this->expectException(InvalidQueryException::class);
+        $this->expectExceptionMessage('Invalid amount of bind variables');
+
         // Determine if the test should be skipped
         if (version_compare(\Cassandra::CPP_DRIVER_VERSION, "2.2.3") < 0) {
             $this->markTestSkipped("Skipping {$this->getName()}: Case sensitivity issue fixed in DataStax C/C++ v 2.2.3");

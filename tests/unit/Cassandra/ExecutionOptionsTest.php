@@ -18,17 +18,19 @@
 
 namespace Cassandra;
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * @requires extension cassandra
  */
-class ExecutionOptionsTest extends \PHPUnit_Framework_TestCase
+class ExecutionOptionsTest extends TestCase
 {
-    public function setUp()
+    protected function setUp(): void
     {
         error_reporting(E_ALL ^ E_DEPRECATED);
     }
 
-    public function tearDown()
+    protected function tearDown(): void
     {
         error_reporting(E_ALL);
     }

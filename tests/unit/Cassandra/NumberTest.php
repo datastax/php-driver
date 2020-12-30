@@ -18,10 +18,13 @@
 
 namespace Cassandra;
 
+use PHPUnit\Framework\TestCase;
+use RangeException;
+
 /**
  * @requires extension cassandra
  */
-class NumberTest extends \PHPUnit_Framework_TestCase {
+class NumberTest extends TestCase {
     /**
      * Minimum value for integer
      */
@@ -314,9 +317,17 @@ class NumberTest extends \PHPUnit_Framework_TestCase {
                     continue;
                 }
 
+                $strMin = (string) $min;
+                if($strMin[0] === '-') {
+                    $strMin = substr($strMin, 1);
+                }
+                $strMinMinusOne = (string) ($min - 1);
+                if($strMinMinusOne[0] === '-') {
+                    $strMinMinusOne = substr($strMinMinusOne, 1);
+                }
                 $val = ($class == "Cassandra\\Bigint") ?
-                    $prefix . base_convert((string) $min, 10, $base) . "0":
-                    $prefix . base_convert((string) ($min - 1), 10, $base);
+                    $prefix . base_convert($strMin, 10, $base) . "0":
+                    $prefix . base_convert($strMinMinusOne, 10, $base);
                 $provider[] = array(
                     $class,
                     $val
@@ -366,7 +377,11 @@ class NumberTest extends \PHPUnit_Framework_TestCase {
                 // Since we don't need base conversion for base 10 and we have to special case something,
                 // we just don't do base_convert for any of the base 10 tests.
 
-                $val = ($base == 10) ? (string) $min : $prefix . base_convert((string) $min, 10, $base);
+                $strMin = (string) $min;
+                if($strMin[0] === '-') {
+                    $strMin = substr($strMin, 1);
+                }
+                $val = ($base == 10) ? $min : $prefix . base_convert($strMin, 10, $base);
                 $provider[] = array(
                     $class,
                     $val,
@@ -403,22 +418,20 @@ class NumberTest extends \PHPUnit_Framework_TestCase {
 
     /**
      * This Varint test will be valid for both 32-bit and 64-bit longs
-     *
-     * @expectedException Cassandra\Exception\RangeException
-     * @expectedExceptionMessage Value is too big
      */
     public function testVarintOverflowTooBig() {
+        $this->expectException(Exception\RangeException::class);
+        $this->expectExceptionMessage("Value is too big");
         $number = new Varint("9223372036854775808");
         $number->toInt();
     }
 
     /**
      * This Varint test will be valid for both 32-bit and 64-bit longs
-     *
-     * @expectedException Cassandra\Exception\RangeException
-     * @expectedExceptionMessage Value is too small
      */
     public function testVarintOverflowTooSmall() {
+        $this->expectException(Exception\RangeException::class);
+        $this->expectExceptionMessage("Value is too small");
         $number = new Varint("-9223372036854775809");
         $number->toInt();
     }
@@ -426,28 +439,28 @@ class NumberTest extends \PHPUnit_Framework_TestCase {
 
     /**
      * @dataProvider numberClasses
-     * @expectedException Cassandra\Exception\InvalidArgumentException
-     * @expectedExceptionMessage Invalid integer value: ''
      */
     public function testEmptyString($class) {
+        $this->expectException(Exception\InvalidArgumentException::class);
+        $this->expectExceptionMessage("Invalid integer value: ''");
         new $class("");
     }
 
     /**
      * @dataProvider numberClasses
-     * @expectedException Cassandra\Exception\InvalidArgumentException
-     * @expectedExceptionMessage Invalid integer value: 'invalid123'
      */
     public function testInvalidString($class) {
+        $this->expectException(Exception\InvalidArgumentException::class);
+        $this->expectExceptionMessage("Invalid integer value: 'invalid123'");
         new $class("invalid123");
     }
 
     /**
      * @dataProvider numberClasses
-     * @expectedException Cassandra\Exception\InvalidArgumentException
-     * @expectedExceptionMessageRegExp /Invalid characters were found in value: '123.123'|Invalid integer value: '123.123'/
      */
     public function testInvalidCharacters($class) {
+        $this->expectException(Exception\InvalidArgumentException::class);
+        $this->expectExceptionMessageMatches("/Invalid characters were found in value: '123.123'|Invalid integer value: '123.123'/");
         new $class("123.123");
     }
 
@@ -494,10 +507,10 @@ class NumberTest extends \PHPUnit_Framework_TestCase {
 
     /**
      * @dataProvider numberClasses
-     * @expectedException Cassandra\Exception\RangeException
-     * @expectedExceptionMessage Product is out of range
      */
     public function testMultiplyOutOfRange($class) {
+        $this->expectException(Exception\RangeException::class);
+        $this->expectExceptionMessage("Product is out of range");
         if ($class == "Cassandra\\Bigint" ||
             $class == "Cassandra\\Varint") {
             $this->markTestSkipped("{$class} is not compatible with this test");
@@ -520,10 +533,10 @@ class NumberTest extends \PHPUnit_Framework_TestCase {
 
     /**
      * @dataProvider numberClasses
-     * @expectedException Cassandra\Exception\DivideByZeroException
-     * @expectedExceptionMessage Cannot divide by zero
      */
     public function testDivisionByZero($class) {
+        $this->expectException(Exception\DivideByZeroException::class);
+        $this->expectExceptionMessage("Cannot divide by zero");
         $value1 = new $class(1);
         $value2 = new $class(0);
         $value1->div($value2);
@@ -541,10 +554,10 @@ class NumberTest extends \PHPUnit_Framework_TestCase {
 
     /**
      * @dataProvider numberClasses
-     * @expectedException Cassandra\Exception\DivideByZeroException
-     * @expectedExceptionMessage Cannot modulo by zero
      */
     public function testModuloByZero($class) {
+        $this->expectException(Exception\DivideByZeroException::class);
+        $this->expectExceptionMessage("Cannot modulo by zero");
         $value1 = new $class(1);
         $value2 = new $class(0);
         $value1->mod($value2);
@@ -560,10 +573,10 @@ class NumberTest extends \PHPUnit_Framework_TestCase {
 
     /**
      * @dataProvider numberClasses
-     * @expectedException Cassandra\Exception\RangeException
-     * @expectedExceptionMessage Value doesn't exist
      */
     public function testAbsoluteValueDatatypeMinimum($class) {
+        $this->expectException(Exception\RangeException::class);
+        $this->expectExceptionMessage("Value doesn't exist");
         if ($class == "Cassandra\\Varint") {
             $this->markTestSkipped("{$class} is not compatible with this test");
         }
@@ -595,10 +608,10 @@ class NumberTest extends \PHPUnit_Framework_TestCase {
 
     /**
      * @dataProvider numberClasses
-     * @expectedException Cassandra\Exception\RangeException
-     * @expectedExceptionMessage Cannot take a square root of a negative number
      */
     public function testSquareRootNegative($class) {
+        $this->expectException(Exception\RangeException::class);
+        $this->expectExceptionMessage("Cannot take a square root of a negative number");
         $number = new $class(-1);
         $number->sqrt();
     }
@@ -659,10 +672,10 @@ class NumberTest extends \PHPUnit_Framework_TestCase {
      * value of a 32-bit value.
      *
      * @depends testIs32bitLong
-     * @expectedException Cassandra\Exception\RangeException
-     * @expectedExceptionMessage Value is too small
      */
     public function testBigintToIntTooSmall() {
+        $this->expectException(Exception\RangeException::class);
+        $this->expectExceptionMessage("Value is too small");
         $number = new Bigint("-9223372036854775808");
         $number->toInt();
     }
@@ -673,10 +686,10 @@ class NumberTest extends \PHPUnit_Framework_TestCase {
      * value of a 32-bit value.
      *
      * @depends testIs32bitLong
-     * @expectedException Cassandra\Exception\RangeException
-     * @expectedExceptionMessage Value is too big
      */
     public function testBigintToIntTooLarge() {
+        $this->expectException(Exception\RangeException::class);
+        $this->expectExceptionMessage("Value is too big");
         $number = new Bigint("9223372036854775807");
         $number->toInt();
     }
@@ -687,11 +700,11 @@ class NumberTest extends \PHPUnit_Framework_TestCase {
     public function testOverflowTooBig($class, $value)
     {
         if (is_double($value)) {
-            $this->setExpectedException('RangeException',
-                "value must be between " . self::LIMITS[$class]["min"] . " and " . self::LIMITS[$class]["max"]);
+            $this->expectException(RangeException::class);
+            $this->expectExceptionMessage("value must be between " . self::LIMITS[$class]["min"] . " and " . self::LIMITS[$class]["max"]);
         } else {
-            $this->setExpectedException('RangeException',
-                "value must be between " . self::LIMITS[$class]["min"] . " and " . self::LIMITS[$class]["max"] . ", " .
+            $this->expectException(RangeException::class);
+            $this->expectExceptionMessage("value must be between " . self::LIMITS[$class]["min"] . " and " . self::LIMITS[$class]["max"] . ", " .
                 $value . " given");
         }
         new $class($value);
@@ -703,11 +716,11 @@ class NumberTest extends \PHPUnit_Framework_TestCase {
     public function testOverflowTooSmall($class, $value)
     {
         if (is_double($value)) {
-            $this->setExpectedException('RangeException',
-                "value must be between " . self::LIMITS[$class]["min"] . " and " . self::LIMITS[$class]["max"]);
+            $this->expectException(RangeException::class);
+            $this->expectExceptionMessage("value must be between " . self::LIMITS[$class]["min"] . " and " . self::LIMITS[$class]["max"]);
         } else {
-            $this->setExpectedException('RangeException',
-                "value must be between " . self::LIMITS[$class]["min"] . " and " . self::LIMITS[$class]["max"] . ", " .
+            $this->expectException(RangeException::class);
+            $this->expectExceptionMessage("value must be between " . self::LIMITS[$class]["min"] . " and " . self::LIMITS[$class]["max"] . ", " .
                 $value . " given");
         }
         new $class($value);

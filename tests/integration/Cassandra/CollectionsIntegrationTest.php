@@ -25,7 +25,7 @@ abstract class CollectionsIntegrationTest extends DatatypeIntegrationTests {
     /**
      * Create user types after initializing cluster and session
      */
-    protected function setUp() {
+    protected function setUp(): void {
         parent::setUp();
 
         foreach ($this->compositeCassandraTypes() as $cassandraType) {

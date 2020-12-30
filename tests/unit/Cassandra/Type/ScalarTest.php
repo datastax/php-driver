@@ -19,11 +19,12 @@
 namespace Cassandra\Type;
 
 use Cassandra\Type;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @requires extension cassandra
  */
-class ScalarTest extends \PHPUnit_Framework_TestCase
+class ScalarTest extends TestCase
 {
     public function testAllowCreatingTypes()
     {

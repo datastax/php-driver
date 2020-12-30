@@ -18,36 +18,34 @@
 
 namespace Cassandra;
 
+use Cassandra;
+use InvalidArgumentException;
+use PHPUnit\Framework\TestCase;
+use stdClass;
+
 /**
  * @requires extension cassandra
  */
-class CollectionTest extends \PHPUnit_Framework_TestCase
+class CollectionTest extends TestCase
 {
-    /**
-     * @expectedException         InvalidArgumentException
-     * @expectedExceptionMessage  type must be a string or an instance of Cassandra\Type, an instance of stdClass given
-     */
     public function testInvalidType()
     {
-        new Collection(new \stdClass());
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('type must be a string or an instance of Cassandra\Type, an instance of stdClass given');
+        new Collection(new stdClass());
     }
 
-    /**
-     * @expectedException         InvalidArgumentException
-     * @expectedExceptionMessage  Unsupported type 'custom type'
-     */
     public function testUnsupportedStringType()
     {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage("Unsupported type 'custom type'");
         new Collection('custom type');
     }
 
-    /**
-     * @expectedException        InvalidArgumentException
-     * @expectedExceptionMessage type must be a valid Cassandra\Type,
-     *                           an instance of Cassandra\Type\UnsupportedType given
-     */
     public function testUnsupportedType()
     {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage("type must be a valid Cassandra\Type, an instance of Cassandra\Type\UnsupportedType given");
         new Collection(new Type\UnsupportedType());
     }
 
@@ -63,22 +61,22 @@ class CollectionTest extends \PHPUnit_Framework_TestCase
     public function cassandraTypes()
     {
         return array(
-            array(\Cassandra::TYPE_ASCII),
-            array(\Cassandra::TYPE_BIGINT),
-            array(\Cassandra::TYPE_BLOB),
-            array(\Cassandra::TYPE_BOOLEAN),
-            array(\Cassandra::TYPE_COUNTER),
-            array(\Cassandra::TYPE_DECIMAL),
-            array(\Cassandra::TYPE_DOUBLE),
-            array(\Cassandra::TYPE_FLOAT),
-            array(\Cassandra::TYPE_INT),
-            array(\Cassandra::TYPE_TEXT),
-            array(\Cassandra::TYPE_TIMESTAMP),
-            array(\Cassandra::TYPE_UUID),
-            array(\Cassandra::TYPE_VARCHAR),
-            array(\Cassandra::TYPE_VARINT),
-            array(\Cassandra::TYPE_TIMEUUID),
-            array(\Cassandra::TYPE_INET),
+            array(Cassandra::TYPE_ASCII),
+            array(Cassandra::TYPE_BIGINT),
+            array(Cassandra::TYPE_BLOB),
+            array(Cassandra::TYPE_BOOLEAN),
+            array(Cassandra::TYPE_COUNTER),
+            array(Cassandra::TYPE_DECIMAL),
+            array(Cassandra::TYPE_DOUBLE),
+            array(Cassandra::TYPE_FLOAT),
+            array(Cassandra::TYPE_INT),
+            array(Cassandra::TYPE_TEXT),
+            array(Cassandra::TYPE_TIMESTAMP),
+            array(Cassandra::TYPE_UUID),
+            array(Cassandra::TYPE_VARCHAR),
+            array(Cassandra::TYPE_VARINT),
+            array(Cassandra::TYPE_TIMEUUID),
+            array(Cassandra::TYPE_INET),
         );
     }
 
@@ -150,29 +148,25 @@ class CollectionTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    /**
-     * @expectedException         InvalidArgumentException
-     * @expectedExceptionMessage  argument must be an instance of Cassandra\Varint, an instance of Cassandra\Decimal given
-     */
     public function testValidatesTypesOfElements()
     {
-        $list = new Collection(\Cassandra::TYPE_VARINT);
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage("argument must be an instance of Cassandra\Varint, an instance of Cassandra\Decimal given");
+        $list = new Collection(Cassandra::TYPE_VARINT);
         $list->add(new Decimal('123'));
     }
 
-    /**
-     * @expectedException         InvalidArgumentException
-     * @expectedExceptionMessage  Invalid value: null is not supported inside collections
-     */
     public function testSupportsNullValues()
     {
-        $list = new Collection(\Cassandra::TYPE_VARINT);
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage("Invalid value: null is not supported inside collections");
+        $list = new Collection(Cassandra::TYPE_VARINT);
         $list->add(null);
     }
 
     public function testAddsAllElements()
     {
-        $list = new Collection(\Cassandra::TYPE_VARINT);
+        $list = new Collection(Cassandra::TYPE_VARINT);
         $list->add(new Varint('1'), new Varint('2'), new Varint('3'),
                    new Varint('4'), new Varint('5'), new Varint('6'),
                    new Varint('7'), new Varint('8'));
@@ -190,13 +184,13 @@ class CollectionTest extends \PHPUnit_Framework_TestCase
 
     public function testReturnsNullWhenCannotFindIndex()
     {
-        $list = new Collection(\Cassandra::TYPE_VARINT);
+        $list = new Collection(Cassandra::TYPE_VARINT);
         $this->assertSame(null, $list->find(new Varint('1')));
     }
 
     public function testFindsIndexOfAnElement()
     {
-        $list = new Collection(\Cassandra::TYPE_VARINT);
+        $list = new Collection(Cassandra::TYPE_VARINT);
         $list->add(new Varint('1'), new Varint('2'), new Varint('3'),
                    new Varint('4'), new Varint('5'), new Varint('6'),
                    new Varint('7'), new Varint('8'));
@@ -213,7 +207,7 @@ class CollectionTest extends \PHPUnit_Framework_TestCase
 
     public function testGetsElementByIndex()
     {
-        $list = new Collection(\Cassandra::TYPE_VARINT);
+        $list = new Collection(Cassandra::TYPE_VARINT);
         $list->add(new Varint('1'), new Varint('2'), new Varint('3'),
                    new Varint('4'), new Varint('5'), new Varint('6'),
                    new Varint('7'), new Varint('8'));
@@ -233,7 +227,7 @@ class CollectionTest extends \PHPUnit_Framework_TestCase
         $values = array(new Varint('1'), new Varint('2'), new Varint('3'),
                         new Varint('4'), new Varint('5'), new Varint('6'),
                         new Varint('7'), new Varint('8'));
-        $list = new Collection(\Cassandra::TYPE_VARINT);
+        $list = new Collection(Cassandra::TYPE_VARINT);
 
         foreach ($values as $value) {
             $list->add($value);

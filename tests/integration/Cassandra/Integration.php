@@ -18,6 +18,10 @@
 
 namespace Cassandra;
 
+use Cassandra;
+use CCM;
+use ReflectionClass;
+
 /**
  * Base class to provide common integration test functionality.
  */
@@ -27,7 +31,7 @@ class Integration {
     /**
      * Default Cassandra server version
      */
-    const DEFAULT_CASSANDRA_VERSION = "3.10";
+    const DEFAULT_CASSANDRA_VERSION = "3.11.9";
     /**
      * Default verbosity for CCM output
      */
@@ -62,13 +66,13 @@ class Integration {
     /**
      * Cluster instance.
      *
-     * @var \Cassandra\Cluster
+     * @var Cluster
      */
     private $cluster;
     /**
      * Connected database session.
      *
-     * @var \Cassandra\Session
+     * @var Session
      */
     private $session;
     /**
@@ -129,7 +133,7 @@ class Integration {
 
         // Create the Cassandra cluster for the test
         //TODO: Need to add the ability to switch the Cassandra version (command line)
-        $this->ccm = new \CCM(self::DEFAULT_CASSANDRA_VERSION, self::DEFAULT_IS_CCM_SILENT);
+        $this->ccm = new CCM(self::DEFAULT_CASSANDRA_VERSION, self::DEFAULT_IS_CCM_SILENT);
         $this->ccm->setup($numberDC1Nodes, $numberDC2Nodes);
         if ($isClientAuthentication) {
             $this->ccm->setupClientVerification();
@@ -159,7 +163,7 @@ class Integration {
         }
 
         // Create the session and keyspace for the integration test
-        $this->cluster = \Cassandra::cluster()
+        $this->cluster = Cassandra::cluster()
             ->withContactPoints($this->getContactPoints(Integration::IP_ADDRESS, ($numberDC1Nodes + $numberDC2Nodes)))
             ->withPersistentSessions(false)
             ->build();
@@ -192,7 +196,7 @@ class Integration {
      * @return string Short name for the class name
      */
     private function getShortName($className) {
-        $function = new \ReflectionClass($className);
+        $function = new ReflectionClass($className);
         return $function->getShortName();
     }
 
@@ -249,7 +253,7 @@ class IntegrationTestFixture {
     /**
      * Handle for communicating with CCM.
      *
-     * @var \CCM
+     * @var CCM
      */
     private $ccm;
     /**
@@ -260,7 +264,7 @@ class IntegrationTestFixture {
     private static $instance;
 
     function __construct() {
-        $this->ccm = new \CCM(\CCM::DEFAULT_CASSANDRA_VERSION, true);
+        $this->ccm = new CCM(CCM::DEFAULT_CASSANDRA_VERSION, true);
         $this->ccm->removeAllClusters();
     }
 

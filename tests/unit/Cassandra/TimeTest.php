@@ -18,10 +18,13 @@
 
 namespace Cassandra;
 
+use InvalidArgumentException;
+use PHPUnit\Framework\TestCase;
+
 /**
  * @requires extension cassandra
  */
-class TimeTest extends \PHPUnit_Framework_TestCase
+class TimeTest extends TestCase
 {
     public function testConstruct()
     {
@@ -38,25 +41,21 @@ class TimeTest extends \PHPUnit_Framework_TestCase
     public function testConstructNow()
     {
         $time = new Time();
-        $this->assertEquals($time->seconds(), time() % (24 * 60 * 60), "", 1);
+        $this->assertEqualsWithDelta($time->seconds(), time() % (24 * 60 * 60), 1);
     }
 
-    /**
-     * @expectedException InvalidArgumentException
-     * @expectedExceptionMessage nanoseconds must be nanoseconds since midnight, -1 given
-     */
     public function testConstructNegative()
     {
-        $time = new Time(-1);
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage("nanoseconds must be nanoseconds since midnight, -1 given");
+        new Time(-1);
     }
 
-    /**
-     * @expectedException InvalidArgumentException
-     * @expectedExceptionMessage nanoseconds must be nanoseconds since midnight, '86400000000000' given
-     */
     public function testConstructTooBig()
     {
-        $time = new Time("86400000000000");
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage("nanoseconds must be nanoseconds since midnight, '86400000000000' given");
+        new Time("86400000000000");
     }
 
     public function testFromDateTime()

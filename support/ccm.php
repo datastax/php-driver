@@ -93,7 +93,7 @@ class CCM
 
     public function start()
     {
-        $this->run('start', '--wait-other-notice', '--wait-for-binary-proto');
+        $this->run('start', '--root', '--skip-wait-other-notice', '--wait-for-binary-proto');
         $builder = Cassandra::cluster()
                        ->withPersistentSessions(false)
                        ->withContactPoints('127.0.0.1');
@@ -181,7 +181,7 @@ class CCM
             if (in_array($clusterName, $clusters['list'])) {
                 $this->run('switch', $clusterName);
             } else {
-                $this->run('create', '-v', 'binary:' . $this->version, '-b', $clusterName);
+                $this->run('create', '-v', $this->version, '-b', $clusterName);
 
                 $params = array(
                   'updateconf', '--rt', '1000', 'read_request_timeout_in_ms: 1000',

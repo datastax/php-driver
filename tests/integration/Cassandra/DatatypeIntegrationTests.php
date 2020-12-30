@@ -18,6 +18,8 @@
 
 namespace Cassandra;
 
+use Cassandra;
+
 /**
  * A base class for data type integration tests
  */
@@ -62,23 +64,23 @@ abstract class DatatypeIntegrationTests extends BasicIntegrationTest {
      */
     public function constantScalarCassandraTypes() {
         $constants = array(
-            \Cassandra::TYPE_TEXT,
-            \Cassandra::TYPE_ASCII,
-            \Cassandra::TYPE_VARCHAR,
-            \Cassandra::TYPE_BIGINT,
-            \Cassandra::TYPE_SMALLINT,
-            \Cassandra::TYPE_TINYINT,
-            \Cassandra::TYPE_BLOB,
-            \Cassandra::TYPE_BOOLEAN,
-            \Cassandra::TYPE_DECIMAL,
-            \Cassandra::TYPE_DOUBLE,
-            \Cassandra::TYPE_FLOAT,
-            \Cassandra::TYPE_INT,
-            \Cassandra::TYPE_TIMESTAMP,
-            \Cassandra::TYPE_UUID,
-            \Cassandra::TYPE_VARINT,
-            \Cassandra::TYPE_TIMEUUID,
-            \Cassandra::TYPE_INET
+            Cassandra::TYPE_TEXT,
+            Cassandra::TYPE_ASCII,
+            Cassandra::TYPE_VARCHAR,
+            Cassandra::TYPE_BIGINT,
+            Cassandra::TYPE_SMALLINT,
+            Cassandra::TYPE_TINYINT,
+            Cassandra::TYPE_BLOB,
+            Cassandra::TYPE_BOOLEAN,
+            Cassandra::TYPE_DECIMAL,
+            Cassandra::TYPE_DOUBLE,
+            Cassandra::TYPE_FLOAT,
+            Cassandra::TYPE_INT,
+            Cassandra::TYPE_TIMESTAMP,
+            Cassandra::TYPE_UUID,
+            Cassandra::TYPE_VARINT,
+            Cassandra::TYPE_TIMEUUID,
+            Cassandra::TYPE_INET
         );
         $scalarCassandraTypes = $this->scalarCassandraTypes();
 
@@ -193,14 +195,21 @@ abstract class DatatypeIntegrationTests extends BasicIntegrationTest {
             array('arguments' => array($key))
         );
 
-        $this->assertEquals(count($result), 1);
+        if (PHP_MAJOR_VERSION >= 8) {
+            $this->assertEquals(1, $result->count());
+        }
+        else {
+            $this->assertEquals(count($result), 1);
+        }
 
         $row = $result->first();
 
         $this->assertEquals($row['value'], $value);
         $this->assertTrue($row['value'] == $value);
         if (isset($row['value'])) {
-            $this->assertEquals(count($row['value']), count($value));
+            if (PHP_MAJOR_VERSION < 8) {
+                $this->assertEquals(count($row['value']), count($value));
+            }
             if (is_object($row['value'])) {
                 $this->assertEquals($row['value']->type(), $type);
             }

@@ -18,17 +18,19 @@
 
 namespace Cassandra;
 
+use Cassandra;
+use InvalidArgumentException;
+use PHPUnit\Framework\TestCase;
+
 /**
  * @requires extension cassandra
  */
-class TupleTest extends \PHPUnit_Framework_TestCase
+class TupleTest extends TestCase
 {
-    /**
-     * @expectedException         InvalidArgumentException
-     * @expectedExceptionMessage  Unsupported type 'custom type'
-     */
     public function testSupportsOnlyCassandraTypes()
     {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage("Unsupported type 'custom type'");
         new Tuple(array('custom type'));
     }
 
@@ -37,7 +39,8 @@ class TupleTest extends \PHPUnit_Framework_TestCase
      */
     public function testSupportsAllCassandraTypes($types)
     {
-        new Tuple($types);
+        $tuple = new Tuple($types);
+        $this->assertInstanceOf(Tuple::class, $tuple);
     }
 
     /**
@@ -53,25 +56,25 @@ class TupleTest extends \PHPUnit_Framework_TestCase
     public function cassandraTypes()
     {
         return array(
-            array(array(\Cassandra::TYPE_TEXT)),
-            array(array(\Cassandra::TYPE_ASCII)),
-            array(array(\Cassandra::TYPE_VARCHAR)),
-            array(array(\Cassandra::TYPE_BIGINT)),
-            array(array(\Cassandra::TYPE_BOOLEAN)),
-            array(array(\Cassandra::TYPE_COUNTER)),
-            array(array(\Cassandra::TYPE_DECIMAL)),
-            array(array(\Cassandra::TYPE_DOUBLE)),
-            array(array(\Cassandra::TYPE_FLOAT)),
-            array(array(\Cassandra::TYPE_INT)),
-            array(array(\Cassandra::TYPE_TIMESTAMP)),
-            array(array(\Cassandra::TYPE_UUID)),
-            array(array(\Cassandra::TYPE_VARINT)),
-            array(array(\Cassandra::TYPE_TIMEUUID)),
-            array(array(\Cassandra::TYPE_INET)),
-            array(array(\Cassandra::TYPE_TIMEUUID, \Cassandra::TYPE_UUID)),
-            array(array(\Cassandra::TYPE_INT, \Cassandra::TYPE_BIGINT, \Cassandra::TYPE_VARINT)),
-            array(array(\Cassandra::TYPE_INT, \Cassandra::TYPE_BIGINT, \Cassandra::TYPE_VARINT)),
-            array(array(\Cassandra::TYPE_ASCII, \Cassandra::TYPE_TEXT, \Cassandra::TYPE_VARCHAR)),
+            array(array(Cassandra::TYPE_TEXT)),
+            array(array(Cassandra::TYPE_ASCII)),
+            array(array(Cassandra::TYPE_VARCHAR)),
+            array(array(Cassandra::TYPE_BIGINT)),
+            array(array(Cassandra::TYPE_BOOLEAN)),
+            array(array(Cassandra::TYPE_COUNTER)),
+            array(array(Cassandra::TYPE_DECIMAL)),
+            array(array(Cassandra::TYPE_DOUBLE)),
+            array(array(Cassandra::TYPE_FLOAT)),
+            array(array(Cassandra::TYPE_INT)),
+            array(array(Cassandra::TYPE_TIMESTAMP)),
+            array(array(Cassandra::TYPE_UUID)),
+            array(array(Cassandra::TYPE_VARINT)),
+            array(array(Cassandra::TYPE_TIMEUUID)),
+            array(array(Cassandra::TYPE_INET)),
+            array(array(Cassandra::TYPE_TIMEUUID, Cassandra::TYPE_UUID)),
+            array(array(Cassandra::TYPE_INT, Cassandra::TYPE_BIGINT, Cassandra::TYPE_VARINT)),
+            array(array(Cassandra::TYPE_INT, Cassandra::TYPE_BIGINT, Cassandra::TYPE_VARINT)),
+            array(array(Cassandra::TYPE_ASCII, Cassandra::TYPE_TEXT, Cassandra::TYPE_VARCHAR)),
         );
     }
 
@@ -132,23 +135,26 @@ class TupleTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    /**
-     * @expectedException         InvalidArgumentException
-     * @expectedExceptionMessage  argument must be an instance of Cassandra\Varint, an instance of Cassandra\Decimal given
-     */
     public function testValidatesTypesOfElements()
     {
-        $tuple = new Tuple(array(\Cassandra::TYPE_VARINT));
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage(
+            "argument must be an instance of Cassandra\Varint, an instance of Cassandra\Decimal given"
+        );
+        $tuple = new Tuple(array(Cassandra::TYPE_VARINT));
         $tuple->set(0, new Decimal('123'));
     }
 
     public function testSetAllElements()
     {
-        $tuple = new Tuple(array(\Cassandra::TYPE_BOOLEAN,
-            \Cassandra::TYPE_INT,
-            \Cassandra::TYPE_BIGINT,
-            \Cassandra::TYPE_TEXT,
-        ));
+        $tuple = new Tuple(
+            array(
+                Cassandra::TYPE_BOOLEAN,
+                Cassandra::TYPE_INT,
+                Cassandra::TYPE_BIGINT,
+                Cassandra::TYPE_TEXT,
+            )
+        );
 
         $this->assertEquals(4, $tuple->count());
 
@@ -164,23 +170,19 @@ class TupleTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($tuple->get(3), "abc");
     }
 
-    /**
-     * @expectedException         InvalidArgumentException
-     * @expectedExceptionMessage  Index out of bounds
-     */
     public function testInvalidSetIndex()
     {
-        $tuple = new Tuple(array(\Cassandra::TYPE_TEXT));
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage("Index out of bounds");
+        $tuple = new Tuple(array(Cassandra::TYPE_TEXT));
         $tuple->set(1, "invalid index");
     }
 
-    /**
-     * @expectedException         InvalidArgumentException
-     * @expectedExceptionMessage  Index out of bounds
-     */
     public function testInvalidGetIndex()
     {
-        $tuple = new Tuple(array(\Cassandra::TYPE_TEXT));
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage("Index out of bounds");
+        $tuple = new Tuple(array(Cassandra::TYPE_TEXT));
         $tuple->set(0, "invalid index");
         $tuple->get(1);
     }
@@ -198,12 +200,18 @@ class TupleTest extends \PHPUnit_Framework_TestCase
     {
         $setType = Type::set(Type::int());
         return array(
-            array(Type::tuple(Type::int(), Type::varchar(), Type::bigint())->create(),
-                  Type::tuple(Type::int(), Type::varchar(), Type::bigint())->create()),
-            array(Type::tuple(Type::int(), Type::varchar(), Type::bigint())->create(1, 'a', new Bigint(99)),
-                  Type::tuple(Type::int(), Type::varchar(), Type::bigint())->create(1, 'a', new Bigint(99))),
-            array(Type::tuple($setType, Type::varchar())->create($setType->create(1, 2, 3), 'a'),
-                  Type::tuple($setType, Type::varchar())->create($setType->create(1, 2, 3), 'a'))
+            array(
+                Type::tuple(Type::int(), Type::varchar(), Type::bigint())->create(),
+                Type::tuple(Type::int(), Type::varchar(), Type::bigint())->create()
+            ),
+            array(
+                Type::tuple(Type::int(), Type::varchar(), Type::bigint())->create(1, 'a', new Bigint(99)),
+                Type::tuple(Type::int(), Type::varchar(), Type::bigint())->create(1, 'a', new Bigint(99))
+            ),
+            array(
+                Type::tuple($setType, Type::varchar())->create($setType->create(1, 2, 3), 'a'),
+                Type::tuple($setType, Type::varchar())->create($setType->create(1, 2, 3), 'a')
+            )
         );
     }
 
@@ -220,12 +228,18 @@ class TupleTest extends \PHPUnit_Framework_TestCase
     {
         $setType = Type::set(Type::int());
         return array(
-            array(Type::tuple(Type::int(), Type::varchar(), Type::varint())->create(),
-                  Type::tuple(Type::int(), Type::varchar(), Type::bigint())->create()),
-            array(Type::tuple(Type::int(), Type::varchar(), Type::bigint())->create(1, 'a', new Bigint(99)),
-                  Type::tuple(Type::int(), Type::varchar(), Type::bigint())->create(2, 'b', new Bigint(99))),
-            array(Type::tuple($setType, Type::varchar())->create($setType->create(1, 2, 3), 'a'),
-                  Type::tuple($setType, Type::varchar())->create($setType->create(4, 5, 6), 'a'))
+            array(
+                Type::tuple(Type::int(), Type::varchar(), Type::varint())->create(),
+                Type::tuple(Type::int(), Type::varchar(), Type::bigint())->create()
+            ),
+            array(
+                Type::tuple(Type::int(), Type::varchar(), Type::bigint())->create(1, 'a', new Bigint(99)),
+                Type::tuple(Type::int(), Type::varchar(), Type::bigint())->create(2, 'b', new Bigint(99))
+            ),
+            array(
+                Type::tuple($setType, Type::varchar())->create($setType->create(1, 2, 3), 'a'),
+                Type::tuple($setType, Type::varchar())->create($setType->create(4, 5, 6), 'a')
+            )
         );
     }
 }

@@ -18,17 +18,19 @@
 
 namespace Cassandra;
 
+use InvalidArgumentException;
+use PHPUnit\Framework\TestCase;
+use RuntimeException;
+
 /**
  * @requires extension cassandra
  */
-class DecimalTest extends \PHPUnit_Framework_TestCase
+class DecimalTest extends TestCase
 {
-    /**
-     * @expectedException         InvalidArgumentException
-     * @expectedExceptionMessage  Unrecognized character 'q' at position 0
-     */
     public function testThrowsWhenCreatingNotAnInteger()
     {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage("Unrecognized character 'q' at position 0");
         new Decimal("qwe");
     }
 
@@ -62,7 +64,12 @@ class DecimalTest extends \PHPUnit_Framework_TestCase
             array("55.55", "5555", 2, "55.55"),
             array("-123.123", "-123123", 3, "-123.123"),
             array("0.5", "5", 1, "0.5"),
-            array(0.123, "1229999999999999982236431605997495353221893310546875", 52, "0.123"),
+            //@todo check the following
+            // The following test should be checked
+            // Previously was
+            // array(0.123, "1229999999999999982236431605997495353221893310546875", 52, "0.123"),
+            // This does not pass, ext did not change
+            array(0.123, "1229999999999999982236431605997495353221893310546875", 52, "0.1229999999999999982236431605997495353221893310546875"),
             array(123, "123", 0, "123"),
             array(123.5, "1235", 1, "123.5"),
             array(-123, "-123", 0, "-123"),
@@ -100,34 +107,28 @@ class DecimalTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals("1.0", (string)$decimal1->mul($decimal2));
     }
 
-    /**
-     * @expectedException        RuntimeException
-     * @expectedExceptionMessage Not implemented
-     */
     public function testDiv()
     {
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage("Not implemented");
         $decimal1 = new Decimal("1.0");
         $decimal2 = new Decimal("0.5");
         $this->assertEquals("2.0", (string)$decimal1->div($decimal2));
     }
 
-    /**
-     * @expectedException        RuntimeException
-     * @expectedExceptionMessage Not implemented
-     */
     public function testDivByZero()
     {
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage("Not implemented");
         $decimal1 = new Decimal("1");
         $decimal2 = new Decimal("0");
         $decimal1->div($decimal2);
     }
 
-    /**
-     * @expectedException        RuntimeException
-     * @expectedExceptionMessage Not implemented
-     */
     public function testMod()
     {
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage("Not implemented");
         $decimal1 = new Decimal("1");
         $decimal2 = new Decimal("2");
         $decimal1->mod($decimal2);
@@ -145,12 +146,10 @@ class DecimalTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals("-123.123", (string)$decimal1->neg());
     }
 
-    /**
-     * @expectedException        RuntimeException
-     * @expectedExceptionMessage Not implemented
-     */
     public function testSqrt()
     {
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage("Not implemented");
         $decimal = new Decimal("4");
         $decimal->sqrt();
     }

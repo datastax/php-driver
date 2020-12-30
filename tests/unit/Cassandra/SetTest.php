@@ -18,42 +18,44 @@
 
 namespace Cassandra;
 
+use Cassandra;
+use InvalidArgumentException;
+use PHPUnit\Framework\TestCase;
+use stdClass;
+
 /**
  * @requires extension cassandra
  */
-class SetTest extends \PHPUnit_Framework_TestCase
+class SetTest extends TestCase
 {
-    /**
-     * @expectedException         InvalidArgumentException
-     * @expectedExceptionMessage  type must be a string or an instance of Cassandra\Type, an instance of stdClass given
-     */
     public function testInvalidType()
     {
-        new Set(new \stdClass());
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage(
+            "type must be a string or an instance of Cassandra\Type, an instance of stdClass given"
+        );
+        new Set(new stdClass());
     }
 
-    /**
-     * @expectedException         InvalidArgumentException
-     * @expectedExceptionMessage  Unsupported type 'custom type'
-     */
     public function testUnsupportedStringType()
     {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage("Unsupported type 'custom type'");
         new Set('custom type');
     }
 
-    /**
-     * @expectedException        InvalidArgumentException
-     * @expectedExceptionMessage type must be a valid Cassandra\Type,
-     *                           an instance of Cassandra\Type\UnsupportedType given
-     */
     public function testUnsupportedType()
     {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage(
+            "type must be a valid Cassandra\Type, an instance of Cassandra\Type\UnsupportedType given"
+        );
         new Set(new Type\UnsupportedType());
     }
 
     public function testContainsUniqueValues()
     {
-        $set = new Set(\Cassandra::TYPE_VARINT);
+        $set = new Set(Cassandra::TYPE_VARINT);
         $this->assertEquals(0, count($set));
         $set->add(new Varint('123'));
         $this->assertEquals(1, count($set));
@@ -138,12 +140,10 @@ class SetTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    /**
-     * @expectedException         InvalidArgumentException
-     * @expectedExceptionMessage  Unsupported type 'some custom type'
-     */
     public function testSupportsOnlyCassandraTypes()
     {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage("Unsupported type 'some custom type'");
         new Set('some custom type');
     }
 
@@ -152,7 +152,8 @@ class SetTest extends \PHPUnit_Framework_TestCase
      */
     public function testSupportsAllCassandraTypes($type)
     {
-        new Set($type);
+        $var = new Set($type);
+        $this->assertEquals("set<$type>", (string)$var->type());
     }
 
     /**
@@ -167,42 +168,40 @@ class SetTest extends \PHPUnit_Framework_TestCase
     public function cassandraTypes()
     {
         return array(
-            array(\Cassandra::TYPE_ASCII),
-            array(\Cassandra::TYPE_BIGINT),
-            array(\Cassandra::TYPE_BLOB),
-            array(\Cassandra::TYPE_BOOLEAN),
-            array(\Cassandra::TYPE_COUNTER),
-            array(\Cassandra::TYPE_DECIMAL),
-            array(\Cassandra::TYPE_DOUBLE),
-            array(\Cassandra::TYPE_FLOAT),
-            array(\Cassandra::TYPE_INT),
-            array(\Cassandra::TYPE_TEXT),
-            array(\Cassandra::TYPE_TIMESTAMP),
-            array(\Cassandra::TYPE_UUID),
-            array(\Cassandra::TYPE_VARCHAR),
-            array(\Cassandra::TYPE_VARINT),
-            array(\Cassandra::TYPE_TIMEUUID),
-            array(\Cassandra::TYPE_INET),
+            array(Cassandra::TYPE_ASCII),
+            array(Cassandra::TYPE_BIGINT),
+            array(Cassandra::TYPE_BLOB),
+            array(Cassandra::TYPE_BOOLEAN),
+            array(Cassandra::TYPE_COUNTER),
+            array(Cassandra::TYPE_DECIMAL),
+            array(Cassandra::TYPE_DOUBLE),
+            array(Cassandra::TYPE_FLOAT),
+            array(Cassandra::TYPE_INT),
+            array(Cassandra::TYPE_TEXT),
+            array(Cassandra::TYPE_TIMESTAMP),
+            array(Cassandra::TYPE_UUID),
+            array(Cassandra::TYPE_VARCHAR),
+            array(Cassandra::TYPE_VARINT),
+            array(Cassandra::TYPE_TIMEUUID),
+            array(Cassandra::TYPE_INET),
         );
     }
 
-    /**
-     * @expectedException         InvalidArgumentException
-     * @expectedExceptionMessage  argument must be an instance of Cassandra\Varint, an instance of Cassandra\Decimal given
-     */
     public function testValidatesTypesOfElements()
     {
-        $set = new Set(\Cassandra::TYPE_VARINT);
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage(
+            "argument must be an instance of Cassandra\Varint, an instance of Cassandra\Decimal given"
+        );
+        $set = new Set(Cassandra::TYPE_VARINT);
         $set->add(new Decimal('123'));
     }
 
-    /**
-     * @expectedException         InvalidArgumentException
-     * @expectedExceptionMessage  Invalid value: null is not supported inside sets
-     */
     public function testSupportsNullValues()
     {
-        $set = new Set(\Cassandra::TYPE_VARINT);
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage("Invalid value: null is not supported inside sets");
+        $set = new Set(Cassandra::TYPE_VARINT);
         $set->add(null);
     }
 
@@ -211,7 +210,7 @@ class SetTest extends \PHPUnit_Framework_TestCase
      */
     public function testSupportsIteration($numbers)
     {
-        $set = new Set(\Cassandra::TYPE_INT);
+        $set = new Set(Cassandra::TYPE_INT);
 
         foreach ($numbers as $number) {
             $set->add($number);
@@ -229,7 +228,7 @@ class SetTest extends \PHPUnit_Framework_TestCase
      */
     public function testSupportsConversionToArray($numbers)
     {
-        $set = new Set(\Cassandra::TYPE_INT);
+        $set = new Set(Cassandra::TYPE_INT);
 
         foreach ($numbers as $number) {
             $set->add($number);
@@ -243,7 +242,7 @@ class SetTest extends \PHPUnit_Framework_TestCase
      */
     public function testResumesIterationAfterConvertingToArray($numbers)
     {
-        $set = new Set(\Cassandra::TYPE_INT);
+        $set = new Set(Cassandra::TYPE_INT);
 
         foreach ($numbers as $number) {
             $set->add($number);
@@ -279,7 +278,7 @@ class SetTest extends \PHPUnit_Framework_TestCase
         $values = array(new Varint('1'), new Varint('2'), new Varint('3'),
                         new Varint('4'), new Varint('5'), new Varint('6'),
                         new Varint('7'), new Varint('8'));
-        $set = new Set(\Cassandra::TYPE_VARINT);
+        $set = new Set(Cassandra::TYPE_VARINT);
 
         for ($i = 0; $i < count($values); $i++) {
             $set->add($values[$i]);

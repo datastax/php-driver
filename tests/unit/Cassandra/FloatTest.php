@@ -18,46 +18,45 @@
 
 namespace Cassandra;
 
+use Cassandra\Exception\DivideByZeroException;
+use InvalidArgumentException;
+use PHPUnit\Framework\TestCase;
+use RangeException;
+
 /**
  * @requires extension cassandra
  */
-class FloatTest extends \PHPUnit_Framework_TestCase
+class FloatTest extends TestCase
 {
     const EPSILON = 0.00001;
 
-    /**
-     * @expectedException InvalidArgumentException
-     * @expectedExceptionMessage Invalid float value: ''
-     */
     public function testThrowsWhenCreatingFromEmpty()
     {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage("Invalid float value: ''");
         new Float("");
     }
 
-    /**
-     * @expectedException InvalidArgumentException
-     * @expectedExceptionMessage Invalid float value: 'invalid'
-     */
     public function testThrowsWhenCreatingFromInvalid()
     {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage("Invalid float value: 'invalid'");
         new Float("invalid");
     }
 
-    /**
-     * @expectedException InvalidArgumentException
-     * @expectedExceptionMessage Invalid characters were found in value: '123.123    '
-     */
     public function testThrowsWhenCreatingFromInvalidTrailingChars()
     {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage("Invalid characters were found in value: '123.123    '");
         new Float("123.123    ");
     }
 
     /**
      * @dataProvider      outOfRangeStrings
-     * @expectedException RangeException
      */
     public function testThrowsWhenCreatingOutOfRange($string)
     {
+        $this->expectException(RangeException::class);
         new Float($string);
     }
 
@@ -75,7 +74,7 @@ class FloatTest extends \PHPUnit_Framework_TestCase
     public function testCorrectlyParsesStrings($number, $expected)
     {
         $number = new Float($number);
-        $this->assertEquals((float)$number, (float)$expected, "", self::EPSILON);
+        $this->assertEqualsWithDelta((float)$expected, (float)$number, self::EPSILON);
     }
 
     public function validStrings()
@@ -95,9 +94,9 @@ class FloatTest extends \PHPUnit_Framework_TestCase
     public function testFromNumbers($number)
     {
         $float = new Float($number);
-        $this->assertEquals((float)$number, (float)$float, "", self::EPSILON);
+        $this->assertEqualsWithDelta((float)$number, (float)$float, self::EPSILON);
         $this->assertEquals((int)$number, $float->toInt());
-        $this->assertEquals((float)$number, (float)(string)$float, "", self::EPSILON);
+        $this->assertEqualsWithDelta((float)$number, (float)(string)$float, self::EPSILON);
     }
 
     public function validNumbers()
@@ -112,35 +111,33 @@ class FloatTest extends \PHPUnit_Framework_TestCase
     {
         $float1 = new Float("1");
         $float2 = new Float("0.5");
-        $this->assertEquals(1.5, (float)$float1->add($float2), "", self::EPSILON);
+        $this->assertEqualsWithDelta(1.5, (float)$float1->add($float2), self::EPSILON);
     }
 
     public function testSub()
     {
         $float1 = new Float("1");
         $float2 = new Float("0.5");
-        $this->assertEquals(0.5, (float)$float1->sub($float2), "", self::EPSILON);
+        $this->assertEqualsWithDelta(0.5, (float)$float1->sub($float2), self::EPSILON);
     }
 
     public function testMul()
     {
         $float1 = new Float("2");
         $float2 = new Float("0.5");
-        $this->assertEquals(1.0, (float)$float1->mul($float2), "", self::EPSILON);
+        $this->assertEqualsWithDelta(1.0, (float)$float1->mul($float2), self::EPSILON);
     }
 
     public function testDiv()
     {
         $float1 = new Float("1");
         $float2 = new Float("0.5");
-        $this->assertEquals(2, (float)$float1->div($float2), "", self::EPSILON);
+        $this->assertEqualsWithDelta(2, (float)$float1->div($float2), self::EPSILON);
     }
 
-    /**
-     * @expectedException Cassandra\Exception\DivideByZeroException
-     */
     public function testDivByZero()
     {
+        $this->expectException(DivideByZeroException::class);
         $float1 = new Float("1");
         $float2 = new Float("0");
         $float1->div($float2);
@@ -150,25 +147,25 @@ class FloatTest extends \PHPUnit_Framework_TestCase
     {
         $float1 = new Float("1");
         $float2 = new Float("2");
-        $this->assertEquals(1, (float)$float1->mod($float2), "", self::EPSILON);
+        $this->assertEqualsWithDelta(1, (float)$float1->mod($float2), self::EPSILON);
     }
 
     public function testAbs()
     {
         $float1 = new Float("-123.123");
-        $this->assertEquals(123.123, (float)$float1->abs(), "", self::EPSILON);
+        $this->assertEqualsWithDelta(123.123, (float)$float1->abs(), self::EPSILON);
     }
 
     public function testNeg()
     {
         $float1 = new Float("123.123");
-        $this->assertEquals(-123.123, (float)$float1->neg(), "", self::EPSILON);
+        $this->assertEqualsWithDelta(-123.123, (float)$float1->neg(), self::EPSILON);
     }
 
     public function testSqrt()
     {
         $float1 = new Float("4.0");
-        $this->assertEquals(2.0, (float)$float1->sqrt(), "", self::EPSILON);
+        $this->assertEqualsWithDelta(2.0, (float)$float1->sqrt(), self::EPSILON);
     }
 
     /**

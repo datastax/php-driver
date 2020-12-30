@@ -18,17 +18,18 @@
 
 namespace Cassandra;
 
+use InvalidArgumentException;
+use PHPUnit\Framework\TestCase;
+
 /**
  * @requires extension cassandra
  */
-class UserTypeValueTest extends \PHPUnit_Framework_TestCase
+class UserTypeValueTest extends TestCase
 {
-    /**
-     * @expectedException         InvalidArgumentException
-     * @expectedExceptionMessage  Unsupported type 'invalid type'
-     */
     public function testSupportsOnlyCassandraTypes()
     {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage("Unsupported type 'invalid type'");
         new UserTypeValue(array('name1' => 'invalid type'));
     }
 
@@ -37,7 +38,8 @@ class UserTypeValueTest extends \PHPUnit_Framework_TestCase
      */
     public function testSupportsAllCassandraTypes($type)
     {
-        new UserTypeValue(array('name1' => $type));
+        $result = new UserTypeValue(array('name1' => $type));
+        $this->assertInstanceOf(UserTypeValue::class, $result);
     }
 
     /**
@@ -145,33 +147,27 @@ class UserTypeValueTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($udt, $other);
     }
 
-    /**
-     * @expectedException         InvalidArgumentException
-     * @expectedExceptionMessage  Invalid name 'invalid'
-     */
     public function testSetInvalidName()
     {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage("Invalid name 'invalid'");
         $udt = new UserTypeValue(array('name1' => Type::int()));
         $udt->set('invalid', 42);
     }
 
-    /**
-     * @expectedException         InvalidArgumentException
-     * @expectedExceptionMessage  Invalid name 'invalid'
-     */
     public function testGetInvalidName()
     {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage("Invalid name 'invalid'");
         $udt = new UserTypeValue(array('name1' => Type::int()));
         $udt->set('name1', 42);
         $udt->get('invalid');
     }
 
-    /**
-     * @expectedException         InvalidArgumentException
-     * @expectedExceptionMessage  argument must be an int, 'text' given
-     */
     public function testInvalidType()
     {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage("argument must be an int, 'text' given");
         $udt = new UserTypeValue(array('name1' => Type::int()));
         $udt->set('name1', 'text');
     }

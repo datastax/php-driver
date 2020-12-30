@@ -18,10 +18,14 @@
 
 namespace Cassandra;
 
+use Cassandra\Exception\InvalidArgumentException;
+use Datetime;
+use PHPUnit\Framework\TestCase;
+
 /**
  * @requires extension cassandra
  */
-class TimeUuidTest extends \PHPUnit_Framework_TestCase
+class TimeUuidTest extends TestCase
 {
     /**
      * @dataProvider equalTypes
@@ -60,36 +64,37 @@ class TimeUuidTest extends \PHPUnit_Framework_TestCase
      */
     public function testInitFromStringType1()
     {
-        new TimeUuid('5f344f20-52a3-11e7-915b-5f4f349b532d');
+        $uuid = new TimeUuid('5f344f20-52a3-11e7-915b-5f4f349b532d');
+        $this->assertIsObject($uuid);
     }
 
     /**
      * TimeUuid cannot be created from UUID type 4
-     * @expectedException         Cassandra\Exception\InvalidArgumentException
-     * @expectedExceptionMessage  UUID must be of type 1, type 4 given
      */
     public function testInitFromStringType4()
     {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage("UUID must be of type 1, type 4 given");
         new TimeUuid('65f9e722-036a-4029-b03b-a9046b23b4c9');
     }
 
     /**
      * TimeUuid cannot be created from invalid string
-     * @expectedException         Cassandra\Exception\InvalidArgumentException
-     * @expectedExceptionMessage  Invalid UUID
      */
     public function testInitFromInvalidString()
     {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage("Invalid UUID");
         new TimeUuid('invalid');
     }
 
     /**
      * TimeUuid requires string or integer in constructor
-     * @expectedException         Cassandra\Exception\InvalidArgumentException
-     * @expectedExceptionMessage  Invalid argument
      */
     public function testInitInvalidArgument()
     {
-        new TimeUuid(new \Datetime());
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage("Invalid argument");
+        new TimeUuid(new Datetime());
     }
 }
