@@ -337,13 +337,31 @@ throw_invalid_argument(zval *object,
                               object_name, expected_type);
     }
   } else if (Z_TYPE_P(object) == IS_STRING) {
+    // remember current diagnostic state
+    #pragma GCC diagnostic push
+    // suppress warnings relating %Z
+    #pragma GCC diagnostic ignored "-Wformat"
+    #pragma GCC diagnostic ignored "-Wformat-extra-args"
+
     zend_throw_exception_ex(php_driver_invalid_argument_exception_ce, 0 TSRMLS_CC,
                             "%s must be %s, '%Z' given",
                             object_name, expected_type, object);
+
+    // restore diagnostic state
+    #pragma GCC diagnostic pop
   } else {
+    // remember current diagnostic state
+    #pragma GCC diagnostic push 
+    // suppress warnings relating %Z
+    #pragma GCC diagnostic ignored "-Wformat" 
+    #pragma GCC diagnostic ignored "-Wformat-extra-args"
+
     zend_throw_exception_ex(php_driver_invalid_argument_exception_ce, 0 TSRMLS_CC,
                             "%s must be %s, %Z given",
                             object_name, expected_type, object);
+
+    // restore diagnostic state
+    #pragma GCC diagnostic pop
   }
 }
 
