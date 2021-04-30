@@ -161,10 +161,10 @@ if test "$PHP_CASSANDRA" != "no"; then
 
   case $(uname -s) in
     Linux)
-      CASSANDRA_CFLAGS="-Wall -Wextra -Wno-long-long -Wno-deprecated-declarations -Wno-unused-parameter -Wno-unused-result -Wno-variadic-macros -Wno-extra-semi -pthread"
+      CASSANDRA_CFLAGS="-Wall -Wextra -Wno-long-long -Wno-deprecated-declarations -Wno-unused-parameter -Wno-unused-result -Wno-variadic-macros -pthread"
       ;;
     Darwin)
-      CASSANDRA_CFLAGS="-Wall -Wextra -Wno-long-long -Wno-deprecated-declarations -Wno-unused-parameter -Wno-unused-result -Wno-variadic-macros -Wno-extra-semi"
+      CASSANDRA_CFLAGS="-Wall -Wextra -Wno-long-long -Wno-deprecated-declarations -Wno-unused-parameter -Wno-unused-result -Wno-variadic-macros"
       ;;
   esac
 

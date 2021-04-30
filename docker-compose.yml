@@ -1,0 +1,7 @@
+version: "3.5"
+
+services:
+  php-driver:
+    build:
+      context: .
+    image: cassandra-php-driver

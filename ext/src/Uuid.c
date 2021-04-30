@@ -45,7 +45,7 @@ php_driver_uuid_init(INTERNAL_FUNCTION_PARAMETERS)
   } else {
     if (cass_uuid_from_string(value, &self->uuid) != CASS_OK) {
       zend_throw_exception_ex(php_driver_invalid_argument_exception_ce, 0 TSRMLS_CC,
-                              "Invalid UUID: '%.*s'", value_len, value);
+                              "Invalid UUID: '%.*s'", (int) value_len, value);
       return;
     }
   }

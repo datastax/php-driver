@@ -104,7 +104,7 @@ PHP_METHOD(Date, toDateTime)
 #endif
 
   str_len = spprintf(&str, 0, "%lld",
-                     cass_date_time_to_epoch(self->date,
+                     (long long int) cass_date_time_to_epoch(self->date,
                                              time_obj != NULL ? time_obj->time : 0));
   php_date_initialize(datetime_obj, str, str_len, "U", NULL, 0 TSRMLS_CC);
   efree(str);
@@ -154,7 +154,7 @@ PHP_METHOD(Date, __toString)
 
   self = PHP_DRIVER_GET_DATE(getThis());
 
-  spprintf(&ret, 0, PHP_DRIVER_NAMESPACE "\\Date(seconds=%lld)", cass_date_time_to_epoch(self->date, 0));
+  spprintf(&ret, 0, PHP_DRIVER_NAMESPACE "\\Date(seconds=%lld)", (long long int) cass_date_time_to_epoch(self->date, 0));
   PHP5TO7_RETVAL_STRING(ret);
   efree(ret);
 }

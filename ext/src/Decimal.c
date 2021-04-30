@@ -116,7 +116,7 @@ from_double(php_driver_numeric *result, double value)
 #ifdef _WIN32
   sprintf(mantissa_str, "%I64d", mantissa);
 #else
-  sprintf(mantissa_str, "%lld", mantissa);
+  sprintf(mantissa_str, "%lld", (long long int) mantissa);
 #endif
   mpz_set_str(result->data.decimal.value, mantissa_str, 10);
 
