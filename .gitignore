@@ -7,9 +7,8 @@
 /vendor/
 /venv/
 
-
 # Files to ignore
 /cassandra.log
-/composer.phar
-/composer.lock
 /tmp/*
+*.ac
+.phpunit.result.cache
