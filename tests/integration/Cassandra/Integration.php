@@ -18,25 +18,12 @@
 
 namespace Cassandra;
 
-use Cassandra;
-use CCM;
-use ReflectionClass;
-
 /**
  * Base class to provide common integration test functionality.
  */
 class Integration {
     //TODO: Remove these constant and make them configurable
     const IP_ADDRESS = "127.0.0.1";
-    /**
-     * Default Cassandra server version
-     */
-    const DEFAULT_CASSANDRA_VERSION = "3.11.9";
-    /**
-     * Default verbosity for CCM output
-     */
-    const DEFAULT_IS_CCM_SILENT = true;
-
     /**
      * Maximum length for the keyspace (server limit)
      */
@@ -60,19 +47,19 @@ class Integration {
     /**
      * Handle for interacting with CCM.
      *
-     * @var CCM
+     * @var \CCM
      */
     private $ccm;
     /**
      * Cluster instance.
      *
-     * @var Cluster
+     * @var \Cassandra\Cluster
      */
     private $cluster;
     /**
      * Connected database session.
      *
-     * @var Session
+     * @var \Cassandra\Session
      */
     private $session;
     /**
@@ -133,7 +120,7 @@ class Integration {
 
         // Create the Cassandra cluster for the test
         //TODO: Need to add the ability to switch the Cassandra version (command line)
-        $this->ccm = new CCM(self::DEFAULT_CASSANDRA_VERSION, self::DEFAULT_IS_CCM_SILENT);
+        $this->ccm = new \CCM();
         $this->ccm->setup($numberDC1Nodes, $numberDC2Nodes);
         if ($isClientAuthentication) {
             $this->ccm->setupClientVerification();
@@ -163,7 +150,7 @@ class Integration {
         }
 
         // Create the session and keyspace for the integration test
-        $this->cluster = Cassandra::cluster()
+        $this->cluster = \Cassandra::cluster()
             ->withContactPoints($this->getContactPoints(Integration::IP_ADDRESS, ($numberDC1Nodes + $numberDC2Nodes)))
             ->withPersistentSessions(false)
             ->build();
@@ -176,6 +163,8 @@ class Integration {
         // Get the server version the session is connected to
         $rows = $this->session->execute(self::SELECT_SERVER_VERSION);
         $this->serverVersion = $rows->first()["release_version"];
+
+        sleep(5);
     }
 
     public function __destruct() {
@@ -196,7 +185,7 @@ class Integration {
      * @return string Short name for the class name
      */
     private function getShortName($className) {
-        $function = new ReflectionClass($className);
+        $function = new \ReflectionClass($className);
         return $function->getShortName();
     }
 
@@ -253,7 +242,7 @@ class IntegrationTestFixture {
     /**
      * Handle for communicating with CCM.
      *
-     * @var CCM
+     * @var \CCM
      */
     private $ccm;
     /**
@@ -264,7 +253,7 @@ class IntegrationTestFixture {
     private static $instance;
 
     function __construct() {
-        $this->ccm = new CCM(CCM::DEFAULT_CASSANDRA_VERSION, true);
+        $this->ccm = new \CCM();
         $this->ccm->removeAllClusters();
     }
 

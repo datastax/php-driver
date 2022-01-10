@@ -37,7 +37,7 @@ environment:
   PHP_BINARY_TOOLS_ARCHIVE: php-sdk-binary-tools-20110915.zip
   PHP_BINARY_TOOLS_DIR: C:/projects
   PHP_DOWNLOAD_URL_PREFIX: https://github.com/php/php-src/archive
-  PHP_SDK_DEPENDENCIES_DOWNLOAD_URL_PREFIX: http://windows.php.net/downloads/php-sdk
+  PHP_SDK_DEPENDENCIES_DOWNLOAD_URL_PREFIX: https://windows.php.net/downloads/php-sdk
   PHP_SDK_LOCATION_PREFIX: C:/projects/dependencies/php-sdk
   DEPENDENCIES_LOCATION_PREFIX: C:/projects/dependencies/libs
   COMPOSER_CACHE_DIR: C:/projects/dependencies/composer
@@ -165,7 +165,7 @@ install:
       # Determine if PHP libraries archive should be downloaded (cached)
       If (!(Test-Path -Path "$($env:PHP_DEPENDENCIES_ARCHIVE)")) {
         # Download the PHP dependencies archive
-        Start-FileDownload "$($env:PHP_SDK_DEPENDENCIES_DOWNLOAD_URL_PREFIX)/$($env:PHP_DEPENDENCIES_ARCHIVE)" -FileName $env:PHP_DEPENDENCIES_ARCHIVE
+        Start-FileDownload "$($env:PHP_SDK_DEPENDENCIES_DOWNLOAD_URL_PREFIX)/archives/$($env:PHP_DEPENDENCIES_ARCHIVE)" -FileName $env:PHP_DEPENDENCIES_ARCHIVE
       }
 
       # Determine if libuv should be installed (cached)

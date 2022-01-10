@@ -18,8 +18,6 @@
 
 namespace Cassandra;
 
-use Cassandra\Exception\InvalidArgumentException;
-use Datetime;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -73,7 +71,7 @@ class TimeUuidTest extends TestCase
      */
     public function testInitFromStringType4()
     {
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(\Cassandra\Exception\InvalidArgumentException::class);
         $this->expectExceptionMessage("UUID must be of type 1, type 4 given");
         new TimeUuid('65f9e722-036a-4029-b03b-a9046b23b4c9');
     }
@@ -83,7 +81,7 @@ class TimeUuidTest extends TestCase
      */
     public function testInitFromInvalidString()
     {
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(\Cassandra\Exception\InvalidArgumentException::class);
         $this->expectExceptionMessage("Invalid UUID");
         new TimeUuid('invalid');
     }
@@ -93,8 +91,8 @@ class TimeUuidTest extends TestCase
      */
     public function testInitInvalidArgument()
     {
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(\Cassandra\Exception\InvalidArgumentException::class);
         $this->expectExceptionMessage("Invalid argument");
-        new TimeUuid(new Datetime());
+        new TimeUuid(new \Datetime());
     }
 }

@@ -19,7 +19,6 @@
 namespace Cassandra\Type;
 
 use Cassandra\Type;
-use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -57,19 +56,15 @@ class MapTest extends TestCase
 
     public function testPreventsCreatingMapWithoutEnoughValues()
     {
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage(
-            'Not enough values, maps can only be created from an even number of values, ' .
-            'where each odd value is a key and each even value is a value, ' .
-            'e.g create(key, value, key, value, key, value)'
-        );
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Not enough values, maps can only be created from an even number of values, where each odd value is a key and each even value is a value, e.g create(key, value, key, value, key, value)');
         Type::map(Type::varchar(), Type::int())
             ->create("a", 1, "b", 2, "c", 3, "d", 4, "e");
     }
 
     public function testPreventsCreatingMapWithUnsupportedTypes()
     {
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage("argument must be a string, 1 given");
         Type::map(Type::varchar(), Type::int())
             ->create(1, "a");
@@ -77,10 +72,8 @@ class MapTest extends TestCase
 
     public function testPreventsDefiningMapsWithUnsupportedTypes()
     {
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage(
-            "keyType must be a valid Cassandra\Type, an instance of Cassandra\Type\UnsupportedType given"
-        );
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage("keyType must be a valid Cassandra\Type, an instance of Cassandra\Type\UnsupportedType given");
         Type::map(new UnsupportedType(), Type::varchar());
     }
 

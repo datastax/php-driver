@@ -17,8 +17,8 @@ protocol and Cassandra Query Language v3.
   <date>2019-01-16</date>
   <time>21:05:52</time>
   <version>
-    <release>1.3.3</release>
-    <api>1.3.3</api>
+    <release>1.4.0</release>
+    <api>1.4.0</api>
   </version>
   <stability>
     <release>devel</release>
@@ -297,8 +297,8 @@ protocol and Cassandra Query Language v3.
   <dependencies>
   <required>
    <php>
-    <min>7.2.0</min>
-    <max>7.99.99</max>
+    <min>8.0.0</min>
+    <max>8.99.99</max>
    </php>
    <pearinstaller>
     <min>1.4.8</min>

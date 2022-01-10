@@ -234,13 +234,7 @@ PHP_METHOD(TypeUserType, create)
 ZEND_BEGIN_ARG_INFO_EX(arginfo_none, 0, ZEND_RETURN_VALUE, 0)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_value, 0, ZEND_RETURN_VALUE, 0)
-#if PHP_MAJOR_VERSION >= 8
-  ZEND_ARG_VARIADIC_INFO(0, value)
-#else
-  ZEND_ARG_INFO(0, value)
-#endif
-ZEND_END_ARG_INFO()
+PHP7TO8_ARG_INFO_VARIADIC(arginfo_value, value)
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_name, 0, ZEND_RETURN_VALUE, 1)
   ZEND_ARG_INFO(0, name)
@@ -265,14 +259,7 @@ static zend_function_entry php_driver_type_user_type_methods[] = {
 static zend_object_handlers php_driver_type_user_type_handlers;
 
 static HashTable *
-php_driver_type_user_type_gc(
-#if PHP_MAJOR_VERSION >= 8
-        zend_object *object,
-#else
-        zval *object,
-#endif
-        php5to7_zval_gc table, int *n TSRMLS_DC
-)
+php_driver_type_user_type_gc(php7to8_object *object, php5to7_zval_gc table, int *n TSRMLS_DC)
 {
   *table = NULL;
   *n = 0;
@@ -280,13 +267,7 @@ php_driver_type_user_type_gc(
 }
 
 static HashTable *
-php_driver_type_user_type_properties(
-#if PHP_MAJOR_VERSION >= 8
-        zend_object *object
-#else
-        zval *object TSRMLS_DC
-#endif
-)
+php_driver_type_user_type_properties(php7to8_object *object TSRMLS_DC)
 {
   php5to7_zval types;
 
@@ -310,9 +291,7 @@ php_driver_type_user_type_properties(
 static int
 php_driver_type_user_type_compare(zval *obj1, zval *obj2 TSRMLS_DC)
 {
-#if PHP_MAJOR_VERSION >= 8
-  ZEND_COMPARE_OBJECTS_FALLBACK(obj1, obj2);
-#endif
+  PHP7TO8_MAYBE_COMPARE_OBJECTS_FALLBACK(obj1, obj2);
   php_driver_type* type1 = PHP_DRIVER_GET_TYPE(obj1);
   php_driver_type* type2 = PHP_DRIVER_GET_TYPE(obj2);
 
@@ -357,11 +336,7 @@ void php_driver_define_TypeUserType(TSRMLS_D)
 #if PHP_VERSION_ID >= 50400
   php_driver_type_user_type_handlers.get_gc          = php_driver_type_user_type_gc;
 #endif
-#if PHP_MAJOR_VERSION >= 8
-  php_driver_type_user_type_handlers.compare = php_driver_type_user_type_compare;
-#else
-  php_driver_type_user_type_handlers.compare_objects = php_driver_type_user_type_compare;
-#endif
+  PHP7TO8_COMPARE(php_driver_type_user_type_handlers, php_driver_type_user_type_compare);
   php_driver_type_user_type_ce->ce_flags     |= PHP5TO7_ZEND_ACC_FINAL;
   php_driver_type_user_type_ce->create_object = php_driver_type_user_type_new;
 }

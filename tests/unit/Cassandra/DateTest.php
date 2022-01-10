@@ -18,7 +18,6 @@
 
 namespace Cassandra;
 
-use DateTime;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -43,26 +42,26 @@ class DateTest extends TestCase
     public function testConstructNow()
     {
         $date = new Date();
-        $this->assertEqualsWithDelta((int) (time() / self::SECONDS_PER_DAY) * self::SECONDS_PER_DAY, $date->seconds(), 1);
+        $this->assertEqualsWithDelta($date->seconds(), (int) (time() / self::SECONDS_PER_DAY) * self::SECONDS_PER_DAY, 1);
     }
 
     public function testFromDateTime()
     {
         // Epoch
-        $datetime = new DateTime("1970-01-01T00:00:00+0000");
+        $datetime = new \DateTime("1970-01-01T00:00:00+0000");
         $date = Date::fromDateTime($datetime);
         $this->assertEquals($date->seconds(), 0);
         $this->assertEquals($date->toDateTime(), $datetime);
 
         // Epoch + 1
-        $datetime = new DateTime("1970-01-02T00:00:00+0000");
+        $datetime = new \DateTime("1970-01-02T00:00:00+0000");
         $date = Date::fromDateTime($datetime);
         $this->assertEquals($date->seconds(), self::SECONDS_PER_DAY);
         $this->assertEquals($date->toDateTime(), $datetime);
 
         // Epoch - 1 (should work if cpp-driver >= 2.4.2, otherwise it's broken)
         if (version_compare(\Cassandra::CPP_DRIVER_VERSION, "2.4.2") >= 0) {
-          $date = Date::fromDateTime(new DateTime("1969-12-31T00:00:00"));
+          $date = Date::fromDateTime(new \DateTime("1969-12-31T00:00:00"));
           $this->assertEquals($date->seconds(), -1 * self::SECONDS_PER_DAY);
         }
     }
@@ -70,7 +69,7 @@ class DateTest extends TestCase
     public function testToDateTimeWithTime()
     {
         // Epoch
-        $datetime = new DateTime("1970-01-01T00:00:01+0000");
+        $datetime = new \DateTime("1970-01-01T00:00:01+0000");
         $date = Date::fromDateTime($datetime);
         $this->assertEquals($date->seconds(), 0);
         $this->assertEquals($date->toDateTime(new Time(1000 * 1000 * 1000)), $datetime);

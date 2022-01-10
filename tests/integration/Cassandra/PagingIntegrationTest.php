@@ -18,9 +18,6 @@
 
 namespace Cassandra;
 
-use Cassandra\Exception\ProtocolException;
-use InvalidArgumentException;
-
 class PagingIntegrationTest extends BasicIntegrationTest {
     protected function setUp(): void {
         parent::setUp();
@@ -129,12 +126,7 @@ class PagingIntegrationTest extends BasicIntegrationTest {
                 $options["paging_state_token"] = $result->pagingStateToken();
             }
             $result = $this->session->execute("SELECT * FROM {$this->tableNamePrefix}", $options);
-            if(PHP_MAJOR_VERSION >= 8) {
-                $this->assertCount(1, $result);
-            }
-            else {
-                $this->assertEquals(1, count($result));
-            }
+            $this->assertEquals(1, count($result));
 
             $row = $result->first();
             $results[] = $row["value"];
@@ -154,7 +146,7 @@ class PagingIntegrationTest extends BasicIntegrationTest {
      * @ticket PHP-46
      */
     public function testInvalidToken() {
-        $this->expectException(ProtocolException::class);
+        $this->expectException(\Cassandra\Exception\ProtocolException::class);
         $this->expectExceptionMessage('Invalid value for the paging state');
         $this->session->execute(
             "SELECT * FROM {$this->tableNamePrefix}",
@@ -172,7 +164,7 @@ class PagingIntegrationTest extends BasicIntegrationTest {
      * @ticket PHP-46
      */
     public function testNullToken() {
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(\Cassandra\Exception\InvalidArgumentException::class);
         $this->expectExceptionMessageMatches('/paging_state_token must be a string.*/');
         $this->session->execute(
             "SELECT * FROM {$this->tableNamePrefix}",
@@ -195,55 +187,30 @@ class PagingIntegrationTest extends BasicIntegrationTest {
             "SELECT * FROM {$this->tableNamePrefix}",
             array("page_size" => $pageSize)
         );
-        if(PHP_MAJOR_VERSION >= 8) {
-            $this->assertCount($pageSize, $rows);
-        }
-        else {
-            $this->assertEquals($rows->count(), $pageSize);
-        }
+        $this->assertEquals($rows->count(), $pageSize);
         $values = self::convertRowsToArray($rows, "value");
 
         // Get next page (verify that it's a different page)
         $nextRows = $rows->nextPage();
         $nextValues = self::convertRowsToArray($nextRows, "value");
-        if(PHP_MAJOR_VERSION >= 8) {
-            $this->assertCount($pageSize, $nextRows);
-        }
-        else {
-            $this->assertEquals($nextRows->count(), $pageSize);
-        }
+        $this->assertEquals($nextRows->count(), $pageSize);
         $this->assertNotEquals($values, $nextValues);
 
         // Get next page again (verify that it's the same)
         $nextRowsAgain = $rows->nextPage();
-        if(PHP_MAJOR_VERSION >= 8) {
-            $this->assertCount($pageSize, $nextRowsAgain);
-        }
-        else {
-            $this->assertEquals($nextRowsAgain->count(), $pageSize);
-        }
+        $this->assertEquals($nextRowsAgain->count(), $pageSize);
         $nextValuesAgain = self::convertRowsToArray($nextRowsAgain, "value");
         $this->assertEquals($nextValues, $nextValuesAgain);
 
         // Get next page asynchonously (verify that it's the same)
         $nextRowsAsync = $rows->nextPageAsync()->get();
-        if(PHP_MAJOR_VERSION >= 8) {
-            $this->assertCount($pageSize, $nextRowsAsync);
-        }
-        else {
-            $this->assertEquals($nextRowsAsync->count(), $pageSize);
-        }
+        $this->assertEquals($nextRowsAsync->count(), $pageSize);
         $nextValuesAsync = self::convertRowsToArray($nextRowsAsync, "value");
         $this->assertEquals($nextValues, $nextValuesAsync);
 
         // Get the next page's page (verify that it's a different page)
         $lastRows = $nextRows->nextPage();
-        if(PHP_MAJOR_VERSION >= 8) {
-            $this->assertCount($pageSize, $lastRows);
-        }
-        else {
-            $this->assertEquals($lastRows->count(), $pageSize);
-        }
+        $this->assertEquals($lastRows->count(), $pageSize);
         $lastValues = self::convertRowsToArray($lastRows, "value");
         $this->assertNotEquals($nextValues, $lastValues);
     }
@@ -263,55 +230,30 @@ class PagingIntegrationTest extends BasicIntegrationTest {
             "SELECT * FROM {$this->tableNamePrefix}",
             array("page_size" => $pageSize)
         );
-        if(PHP_MAJOR_VERSION >= 8) {
-            $this->assertCount($pageSize, $rows);
-        }
-        else {
-            $this->assertEquals($rows->count(), $pageSize);
-        }
+        $this->assertEquals($rows->count(), $pageSize);
         $values = self::convertRowsToArray($rows, "value");
 
         // Get next page asynchronously (verify that it's a different page)
         $nextRowsAsync = $rows->nextPageAsync()->get();
-        if(PHP_MAJOR_VERSION >= 8) {
-            $this->assertCount($pageSize, $nextRowsAsync);
-        }
-        else {
-            $this->assertEquals($nextRowsAsync->count(), $pageSize);
-        }
+        $this->assertEquals($nextRowsAsync->count(), $pageSize);
         $nextValuesAsync = self::convertRowsToArray($nextRowsAsync, "value");
         $this->assertNotEquals($values, $nextValuesAsync);
 
         // Get next page asynchronously again (verify that it's the same)
         $nextRowsAgainAsync = $rows->nextPageAsync()->get();
-        if(PHP_MAJOR_VERSION >= 8) {
-            $this->assertCount($pageSize, $nextRowsAgainAsync);
-        }
-        else {
-            $this->assertEquals($nextRowsAgainAsync->count(), $pageSize);
-        }
+        $this->assertEquals($nextRowsAgainAsync->count(), $pageSize);
         $nextValuesAgainAsync = self::convertRowsToArray($nextRowsAgainAsync, "value");
         $this->assertEquals($nextValuesAsync, $nextValuesAgainAsync);
 
         // Get the next page again synchonously (verify that it's the same)
         $nextRows = $rows->nextPage();
         $nextValues = self::convertRowsToArray($nextRows, "value");
-        if(PHP_MAJOR_VERSION >= 8) {
-            $this->assertCount($pageSize, $nextRows);
-        }
-        else {
-            $this->assertEquals($nextRows->count(), $pageSize);
-        }
+        $this->assertEquals($nextRows->count(), $pageSize);
         $this->assertEquals($nextValuesAsync, $nextValues);
 
         // Get the next page's page asynchronously (verify that it's a different page)
         $lastRowsAsync = $nextRowsAsync->nextPageAsync()->get();
-        if(PHP_MAJOR_VERSION >= 8) {
-            $this->assertCount($pageSize, $lastRowsAsync);
-        }
-        else {
-            $this->assertEquals($lastRowsAsync->count(), $pageSize);
-        }
+        $this->assertEquals($lastRowsAsync->count(), $pageSize);
         $lastValuesAsync = self::convertRowsToArray($lastRowsAsync, "value");
         $this->assertNotEquals($nextValuesAsync, $lastValuesAsync);
     }

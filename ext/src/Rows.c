@@ -376,55 +376,47 @@ PHP_METHOD(Rows, first)
 ZEND_BEGIN_ARG_INFO_EX(arginfo_none, 0, ZEND_RETURN_VALUE, 0)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_offset, 0, ZEND_RETURN_VALUE, 1)
-  ZEND_ARG_INFO(0, offset)
-ZEND_END_ARG_INFO()
-
-ZEND_BEGIN_ARG_INFO_EX(arginfo_set, 0, ZEND_RETURN_VALUE, 2)
-  ZEND_ARG_INFO(0, offset)
-  ZEND_ARG_INFO(0, value)
-ZEND_END_ARG_INFO()
-
-#if PHP_MAJOR_VERSION >= 8
 ZEND_BEGIN_ARG_INFO_EX(arginfo_timeout, 0, ZEND_RETURN_VALUE, 0)
   ZEND_ARG_INFO(0, timeout)
 ZEND_END_ARG_INFO()
-#else
-ZEND_BEGIN_ARG_INFO_EX(arginfo_timeout, 0, ZEND_RETURN_VALUE, 1)
-  ZEND_ARG_INFO(0, timeout)
-ZEND_END_ARG_INFO()
-#endif
+
+PHP7TO8_ARG_INFO_VOID_RETURN(arginfo_void_return)
+PHP7TO8_ARG_INFO_BOOL_RETURN(arginfo_bool_return)
+PHP7TO8_ARG_INFO_MIXED_RETURN(arginfo_mixed_return)
+PHP7TO8_ARG_INFO_LONG_RETURN(arginfo_long_return)
+
+PHP7TO8_ARG_INFO_MIXED_BOOL_RETURN(arginfo_mixed_bool_return, offset)
+PHP7TO8_ARG_INFO_MIXED_MIXED_RETURN(arginfo_mixed_mixed_return, offset)
+PHP7TO8_ARG_INFO_MIXED_MIXED_VOID_RETURN(arginfo_mixed_mixed_void_return, offset, value)
+PHP7TO8_ARG_INFO_MIXED_VOID_RETURN(arginfo_mixed_void_return, offset)
 
 static zend_function_entry php_driver_rows_methods[] = {
   PHP_ME(Rows, __construct,      arginfo_none,    ZEND_ACC_PUBLIC | ZEND_ACC_CTOR)
-  PHP_ME(Rows, count,            arginfo_none,    ZEND_ACC_PUBLIC)
-  PHP_ME(Rows, rewind,           arginfo_none,    ZEND_ACC_PUBLIC)
-  PHP_ME(Rows, current,          arginfo_none,    ZEND_ACC_PUBLIC)
-  PHP_ME(Rows, key,              arginfo_none,    ZEND_ACC_PUBLIC)
-  PHP_ME(Rows, next,             arginfo_none,    ZEND_ACC_PUBLIC)
-  PHP_ME(Rows, valid,            arginfo_none,    ZEND_ACC_PUBLIC)
-  PHP_ME(Rows, offsetExists,     arginfo_offset,  ZEND_ACC_PUBLIC)
-  PHP_ME(Rows, offsetGet,        arginfo_offset,  ZEND_ACC_PUBLIC)
-  PHP_ME(Rows, offsetSet,        arginfo_set,     ZEND_ACC_PUBLIC)
-  PHP_ME(Rows, offsetUnset,      arginfo_offset,  ZEND_ACC_PUBLIC)
   PHP_ME(Rows, isLastPage,       arginfo_none,    ZEND_ACC_PUBLIC)
   PHP_ME(Rows, nextPage,         arginfo_timeout, ZEND_ACC_PUBLIC)
   PHP_ME(Rows, nextPageAsync,    arginfo_none,    ZEND_ACC_PUBLIC)
   PHP_ME(Rows, pagingStateToken, arginfo_none,    ZEND_ACC_PUBLIC)
   PHP_ME(Rows, first,            arginfo_none,    ZEND_ACC_PUBLIC)
+  /* Countable */
+  PHP_ME(Rows, count, arginfo_long_return, ZEND_ACC_PUBLIC)
+  /* Iterator */
+  PHP_ME(Rows, current, arginfo_mixed_return, ZEND_ACC_PUBLIC)
+  PHP_ME(Rows, key, arginfo_mixed_return, ZEND_ACC_PUBLIC)
+  PHP_ME(Rows, next, arginfo_void_return, ZEND_ACC_PUBLIC)
+  PHP_ME(Rows, rewind, arginfo_void_return, ZEND_ACC_PUBLIC)
+  PHP_ME(Rows, valid, arginfo_bool_return, ZEND_ACC_PUBLIC)
+  /* ArrayAccess */
+  PHP_ME(Rows, offsetExists, arginfo_mixed_bool_return, ZEND_ACC_PUBLIC)
+  PHP_ME(Rows, offsetGet, arginfo_mixed_mixed_return, ZEND_ACC_PUBLIC)
+  PHP_ME(Rows, offsetSet, arginfo_mixed_mixed_void_return, ZEND_ACC_PUBLIC)
+  PHP_ME(Rows, offsetUnset, arginfo_mixed_void_return, ZEND_ACC_PUBLIC)
   PHP_FE_END
 };
 
 static zend_object_handlers php_driver_rows_handlers;
 
 static HashTable *
-php_driver_rows_properties(
-#if PHP_MAJOR_VERSION >= 8
-        zend_object *object
-#else
-        zval *object TSRMLS_DC
-#endif
-)
+php_driver_rows_properties(php7to8_object *object TSRMLS_DC)
 {
   HashTable *props = zend_std_get_properties(object TSRMLS_CC);
 
@@ -434,9 +426,7 @@ php_driver_rows_properties(
 static int
 php_driver_rows_compare(zval *obj1, zval *obj2 TSRMLS_DC)
 {
-#if PHP_MAJOR_VERSION >= 8
-  ZEND_COMPARE_OBJECTS_FALLBACK(obj1, obj2);
-#endif
+  PHP7TO8_MAYBE_COMPARE_OBJECTS_FALLBACK(obj1, obj2);
   if (Z_OBJCE_P(obj1) != Z_OBJCE_P(obj2))
     return 1; /* different classes */
 
@@ -484,16 +474,12 @@ void php_driver_define_Rows(TSRMLS_D)
 
   INIT_CLASS_ENTRY(ce, PHP_DRIVER_NAMESPACE "\\Rows", php_driver_rows_methods);
   php_driver_rows_ce = zend_register_internal_class(&ce TSRMLS_CC);
-  zend_class_implements(php_driver_rows_ce TSRMLS_CC, 2, zend_ce_iterator, zend_ce_arrayaccess);
+  zend_class_implements(php_driver_rows_ce TSRMLS_CC, 2, PHP7TO8_COUNTABLE, zend_ce_iterator, zend_ce_arrayaccess);
   php_driver_rows_ce->ce_flags     |= PHP5TO7_ZEND_ACC_FINAL;
   php_driver_rows_ce->create_object = php_driver_rows_new;
 
   memcpy(&php_driver_rows_handlers, zend_get_std_object_handlers(), sizeof(zend_object_handlers));
   php_driver_rows_handlers.get_properties  = php_driver_rows_properties;
-#if PHP_MAJOR_VERSION >= 8
-  php_driver_rows_handlers.compare = php_driver_rows_compare;
-#else
-  php_driver_rows_handlers.compare_objects = php_driver_rows_compare;
-#endif
+  PHP7TO8_COMPARE(php_driver_rows_handlers, php_driver_rows_compare);
   php_driver_rows_handlers.clone_obj = NULL;
 }

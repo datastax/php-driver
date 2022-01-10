@@ -20,6 +20,7 @@ use Behat\Behat\Context\Context;
 use Behat\Behat\Context\SnippetAcceptingContext;
 use Behat\Gherkin\Node\PyStringNode;
 use Behat\Gherkin\Node\TableNode;
+use PHPUnit\Framework\Assert;
 use Symfony\Component\Process\PhpExecutableFinder;
 use Symfony\Component\Process\Process;
 
@@ -48,7 +49,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
      */
     public function __construct($cassandra_version)
     {
-        $this->ccm = new \CCM($cassandra_version);
+        $this->ccm = new \CCM();
     }
 
     /**
@@ -81,7 +82,6 @@ class FeatureContext implements Context, SnippetAcceptingContext
         }
         $this->workingDir               = $dir;
         $this->phpBin                   = $php;
-        $this->process                  = new Process(null);
         $this->webServerProcess         = null;
         $this->webServerURL             = '';
         $this->lastResponse             = '';
@@ -218,7 +218,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
             $contents = $this->fetchPath($this->webServerURL.$path);
 
             if ($contents === false) {
-                $wait = $retries * 0.4;
+                $wait = intval($retries * 0.4);
                 printf("Unable to fetch %s, attempt %d, retrying in %d\n",
                        $path, $retries, $wait);
                 sleep($wait);
@@ -244,13 +244,18 @@ class FeatureContext implements Context, SnippetAcceptingContext
     public function iShouldSee(TableNode $table)
     {
         $doc = new DOMDocument();
+        libxml_use_internal_errors(true);
         $doc->loadHTML($this->lastResponse);
+        libxml_clear_errors();
         $xpath = new DOMXpath($doc);
         $nodes = $xpath->query("//h2/a[@name='module_cassandra']/../following-sibling::*[position()=1][name()='table']");
         $html  = $nodes->item(0);
         $table = $table->getRowsHash();
 
         foreach ($html->childNodes as $tr) {
+            if ($tr->childNodes->length === 0) {
+                continue;
+            }
             $name  = trim($tr->childNodes->item(0)->textContent);
             $value = trim($tr->childNodes->item(1)->textContent);
 
@@ -315,28 +320,28 @@ class FeatureContext implements Context, SnippetAcceptingContext
 
     private function execute(array $env = array())
     {
-        $this->process->setWorkingDirectory($this->workingDir);
-        $this->process->setCommandLine(sprintf(
+        $this->process = new Process(array_filter(explode(' ', sprintf(
             '%s %s %s', $this->phpBin, $this->phpBinOptions, 'example.php'
-        ));
+        )), function ($arg) {
+            return $arg !== "";
+        }), $this->workingDir);
         if (!empty($env)) {
             $this->process->setEnv(array_replace((array) $this->process->getEnv(), $env));
         }
         $this->process->run();
+        sleep(5);
     }
 
     private function startWebServer()
     {
         $this->webServerURL = 'http://127.0.0.1:10000';
-        $command = sprintf('exec %s -S "%s"', $this->phpBin, '127.0.0.1:10000');
-        if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
-            $command = sprintf('%s -S "%s"', $this->phpBin, '127.0.0.1:10000');
-        }
+        $command = sprintf('%s -S %s', $this->phpBin, '127.0.0.1:10000');
         if ($this->phpBinOptions) {
             $command = sprintf("%s %s", $command, $this->phpBinOptions);
         }
-        $this->webServerProcess = new Process($command, $this->workingDir);
-        $this->webServerProcess->setCommandLine($command);
+        $this->webServerProcess = new Process(array_filter(explode(' ', $command), function ($arg) {
+            return $arg !== "";
+        }), $this->workingDir);
         $this->webServerProcess->start();
         echo 'Web Server Started: ' . $this->webServerProcess->getPid() . "\n";
         sleep(5);
@@ -356,7 +361,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
      */
     public function itsOutputShouldContain(PyStringNode $string)
     {
-        PHPUnit_Framework_Assert::assertContains((string) $string, $this->getOutput());
+        Assert::assertContains((string) $string, $this->getOutput());
     }
 
     /**
@@ -368,7 +373,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
         sort($expected, SORT_STRING);
         $actual = explode("\n", $this->getOutput());
         sort($actual, SORT_STRING);
-        PHPUnit_Framework_Assert::assertContains(implode("\n", $expected), implode("\n", $actual));
+        Assert::assertContains(implode("\n", $expected), implode("\n", $actual));
     }
 
     /**
@@ -388,7 +393,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
     public function aLogFileShouldExist($filename)
     {
         $absoluteFilename = $this->workingDir.DIRECTORY_SEPARATOR.((string) $filename);
-        PHPUnit_Framework_Assert::assertFileExists($absoluteFilename);
+        Assert::assertFileExists($absoluteFilename);
     }
 
     /**
@@ -397,8 +402,8 @@ class FeatureContext implements Context, SnippetAcceptingContext
     public function theLogFileShouldContain($filename, $contents)
     {
       $absoluteFilename = $this->workingDir.DIRECTORY_SEPARATOR.((string) $filename);
-      PHPUnit_Framework_Assert::assertFileExists($absoluteFilename);
-      PHPUnit_Framework_Assert::assertContains($contents, file_get_contents($absoluteFilename));
+      Assert::assertFileExists($absoluteFilename);
+      Assert::assertContains($contents, file_get_contents($absoluteFilename));
     }
 
     private function getOutput()

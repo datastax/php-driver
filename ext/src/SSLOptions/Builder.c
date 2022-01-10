@@ -125,7 +125,9 @@ PHP_METHOD(SSLOptionsBuilder, withTrustedCerts)
       PHP5TO7_MAYBE_EFREE(args);
     }
 
-    php_stat(Z_STRVAL_P(path), Z_STRLEN_P(path), FS_IS_R, &readable TSRMLS_CC);
+    zend_string *path_str = zend_string_init(Z_STRVAL_P(path), Z_STRLEN_P(path), false);
+    php_stat(path_str, FS_IS_R, &readable TSRMLS_CC);
+    zend_string_release(path_str);
 
     if (PHP5TO7_ZVAL_IS_FALSE_P(&readable)) {
       zend_throw_exception_ex(php_driver_invalid_argument_exception_ce, 0 TSRMLS_CC,
@@ -185,7 +187,9 @@ PHP_METHOD(SSLOptionsBuilder, withClientCert)
     return;
   }
 
-  php_stat(client_cert, client_cert_len, FS_IS_R, &readable TSRMLS_CC);
+  zend_string *path_str = zend_string_init(client_cert, client_cert_len, false);
+  php_stat(path_str, FS_IS_R, &readable TSRMLS_CC);
+  zend_string_release(path_str);
 
   if (PHP5TO7_ZVAL_IS_FALSE_P(&readable)) {
     zend_throw_exception_ex(php_driver_invalid_argument_exception_ce, 0 TSRMLS_CC,
@@ -215,7 +219,9 @@ PHP_METHOD(SSLOptionsBuilder, withPrivateKey)
     return;
   }
 
-  php_stat(private_key, private_key_len, FS_IS_R, &readable TSRMLS_CC);
+  zend_string *path_str = zend_string_init(private_key, private_key_len, false);
+  php_stat(path_str, FS_IS_R, &readable TSRMLS_CC);
+  zend_string_release(path_str);
 
   if (PHP5TO7_ZVAL_IS_FALSE_P(&readable)) {
     zend_throw_exception_ex(php_driver_invalid_argument_exception_ce, 0 TSRMLS_CC,
@@ -273,13 +279,7 @@ static zend_function_entry php_driver_ssl_builder_methods[] = {
 static zend_object_handlers php_driver_ssl_builder_handlers;
 
 static HashTable *
-php_driver_ssl_builder_properties(
-#if PHP_MAJOR_VERSION >= 8
- zend_object *object
-#else
- zval *object TSRMLS_DC
-#endif
-)
+php_driver_ssl_builder_properties(php7to8_object *object TSRMLS_DC)
 {
   HashTable *props = zend_std_get_properties(object TSRMLS_CC);
 
@@ -349,9 +349,5 @@ void php_driver_define_SSLOptionsBuilder(TSRMLS_D)
 
   memcpy(&php_driver_ssl_builder_handlers, zend_get_std_object_handlers(), sizeof(zend_object_handlers));
   php_driver_ssl_builder_handlers.get_properties  = php_driver_ssl_builder_properties;
-#if PHP_MAJOR_VERSION >= 8
-  php_driver_ssl_builder_handlers.compare = php_driver_ssl_builder_compare;
-#else
-  php_driver_ssl_builder_handlers.compare_objects = php_driver_ssl_builder_compare;
-#endif
+  PHP7TO8_COMPARE(php_driver_ssl_builder_handlers, php_driver_ssl_builder_compare);
 }

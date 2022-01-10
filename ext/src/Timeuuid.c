@@ -183,14 +183,7 @@ static zend_function_entry php_driver_timeuuid_methods[] = {
 static php_driver_value_handlers php_driver_timeuuid_handlers;
 
 static HashTable *
-php_driver_timeuuid_gc(
-#if PHP_MAJOR_VERSION >= 8
-        zend_object *object,
-#else
-        zval *object,
-#endif
-        php5to7_zval_gc table, int *n TSRMLS_DC
-)
+php_driver_timeuuid_gc(php7to8_object *object, php5to7_zval_gc table, int *n TSRMLS_DC)
 {
   *table = NULL;
   *n = 0;
@@ -198,13 +191,7 @@ php_driver_timeuuid_gc(
 }
 
 static HashTable *
-php_driver_timeuuid_properties(
-#if PHP_MAJOR_VERSION >= 8
-        zend_object *object
-#else
-        zval *object TSRMLS_DC
-#endif
-)
+php_driver_timeuuid_properties(php7to8_object *object TSRMLS_DC)
 {
   char string[CASS_UUID_STRING_LENGTH];
   php5to7_zval type;
@@ -237,9 +224,7 @@ php_driver_timeuuid_properties(
 static int
 php_driver_timeuuid_compare(zval *obj1, zval *obj2 TSRMLS_DC)
 {
-#if PHP_MAJOR_VERSION >= 8
-  ZEND_COMPARE_OBJECTS_FALLBACK(obj1, obj2);
-#endif
+  PHP7TO8_MAYBE_COMPARE_OBJECTS_FALLBACK(obj1, obj2);
   php_driver_uuid *uuid1 = NULL;
   php_driver_uuid *uuid2 = NULL;
 
@@ -296,11 +281,7 @@ php_driver_define_Timeuuid(TSRMLS_D)
 #if PHP_VERSION_ID >= 50400
   php_driver_timeuuid_handlers.std.get_gc          = php_driver_timeuuid_gc;
 #endif
-#if PHP_MAJOR_VERSION >= 8
-  php_driver_timeuuid_handlers.std.compare = php_driver_timeuuid_compare;
-#else
-  php_driver_timeuuid_handlers.std.compare_objects = php_driver_timeuuid_compare;
-#endif
+  PHP7TO8_COMPARE(php_driver_timeuuid_handlers.std, php_driver_timeuuid_compare);
   php_driver_timeuuid_ce->ce_flags |= PHP5TO7_ZEND_ACC_FINAL;
   php_driver_timeuuid_ce->create_object = php_driver_timeuuid_new;
 

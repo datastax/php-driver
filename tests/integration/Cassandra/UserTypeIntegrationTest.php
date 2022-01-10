@@ -18,9 +18,6 @@
 
 namespace Cassandra;
 
-use Cassandra\Exception\InvalidQueryException;
-use Cassandra\Exception\ServerException;
-
 /**
  * User type integration tests.
  *
@@ -461,7 +458,7 @@ class UserTypeIntegrationTest extends CollectionsIntegrationTest {
      * @cassandra-version-less-3
      */
     public function testFrozenRequired() {
-        $this->expectException(InvalidQueryException::class);
+        $this->expectException(\Cassandra\Exception\InvalidQueryException::class);
         $this->expectExceptionMessageMatches('/Non-frozen User-Defined types are not supported, please use frozen<>|A user type cannot contain non-frozen UDTs/');
         $this->session->execute("CREATE TYPE frozen_required (id uuid, address address)");
     }
@@ -476,7 +473,7 @@ class UserTypeIntegrationTest extends CollectionsIntegrationTest {
      * @ticket PHP-57
      */
     public function testUnavailableUserType() {
-        $this->expectException(InvalidQueryException::class);
+        $this->expectException(\Cassandra\Exception\InvalidQueryException::class);
         $this->expectExceptionMessageMatches('/Unknown type .*.user_type_unavailable/');
         $this->session->execute(
             "CREATE TABLE unavailable " .
@@ -498,9 +495,7 @@ class UserTypeIntegrationTest extends CollectionsIntegrationTest {
         $invalidValue = $this->getPhoneUserType();
         $invalidValue->set("alias", "Invalid Value");
         $invalidValue->set("number", "800-555-1212");
-        // Invalid arguments in query will generate
-        // ServereException with Marshalling error in message
-        $this->expectException(ServerException::class);
+        $this->expectException(\Cassandra\Exception\ServerException::class);
         $this->expectExceptionMessageMatches('/org\.apache\.cassandra\.serializers\.MarshalException/');
         $this->insertAddress($invalidValue);
     }
@@ -524,9 +519,7 @@ class UserTypeIntegrationTest extends CollectionsIntegrationTest {
             1,
             $invalidValue
         );
-        // Invalid arguments in query will generate
-        // ServereException with Marshalling error in message
-        $this->expectException(ServerException::class);
+        $this->expectException(\Cassandra\Exception\ServerException::class);
         $this->expectExceptionMessageMatches('/org\.apache\.cassandra\.serializers\.MarshalException/');
         $this->session->execute("INSERT INTO invalidphone (key, value) VALUES (?, ?)", array("arguments" => $values));
     }

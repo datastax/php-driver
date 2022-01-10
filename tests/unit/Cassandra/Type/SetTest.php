@@ -19,7 +19,6 @@
 namespace Cassandra\Type;
 
 use Cassandra\Type;
-use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -31,14 +30,14 @@ class SetTest extends TestCase
     {
         $type = Type::set(Type::varchar());
         $this->assertEquals("set", $type->name());
-        $this->assertEquals("set<varchar>", (string)$type);
+        $this->assertEquals("set<varchar>", (string) $type);
         $this->assertEquals(Type::varchar(), $type->valueType());
     }
 
     public function testCreatesSetFromValues()
     {
         $set = Type::set(Type::varchar())
-            ->create("a", "b", "c", "d", "e");
+                   ->create("a", "b", "c", "d", "e");
         $this->assertEquals(array("a", "b", "c", "d", "e"), $set->values());
     }
 
@@ -50,17 +49,15 @@ class SetTest extends TestCase
 
     public function testPreventsCreatingSetWithUnsupportedTypes()
     {
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage("argument must be a string, 1 given");
         Type::set(Type::varchar())->create(1);
     }
 
     public function testPreventsDefiningSetsWithUnsupportedTypes()
     {
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage(
-            "type must be a valid Cassandra\Type, an instance of Cassandra\Type\UnsupportedType given"
-        );
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage("type must be a valid Cassandra\Type, an instance of Cassandra\Type\UnsupportedType given");
         Type::set(new UnsupportedType());
     }
 
@@ -76,18 +73,12 @@ class SetTest extends TestCase
     public function equalTypes()
     {
         return array(
-            array(
-                Type::set(Type::int()),
-                Type::set(Type::int())
-            ),
-            array(
-                Type::set(Type::collection(Type::int())),
-                Type::set(Type::collection(Type::int()))
-            ),
-            array(
-                Type::set(Type::set(Type::int())),
-                Type::set(Type::set(Type::int()))
-            ),
+            array(Type::set(Type::int()),
+                  Type::set(Type::int())),
+            array(Type::set(Type::collection(Type::int())),
+                  Type::set(Type::collection(Type::int()))),
+            array(Type::set(Type::set(Type::int())),
+                  Type::set(Type::set(Type::int()))),
         );
     }
 
@@ -103,18 +94,12 @@ class SetTest extends TestCase
     public function notEqualTypes()
     {
         return array(
-            array(
-                Type::set(Type::varchar()),
-                Type::set(Type::int())
-            ),
-            array(
-                Type::set(Type::collection(Type::varchar())),
-                Type::set(Type::collection(Type::int()))
-            ),
-            array(
-                Type::set(Type::collection(Type::int())),
-                Type::set(Type::set(Type::int()))
-            ),
+            array(Type::set(Type::varchar()),
+                  Type::set(Type::int())),
+            array(Type::set(Type::collection(Type::varchar())),
+                  Type::set(Type::collection(Type::int()))),
+            array(Type::set(Type::collection(Type::int())),
+                  Type::set(Type::set(Type::int()))),
         );
     }
 }

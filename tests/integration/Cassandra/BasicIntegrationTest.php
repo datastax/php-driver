@@ -18,7 +18,6 @@
 
 namespace Cassandra;
 
-use CCM;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -45,7 +44,7 @@ abstract class BasicIntegrationTest extends TestCase {
     /**
      * Handle for interacting with CCM.
      *
-     * @var CCM
+     * @var \CCM
      */
     protected $ccm;
     /**

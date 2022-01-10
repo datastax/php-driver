@@ -18,10 +18,7 @@
 
 namespace Cassandra;
 
-use Cassandra;
-use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
-use stdClass;
 
 /**
  * @requires extension cassandra
@@ -30,21 +27,21 @@ class CollectionTest extends TestCase
 {
     public function testInvalidType()
     {
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('type must be a string or an instance of Cassandra\Type, an instance of stdClass given');
-        new Collection(new stdClass());
+        new Collection(new \stdClass());
     }
 
     public function testUnsupportedStringType()
     {
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage("Unsupported type 'custom type'");
         new Collection('custom type');
     }
 
     public function testUnsupportedType()
     {
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage("type must be a valid Cassandra\Type, an instance of Cassandra\Type\UnsupportedType given");
         new Collection(new Type\UnsupportedType());
     }
@@ -61,22 +58,22 @@ class CollectionTest extends TestCase
     public function cassandraTypes()
     {
         return array(
-            array(Cassandra::TYPE_ASCII),
-            array(Cassandra::TYPE_BIGINT),
-            array(Cassandra::TYPE_BLOB),
-            array(Cassandra::TYPE_BOOLEAN),
-            array(Cassandra::TYPE_COUNTER),
-            array(Cassandra::TYPE_DECIMAL),
-            array(Cassandra::TYPE_DOUBLE),
-            array(Cassandra::TYPE_FLOAT),
-            array(Cassandra::TYPE_INT),
-            array(Cassandra::TYPE_TEXT),
-            array(Cassandra::TYPE_TIMESTAMP),
-            array(Cassandra::TYPE_UUID),
-            array(Cassandra::TYPE_VARCHAR),
-            array(Cassandra::TYPE_VARINT),
-            array(Cassandra::TYPE_TIMEUUID),
-            array(Cassandra::TYPE_INET),
+            array(\Cassandra::TYPE_ASCII),
+            array(\Cassandra::TYPE_BIGINT),
+            array(\Cassandra::TYPE_BLOB),
+            array(\Cassandra::TYPE_BOOLEAN),
+            array(\Cassandra::TYPE_COUNTER),
+            array(\Cassandra::TYPE_DECIMAL),
+            array(\Cassandra::TYPE_DOUBLE),
+            array(\Cassandra::TYPE_FLOAT),
+            array(\Cassandra::TYPE_INT),
+            array(\Cassandra::TYPE_TEXT),
+            array(\Cassandra::TYPE_TIMESTAMP),
+            array(\Cassandra::TYPE_UUID),
+            array(\Cassandra::TYPE_VARCHAR),
+            array(\Cassandra::TYPE_VARINT),
+            array(\Cassandra::TYPE_TIMEUUID),
+            array(\Cassandra::TYPE_INET),
         );
     }
 
@@ -150,23 +147,23 @@ class CollectionTest extends TestCase
 
     public function testValidatesTypesOfElements()
     {
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage("argument must be an instance of Cassandra\Varint, an instance of Cassandra\Decimal given");
-        $list = new Collection(Cassandra::TYPE_VARINT);
+        $list = new Collection(\Cassandra::TYPE_VARINT);
         $list->add(new Decimal('123'));
     }
 
     public function testSupportsNullValues()
     {
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage("Invalid value: null is not supported inside collections");
-        $list = new Collection(Cassandra::TYPE_VARINT);
+        $list = new Collection(\Cassandra::TYPE_VARINT);
         $list->add(null);
     }
 
     public function testAddsAllElements()
     {
-        $list = new Collection(Cassandra::TYPE_VARINT);
+        $list = new Collection(\Cassandra::TYPE_VARINT);
         $list->add(new Varint('1'), new Varint('2'), new Varint('3'),
                    new Varint('4'), new Varint('5'), new Varint('6'),
                    new Varint('7'), new Varint('8'));
@@ -184,13 +181,13 @@ class CollectionTest extends TestCase
 
     public function testReturnsNullWhenCannotFindIndex()
     {
-        $list = new Collection(Cassandra::TYPE_VARINT);
+        $list = new Collection(\Cassandra::TYPE_VARINT);
         $this->assertSame(null, $list->find(new Varint('1')));
     }
 
     public function testFindsIndexOfAnElement()
     {
-        $list = new Collection(Cassandra::TYPE_VARINT);
+        $list = new Collection(\Cassandra::TYPE_VARINT);
         $list->add(new Varint('1'), new Varint('2'), new Varint('3'),
                    new Varint('4'), new Varint('5'), new Varint('6'),
                    new Varint('7'), new Varint('8'));
@@ -207,7 +204,7 @@ class CollectionTest extends TestCase
 
     public function testGetsElementByIndex()
     {
-        $list = new Collection(Cassandra::TYPE_VARINT);
+        $list = new Collection(\Cassandra::TYPE_VARINT);
         $list->add(new Varint('1'), new Varint('2'), new Varint('3'),
                    new Varint('4'), new Varint('5'), new Varint('6'),
                    new Varint('7'), new Varint('8'));
@@ -227,7 +224,7 @@ class CollectionTest extends TestCase
         $values = array(new Varint('1'), new Varint('2'), new Varint('3'),
                         new Varint('4'), new Varint('5'), new Varint('6'),
                         new Varint('7'), new Varint('8'));
-        $list = new Collection(Cassandra::TYPE_VARINT);
+        $list = new Collection(\Cassandra::TYPE_VARINT);
 
         foreach ($values as $value) {
             $list->add($value);

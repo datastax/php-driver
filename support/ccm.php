@@ -22,12 +22,11 @@ use Cassandra\SimpleStatement;
 class CCM
 {
     const DEFAULT_CLUSTER_PREFIX = "php-driver";
-    const DEFAULT_CASSANDRA_VERSION = "3.10";
+    const DEFAULT_CASSANDRA_VERSION = "4.0.1";
     const PROCESS_TIMEOUT_IN_SECONDS = 480;
     private $clusterPrefix;
     private $isSilent;
     private $version;
-    private $process;
     private $cluster;
     private $session;
     private $ssl;
@@ -35,21 +34,17 @@ class CCM
     private $dataCenterOneNodes;
     private $dataCenterTwoNodes;
 
-    public function __construct($version = self::DEFAULT_CASSANDRA_VERSION, $isSilent = false, $clusterPrefix = self::DEFAULT_CLUSTER_PREFIX)
+    public function __construct($version = self::DEFAULT_CASSANDRA_VERSION, $isSilent = true, $clusterPrefix = self::DEFAULT_CLUSTER_PREFIX)
     {
         $this->version            = $version;
         $this->isSilent           = $isSilent;
         $this->clusterPrefix      = $clusterPrefix;
-        $this->process            = new Process(null);
         $this->cluster            = null;
         $this->session            = null;
         $this->ssl                = false;
         $this->clientAuth         = false;
         $this->dataCenterOneNodes = 0;
         $this->dataCenterTwoNodes = 0;
-
-        // Increase the timeout to handle TravisCI timeouts
-        $this->process->setTimeout(self::PROCESS_TIMEOUT_IN_SECONDS);
     }
 
     public function setupSchema($schema, $dropExistingKeyspaces = true)
@@ -116,7 +111,7 @@ class CCM
             } catch (Cassandra\Exception\RuntimeException $e) {
                 unset($this->session);
                 unset($this->cluster);
-                sleep($retries * 0.4);
+                sleep(intval($retries * 0.4));
             }
         }
 
@@ -181,7 +176,7 @@ class CCM
             if (in_array($clusterName, $clusters['list'])) {
                 $this->run('switch', $clusterName);
             } else {
-                $this->run('create', '-v', $this->version, '-b', $clusterName);
+                $this->run('create', '-v', 'binary:' . $this->version, '-b', $clusterName);
 
                 $params = array(
                   'updateconf', '--rt', '1000', 'read_request_timeout_in_ms: 1000',
@@ -201,8 +196,12 @@ class CCM
                 }
 
                 $params[] = 'native_transport_max_threads: 1';
-                $params[] = 'rpc_min_threads: 1';
-                $params[] = 'rpc_max_threads: 1';
+
+                if (version_compare($this->version, "4.0.0", "<=")) {
+                    $params[] = 'rpc_min_threads: 1';
+                    $params[] = 'rpc_max_threads: 1';
+                }
+
                 $params[] = 'concurrent_reads: 2';
                 $params[] = 'concurrent_writes: 2';
                 $params[] = 'concurrent_compactors: 1';
@@ -220,6 +219,9 @@ class CCM
                     $this->run('updateconf', 'enable_scripted_user_defined_functions: true');
                 }
 
+                if (version_compare($this->version, "3.0.0", ">=")) {
+                    $this->run('updateconf', 'enable_materialized_views: true');
+                }
 
                 $params[] = 'key_cache_size_in_mb: 0';
                 $params[] = 'key_cache_save_period: 0';
@@ -332,31 +334,28 @@ class CCM
 
     private function run()
     {
-        $args = func_get_args();
-        foreach ($args as $i => $arg) {
-            $args[$i] = escapeshellarg($arg);
-        }
-
-        $command = sprintf('ccm %s', implode(' ', $args));
+        $args = \array_merge(['ccm'], func_get_args());
         if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN' || strtoupper(substr(PHP_OS, 0, 6)) === 'CYGWIN') {
             $keepWindowsContext = '';
             if ($args[0] != "\"start\"") {
                 $keepWindowsContext = '/B ';
             }
-            $command = 'START "PHP Driver - CCM" ' . $keepWindowsContext . '/MIN /WAIT ' . $command;
+            $args = \array_merge(['START', '"PHP Driver - CCM"', $keepWindowsContext, '/MIN', '/WAIT'], $args);
         }
-        $this->process->setCommandLine($command);
+
+        $process = new Process($args);
+        $process->setTimeout(self::PROCESS_TIMEOUT_IN_SECONDS);
 
         if (!$this->isSilent) {
-            echo 'ccm > ' . $command . "\n";
+            echo 'ccm > ' . implode(' ', $args) . "\n";
         }
-        $this->process->mustRun(function ($type, $buffer) {
+        $process->mustRun(function ($type, $buffer) {
             if (!$this->isSilent) {
                 echo 'ccm > ' . $buffer;
             }
         });
 
-        return $this->process->getOutput();
+        return $process->getOutput();
     }
 
     public function removeCluster($cluster)

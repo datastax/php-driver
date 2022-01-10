@@ -19,7 +19,6 @@
 namespace Cassandra\Type;
 
 use Cassandra\Type;
-use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -31,7 +30,7 @@ class TupleTest extends TestCase
     {
         $type = Type::tuple(Type::varchar(), Type::int());
         $this->assertEquals('tuple', $type->name());
-        $this->assertEquals('tuple<varchar, int>', (string)$type);
+        $this->assertEquals('tuple<varchar, int>', (string) $type);
         $types = $type->types();
         $this->assertEquals(Type::varchar(), $types[0]);
         $this->assertEquals(Type::int(), $types[1]);
@@ -40,7 +39,7 @@ class TupleTest extends TestCase
     public function testCreatesTupleFromValues()
     {
         $tuple = Type::tuple(Type::varchar(), Type::int())
-            ->create('xyz', 123);
+                    ->create('xyz', 123);
         $this->assertEquals(array('xyz', 123), $tuple->values());
         $this->assertEquals('xyz', $tuple->get(0));
         $this->assertEquals(123, $tuple->get(1));
@@ -66,17 +65,15 @@ class TupleTest extends TestCase
 
     public function testPreventsCreatingTupleWithInvalidType()
     {
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage("argument must be a string, 1 given");
         Type::tuple(Type::varchar())->create(1);
     }
 
     public function testPreventsDefiningTuplesWithUnsupportedTypes()
     {
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage(
-            "type must be a valid Cassandra\Type, an instance of Cassandra\Type\UnsupportedType given"
-        );
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage("type must be a valid Cassandra\Type, an instance of Cassandra\Type\UnsupportedType given");
         Type::tuple(new UnsupportedType());
     }
 
@@ -92,22 +89,14 @@ class TupleTest extends TestCase
     public function equalTypes()
     {
         return array(
-            array(
-                Type::tuple(Type::int()),
-                Type::tuple(Type::int())
-            ),
-            array(
-                Type::tuple(Type::int(), Type::varchar()),
-                Type::tuple(Type::int(), Type::varchar())
-            ),
-            array(
-                Type::tuple(Type::int(), Type::varchar(), Type::bigint()),
-                Type::tuple(Type::int(), Type::varchar(), Type::bigint())
-            ),
-            array(
-                Type::tuple(Type::collection(Type::int()), Type::set(Type::int())),
-                Type::tuple(Type::collection(Type::int()), Type::set(Type::int()))
-            )
+            array(Type::tuple(Type::int()),
+                  Type::tuple(Type::int())),
+            array(Type::tuple(Type::int(), Type::varchar()),
+                  Type::tuple(Type::int(), Type::varchar())),
+            array(Type::tuple(Type::int(), Type::varchar(), Type::bigint()),
+                  Type::tuple(Type::int(), Type::varchar(), Type::bigint())),
+            array(Type::tuple(Type::collection(Type::int()), Type::set(Type::int())),
+                  Type::tuple(Type::collection(Type::int()), Type::set(Type::int())))
         );
     }
 
@@ -123,22 +112,14 @@ class TupleTest extends TestCase
     public function notEqualTypes()
     {
         return array(
-            array(
-                Type::tuple(Type::int()),
-                Type::tuple(Type::varchar())
-            ),
-            array(
-                Type::tuple(Type::int(), Type::varchar()),
-                Type::tuple(Type::int(), Type::bigint())
-            ),
-            array(
-                Type::tuple(Type::int(), Type::varchar(), Type::varint()),
-                Type::tuple(Type::int(), Type::varchar(), Type::bigint())
-            ),
-            array(
-                Type::tuple(Type::collection(Type::int()), Type::set(Type::varchar())),
-                Type::tuple(Type::collection(Type::int()), Type::set(Type::int()))
-            )
+            array(Type::tuple(Type::int()),
+                  Type::tuple(Type::varchar())),
+            array(Type::tuple(Type::int(), Type::varchar()),
+                  Type::tuple(Type::int(), Type::bigint())),
+            array(Type::tuple(Type::int(), Type::varchar(), Type::varint()),
+                  Type::tuple(Type::int(), Type::varchar(), Type::bigint())),
+            array(Type::tuple(Type::collection(Type::int()), Type::set(Type::varchar())),
+                  Type::tuple(Type::collection(Type::int()), Type::set(Type::int())))
         );
     }
 }

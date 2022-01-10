@@ -278,6 +278,11 @@ ZEND_END_ARG_INFO()
 ZEND_BEGIN_ARG_INFO_EX(arginfo_none, 0, ZEND_RETURN_VALUE, 0)
 ZEND_END_ARG_INFO()
 
+PHP7TO8_ARG_INFO_VOID_RETURN(arginfo_void_return)
+PHP7TO8_ARG_INFO_BOOL_RETURN(arginfo_bool_return)
+PHP7TO8_ARG_INFO_MIXED_RETURN(arginfo_mixed_return)
+PHP7TO8_ARG_INFO_LONG_RETURN(arginfo_long_return)
+
 static zend_function_entry php_driver_set_methods[] = {
   PHP_ME(Set, __construct, arginfo__construct, ZEND_ACC_CTOR|ZEND_ACC_PUBLIC)
   PHP_ME(Set, type, arginfo_none, ZEND_ACC_PUBLIC)
@@ -286,27 +291,20 @@ static zend_function_entry php_driver_set_methods[] = {
   PHP_ME(Set, has, arginfo_one, ZEND_ACC_PUBLIC)
   PHP_ME(Set, remove, arginfo_one, ZEND_ACC_PUBLIC)
   /* Countable */
-  PHP_ME(Set, count, arginfo_none, ZEND_ACC_PUBLIC)
+  PHP_ME(Set, count, arginfo_long_return, ZEND_ACC_PUBLIC)
   /* Iterator */
-  PHP_ME(Set, current, arginfo_none, ZEND_ACC_PUBLIC)
-  PHP_ME(Set, key, arginfo_none, ZEND_ACC_PUBLIC)
-  PHP_ME(Set, next, arginfo_none, ZEND_ACC_PUBLIC)
-  PHP_ME(Set, valid, arginfo_none, ZEND_ACC_PUBLIC)
-  PHP_ME(Set, rewind, arginfo_none, ZEND_ACC_PUBLIC)
+  PHP_ME(Set, current, arginfo_mixed_return, ZEND_ACC_PUBLIC)
+  PHP_ME(Set, key, arginfo_mixed_return, ZEND_ACC_PUBLIC)
+  PHP_ME(Set, next, arginfo_void_return, ZEND_ACC_PUBLIC)
+  PHP_ME(Set, rewind, arginfo_void_return, ZEND_ACC_PUBLIC)
+  PHP_ME(Set, valid, arginfo_bool_return, ZEND_ACC_PUBLIC)
   PHP_FE_END
 };
 
 static php_driver_value_handlers php_driver_set_handlers;
 
 static HashTable *
-php_driver_set_gc(
-#if PHP_MAJOR_VERSION >= 8
-        zend_object *object,
-#else
-        zval *object,
-#endif
-        php5to7_zval_gc table, int *n TSRMLS_DC
-)
+php_driver_set_gc(php7to8_object *object, php5to7_zval_gc table, int *n TSRMLS_DC)
 {
   *table = NULL;
   *n = 0;
@@ -314,13 +312,7 @@ php_driver_set_gc(
 }
 
 static HashTable *
-php_driver_set_properties(
-#if PHP_MAJOR_VERSION >= 8
-        zend_object *object
-#else
-        zval *object TSRMLS_DC
-#endif
-)
+php_driver_set_properties(php7to8_object *object TSRMLS_DC)
 {
   php5to7_zval values;
 
@@ -349,9 +341,7 @@ php_driver_set_properties(
 static int
 php_driver_set_compare(zval *obj1, zval *obj2 TSRMLS_DC)
 {
-#if PHP_MAJOR_VERSION >= 8
-  ZEND_COMPARE_OBJECTS_FALLBACK(obj1, obj2);
-#endif
+  PHP7TO8_MAYBE_COMPARE_OBJECTS_FALLBACK(obj1, obj2);
   php_driver_set_entry *curr, *temp;
   php_driver_set *set1;
   php_driver_set *set2;
@@ -449,14 +439,10 @@ void php_driver_define_Set(TSRMLS_D)
 #if PHP_VERSION_ID >= 50400
   php_driver_set_handlers.std.get_gc          = php_driver_set_gc;
 #endif
-#if PHP_MAJOR_VERSION >= 8
-  php_driver_set_handlers.std.compare = php_driver_set_compare;
-#else
-  php_driver_set_handlers.std.compare_objects = php_driver_set_compare;
-#endif
+  PHP7TO8_COMPARE(php_driver_set_handlers.std, php_driver_set_compare);
   php_driver_set_ce->ce_flags |= PHP5TO7_ZEND_ACC_FINAL;
   php_driver_set_ce->create_object = php_driver_set_new;
-  zend_class_implements(php_driver_set_ce TSRMLS_CC, 2, spl_ce_Countable, zend_ce_iterator);
+  zend_class_implements(php_driver_set_ce TSRMLS_CC, 2, PHP7TO8_COUNTABLE, zend_ce_iterator);
 
   php_driver_set_handlers.hash_value = php_driver_set_hash_value;
   php_driver_set_handlers.std.clone_obj = NULL;

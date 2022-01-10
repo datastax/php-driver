@@ -18,13 +18,18 @@
 
 zend_class_entry *php_driver_cluster_ce = NULL;
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_keyspace, 0, ZEND_RETURN_VALUE, 0)
+ZEND_BEGIN_ARG_INFO_EX(arginfo_connect, 0, ZEND_RETURN_VALUE, 0)
+  ZEND_ARG_INFO(0, keyspace)
+  ZEND_ARG_INFO(0, timeout)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_INFO_EX(arginfo_connectAsync, 0, ZEND_RETURN_VALUE, 0)
   ZEND_ARG_INFO(0, keyspace)
 ZEND_END_ARG_INFO()
 
 static zend_function_entry php_driver_cluster_methods[] = {
-  PHP_ABSTRACT_ME(Cluster, connect, arginfo_keyspace)
-  PHP_ABSTRACT_ME(Cluster, connectAsync, arginfo_keyspace)
+  PHP_ABSTRACT_ME(Cluster, connect, arginfo_connect)
+  PHP_ABSTRACT_ME(Cluster, connectAsync, arginfo_connectAsync)
   PHP_FE_END
 };
 

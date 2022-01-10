@@ -18,10 +18,7 @@
 
 namespace Cassandra;
 
-use Cassandra\Exception\DivideByZeroException;
-use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
-use RangeException;
 
 /**
  * @requires extension cassandra
@@ -32,21 +29,21 @@ class FloatTest extends TestCase
 
     public function testThrowsWhenCreatingFromEmpty()
     {
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage("Invalid float value: ''");
         new Float("");
     }
 
     public function testThrowsWhenCreatingFromInvalid()
     {
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage("Invalid float value: 'invalid'");
         new Float("invalid");
     }
 
     public function testThrowsWhenCreatingFromInvalidTrailingChars()
     {
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage("Invalid characters were found in value: '123.123    '");
         new Float("123.123    ");
     }
@@ -56,7 +53,7 @@ class FloatTest extends TestCase
      */
     public function testThrowsWhenCreatingOutOfRange($string)
     {
-        $this->expectException(RangeException::class);
+        $this->expectException(\RangeException::class);
         new Float($string);
     }
 
@@ -74,7 +71,7 @@ class FloatTest extends TestCase
     public function testCorrectlyParsesStrings($number, $expected)
     {
         $number = new Float($number);
-        $this->assertEqualsWithDelta((float)$expected, (float)$number, self::EPSILON);
+        $this->assertEqualsWithDelta((float)$number, (float)$expected, self::EPSILON);
     }
 
     public function validStrings()
@@ -137,7 +134,7 @@ class FloatTest extends TestCase
 
     public function testDivByZero()
     {
-        $this->expectException(DivideByZeroException::class);
+        $this->expectException(\Cassandra\Exception\DivideByZeroException::class);
         $float1 = new Float("1");
         $float2 = new Float("0");
         $float1->div($float2);

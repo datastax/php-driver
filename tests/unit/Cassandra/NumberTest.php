@@ -19,7 +19,6 @@
 namespace Cassandra;
 
 use PHPUnit\Framework\TestCase;
-use RangeException;
 
 /**
  * @requires extension cassandra
@@ -317,17 +316,9 @@ class NumberTest extends TestCase {
                     continue;
                 }
 
-                $strMin = (string) $min;
-                if($strMin[0] === '-') {
-                    $strMin = substr($strMin, 1);
-                }
-                $strMinMinusOne = (string) ($min - 1);
-                if($strMinMinusOne[0] === '-') {
-                    $strMinMinusOne = substr($strMinMinusOne, 1);
-                }
                 $val = ($class == "Cassandra\\Bigint") ?
-                    $prefix . base_convert($strMin, 10, $base) . "0":
-                    $prefix . base_convert($strMinMinusOne, 10, $base);
+                    $prefix . base_convert((string) gmp_abs($min), 10, $base) . "0":
+                    $prefix . base_convert((string) gmp_abs($min - 1), 10, $base);
                 $provider[] = array(
                     $class,
                     $val
@@ -377,11 +368,7 @@ class NumberTest extends TestCase {
                 // Since we don't need base conversion for base 10 and we have to special case something,
                 // we just don't do base_convert for any of the base 10 tests.
 
-                $strMin = (string) $min;
-                if($strMin[0] === '-') {
-                    $strMin = substr($strMin, 1);
-                }
-                $val = ($base == 10) ? $min : $prefix . base_convert($strMin, 10, $base);
+                $val = ($base == 10) ? (string) $min : $prefix . base_convert((string) gmp_abs($min), 10, $base);
                 $provider[] = array(
                     $class,
                     $val,
@@ -420,7 +407,7 @@ class NumberTest extends TestCase {
      * This Varint test will be valid for both 32-bit and 64-bit longs
      */
     public function testVarintOverflowTooBig() {
-        $this->expectException(Exception\RangeException::class);
+        $this->expectException(\Cassandra\Exception\RangeException::class);
         $this->expectExceptionMessage("Value is too big");
         $number = new Varint("9223372036854775808");
         $number->toInt();
@@ -430,7 +417,7 @@ class NumberTest extends TestCase {
      * This Varint test will be valid for both 32-bit and 64-bit longs
      */
     public function testVarintOverflowTooSmall() {
-        $this->expectException(Exception\RangeException::class);
+        $this->expectException(\Cassandra\Exception\RangeException::class);
         $this->expectExceptionMessage("Value is too small");
         $number = new Varint("-9223372036854775809");
         $number->toInt();
@@ -441,7 +428,7 @@ class NumberTest extends TestCase {
      * @dataProvider numberClasses
      */
     public function testEmptyString($class) {
-        $this->expectException(Exception\InvalidArgumentException::class);
+        $this->expectException(\Cassandra\Exception\InvalidArgumentException::class);
         $this->expectExceptionMessage("Invalid integer value: ''");
         new $class("");
     }
@@ -450,7 +437,7 @@ class NumberTest extends TestCase {
      * @dataProvider numberClasses
      */
     public function testInvalidString($class) {
-        $this->expectException(Exception\InvalidArgumentException::class);
+        $this->expectException(\Cassandra\Exception\InvalidArgumentException::class);
         $this->expectExceptionMessage("Invalid integer value: 'invalid123'");
         new $class("invalid123");
     }
@@ -459,7 +446,7 @@ class NumberTest extends TestCase {
      * @dataProvider numberClasses
      */
     public function testInvalidCharacters($class) {
-        $this->expectException(Exception\InvalidArgumentException::class);
+        $this->expectException(\Cassandra\Exception\InvalidArgumentException::class);
         $this->expectExceptionMessageMatches("/Invalid characters were found in value: '123.123'|Invalid integer value: '123.123'/");
         new $class("123.123");
     }
@@ -509,7 +496,7 @@ class NumberTest extends TestCase {
      * @dataProvider numberClasses
      */
     public function testMultiplyOutOfRange($class) {
-        $this->expectException(Exception\RangeException::class);
+        $this->expectException(\Cassandra\Exception\RangeException::class);
         $this->expectExceptionMessage("Product is out of range");
         if ($class == "Cassandra\\Bigint" ||
             $class == "Cassandra\\Varint") {
@@ -535,7 +522,7 @@ class NumberTest extends TestCase {
      * @dataProvider numberClasses
      */
     public function testDivisionByZero($class) {
-        $this->expectException(Exception\DivideByZeroException::class);
+        $this->expectException(\Cassandra\Exception\DivideByZeroException::class);
         $this->expectExceptionMessage("Cannot divide by zero");
         $value1 = new $class(1);
         $value2 = new $class(0);
@@ -556,7 +543,7 @@ class NumberTest extends TestCase {
      * @dataProvider numberClasses
      */
     public function testModuloByZero($class) {
-        $this->expectException(Exception\DivideByZeroException::class);
+        $this->expectException(\Cassandra\Exception\DivideByZeroException::class);
         $this->expectExceptionMessage("Cannot modulo by zero");
         $value1 = new $class(1);
         $value2 = new $class(0);
@@ -575,7 +562,7 @@ class NumberTest extends TestCase {
      * @dataProvider numberClasses
      */
     public function testAbsoluteValueDatatypeMinimum($class) {
-        $this->expectException(Exception\RangeException::class);
+        $this->expectException(\Cassandra\Exception\RangeException::class);
         $this->expectExceptionMessage("Value doesn't exist");
         if ($class == "Cassandra\\Varint") {
             $this->markTestSkipped("{$class} is not compatible with this test");
@@ -610,7 +597,7 @@ class NumberTest extends TestCase {
      * @dataProvider numberClasses
      */
     public function testSquareRootNegative($class) {
-        $this->expectException(Exception\RangeException::class);
+        $this->expectException(\Cassandra\Exception\RangeException::class);
         $this->expectExceptionMessage("Cannot take a square root of a negative number");
         $number = new $class(-1);
         $number->sqrt();
@@ -674,7 +661,7 @@ class NumberTest extends TestCase {
      * @depends testIs32bitLong
      */
     public function testBigintToIntTooSmall() {
-        $this->expectException(Exception\RangeException::class);
+        $this->expectException(\Cassandra\Exception\RangeException::class);
         $this->expectExceptionMessage("Value is too small");
         $number = new Bigint("-9223372036854775808");
         $number->toInt();
@@ -688,7 +675,7 @@ class NumberTest extends TestCase {
      * @depends testIs32bitLong
      */
     public function testBigintToIntTooLarge() {
-        $this->expectException(Exception\RangeException::class);
+        $this->expectException(\Cassandra\Exception\RangeException::class);
         $this->expectExceptionMessage("Value is too big");
         $number = new Bigint("9223372036854775807");
         $number->toInt();
@@ -700,10 +687,10 @@ class NumberTest extends TestCase {
     public function testOverflowTooBig($class, $value)
     {
         if (is_double($value)) {
-            $this->expectException(RangeException::class);
+            $this->expectException(\RangeException::class);
             $this->expectExceptionMessage("value must be between " . self::LIMITS[$class]["min"] . " and " . self::LIMITS[$class]["max"]);
         } else {
-            $this->expectException(RangeException::class);
+            $this->expectException(\RangeException::class);
             $this->expectExceptionMessage("value must be between " . self::LIMITS[$class]["min"] . " and " . self::LIMITS[$class]["max"] . ", " .
                 $value . " given");
         }
@@ -716,10 +703,10 @@ class NumberTest extends TestCase {
     public function testOverflowTooSmall($class, $value)
     {
         if (is_double($value)) {
-            $this->expectException(RangeException::class);
+            $this->expectException(\RangeException::class);
             $this->expectExceptionMessage("value must be between " . self::LIMITS[$class]["min"] . " and " . self::LIMITS[$class]["max"]);
         } else {
-            $this->expectException(RangeException::class);
+            $this->expectException(\RangeException::class);
             $this->expectExceptionMessage("value must be between " . self::LIMITS[$class]["min"] . " and " . self::LIMITS[$class]["max"] . ", " .
                 $value . " given");
         }

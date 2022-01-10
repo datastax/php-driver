@@ -18,8 +18,6 @@
 
 namespace Cassandra;
 
-use Cassandra\Exception\InvalidQueryException;
-
 /**
  * Simple statement integration tests.
  */
@@ -183,7 +181,7 @@ class SimpleStatementIntegrationTest extends BasicIntegrationTest {
      * @cassandra-version-2.1
      */
     public function testByNameInvalidBindName() {
-        $this->expectException(InvalidQueryException::class);
+        $this->expectException(\Cassandra\Exception\InvalidQueryException::class);
         $this->expectExceptionMessage('Invalid amount of bind variables');
 
         // Create the table
@@ -217,7 +215,7 @@ class SimpleStatementIntegrationTest extends BasicIntegrationTest {
      * @cpp-driver-version-2.2.3
      */
     public function testCaseSensitiveByNameInvalidBindName() {
-        $this->expectException(InvalidQueryException::class);
+        $this->expectException(\Cassandra\Exception\InvalidQueryException::class);
         $this->expectExceptionMessage('Invalid amount of bind variables');
 
         // Determine if the test should be skipped

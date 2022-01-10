@@ -18,7 +18,6 @@
 
 namespace Cassandra;
 
-use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -46,14 +45,14 @@ class TimeTest extends TestCase
 
     public function testConstructNegative()
     {
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage("nanoseconds must be nanoseconds since midnight, -1 given");
         new Time(-1);
     }
 
     public function testConstructTooBig()
     {
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage("nanoseconds must be nanoseconds since midnight, '86400000000000' given");
         new Time("86400000000000");
     }

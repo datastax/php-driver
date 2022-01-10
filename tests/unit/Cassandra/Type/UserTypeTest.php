@@ -19,7 +19,6 @@
 namespace Cassandra\Type;
 
 use Cassandra\Type;
-use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -30,7 +29,7 @@ class UserTypeTest extends TestCase
     public function testDefinesUserTypeType()
     {
         $type = Type::userType('a', Type::varchar());
-        $this->assertEquals('userType<a:varchar>', (string)$type);
+        $this->assertEquals('userType<a:varchar>', (string) $type);
         $types = $type->types();
         $this->assertEquals(Type::varchar(), $types['a']);
     }
@@ -38,7 +37,7 @@ class UserTypeTest extends TestCase
     public function testCreatesUserTypeFromValues()
     {
         $udt = Type::userType('a', Type::varchar(), 'b', Type::int())
-            ->create('a', 'xyz', 'b', 123);
+                    ->create('a', 'xyz', 'b', 123);
         $this->assertEquals(array('a' => 'xyz', 'b' => 123), $udt->values());
         $this->assertEquals('xyz', $udt->get('a'));
         $this->assertEquals(123, $udt->get('b'));
@@ -64,45 +63,34 @@ class UserTypeTest extends TestCase
 
     public function testPreventsCreatingUserTypeTypeWithInvalidName()
     {
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage(
-            'Not enough name/type pairs, user types can only be created from an even number of name/type pairs, '.
-            'where each odd argument is a name and each even argument is a type, ' .
-            'e.g userType(name, type, name, type, name, type)'
-        );
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Not enough name/type pairs, user types can only be created from an even number of name/type pairs, where each odd argument is a name and each even argument is a type, e.g userType(name, type, name, type, name, type)');
         Type::userType(Type::varchar());
     }
 
     public function testPreventsCreatingUserTypeWithInvalidName()
     {
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage(
-            'Not enough name/value pairs, user_types can only be created from an even number of name/value pairs, ' .
-            'where each odd argument is a name and each even argument is a value, ' .
-            'e.g user_type(name, value, name, value, name, value)'
-        );
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Not enough name/value pairs, user_types can only be created from an even number of name/value pairs, where each odd argument is a name and each even argument is a value, e.g user_type(name, value, name, value, name, value)');
         Type::userType('a', Type::varchar())->create(1);
     }
 
 
     public function testPreventsCreatingUserTypeWithUnsupportedTypes()
     {
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage("argument must be a string, 1 given");
         Type::userType('a', Type::varchar())->create('a', 1);
     }
 
     public function testPreventsDefiningUserTypesWithUnsupportedTypes()
     {
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage(
-            "type must be a valid Cassandra\Type, an instance of Cassandra\Type\UnsupportedType given"
-        );
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage("type must be a valid Cassandra\Type, an instance of Cassandra\Type\UnsupportedType given");
         Type::userType('a', new UnsupportedType());
     }
 
-    public function testWithNameOrWithKeyspace()
-    {
+    public function testWithNameOrWithKeyspace() {
         $userType = Type::userType('a', Type::int(), 'b', Type::varchar());
         $this->assertEquals($userType->name(), null);
         $this->assertEquals($userType->keyspace(), null);
@@ -140,22 +128,14 @@ class UserTypeTest extends TestCase
     public function equalTypes()
     {
         return array(
-            array(
-                Type::userType('a', Type::int()),
-                Type::userType('a', Type::int())
-            ),
-            array(
-                Type::userType('a', Type::int(), 'b', Type::varchar()),
-                Type::userType('a', Type::int(), 'b', Type::varchar())
-            ),
-            array(
-                Type::userType('a', Type::int(), 'b', Type::varchar(), 'c', Type::bigint()),
-                Type::userType('a', Type::int(), 'b', Type::varchar(), 'c', Type::bigint())
-            ),
-            array(
-                Type::userType('a', Type::collection(Type::int()), 'b', Type::set(Type::int())),
-                Type::userType('a', Type::collection(Type::int()), 'b', Type::set(Type::int()))
-            )
+            array(Type::userType('a', Type::int()),
+                  Type::userType('a', Type::int())),
+            array(Type::userType('a', Type::int(), 'b', Type::varchar()),
+                  Type::userType('a', Type::int(), 'b', Type::varchar())),
+            array(Type::userType('a', Type::int(), 'b', Type::varchar(), 'c', Type::bigint()),
+                  Type::userType('a', Type::int(), 'b', Type::varchar(), 'c', Type::bigint())),
+            array(Type::userType('a', Type::collection(Type::int()), 'b', Type::set(Type::int())),
+                  Type::userType('a', Type::collection(Type::int()), 'b', Type::set(Type::int())))
         );
     }
 
@@ -172,31 +152,19 @@ class UserTypeTest extends TestCase
     {
         return array(
             // Different types
-            array(
-                Type::userType('a', Type::int()),
-                Type::userType('a', Type::varchar())
-            ),
-            array(
-                Type::userType('a', Type::int(), 'b', Type::varchar()),
-                Type::userType('a', Type::int(), 'b', Type::bigint())
-            ),
-            array(
-                Type::userType('a', Type::int(), 'b', Type::varchar(), 'c', Type::varint()),
-                Type::userType('a', Type::int(), 'b', Type::varchar(), 'c', Type::bigint())
-            ),
-            array(
-                Type::userType('a', Type::collection(Type::int()), 'b', Type::set(Type::varchar())),
-                Type::userType('a', Type::collection(Type::int()), 'b', Type::set(Type::int()))
-            ),
+            array(Type::userType('a', Type::int()),
+                  Type::userType('a', Type::varchar())),
+            array(Type::userType('a', Type::int(), 'b', Type::varchar()),
+                  Type::userType('a', Type::int(), 'b', Type::bigint())),
+            array(Type::userType('a', Type::int(), 'b', Type::varchar(), 'c', Type::varint()),
+                  Type::userType('a', Type::int(), 'b', Type::varchar(), 'c', Type::bigint())),
+            array(Type::userType('a', Type::collection(Type::int()), 'b', Type::set(Type::varchar())),
+                  Type::userType('a', Type::collection(Type::int()), 'b', Type::set(Type::int()))),
             // Different names
-            array(
-                Type::userType('a', Type::int()),
-                Type::userType('b', Type::int())
-            ),
-            array(
-                Type::userType('a', Type::int(), 'c', Type::varchar()),
-                Type::userType('b', Type::int(), 'c', Type::varchar())
-            ),
+            array(Type::userType('a', Type::int()),
+                  Type::userType('b', Type::int())),
+            array(Type::userType('a', Type::int(), 'c', Type::varchar()),
+                  Type::userType('b', Type::int(), 'c', Type::varchar())),
         );
     }
 }

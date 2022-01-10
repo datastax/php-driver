@@ -18,7 +18,6 @@
 
 namespace Cassandra;
 
-use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -28,7 +27,7 @@ class UserTypeValueTest extends TestCase
 {
     public function testSupportsOnlyCassandraTypes()
     {
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage("Unsupported type 'invalid type'");
         new UserTypeValue(array('name1' => 'invalid type'));
     }
@@ -149,7 +148,7 @@ class UserTypeValueTest extends TestCase
 
     public function testSetInvalidName()
     {
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage("Invalid name 'invalid'");
         $udt = new UserTypeValue(array('name1' => Type::int()));
         $udt->set('invalid', 42);
@@ -157,7 +156,7 @@ class UserTypeValueTest extends TestCase
 
     public function testGetInvalidName()
     {
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage("Invalid name 'invalid'");
         $udt = new UserTypeValue(array('name1' => Type::int()));
         $udt->set('name1', 42);
@@ -166,7 +165,7 @@ class UserTypeValueTest extends TestCase
 
     public function testInvalidType()
     {
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage("argument must be an int, 'text' given");
         $udt = new UserTypeValue(array('name1' => Type::int()));
         $udt->set('name1', 'text');

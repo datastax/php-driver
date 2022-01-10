@@ -95,7 +95,7 @@ char *php_driver_duration_to_string(php_driver_duration *duration)
   cass_int32_t final_months = duration->months;
   cass_int32_t final_days = duration->days;
   cass_int64_t final_nanos = duration->nanos;
-  
+
   is_negative = final_months < 0 || final_days < 0 || final_nanos < 0;
   if (final_months < 0)
     final_months = -final_months;
@@ -103,7 +103,7 @@ char *php_driver_duration_to_string(php_driver_duration *duration)
     final_days = -final_days;
   if (final_nanos < 0)
     final_nanos = -final_nanos;
-  
+
   spprintf(&rep, 0, "%s%dmo%dd" LL_FORMAT "ns", is_negative ? "-" : "", final_months, final_days, final_nanos);
   return rep;
 }
@@ -226,16 +226,9 @@ static zend_function_entry php_driver_duration_methods[] = {
 static php_driver_value_handlers php_driver_duration_handlers;
 
 static HashTable *
-php_driver_duration_properties(
-#if PHP_MAJOR_VERSION >= 8
-        zend_object *object
-#else
-        zval *object TSRMLS_DC
-#endif
-)
+php_driver_duration_properties(php7to8_object *object TSRMLS_DC)
 {
   HashTable *props = zend_std_get_properties(object TSRMLS_CC);
-
 #if PHP_MAJOR_VERSION >= 8
   php_driver_duration  *self = PHP5TO7_ZEND_OBJECT_GET(duration, object);
 #else
@@ -259,9 +252,7 @@ php_driver_duration_properties(
 static int
 php_driver_duration_compare(zval *obj1, zval *obj2 TSRMLS_DC)
 {
-#if PHP_MAJOR_VERSION >= 8
-  ZEND_COMPARE_OBJECTS_FALLBACK(obj1, obj2);
-#endif
+  PHP7TO8_MAYBE_COMPARE_OBJECTS_FALLBACK(obj1, obj2);
   php_driver_duration *left, *right;
 
   if (Z_OBJCE_P(obj1) != Z_OBJCE_P(obj2))
@@ -336,11 +327,7 @@ void php_driver_define_Duration(TSRMLS_D)
 
   memcpy(&php_driver_duration_handlers, zend_get_std_object_handlers(), sizeof(zend_object_handlers));
   php_driver_duration_handlers.std.get_properties  = php_driver_duration_properties;
-#if PHP_MAJOR_VERSION >= 8
-  php_driver_duration_handlers.std.compare = php_driver_duration_compare;
-#else
-  php_driver_duration_handlers.std.compare_objects = php_driver_duration_compare;
-#endif
+  PHP7TO8_COMPARE(php_driver_duration_handlers.std, php_driver_duration_compare);
 
   php_driver_duration_handlers.hash_value = php_driver_duration_hash_value;
   php_driver_duration_handlers.std.clone_obj = NULL;

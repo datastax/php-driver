@@ -18,8 +18,6 @@
 
 namespace Cassandra;
 
-use Cassandra\Exception\InvalidQueryException;
-
 /**
  * Tuple integration tests.
  *
@@ -216,7 +214,7 @@ class TupleIntegrationTest extends CollectionsIntegrationTest {
      * @ticket PHP-58
      */
     public function testInvalidType() {
-        $this->expectException(InvalidQueryException::class);
+        $this->expectException(\Cassandra\Exception\InvalidQueryException::class);
 
         $validType = Type::tuple(Type::int());
         $invalidType = Type::tuple(Type::varchar());

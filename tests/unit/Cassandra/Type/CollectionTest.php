@@ -19,7 +19,6 @@
 namespace Cassandra\Type;
 
 use Cassandra\Type;
-use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -55,17 +54,15 @@ class CollectionTest extends TestCase
 
     public function testPreventsCreatingCollectionWithUnsupportedTypes()
     {
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage("argument must be a string, 1 given");
         Type::collection(Type::varchar())->create(1);
     }
 
     public function testPreventsDefiningCollectionsWithUnsupportedTypes()
     {
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage(
-            "type must be a valid Cassandra\Type, an instance of Cassandra\Type\UnsupportedType given"
-        );
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage("type must be a valid Cassandra\Type, an instance of Cassandra\Type\UnsupportedType given");
         Type::collection(new UnsupportedType());
     }
 

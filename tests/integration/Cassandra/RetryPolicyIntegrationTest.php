@@ -18,8 +18,6 @@
 
 namespace Cassandra;
 
-use Cassandra\Exception\UnavailableException;
-
 /**
  * Retry policy integration tests.
  */
@@ -228,7 +226,7 @@ class RetryPolicyIntegrationTest extends BasicIntegrationTest {
      * @cassandra-version-2.0
      */
     public function testFallThroughPolicyWrite() {
-        $this->expectException(UnavailableException::class);
+        $this->expectException(\Cassandra\Exception\UnavailableException::class);
         $this->expectExceptionMessageMatches('/Cannot achieve consistency level .*/');
 
         // Create the retry policy (RF = 3 with 1 node)
@@ -264,7 +262,7 @@ class RetryPolicyIntegrationTest extends BasicIntegrationTest {
      * @cassandra-version-2.0
      */
     public function testFallThroughPolicyRead() {
-        $this->expectException(UnavailableException::class);
+        $this->expectException(\Cassandra\Exception\UnavailableException::class);
         $this->expectExceptionMessageMatches('/Cannot achieve consistency level .*/');
 
         // Create the retry policy (RF = 3 with 1 node)
