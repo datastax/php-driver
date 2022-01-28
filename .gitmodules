@@ -1,3 +1,7 @@
-[submodule "lib/cpp-driver"]
-	path = lib/cpp-driver
+
+[submodule "subprojects/cassandra_cpp"]
+	path = subprojects/cassandra_cpp
 	url = https://github.com/datastax/cpp-driver.git
+[submodule "subprojects/libuv"]
+	path = subprojects/libuv
+	url = https://github.com/libuv/libuv.git
