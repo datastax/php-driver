@@ -2,31 +2,33 @@
 // https://github.com/microsoft/vscode-dev-containers/tree/v0.194.0/containers/docker-existing-dockerfile
 {
 	"name": "Existing Dockerfile",
-
-	// Sets the run context to one level up instead of the .devcontainer folder.
 	"context": "..",
-
-	// Update the 'dockerFile' property if you aren't using the standard 'Dockerfile' filename.
 	"dockerFile": "../Dockerfile",
-
-	// Set *default* container specific settings.json values on container create.
 	"settings": {},
-	
-	// Add the IDs of extensions you want installed when the container is created.
-	"extensions": []
-
-	// Use 'forwardPorts' to make a list of ports inside the container available locally.
-	// "forwardPorts": [],
-
-	// Uncomment the next line to run commands after the container is created - for example installing curl.
-	// "postCreateCommand": "apt-get update && apt-get install -y curl",
-
-	// Uncomment when using a ptrace-based debugger like C++, Go, and Rust
-	// "runArgs": [ "--cap-add=SYS_PTRACE", "--security-opt", "seccomp=unconfined" ],
-
-	// Uncomment to use the Docker CLI from inside the container. See https://aka.ms/vscode-remote/samples/docker-from-docker.
-	// "mounts": [ "source=/var/run/docker.sock,target=/var/run/docker.sock,type=bind" ],
-
-	// Uncomment to connect as a non-root user if you've added one. See https://aka.ms/vscode-remote/containers/non-root.
-	// "remoteUser": "vscode"
+	"extensions": [
+		"maelvalais.autoconf",
+		"aaron-bond.better-comments",
+		"jeff-hykin.better-cpp-syntax",
+		"mads-hartmann.bash-ide-vscode",
+		"ms-vscode.cpptools",
+		"jbenden.c-cpp-flylint",
+		"ms-vscode.cpptools-extension-pack",
+		"xaver.clang-format",
+		"p1c2u.docker-compose",
+		"ms-azuretools.vscode-docker",
+		"mikestead.dotenv",
+		"usernamehw.errorlens",
+		"eamodio.gitlens",
+		"EditorConfig.EditorConfig",
+		"christian-kohler.path-intellisense",
+		"xdebug.php-debug",
+		"bmewburn.vscode-intelephense-client",
+		"ms-python.vscode-pylance",
+		"ms-python.python",
+		"JordanHury.sqltools-cassandra",
+		"VisualStudioExptTeam.vscodeintellicode",
+		"redhat.vscode-yaml"
+	],
+	"forwardPorts": [],
+	"remoteUser": "root"
 }
