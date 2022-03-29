@@ -624,7 +624,12 @@ void php_driver_define_Map(TSRMLS_D)
 #endif
   php_driver_map_ce->ce_flags |= PHP5TO7_ZEND_ACC_FINAL;
   php_driver_map_ce->create_object = php_driver_map_new;
+
+#if PHP_VERSION_ID < 80100
   zend_class_implements(php_driver_map_ce TSRMLS_CC, 3, spl_ce_Countable, zend_ce_iterator, zend_ce_arrayaccess);
+#else
+  zend_class_implements(php_driver_map_ce TSRMLS_CC, 3, zend_ce_countable, zend_ce_iterator, zend_ce_arrayaccess);
+#endif
 
   php_driver_map_handlers.hash_value = php_driver_map_hash_value;
   php_driver_map_handlers.std.clone_obj = NULL;

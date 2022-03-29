@@ -456,7 +456,12 @@ void php_driver_define_Set(TSRMLS_D)
 #endif
   php_driver_set_ce->ce_flags |= PHP5TO7_ZEND_ACC_FINAL;
   php_driver_set_ce->create_object = php_driver_set_new;
+
+#if PHP_VERSION_ID < 80100
   zend_class_implements(php_driver_set_ce TSRMLS_CC, 2, spl_ce_Countable, zend_ce_iterator);
+#else
+  zend_class_implements(php_driver_set_ce TSRMLS_CC, 2, zend_ce_countable, zend_ce_iterator);
+#endif
 
   php_driver_set_handlers.hash_value = php_driver_set_hash_value;
   php_driver_set_handlers.std.clone_obj = NULL;

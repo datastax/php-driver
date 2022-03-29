@@ -12,3 +12,4 @@
 /tmp/*
 *.ac
 .phpunit.result.cache
+*.dep
