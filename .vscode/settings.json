@@ -1,6 +1,33 @@
 {
     "files.associations": {
         "php_driver.h": "c",
-        "php.h": "c"
-    }
+        "php.h": "c",
+        "bytes.h": "c",
+        "config.h": "c"
+    },
+    "php.suggest.basic": false,
+    "php.validate.enable": true,
+    "php.validate.run": "onType",
+    "C_Cpp.clang_format_sortIncludes": true,
+    "C_Cpp.experimentalFeatures": "Enabled",
+    "C_Cpp.intelliSenseEngineFallback": "Enabled",
+    "C_Cpp.loggingLevel": "Information",
+    "C_Cpp.workspaceSymbols": "All",
+    "C_Cpp.vcFormat.indent.preprocessor": "leftmostColumn",
+    "C_Cpp.vcFormat.newLine.beforeCatch": false,
+    "C_Cpp.vcFormat.newLine.beforeElse": false,
+    "C_Cpp.vcFormat.newLine.beforeOpenBrace.block": "sameLine",
+    "C_Cpp.vcFormat.newLine.beforeOpenBrace.function": "newLine",
+    "C_Cpp.vcFormat.newLine.beforeOpenBrace.type": "sameLine",
+    "C_Cpp.vcFormat.newLine.closeBraceSameLine.emptyFunction": true,
+    "C_Cpp.vcFormat.newLine.closeBraceSameLine.emptyType": true,
+    "C_Cpp.default.cppStandard": "gnu++20",
+    "C_Cpp.default.cStandard": "gnu17",
+    "C_Cpp.default.intelliSenseMode": "clang-arm64",
+    "[c]": {
+        "editor.defaultFormatter": "ms-vscode.cpptools"
+    },
+    "[cpp]": {
+        "editor.defaultFormatter": "ms-vscode.cpptools"
+    },
 }

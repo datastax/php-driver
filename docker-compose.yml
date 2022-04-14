@@ -1,0 +1,24 @@
+version: '3.8'
+
+volumes:
+  cassandra:
+networks:
+  net:
+    driver: bridge
+    name: cassandra-php-driver
+
+services:
+  cassandra:
+    image: cassandra:3.11
+    restart: unless-stopped
+    ports:
+      - '9042:9042'
+    volumes:
+      - cassandra:/var/lib/cassandra
+    environment:
+      CASSANDRA_CLUSTER_NAME: cassandra-php-driver
+      CASSANDRA_ENDPOINT_SNITCH: GossipingPropertyFileSnitch
+      CASSANDRA_DC: datacenter1
+      CASSANDRA_RPC_ADDRESS: cassandra
+    networks:
+      - net

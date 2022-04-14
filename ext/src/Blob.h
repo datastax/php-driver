@@ -17,6 +17,4 @@
 #ifndef PHP_DRIVER_BLOB_H
 #define PHP_DRIVER_BLOB_H
 
-void php_driver_blob_init(INTERNAL_FUNCTION_PARAMETERS);
-
 #endif /* PHP_DRIVER_BLOB_H */

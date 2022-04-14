@@ -4,7 +4,6 @@
 	"name": "Existing Dockerfile",
 	"context": "..",
 	"dockerFile": "../Dockerfile",
-	"settings": {},
 	"extensions": [
 		"maelvalais.autoconf",
 		"aaron-bond.better-comments",
@@ -30,5 +29,10 @@
 		"redhat.vscode-yaml"
 	],
 	"forwardPorts": [],
-	"remoteUser": "root"
+	"remoteUser": "root",
+	"initializeCommand": "docker compose up -d",
+	"runArgs": [
+		"--network",
+		"cassandra-php-driver"
+	]
 }

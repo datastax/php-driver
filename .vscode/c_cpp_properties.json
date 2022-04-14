@@ -1,15 +1,45 @@
 {
+    "enableConfigurationSquiggles": true,
     "configurations": [
+        {
+            "name": "Mac",
+            "includePath": [
+                "${workspaceFolder}/lib/cpp-driver/include",
+                "${workspaceFolder}/ext",
+                "/opt/homebrew/include/php/main",
+                "/opt/homebrew/include/php/Zend",
+                "/opt/homebrew/include/php",
+                "/opt/homebrew/include/php/TSRM"
+            ],
+            "defines": [
+                "HAVE_CONFIG_H"
+            ],
+            "compilerPath": "/usr/bin/gcc",
+            "cStandard": "c17",
+            "cppStandard": "c++20",
+            "intelliSenseMode": "linux-gcc-arm64",
+            "compilerArgs": [
+                "-lssl ",
+                "-lz ",
+                "-luv ",
+                "-lm ",
+                "-lgmp ",
+                "-lstdc++"
+            ]
+        },
         {
             "name": "Linux",
             "includePath": [
-                "${workspaceFolder}/**",
+                "${workspaceFolder}/lib/cpp-driver/include",
+                "${workspaceFolder}/ext",
                 "/usr/local/include/php/main",
                 "/usr/local/include/php/Zend",
                 "/usr/local/include/php",
                 "/usr/local/include/php/TSRM"
             ],
-            "defines": [],
+            "defines": [
+                "HAVE_CONFIG_H"
+            ],
             "compilerPath": "/usr/bin/gcc",
             "cStandard": "c17",
             "cppStandard": "c++20",

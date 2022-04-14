@@ -25,7 +25,8 @@
     },
     {
       "name": "Dusan Malusev",
-      "email": "dmalusev@nanointeractive.com"
+      "email": "dmalusev@nanointeractive.com",
+      "homepage": "https://github.com/malusev998"
     },
     {
       "name": "Marko Dobromirovic",
@@ -37,16 +38,16 @@
   },
   "require-dev": {
     "behat/behat": "^3.7",
-    "phpunit/php-code-coverage": "^7.0",
-    "phpunit/php-token-stream": "^3.1",
-    "phpunit/phpunit": "^8.5",
-    "symfony/process": "^2.1"
+    "phpunit/php-code-coverage": "^9",
+    "phpunit/php-token-stream": "^4",
+    "phpunit/phpunit": "^9",
+    "symfony/process": "^2"
   },
   "config": {
     "bin-dir": "bin/"
   },
   "scripts": {
-    "test": "phpunit && behat"
+    "test": "phpunit"
   },
   "autoload-dev": {
     "files": ["support/ccm.php"],

@@ -22,7 +22,7 @@ use Cassandra\SimpleStatement;
 class CCM
 {
     const DEFAULT_CLUSTER_PREFIX = "php-driver";
-    const DEFAULT_CASSANDRA_VERSION = "3.10";
+    const DEFAULT_CASSANDRA_VERSION = "3.11";
     const PROCESS_TIMEOUT_IN_SECONDS = 480;
     private $clusterPrefix;
     private $isSilent;
@@ -93,20 +93,26 @@ class CCM
 
     public function start()
     {
+        $host = getenv("CASSANDRA_HOST");
+
+        if (empty($host)) {
+            $host = '127.0.0.1';
+        }
+
         $this->run('start', '--root', '--skip-wait-other-notice', '--wait-for-binary-proto');
         $builder = Cassandra::cluster()
-                       ->withPersistentSessions(false)
-                       ->withContactPoints('127.0.0.1');
+            ->withPersistentSessions(false)
+            ->withContactPoints($host);
 
-        if ($this->ssl || $this->clientAuth) {
-            $sslOptions = Cassandra::ssl()
-                              ->withTrustedCerts(realpath(__DIR__ . '/ssl/cassandra.pem'))
-                              ->withVerifyFlags(Cassandra::VERIFY_PEER_CERT)
-                              ->withClientCert(realpath(__DIR__ . '/ssl/driver.pem'))
-                              ->withPrivateKey(realpath(__DIR__ . '/ssl/driver.key'), 'php-driver')
-                              ->build();
-            $builder->withSSL($sslOptions);
-        }
+        // if ($this->ssl || $this->clientAuth) {
+        //     $sslOptions = Cassandra::ssl()
+        //                       ->withTrustedCerts(realpath(__DIR__ . '/ssl/cassandra.pem'))
+        //                       ->withVerifyFlags(Cassandra::VERIFY_PEER_CERT)
+        //                       ->withClientCert(realpath(__DIR__ . '/ssl/driver.pem'))
+        //                       ->withPrivateKey(realpath(__DIR__ . '/ssl/driver.key'), 'php-driver')
+        //                       ->build();
+        //     $builder->withSSL($sslOptions);
+        // }
 
         for ($retries = 1; $retries <= 10; $retries++) {
             try {
@@ -116,7 +122,7 @@ class CCM
             } catch (Cassandra\Exception\RuntimeException $e) {
                 unset($this->session);
                 unset($this->cluster);
-                sleep($retries * 0.4);
+                // sleep($retries * 0.4);
             }
         }
 
