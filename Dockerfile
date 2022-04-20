@@ -35,7 +35,9 @@ RUN docker-php-source extract \
         cppcheck \
         flawfinder \
         psutils \
-        libpcre3-dev -y \
+        iputils-ping \
+        libpcre3-dev \
+        default-jdk -y \
     && git clone --recursive https://github.com/datastax/cpp-driver /cpp-driver \
     && cd /cpp-driver && git checkout tags/$CPP_DRIVER_VERSION -b v$CPP_DRIVER_VERSION \
     && mkdir -p build && cd build \
@@ -59,6 +61,6 @@ RUN pip3 install lizard \
     && pip3 install six \
     && pip3 install psutil
 
-RUN apt-get install openjdk-11-jdk iputils-ping
+RUN pecl install openswoole
 
 CMD ["bash"]

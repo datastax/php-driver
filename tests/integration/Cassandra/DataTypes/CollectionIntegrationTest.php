@@ -16,7 +16,9 @@
  * limitations under the License.
  */
 
-namespace Cassandra;
+namespace Cassandra\DataTypes;
+
+use Cassandra\Type;
 
 class CollectionIntegrationTest extends CollectionsIntegrationTest
 {

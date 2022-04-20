@@ -31,8 +31,8 @@
 	"forwardPorts": [],
 	"remoteUser": "root",
 	"initializeCommand": "docker compose up -d",
+	"shutdownAction": "stopContainer",
 	"runArgs": [
-		"--network",
-		"cassandra-php-driver"
+		"--network=cassandra-php-driver"
 	]
 }

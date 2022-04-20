@@ -58,10 +58,10 @@ class PagingIntegrationTest extends BasicIntegrationTest {
      *                    from 1 - 1024 characters)
      * @return string Randomly genreated text
      */
-    private function randomString($length = -1) {
+    private function randomString(int $length = -1) {
         // Determine if the length should be random
         if ($length < 0) {
-            $length = mt_rand(1, 1024);
+            $length = random_int(1, 1024);
         }
 
         // Generate the random string from the below character set
@@ -69,7 +69,7 @@ class PagingIntegrationTest extends BasicIntegrationTest {
         $charactersLength = strlen($characters);
         $randomString = '';
         foreach (range(1, $length) as $i) {
-            $randomString .= $characters[rand(0, $charactersLength - 1)];
+            $randomString .= $characters[random_int(0, $charactersLength - 1)];
         }
         return $randomString;
     }

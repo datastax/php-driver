@@ -16,10 +16,15 @@
  * limitations under the License.
  */
 
-namespace Cassandra;
+namespace Cassandra\DataTypes;
 
+use Cassandra\Bigint;
 use Cassandra\Exception\InvalidQueryException;
 use Cassandra\Exception\ServerException;
+use Cassandra\Set;
+use Cassandra\Timeuuid;
+use Cassandra\Type;
+use Cassandra\UserTypeValue;
 
 /**
  * User type integration tests.

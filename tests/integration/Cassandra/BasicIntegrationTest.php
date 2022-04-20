@@ -26,15 +26,16 @@ use PHPUnit\Framework\TestCase;
  * functionality when a simple setup and teardown is required. This class
  * should be used for the majority of tests.
  */
-abstract class BasicIntegrationTest extends TestCase {
+abstract class BasicIntegrationTest extends TestCase
+{
     /**
      * Conversion value for seconds to milliseconds.
      */
-    const SECONDS_TO_MILLISECONDS = 1000;
+    public const SECONDS_TO_MILLISECONDS = 1000;
     /**
      * Conversion value for seconds to microseconds.
      */
-    const SECONDS_TO_MICROSECONDS = 1000000;
+    public const SECONDS_TO_MICROSECONDS = 1000000;
 
     /**
      * Integration test instance (helper class).
@@ -42,12 +43,7 @@ abstract class BasicIntegrationTest extends TestCase {
      * @var Integration
      */
     private $integration;
-    /**
-     * Handle for interacting with CCM.
-     *
-     * @var CCM
-     */
-    protected $ccm;
+
     /**
      * Number of nodes in data center one.
      *
@@ -66,24 +62,25 @@ abstract class BasicIntegrationTest extends TestCase {
      * @var int
      */
     protected $replicationFactor = -1;
+
     /**
      * Established cluster configuration.
      *
-     * @var \Cassandra\Cluster
+     * @var Cluster
      */
-    protected $cluster;
+    protected Cluster $cluster;
     /**
      * Connected database session.
      *
-     * @var \Cassandra\Session
+     * @var Session
      */
-    protected $session;
+    protected Session $session;
     /**
      * Version of Cassandra/DSE the session is connected to.
      *
      * @var string
      */
-    protected $serverVersion;
+    protected mixed $serverVersion;
     /**
      * Keyspace name being used for the test.
      *
@@ -118,12 +115,19 @@ abstract class BasicIntegrationTest extends TestCase {
     /**
      * Setup the database for the integration tests.
      */
-    protected function setUp(): void {
+    protected function setUp(): void
+    {
         // Initialize the database and establish a connection
-        $this->integration = new Integration(get_class(), $this->getName(false),
-            $this->numberDC1Nodes, $this->numberDC2Nodes,
-            $this->replicationFactor, $this->isClientAuthentication,
-            $this->isSSL, $this->isUserDefinedAggregatesFunctions);
+        $this->integration = new Integration(
+            static::class,
+            $this->getName(false),
+            $this->numberDC1Nodes,
+            $this->numberDC2Nodes,
+            $this->replicationFactor,
+            $this->isClientAuthentication,
+            $this->isSSL,
+            $this->isUserDefinedAggregatesFunctions
+        );
         $this->ccm = $this->integration->ccm;
         $this->cluster = $this->integration->cluster;
         $this->session = $this->integration->session;
@@ -137,7 +141,8 @@ abstract class BasicIntegrationTest extends TestCase {
     /**
      * Teardown the database for the integration tests.
      */
-    protected function tearDown(): void {
+    protected function tearDown(): void
+    {
         unset($this->integration);
         unset($this->ccm);
         unset($this->session);

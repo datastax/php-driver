@@ -16,7 +16,11 @@
  * limitations under the License.
  */
 
-namespace Cassandra;
+namespace Cassandra\DataTypes;
+
+use Cassandra\Bigint;
+use Cassandra\DatatypeIntegrationTests;
+use Cassandra\Type;
 
 /**
  * A base class for collections integration tests

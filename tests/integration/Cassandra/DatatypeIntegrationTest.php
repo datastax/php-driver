@@ -28,7 +28,6 @@ class DatatypeIntegrationTest extends DatatypeIntegrationTests {
      * This test ensures that data types work with all Cassandra's scalar
      * types.
      *
-     * @test
      * @dataProvider dataTypes
      */
     public function testDataTypes($type, $values) {
@@ -59,7 +58,6 @@ class DatatypeIntegrationTest extends DatatypeIntegrationTests {
      * and Varint datatypes for positive values with leading 1's that land on
      * a byte boundary.
      *
-     * @test
      * @ticket PHP-70
      */
     public function testByteBoundaryDecimalVarint() {

@@ -16,9 +16,13 @@
  * limitations under the License.
  */
 
-namespace Cassandra;
+namespace Cassandra\DataTypes;
 
+use Cassandra\Bigint;
 use Cassandra\Exception\InvalidQueryException;
+use Cassandra\Timeuuid;
+use Cassandra\Tuple;
+use Cassandra\Type;
 
 /**
  * Tuple integration tests.

@@ -34,7 +34,7 @@
     }
   ],
   "require": {
-    "php": ">=8.0"
+    "php": ">=8.1"
   },
   "require-dev": {
     "behat/behat": "^3.7",

@@ -13,3 +13,4 @@
 *.ac
 .phpunit.result.cache
 *.dep
+./ext/cmake_build/

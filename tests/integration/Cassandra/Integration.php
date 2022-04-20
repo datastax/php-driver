@@ -25,7 +25,8 @@ use ReflectionClass;
 /**
  * Base class to provide common integration test functionality.
  */
-class Integration {
+class Integration
+{
     //TODO: Remove these constant and make them configurable
     const IP_ADDRESS = "127.0.0.1";
     /**
@@ -85,7 +86,7 @@ class Integration {
     /**
      * Create the integration helper instance.
      *
-     * @param $className Name of the class for the executed test.
+     * @param string $className Name of the class for the executed test.
      * @param string $testName Name of the test being executed.
      * @param int $numberDC1Nodes Number of nodes in data center one
      *                            (DEFAULT: 1).
@@ -106,18 +107,21 @@ class Integration {
      *                                               (DEFAULT: false).
      * @return Integration Instance of the Integration class created.
      */
-    public function __construct($className,
-                                $testName = "",
-                                $numberDC1Nodes = 1,
-                                $numberDC2Nodes = 0,
-                                $replicationFactor = -1,
-                                $isClientAuthentication = false,
-                                $isSSL = false,
-                                $isUserDefinedAggregatesFunctions = false) {
+    public function __construct(
+        private string $className,
+        private string $testName = "",
+        private int $numberDC1Nodes = 1,
+        private int $numberDC2Nodes = 0,
+        private int $replicationFactor = -1,
+        private bool $isClientAuthentication = false,
+        private bool $isSSL = false,
+        private bool $isUserDefinedAggregatesFunctions = false
+    ) {
         // Generate the keyspace name for the test
         $this->keyspaceName = $this->getShortName($className);
+
         if (!empty($testName)) {
-            $this->keyspaceName = $this->keyspaceName . "_" . $testName;
+            $this->keyspaceName .= "_" . $testName;
         }
         // Make all strings lowercase for case insensitive O/S (e.g. Windows)
         $this->keyspaceName = strtolower($this->keyspaceName);
@@ -125,9 +129,12 @@ class Integration {
         //Ensure the keyspace does not contain more to many characters
         if (strlen($this->keyspaceName) > self::KEYSPACE_MAXIMUM_LENGTH) {
             // Update the keyspace name with a unique ID
-            $uniqueID = uniqid();
-            $this->keyspaceName = substr($this->keyspaceName,
-                0, self::KEYSPACE_MAXIMUM_LENGTH - strlen($uniqueID)) .
+            $uniqueID = uniqid('', true);
+            $this->keyspaceName = substr(
+                    $this->keyspaceName,
+                    0,
+                    self::KEYSPACE_MAXIMUM_LENGTH - strlen($uniqueID)
+                ) .
                 $uniqueID;
         }
 
@@ -178,7 +185,8 @@ class Integration {
         $this->serverVersion = $rows->first()["release_version"];
     }
 
-    public function __destruct() {
+    public function __destruct()
+    {
         // Drop keyspace for integration test (may or may have not been created)
         if (!is_null($this->session)) {
             try {
@@ -195,7 +203,8 @@ class Integration {
      * @param $className Class name to remove namespace from
      * @return string Short name for the class name
      */
-    private function getShortName($className) {
+    private function getShortName($className)
+    {
         $function = new ReflectionClass($className);
         return $function->getShortName();
     }
@@ -207,19 +216,21 @@ class Integration {
      * @param $numberOfNodes Total number of nodes in the cluster
      * @return string Comma delimited ip addresses
      */
-    private function getContactPoints($ipAddress, $numberOfNodes) {
+    private function getContactPoints($ipAddress, $numberOfNodes): string
+    {
         // Generate the contact points from the IP address and total nodes
-        $ipPrefix = substr($ipAddress, 0, strlen($ipAddress) - 1);
+        $ipPrefix = substr($ipAddress, 0, -1);
         $contactPoints = $ipAddress;
-        foreach (range(2, $numberOfNodes) as $i ) {
-            $contactPoints .= ", {$ipPrefix}{$i}";
+        foreach (range(2, $numberOfNodes) as $i) {
+            $contactPoints .= ", $ipPrefix$i";
         }
 
         // Return the contact points
         return $contactPoints;
     }
 
-    public function __get($property) {
+    public function __get($property)
+    {
         if (property_exists($this, $property)) {
             return $this->$property;
         }
@@ -230,7 +241,8 @@ class Integration {
      *
      * @return bool True if debug argument was used; false otherwise
      */
-    public static function isDebug() {
+    public static function isDebug()
+    {
         return in_array("--debug", $_SERVER['argv']);
     }
 
@@ -239,9 +251,10 @@ class Integration {
      *
      * @return bool True if verbose argument was used; false otherwise
      */
-    public static function isVerbose() {
+    public static function isVerbose()
+    {
         return in_array("--verbose", $_SERVER['argv']);
-     }
+    }
 }
 
 /**
@@ -249,7 +262,8 @@ class Integration {
  * fixture will ensure startup and shutdown procedures when running the
  * integration tests.
  */
-class IntegrationTestFixture {
+class IntegrationTestFixture
+{
     /**
      * Handle for communicating with CCM.
      *
@@ -263,12 +277,14 @@ class IntegrationTestFixture {
      */
     private static $instance;
 
-    function __construct() {
+    function __construct()
+    {
         $this->ccm = new CCM(CCM::DEFAULT_CASSANDRA_VERSION, true);
         $this->ccm->removeAllClusters();
     }
 
-    function __destruct() {
+    function __destruct()
+    {
         $this->ccm->removeAllClusters();
     }
 
@@ -276,10 +292,11 @@ class IntegrationTestFixture {
      * Create the integration test fixture for performing startup and shutdown
      * procedures required by the integration test suite.
      */
-    public static function createFixture() {
+    public static function createFixture()
+    {
         // Ensure only one instance (singleton)
         if (!isset($instance)) {
-            self::$instance  = new IntegrationTestFixture();
+            self::$instance = new IntegrationTestFixture();
         }
     }
 }
