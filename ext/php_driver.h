@@ -24,13 +24,13 @@
 #define LL_FORMAT "%lld"
 
 #if PHP_MAJOR_VERSION >= 8
-  #ifndef TSRMLS_D
-  #define TSRMLS_D void
-  #define TSRMLS_DC
-  #define TSRMLS_C
-  #define TSRMLS_CC
-  #define TSRMLS_FETCH()
-  #endif
+#ifndef TSRMLS_D
+#define TSRMLS_D void
+#define TSRMLS_DC
+#define TSRMLS_C
+#define TSRMLS_CC
+#define TSRMLS_FETCH()
+#endif
 #endif
 
 #include <ext/spl/spl_iterators.h>
@@ -70,30 +70,31 @@
 #define php5to7_zend_register_internal_class_ex(ce, parent_ce) zend_register_internal_class_ex((ce), (parent_ce) TSRMLS_CC);
 
 typedef zval php5to7_zval;
-typedef zval *php5to7_zval_args;
-typedef zval *php5to7_zval_arg;
-typedef zend_string *php5to7_string;
+typedef zval* php5to7_zval_args;
+typedef zval* php5to7_zval_arg;
+typedef zend_string* php5to7_string;
 typedef zend_long php5to7_long;
 typedef zend_ulong php5to7_ulong;
 typedef zval php5to7_zend_resource_le;
 typedef zend_resource* php5to7_zend_resource;
-typedef zend_object *php5to7_zend_object;
+typedef zend_object* php5to7_zend_object;
 typedef zend_object php5to7_zend_object_free;
-typedef zval **php5to7_zval_gc;
-typedef zval *php5to7_dtor;
+typedef zval** php5to7_zval_gc;
+typedef zval* php5to7_dtor;
 typedef size_t php5to7_size;
 
 #if ((PHP_MAJOR_VERSION == 7 && PHP_MINOR_VERSION >= 4) || PHP_MAJOR_VERSION > 7)
-  typedef unsigned long ulong;
+typedef unsigned long ulong;
 #endif
 
 static inline int
 php5to7_string_compare(php5to7_string s1, php5to7_string s2)
 {
-  if (s1->len != s2->len) {
-    return s1->len < s2->len ? -1 : 1;
-  }
-  return memcmp(s1->val, s2->val, s1->len);
+	if (s1->len != s2->len)
+	{
+		return s1->len < s2->len ? -1 : 1;
+	}
+	return memcmp(s1->val, s2->val, s1->len);
 }
 
 #define PHP5TO7_ZEND_OBJECT_GET(type_name, object) \
@@ -172,25 +173,25 @@ php5to7_string_compare(php5to7_string s1, php5to7_string s2)
   zend_hash_str_exists((ht), (key), (size_t)(len - 1))
 
 #define PHP5TO7_ZEND_HASH_FIND(ht, key, len, res) \
-  ((res = zend_hash_str_find((ht), (key), (size_t)(len - 1))) != NULL)
+  (((res) = zend_hash_str_find((ht), (key), (size_t)((len) - 1))) != NULL)
 
 #define PHP5TO7_ZEND_HASH_INDEX_FIND(ht, index, res) \
-  ((res = zend_hash_index_find((ht), (php5to7_ulong) (index))) != NULL)
+  (((res) = zend_hash_index_find((ht), (php5to7_ulong) (index))) != NULL)
 
 #define PHP5TO7_ZEND_HASH_NEXT_INDEX_INSERT(ht, val, val_size) \
   ((void) zend_hash_next_index_insert((ht), (val)))
 
 #define PHP5TO7_ZEND_HASH_UPDATE(ht, key, len, val, val_size) \
-  ((void) zend_hash_str_update((ht), (key), (size_t)(len - 1), (val)))
+  ((void) zend_hash_str_update((ht), (key), (size_t)((len) - 1), (val)))
 
 #define PHP5TO7_ZEND_HASH_INDEX_UPDATE(ht, index, val, val_size) \
   ((void) zend_hash_index_update((ht), (index), (val)))
 
 #define PHP5TO7_ZEND_HASH_ADD(ht, key, len, val, val_size) \
-  ((void) zend_hash_str_add((ht), (key), (size_t)(len - 1), (val)))
+  ((void) zend_hash_str_add((ht), (key), (size_t)((len) - 1), (val)))
 
 #define PHP5TO7_ZEND_HASH_DEL(ht, key, len) \
-  ((zend_hash_str_del((ht), (key), (size_t)(len - 1))) == SUCCESS)
+  ((zend_hash_str_del((ht), (key), (size_t)((len) - 1))) == SUCCESS)
 
 #define PHP5TO7_ZEND_HASH_ZVAL_COPY(dst, src) \
   zend_hash_copy((dst), (src), (copy_ctor_func_t) zval_add_ref);
@@ -198,8 +199,6 @@ php5to7_string_compare(php5to7_string s1, php5to7_string s2)
 #define PHP5TO7_ZEND_HASH_SORT(ht, compare_func, renumber) \
   zend_hash_sort(ht, compare_func, renumber TSRMLS_CC)
 
-#define PHP5TO7_ZEND_STRING_VAL(str) (str)->val
-#define PHP5TO7_ZEND_STRING_LEN(str) (str)->len
 
 #define PHP5TO7_ZVAL_COPY(zv1, zv2) ZVAL_COPY(zv1, zv2)
 #define PHP5TO7_ZVAL_IS_UNDEF(zv) Z_ISUNDEF(zv)
@@ -245,18 +244,18 @@ extern zend_module_entry php_driver_module_entry;
 
 #define phpext_cassandra_ptr &php_driver_module_entry
 
-PHP_MINIT_FUNCTION(php_driver);
-PHP_MSHUTDOWN_FUNCTION(php_driver);
-PHP_RINIT_FUNCTION(php_driver);
-PHP_RSHUTDOWN_FUNCTION(php_driver);
-PHP_MINFO_FUNCTION(php_driver);
+PHP_MINIT_FUNCTION (php_driver);
+PHP_MSHUTDOWN_FUNCTION (php_driver);
+PHP_RINIT_FUNCTION (php_driver);
+PHP_RSHUTDOWN_FUNCTION (php_driver);
+PHP_MINFO_FUNCTION (php_driver);
 
-zend_class_entry *exception_class(CassError rc);
+zend_class_entry* exception_class(CassError rc);
 
 void throw_invalid_argument(
-  zval* object,
-  const char* object_name,
-  const char* expected_type TSRMLS_DC);
+	zval* object,
+	const char* object_name,
+	const char* expected_type TSRMLS_DC);
 
 #define INVALID_ARGUMENT(object, expected)                       \
   {                                                              \
@@ -294,7 +293,7 @@ void throw_invalid_argument(
 #define PHP_DRIVER_INI_ENTRY_LOG_LEVEL \
   PHP_INI_ENTRY(PHP_DRIVER_NAME ".log_level", PHP_DRIVER_DEFAULT_LOG_LEVEL, PHP_INI_ALL, OnUpdateLogLevel)
 
-PHP_INI_MH(OnUpdateLogLevel);
-PHP_INI_MH(OnUpdateLog);
+PHP_INI_MH (OnUpdateLogLevel);
+PHP_INI_MH (OnUpdateLog);
 
 #endif /* PHP_DRIVER_H */

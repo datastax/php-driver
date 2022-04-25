@@ -30,4 +30,5 @@
     "[cpp]": {
         "editor.defaultFormatter": "ms-vscode.cpptools"
     },
+    "cmake.sourceDirectory": "${workspaceFolder}/ext",
 }

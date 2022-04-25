@@ -37,6 +37,7 @@ php_driver_del_peref(php_driver_ref **ref_ptr, int persistent)
   if (ref) {
     ref->count--;
 
+    // FIXME: Check for bug here
     if (ref->count <= 0) {
       ref->destruct(ref->data);
       ref->data = NULL;

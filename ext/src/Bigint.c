@@ -527,9 +527,7 @@ void php_driver_define_Bigint(TSRMLS_D)
 
   memcpy(&php_driver_bigint_handlers, zend_get_std_object_handlers(), sizeof(zend_object_handlers));
   php_driver_bigint_handlers.std.get_properties  = php_driver_bigint_properties;
-#if PHP_VERSION_ID >= 50400
   php_driver_bigint_handlers.std.get_gc          = php_driver_bigint_gc;
-#endif
 #if PHP_MAJOR_VERSION >= 8
   php_driver_bigint_handlers.std.compare         = php_driver_bigint_compare;
 #else

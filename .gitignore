@@ -14,3 +14,5 @@
 .phpunit.result.cache
 *.dep
 ./ext/cmake_build/
+.idea/
+cmake_build/

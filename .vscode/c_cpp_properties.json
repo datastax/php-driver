@@ -19,13 +19,14 @@
             "cppStandard": "c++20",
             "intelliSenseMode": "linux-gcc-arm64",
             "compilerArgs": [
-                "-lssl ",
-                "-lz ",
-                "-luv ",
-                "-lm ",
-                "-lgmp ",
+                "-lssl",
+                "-lz",
+                "-luv",
+                "-lm",
+                "-lgmp",
                 "-lstdc++"
-            ]
+            ],
+            "configurationProvider": "ms-vscode.cmake-tools"
         },
         {
             "name": "Linux",
@@ -45,11 +46,11 @@
             "cppStandard": "c++20",
             "intelliSenseMode": "linux-gcc-arm64",
             "compilerArgs": [
-                "-lssl ",
-                "-lz ",
-                "-luv ",
-                "-lm ",
-                "-lgmp ",
+                "-lssl",
+                "-lz",
+                "-luv",
+                "-lm",
+                "-lgmp",
                 "-lstdc++"
             ]
         }

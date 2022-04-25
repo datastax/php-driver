@@ -1,17 +1,26 @@
 LDFLAGS ?= -L/usr/local/lib
 LIBS ?= -lssl -lz -luv -lm -lgmp -lstdc++
 
-all: build copy
-
 .PHONY: build
 build:
-	cd ext && phpize
-	cd ext && ./configure --with-cassandra=/usr/local
-	cd ext && make -j8
-	cd ext && make install
+	@cd ext && mkdir cmake_build && cd cmake_build && cmake .. && make -j8
 
-config:
-	cp ./ext/cassandra.ini /usr/local/etc/php/conf.d/cassandra.ini
+install:
+	@cd ext/cmake_build && make install
 
-clean:
-	cd ext && $(MAKE) clean
+.PHONY: docker-dev-image
+docker-dev-image:
+	@docker build \
+		--build-arg "IMAGE=malusevd99/php-ext-dev:8.1-debug" \
+		-t "ghcr.io/nano-interactive/cassandra-php-driver:dev" \
+		--target dev \
+		--compress .
+
+.PHONY: docker-production-image
+docker-production-image:
+	@docker build \
+		--build-arg "IMAGE=malusevd99/php-ext-dev:8.1" \
+		-t "ghcr.io/nano-interactive/cassandra-php-driver:dev" \
+		--target dev \
+		--compress .
+

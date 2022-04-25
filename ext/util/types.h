@@ -17,11 +17,7 @@
 #ifndef PHP_DRIVER_UTIL_TYPES_H
 #define PHP_DRIVER_UTIL_TYPES_H
 
-#if PHP_MAJOR_VERSION >= 7
 #include <zend_smart_str.h>
-#else
-#include <ext/standard/php_smart_str.h>
-#endif
 
 #define PHP_DRIVER_SCALAR_TYPES_MAP(XX) \
   XX(ascii, CASS_VALUE_TYPE_ASCII) \

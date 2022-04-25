@@ -1,0 +1,18 @@
+[package]
+name = "utils"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+
+
+[lib]
+crate-type=["staticlib"]
+
+
+[profile.release]
+lto = true
+opt-level = 3
+debug = false
+overflow-checks = false
+debug-assertions = false
