@@ -56,6 +56,11 @@ typedef int pid_t;
   #endif
 #endif
 
+#ifndef ZEND_BEGIN_ARG_WITH_TENTATIVE_RETURN_TYPE_INFO_EX
+#define ZEND_BEGIN_ARG_WITH_TENTATIVE_RETURN_TYPE_INFO_EX(name, return_reference, required_num_args, type, allow_null) \
+        ZEND_BEGIN_ARG_INFO_EX(name, 0, return_reference, required_num_args)
+#endif
+
 #include <ext/spl/spl_iterators.h>
 #include <ext/spl/spl_exceptions.h>
 

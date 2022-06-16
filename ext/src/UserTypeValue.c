@@ -318,6 +318,24 @@ ZEND_END_ARG_INFO()
 ZEND_BEGIN_ARG_INFO_EX(arginfo_none, 0, ZEND_RETURN_VALUE, 0)
 ZEND_END_ARG_INFO()
 
+ZEND_BEGIN_ARG_WITH_TENTATIVE_RETURN_TYPE_INFO_EX(arginfo_current, 0, 0, IS_MIXED, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_TENTATIVE_RETURN_TYPE_INFO_EX(arginfo_key, 0, 0, IS_MIXED, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_TENTATIVE_RETURN_TYPE_INFO_EX(arginfo_next, 0, 0, IS_VOID, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_TENTATIVE_RETURN_TYPE_INFO_EX(arginfo_rewind, 0, 0, IS_VOID, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_TENTATIVE_RETURN_TYPE_INFO_EX(arginfo_valid, 0, 0, _IS_BOOL, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_TENTATIVE_RETURN_TYPE_INFO_EX(arginfo_count, 0, 0, IS_LONG, 0)
+ZEND_END_ARG_INFO()
+
 static zend_function_entry php_driver_user_type_value_methods[] = {
   PHP_ME(UserTypeValue, __construct, arginfo__construct, ZEND_ACC_CTOR|ZEND_ACC_PUBLIC)
   PHP_ME(UserTypeValue, type, arginfo_none, ZEND_ACC_PUBLIC)
@@ -329,13 +347,13 @@ static zend_function_entry php_driver_user_type_value_methods[] = {
 #endif
   PHP_ME(UserTypeValue, get, arginfo_name, ZEND_ACC_PUBLIC)
   /* Countable */
-  PHP_ME(UserTypeValue, count, arginfo_none, ZEND_ACC_PUBLIC)
+  PHP_ME(UserTypeValue, count, arginfo_count, ZEND_ACC_PUBLIC)
   /* Iterator */
-  PHP_ME(UserTypeValue, current, arginfo_none, ZEND_ACC_PUBLIC)
-  PHP_ME(UserTypeValue, key, arginfo_none, ZEND_ACC_PUBLIC)
-  PHP_ME(UserTypeValue, next, arginfo_none, ZEND_ACC_PUBLIC)
-  PHP_ME(UserTypeValue, valid, arginfo_none, ZEND_ACC_PUBLIC)
-  PHP_ME(UserTypeValue, rewind, arginfo_none, ZEND_ACC_PUBLIC)
+  PHP_ME(UserTypeValue, current, arginfo_current, ZEND_ACC_PUBLIC)
+  PHP_ME(UserTypeValue, key, arginfo_key, ZEND_ACC_PUBLIC)
+  PHP_ME(UserTypeValue, next, arginfo_next, ZEND_ACC_PUBLIC)
+  PHP_ME(UserTypeValue, valid, arginfo_valid, ZEND_ACC_PUBLIC)
+  PHP_ME(UserTypeValue, rewind, arginfo_rewind, ZEND_ACC_PUBLIC)
   PHP_FE_END
 };
 
