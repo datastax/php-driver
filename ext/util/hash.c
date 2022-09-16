@@ -136,20 +136,25 @@ php_driver_value_compare(zval* zvalue1, zval* zvalue2 TSRMLS_DC) {
   return 1;
 }
 
+#if PHP_MAJOR_VERSION < 7
 int php_driver_data_compare(const void* a, const void* b TSRMLS_DC) {
   Bucket *f, *s;
   zval *first, *second;
 
-#if PHP_MAJOR_VERSION >= 7
-  f = (Bucket *)a;
-  s = (Bucket *)b;
-  first = &f->val;
-  second = &s->val;
-#else
   f = *((Bucket **) a);
   s = *((Bucket **) b);
   first = *((zval **) f->pData);
   second = *((zval **) s->pData);
+
+#elif PHP_MAJOR_VERSION < 8
+int php_driver_data_compare(const void *a, const void *b TSRMLS_DC) {
+  zval *first = &((Bucket*)a)->val;
+  zval *second = &((Bucket*)b)->val;
+
+#else
+int php_driver_data_compare(Bucket *a, Bucket *b) {
+  zval *first = &a->val;
+  zval *second = &b->val;
 #endif
 
   return php_driver_value_compare(first, second TSRMLS_CC);
