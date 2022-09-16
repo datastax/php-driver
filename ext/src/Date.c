@@ -180,13 +180,20 @@ ZEND_END_ARG_INFO()
 ZEND_BEGIN_ARG_INFO_EX(arginfo_none, 0, ZEND_RETURN_VALUE, 0)
 ZEND_END_ARG_INFO()
 
+#if PHP_VERSION_ID >= 80200
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_tostring, 0, 0, IS_STRING, 0)
+ZEND_END_ARG_INFO()
+#else
+#define arginfo_tostring arginfo_none
+#endif
+
 static zend_function_entry php_driver_date_methods[] = {
   PHP_ME(Date, __construct, arginfo__construct, ZEND_ACC_CTOR|ZEND_ACC_PUBLIC)
   PHP_ME(Date, type, arginfo_none, ZEND_ACC_PUBLIC)
   PHP_ME(Date, seconds, arginfo_none, ZEND_ACC_PUBLIC)
   PHP_ME(Date, toDateTime, arginfo_time, ZEND_ACC_PUBLIC)
   PHP_ME(Date, fromDateTime, arginfo_datetime, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
-  PHP_ME(Date, __toString, arginfo_none, ZEND_ACC_PUBLIC)
+  PHP_ME(Date, __toString, arginfo_tostring, ZEND_ACC_PUBLIC)
   PHP_FE_END
 };
 
