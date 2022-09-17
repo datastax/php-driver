@@ -196,6 +196,13 @@ PHP_METHOD(Type, map)
 ZEND_BEGIN_ARG_INFO_EX(arginfo_none, 0, ZEND_RETURN_VALUE, 0)
 ZEND_END_ARG_INFO()
 
+#if PHP_VERSION_ID >= 80200
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_tostring, 0, 0, IS_STRING, 0)
+ZEND_END_ARG_INFO()
+#else
+#define arginfo_tostring arginfo_none
+#endif
+
 ZEND_BEGIN_ARG_INFO_EX(arginfo_types, 0, ZEND_RETURN_VALUE, 0)
 #if PHP_MAJOR_VERSION >= 8
   ZEND_ARG_VARIADIC_INFO(0, types)
@@ -215,7 +222,7 @@ ZEND_END_ARG_INFO()
 
 static zend_function_entry php_driver_type_methods[] = {
   PHP_ABSTRACT_ME(Type, name,       arginfo_none)
-  PHP_ABSTRACT_ME(Type, __toString, arginfo_none)
+  PHP_ABSTRACT_ME(Type, __toString, arginfo_tostring)
 
 #define XX_SCALAR_METHOD(name, _) PHP_ME(Type, name, arginfo_none, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC|ZEND_ACC_FINAL)
   PHP_DRIVER_SCALAR_TYPES_MAP(XX_SCALAR_METHOD)

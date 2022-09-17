@@ -140,6 +140,13 @@ PHP_METHOD(TypeTuple, create)
 ZEND_BEGIN_ARG_INFO_EX(arginfo_none, 0, ZEND_RETURN_VALUE, 0)
 ZEND_END_ARG_INFO()
 
+#if PHP_VERSION_ID >= 80200
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_tostring, 0, 0, IS_STRING, 0)
+ZEND_END_ARG_INFO()
+#else
+#define arginfo_tostring arginfo_none
+#endif
+
 ZEND_BEGIN_ARG_INFO_EX(arginfo_values, 0, ZEND_RETURN_VALUE, 0)
 #if PHP_MAJOR_VERSION >= 8
   ZEND_ARG_VARIADIC_INFO(0, values)
@@ -151,7 +158,7 @@ ZEND_END_ARG_INFO()
 static zend_function_entry php_driver_type_tuple_methods[] = {
   PHP_ME(TypeTuple, __construct, arginfo_none,   ZEND_ACC_PRIVATE)
   PHP_ME(TypeTuple, name,        arginfo_none,   ZEND_ACC_PUBLIC)
-  PHP_ME(TypeTuple, __toString,  arginfo_none,   ZEND_ACC_PUBLIC)
+  PHP_ME(TypeTuple, __toString,  arginfo_tostring,   ZEND_ACC_PUBLIC)
   PHP_ME(TypeTuple, types,       arginfo_none,   ZEND_ACC_PUBLIC)
   PHP_ME(TypeTuple, create,      arginfo_values, ZEND_ACC_PUBLIC)
   PHP_FE_END
