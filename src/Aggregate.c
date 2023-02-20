@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include "php_driver.h"
+#include <php_driver.h>
 
 zend_class_entry *php_driver_aggregate_ce = NULL;
 

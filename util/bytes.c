@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-#include "php_driver.h"
 #include <stdlib.h>
+
+#include <php_driver.h>
 #include "util/bytes.h"
 
 void

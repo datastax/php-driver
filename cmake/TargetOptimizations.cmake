@@ -1,0 +1,22 @@
+function(php_scylladb_optimize target)
+    if (${CMAKE_BUILD_TYPE} MATCHES "Debug")
+        target_compile_options(${target} PRIVATE -O0 -g -ggdb)
+    endif ()
+
+    if (${CMAKE_BUILD_TYPE} MATCHES "Release")
+        check_ipo_supported(RESULT LTO_SUPPORTED)
+
+        if (LTO_SUPPORTED)
+            set_property(TARGET ${target} PROPERTY INTERPROCEDURAL_OPTIMIZATION ON)
+        endif ()
+
+        if (PHP_SCYLLADB_OPTIMISE_FOR_CURRENT_MACHINE)
+            check_cxx_compiler_flag(-march=native SUPPORT_MARCH_NATIVE)
+            if (SUPPORT_MARCH_NATIVE)
+                target_compile_options(${target} PRIVATE -march=native -O3)
+            else ()
+                message(WARNING "Compiler does not support `-march=native` required by PHP_SCYLLADB_OPTIMISE_FOR_CURRENT_MACHINE")
+            endif ()
+        endif ()
+    endif ()
+endfunction()

@@ -18,7 +18,6 @@
 #include "php_driver_types.h"
 #include "result.h"
 #include "math.h"
-#include "collections.h"
 #include "types.h"
 #include "src/Collection.h"
 #include "src/Map.h"

@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
+#include "math.h"
 #include "php_driver.h"
 #include "php_driver_types.h"
-#include <errno.h>
-#include <stdlib.h>
-#include <gmp.h>
-#include <math.h>
 #include "util/math.h"
+#include <errno.h>
+#include <gmp.h>
+#include <stdlib.h>
 
 #ifdef _WIN32
 #  if defined(DISABLE_MSVC_STDINT) || _MSC_VER <= 1700

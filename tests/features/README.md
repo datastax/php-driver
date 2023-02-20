@@ -483,7 +483,7 @@ foreach ($schema->keyspaces() as $keyspace) {
 
 ### Data Types
 
-The PHP driver for Apache Cassandra supports [a variety of datatypes](/features/datatypes/).
+The PHP driver for Apache Cassandra supports [a variety of datatypes](/tests/features/datatypes/).
 
 You can also use the rich type metadata API to define and inspect types, as well as validate data objects.
 

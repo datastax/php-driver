@@ -15,15 +15,15 @@
  */
 
 #include "php_driver.h"
-#include "php_driver_globals.h"
-#include "php_driver_types.h"
-#include "version.h"
+#include <php_driver_globals.h>
+#include <php_driver_types.h>
+#include <version.h>
 
-#include "util/types.h"
 #include "util/ref.h"
+#include "util/types.h"
 
-#include <php_ini.h>
 #include <ext/standard/info.h>
+#include <php_ini.h>
 
 #ifndef _WIN32
 #include <php_syslog.h>
@@ -42,7 +42,7 @@
 #define PHP_DRIVER_PREPARED_STATEMENT_RES_NAME PHP_DRIVER_NAMESPACE " PreparedStatement"
 
 static uv_once_t log_once = UV_ONCE_INIT;
-static char *log_location = NULL;
+static char* log_location = NULL;
 static uv_rwlock_t log_lock;
 
 #if CURRENT_CPP_DRIVER_VERSION < CPP_DRIVER_VERSION(2, 6, 0)
@@ -61,7 +61,7 @@ const zend_function_entry php_driver_functions[] = {
 #if ZEND_MODULE_API_NO >= 20050617
 static zend_module_dep php_driver_deps[] = {
   ZEND_MOD_REQUIRED("spl")
-  ZEND_MOD_END
+    ZEND_MOD_END
 };
 #endif
 
@@ -78,9 +78,7 @@ zend_module_entry php_driver_module_entry = {
   PHP_RINIT(php_driver),     /* RINIT */
   PHP_RSHUTDOWN(php_driver), /* RSHUTDOWN */
   PHP_MINFO(php_driver),     /* MINFO */
-#if ZEND_MODULE_API_NO >= 20010901
   PHP_DRIVER_VERSION,
-#endif
   PHP_MODULE_GLOBALS(php_driver),
   PHP_GINIT(php_driver),
   PHP_GSHUTDOWN(php_driver),
@@ -93,8 +91,8 @@ ZEND_GET_MODULE(php_driver)
 #endif
 
 PHP_INI_BEGIN()
-  PHP_DRIVER_INI_ENTRY_LOG
-  PHP_DRIVER_INI_ENTRY_LOG_LEVEL
+PHP_DRIVER_INI_ENTRY_LOG
+PHP_DRIVER_INI_ENTRY_LOG_LEVEL
 PHP_INI_END()
 
 static int le_php_driver_cluster_res;
@@ -106,11 +104,12 @@ php_le_php_driver_cluster()
 static void
 php_driver_cluster_dtor(php5to7_zend_resource rsrc TSRMLS_DC)
 {
-  CassCluster *cluster = (CassCluster*) rsrc->ptr;
+  CassCluster* cluster = (CassCluster*) rsrc->ptr;
 
   if (cluster) {
     cass_cluster_free(cluster);
-    PHP_DRIVER_G(persistent_clusters)--;
+    PHP_DRIVER_G(persistent_clusters)
+    --;
     rsrc->ptr = NULL;
   }
 }
@@ -124,13 +123,14 @@ php_le_php_driver_session()
 static void
 php_driver_session_dtor(php5to7_zend_resource rsrc TSRMLS_DC)
 {
-  php_driver_psession *psession = (php_driver_psession*) rsrc->ptr;
+  php_driver_psession* psession = (php_driver_psession*) rsrc->ptr;
 
   if (psession) {
     cass_future_free(psession->future);
     php_driver_del_peref(&psession->session, 1);
     pefree(psession, 1);
-    PHP_DRIVER_G(persistent_sessions)--;
+    PHP_DRIVER_G(persistent_sessions)
+    --;
     rsrc->ptr = NULL;
   }
 }
@@ -144,19 +144,20 @@ php_le_php_driver_prepared_statement()
 static void
 php_driver_prepared_statement_dtor(php5to7_zend_resource rsrc TSRMLS_DC)
 {
-  php_driver_pprepared_statement *preparedStmt = (php_driver_pprepared_statement*) rsrc->ptr;
+  php_driver_pprepared_statement* preparedStmt = (php_driver_pprepared_statement*) rsrc->ptr;
 
   if (preparedStmt) {
     cass_future_free(preparedStmt->future);
     php_driver_del_peref(&preparedStmt->ref, 1);
     pefree(preparedStmt, 1);
-    PHP_DRIVER_G(persistent_prepared_statements)--;
+    PHP_DRIVER_G(persistent_prepared_statements)
+    --;
     rsrc->ptr = NULL;
   }
 }
 
 static void
-php_driver_log(const CassLogMessage *message, void *data);
+php_driver_log(const CassLogMessage* message, void* data);
 
 static void
 php_driver_log_cleanup()
@@ -178,7 +179,7 @@ php_driver_log_initialize()
 }
 
 static void
-php_driver_log(const CassLogMessage *message, void *data)
+php_driver_log(const CassLogMessage* message, void* data)
 {
   char log[MAXPATHLEN + 1];
   uint log_length = 0;
@@ -194,7 +195,7 @@ php_driver_log(const CassLogMessage *message, void *data)
   log[log_length] = '\0';
 
   if (log_length > 0) {
-    FILE *fd = NULL;
+    FILE* fd = NULL;
 #ifndef _WIN32
     if (!strcmp(log, "syslog")) {
       php_syslog(LOG_NOTICE, PHP_DRIVER_NAME " | [%s] %s (%s:%d)",
@@ -210,7 +211,7 @@ php_driver_log(const CassLogMessage *message, void *data)
       struct tm log_tm;
       char log_time_str[64];
       size_t needed = 0;
-      char *tmp     = NULL;
+      char* tmp     = NULL;
 
       time(&log_time);
       php_localtime_r(&log_time, &log_tm);
@@ -319,9 +320,9 @@ exception_class(CassError rc)
 }
 
 void
-throw_invalid_argument(zval *object,
-                       const char *object_name,
-                       const char *expected_type TSRMLS_DC)
+throw_invalid_argument(zval* object,
+                       const char* object_name,
+                       const char* expected_type TSRMLS_DC)
 {
   if (Z_TYPE_P(object) == IS_OBJECT) {
 #if ZEND_MODULE_API_NO >= 20100525
@@ -337,21 +338,18 @@ throw_invalid_argument(zval *object,
 #endif
 
 #if PHP_MAJOR_VERSION >= 7
-    zend_string* str  = Z_OBJ_HANDLER_P(object, get_class_name)(Z_OBJ_P(object) TSRMLS_CC);
-    cls_name = str->val;
-    cls_len = str->len;
+    zend_string* str = Z_OBJ_HANDLER_P(object, get_class_name)(Z_OBJ_P(object) TSRMLS_CC);
+    cls_name         = str->val;
+    cls_len          = str->len;
 #else
-    Z_OBJ_HANDLER_P(object, get_class_name)(object, &cls_name, &cls_len, 0 TSRMLS_CC);
+    Z_OBJ_HANDLER_P(object, get_class_name)
+    (object, &cls_name, &cls_len, 0 TSRMLS_CC);
 #endif
     if (cls_name) {
       zend_throw_exception_ex(php_driver_invalid_argument_exception_ce, 0 TSRMLS_CC,
                               "%s must be %s, an instance of %.*s given",
-                              object_name, expected_type, (int)cls_len, cls_name);
-#if PHP_MAJOR_VERSION >= 7
+                              object_name, expected_type, (int) cls_len, cls_name);
       zend_string_release(str);
-#else
-      efree((void*) cls_name);
-#endif
     } else {
       zend_throw_exception_ex(php_driver_invalid_argument_exception_ce, 0 TSRMLS_CC,
                               "%s must be %s, an instance of Unknown Class given",
@@ -388,11 +386,7 @@ PHP_INI_MH(OnUpdateLogLevel)
     } else {
       php_error_docref(NULL TSRMLS_CC, E_NOTICE,
                        PHP_DRIVER_NAME " | Unknown log level '%s', using 'ERROR'",
-#if PHP_MAJOR_VERSION >= 7
                        ZSTR_VAL(new_value));
-#else
-                       new_value);
-#endif
       cass_log_set_level(CASS_LOG_ERROR);
     }
   }
@@ -426,15 +420,14 @@ PHP_INI_MH(OnUpdateLog)
   return SUCCESS;
 }
 
-
 static PHP_GINIT_FUNCTION(php_driver)
 {
   uv_once(&log_once, php_driver_log_initialize);
 
-  php_driver_globals->uuid_gen            = NULL;
-  php_driver_globals->uuid_gen_pid        = 0;
-  php_driver_globals->persistent_clusters = 0;
-  php_driver_globals->persistent_sessions = 0;
+  php_driver_globals->uuid_gen                       = NULL;
+  php_driver_globals->uuid_gen_pid                   = 0;
+  php_driver_globals->persistent_clusters            = 0;
+  php_driver_globals->persistent_sessions            = 0;
   php_driver_globals->persistent_prepared_statements = 0;
   PHP5TO7_ZVAL_UNDEF(php_driver_globals->type_varchar);
   PHP5TO7_ZVAL_UNDEF(php_driver_globals->type_text);
@@ -468,18 +461,18 @@ PHP_MINIT_FUNCTION(php_driver)
   REGISTER_INI_ENTRIES();
 
   le_php_driver_cluster_res =
-  zend_register_list_destructors_ex(NULL, php_driver_cluster_dtor,
-                                    PHP_DRIVER_CLUSTER_RES_NAME,
-                                    module_number);
+    zend_register_list_destructors_ex(NULL, php_driver_cluster_dtor,
+                                      PHP_DRIVER_CLUSTER_RES_NAME,
+                                      module_number);
   le_php_driver_session_res =
-  zend_register_list_destructors_ex(NULL, php_driver_session_dtor,
-                                    PHP_DRIVER_SESSION_RES_NAME,
-                                    module_number);
+    zend_register_list_destructors_ex(NULL, php_driver_session_dtor,
+                                      PHP_DRIVER_SESSION_RES_NAME,
+                                      module_number);
 
   le_php_driver_prepared_statement_res =
-  zend_register_list_destructors_ex(NULL, php_driver_prepared_statement_dtor,
-                                    PHP_DRIVER_PREPARED_STATEMENT_RES_NAME,
-                                    module_number);
+    zend_register_list_destructors_ex(NULL, php_driver_prepared_statement_dtor,
+                                      PHP_DRIVER_PREPARED_STATEMENT_RES_NAME,
+                                      module_number);
 
   php_driver_define_Exception(TSRMLS_C);
   php_driver_define_InvalidArgumentException(TSRMLS_C);
