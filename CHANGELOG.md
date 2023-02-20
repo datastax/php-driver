@@ -1,3 +1,17 @@
+# 1.3.8
+
+*  Support for PHP 8.2
+
+# 1.3.7
+
+*  Support for PHP 8.1
+
+# 1.3.3
+
+Features:
+
+*  Support for PHP 8.0
+
 # 1.3.2
 
 Features:

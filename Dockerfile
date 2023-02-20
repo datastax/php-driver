@@ -1,18 +1,17 @@
-FROM malusevd99/php-ext-dev:8.1
+FROM php:8.2-cli
 
 ARG CPP_DRIVER_VERSION=2.16.2
 
-ENV EXT_CASSANDRA_VERSION=master
 ENV LDFLAGS="-L/usr/local/lib"
 ENV LIBS="-lssl -lz -luv -lm -lgmp -lstdc++"
 
-RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" && \
-    php composer-setup.php && php -r "unlink('composer-setup.php');" \
-    mv composer.phar /bin/composer
-
 COPY --from=mlocati/php-extension-installer /usr/bin/install-php-extensions /usr/local/bin
 
-RUN docker-php-source extract \
+RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"  \
+    && php composer-setup.php \
+    && php -r "unlink('composer-setup.php');" \
+    && mv composer.phar /bin/composer \
+    && docker-php-source extract \
     && apt update -y \
     && mkdir -p /cpp-driver \
     && apt install \
@@ -20,6 +19,7 @@ RUN docker-php-source extract \
         unzip \
         mlocate \
         build-essential \
+        ninja-build \
         git \
         libuv1-dev \
         libssl-dev \
@@ -30,14 +30,18 @@ RUN docker-php-source extract \
     && git clone --recursive https://github.com/datastax/cpp-driver /cpp-driver \
     && cd /cpp-driver && git checkout tags/$CPP_DRIVER_VERSION -b v$CPP_DRIVER_VERSION \
     && mkdir -p build && cd build \
-    && cmake \
-        -DCMAKE_CXX_FLAGS="-fPIC" \
-        -DCASS_BUILD_STATIC=OFF \
-        -DCASS_BUILD_SHARED=ON \
-        -DCMAKE_BUILD_TYPE=RELEASE \
-        -DCMAKE_INSTALL_LIBDIR:PATH=lib \
-        -DCASS_USE_ZLIB=ON .. \
-    && make -j8 && make install \
-    && install-php-extensions intl zip pcntl gmp ast xdebug
-
-CMD ["bash"]
+    && cmake -G Ninja \
+      -DCASS_BUILD_STATIC=ON \
+      -DCASS_BUILD_SHARED=ON \
+      -DCASS_USE_STD_ATOMIC=ON \
+      -DCASS_USE_TIMERFD=ON \
+      -DCASS_USE_LIBSSH2=ON \
+      -DCMAKE_CXX_FLAGS="-O3 -fPIC" \
+      -DCMAKE_C_FLAGS="-O3 -fPIC" \
+      -DCMAKE_BUILD_TYPE=RELEASE \
+      -DCASS_USE_ZLIB=ON .. \
+    && ninja && ninja install \
+    && install-php-extensions intl zip pcntl gmp xdebug \
+    && docker-php-source delete \
+    && apt-get clean \
+    && rm -rf /cpp-driver
