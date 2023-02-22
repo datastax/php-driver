@@ -7,6 +7,7 @@
 /venv/
 Makefile
 cmake-build-debug/
+cmake-build-release/
 # Files to ignore
 /cassandra.log
 /tmp/*
@@ -30,6 +31,7 @@ Makefile.global
 Makefile.objects
 build
 config.*
+!config.in
 !config.m4
 !config.w32
 configure

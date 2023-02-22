@@ -1,3 +1,0 @@
-[submodule "third-party/cpp-driver"]
-	path = third-party/cpp-driver
-	url = https://github.com/scylladb/cpp-driver.git

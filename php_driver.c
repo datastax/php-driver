@@ -25,13 +25,6 @@
 #include <ext/standard/info.h>
 #include <php_ini.h>
 
-#ifndef _WIN32
-#include <php_syslog.h>
-#else
-#pragma message("syslog will be disabled on Windows")
-#endif
-
-#include <ext/standard/info.h>
 #include <fcntl.h>
 #include <time.h>
 #include <uv.h>
@@ -45,8 +38,8 @@ static uv_once_t log_once = UV_ONCE_INIT;
 static char* log_location = NULL;
 static uv_rwlock_t log_lock;
 
-#if CURRENT_CPP_DRIVER_VERSION < CPP_DRIVER_VERSION(2, 6, 0)
-#error C/C++ driver version 2.6.0 or greater required
+#if CURRENT_CPP_DRIVER_VERSION < CPP_DRIVER_VERSION(2, 16, 2)
+#error C/C++ driver version 2.16.2 or greater required
 #endif
 
 ZEND_DECLARE_MODULE_GLOBALS(php_driver)
@@ -58,19 +51,13 @@ const zend_function_entry php_driver_functions[] = {
   PHP_FE_END /* Must be the last line in php_driver_functions[] */
 };
 
-#if ZEND_MODULE_API_NO >= 20050617
 static zend_module_dep php_driver_deps[] = {
   ZEND_MOD_REQUIRED("spl")
     ZEND_MOD_END
 };
-#endif
 
 zend_module_entry php_driver_module_entry = {
-#if ZEND_MODULE_API_NO >= 20050617
   STANDARD_MODULE_HEADER_EX, NULL, php_driver_deps,
-#elif ZEND_MODULE_API_NO >= 20010901
-  STANDARD_MODULE_HEADER,
-#endif
   PHP_DRIVER_NAME,
   php_driver_functions,      /* Functions */
   PHP_MINIT(php_driver),     /* MINIT */
@@ -91,8 +78,8 @@ ZEND_GET_MODULE(php_driver)
 #endif
 
 PHP_INI_BEGIN()
-PHP_DRIVER_INI_ENTRY_LOG
-PHP_DRIVER_INI_ENTRY_LOG_LEVEL
+PHP_INI_ENTRY(PHP_DRIVER_NAME ".log", PHP_DRIVER_DEFAULT_LOG, PHP_INI_ALL, OnUpdateLog)
+PHP_INI_ENTRY(PHP_DRIVER_NAME ".log_level", PHP_DRIVER_DEFAULT_LOG_LEVEL, PHP_INI_ALL, OnUpdateLogLevel)
 PHP_INI_END()
 
 static int le_php_driver_cluster_res;
@@ -162,7 +149,6 @@ php_driver_log(const CassLogMessage* message, void* data);
 static void
 php_driver_log_cleanup()
 {
-  cass_log_cleanup();
   uv_rwlock_destroy(&log_lock);
   if (log_location) {
     free(log_location);
@@ -196,15 +182,6 @@ php_driver_log(const CassLogMessage* message, void* data)
 
   if (log_length > 0) {
     FILE* fd = NULL;
-#ifndef _WIN32
-    if (!strcmp(log, "syslog")) {
-      php_syslog(LOG_NOTICE, PHP_DRIVER_NAME " | [%s] %s (%s:%d)",
-                 cass_log_level_string(message->severity), message->message,
-                 message->file, message->line);
-      return;
-    }
-#endif
-
     fd = fopen(log, "a");
     if (fd) {
       time_t log_time;
@@ -325,26 +302,12 @@ throw_invalid_argument(zval* object,
                        const char* expected_type TSRMLS_DC)
 {
   if (Z_TYPE_P(object) == IS_OBJECT) {
-#if ZEND_MODULE_API_NO >= 20100525
     const char* cls_name = NULL;
-#else
-    char* cls_name = NULL;
-#endif
-
-#if PHP_MAJOR_VERSION >= 7
     size_t cls_len;
-#else
-    zend_uint cls_len;
-#endif
 
-#if PHP_MAJOR_VERSION >= 7
     zend_string* str = Z_OBJ_HANDLER_P(object, get_class_name)(Z_OBJ_P(object) TSRMLS_CC);
     cls_name         = str->val;
     cls_len          = str->len;
-#else
-    Z_OBJ_HANDLER_P(object, get_class_name)
-    (object, &cls_name, &cls_len, 0 TSRMLS_CC);
-#endif
     if (cls_name) {
       zend_throw_exception_ex(php_driver_invalid_argument_exception_ce, 0 TSRMLS_CC,
                               "%s must be %s, an instance of %.*s given",
