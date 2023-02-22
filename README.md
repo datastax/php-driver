@@ -1,14 +1,11 @@
-:warning: **The PHP driver is in maintenance mode. We are still accepting pull-requests and we will occasionally release critical bug fixes, but no ongoing active development is being done currently.**
 
-# DataStax PHP Driver for Apache Cassandra
+# ScyllaDB/CassandraDB Driver for PHP
 
 [![Build Status: Linux](https://travis-ci.org/datastax/php-driver.svg)](https://travis-ci.org/datastax/php-driver)
 [![Build Status: Windows](https://ci.appveyor.com/api/projects/status/8vrxpkfl4xm2f3nm?svg=true)](https://ci.appveyor.com/project/DataStax/php-driver)
 
 A modern, [feature-rich][Features] and highly tunable PHP client library for
-[Apache Cassandra] 2.1+ using exclusively Cassandra's binary protocol and
-Cassandra Query Language v3. __Use the [DSE PHP driver] for better compatibility
-and support for [DataStax Enterprise]__.
+[Apache Cassandra] 3.0+ using exclusively Cassandra's binary protocol. 
 
 This is a wrapper around the [DataStax C/C++ Driver for Apache Cassandra].
 
@@ -17,21 +14,17 @@ __Note__: DataStax products do not support big-endian systems.
 ## Getting the Driver
 
 Binary versions of the driver, available for multiple operating systems and
-multiple versions of PHP, can be obtained from [DataStax download server]. The
-source code is made available via [GitHub]. __If you're using [DataStax Enterprise]
-use the [DSE PHP driver] instead__.
+multiple versions of PHP, can be obtained from [DataStax download server]. 
+You're also can compile the driver by yourself or use Dockerfile with a pre-set environment to run your tests.
 
-__Note__: The driver extension is a wrapper around the 
-          [DataStax C/C++ Driver for Apache Cassandra] and is a requirement for proper
-          installation of the PHP extension binaries. Ensure these dependencies are met before proceeding.
 
-## What's new in v1.2.0/v1.3.0
+## What's new in v1.2.0/v1.3.8
 
 * Support for [`duration`]
 * `Session::execute()` and `Session::executeAsync()` now support a
   [simple string] for the query CQL and a simple array for the query execution
   option
-* Full support for Apache Cassandra 2.2 and 3.0+
+* Full support for Apache Cassandra  3.0+
 * Support for [`tinyint` and `smallint`]
 * Support for [`date`] and [`time`]
 * Support for [user-defined function and aggregate] metadata
@@ -42,14 +35,12 @@ __Note__: The driver extension is a wrapper around the
 This driver works exclusively with the Cassandra Query Language v3 (CQL3) and
 Cassandra's native protocol. The current version works with:
 
-* Apache Cassandra versions 2.1, 2.2 and 3.0+
-* PHP 5.6, PHP 7.0, and PHP 7.1
-  * 32-bit (x86) and 64-bit (x64)
-  * Thread safe (TS) and non-thread safe (NTS)
-* Compilers: GCC 4.1.2+, Clang 3.4+, and MSVC 2010/2012/2013/2015
+* Apache Cassandra versions 3.0+
+* PHP 8.0, 8.1 and 8.2 
+* 64-bit (x64)
+* Thread safe (TS) and non-thread safe (NTS)
+* Compilers: GCC 10.0+ and Clang 14+
 
-If using [DataStax Enterprise] the [DSE PHP driver] provides more features and
-better compatibility.
 
 ## Documentation
 
@@ -59,9 +50,8 @@ better compatibility.
 
 ## Getting Help
 
-* JIRA: https://datastax-oss.atlassian.net/browse/PHP
-* Mailing List: https://groups.google.com/a/lists.datastax.com/forum/#!forum/php-driver-user
-* DataStax Academy via Slack: https://academy.datastax.com/slack
+* If you're able to fix a bug yourself, you can [fork the repository](https://help.github.com/articles/fork-a-repo/) and [submit a pull request](https://help.github.com/articles/using-pull-requests/) with the fix.
+* If you're not able fix a bug yourself, please [open an issue](https://github.com/nano-interactive/ext-cassandra/issues) , describe it with the most details possible and wait until one of our maintainers join the conversation. 
 
 ## Quick Start
 
@@ -74,8 +64,8 @@ $session   = $cluster->connect($keyspace);        // create session, optionally 
 $statement = new Cassandra\SimpleStatement(       // also supports prepared and batch statements
     'SELECT keyspace_name, columnfamily_name FROM schema_columnfamilies'
 );
-$future    = $session->executeAsync($statement);  // fully asynchronous and easy parallel execution
-$result    = $future->get();                      // wait for the result, with an optional timeout
+$querySent = $session->execute($statement);  
+$result    = $querySent->get();                      // wait for the result, with an optional timeout
 
 foreach ($result as $row) {                       // results and rows implement Iterator, Countable and ArrayAccess
     printf("The keyspace %s has a table called %s\n", $row['keyspace_name'], $row['columnfamily_name']);
@@ -84,12 +74,17 @@ foreach ($result as $row) {                       // results and rows implement 
 
 ## Installation
 
+
+[Read detailed instructions on building and installing the
+extension][installing-details]
+
+
+
+Or if you want to use a older version (PHP 7.1) use the command below
 ```bash
 pecl install cassandra
 ```
 
-[Read detailed instructions on building and installing the
-extension][installing-details]
 
 ## Contributing
 
