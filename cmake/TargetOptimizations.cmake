@@ -1,4 +1,8 @@
-function(php_scylladb_optimize target)
+include(CheckIPOSupported)
+include(CheckCXXCompilerFlag)
+include(CheckCCompilerFlag)
+
+function(target_optimize target native_arch)
     if (${CMAKE_BUILD_TYPE} MATCHES "Debug")
         target_compile_options(${target} PRIVATE -O0 -g -ggdb)
     endif ()
@@ -10,7 +14,7 @@ function(php_scylladb_optimize target)
             set_property(TARGET ${target} PROPERTY INTERPROCEDURAL_OPTIMIZATION ON)
         endif ()
 
-        if (PHP_SCYLLADB_OPTIMISE_FOR_CURRENT_MACHINE)
+        if (native_arch)
             check_cxx_compiler_flag(-march=native SUPPORT_MARCH_NATIVE)
             if (SUPPORT_MARCH_NATIVE)
                 target_compile_options(${target} PRIVATE -march=native -O3)
