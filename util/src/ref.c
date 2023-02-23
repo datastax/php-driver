@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-#include "php_driver.h"
-#include "php_driver_types.h"
+#include "include/php_driver.h"
+#include "include/php_driver_types.h"
+
 #include "util/math.h"
 
 php_driver_ref*

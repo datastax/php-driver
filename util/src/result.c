@@ -14,11 +14,13 @@
  * limitations under the License.
  */
 
-#include "php_driver.h"
-#include "php_driver_types.h"
-#include "result.h"
-#include "math.h"
-#include "types.h"
+#include <php_driver.h>
+#include <php_driver_types.h>
+
+#include <util/math.h>
+#include <util/types.h>
+#include <util/result.h>
+
 #include "src/Collection.h"
 #include "src/Map.h"
 #include "src/Set.h"

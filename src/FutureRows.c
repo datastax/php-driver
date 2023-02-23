@@ -17,8 +17,8 @@
 #include "php_driver.h"
 #include "php_driver_types.h"
 #include "util/future.h"
-#include "util/result.h"
 #include "util/ref.h"
+#include "util/result.h"
 
 zend_class_entry *php_driver_future_rows_ce = NULL;
 

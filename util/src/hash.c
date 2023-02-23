@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
+#include "include/php_driver.h"
+#include "include/php_driver_types.h"
+
 #include "util/hash.h"
-#include "php_driver.h"
-#include "php_driver_types.h"
 
 static inline cass_int64_t
 double_to_bits(cass_double_t value)

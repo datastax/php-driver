@@ -13,15 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#pragma once
 
-#ifndef PHP_DRIVER_REF_H
-#define PHP_DRIVER_REF_H
+#include <php_driver_types.h>
 
-php_driver_ref *php_driver_new_peref(void *data, php_driver_free_function destructor, int persistent);
-void php_driver_del_peref(php_driver_ref **ref_ptr, int persistent);
+php_driver_ref* php_driver_new_peref(void* data, php_driver_free_function destructor, int persistent);
+void php_driver_del_peref(php_driver_ref** ref_ptr, int persistent);
 
 #define php_driver_new_ref(data, destructor) php_driver_new_peref(data, destructor, 0)
 #define php_driver_del_ref(ref) php_driver_del_peref(ref, 0)
 #define php_driver_add_ref(ref) (++ref->count, ref)
-
-#endif /* PHP_DRIVER_REF_H */

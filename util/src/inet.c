@@ -14,21 +14,20 @@
  * limitations under the License.
  */
 
-#include "php_driver.h"
-#include "php_driver_types.h"
-#include "util/inet.h"
-
+#include "include/php_driver.h"
+#include "include/php_driver_types.h"
 #include <stdlib.h>
 
-#define IPV4             1
-#define IPV6             2
-#define TOKEN_MAX_LEN    4
-#define IP_MAX_ADDRLEN   50
-#define EXPECTING_TOKEN(expected) \
-  zend_throw_exception_ex(php_driver_invalid_argument_exception_ce, 0 TSRMLS_CC, \
-    "Unexpected %s at position %d in address \"%s\", expected " expected, \
-    ip_address_describe_token(type), ((int) (in_ptr - in) - 1), in \
-  ); \
+#include "util/inet.h"
+
+#define IPV4 1
+#define IPV6 2
+#define TOKEN_MAX_LEN 4
+#define IP_MAX_ADDRLEN 50
+#define EXPECTING_TOKEN(expected)                                                               \
+  zend_throw_exception_ex(php_driver_invalid_argument_exception_ce, 0 TSRMLS_CC,                \
+                          "Unexpected %s at position %d in address \"%s\", expected " expected, \
+                          ip_address_describe_token(type), ((int) (in_ptr - in) - 1), in);      \
   return 0;
 
 enum token_type {
@@ -41,33 +40,46 @@ enum token_type {
 };
 
 enum parser_state {
-  STATE_START = 0,
-  STATE_FIELD = 1,
+  STATE_START      = 0,
+  STATE_FIELD      = 1,
   STATE_COMPRESSED = 2,
-  STATE_AFTERHEX = 3,
-  STATE_AFTERDEC = 4,
-  STATE_IPV4BYTE = 5,
-  STATE_IPV4DOT = 6,
+  STATE_AFTERHEX   = 3,
+  STATE_AFTERDEC   = 4,
+  STATE_IPV4BYTE   = 5,
+  STATE_IPV4DOT    = 6,
   STATE_AFTERCOLON = 7,
-  STATE_END = 8
+  STATE_END        = 8
 };
 
-static const char *
+static const char*
 ip_address_describe_token(enum token_type type)
 {
   switch (type) {
-  case TOKEN_END    : return "end of address";    break;
-  case TOKEN_COLON  : return "colon";             break;
-  case TOKEN_DOT    : return "dot";               break;
-  case TOKEN_HEX    : return "hex address field"; break;
-  case TOKEN_DEC    : return "address field";     break;
-  case TOKEN_ILLEGAL: return "illegal character"; break;
-  default           : return NULL;
+  case TOKEN_END:
+    return "end of address";
+    break;
+  case TOKEN_COLON:
+    return "colon";
+    break;
+  case TOKEN_DOT:
+    return "dot";
+    break;
+  case TOKEN_HEX:
+    return "hex address field";
+    break;
+  case TOKEN_DEC:
+    return "address field";
+    break;
+  case TOKEN_ILLEGAL:
+    return "illegal character";
+    break;
+  default:
+    return NULL;
   }
 }
 
 static enum token_type
-ip_address_tokenize(char *address, char *token, int *token_len, char **next_token)
+ip_address_tokenize(char* address, char* token, int* token_len, char** next_token)
 {
   enum token_type type;
 
@@ -100,10 +112,17 @@ ip_address_tokenize(char *address, char *token, int *token_len, char **next_toke
       type = TOKEN_DEC;
   } else {
     switch (ch) {
-    case '\0': type = TOKEN_END;     break;
-    case ':' : type = TOKEN_COLON;   break;
-    case '.' : type = TOKEN_DOT;     break;
-    default  : type = TOKEN_ILLEGAL;
+    case '\0':
+      type = TOKEN_END;
+      break;
+    case ':':
+      type = TOKEN_COLON;
+      break;
+    case '.':
+      type = TOKEN_DOT;
+      break;
+    default:
+      type = TOKEN_ILLEGAL;
     }
 
     token[len++] = ch;
@@ -112,31 +131,31 @@ ip_address_tokenize(char *address, char *token, int *token_len, char **next_toke
   token[len] = '\0';
 
   *next_token = &(address[len]);
-  *token_len = len;
+  *token_len  = len;
 
   return type;
 }
 
 int
-php_driver_parse_ip_address(char *in, CassInet *inet TSRMLS_DC)
+php_driver_parse_ip_address(char* in, CassInet* inet TSRMLS_DC)
 {
-  char              token[TOKEN_MAX_LEN + 1];
-  int               token_len                    = -1;
-  int               prev_token_len               = 0;
-  char             *in_ptr                       = in;
-  enum token_type   type;
-  enum parser_state state                        = STATE_START;
-  int               pos                          = -1;
-  int               compress_pos                 = -1;
-  int               ipv4_pos                     = -1;
-  int               ipv4_byte;
-  cass_uint8_t      address[CASS_INET_V6_LENGTH] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-  int               domain                       = 0;
+  char token[TOKEN_MAX_LEN + 1];
+  int token_len      = -1;
+  int prev_token_len = 0;
+  char* in_ptr       = in;
+  enum token_type type;
+  enum parser_state state = STATE_START;
+  int pos                 = -1;
+  int compress_pos        = -1;
+  int ipv4_pos            = -1;
+  int ipv4_byte;
+  cass_uint8_t address[CASS_INET_V6_LENGTH] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+  int domain                                = 0;
 
   if (strlen(in) > (IP_MAX_ADDRLEN - 1)) {
     zend_throw_exception_ex(php_driver_invalid_argument_exception_ce, 0 TSRMLS_CC,
-      "The IP address \"%s\" is too long (at most %d characters are expected)",
-      in, IP_MAX_ADDRLEN - 1);
+                            "The IP address \"%s\" is too long (at most %d characters are expected)",
+                            in, IP_MAX_ADDRLEN - 1);
     return 0;
   }
 
@@ -148,8 +167,8 @@ php_driver_parse_ip_address(char *in, CassInet *inet TSRMLS_DC)
 
     if (type == TOKEN_ILLEGAL) {
       zend_throw_exception_ex(php_driver_invalid_argument_exception_ce, 0 TSRMLS_CC,
-        "Illegal character \"%c\" at position %d in address \"%s\"",
-        *token, ((int) (in_ptr - in) - 1), in);
+                              "Illegal character \"%c\" at position %d in address \"%s\"",
+                              *token, ((int) (in_ptr - in) - 1), in);
       return 0;
     }
 
@@ -187,13 +206,13 @@ php_driver_parse_ip_address(char *in, CassInet *inet TSRMLS_DC)
         /* Only one compressed zero block can exist. */
         if (compress_pos != -1) {
           zend_throw_exception_ex(php_driver_invalid_argument_exception_ce, 0 TSRMLS_CC,
-            "Duplicate \"::\" block at position %d in address \"%s\"",
-            ((int) (in_ptr - in) - 1), in);
+                                  "Duplicate \"::\" block at position %d in address \"%s\"",
+                                  ((int) (in_ptr - in) - 1), in);
           return 0;
         }
 
         compress_pos = pos == -1 ? 0 : pos + 1;
-        state = STATE_FIELD;
+        state        = STATE_FIELD;
         continue;
       } else {
         EXPECTING_TOKEN("a colon");
@@ -211,9 +230,14 @@ php_driver_parse_ip_address(char *in, CassInet *inet TSRMLS_DC)
         break;
 
       switch (type) {
-      case TOKEN_HEX  : state = STATE_AFTERHEX;      break;
-      case TOKEN_DEC  : state = STATE_AFTERDEC;      break;
-      default         : EXPECTING_TOKEN("an address field");
+      case TOKEN_HEX:
+        state = STATE_AFTERHEX;
+        break;
+      case TOKEN_DEC:
+        state = STATE_AFTERDEC;
+        break;
+      default:
+        EXPECTING_TOKEN("an address field");
       }
 
       /* Check for too many address bytes. */
@@ -224,7 +248,8 @@ php_driver_parse_ip_address(char *in, CassInet *inet TSRMLS_DC)
 
       /* Add the IPv6 field bytes. */
       sscanf(token, "%x", &field);
-      address[++pos] = (field & 0xff00) >> 8;;
+      address[++pos] = (field & 0xff00) >> 8;
+      ;
       address[++pos] = (field & 0x00ff);
       continue;
     }
@@ -260,7 +285,7 @@ php_driver_parse_ip_address(char *in, CassInet *inet TSRMLS_DC)
         in_ptr -= (prev_token_len + 1);
 
         /* Continue with IPv4 address parsing. */
-        state = STATE_IPV4BYTE;
+        state    = STATE_IPV4BYTE;
         ipv4_pos = 0;
         continue;
       } else {
@@ -274,9 +299,9 @@ php_driver_parse_ip_address(char *in, CassInet *inet TSRMLS_DC)
       if (type == TOKEN_DEC) {
         if (token_len > 1 && token[0] == '0') {
           zend_throw_exception_ex(php_driver_invalid_argument_exception_ce, 0 TSRMLS_CC,
-            "Illegal IPv4 character \"%s\" at position %d " \
-            "in address \"%s\" (no leading zeroes are allowed)",
-            token, ((int) (in_ptr - in) - 1), in);
+                                  "Illegal IPv4 character \"%s\" at position %d "
+                                  "in address \"%s\" (no leading zeroes are allowed)",
+                                  token, ((int) (in_ptr - in) - 1), in);
           return 0;
         }
 
@@ -284,9 +309,9 @@ php_driver_parse_ip_address(char *in, CassInet *inet TSRMLS_DC)
 
         if (ipv4_byte < 0 || ipv4_byte > 255) {
           zend_throw_exception_ex(php_driver_invalid_argument_exception_ce, 0 TSRMLS_CC,
-            "Illegal IPv4 segment value '%d' at position %d " \
-            "in address \"%s\" (expected: 0 - 255)",
-            ipv4_byte, ((int) (in_ptr - in) - 1), in);
+                                  "Illegal IPv4 segment value '%d' at position %d "
+                                  "in address \"%s\" (expected: 0 - 255)",
+                                  ipv4_byte, ((int) (in_ptr - in) - 1), in);
           return 0;
         }
 
@@ -355,9 +380,9 @@ php_driver_parse_ip_address(char *in, CassInet *inet TSRMLS_DC)
      */
     if (pos + 1 >= CASS_INET_V6_LENGTH) {
       zend_throw_exception_ex(php_driver_invalid_argument_exception_ce, 0 TSRMLS_CC,
-        "Address \"%s\" contains a compressed zeroes block '::', "
-        "but the address already contains %d bytes or more",
-        address, CASS_INET_V6_LENGTH);
+                              "Address \"%s\" contains a compressed zeroes block '::', "
+                              "but the address already contains %d bytes or more",
+                              address, CASS_INET_V6_LENGTH);
       return 0;
     }
 
@@ -367,7 +392,7 @@ php_driver_parse_ip_address(char *in, CassInet *inet TSRMLS_DC)
     pos++;
     if (pos != compress_pos) {
       int i;
-      int move_len     = pos - compress_pos;
+      int move_len = pos - compress_pos;
 
       /* Move bytes after the compression position to the end and
        * fill the old byte positions with zeroes. */
@@ -389,16 +414,17 @@ php_driver_parse_ip_address(char *in, CassInet *inet TSRMLS_DC)
     /* Check if there are enough bytes. */
     if (pos + 1 < CASS_INET_V6_LENGTH) {
       zend_throw_exception_ex(php_driver_invalid_argument_exception_ce, 0 TSRMLS_CC,
-        "Address \"%s\" contains only %d bytes  (%d bytes are expected)",
-        in, pos + 1, CASS_INET_V6_LENGTH);
+                              "Address \"%s\" contains only %d bytes  (%d bytes are expected)",
+                              in, pos + 1, CASS_INET_V6_LENGTH);
       return 0;
     }
 
     /* Check if the number of bytes does not exceed the maximum. */
     if (pos + 1 > CASS_INET_V6_LENGTH) {
       zend_throw_exception_ex(php_driver_invalid_argument_exception_ce, 0 TSRMLS_CC,
-        "Address \"%s\" exceeds the maximum IPv6 byte length " \
-        "(%d bytes are expected)\n", in, CASS_INET_V6_LENGTH);
+                              "Address \"%s\" exceeds the maximum IPv6 byte length "
+                              "(%d bytes are expected)\n",
+                              in, CASS_INET_V6_LENGTH);
       return 0;
     }
 
@@ -414,24 +440,22 @@ php_driver_parse_ip_address(char *in, CassInet *inet TSRMLS_DC)
 }
 
 void
-php_driver_format_address(CassInet inet, char **out)
+php_driver_format_address(CassInet inet, char** out)
 {
   if (inet.address_length > 4)
     spprintf(out, 0, "%x:%x:%x:%x:%x:%x:%x:%x",
-      (inet.address[0]  * 256 + inet.address[1]),
-      (inet.address[2]  * 256 + inet.address[3]),
-      (inet.address[4]  * 256 + inet.address[5]),
-      (inet.address[6]  * 256 + inet.address[7]),
-      (inet.address[8]  * 256 + inet.address[9]),
-      (inet.address[10] * 256 + inet.address[11]),
-      (inet.address[12] * 256 + inet.address[13]),
-      (inet.address[14] * 256 + inet.address[15])
-    );
+             (inet.address[0] * 256 + inet.address[1]),
+             (inet.address[2] * 256 + inet.address[3]),
+             (inet.address[4] * 256 + inet.address[5]),
+             (inet.address[6] * 256 + inet.address[7]),
+             (inet.address[8] * 256 + inet.address[9]),
+             (inet.address[10] * 256 + inet.address[11]),
+             (inet.address[12] * 256 + inet.address[13]),
+             (inet.address[14] * 256 + inet.address[15]));
   else
     spprintf(out, 0, "%d.%d.%d.%d",
-      inet.address[0],
-      inet.address[1],
-      inet.address[2],
-      inet.address[3]
-    );
+             inet.address[0],
+             inet.address[1],
+             inet.address[2],
+             inet.address[3]);
 }

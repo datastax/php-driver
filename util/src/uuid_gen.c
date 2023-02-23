@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-#include "php_driver.h"
-#include "php_driver_globals.h"
-#include <stdlib.h>
+#include "include/php_driver.h"
+#include "include/php_driver_globals.h"
+
 #include "util/uuid_gen.h"
 
-static CassUuidGen* get_uuid_gen(TSRMLS_D) {
+static CassUuidGen* get_uuid_gen() {
   /* Create a new uuid generator if our PID has changed. This prevents the same
    * UUIDs from being generated in forked processes.
    */

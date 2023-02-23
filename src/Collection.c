@@ -14,12 +14,14 @@
  * limitations under the License.
  */
 
-#include "php_driver.h"
-#include "php_driver_types.h"
-#include "util/collections.h"
-#include "util/hash.h"
-#include "util/types.h"
-#include "src/Collection.h"
+#include <php_driver.h>
+#include <php_driver_types.h>
+
+#include <util/collections.h>
+#include <util/hash.h>
+#include <util/types.h>
+
+#include "Collection.h"
 
 zend_class_entry *php_driver_collection_ce = NULL;
 

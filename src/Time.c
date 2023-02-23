@@ -17,11 +17,11 @@
 #include "php_driver.h"
 #include "php_driver_types.h"
 #include "util/hash.h"
-#include "util/types.h"
 #include "util/math.h"
-#include <time.h>
-#include <ext/date/php_date.h>
+#include "util/types.h"
 #include <ext/date/lib/timelib.h>
+#include <ext/date/php_date.h>
+#include <time.h>
 
 zend_class_entry *php_driver_time_ce = NULL;
 

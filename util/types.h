@@ -13,72 +13,66 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#pragma once
 
-#ifndef PHP_DRIVER_UTIL_TYPES_H
-#define PHP_DRIVER_UTIL_TYPES_H
-
-#if PHP_MAJOR_VERSION >= 7
+#include <cassandra.h>
+#include <php_driver_types.h>
 #include <zend_smart_str.h>
-#else
-#include <ext/standard/php_smart_str.h>
-#endif
 
-#define PHP_DRIVER_SCALAR_TYPES_MAP(XX) \
-  XX(ascii, CASS_VALUE_TYPE_ASCII) \
-  XX(bigint, CASS_VALUE_TYPE_BIGINT) \
-  XX(smallint, CASS_VALUE_TYPE_SMALL_INT) \
-  XX(tinyint, CASS_VALUE_TYPE_TINY_INT) \
-  XX(blob, CASS_VALUE_TYPE_BLOB) \
-  XX(boolean, CASS_VALUE_TYPE_BOOLEAN) \
-  XX(counter, CASS_VALUE_TYPE_COUNTER) \
-  XX(decimal, CASS_VALUE_TYPE_DECIMAL) \
-  XX(double, CASS_VALUE_TYPE_DOUBLE) \
-  XX(duration, CASS_VALUE_TYPE_DURATION) \
-  XX(float, CASS_VALUE_TYPE_FLOAT) \
-  XX(int, CASS_VALUE_TYPE_INT) \
-  XX(text, CASS_VALUE_TYPE_TEXT) \
+#define PHP_DRIVER_SCALAR_TYPES_MAP(XX)    \
+  XX(ascii, CASS_VALUE_TYPE_ASCII)         \
+  XX(bigint, CASS_VALUE_TYPE_BIGINT)       \
+  XX(smallint, CASS_VALUE_TYPE_SMALL_INT)  \
+  XX(tinyint, CASS_VALUE_TYPE_TINY_INT)    \
+  XX(blob, CASS_VALUE_TYPE_BLOB)           \
+  XX(boolean, CASS_VALUE_TYPE_BOOLEAN)     \
+  XX(counter, CASS_VALUE_TYPE_COUNTER)     \
+  XX(decimal, CASS_VALUE_TYPE_DECIMAL)     \
+  XX(double, CASS_VALUE_TYPE_DOUBLE)       \
+  XX(duration, CASS_VALUE_TYPE_DURATION)   \
+  XX(float, CASS_VALUE_TYPE_FLOAT)         \
+  XX(int, CASS_VALUE_TYPE_INT)             \
+  XX(text, CASS_VALUE_TYPE_TEXT)           \
   XX(timestamp, CASS_VALUE_TYPE_TIMESTAMP) \
-  XX(date, CASS_VALUE_TYPE_DATE) \
-  XX(time, CASS_VALUE_TYPE_TIME) \
-  XX(uuid, CASS_VALUE_TYPE_UUID) \
-  XX(varchar, CASS_VALUE_TYPE_VARCHAR) \
-  XX(varint, CASS_VALUE_TYPE_VARINT) \
-  XX(timeuuid, CASS_VALUE_TYPE_TIMEUUID) \
+  XX(date, CASS_VALUE_TYPE_DATE)           \
+  XX(time, CASS_VALUE_TYPE_TIME)           \
+  XX(uuid, CASS_VALUE_TYPE_UUID)           \
+  XX(varchar, CASS_VALUE_TYPE_VARCHAR)     \
+  XX(varint, CASS_VALUE_TYPE_VARINT)       \
+  XX(timeuuid, CASS_VALUE_TYPE_TIMEUUID)   \
   XX(inet, CASS_VALUE_TYPE_INET)
 
-php5to7_zval php_driver_type_from_data_type(const CassDataType *data_type TSRMLS_DC);
+php5to7_zval php_driver_type_from_data_type(const CassDataType* data_type);
 
-int php_driver_type_validate(zval *object, const char *object_name TSRMLS_DC);
-int php_driver_type_compare(php_driver_type *type1, php_driver_type *type2 TSRMLS_DC);
-void php_driver_type_string(php_driver_type *type, smart_str *smart TSRMLS_DC);
+int php_driver_type_validate(zval* object, const char* object_name);
+int php_driver_type_compare(php_driver_type* type1, php_driver_type* type2);
+void php_driver_type_string(php_driver_type* type, smart_str* smart);
 
-php5to7_zval php_driver_type_scalar(CassValueType type TSRMLS_DC);
-const char* php_driver_scalar_type_name(CassValueType type TSRMLS_DC);
+php5to7_zval php_driver_type_scalar(CassValueType type);
+const char* php_driver_scalar_type_name(CassValueType type);
 
-php5to7_zval php_driver_type_set(zval *value_type TSRMLS_DC);
-php5to7_zval php_driver_type_set_from_value_type(CassValueType type TSRMLS_DC);
+php5to7_zval php_driver_type_set(zval* value_type);
+php5to7_zval php_driver_type_set_from_value_type(CassValueType type);
 
-php5to7_zval php_driver_type_collection(zval *value_type TSRMLS_DC);
-php5to7_zval php_driver_type_collection_from_value_type(CassValueType type TSRMLS_DC);
+php5to7_zval php_driver_type_collection(zval* value_type);
+php5to7_zval php_driver_type_collection_from_value_type(CassValueType type);
 
-php5to7_zval php_driver_type_map(zval *key_type,
-                                    zval *value_type TSRMLS_DC);
+php5to7_zval php_driver_type_map(zval* key_type,
+                                 zval* value_type);
 php5to7_zval php_driver_type_map_from_value_types(CassValueType key_type,
-                                                  CassValueType value_type TSRMLS_DC);
+                                                  CassValueType value_type);
 
-php5to7_zval php_driver_type_tuple(TSRMLS_D);
+php5to7_zval php_driver_type_tuple();
 
-php5to7_zval php_driver_type_user_type(TSRMLS_D);
+php5to7_zval php_driver_type_user_type();
 
-php5to7_zval php_driver_type_custom(const char *name,
-                                    size_t name_length TSRMLS_DC);
+php5to7_zval php_driver_type_custom(const char* name,
+                                    size_t name_length);
 
-int php_driver_parse_column_type(const char   *validator,
-                                 size_t        validator_len,
-                                 int          *reversed_out,
-                                 int          *frozen_out,
-                                 php5to7_zval *type_out TSRMLS_DC);
+int php_driver_parse_column_type(const char* validator,
+                                 size_t validator_len,
+                                 int* reversed_out,
+                                 int* frozen_out,
+                                 php5to7_zval* type_out);
 
 void php_driver_scalar_init(INTERNAL_FUNCTION_PARAMETERS);
-
-#endif /* PHP_DRIVER_UTIL_TYPES_H */

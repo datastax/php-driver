@@ -13,12 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#pragma once
 
-#ifndef PHP_DRIVER_UTIL_INET_H
-#define PHP_DRIVER_UTIL_INET_H
+#include <cassandra.h>
 
-void php_driver_format_address(CassInet inet, char **out);
-int php_driver_parse_ip_address(char *in, CassInet *inet TSRMLS_DC);
-
-
-#endif /* PHP_DRIVER_UTIL_INET_H */
+void php_driver_format_address(CassInet inet, char** out);
+int php_driver_parse_ip_address(char* in, CassInet* inet);

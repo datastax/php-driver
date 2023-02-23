@@ -14,9 +14,7 @@
  * limitations under the License.
  */
 
-#ifndef PHP_DRIVER_MATH_H
-#define PHP_DRIVER_MATH_H
-
+#pragma once
 #include <cassandra.h>
 #include <gmp.h>
 
@@ -32,5 +30,3 @@ int php_driver_parse_decimal(char* in, int in_len, mpz_t* number, long* scale);
 
 void php_driver_format_integer(mpz_t number, char** out, int* out_len);
 void php_driver_format_decimal(mpz_t number, long scale, char** out, int* out_len);
-
-#endif /* PHP_DRIVER_MATH_H */

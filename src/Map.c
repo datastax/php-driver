@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-#include "php_driver.h"
-#include "php_driver_types.h"
-#include "util/collections.h"
-#include "util/hash.h"
-#include "util/types.h"
+#include <php_driver.h>
+#include <php_driver_types.h>
+#include <util/collections.h>
+#include <util/hash.h>
+#include <util/types.h>
+
 #include "Map.h"
 
 zend_class_entry *php_driver_map_ce = NULL;

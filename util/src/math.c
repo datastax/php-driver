@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include "math.h"
+#include "util/math.h"
 #include "php_driver.h"
 #include "php_driver_types.h"
 #include "util/math.h"

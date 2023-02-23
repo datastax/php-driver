@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
+#include "util/inet.h"
 #include "php_driver.h"
 #include "php_driver_types.h"
-#include "util/inet.h"
 #include "util/types.h"
 
 zend_class_entry *php_driver_inet_ce = NULL;

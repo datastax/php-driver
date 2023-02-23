@@ -51,7 +51,6 @@ CPMAddPackage(
         "CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} -fPIC"
         GIT_TAG v1.44.2
 )
-message("BUILD_TYPE: ${CMAKE_BUILD_TYPE}")
 
 set(LIBUV_ROOT_DIR ${libuv_BINARY_DIR})
 if (PHP_SCYLLADB_LIBUV_STATIC)
@@ -91,9 +90,11 @@ CPMAddPackage(
 
 
 file(GLOB_RECURSE SRC_LIST FOLLOW_SYMLINKS src/*.c)
-file(GLOB_RECURSE UTILS_LIST FOLLOW_SYMLINKS util/*.c)
 file(GLOB_RECURSE HEADERS_LIST FOLLOW_SYMLINKS include/*.h)
-set(php_scylladb_sources ${UTILS_LIST} ${SRC_LIST} php_driver.c)
+set(php_scylladb_sources ${SRC_LIST} php_driver.c)
+
+add_subdirectory(ZendCPP)
+add_subdirectory(util)
 
 add_library(ext_scylladb SHARED)
 target_optimize(ext_scylladb ${PHP_SCYLLADB_OPTIMISE_FOR_CURRENT_MACHINE})
@@ -104,6 +105,11 @@ add_compile_options(
 target_sources(ext_scylladb PUBLIC FILE_SET headers TYPE HEADERS FILES "${HEADERS_LIST}" "${PROJECT_BINARY_DIR}/config.h")
 target_sources(ext_scylladb PRIVATE ${php_scylladb_sources})
 
+target_link_libraries(
+        ext_scylladb PRIVATE
+        zend
+        ext_scylladb::utils
+)
 
 if (PHP_SCYLLADB_LIBUV_STATIC)
     target_compile_definitions(ext_scylladb PRIVATE -DUV_STATIC)

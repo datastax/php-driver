@@ -13,24 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#pragma once
 
-#ifndef PHP_DRIVER_HASH_H
-#define PHP_DRIVER_HASH_H
-
-#include "php_driver.h"
+#include <php_driver.h>
 
 #define uthash_malloc(sz) emalloc(sz)
 #define uthash_free(ptr, sz) efree(ptr)
 
 #define HASH_FUNCTION(key, keylen, num_bkts, hashv, bkt) \
-  hashv = php_driver_value_hash((zval*) key TSRMLS_CC);  \
+  hashv = php_driver_value_hash((zval*) key);            \
   bkt   = (hashv) & (num_bkts - 1U)
 #define HASH_KEYCOMPARE(a, b, len) \
-  php_driver_value_compare((zval*) a, (zval*) b TSRMLS_CC)
+  php_driver_value_compare((zval*) a, (zval*) b)
 
 #undef HASH_ADD /* Previously defined in Zend/zend_hash.h */
 
-#include "util/uthash.h"
+#include "uthash.h"
 
 #define HASH_FIND_ZVAL(head, zvptr, out) \
   HASH_FIND(hh, head, zvptr, 0, out)
@@ -67,5 +65,3 @@ php_driver_combine_hash(unsigned seed, unsigned hashv)
 {
   return seed ^ (hashv + 0x9e3779b9 + (seed << 6) + (seed >> 2));
 }
-
-#endif /* PHP_DRIVER_HASH_H */

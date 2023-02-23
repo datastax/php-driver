@@ -18,8 +18,8 @@
 #include "php_driver_types.h"
 #include "util/hash.h"
 #include "util/types.h"
-#include <time.h>
 #include <ext/date/php_date.h>
+#include <time.h>
 
 zend_class_entry *php_driver_date_ce = NULL;
 

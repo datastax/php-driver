@@ -13,11 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#pragma once
 
-#ifndef PHP_DRIVER_UTIL_FUTURE_H
-#define PHP_DRIVER_UTIL_FUTURE_H
+#include <cassandra.h>
+#include <php.h>
 
-int  php_driver_future_wait_timed(CassFuture *future, zval *timeout TSRMLS_DC);
-int  php_driver_future_is_error(CassFuture *future TSRMLS_DC);
-
-#endif /* PHP_DRIVER_UTIL_FUTURE_H */
+int php_driver_future_wait_timed(CassFuture* future, zval* timeout);
+int php_driver_future_is_error(CassFuture* future);

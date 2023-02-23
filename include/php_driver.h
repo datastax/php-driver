@@ -8,6 +8,12 @@
 #include <cassandra.h>
 #include <gmp.h>
 
+#include <math.h>
+
+#ifdef HAVE_STRING_H
+#include <string.h>
+#endif
+
 #include <php.h>
 
 #include <sys/types.h>
@@ -45,7 +51,7 @@
 #include <ext/spl/spl_exceptions.h>
 #include <ext/spl/spl_iterators.h>
 
-#include "version.h"
+#include <version.h>
 
 #if defined(__GNUC__) && __GNUC__ >= 4
 #define PHP_DRIVER_API __attribute__((visibility("default")))

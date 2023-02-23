@@ -13,11 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#pragma once
 
-#ifndef PHP_DRIVER_CONSISTENCY_H
-#define PHP_DRIVER_CONSISTENCY_H
+#include <php.h>
 
-int php_driver_get_consistency(zval *consistency, long *result TSRMLS_DC);
-int php_driver_get_serial_consistency(zval *serial_consistency, long *result TSRMLS_DC);
-
-#endif /* PHP_DRIVER_CONSISTENCY_H */
+int php_driver_get_consistency(zval* consistency, long* result);
+int php_driver_get_serial_consistency(zval* serial_consistency, long* result);

@@ -14,9 +14,7 @@
  * limitations under the License.
  */
 
-#ifndef PHP_DRIVER_BYTES_H
-#define PHP_DRIVER_BYTES_H
+#pragma once
 
-void php_driver_bytes_to_hex(const char *bin, int len, char **out, int *out_len);
-
-#endif /* PHP_DRIVER_BYTES_H */
+#include <php.h>
+void php_driver_bytes_to_hex(const char* bin, int len, char** out, int* out_len);

@@ -16,8 +16,8 @@
 
 #include "php_driver.h"
 #include "php_driver_types.h"
-#include "util/result.h"
 #include "util/ref.h"
+#include "util/result.h"
 #include "util/types.h"
 
 #include "DefaultColumn.h"

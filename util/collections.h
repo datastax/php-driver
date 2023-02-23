@@ -13,19 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#pragma once
 
-#ifndef PHP_DRIVER_UTIL_COLLECTIONS_H
-#define PHP_DRIVER_UTIL_COLLECTIONS_H
+#include <cassandra.h>
+#include <php.h>
+#include <php_driver_types.h>
 
-int php_driver_validate_object(zval* object, zval* ztype TSRMLS_DC);
-int php_driver_value_type(char* type, CassValueType* value_type TSRMLS_DC);
+int php_driver_validate_object(zval* object, zval* ztype);
+int php_driver_value_type(char* type, CassValueType* value_type);
 
-int php_driver_collection_from_set(php_driver_set* set, CassCollection** collection_ptr TSRMLS_DC);
-int php_driver_collection_from_collection(php_driver_collection* coll, CassCollection** collection_ptr TSRMLS_DC);
-int php_driver_collection_from_map(php_driver_map* map, CassCollection** collection_ptr TSRMLS_DC);
+int php_driver_collection_from_set(php_driver_set* set, CassCollection** collection_ptr);
+int php_driver_collection_from_collection(php_driver_collection* coll, CassCollection** collection_ptr);
+int php_driver_collection_from_map(php_driver_map* map, CassCollection** collection_ptr);
 
-int php_driver_tuple_from_tuple(php_driver_tuple *tuple, CassTuple **output TSRMLS_DC);
+int php_driver_tuple_from_tuple(php_driver_tuple* tuple, CassTuple** output);
 
-int php_driver_user_type_from_user_type_value(php_driver_user_type_value *user_type_value, CassUserType **output TSRMLS_DC);
-
-#endif /* PHP_DRIVER_UTIL_COLLECTIONS_H */
+int php_driver_user_type_from_user_type_value(php_driver_user_type_value* user_type_value, CassUserType** output);
