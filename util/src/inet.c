@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-#include "include/php_driver.h"
-#include "include/php_driver_types.h"
+#include <php_driver.h>
+#include <php_driver_types.h>
 #include <stdlib.h>
 
-#include "util/inet.h"
+#include "inet.h"
 
 #define IPV4 1
 #define IPV6 2

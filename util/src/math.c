@@ -14,29 +14,21 @@
  * limitations under the License.
  */
 
-#include "util/math.h"
-#include "php_driver.h"
-#include "php_driver_types.h"
-#include "util/math.h"
 #include <errno.h>
 #include <gmp.h>
 #include <stdlib.h>
 
-#ifdef _WIN32
-#  if defined(DISABLE_MSVC_STDINT) || _MSC_VER <= 1700
-#    define strtoull _strtoui64
-       float strtof(const char *str, char **endptr) {
-         return (float) strtod(str, endptr);
-       }
-#  endif
-#endif
+#include <php_driver.h>
+#include <php_driver_types.h>
 
-extern zend_class_entry *php_driver_invalid_argument_exception_ce;
+#include "math.h"
+
+extern zend_class_entry* php_driver_invalid_argument_exception_ce;
 
 static int
-prepare_string_conversion(char *in, int *pos, int *negative)
+prepare_string_conversion(char* in, int* pos, int* negative)
 {
-  int base = 0;
+  int base  = 0;
   int point = 0;
 
   /* Advance the pointer; ignore sign */
@@ -64,9 +56,9 @@ prepare_string_conversion(char *in, int *pos, int *negative)
 }
 
 int
-php_driver_parse_float(char *in, int in_len, cass_float_t *number TSRMLS_DC)
+php_driver_parse_float(char* in, int in_len, cass_float_t* number TSRMLS_DC)
 {
-  char *end;
+  char* end;
   errno = 0;
 
   *number = (cass_float_t) strtof(in, &end);
@@ -118,19 +110,19 @@ php_driver_parse_double(char* in, int in_len, cass_double_t* number TSRMLS_DC)
 int
 php_driver_parse_int(char* in, int in_len, cass_int32_t* number TSRMLS_DC)
 {
-  char* end = NULL;
-  int pos = 0;
-  int negative = 0;
+  char* end          = NULL;
+  int pos            = 0;
+  int negative       = 0;
   cass_uint32_t temp = 0;
-  int base = 0;
+  int base           = 0;
 
-  base = prepare_string_conversion(in, &pos, &negative);
+  base  = prepare_string_conversion(in, &pos, &negative);
   errno = 0;
-  temp = (cass_uint32_t) strtoul(in + pos, &end, base);
+  temp  = (cass_uint32_t) strtoul(in + pos, &end, base);
 
   if (negative) {
     if (temp > (cass_uint32_t) INT_MAX + 1) {
-      errno = ERANGE;
+      errno   = ERANGE;
       *number = INT_MIN;
     } else if (temp == (cass_uint32_t) INT_MAX + 1) {
       *number = INT_MIN;
@@ -139,7 +131,7 @@ php_driver_parse_int(char* in, int in_len, cass_int32_t* number TSRMLS_DC)
     }
   } else {
     if (temp > (cass_uint32_t) INT_MAX) {
-      errno = ERANGE;
+      errno   = ERANGE;
       *number = INT_MAX;
     } else {
       *number = temp;
@@ -148,7 +140,7 @@ php_driver_parse_int(char* in, int in_len, cass_int32_t* number TSRMLS_DC)
 
   if (errno == ERANGE) {
     zend_throw_exception_ex(php_driver_range_exception_ce, 0 TSRMLS_CC,
-      "value must be between %d and %d, %s given", INT_MIN, INT_MAX, in);
+                            "value must be between %d and %d, %s given", INT_MIN, INT_MAX, in);
     return 0;
   }
 
@@ -166,21 +158,21 @@ php_driver_parse_int(char* in, int in_len, cass_int32_t* number TSRMLS_DC)
 }
 
 int
-php_driver_parse_bigint(char *in, int in_len, cass_int64_t *number TSRMLS_DC)
+php_driver_parse_bigint(char* in, int in_len, cass_int64_t* number TSRMLS_DC)
 {
-  char* end = NULL;
-  int pos = 0;
-  int negative = 0;
+  char* end          = NULL;
+  int pos            = 0;
+  int negative       = 0;
   cass_uint64_t temp = 0;
-  int base = 0;
+  int base           = 0;
 
-  base = prepare_string_conversion(in, &pos, &negative);
+  base  = prepare_string_conversion(in, &pos, &negative);
   errno = 0;
-  temp = (cass_uint64_t) strtoull(in + pos, &end, base);
+  temp  = (cass_uint64_t) strtoull(in + pos, &end, base);
 
   if (negative) {
     if (temp > (cass_uint64_t) INT64_MAX + 1) {
-      errno = ERANGE;
+      errno   = ERANGE;
       *number = INT64_MIN;
     } else if (temp == (cass_uint64_t) INT64_MAX + 1) {
       *number = INT64_MIN;
@@ -189,7 +181,7 @@ php_driver_parse_bigint(char *in, int in_len, cass_int64_t *number TSRMLS_DC)
     }
   } else {
     if (temp > (cass_uint64_t) INT64_MAX) {
-      errno = ERANGE;
+      errno   = ERANGE;
       *number = INT64_MAX;
     } else {
       *number = temp;
@@ -198,7 +190,7 @@ php_driver_parse_bigint(char *in, int in_len, cass_int64_t *number TSRMLS_DC)
 
   if (errno == ERANGE) {
     zend_throw_exception_ex(php_driver_range_exception_ce, 0 TSRMLS_CC,
-      "value must be between " LL_FORMAT " and " LL_FORMAT ", %s given", INT64_MIN, INT64_MAX, in);
+                            "value must be between " LL_FORMAT " and " LL_FORMAT ", %s given", INT64_MIN, INT64_MAX, in);
     return 0;
   }
 
@@ -216,11 +208,11 @@ php_driver_parse_bigint(char *in, int in_len, cass_int64_t *number TSRMLS_DC)
 }
 
 int
-php_driver_parse_varint(char *in, int in_len, mpz_t *number TSRMLS_DC)
+php_driver_parse_varint(char* in, int in_len, mpz_t* number TSRMLS_DC)
 {
-  int pos = 0;
+  int pos      = 0;
   int negative = 0;
-  int base = 0;
+  int base     = 0;
 
   base = prepare_string_conversion(in, &pos, &negative);
 
@@ -236,7 +228,7 @@ php_driver_parse_varint(char *in, int in_len, mpz_t *number TSRMLS_DC)
 }
 
 int
-php_driver_parse_decimal(char *in, int in_len, mpz_t *number, long *scale TSRMLS_DC)
+php_driver_parse_decimal(char* in, int in_len, mpz_t* number, long* scale TSRMLS_DC)
 {
   /*  start is the index into the char array where the significand starts */
   int start = 0;
@@ -356,7 +348,7 @@ php_driver_parse_decimal(char *in, int in_len, mpz_t *number, long *scale TSRMLS
     memcpy(&out[negative + dot - start], &in[dot + 1], point - dot);
 
     out_len = point - start + negative - 1;
-    *scale = point - 1 - dot;
+    *scale  = point - 1 - dot;
   } else {
     /*
      * If there was no decimal then the unscaled value is just the number
@@ -364,7 +356,7 @@ php_driver_parse_decimal(char *in, int in_len, mpz_t *number, long *scale TSRMLS
      */
     memcpy(&out[negative], &in[start], point - start);
     out_len = point - start + negative;
-    *scale = 0;
+    *scale  = 0;
   }
 
   if (out_len == 0) {
@@ -414,7 +406,7 @@ php_driver_parse_decimal(char *in, int in_len, mpz_t *number, long *scale TSRMLS
 }
 
 void
-php_driver_format_integer(mpz_t number, char **out, int *out_len)
+php_driver_format_integer(mpz_t number, char** out, int* out_len)
 {
   /* Adding 2 ensures enough space for the null-terminator and negative sign */
   *out = (char*) emalloc(mpz_sizeinbase(number, 10) + 2);
@@ -423,13 +415,13 @@ php_driver_format_integer(mpz_t number, char **out, int *out_len)
 }
 
 void
-php_driver_format_decimal(mpz_t number, long scale, char **out, int *out_len)
+php_driver_format_decimal(mpz_t number, long scale, char** out, int* out_len)
 {
-  char *tmp = NULL;
+  char* tmp    = NULL;
   size_t total = 0;
   size_t len   = mpz_sizeinbase(number, 10);
   int negative = 0;
-  int point = -1;
+  int point    = -1;
 
   if (scale == 0) {
     php_driver_format_integer(number, out, out_len);
@@ -450,7 +442,7 @@ php_driver_format_decimal(mpz_t number, long scale, char **out, int *out_len)
   // Update len to be the true length of the string representation of |number|. mpz_sizeinbase
   // can return a higher result than the actual length.
   // NOTE: the length of the string includes the negative sign (if present); account for that.
-  len  = strlen(tmp) - negative;
+  len = strlen(tmp) - negative;
 
   point = len - scale;
 
@@ -482,7 +474,7 @@ php_driver_format_decimal(mpz_t number, long scale, char **out, int *out_len)
         point++;
       }
 
-      total = i + len;
+      total      = i + len;
       tmp[total] = '\0';
     } else {
       // e.g. 1.2, -1.2
@@ -504,7 +496,7 @@ php_driver_format_decimal(mpz_t number, long scale, char **out, int *out_len)
     // Very small positive or negative number that we want to express in scientific notation:
     // 0.000000004, -0.000000004
 
-    int exponent = -1;
+    int exponent      = -1;
     int exponent_size = -1;
 
     // Calculate the exponent value and its size.
@@ -522,7 +514,7 @@ php_driver_format_decimal(mpz_t number, long scale, char **out, int *out_len)
     } else {
       // We have a more complex number. Insert a decimal point after the first digit.
       point = negative ? 2 : 1;
-      memmove(&(tmp[point + 1]), &(tmp[point]), len-1);
+      memmove(&(tmp[point + 1]), &(tmp[point]), len - 1);
       tmp[point] = '.';
 
       // Now append the exponent to the end and we're done.
@@ -536,7 +528,7 @@ php_driver_format_decimal(mpz_t number, long scale, char **out, int *out_len)
 }
 
 void
-import_twos_complement(cass_byte_t *data, size_t size, mpz_t *number)
+import_twos_complement(cass_byte_t* data, size_t size, mpz_t* number)
 {
   mpz_import(*number, size, 1, sizeof(cass_byte_t), 1, 0, data);
 
@@ -555,15 +547,15 @@ import_twos_complement(cass_byte_t *data, size_t size, mpz_t *number)
 }
 
 cass_byte_t*
-export_twos_complement(mpz_t number, size_t *size)
+export_twos_complement(mpz_t number, size_t* size)
 {
-  cass_byte_t *bytes;
+  cass_byte_t* bytes;
 
   if (mpz_sgn(number) == 0) {
     /* mpz_export() returns NULL for 0 */
-    bytes = (cass_byte_t*) malloc(sizeof(cass_byte_t));
+    bytes  = (cass_byte_t*) malloc(sizeof(cass_byte_t));
     *bytes = 0;
-    *size = 1;
+    *size  = 1;
   } else if (mpz_sgn(number) == -1) {
     /*  mpz_export() ignores sign and only exports abs(number)
      *  so this needs to convert the number to the two's complement
@@ -605,8 +597,8 @@ export_twos_complement(mpz_t number, size_t *size)
      */
 
     /* round to the nearest byte and add space for a leading 0 byte */
-    *size = (mpz_sizeinbase(number, 2) + 7) / 8 + 1;
-    bytes = malloc(*size);
+    *size    = (mpz_sizeinbase(number, 2) + 7) / 8 + 1;
+    bytes    = malloc(*size);
     bytes[0] = 0;
     mpz_export(bytes + 1, NULL, 1, sizeof(cass_byte_t), 1, 0, number);
   }

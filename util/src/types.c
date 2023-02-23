@@ -36,7 +36,7 @@
 #include "src/Uuid.h"
 #include "src/Varint.h"
 
-#include "util/types.h"
+#include "types.h"
 
 struct node_s {
   struct node_s* parent;

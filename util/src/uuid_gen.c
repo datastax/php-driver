@@ -14,12 +14,14 @@
  * limitations under the License.
  */
 
-#include "include/php_driver.h"
-#include "include/php_driver_globals.h"
+#include <php_driver.h>
+#include <php_driver_globals.h>
 
-#include "util/uuid_gen.h"
+#include "uuid_gen.h"
 
-static CassUuidGen* get_uuid_gen() {
+static CassUuidGen*
+get_uuid_gen()
+{
   /* Create a new uuid generator if our PID has changed. This prevents the same
    * UUIDs from being generated in forked processes.
    */
@@ -27,32 +29,35 @@ static CassUuidGen* get_uuid_gen() {
     if (PHP_DRIVER_G(uuid_gen)) {
       cass_uuid_gen_free(PHP_DRIVER_G(uuid_gen));
     }
-    PHP_DRIVER_G(uuid_gen) = cass_uuid_gen_new();
+    PHP_DRIVER_G(uuid_gen)     = cass_uuid_gen_new();
     PHP_DRIVER_G(uuid_gen_pid) = getpid();
   }
   return PHP_DRIVER_G(uuid_gen);
 }
 
 void
-php_driver_uuid_generate_random(CassUuid *out TSRMLS_DC)
+php_driver_uuid_generate_random(CassUuid* out TSRMLS_DC)
 {
   CassUuidGen* uuid_gen = get_uuid_gen(TSRMLS_C);
-  if (!uuid_gen) return;
+  if (!uuid_gen)
+    return;
   cass_uuid_gen_random(uuid_gen, out);
 }
 
 void
-php_driver_uuid_generate_time(CassUuid *out TSRMLS_DC)
+php_driver_uuid_generate_time(CassUuid* out TSRMLS_DC)
 {
   CassUuidGen* uuid_gen = get_uuid_gen(TSRMLS_C);
-  if (!uuid_gen) return;
+  if (!uuid_gen)
+    return;
   cass_uuid_gen_time(uuid_gen, out);
 }
 
 void
-php_driver_uuid_generate_from_time(long timestamp, CassUuid *out TSRMLS_DC)
+php_driver_uuid_generate_from_time(long timestamp, CassUuid* out TSRMLS_DC)
 {
   CassUuidGen* uuid_gen = get_uuid_gen(TSRMLS_C);
-  if (!uuid_gen) return;
+  if (!uuid_gen)
+    return;
   cass_uuid_gen_from_time(uuid_gen, (cass_uint64_t) timestamp, out);
 }

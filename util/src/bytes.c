@@ -14,10 +14,9 @@
  * limitations under the License.
  */
 
-#include "include/php_driver.h"
 #include <stdlib.h>
 
-#include "util/bytes.h"
+#include "bytes.h"
 
 void
 php_driver_bytes_to_hex(const char* bin, int len, char** out, int* out_len)

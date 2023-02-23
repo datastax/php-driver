@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include "php_driver.h"
+#include <php_driver.h>
 
 int php_driver_get_consistency(zval *consistency, long *result TSRMLS_DC)
 {
