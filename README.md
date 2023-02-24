@@ -145,12 +145,12 @@ specific language governing permissions and limitations under the License.
 [installing-details]: https://github.com/datastax/php-driver/blob/master/ext/README.md
 [contribution-policy]: https://github.com/datastax/php-driver/blob/master/CONTRIBUTING.md
 [Behat Framework]: http://docs.behat.org
-[Features]: /features
-[`duration`]: /features/duration.feature
-[simple string]: /features/simple_string_queries.feature
-[`tinyint` and `smallint`]: /features/datatypes.feature#L92
-[`date`]: /features/datatypes.feature#L135
-[`time`]: /features/datatypes.feature#L170
-[user-defined function and aggregate]: /features/function_and_aggregate_metadata.feature
-[secondary index]: /features/secondary_index_metadata.feature
-[materialized view]: /features/materialized_view_metadata.feature
+[Features]: /tests/features
+[`duration`]: /tests/features/duration.feature
+[simple string]: /tests/features/simple_string_queries.feature
+[`tinyint` and `smallint`]: /tests/features/datatypes.feature#L92
+[`date`]: /tests/features/datatypes.feature#L135
+[`time`]: /tests/features/datatypes.feature#L170
+[user-defined function and aggregate]: /tests/features/function_and_aggregate_metadata.feature
+[secondary index]: /tests/features/secondary_index_metadata.feature
+[materialized view]: /tests/features/materialized_view_metadata.feature

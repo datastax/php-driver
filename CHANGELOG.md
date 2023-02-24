@@ -1,3 +1,10 @@
+# Development
+
+* CMake used instead of autoconf and makefiles
+* Removed support for PHP 5.x
+* Version of the extension gets updated from CMakeLists.txt
+
+
 # 1.3.8
 
 *  Support for PHP 8.2
