@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+#include <cassandra.h>
 #include <php_driver.h>
 #include <php_driver_globals.h>
 

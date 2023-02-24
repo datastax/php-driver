@@ -15,7 +15,7 @@
 #define PACKAGE_STRING "scylladb-@PHP_SCYLLADB_VERSION@"
 #define PACKAGE_TARNAME "scylladb"
 #define PACKAGE_VERSION "@PHP_SCYLLADB_VERSION@"
-#define PACKAGE_URL "https://github.com/nano-interactive/ext-cassandra"
+#define PACKAGE_URL "https://github.com/he4rt/scylladb-php-driver"
 
 /* Define to 1 if you have the ANSI C header files. */
 #cmakedefine STDC_HEADERS 1

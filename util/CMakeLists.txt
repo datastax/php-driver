@@ -16,13 +16,14 @@ target_sources(
 )
 
 find_package(PHP REQUIRED)
-
+set_target_properties(util PROPERTIES POSITION_INDEPENDENT_CODE ON)
 target_include_directories(
         util
         PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}
         ${PHP_INCLUDES}
         ${PROJECT_SOURCE_DIR}/include
-        ${PROJECT_SOURCE_DIR} # TODO: Should be removed
         ${PROJECT_BINARY_DIR}
+        ${libscylladb_SOURCE_DIR}/include
+        ${PROJECT_SOURCE_DIR}
 )

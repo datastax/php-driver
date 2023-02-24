@@ -1,6 +1,6 @@
 ARG PHP_IMAGE=php:8.2-cli
 
-FROM $PHP_IMAGE
+FROM $PHP_IMAGE as base
 
 ARG API_VERSION=20220829
 ARG PHP_CONF_DIR=/usr/local/etc/php/conf.d
@@ -19,7 +19,8 @@ RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"  \
     && docker-php-source extract \
     && apt update -y \
     && apt install \
-        cmake \
+        python3 \
+        python3-pip \
         unzip \
         mlocate \
         build-essential \
@@ -30,19 +31,21 @@ RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"  \
         zlib1g-dev \
         openssl \
         libpcre3-dev -y \
-    && install-php-extensions intl zip pcntl gmp xdebug \
+    && pip3 install cmake \
+    && install-php-extensions intl zip pcntl gmp \
     && docker-php-source delete \
     && apt-get clean \
-    && mkdir -p build/Release \
+
+FROM base as build
+
+RUN mkdir -p build/Release \
+    && phpize \
     && cd build/Release \
     && cmake \
       -G Ninja \
       -DCMAKE_BUILD_TYPE=Release \
-      -DPHP_SCYLLADB_LIBUV_STATIC=ON \
-      -DPHP_SCYLLADB_LIBSCYLLADB_STATIC=ON \
       ../.. \
     && ninja \
     && ninja install \
     && cp cassandra.so ${PHP_EXT_DIR}/cassandra.so \
-    && cd ../../ \
-    && cp cassandra.ini ${PHP_CONF_DIR}/cassandra.ini \
+    && cp ../../cassandra.ini ${PHP_CONF_DIR}/cassandra.ini

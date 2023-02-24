@@ -29,8 +29,8 @@ option(PHP_SCYLLADB_ENABLE_SANITIZERS "Enable sanitizers" OFF)
 option(PHP_SCYLLADB_ENABLE_COVERAGE "Enable coverage" OFF)
 option(PHP_SCYLLADB_OPTIMISE_FOR_CURRENT_MACHINE "Optimise for current machine" OFF)
 
-option(PHP_SCYLLADB_LIBUV_STATIC "Statically link libuv" OFF)
-option(PHP_SCYLLADB_LIBSCYLLADB_STATIC "Statically link libscylladb" OFF)
+option(PHP_SCYLLADB_LIBUV_STATIC "Statically link libuv" ON)
+option(PHP_SCYLLADB_LIBSCYLLADB_STATIC "Statically link libscylladb" ON)
 
 find_package(PHP REQUIRED)
 
@@ -54,7 +54,7 @@ CPMAddPackage(
 
 set(LIBUV_ROOT_DIR ${libuv_BINARY_DIR})
 if (PHP_SCYLLADB_LIBUV_STATIC)
-    set(LIBUV_LIBRARY "${libuv_BINARY_DIR}/${CMAKE_BUILD_TYPE}/libuv_a.a")
+    set(LIBUV_LIBRARY "${libuv_BINARY_DIR}/libuv_a.a")
 else ()
     set(LIBUV_LIBRARY "${libuv_BINARY_DIR}/${CMAKE_BUILD_TYPE}/libuv.so")
 endif ()
@@ -102,6 +102,14 @@ add_compile_options(
         -fPIC -Wall -Wextra -Wno-long-long -Wno-deprecated-declarations -Wno-unused-parameter -Wno-unused-result -Wno-variadic-macros -Wno-extra-semi -pthread
         $<$<CONFIG:DEBUG>:-ggdb3
 )
+target_include_directories(
+        ext_scylladb PUBLIC
+        ${PROJECT_SOURCE_DIR}/include
+        ${PROJECT_BINARY_DIR}
+        ${libuv_SOURCE_DIR}/include
+        ${libscylladb_SOURCE_DIR}/include
+        ${PHP_INCLUDES}
+)
 target_sources(ext_scylladb PUBLIC FILE_SET headers TYPE HEADERS FILES "${HEADERS_LIST}" "${PROJECT_BINARY_DIR}/config.h")
 target_sources(ext_scylladb PRIVATE ${php_scylladb_sources})
 
@@ -124,16 +132,6 @@ if (PHP_SCYLLADB_LIBSCYLLADB_STATIC)
 else ()
     target_link_libraries(ext_scylladb PRIVATE "libscylla-cpp-driver.so")
 endif ()
-
-
-target_include_directories(
-        ext_scylladb
-        PRIVATE "${PHP_INCLUDES}"
-        PRIVATE "${PROJECT_BINARY_DIR}"
-        PRIVATE "${libuv_SOURCE_DIR}/include"
-        PRIVATE "${libscylladb_SOURCE_DIR}/include"
-        PUBLIC "${PROJECT_SOURCE_DIR}/include"
-)
 
 check_include_file("dlfcn.h" HAVE_DLFCN_H)
 check_include_file("stdio.h" HAVE_STDIO_H)

@@ -21,4 +21,4 @@ if (NOT PHP_FOUND)
     endif ()
 endif ()
 
-message(STATUS "PHP version: ${PHP_VERSION} ${PHP_INCLUDES}")
+message(STATUS "PHP version: ${PHP_VERSION}")
