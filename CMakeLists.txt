@@ -96,7 +96,7 @@ set(php_scylladb_sources ${SRC_LIST} php_driver.c)
 add_subdirectory(ZendCPP)
 add_subdirectory(util)
 
-add_library(ext_scylladb SHARED add.cpp)
+add_library(ext_scylladb SHARED)
 target_optimize(ext_scylladb ${PHP_SCYLLADB_OPTIMISE_FOR_CURRENT_MACHINE})
 add_compile_options(
         -fPIC -Wall -Wextra -Wno-long-long -Wno-deprecated-declarations -Wno-unused-parameter -Wno-unused-result -Wno-variadic-macros -Wno-extra-semi -pthread
