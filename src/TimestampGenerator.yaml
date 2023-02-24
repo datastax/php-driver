@@ -1,4 +1,0 @@
----
-TimestampGenerator:
-  comment: Interface for timestamp generators.
-...
