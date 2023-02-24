@@ -1,6 +1,6 @@
 ARG PHP_IMAGE=php:8.2-cli
 
-FROM PHP_IMAGE
+FROM $PHP_IMAGE
 
 ARG API_VERSION=20220829
 ARG PHP_CONF_DIR=/usr/local/etc/php/conf.d
@@ -43,5 +43,6 @@ RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"  \
       ../.. \
     && ninja \
     && ninja install \
-    && cp /ext-scylladb/build/Release/cassandra.so ${PHP_EXT_DIR}/scylladb.so \
-    && echo "extension=scylladb.so" > ${PHP_CONF_DIR}/scylladb.ini \
+    && cp cassandra.so ${PHP_EXT_DIR}/cassandra.so \
+    && cd ../../ \
+    && cp cassandra.ini ${PHP_CONF_DIR}/cassandra.ini \

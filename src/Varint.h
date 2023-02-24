@@ -17,6 +17,8 @@
 #ifndef PHP_DRIVER_VARINT_H
 #define PHP_DRIVER_VARINT_H
 
+#include <php.h>
+
 void php_driver_varint_init(INTERNAL_FUNCTION_PARAMETERS);
 
 #endif /* PHP_DRIVER_VARINT_H */

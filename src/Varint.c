@@ -102,7 +102,6 @@ php_driver_varint_init(INTERNAL_FUNCTION_PARAMETERS)
     INVALID_ARGUMENT(num, "a long, double, numeric string or a " PHP_DRIVER_NAMESPACE "\\Varint instance");
   }
 }
-
 /* {{{ Varint::__construct(string) */
 PHP_METHOD(Varint, __construct)
 {
@@ -510,6 +509,8 @@ void php_driver_define_Varint(TSRMLS_D)
   INIT_CLASS_ENTRY(ce, PHP_DRIVER_NAMESPACE "\\Varint", php_driver_varint_methods);
   php_driver_varint_ce = zend_register_internal_class(&ce TSRMLS_CC);
   zend_class_implements(php_driver_varint_ce TSRMLS_CC, 2, php_driver_value_ce, php_driver_numeric_ce);
+
+
   php_driver_varint_ce->ce_flags     |= PHP5TO7_ZEND_ACC_FINAL;
   php_driver_varint_ce->create_object = php_driver_varint_new;
 
@@ -518,6 +519,7 @@ void php_driver_define_Varint(TSRMLS_D)
 #if PHP_VERSION_ID >= 50400
   php_driver_varint_handlers.std.get_gc          = php_driver_varint_gc;
 #endif
+
 #if PHP_MAJOR_VERSION >= 8
   php_driver_varint_handlers.std.compare = php_driver_varint_compare;
 #else

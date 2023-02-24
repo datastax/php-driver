@@ -74,7 +74,15 @@ zend_module_entry php_driver_module_entry = {
 };
 
 #ifdef COMPILE_DL_CASSANDRA
-ZEND_GET_MODULE(php_driver)
+BEGIN_EXTERN_C()
+
+ZEND_DLEXPORT zend_module_entry*
+get_module()
+{
+  return &php_driver_module_entry;
+}
+END_EXTERN_C()
+
 #endif
 
 PHP_INI_BEGIN()
@@ -182,7 +190,7 @@ php_driver_log(const CassLogMessage* message, void* data)
 
   if (log_length > 0) {
     FILE* fd = NULL;
-    fd = fopen(log, "a");
+    fd       = fopen(log, "a");
     if (fd) {
       time_t log_time;
       struct tm log_tm;

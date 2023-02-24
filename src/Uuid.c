@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-#include "php_driver.h"
-#include "php_driver_types.h"
-#include "util/hash.h"
-#include "util/types.h"
-#include "util/uuid_gen.h"
+#include <php_driver.h>
+#include <php_driver_types.h>
+#include <util/hash.h>
+#include <util/types.h>
+#include <util/uuid_gen.h>
 
 zend_class_entry *php_driver_uuid_ce = NULL;
 
@@ -59,6 +59,8 @@ PHP_METHOD(Uuid, __construct)
 /* }}} */
 
 /* {{{ Uuid::__toString() */
+
+
 PHP_METHOD(Uuid, __toString)
 {
   char string[CASS_UUID_STRING_LENGTH];
