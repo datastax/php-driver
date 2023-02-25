@@ -42,8 +42,10 @@ RUN mkdir -p build/Release \
     && phpize \
     && cd build/Release \
     && cmake \
-      -G Ninja \
+      -G "Ninja" \
       -DCMAKE_BUILD_TYPE=Release \
+      -DCASS_CPP_STANDARD:STRING=17 \
+      -DCASS_USE_STATIC_LIBS:BOOL=ON \
       ../.. \
     && ninja \
     && ninja install \

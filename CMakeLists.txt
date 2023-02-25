@@ -56,7 +56,7 @@ set(LIBUV_ROOT_DIR ${libuv_BINARY_DIR})
 if (PHP_SCYLLADB_LIBUV_STATIC)
     set(LIBUV_LIBRARY "${libuv_BINARY_DIR}/libuv_a.a")
 else ()
-    set(LIBUV_LIBRARY "${libuv_BINARY_DIR}/${CMAKE_BUILD_TYPE}/libuv.so")
+    set(LIBUV_LIBRARY "${libuv_BINARY_DIR}/libuv.so")
 endif ()
 
 
