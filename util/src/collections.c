@@ -24,10 +24,10 @@
 #include "types.h"
 
 #define EXPECTING_VALUE(expected)                                   \
-  {                                                                 \
+  do {                                                              \
     throw_invalid_argument(object, "argument", expected TSRMLS_CC); \
     return 0;                                                       \
-  }
+  } while (0)
 
 #define INSTANCE_OF(cls) \
   (Z_TYPE_P(object) == IS_OBJECT && instanceof_function(Z_OBJCE_P(object), cls TSRMLS_CC))
@@ -891,10 +891,11 @@ php_driver_user_type_from_user_type_value(php_driver_user_type_value* user_type_
   }
   PHP5TO7_ZEND_HASH_FOREACH_END(&user_type_value->values);
 
-  if (result)
+  if (result) {
     *output = ut;
-  else
+  } else {
     cass_user_type_free(ut);
+  }
 
   return result;
 }
