@@ -7,14 +7,9 @@
       "description": "",
       "generator": "Ninja",
       "environment": {},
-      "architecture": {
-        "value": "x64",
-        "strategy": "set"
-      },
       "binaryDir": "${sourceDir}/out/${presetName}",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Debug",
-        "CMAKE_TOOLCHAIN_FILE": "",
         "CMAKE_INSTALL_PREFIX": "${sourceDir}/out/install/${presetName}",
         "PHP_SCYLLADB_LIBUV_STATIC": "ON",
         "PHP_SCYLLADB_LIBSCYLLADB_STATIC": "ON",
@@ -31,7 +26,6 @@
       "binaryDir": "${sourceDir}/out/${presetName}",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Release",
-        "CMAKE_TOOLCHAIN_FILE": "",
         "CMAKE_INSTALL_PREFIX": "${sourceDir}/out/install/${presetName}",
         "PHP_SCYLLADB_LIBUV_STATIC": "ON",
         "PHP_SCYLLADB_LIBSCYLLADB_STATIC": "ON",

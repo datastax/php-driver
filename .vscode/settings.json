@@ -3,6 +3,8 @@
   "cmake.allowCommentsInPresetsFile": true,
   "cmake.buildTask": true,
   "cmake.configureEnvironment": {
+    "CMAKE_C_COMPILER": "/usr/bin/clang",
+    "CMAKE_CXX_COMPILER": "/usr/bin/clang++",
     "PHP_SCYLLADB_LIBUV_STATIC": "ON",
     "PHP_SCYLLADB_LIBSCYLLADB_STATIC": "ON",
     "CASS_CPP_STANDARD": "17",
@@ -10,16 +12,9 @@
   },
   "cmake.configureSettings": {},
   "cmake.generator": "Ninja",
-  "cmake.configureOnOpen": true,
-  "files.associations": {
-    "*main.yml": "ansible",
-    "php_driver.h": "c",
-    "zend_exceptions.h": "c",
-    "php.h": "c",
-    "types.h": "c",
-    "php_driver_globals.h": "c",
-    "ref.h": "c",
-    "php_driver_types.h": "c",
-    "zend_smart_str.h": "c"
-  }
+  "cmake.installPrefix": "${workspaceFolder}/build/Debug/install",
+  "cmake.loggingLevel": "debug",
+  "cmake.configureArgs": [],
+  "cmake.sourceDirectory": "${workspaceFolder}",
+  "cmake.configureOnOpen": true
 }
