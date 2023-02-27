@@ -1,6 +1,4 @@
-#ifndef PHP_DRIVER_H
-#define PHP_DRIVER_H
-
+#pragma once
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
@@ -322,5 +320,3 @@ void throw_invalid_argument(zval* object,
 
 PHP_INI_MH(OnUpdateLogLevel);
 PHP_INI_MH(OnUpdateLog);
-
-#endif /* PHP_DRIVER_H */

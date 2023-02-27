@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-#include "php_driver.h"
+#include <php_driver.h>
 #include <php_driver_globals.h>
 #include <php_driver_types.h>
 #include <version.h>
 
-#include "util/ref.h"
-#include "util/types.h"
+#include <util/ref.h>
+#include <util/types.h>
 
 #include <ext/standard/info.h>
 #include <php_ini.h>

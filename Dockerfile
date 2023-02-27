@@ -13,6 +13,7 @@ COPY . /ext-scylladb
 WORKDIR /ext-scylladb
 
 RUN apt update -y \
+    && apt upgrade -y \
     && apt install -y \
         python3 \
         python3-pip \

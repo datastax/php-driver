@@ -1,0 +1,43 @@
+{
+  "version": 2,
+  "configurePresets": [
+    {
+      "name": "Debug",
+      "displayName": "Debug",
+      "description": "",
+      "generator": "Ninja",
+      "environment": {},
+      "architecture": {
+        "value": "x64",
+        "strategy": "set"
+      },
+      "binaryDir": "${sourceDir}/out/${presetName}",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "CMAKE_TOOLCHAIN_FILE": "",
+        "CMAKE_INSTALL_PREFIX": "${sourceDir}/out/install/${presetName}",
+        "PHP_SCYLLADB_LIBUV_STATIC": "ON",
+        "PHP_SCYLLADB_LIBSCYLLADB_STATIC": "ON",
+        "CASS_CPP_STANDARD": "17",
+        "CASS_USE_STATIC_LIBS": "ON"
+      }
+    },
+    {
+      "name": "Release",
+      "displayName": "Release",
+      "description": "",
+      "generator": "Ninja",
+      "environment": {},
+      "binaryDir": "${sourceDir}/out/${presetName}",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "CMAKE_TOOLCHAIN_FILE": "",
+        "CMAKE_INSTALL_PREFIX": "${sourceDir}/out/install/${presetName}",
+        "PHP_SCYLLADB_LIBUV_STATIC": "ON",
+        "PHP_SCYLLADB_LIBSCYLLADB_STATIC": "ON",
+        "CASS_CPP_STANDARD": "17",
+        "CASS_USE_STATIC_LIBS": "ON"
+      }
+    }
+  ]
+}
