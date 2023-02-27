@@ -42,21 +42,23 @@ endif ()
 
 CPMAddPackage(
         NAME libuv
-        GITHUB_REPOSITORY libuv/libuv
+        VERSION 1.44.2
+        URL https://github.com/libuv/libuv/tarball/v1.44.2
+        URL_HASH MD5=3e22e24d53aab67252907dfa004a6b53
         OPTIONS
         "BUILD_TESTING OFF"
         "BUILD_BENCHMARKS OFF"
         "LIBUV_BUILD_SHARED ${LIBUV_BUILD_SHARED}"
         "CMAKE_C_FLAGS ${CMAKE_C_FLAGS} -fPIC"
         "CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} -fPIC"
-        GIT_TAG v1.44.2
+        
 )
 
 set(LIBUV_ROOT_DIR ${libuv_BINARY_DIR})
 if (PHP_SCYLLADB_LIBUV_STATIC)
     set(LIBUV_LIBRARY "${libuv_BINARY_DIR}/libuv_a.a")
 else ()
-    set(LIBUV_LIBRARY "${libuv_BINARY_DIR}/${CMAKE_BUILD_TYPE}/libuv.so")
+    set(LIBUV_LIBRARY "${libuv_BINARY_DIR}/libuv.so")
 endif ()
 
 
@@ -71,7 +73,9 @@ endif ()
 
 CPMAddPackage(
         NAME libscylladb
-        GITHUB_REPOSITORY scylladb/cpp-driver
+        VERSION 2.16.2
+        URL https://github.com/scylladb/cpp-driver/tarball/2.16.2b
+        URL_HASH MD5=67e6c74cdd6c9692b2745bfc28dccdaa
         OPTIONS
         "CASS_CPP_STANDARD 17"
         "CASS_BUILD_STATIC ${CASS_BUILD_STATIC}"
@@ -84,7 +88,6 @@ CPMAddPackage(
         "CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} -fPIC"
         "LIBUV_LIBRARY ${LIBUV_LIBRARY}"
         "LIBUV_INCLUDE_DIR ${libuv_SOURCE_DIR}/include"
-        GIT_TAG 2.16.2b
 )
 
 
