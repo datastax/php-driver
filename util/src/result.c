@@ -91,7 +91,7 @@ php_driver_value(const CassValue* value, const CassDataType* data_type, php5to7_
     ASSERT_SUCCESS_BLOCK(cass_value_get_int64(value, &numeric->data.bigint.value),
       zval_ptr_dtor(out);
       return FAILURE;
-    )
+    );
     break;
   case CASS_VALUE_TYPE_SMALL_INT:
     object_init_ex(PHP5TO7_ZVAL_MAYBE_DEREF(out), php_driver_smallint_ce);
@@ -99,7 +99,7 @@ php_driver_value(const CassValue* value, const CassDataType* data_type, php5to7_
     ASSERT_SUCCESS_BLOCK(cass_value_get_int16(value, &numeric->data.smallint.value),
       zval_ptr_dtor(out);
       return FAILURE;
-    )
+    );
     break;
   case CASS_VALUE_TYPE_TINY_INT:
     object_init_ex(PHP5TO7_ZVAL_MAYBE_DEREF(out), php_driver_tinyint_ce);
@@ -107,7 +107,7 @@ php_driver_value(const CassValue* value, const CassDataType* data_type, php5to7_
     ASSERT_SUCCESS_BLOCK(cass_value_get_int8(value, &numeric->data.tinyint.value),
       zval_ptr_dtor(out);
       return FAILURE;
-    )
+    );
     break;
   case CASS_VALUE_TYPE_TIMESTAMP:
     object_init_ex(PHP5TO7_ZVAL_MAYBE_DEREF(out), php_driver_timestamp_ce);
@@ -115,7 +115,7 @@ php_driver_value(const CassValue* value, const CassDataType* data_type, php5to7_
     ASSERT_SUCCESS_BLOCK(cass_value_get_int64(value, &timestamp->timestamp),
       zval_ptr_dtor(out);
       return FAILURE;
-    )
+    );
     break;
   case CASS_VALUE_TYPE_DATE:
     object_init_ex(PHP5TO7_ZVAL_MAYBE_DEREF(out), php_driver_date_ce);
@@ -123,7 +123,7 @@ php_driver_value(const CassValue* value, const CassDataType* data_type, php5to7_
     ASSERT_SUCCESS_BLOCK(cass_value_get_uint32(value, &date->date),
       zval_ptr_dtor(out);
       return FAILURE;
-    )
+    );
     break;
   case CASS_VALUE_TYPE_TIME:
     object_init_ex(PHP5TO7_ZVAL_MAYBE_DEREF(out), php_driver_time_ce);
@@ -131,7 +131,7 @@ php_driver_value(const CassValue* value, const CassDataType* data_type, php5to7_
     ASSERT_SUCCESS_BLOCK(cass_value_get_int64(value, &time->time),
       zval_ptr_dtor(out);
       return FAILURE;
-    )
+    );
     break;
   case CASS_VALUE_TYPE_BLOB:
     object_init_ex(PHP5TO7_ZVAL_MAYBE_DEREF(out), php_driver_blob_ce);
@@ -139,7 +139,7 @@ php_driver_value(const CassValue* value, const CassDataType* data_type, php5to7_
     ASSERT_SUCCESS_BLOCK(cass_value_get_bytes(value, &v_bytes, &v_bytes_len),
       zval_ptr_dtor(out);
       return FAILURE;
-    )
+    );
     blob->data = emalloc(v_bytes_len * sizeof(cass_byte_t));
     blob->size = v_bytes_len;
     memcpy(blob->data, v_bytes, v_bytes_len);
@@ -159,7 +159,7 @@ php_driver_value(const CassValue* value, const CassDataType* data_type, php5to7_
     ASSERT_SUCCESS_BLOCK(cass_value_get_uuid(value, &uuid->uuid),
       zval_ptr_dtor(out);
       return FAILURE;
-    )
+    );
     break;
   case CASS_VALUE_TYPE_TIMEUUID:
     object_init_ex(PHP5TO7_ZVAL_MAYBE_DEREF(out), php_driver_timeuuid_ce);
@@ -167,7 +167,7 @@ php_driver_value(const CassValue* value, const CassDataType* data_type, php5to7_
     ASSERT_SUCCESS_BLOCK(cass_value_get_uuid(value, &uuid->uuid),
       zval_ptr_dtor(out);
       return FAILURE;
-    )
+    );
     break;
   case CASS_VALUE_TYPE_BOOLEAN:
     ASSERT_SUCCESS_BLOCK(cass_value_get_bool(value, &v_boolean),
@@ -186,7 +186,7 @@ php_driver_value(const CassValue* value, const CassDataType* data_type, php5to7_
     ASSERT_SUCCESS_BLOCK(cass_value_get_inet(value, &inet->inet),
       zval_ptr_dtor(out);
       return FAILURE;
-    )
+    );
     break;
   case CASS_VALUE_TYPE_DECIMAL:
     object_init_ex(PHP5TO7_ZVAL_MAYBE_DEREF(out), php_driver_decimal_ce);
@@ -219,7 +219,7 @@ php_driver_value(const CassValue* value, const CassDataType* data_type, php5to7_
     ASSERT_SUCCESS_BLOCK(cass_value_get_float(value, &numeric->data.floating.value),
       zval_ptr_dtor(out);
       return FAILURE;
-    )
+    );
     break;
   case CASS_VALUE_TYPE_LIST:
     object_init_ex(PHP5TO7_ZVAL_MAYBE_DEREF(out), php_driver_collection_ce);
