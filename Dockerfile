@@ -12,28 +12,26 @@ COPY . /ext-scylladb
 
 WORKDIR /ext-scylladb
 
-RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"  \
-    && php composer-setup.php \
-    && php -r "unlink('composer-setup.php');" \
-    && mv composer.phar /bin/composer \
-    && docker-php-source extract \
-    && apt update -y \
-    && apt install \
+RUN apt update -y \
+    && apt install -y \
         python3 \
         python3-pip \
         unzip \
         mlocate \
         build-essential \
         ninja-build \
-        git \
         libssl-dev \
         libgmp-dev \
         zlib1g-dev \
         openssl \
-        libpcre3-dev -y \
+        libpcre3-dev \
     && pip3 install cmake \
-    && install-php-extensions intl zip pcntl gmp \
-    && docker-php-source delete \
+    && install-php-extensions \
+        intl \
+        zip \
+        pcntl \
+        gmp \
+        @composer \
     && apt-get clean \
 
 FROM base as build
