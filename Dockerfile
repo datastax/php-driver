@@ -26,7 +26,7 @@ RUN apt update -y \
     zlib1g-dev \
     openssl \
     libpcre3-dev \
-    && pip3 install cmake \
+    && pip3 install cmake cqlsh \
     && install-php-extensions \
     intl \
     zip \
