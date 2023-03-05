@@ -6,9 +6,9 @@ on:
       php:
         description: 'PHP Version'
         required: true
-        default: '8.1'
+        default: '8.2'
       zts:
-        description: 'ZTS'
+        description: 'ZTS (Zend Thread Safety)'
         required: true
         default: 'no'
 jobs:
@@ -45,8 +45,8 @@ jobs:
           push: true
           pull: true
           platforms: linux/amd64
-          target: build
-          tags: ghcr.io/nano-interactive/ext-cassandra:${{ github.event.inputs.php }}-${{ github.sha }}
+          target: base
+          tags: ghcr.io/he4rt/scylladb-php-driver:${{ github.event.inputs.php }}-${{ github.sha }}
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache-new,mode=max
           build-args: |
@@ -61,9 +61,9 @@ jobs:
           push: true
           pull: true
           platforms: linux/amd64
-          target: build
-          tags: ghcr.io/nano-interactive/ext-cassandra:${{ github.event.inputs.php }}-${{ github.sha }}-zts
+          target: base
+          tags: ghcr.io/he4rt/scylladb-php-driver:${{ github.event.inputs.php }}-zts
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache-new,mode=max
           build-args: |
-            PHP_IMAGE="php:${{ github.event.inputs.php }}-zts-cli"
+            PHP_IMAGE="php:${{ github.event.inputs.php }}-zts"
