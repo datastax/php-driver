@@ -15,6 +15,11 @@
   "cmake.installPrefix": "${workspaceFolder}/build/Debug/install",
   "cmake.loggingLevel": "debug",
   "cmake.configureArgs": [],
-  "cmake.sourceDirectory": "${workspaceFolder}",
-  "cmake.configureOnOpen": true
+  "cmake.sourceDirectory": "${workspaceFolder}/.",
+  "cmake.configureOnOpen": true,
+  "files.associations": {
+    "*main.yml": "ansible",
+    "php_driver.h": "c",
+    "types.h": "c"
+  }
 }
