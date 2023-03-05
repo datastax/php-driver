@@ -15,9 +15,11 @@
  */
 #pragma once
 
-#include <cassandra.h>
+#include <php_driver.h>
 #include <php_driver_types.h>
-#include <zend_smart_str.h>
+
+#include <Zend/zend_smart_str.h>
+#include <cassandra.h>
 
 #define PHP_DRIVER_SCALAR_TYPES_MAP(XX)    \
   XX(ascii, CASS_VALUE_TYPE_ASCII)         \

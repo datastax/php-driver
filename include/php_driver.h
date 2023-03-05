@@ -1,6 +1,4 @@
-#ifndef PHP_DRIVER_H
-#define PHP_DRIVER_H
-
+#pragma once
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
@@ -303,13 +301,13 @@ void throw_invalid_argument(zval* object,
   }
 
 #define ASSERT_SUCCESS_BLOCK(rc, block)                          \
-  {                                                              \
+  do {                                                              \
     if (rc != CASS_OK) {                                         \
       zend_throw_exception_ex(exception_class(rc), rc TSRMLS_CC, \
                               "%s", cass_error_desc(rc));        \
       block                                                      \
     }                                                            \
-  }
+  }while(0)
 
 #define ASSERT_SUCCESS(rc) ASSERT_SUCCESS_BLOCK(rc, return;)
 
@@ -322,5 +320,3 @@ void throw_invalid_argument(zval* object,
 
 PHP_INI_MH(OnUpdateLogLevel);
 PHP_INI_MH(OnUpdateLog);
-
-#endif /* PHP_DRIVER_H */

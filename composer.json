@@ -1,0 +1,29 @@
+{
+  "name": "he4rt/scylladb-php-driver",
+  "type": "library",
+  "license": "Apache-2.0",
+  "authors": [
+    {
+      "name": "Dusan Malusev",
+      "email": "dusan@dusanmalusev.dev"
+    }
+  ],
+  "minimum-stability": "stable",
+  "autoload-dev": {
+    "psr-4": {
+      "Cassandra\\Tests\\": "tests/"
+    }
+  },
+  "require": {
+    "ext-cassandra": "^1.3.9-dev",
+    "symfony/process": "^6.2"
+  },
+  "require-dev": {
+    "pestphp/pest": "^1.22"
+  },
+  "config": {
+    "allow-plugins": {
+      "pestphp/pest-plugin": true
+    }
+  }
+}

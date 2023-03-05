@@ -2,7 +2,8 @@
 
 * CMake used instead of autoconf and makefiles
 * Removed support for PHP 5.x
-* Version of the extension gets updated from CMakeLists.txt
+* Version of the extension gets updated from CMakeLists.txt\
+* Setup Pest Testing
 
 
 # 1.3.8

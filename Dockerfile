@@ -13,6 +13,7 @@ COPY . /ext-scylladb
 WORKDIR /ext-scylladb
 
 RUN apt update -y \
+    && apt upgrade -y \
     && apt install -y \
         python3 \
         python3-pip \
@@ -32,19 +33,13 @@ RUN apt update -y \
         pcntl \
         gmp \
         @composer \
-    && apt-get clean \
+    && apt-get clean
 
 FROM base as build
 
-RUN mkdir -p build/Release \
-    && phpize \
-    && cd build/Release \
-    && cmake \
-      -G "Ninja" \
-      -DCMAKE_BUILD_TYPE=Release \
-      -DCASS_CPP_STANDARD:STRING=17 \
-      -DCASS_USE_STATIC_LIBS:BOOL=ON \
-      ../.. \
+RUN phpize \
+    && cmake --preset Release \
+    && cd out/Release \
     && ninja \
     && ninja install \
     && cp cassandra.so ${PHP_EXT_DIR}/cassandra.so \

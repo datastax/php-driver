@@ -5,6 +5,7 @@
 /build/
 /vendor/
 /venv/
+out/
 Makefile
 cmake-build-debug/
 cmake-build-release/
