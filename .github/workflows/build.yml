@@ -45,7 +45,7 @@ jobs:
           pull: true
           platforms: linux/amd64
           target: base
-          tags: ${{ secrets.DOCKER_USERNAME}}/scylladb-php-driver:${{ github.event.inputs.php }}-${{ github.sha }}
+          tags: ${{ secrets.DOCKER_USERNAME}}/scylladb-php-driver:php-${{ github.event.inputs.php }}
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache-new,mode=max
           build-args: |
@@ -61,7 +61,7 @@ jobs:
           pull: true
           platforms: linux/amd64
           target: base
-          tags: ${{ secrets.DOCKER_USERNAME}}/scylladb-php-driver:${{ github.event.inputs.php }}-zts
+          tags: ${{ secrets.DOCKER_USERNAME}}/scylladb-php-driver:php-${{ github.event.inputs.php }}-zts
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache-new,mode=max
           build-args: |

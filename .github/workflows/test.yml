@@ -1,0 +1,103 @@
+name: 'Test PHP Extension'
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  test_php81:
+    services:
+      scylla:
+        image: scylladb/scylla:5.1
+        ports:
+          - 9042:9042
+    runs-on: ubuntu-latest
+    container: malusevd99/scylladb-php-driver:php-8.1
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 1
+      - name: Compile using CMake
+        run: |
+          cmake --preset Release
+          cd out/Release
+          ninja install
+      - name: Composer install
+        run: |
+          composer install
+      - name: Run tests
+        run: |
+          vendor/bin/pest
+  test_php81_zts:
+    services:
+      scylla:
+        image: scylladb/scylla:5.1
+        ports:
+          - 9042:9042
+    runs-on: ubuntu-latest
+    container: malusevd99/scylladb-php-driver:php-8.1-zts
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 1
+      - name: Compile using CMake
+        run: |
+          cmake --preset Release
+          cd out/Release
+          ninja install
+      - name: Composer install
+        run: |
+          composer install
+      - name: Run tests
+        run: |
+          vendor/bin/pest
+  test_php82:
+    services:
+      scylla:
+        image: scylladb/scylla:5.1
+        ports:
+          - 9042:9042
+    runs-on: ubuntu-latest
+    container: malusevd99/scylladb-php-driver:php-8.2
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 1
+      - name: Compile using CMake
+        run: |
+          cmake --preset Release
+          cd out/Release
+          ninja install
+      - name: Composer install
+        run: |
+          composer install
+      - name: Run tests
+        run: |
+          vendor/bin/pest
+  test_php82_zts:
+    services:
+      scylla:
+        image: scylladb/scylla:5.1
+        ports:
+          - 9042:9042
+    runs-on: ubuntu-latest
+    container: malusevd99/scylladb-php-driver:php-8.2-zts
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 1
+      - name: Compile using CMake
+        run: |
+          cmake --preset Release
+          cd out/Release
+          ninja install
+      - name: Composer install
+        run: |
+          composer install
+      - name: Run tests
+        run: |
+          vendor/bin/pest
