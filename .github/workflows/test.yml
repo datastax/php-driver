@@ -3,10 +3,10 @@ name: 'Test PHP Extension'
 on:
   push:
     branches:
-      - master
+      - v1.3.x
   pull_request:
     branches:
-      - master
+      - v1.3.x
 
 jobs:
   test_php81:
