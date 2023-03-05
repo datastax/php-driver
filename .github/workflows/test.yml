@@ -18,7 +18,7 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
-    container: malusevd99/scylladb-php-driver:${{ github.event.inputs.image }}
+    container: malusevd99/scylladb-php-driver:${{ inputs.image }}
     services:
       scylladb:
         image: scylladb/scylla:5.1
