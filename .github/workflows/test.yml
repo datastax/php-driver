@@ -41,3 +41,8 @@ jobs:
       - name: Run tests
         run: |
           vendor/bin/pest
+        env:
+          SCYLLADB_HOSTS: scylladb
+          SCYLLADB_PORT: 9042
+          SCYLLADB_USERNAME: cassandra
+          SCYLLADB_PASSWORD: cassandra
