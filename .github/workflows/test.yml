@@ -1,0 +1,43 @@
+name: 'Test PHP Extension'
+
+on:
+  workflow_dispatch:
+    inputs:
+      image:
+        type: string
+        description: 'Image Tag'
+        required: true
+        default: 'php-8.2'
+  workflow_call:
+    inputs:
+      image:
+        type: string
+        description: 'Image Tag'
+        required: true
+        default: 'php-8.2'
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    container: malusevd99/scylladb-php-driver:${{ inputs.image }}
+    services:
+      scylladb:
+        image: scylladb/scylla:5.1
+        ports:
+          - 9042:9042
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 1
+      - name: Compile using CMake
+        run: |
+          cmake --preset Release
+          cd out/Release
+          ninja install
+          cd ../..
+          cp cassandra.ini /usr/local/etc/php/conf.d/cassandra.ini
+      - name: Composer install
+        run: |
+          composer install
+      - name: Run tests
+        run: |
+          vendor/bin/pest

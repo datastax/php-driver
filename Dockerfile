@@ -15,24 +15,24 @@ WORKDIR /ext-scylladb
 RUN apt update -y \
     && apt upgrade -y \
     && apt install -y \
-        python3 \
-        python3-pip \
-        unzip \
-        mlocate \
-        build-essential \
-        ninja-build \
-        libssl-dev \
-        libgmp-dev \
-        zlib1g-dev \
-        openssl \
-        libpcre3-dev \
-    && pip3 install cmake \
+    python3 \
+    python3-pip \
+    unzip \
+    mlocate \
+    build-essential \
+    ninja-build \
+    libssl-dev \
+    libgmp-dev \
+    zlib1g-dev \
+    openssl \
+    libpcre3-dev \
+    && pip3 install cmake cqlsh \
     && install-php-extensions \
-        intl \
-        zip \
-        pcntl \
-        gmp \
-        @composer \
+    intl \
+    zip \
+    pcntl \
+    gmp \
+    @composer \
     && apt-get clean
 
 FROM base as build
@@ -42,5 +42,4 @@ RUN phpize \
     && cd out/Release \
     && ninja \
     && ninja install \
-    && cp cassandra.so ${PHP_EXT_DIR}/cassandra.so \
     && cp ../../cassandra.ini ${PHP_CONF_DIR}/cassandra.ini
