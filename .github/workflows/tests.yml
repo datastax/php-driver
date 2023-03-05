@@ -10,18 +10,18 @@ on:
 
 jobs:
   test_php81:
-    uses: he4rt/scylladb-php-driver/.github/workflows/test.yml@feat/github-actions
+    uses: he4rt/scylladb-php-driver/.github/workflows/test.yml@v1.3.x
     with:
       image: php-8.1
   test_php81_zts:
-    uses: he4rt/scylladb-php-driver/.github/workflows/test.yml@feat/github-actions
+    uses: he4rt/scylladb-php-driver/.github/workflows/test.yml@v1.3.x
     with:
       image: php-8.1-zts
   test_php82:
-    uses: he4rt/scylladb-php-driver/.github/workflows/test.yml@feat/github-actions
+    uses: he4rt/scylladb-php-driver/.github/workflows/test.yml@v1.3.x
     with:
       image: php-8.2
   test_php82_zts:
-    uses: he4rt/scylladb-php-driver/.github/workflows/test.yml@feat/github-actions
+    uses: he4rt/scylladb-php-driver/.github/workflows/test.yml@v1.3.x
     with:
       image: php-8.2-zts
