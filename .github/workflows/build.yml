@@ -49,7 +49,7 @@ jobs:
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache-new,mode=max
           build-args: |
-            PHP_IMAGE="php:${{ github.event.inputs.php }}-cli"
+            PHP_IMAGE=php:${{ github.event.inputs.php }}-cli
       - name: Build and push API
         id: docker_build_zts
         if: ${{ github.event.inputs.zts == 'yes' }}
@@ -65,4 +65,4 @@ jobs:
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache-new,mode=max
           build-args: |
-            PHP_IMAGE="php:${{ github.event.inputs.php }}-zts"
+            PHP_IMAGE=php:${{ github.event.inputs.php }}-zts
