@@ -26,3 +26,9 @@ target_include_directories(
         ${libscylladb_SOURCE_DIR}/include
         ${PROJECT_SOURCE_DIR}
 )
+
+if (${CMAKE_BUILD_TYPE} STREQUAL "Debug")
+    target_compile_definitions(util PRIVATE -DDEBUG)
+elseif (${CMAKE_BUILD_TYPE} STREQUAL "RelWithDebInfo" OR ${CMAKE_BUILD_TYPE} STREQUAL "Release")
+    target_compile_definitions(util PRIVATE -DRELEASE)
+endif ()
