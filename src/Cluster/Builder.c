@@ -31,7 +31,7 @@
 BEGIN_EXTERN_C()
 zend_class_entry *php_driver_cluster_builder_ce = NULL;
 
-PHP_METHOD(ClusterBuilder, build)
+ZEND_METHOD(Cassandra_Cluster_Builder, build)
 {
     CassError rc;
     php_driver_cluster *cluster = PHP_DRIVER_GET_CLUSTER(return_value);
@@ -174,7 +174,7 @@ PHP_METHOD(ClusterBuilder, build)
     }
 }
 
-PHP_METHOD(ClusterBuilder, withDefaultConsistency)
+ZEND_METHOD(Cassandra_Cluster_Builder, withDefaultConsistency)
 {
     zend_long consistency;
 
@@ -197,7 +197,7 @@ PHP_METHOD(ClusterBuilder, withDefaultConsistency)
     RETURN_ZVAL(getThis(), 0, 0);
 }
 
-PHP_METHOD(ClusterBuilder, withDefaultPageSize)
+ZEND_METHOD(Cassandra_Cluster_Builder, withDefaultPageSize)
 {
     zend_long pageSize = -1;
 
@@ -218,7 +218,7 @@ PHP_METHOD(ClusterBuilder, withDefaultPageSize)
     RETURN_ZVAL(getThis(), 0, 0);
 }
 
-PHP_METHOD(ClusterBuilder, withDefaultTimeout)
+ZEND_METHOD(Cassandra_Cluster_Builder, withDefaultTimeout)
 {
     double timeout = 0.0;
     php_driver_cluster_builder *self = PHP_DRIVER_GET_CLUSTER_BUILDER(getThis());
@@ -246,7 +246,7 @@ PHP_METHOD(ClusterBuilder, withDefaultTimeout)
     RETURN_ZVAL(getThis(), 0, 0);
 }
 
-PHP_METHOD(ClusterBuilder, withContactPoints)
+ZEND_METHOD(Cassandra_Cluster_Builder, withContactPoints)
 {
     zval *host = NULL;
     php5to7_zval_args args = NULL;
@@ -290,7 +290,7 @@ PHP_METHOD(ClusterBuilder, withContactPoints)
     RETURN_ZVAL(getThis(), 0, 0);
 }
 
-PHP_METHOD(ClusterBuilder, withPort)
+ZEND_METHOD(Cassandra_Cluster_Builder, withPort)
 {
     zend_long port = 0;
 
@@ -311,7 +311,7 @@ PHP_METHOD(ClusterBuilder, withPort)
     RETURN_ZVAL(getThis(), 0, 0);
 }
 
-PHP_METHOD(ClusterBuilder, withRoundRobinLoadBalancingPolicy)
+ZEND_METHOD(Cassandra_Cluster_Builder, withRoundRobinLoadBalancingPolicy)
 {
     ZEND_PARSE_PARAMETERS_NONE();
 
@@ -328,7 +328,7 @@ PHP_METHOD(ClusterBuilder, withRoundRobinLoadBalancingPolicy)
     RETURN_ZVAL(getThis(), 0, 0);
 }
 
-PHP_METHOD(ClusterBuilder, withDatacenterAwareRoundRobinLoadBalancingPolicy)
+ZEND_METHOD(Cassandra_Cluster_Builder, withDatacenterAwareRoundRobinLoadBalancingPolicy)
 {
     char *local_dc;
     size_t local_dc_len;
@@ -362,7 +362,7 @@ PHP_METHOD(ClusterBuilder, withDatacenterAwareRoundRobinLoadBalancingPolicy)
     RETURN_ZVAL(getThis(), 0, 0);
 }
 
-PHP_METHOD(ClusterBuilder, withBlackListHosts)
+ZEND_METHOD(Cassandra_Cluster_Builder, withBlackListHosts)
 {
     zval *args = NULL;
     int argc = 0;
@@ -405,7 +405,7 @@ PHP_METHOD(ClusterBuilder, withBlackListHosts)
     RETURN_ZVAL(getThis(), 0, 0);
 }
 
-PHP_METHOD(ClusterBuilder, withWhiteListHosts)
+ZEND_METHOD(Cassandra_Cluster_Builder, withWhiteListHosts)
 {
     zval *hosts = NULL;
     php5to7_zval_args args = NULL;
@@ -450,7 +450,7 @@ PHP_METHOD(ClusterBuilder, withWhiteListHosts)
     RETURN_ZVAL(getThis(), 0, 0);
 }
 
-PHP_METHOD(ClusterBuilder, withBlackListDCs)
+ZEND_METHOD(Cassandra_Cluster_Builder, withBlackListDCs)
 {
     zval *dcs = NULL;
     php5to7_zval_args args = NULL;
@@ -495,7 +495,7 @@ PHP_METHOD(ClusterBuilder, withBlackListDCs)
     RETURN_ZVAL(getThis(), 0, 0);
 }
 
-PHP_METHOD(ClusterBuilder, withWhiteListDCs)
+ZEND_METHOD(Cassandra_Cluster_Builder, withWhiteListDCs)
 {
     zval *dcs = NULL;
     php5to7_zval_args args = NULL;
@@ -540,7 +540,7 @@ PHP_METHOD(ClusterBuilder, withWhiteListDCs)
     RETURN_ZVAL(getThis(), 0, 0);
 }
 
-PHP_METHOD(ClusterBuilder, withTokenAwareRouting)
+ZEND_METHOD(Cassandra_Cluster_Builder, withTokenAwareRouting)
 {
     zend_bool enabled = 1;
     php_driver_cluster_builder *self;
@@ -557,7 +557,7 @@ PHP_METHOD(ClusterBuilder, withTokenAwareRouting)
     RETURN_ZVAL(getThis(), 0, 0);
 }
 
-PHP_METHOD(ClusterBuilder, withCredentials)
+ZEND_METHOD(Cassandra_Cluster_Builder, withCredentials)
 {
     zval *username = NULL;
     zval *password = NULL;
@@ -592,7 +592,7 @@ PHP_METHOD(ClusterBuilder, withCredentials)
     RETURN_ZVAL(getThis(), 0, 0);
 }
 
-PHP_METHOD(ClusterBuilder, withConnectTimeout)
+ZEND_METHOD(Cassandra_Cluster_Builder, withConnectTimeout)
 {
     zval *timeout = NULL;
     php_driver_cluster_builder *self;
@@ -620,7 +620,7 @@ PHP_METHOD(ClusterBuilder, withConnectTimeout)
     RETURN_ZVAL(getThis(), 0, 0);
 }
 
-PHP_METHOD(ClusterBuilder, withRequestTimeout)
+ZEND_METHOD(Cassandra_Cluster_Builder, withRequestTimeout)
 {
     double timeout;
     php_driver_cluster_builder *self;
@@ -637,7 +637,7 @@ PHP_METHOD(ClusterBuilder, withRequestTimeout)
     RETURN_ZVAL(getThis(), 0, 0);
 }
 
-PHP_METHOD(ClusterBuilder, withSSL)
+ZEND_METHOD(Cassandra_Cluster_Builder, withSSL)
 {
     zval *ssl_options = NULL;
     php_driver_cluster_builder *self;
@@ -657,7 +657,7 @@ PHP_METHOD(ClusterBuilder, withSSL)
     RETURN_ZVAL(getThis(), 0, 0);
 }
 
-PHP_METHOD(ClusterBuilder, withPersistentSessions)
+ZEND_METHOD(Cassandra_Cluster_Builder, withPersistentSessions)
 {
     zend_bool enabled = 1;
     php_driver_cluster_builder *self;
@@ -674,7 +674,7 @@ PHP_METHOD(ClusterBuilder, withPersistentSessions)
     RETURN_ZVAL(getThis(), 0, 0);
 }
 
-PHP_METHOD(ClusterBuilder, withProtocolVersion)
+ZEND_METHOD(Cassandra_Cluster_Builder, withProtocolVersion)
 {
     zval *version = NULL;
     php_driver_cluster_builder *self;
@@ -698,7 +698,7 @@ PHP_METHOD(ClusterBuilder, withProtocolVersion)
     RETURN_ZVAL(getThis(), 0, 0);
 }
 
-PHP_METHOD(ClusterBuilder, withIOThreads)
+ZEND_METHOD(Cassandra_Cluster_Builder, withIOThreads)
 {
     zval *count = NULL;
     php_driver_cluster_builder *self;
@@ -722,7 +722,7 @@ PHP_METHOD(ClusterBuilder, withIOThreads)
     RETURN_ZVAL(getThis(), 0, 0);
 }
 
-PHP_METHOD(ClusterBuilder, withConnectionsPerHost)
+ZEND_METHOD(Cassandra_Cluster_Builder, withConnectionsPerHost)
 {
     zval *core = NULL;
     zval *max = NULL;
@@ -771,7 +771,7 @@ PHP_METHOD(ClusterBuilder, withConnectionsPerHost)
     RETURN_ZVAL(getThis(), 0, 0);
 }
 
-PHP_METHOD(ClusterBuilder, withReconnectInterval)
+ZEND_METHOD(Cassandra_Cluster_Builder, withReconnectInterval)
 {
     zval *interval = NULL;
     php_driver_cluster_builder *self;
@@ -799,7 +799,7 @@ PHP_METHOD(ClusterBuilder, withReconnectInterval)
     RETURN_ZVAL(getThis(), 0, 0);
 }
 
-PHP_METHOD(ClusterBuilder, withLatencyAwareRouting)
+ZEND_METHOD(Cassandra_Cluster_Builder, withLatencyAwareRouting)
 {
     zend_bool enabled = 1;
     php_driver_cluster_builder *self;
@@ -816,7 +816,7 @@ PHP_METHOD(ClusterBuilder, withLatencyAwareRouting)
     RETURN_ZVAL(getThis(), 0, 0);
 }
 
-PHP_METHOD(ClusterBuilder, withTCPNodelay)
+ZEND_METHOD(Cassandra_Cluster_Builder, withTCPNodelay)
 {
     zend_bool enabled = 1;
     php_driver_cluster_builder *self;
@@ -833,7 +833,7 @@ PHP_METHOD(ClusterBuilder, withTCPNodelay)
     RETURN_ZVAL(getThis(), 0, 0);
 }
 
-PHP_METHOD(ClusterBuilder, withTCPKeepalive)
+ZEND_METHOD(Cassandra_Cluster_Builder, withTCPKeepalive)
 {
     zval *delay = NULL;
     php_driver_cluster_builder *self;
@@ -868,7 +868,7 @@ PHP_METHOD(ClusterBuilder, withTCPKeepalive)
     RETURN_ZVAL(getThis(), 0, 0);
 }
 
-PHP_METHOD(ClusterBuilder, withRetryPolicy)
+ZEND_METHOD(Cassandra_Cluster_Builder, withRetryPolicy)
 {
     zval *retry_policy = NULL;
     php_driver_cluster_builder *self;
@@ -888,7 +888,7 @@ PHP_METHOD(ClusterBuilder, withRetryPolicy)
     RETURN_ZVAL(getThis(), 0, 0);
 }
 
-PHP_METHOD(ClusterBuilder, withTimestampGenerator)
+ZEND_METHOD(Cassandra_Cluster_Builder, withTimestampGenerator)
 {
     zval *timestamp_gen = NULL;
     php_driver_cluster_builder *self;
@@ -908,7 +908,7 @@ PHP_METHOD(ClusterBuilder, withTimestampGenerator)
     RETURN_ZVAL(getThis(), 0, 0);
 }
 
-PHP_METHOD(ClusterBuilder, withSchemaMetadata)
+ZEND_METHOD(Cassandra_Cluster_Builder, withSchemaMetadata)
 {
     zend_bool enabled = 1;
     php_driver_cluster_builder *self;
@@ -925,7 +925,7 @@ PHP_METHOD(ClusterBuilder, withSchemaMetadata)
     RETURN_ZVAL(getThis(), 0, 0);
 }
 
-PHP_METHOD(ClusterBuilder, withHostnameResolution)
+ZEND_METHOD(Cassandra_Cluster_Builder, withHostnameResolution)
 {
     zend_bool enabled = 1;
     php_driver_cluster_builder *self;
@@ -942,7 +942,7 @@ PHP_METHOD(ClusterBuilder, withHostnameResolution)
     RETURN_ZVAL(getThis(), 0, 0);
 }
 
-PHP_METHOD(ClusterBuilder, withRandomizedContactPoints)
+ZEND_METHOD(Cassandra_Cluster_Builder, withRandomizedContactPoints)
 {
     zend_bool enabled = 1;
     php_driver_cluster_builder *self;
@@ -959,7 +959,7 @@ PHP_METHOD(ClusterBuilder, withRandomizedContactPoints)
     RETURN_ZVAL(getThis(), 0, 0);
 }
 
-PHP_METHOD(ClusterBuilder, withConnectionHeartbeatInterval)
+ZEND_METHOD(Cassandra_Cluster_Builder, withConnectionHeartbeatInterval)
 {
     zval *interval = NULL;
     php_driver_cluster_builder *self;
