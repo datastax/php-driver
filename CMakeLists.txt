@@ -51,7 +51,7 @@ CPMAddPackage(
         "LIBUV_BUILD_SHARED ${LIBUV_BUILD_SHARED}"
         "CMAKE_C_FLAGS ${CMAKE_C_FLAGS} -fPIC"
         "CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} -fPIC"
-        
+
 )
 
 set(LIBUV_ROOT_DIR ${libuv_BINARY_DIR})
@@ -91,8 +91,7 @@ CPMAddPackage(
 )
 
 
-
-file(GLOB_RECURSE SRC_LIST FOLLOW_SYMLINKS src/*.c)
+file(GLOB_RECURSE SRC_LIST FOLLOW_SYMLINKS src/*.c src/*.cpp)
 file(GLOB_RECURSE HEADERS_LIST FOLLOW_SYMLINKS include/*.h)
 set(php_scylladb_sources ${SRC_LIST} php_driver.c)
 
@@ -105,6 +104,13 @@ add_compile_options(
         -fPIC -Wall -Wextra -Wno-long-long -Wno-deprecated-declarations -Wno-unused-parameter -Wno-unused-result -Wno-variadic-macros -Wno-extra-semi -pthread
         $<$<CONFIG:DEBUG>:-ggdb3
 )
+
+if (${CMAKE_BUILD_TYPE} STREQUAL "Debug")
+    target_compile_definitions(ext_scylladb PRIVATE -DDEBUG)
+elseif (${CMAKE_BUILD_TYPE} STREQUAL "RelWithDebInfo" OR ${CMAKE_BUILD_TYPE} STREQUAL "Release")
+    target_compile_definitions(ext_scylladb PRIVATE -DRelease)
+endif ()
+
 target_include_directories(
         ext_scylladb PUBLIC
         ${PROJECT_SOURCE_DIR}/include

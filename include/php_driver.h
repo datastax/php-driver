@@ -12,6 +12,14 @@
 #include <string.h>
 #endif
 
+#ifdef HAVE_SYS_TYPES_H
+#include <sys/types.h>
+#endif
+
+#ifdef HAVE_UNISTD_H
+#include <unistd.h>
+#endif
+
 #include <php.h>
 
 #include <sys/types.h>
@@ -21,14 +29,6 @@
 #include <Zend/zend_exceptions.h>
 #include <Zend/zend_interfaces.h>
 #include <Zend/zend_types.h>
-
-#ifdef HAVE_SYS_TYPES_H
-#include <sys/types.h>
-#endif
-
-#ifdef HAVE_UNISTD_H
-#include <unistd.h>
-#endif
 
 #define LL_FORMAT "%lld"
 
@@ -101,9 +101,7 @@ typedef zend_object php5to7_zend_object_free;
 typedef zval** php5to7_zval_gc;
 typedef zval* php5to7_dtor;
 typedef size_t php5to7_size;
-#if ((PHP_MAJOR_VERSION == 7 && PHP_MINOR_VERSION >= 4) || PHP_MAJOR_VERSION > 7)
 typedef unsigned long ulong;
-#endif
 
 static inline int
 php5to7_string_compare(php5to7_string s1, php5to7_string s2)
@@ -317,6 +315,8 @@ void throw_invalid_argument(zval* object,
 
 #define PHP_DRIVER_DEFAULT_LOG PHP_DRIVER_NAME ".log"
 #define PHP_DRIVER_DEFAULT_LOG_LEVEL "ERROR"
+
+
 
 PHP_INI_MH(OnUpdateLogLevel);
 PHP_INI_MH(OnUpdateLog);

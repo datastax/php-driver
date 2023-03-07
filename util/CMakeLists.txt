@@ -5,7 +5,6 @@ target_sources(
         PRIVATE
         src/bytes.c
         src/collections.c
-        src/consistency.c
         src/future.c
         src/hash.c
         src/inet.c

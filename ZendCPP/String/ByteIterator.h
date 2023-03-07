@@ -1,5 +1,7 @@
 #pragma once
 
+#include <cstdint>
+
 namespace Zend::Internal::String
 {
 struct ByteIterator {
@@ -10,10 +12,10 @@ public:
 
 private:
   pointer value = nullptr;
-  size_t index  = 0;
+  std::size_t index  = 0;
 
 public:
-  explicit ByteIterator(pointer value, size_t index)
+  explicit ByteIterator(pointer value, std::size_t index)
       : value(value)
       , index(index)
   {
