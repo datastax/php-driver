@@ -145,7 +145,6 @@ test('Simple statements also supports ":name" arguments', function () use ($keys
     ];
 
     foreach ($songs as $song) {
-        var_dump($songs);
         $options = ['arguments' => $song];
         $session->execute(
             "INSERT INTO $table (id, song_id, artist, title, album) " .
