@@ -9,7 +9,7 @@ on:
       - v1.3.x
 
 jobs:
- test_php80:
+  test_php80:
     uses: he4rt/scylladb-php-driver/.github/workflows/test.yml@v1.3.x
     with:
       image: php-8.0
