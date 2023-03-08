@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="ext_scylladb" type="CMakeRunConfiguration" factoryName="Application" PROGRAM_PARAMS="-d extension=$CMakeCurrentBuildDir$/cassandra.so ./vendor/bin/pest" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" WORKING_DIR="file://$PROJECT_DIR$" PASS_PARENT_ENVS_2="true" PROJECT_NAME="php-ext-scylladb" TARGET_NAME="ext_scylladb" CONFIG_NAME="Debug" RUN_PATH="$PROJECT_DIR$/../../php/8.2-debug-nts/bin/php">
+  <configuration default="false" name="ext_scylladb" type="CMakeRunConfiguration" factoryName="Application" PROGRAM_PARAMS="-d extension=$CMakeCurrentBuildDir$/cassandra.so ./vendor/bin/pest" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" WORKING_DIR="file://$PROJECT_DIR$" PASS_PARENT_ENVS_2="true" PROJECT_NAME="Project" TARGET_NAME="ext_scylladb" CONFIG_NAME="Debug" RUN_PATH="$USER_HOME$/php/8.2-debug-nts/bin/php">
     <envs>
       <env name="CQLSH_BINARY" value="\\wsl$\Ubuntu/home/dmalusev/.local/bin/cqlsh" />
     </envs>
