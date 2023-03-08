@@ -74,7 +74,7 @@ function migrateKeyspace(
     }
 
     $process = new Process([
-        'cqlsh',
+        env('CQLSH_BINARY','cqlsh'),
         '-u',
         env('SCYLLADB_USERNAME', $username ?? 'cassandra'),
         '-p',

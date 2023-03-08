@@ -131,7 +131,7 @@ namespace Cassandra\Cluster {
         {
         }
 
-        public function build(): Cluster
+        public function build(): \Cassandra\Cluster
         {
         }
     }
