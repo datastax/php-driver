@@ -341,7 +341,7 @@ ZEND_METHOD(Cassandra_Cluster_Builder, withDatacenterAwareRoundRobinLoadBalancin
         return;
     }
 
-    php_driver_cluster_builder * self = PHP_DRIVER_GET_CLUSTER_BUILDER(getThis());
+    php_driver_cluster_builder *self = PHP_DRIVER_GET_CLUSTER_BUILDER(getThis());
 
     if (Z_TYPE_P(hostPerRemoteDatacenter) != IS_LONG || Z_LVAL_P(hostPerRemoteDatacenter) < 0)
     {
@@ -1335,6 +1335,8 @@ static php5to7_zend_object php_driver_cluster_builder_new(zend_class_entry *ce)
     {
         object_properties_init(&self->zval, ce);
     }
+
+    return &self->zval;
 }
 void php_driver_define_ClusterBuilder()
 {
