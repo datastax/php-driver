@@ -2,10 +2,14 @@
 
 declare(strict_types=1);
 
+namespace Cassandra\Tests\Feature\Duration;
+
+use DateTime;
 use Cassandra\Map;
 use Cassandra\Set;
 use Cassandra\Inet;
-use Cassandra\Type;
+use Cassandra\Uuid;
+use DateTimeInterface;
 use Cassandra\Timestamp;
 use Cassandra\Collection;
 use Cassandra\SimpleStatement;
@@ -14,7 +18,8 @@ $collections = 'collections_testing';
 $nestedCollections = 'nested_collections_testing';
 
 beforeAll(function () use ($collections, $nestedCollections) {
-    migrateKeyspace(<<<CQL
+    migrateKeyspace(
+        <<<CQL
     CREATE KEYSPACE $collections WITH replication = {
         'class': 'SimpleStrategy',
         'replication_factor': 1
@@ -32,9 +37,11 @@ beforeAll(function () use ($collections, $nestedCollections) {
         {'2014-09-11 10:09:08+0000': 37.397357},
         {'200.199.198.197', '192.168.1.15'}
     );
-    CQL);
+    CQL
+    );
 
-    migrateKeyspace(<<<CQL
+    migrateKeyspace(
+        <<<CQL
         CREATE KEYSPACE $nestedCollections WITH replication = {
             'class': 'SimpleStrategy',
             'replication_factor': 1
@@ -45,7 +52,8 @@ beforeAll(function () use ($collections, $nestedCollections) {
             name text,
             addresses map<text, frozen<map<text, text>>>
         );
-    CQL);
+    CQL
+    );
 });
 
 afterAll(function () use ($collections, $nestedCollections) {
@@ -61,40 +69,36 @@ test('Using Cassandra collections', function () use ($collections) {
     $result = $session->execute($statement, []);
     $row = $result->first();
 
-    /** @var \Cassandra\Collection */
+    /** @var Collection $logins */
     $logins = $row['logins'];
     expect($logins)
         ->toBeInstanceOf(Collection::class)
-        ->toHaveCount(2);
-
-    expect($logins->get(0))
+        ->toHaveCount(2)
+        ->and($logins->get(0))
         ->toBeInstanceOf(Timestamp::class)
-        ->map(fn (Timestamp $value) => $value->time())
-        ->toBe(DateTime::createFromFormat(DateTimeInterface::ISO8601, '2014-09-11T10:09:08+0000')->getTimestamp());
-    expect($logins->get(1))
+        ->map(fn(Timestamp $value) => $value->time())
+        ->toBe(DateTime::createFromFormat(DateTimeInterface::ISO8601, '2014-09-11T10:09:08+0000')->getTimestamp())
+        ->and($logins->get(1))
         ->toBeInstanceOf(Timestamp::class)
-        ->map(fn (Timestamp $value) => $value->time())
+        ->map(fn(Timestamp $value) => $value->time())
         ->toBe(DateTime::createFromFormat(DateTimeInterface::ISO8601, '2014-09-12T10:09:00+0000')->getTimestamp());
 
-    /** @var \Cassandra\Map */
+    /** @var Map */
     $locations = $row['locations'];
     expect($locations)
         ->toBeInstanceOf(Map::class)
-        ->toHaveCount(1);
-
-    expect($locations->keys())
-        ->toHaveCount(1);
-
-    expect($locations->keys()[0])
+        ->toHaveCount(1)
+        ->and($locations->keys())
+        ->toHaveCount(1)
+        ->and($locations->keys()[0])
         ->toBeInstanceOf(Timestamp::class)
-        ->map(fn (Timestamp $value) => $value->time())
-        ->toBe(DateTime::createFromFormat(DateTimeInterface::ISO8601, '2014-09-11T10:09:08+0000')->getTimestamp());
-
-    expect($locations->values()[0])
+        ->map(fn(Timestamp $value) => $value->time())
+        ->toBe(DateTime::createFromFormat(DateTimeInterface::ISO8601, '2014-09-11T10:09:08+0000')->getTimestamp())
+        ->and($locations->values()[0])
         ->toBe(37.397357);
 
 
-    /** @var \Cassandra\Set */
+    /** @var Set $ipAddresses */
     $ipAddresses = $row['ip_addresses'];
     expect($ipAddresses)
         ->toBeInstanceOf(Set::class)
@@ -113,15 +117,14 @@ test('Using Cassandra collections', function () use ($collections) {
         ->toBe('192.168.1.15')
         ->and((string)$ipAddresses->values()[1]->address())
         ->toBe('200.199.198.197');
-
 });
 
 
 it('Using Cassandra nested collections', function () use ($nestedCollections) {
     $session = scyllaDbConnection($nestedCollections);
 
-    $address = new Map(Cassandra\Type::text(), Cassandra\Type::text());
-    $addresses = new Map(Cassandra\Type::text(), $address->type());
+    $address = new Map(\Cassandra\Type::text(), \Cassandra\Type::text());
+    $addresses = new Map(\Cassandra\Type::text(), $address->type());
 
     $address->set('city', 'Phoenix');
     $address->set('street', '9042 Cassandra Lane');
@@ -131,7 +134,7 @@ it('Using Cassandra nested collections', function () use ($nestedCollections) {
 
     $users = [
         [
-            new Cassandra\Uuid('56357d2b-4586-433c-ad24-afa9918bc415'),
+            new \Cassandra\Uuid('56357d2b-4586-433c-ad24-afa9918bc415'),
             'Charles Wallace',
             $addresses,
         ]
@@ -154,25 +157,23 @@ it('Using Cassandra nested collections', function () use ($nestedCollections) {
     $row = $result->first();
 
     expect($row['id'])
-        ->toBeInstanceOf(Cassandra\Uuid::class)
-        ->map(fn (Cassandra\Uuid $value) => (string)$value)
-        ->toBe('56357d2b-4586-433c-ad24-afa9918bc415');
-
-    expect($row['name'])
+        ->toBeInstanceOf(Uuid::class)
+        ->map(fn(Uuid $value) => (string)$value)
+        ->toBe('56357d2b-4586-433c-ad24-afa9918bc415')
+        ->and($row['name'])
         ->toBe('Charles Wallace');
 
-    /** @var \Cassandra\Map */
+    /** @var Map $addresses */
     $addresses = $row['addresses'];
     expect($addresses)
         ->toBeInstanceOf(Map::class)
-        ->toHaveCount(1);
-
-    expect($addresses->keys())
+        ->toHaveCount(1)
+        ->and($addresses->keys())
         ->toHaveCount(1)
         ->and($addresses->keys()[0])
         ->toBe('home');
 
-    /** @var \Cassandra\Map */
+    /** @var Map $address */
     $address = $addresses->values()[0];
     expect($address)
         ->toBeInstanceOf(Map::class)
