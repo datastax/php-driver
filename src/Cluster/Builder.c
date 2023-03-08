@@ -1283,8 +1283,7 @@ static void php_driver_cluster_builder_free(php5to7_zend_object_free *object)
     PHP5TO7_ZVAL_MAYBE_DESTROY(self->retry_policy);
     PHP5TO7_ZVAL_MAYBE_DESTROY(self->timestamp_gen);
 
-    zend_object_std_dtor(&self->zval);
-    PHP5TO7_MAYBE_EFREE(self);
+    zend_objects_destroy_object(&self->zval);
 }
 
 static php5to7_zend_object php_driver_cluster_builder_new(zend_class_entry *ce)
