@@ -2,13 +2,16 @@
 
 declare(strict_types=1);
 
+namespace Cassandra\Tests\Feature\Duration;
+
+use Cassandra\Collection;
+use Cassandra\Inet;
 use Cassandra\Map;
 use Cassandra\Set;
-use Cassandra\Inet;
-use Cassandra\Type;
-use Cassandra\Timestamp;
-use Cassandra\Collection;
 use Cassandra\SimpleStatement;
+use Cassandra\Timestamp;
+use DateTime;
+use DateTimeInterface;
 
 $collections = 'collections_testing';
 $nestedCollections = 'nested_collections_testing';
@@ -120,8 +123,8 @@ test('Using Cassandra collections', function () use ($collections) {
 it('Using Cassandra nested collections', function () use ($nestedCollections) {
     $session = scyllaDbConnection($nestedCollections);
 
-    $address = new Map(Cassandra\Type::text(), Cassandra\Type::text());
-    $addresses = new Map(Cassandra\Type::text(), $address->type());
+    $address = new Map(\Cassandra\Type::text(), \Cassandra\Type::text());
+    $addresses = new Map(\Cassandra\Type::text(), $address->type());
 
     $address->set('city', 'Phoenix');
     $address->set('street', '9042 Cassandra Lane');
@@ -131,7 +134,7 @@ it('Using Cassandra nested collections', function () use ($nestedCollections) {
 
     $users = [
         [
-            new Cassandra\Uuid('56357d2b-4586-433c-ad24-afa9918bc415'),
+            new \Cassandra\Uuid('56357d2b-4586-433c-ad24-afa9918bc415'),
             'Charles Wallace',
             $addresses,
         ]
@@ -154,8 +157,8 @@ it('Using Cassandra nested collections', function () use ($nestedCollections) {
     $row = $result->first();
 
     expect($row['id'])
-        ->toBeInstanceOf(Cassandra\Uuid::class)
-        ->map(fn (Cassandra\Uuid $value) => (string)$value)
+        ->toBeInstanceOf(\Cassandra\Uuid::class)
+        ->map(fn (\Cassandra\Uuid $value) => (string)$value)
         ->toBe('56357d2b-4586-433c-ad24-afa9918bc415');
 
     expect($row['name'])
