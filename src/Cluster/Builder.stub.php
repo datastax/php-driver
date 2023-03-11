@@ -91,7 +91,7 @@ namespace Cassandra\Cluster {
         {
         }
 
-        public function withReconnectInterval(float $interval): Builder
+        public function withReconnectInterval(int $interval): Builder
         {
         }
 

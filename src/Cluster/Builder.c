@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-#include <math.h>
 #include <zend_smart_str.h>
 
 #include <cassandra.h>
@@ -616,28 +615,22 @@ ZEND_METHOD(Cassandra_Cluster_Builder, withConnectionsPerHost)
 
 ZEND_METHOD(Cassandra_Cluster_Builder, withReconnectInterval)
 {
-    zval *interval = NULL;
-    php_driver_cluster_builder *self;
+    zend_long interval = 0;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS(), "z", &interval) == FAILURE)
+    ZEND_PARSE_PARAMETERS_START(1, 1)
+    Z_PARAM_LONG(interval)
+    ZEND_PARSE_PARAMETERS_END();
+
+    if (interval < 1)
     {
+        zval val;
+        ZVAL_LONG(&val, interval);
+        throw_invalid_argument(&val, "interval", "a positive number");
         return;
     }
 
-    self = PHP_DRIVER_GET_CLUSTER_BUILDER(getThis());
-
-    if (Z_TYPE_P(interval) == IS_LONG && Z_LVAL_P(interval) > 0)
-    {
-        self->reconnect_interval = Z_LVAL_P(interval) * 1000;
-    }
-    else if (Z_TYPE_P(interval) == IS_DOUBLE && Z_DVAL_P(interval) > 0)
-    {
-        self->reconnect_interval = ceil(Z_DVAL_P(interval) * 1000);
-    }
-    else
-    {
-        INVALID_ARGUMENT(interval, "a positive number");
-    }
+    php_driver_cluster_builder *self = PHP_DRIVER_GET_CLUSTER_BUILDER(getThis());
+    self->reconnect_interval = interval * 1000;
 
     RETURN_ZVAL(getThis(), 1, 0);
 }
@@ -676,7 +669,6 @@ ZEND_METHOD(Cassandra_Cluster_Builder, withTCPKeepalive)
 {
     zend_long delay = 0;
     bool is_null = false;
-
 
     ZEND_PARSE_PARAMETERS_START(1, 1)
     Z_PARAM_LONG_OR_NULL(delay, is_null)
