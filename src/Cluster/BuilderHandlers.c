@@ -99,7 +99,7 @@ static HashTable *php_driver_cluster_builder_properties(zend_object *object)
     ZVAL_LONG(&defaultPageSize, self->default_page_size);
     if (!Z_ISUNDEF(self->default_timeout))
     {
-        ZVAL_LONG(&defaultTimeout, PHP5TO7_Z_LVAL_MAYBE_P(self->default_timeout));
+        ZVAL_LONG(&defaultTimeout, Z_LVAL(self->default_timeout));
     }
     else
     {
