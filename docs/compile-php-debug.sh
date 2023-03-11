@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 # -*- coding: utf-8 -*-
 
+CFLAGS="-g3 -gdwarf-4 -fsanitize=address -fno-omit-frame-pointer"
+CXXFLAGS="-g3 -gdwarf-4 -fsanitize=address -fno-omit-frame-pointer"
+
 print_usage() {
     echo ""
     echo "Usage: compile-debug-php.sh [OPTION] [ARG]"
@@ -96,6 +99,7 @@ compile_php() {
         --with-mysqli
         --with-pgsql
         --with-sodium
+        --enable-phar=shared
     )
 
     local OUTPUT_PATH=""
