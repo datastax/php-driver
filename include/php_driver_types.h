@@ -323,7 +323,7 @@ static zend_always_inline php_driver_execution_options *php_driver_execution_opt
     return (php_driver_execution_options *)((char *)obj - ((size_t)(&(((php_driver_execution_options *)0)->zval))));
 }
 
-typedef enum : uint8_t
+typedef enum /* : uint8_t */
 {
     LOAD_BALANCING_DEFAULT = 0,
     LOAD_BALANCING_ROUND_ROBIN,
