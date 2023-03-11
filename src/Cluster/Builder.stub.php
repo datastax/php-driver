@@ -55,7 +55,7 @@ namespace Cassandra\Cluster {
         {
         }
 
-        public function withTokenAwareRouting(bool $enabled): Builder
+        public function withTokenAwareRouting(bool $enabled = true): Builder
         {
         }
 
@@ -63,11 +63,11 @@ namespace Cassandra\Cluster {
         {
         }
 
-        public function withConnectTimeout(float $timeout): Builder
+        public function withConnectTimeout(int $timeout): Builder
         {
         }
 
-        public function withRequestTimeout(float $timeout): Builder
+        public function withRequestTimeout(int $timeout): Builder
         {
         }
 
@@ -75,7 +75,7 @@ namespace Cassandra\Cluster {
         {
         }
 
-        public function withPersistentSessions(bool $enabled): Builder
+        public function withPersistentSessions(bool $enabled = true): Builder
         {
         }
 
@@ -95,15 +95,15 @@ namespace Cassandra\Cluster {
         {
         }
 
-        public function withLatencyAwareRouting(bool $enabled): Builder
+        public function withLatencyAwareRouting(bool $enabled = true): Builder
         {
         }
 
-        public function withTCPNodelay(bool $enabled): Builder
+        public function withTCPNodelay(bool $enabled = true): Builder
         {
         }
 
-        public function withTCPKeepalive(?float $delay): Builder
+        public function withTCPKeepalive(?int $delay): Builder
         {
         }
 

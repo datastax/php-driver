@@ -54,13 +54,13 @@ static HashTable *php_driver_cluster_builder_properties(zend_object *object)
     php_driver_cluster_builder *self = php_driver_cluster_builder_object_fetch(object);
     HashTable *props = zend_std_get_properties(object);
 
-    ZVAL_STRING(&contactPoints, self->contact_points);
+    ZVAL_STR(&contactPoints, self->contact_points);
 
     ZVAL_LONG(&loadBalancingPolicy, self->load_balancing_policy);
 
     if (self->load_balancing_policy == LOAD_BALANCING_DC_AWARE_ROUND_ROBIN)
     {
-        ZVAL_STRING(&localDatacenter, self->local_dc);
+        ZVAL_STR(&localDatacenter, self->local_dc);
         ZVAL_LONG(&hostPerRemoteDatacenter, self->used_hosts_per_remote_dc);
         ZVAL_BOOL(&useRemoteDatacenterForLocalConsistencies, self->allow_remote_dcs_for_local_cl);
     }
@@ -75,8 +75,8 @@ static HashTable *php_driver_cluster_builder_properties(zend_object *object)
 
     if (self->username)
     {
-        ZVAL_STRING(&username, self->username);
-        ZVAL_STRING(&password, self->password);
+        ZVAL_STR(&username, self->username);
+        ZVAL_STR(&password, self->password);
     }
     else
     {
@@ -124,9 +124,9 @@ static HashTable *php_driver_cluster_builder_properties(zend_object *object)
         ZVAL_NULL(&tcpKeepalive);
     }
 
-    if (!Z_ISUNDEF(self->retry_policy))
+    if (self->retry_policy != NULL)
     {
-        ZVAL_COPY(&retryPolicy, &self->retry_policy);
+        ZVAL_OBJ_COPY(&retryPolicy, &self->retry_policy->zval);
     }
     else
     {
@@ -153,7 +153,7 @@ static HashTable *php_driver_cluster_builder_properties(zend_object *object)
 
     if (self->blacklist_dcs)
     {
-        ZVAL_STRING(&blacklistDCs, self->blacklist_dcs);
+        ZVAL_STR(&blacklistDCs, self->blacklist_dcs);
     }
     else
     {
@@ -162,7 +162,7 @@ static HashTable *php_driver_cluster_builder_properties(zend_object *object)
 
     if (self->whitelist_dcs)
     {
-        ZVAL_STRING(&whitelistDCs, self->whitelist_dcs);
+        ZVAL_STR(&whitelistDCs, self->whitelist_dcs);
     }
     else
     {
@@ -248,24 +248,24 @@ static void php_driver_cluster_builder_free(zend_object *object)
 {
     php_driver_cluster_builder *self = PHP5TO7_ZEND_OBJECT_GET(cluster_builder, object);
 
-    efree(self->contact_points);
+    zend_string_release(self->contact_points);
     self->contact_points = NULL;
 
-    if (self->local_dc)
+    if (self->local_dc != NULL)
     {
-        efree(self->local_dc);
+        zend_string_release(self->local_dc);
         self->local_dc = NULL;
     }
 
     if (self->username)
     {
-        efree(self->username);
+        zend_string_release(self->username);
         self->username = NULL;
     }
 
     if (self->password)
     {
-        efree(self->password);
+        zend_string_release(self->password);
         self->password = NULL;
     }
 
@@ -283,13 +283,13 @@ static void php_driver_cluster_builder_free(zend_object *object)
 
     if (self->whitelist_dcs)
     {
-        efree(self->whitelist_dcs);
+        zend_string_release(self->whitelist_dcs);
         self->whitelist_dcs = NULL;
     }
 
     if (self->blacklist_dcs)
     {
-        efree(self->blacklist_dcs);
+        zend_string_release(self->blacklist_dcs);
         self->whitelist_dcs = NULL;
     }
 
@@ -305,15 +305,16 @@ static void php_driver_cluster_builder_free(zend_object *object)
         ZVAL_UNDEF(&self->default_timeout);
     }
 
-    if (!Z_ISUNDEF(self->retry_policy))
+    if (self->retry_policy != NULL)
     {
-        zval_ptr_dtor(&self->retry_policy);
-        ZVAL_UNDEF(&self->retry_policy);
+        zend_object_release(&self->retry_policy->zval);
+        self->retry_policy = NULL;
     }
 
     if (self->timestamp_gen)
     {
         zend_object_release(&self->timestamp_gen->zval);
+        self->timestamp_gen = NULL;
     }
 }
 
@@ -321,7 +322,7 @@ php5to7_zend_object php_driver_cluster_builder_new(zend_class_entry *ce)
 {
     php_driver_cluster_builder *self = emalloc(sizeof(php_driver_cluster_builder) + zend_object_properties_size(ce));
 
-    self->contact_points = estrdup("127.0.0.1");
+    self->contact_points = zend_string_init_fast(ZEND_STRL("127.0.0.1"));
     self->port = 9042;
     self->load_balancing_policy = LOAD_BALANCING_DEFAULT;
     self->local_dc = NULL;
@@ -353,10 +354,10 @@ php5to7_zend_object php_driver_cluster_builder_new(zend_class_entry *ce)
     self->enable_randomized_contact_points = 1;
     self->connection_heartbeat_interval = 30;
     self->timestamp_gen = NULL;
+    self->retry_policy = NULL;
 
     ZVAL_UNDEF(&self->ssl_options);
     ZVAL_UNDEF(&self->default_timeout);
-    ZVAL_UNDEF(&self->retry_policy);
 
     zend_object_std_init(&self->zval, ce);
     self->zval.handlers = &php_driver_cluster_builder_handlers;

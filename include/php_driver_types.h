@@ -254,9 +254,9 @@ typedef struct php_driver_cluster_
 {
     cass_byte_t *data;
     CassCluster *cluster;
-    long default_consistency;
-    int default_page_size;
-    php5to7_zval default_timeout;
+    uint32_t default_consistency;
+    uint32_t default_page_size;
+    zval default_timeout;
     cass_bool_t persist;
     char *hash_key;
     int hash_key_len;
@@ -323,7 +323,7 @@ static zend_always_inline php_driver_execution_options *php_driver_execution_opt
     return (php_driver_execution_options *)((char *)obj - ((size_t)(&(((php_driver_execution_options *)0)->zval))));
 }
 
-typedef enum
+typedef enum : uint8_t
 {
     LOAD_BALANCING_DEFAULT = 0,
     LOAD_BALANCING_ROUND_ROBIN,
@@ -369,6 +369,16 @@ static zend_always_inline php_driver_future_rows *php_driver_future_rows_object_
     return (php_driver_future_rows *)((char *)obj - ((size_t)(&(((php_driver_future_rows *)0)->zval))));
 }
 
+typedef struct php_driver_retry_policy_
+{
+    CassRetryPolicy *policy;
+    zend_object zval;
+} php_driver_retry_policy;
+static zend_always_inline php_driver_retry_policy *php_driver_retry_policy_object_fetch(zend_object *obj)
+{
+    return (php_driver_retry_policy *)((char *)obj - ((size_t)(&(((php_driver_retry_policy *)0)->zval))));
+}
+
 typedef struct php_driver_timestamp_gen_
 {
     CassTimestampGen *gen;
@@ -379,44 +389,45 @@ static zend_always_inline php_driver_timestamp_gen *php_driver_timestamp_gen_obj
     return (php_driver_timestamp_gen *)((char *)obj - ((size_t)(&(((php_driver_timestamp_gen *)0)->zval))));
 }
 
-
 typedef struct php_driver_cluster_builder_
 {
-    char *contact_points;
-    int port;
-    php_driver_load_balancing load_balancing_policy;
-    char *local_dc;
-    unsigned int used_hosts_per_remote_dc;
-    cass_bool_t allow_remote_dcs_for_local_cl;
-    cass_bool_t use_token_aware_routing;
-    char *username;
-    char *password;
-    unsigned int connect_timeout;
-    unsigned int request_timeout;
-    zval ssl_options;
-    long default_consistency;
-    int default_page_size;
-    zval default_timeout;
-    cass_bool_t persist;
-    int protocol_version;
-    int io_threads;
-    int core_connections_per_host;
-    int max_connections_per_host;
-    unsigned int reconnect_interval;
+    zend_string *contact_points;
+    zend_string *username;
+    zend_string *password;
+    zend_string *local_dc;
+    zend_string *blacklist_hosts;
+    zend_string *whitelist_hosts;
+    zend_string *blacklist_dcs;
+    zend_string *whitelist_dcs;
+
+    uint32_t used_hosts_per_remote_dc;
+    uint32_t connect_timeout;
+    uint32_t default_consistency;
+    uint32_t default_page_size;
+    uint32_t protocol_version;
+    uint32_t io_threads;
+    uint32_t core_connections_per_host;
+    uint32_t max_connections_per_host;
+    uint32_t reconnect_interval;
+    uint32_t tcp_keepalive_delay;
     cass_bool_t enable_latency_aware_routing;
     cass_bool_t enable_tcp_nodelay;
     cass_bool_t enable_tcp_keepalive;
-    unsigned int tcp_keepalive_delay;
-    zval retry_policy;
-    php_driver_timestamp_gen* timestamp_gen;
     cass_bool_t enable_schema;
-    zend_string *blacklist_hosts;
-    zend_string *whitelist_hosts;
-    char *blacklist_dcs;
-    char *whitelist_dcs;
     cass_bool_t enable_hostname_resolution;
     cass_bool_t enable_randomized_contact_points;
-    unsigned int connection_heartbeat_interval;
+    cass_bool_t allow_remote_dcs_for_local_cl;
+    cass_bool_t use_token_aware_routing;
+    uint32_t connection_heartbeat_interval;
+    uint32_t request_timeout;
+    uint16_t port;
+    php_driver_load_balancing load_balancing_policy;
+    cass_bool_t persist;
+    php_driver_retry_policy *retry_policy;
+    php_driver_timestamp_gen *timestamp_gen;
+    zval ssl_options;
+    zval default_timeout;
+
     zend_object zval;
 } php_driver_cluster_builder;
 static zend_always_inline php_driver_cluster_builder *php_driver_cluster_builder_object_fetch(zend_object *obj)
@@ -690,17 +701,6 @@ static zend_always_inline php_driver_type *php_driver_type_object_fetch(zend_obj
 {
     return (php_driver_type *)((char *)obj - ((size_t)(&(((php_driver_type *)0)->zval))));
 }
-
-typedef struct php_driver_retry_policy_
-{
-    CassRetryPolicy *policy;
-    zend_object zval;
-} php_driver_retry_policy;
-static zend_always_inline php_driver_retry_policy *php_driver_retry_policy_object_fetch(zend_object *obj)
-{
-    return (php_driver_retry_policy *)((char *)obj - ((size_t)(&(((php_driver_retry_policy *)0)->zval))));
-}
-
 
 typedef unsigned (*php_driver_value_hash_t)(zval *obj TSRMLS_DC);
 
