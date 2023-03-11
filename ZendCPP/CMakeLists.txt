@@ -1,5 +1,5 @@
 add_library(zend STATIC Zend.cpp)
-
+enable_language(CXX)
 set_target_properties(zend PROPERTIES POSITION_INDEPENDENT_CODE ON)
 find_package(PHP REQUIRED)
 
@@ -15,7 +15,5 @@ if (PHP_SCYLLADB_ENABLE_SANITIZERS)
             -fsanitize=address
             -fsanitize=undefined
             -fno-omit-frame-pointer
-
-
     )
 endif ()

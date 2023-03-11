@@ -1,6 +1,6 @@
 add_library(zend_strings STATIC)
 add_library(Zend::String ALIAS zend_strings)
-
+enable_language(CXX)
 find_package(PHP REQUIRED)
 
 target_sources(zend_strings PRIVATE String.cpp ByteIterator.h ByteIterator.cpp)
