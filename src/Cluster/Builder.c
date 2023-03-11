@@ -297,7 +297,7 @@ ZEND_METHOD(Cassandra_Cluster_Builder, withPort)
     Z_PARAM_LONG(port)
     ZEND_PARSE_PARAMETERS_END();
 
-    if (port < 0 || port > 65535)
+    if (port < 1 || port > 65535)
     {
         zval val;
         ZVAL_LONG(&val, port);
