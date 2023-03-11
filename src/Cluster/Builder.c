@@ -268,7 +268,6 @@ ZEND_METHOD(Cassandra_Cluster_Builder, withContactPoints)
         {
             smart_str_free(&contactPoints);
             throw_invalid_argument(host, "host", "a string ip address or hostname");
-            PHP5TO7_MAYBE_EFREE(args);
             return;
         }
 
@@ -280,7 +279,6 @@ ZEND_METHOD(Cassandra_Cluster_Builder, withContactPoints)
         smart_str_appendl(&contactPoints, Z_STRVAL_P(host), Z_STRLEN_P(host));
     }
 
-    PHP5TO7_MAYBE_EFREE(args);
     smart_str_0(&contactPoints);
 
     efree(self->contact_points);
@@ -381,7 +379,6 @@ ZEND_METHOD(Cassandra_Cluster_Builder, withBlackListHosts)
         {
             smart_str_free(&blacklist_hosts);
             throw_invalid_argument(host, "hosts", "a string ip address or hostname");
-            PHP5TO7_MAYBE_EFREE(args);
             return;
         }
 
@@ -1283,8 +1280,6 @@ static void php_driver_cluster_builder_free(php5to7_zend_object_free *object)
     PHP5TO7_ZVAL_MAYBE_DESTROY(self->retry_policy);
     PHP5TO7_ZVAL_MAYBE_DESTROY(self->timestamp_gen);
 
-    zend_objects_destroy_object(&self->zval);
-    efree(self);
 }
 
 static php5to7_zend_object php_driver_cluster_builder_new(zend_class_entry *ce)

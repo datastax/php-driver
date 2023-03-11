@@ -1,9 +1,8 @@
 #!/usr/bin/env bash
 # -*- coding: utf-8 -*-
 
-CFLAGS="-g -ggdb"
-CXXFLAGS="-g -ggdb"
-IS_UBUNTU=0
+CFLAGS="-g3 -gdwarf-4 -fsanitize=address -fno-omit-frame-pointer"
+CXXFLAGS="-g3 -gdwarf-4 -fsanitize=address -fno-omit-frame-pointer"
 
 print_usage() {
     echo ""
@@ -14,11 +13,6 @@ print_usage() {
     echo ""
 }
 
-check_ubuntu() {
-    if grep "NAME=\"Ubuntu\"" "/etc/os-release" >>/dev/null; then
-        IS_UBUNTU=1
-    fi
-}
 
 compile_php() {
     local ZTS="$1"
@@ -50,6 +44,7 @@ compile_php() {
         --with-pgsql
         --with-sodium
         --with-pear
+        --enable-phar=shared
     )
 
     if [[ "$ZTS" == "yes" ]]; then
@@ -66,7 +61,7 @@ compile_php() {
 
     rm -f "php-$PHP_VERSION.tar.gz"
 
-    if [ "$IS_UBUNTU" -eq 1 ]; then
+    if grep "NAME=\"Ubuntu\"" "/etc/os-release" >>/dev/null; then
         sudo apt-get install \
             libssl-dev \
             libsqlite3-dev \
@@ -77,6 +72,7 @@ compile_php() {
             libonig-dev \
             libbz2-dev \
             libsodium-dev \
+            libgmp-dev \
             libpq-dev \
             libzip-dev -y
 
@@ -96,7 +92,7 @@ compile_php() {
 
     rm -rf "/tmp/php-src-php-$PHP_VERSION"
 
-    if [ "$IS_UBUNTU" -eq 1 ]; then
+   if grep "NAME=\"Ubuntu\"" "/etc/os-release" >>/dev/null; then
         sudo update-alternatives --install /bin/php-cgi php-cgi "$OUTPUT_PATH/bin/php-cgi" 1
         sudo update-alternatives --install /bin/php-config php-config "$OUTPUT_PATH/bin/php-config" 1
         sudo update-alternatives --install /bin/phpize phpize "$OUTPUT_PATH/bin/phpize" 1
@@ -113,7 +109,7 @@ check_deps() {
     done
 }
 
-check_deps && check_ubuntu
+check_deps
 
 while getopts "v:zo:" option; do
     case "$option" in
