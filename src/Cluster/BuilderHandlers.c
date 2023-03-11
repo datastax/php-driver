@@ -86,9 +86,9 @@ static HashTable *php_driver_cluster_builder_properties(zend_object *object)
 
     ZVAL_DOUBLE(&connectTimeout, (double)self->connect_timeout / 1000);
     ZVAL_DOUBLE(&requestTimeout, (double)self->request_timeout / 1000);
-    if (!Z_ISUNDEF(self->ssl_options))
+    if (self->ssl_options != NULL)
     {
-        ZVAL_COPY(&sslOptions, &self->ssl_options);
+        ZVAL_OBJ_COPY(&sslOptions, &self->ssl_options->zval);
     }
     else
     {
@@ -293,10 +293,10 @@ static void php_driver_cluster_builder_free(zend_object *object)
         self->whitelist_dcs = NULL;
     }
 
-    if (!Z_ISUNDEF(self->ssl_options))
+    if (self->ssl_options!=NULL)
     {
-        zval_ptr_dtor(&self->ssl_options);
-        ZVAL_UNDEF(&self->ssl_options);
+        zend_object_release(&self->ssl_options->zval);
+        self->ssl_options = NULL;
     }
 
     if (!Z_ISUNDEF(self->default_timeout))
@@ -355,8 +355,8 @@ php5to7_zend_object php_driver_cluster_builder_new(zend_class_entry *ce)
     self->connection_heartbeat_interval = 30;
     self->timestamp_gen = NULL;
     self->retry_policy = NULL;
+    self->ssl_options = NULL;
 
-    ZVAL_UNDEF(&self->ssl_options);
     ZVAL_UNDEF(&self->default_timeout);
 
     zend_object_std_init(&self->zval, ce);

@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: c594d5d63dda2707a9fe8113975b4d7c89cab686 */
+ * Stub hash: ccf696ea4cffbb74f51beec4f88cd86f67d2a778 */
 
 ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Cassandra_Cluster_Builder_withDefaultConsistency, 0, 1, Cassandra\\Cluster\\Builder, 0)
 	ZEND_ARG_TYPE_INFO(0, consistency, IS_LONG, 0)
@@ -51,11 +51,9 @@ ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Cassandra_Cluster_Builder_w
 	ZEND_ARG_TYPE_INFO(0, password, IS_STRING, 0)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Cassandra_Cluster_Builder_withConnectTimeout, 0, 1, Cassandra\\Cluster\\Builder, 0)
-	ZEND_ARG_TYPE_INFO(0, timeout, IS_LONG, 0)
-ZEND_END_ARG_INFO()
+#define arginfo_class_Cassandra_Cluster_Builder_withConnectTimeout arginfo_class_Cassandra_Cluster_Builder_withDefaultTimeout
 
-#define arginfo_class_Cassandra_Cluster_Builder_withRequestTimeout arginfo_class_Cassandra_Cluster_Builder_withConnectTimeout
+#define arginfo_class_Cassandra_Cluster_Builder_withRequestTimeout arginfo_class_Cassandra_Cluster_Builder_withDefaultTimeout
 
 ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Cassandra_Cluster_Builder_withSSL, 0, 1, Cassandra\\Cluster\\Builder, 0)
 	ZEND_ARG_OBJ_INFO(0, options, Cassandra\\SSLOptions, 0)
@@ -77,7 +75,7 @@ ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Cassandra_Cluster_Builder_w
 ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Cassandra_Cluster_Builder_withReconnectInterval, 0, 1, Cassandra\\Cluster\\Builder, 0)
-	ZEND_ARG_TYPE_INFO(0, interval, IS_LONG, 0)
+	ZEND_ARG_TYPE_INFO(0, interval, IS_DOUBLE, 0)
 ZEND_END_ARG_INFO()
 
 #define arginfo_class_Cassandra_Cluster_Builder_withLatencyAwareRouting arginfo_class_Cassandra_Cluster_Builder_withTokenAwareRouting
@@ -85,7 +83,7 @@ ZEND_END_ARG_INFO()
 #define arginfo_class_Cassandra_Cluster_Builder_withTCPNodelay arginfo_class_Cassandra_Cluster_Builder_withTokenAwareRouting
 
 ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Cassandra_Cluster_Builder_withTCPKeepalive, 0, 1, Cassandra\\Cluster\\Builder, 0)
-	ZEND_ARG_TYPE_INFO(0, delay, IS_LONG, 1)
+	ZEND_ARG_TYPE_INFO(0, delay, IS_DOUBLE, 1)
 ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Cassandra_Cluster_Builder_withRetryPolicy, 0, 1, Cassandra\\Cluster\\Builder, 0)

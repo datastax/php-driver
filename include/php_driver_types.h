@@ -379,6 +379,16 @@ static zend_always_inline php_driver_retry_policy *php_driver_retry_policy_objec
     return (php_driver_retry_policy *)((char *)obj - ((size_t)(&(((php_driver_retry_policy *)0)->zval))));
 }
 
+typedef struct php_driver_ssl_
+{
+    CassSsl *ssl;
+    zend_object zval;
+} php_driver_ssl;
+static zend_always_inline php_driver_ssl *php_driver_ssl_object_fetch(zend_object *obj)
+{
+    return (php_driver_ssl *)((char *)obj - ((size_t)(&(((php_driver_ssl *)0)->zval))));
+}
+
 typedef struct php_driver_timestamp_gen_
 {
     CassTimestampGen *gen;
@@ -425,7 +435,7 @@ typedef struct php_driver_cluster_builder_
     cass_bool_t persist;
     php_driver_retry_policy *retry_policy;
     php_driver_timestamp_gen *timestamp_gen;
-    zval ssl_options;
+    php_driver_ssl* ssl_options;
     zval default_timeout;
 
     zend_object zval;
@@ -515,15 +525,6 @@ static zend_always_inline php_driver_session *php_driver_session_object_fetch(ze
     return (php_driver_session *)((char *)obj - ((size_t)(&(((php_driver_session *)0)->zval))));
 }
 
-typedef struct php_driver_ssl_
-{
-    CassSsl *ssl;
-    zend_object zval;
-} php_driver_ssl;
-static zend_always_inline php_driver_ssl *php_driver_ssl_object_fetch(zend_object *obj)
-{
-    return (php_driver_ssl *)((char *)obj - ((size_t)(&(((php_driver_ssl *)0)->zval))));
-}
 
 typedef struct php_driver_ssl_builder_
 {

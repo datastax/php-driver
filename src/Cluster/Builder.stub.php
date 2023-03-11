@@ -63,11 +63,11 @@ namespace Cassandra\Cluster {
         {
         }
 
-        public function withConnectTimeout(int $timeout): Builder
+        public function withConnectTimeout(float $timeout): Builder
         {
         }
 
-        public function withRequestTimeout(int $timeout): Builder
+        public function withRequestTimeout(float $timeout): Builder
         {
         }
 
@@ -91,7 +91,7 @@ namespace Cassandra\Cluster {
         {
         }
 
-        public function withReconnectInterval(int $interval): Builder
+        public function withReconnectInterval(float $interval): Builder
         {
         }
 
@@ -103,7 +103,7 @@ namespace Cassandra\Cluster {
         {
         }
 
-        public function withTCPKeepalive(?int $delay): Builder
+        public function withTCPKeepalive(?float $delay): Builder
         {
         }
 
@@ -127,7 +127,7 @@ namespace Cassandra\Cluster {
         {
         }
 
-        public function withConnectionHeartbeatInterval(int $interval): Builder
+        public function withConnectionHeartbeatInterval(float $interval): Builder
         {
         }
 

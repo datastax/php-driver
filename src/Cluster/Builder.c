@@ -83,6 +83,27 @@ static zend_always_inline void php_driver_parse_hosts(INTERNAL_FUNCTION_PARAMETE
     RETURN_ZVAL(getThis(), 1, 0);
 }
 
+static zend_always_inline void php_driver_set_timeout(INTERNAL_FUNCTION_PARAMETERS, uint32_t *out_timeout)
+{
+    double timeout = 0;
+
+    ZEND_PARSE_PARAMETERS_START(1, 1)
+    Z_PARAM_DOUBLE(timeout)
+    ZEND_PARSE_PARAMETERS_END();
+
+    if (timeout < 0)
+    {
+        zval val;
+        ZVAL_DOUBLE(&val, timeout);
+        throw_invalid_argument(&val, "timeout", "a positive number");
+        return;
+    }
+
+    *out_timeout = (uint32_t)ceil(timeout * 1000);
+
+    RETURN_ZVAL(getThis(), 1, 0);
+}
+
 ZEND_METHOD(Cassandra_Cluster_Builder, build)
 {
     CassError rc;
@@ -171,10 +192,9 @@ ZEND_METHOD(Cassandra_Cluster_Builder, build)
     cass_cluster_set_connect_timeout(cluster->cluster, self->connect_timeout);
     cass_cluster_set_request_timeout(cluster->cluster, self->request_timeout);
 
-    if (!Z_ISUNDEF(self->ssl_options))
+    if (self->ssl_options != NULL)
     {
-        php_driver_ssl *options = PHP_DRIVER_GET_SSL(&self->ssl_options);
-        cass_cluster_set_ssl(cluster->cluster, options->ssl);
+        cass_cluster_set_ssl(cluster->cluster, self->ssl_options->ssl);
     }
 
     ASSERT_SUCCESS(cass_cluster_set_contact_points(cluster->cluster, ZSTR_VAL(self->contact_points)));
@@ -443,65 +463,33 @@ ZEND_METHOD(Cassandra_Cluster_Builder, withCredentials)
 
 ZEND_METHOD(Cassandra_Cluster_Builder, withConnectTimeout)
 {
-    zend_long timeout = 0;
-
-    ZEND_PARSE_PARAMETERS_START(1, 1)
-    Z_PARAM_LONG(timeout)
-    ZEND_PARSE_PARAMETERS_END();
-
-    if (timeout < 1)
-    {
-        zval val;
-        ZVAL_LONG(&val, timeout);
-        throw_invalid_argument(&val, "timeout", "a positive number");
-        return;
-    }
-
     php_driver_cluster_builder *self = PHP_DRIVER_GET_CLUSTER_BUILDER(getThis());
-    self->connect_timeout = timeout * 1000;
-
-    RETURN_ZVAL(getThis(), 1, 0);
+    php_driver_set_timeout(INTERNAL_FUNCTION_PARAM_PASSTHRU, &self->connect_timeout);
 }
 
 ZEND_METHOD(Cassandra_Cluster_Builder, withRequestTimeout)
 {
-    zend_long timeout = 0;
-
-    ZEND_PARSE_PARAMETERS_START(1, 1)
-    Z_PARAM_LONG(timeout)
-    ZEND_PARSE_PARAMETERS_END();
-
-    if (timeout < 1)
-    {
-        zval val;
-        ZVAL_LONG(&val, timeout);
-        throw_invalid_argument(&val, "timeout", "a positive number");
-        return;
-    }
-
     php_driver_cluster_builder *self = PHP_DRIVER_GET_CLUSTER_BUILDER(getThis());
-    self->request_timeout = timeout * 1000;
-
-    RETURN_ZVAL(getThis(), 1, 0);
+    php_driver_set_timeout(INTERNAL_FUNCTION_PARAM_PASSTHRU, &self->request_timeout);
 }
 
 ZEND_METHOD(Cassandra_Cluster_Builder, withSSL)
 {
     zval *ssl_options = NULL;
-    php_driver_cluster_builder *self;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS(), "O", &ssl_options, php_driver_ssl_ce) == FAILURE)
+    ZEND_PARSE_PARAMETERS_START(1, 1)
+    Z_PARAM_OBJECT_OF_CLASS(ssl_options, php_driver_ssl_ce)
+    ZEND_PARSE_PARAMETERS_END();
+
+    php_driver_ssl *ssl = PHP_DRIVER_GET_SSL(ssl_options);
+    php_driver_cluster_builder *self = PHP_DRIVER_GET_CLUSTER_BUILDER(getThis());
+
+    if (self->ssl_options != NULL)
     {
-        return;
+        zend_object_release(&self->ssl_options->zval);
     }
 
-    self = PHP_DRIVER_GET_CLUSTER_BUILDER(getThis());
-
-    if (!Z_ISUNDEF(self->ssl_options))
-        zval_ptr_dtor(&self->ssl_options);
-
-    PHP5TO7_ZVAL_COPY(PHP5TO7_ZVAL_MAYBE_P(self->ssl_options), ssl_options);
-
+    self->ssl_options = ssl;
     RETURN_ZVAL(getThis(), 1, 0);
 }
 
@@ -615,24 +603,8 @@ ZEND_METHOD(Cassandra_Cluster_Builder, withConnectionsPerHost)
 
 ZEND_METHOD(Cassandra_Cluster_Builder, withReconnectInterval)
 {
-    zend_long interval = 0;
-
-    ZEND_PARSE_PARAMETERS_START(1, 1)
-    Z_PARAM_LONG(interval)
-    ZEND_PARSE_PARAMETERS_END();
-
-    if (interval < 1)
-    {
-        zval val;
-        ZVAL_LONG(&val, interval);
-        throw_invalid_argument(&val, "interval", "a positive number");
-        return;
-    }
-
     php_driver_cluster_builder *self = PHP_DRIVER_GET_CLUSTER_BUILDER(getThis());
-    self->reconnect_interval = interval * 1000;
-
-    RETURN_ZVAL(getThis(), 1, 0);
+    php_driver_set_timeout(INTERNAL_FUNCTION_PARAM_PASSTHRU, &self->reconnect_interval);
 }
 
 ZEND_METHOD(Cassandra_Cluster_Builder, withLatencyAwareRouting)
@@ -667,11 +639,11 @@ ZEND_METHOD(Cassandra_Cluster_Builder, withTCPNodelay)
 
 ZEND_METHOD(Cassandra_Cluster_Builder, withTCPKeepalive)
 {
-    zend_long delay = 0;
+    double delay = 0;
     bool is_null = false;
 
     ZEND_PARSE_PARAMETERS_START(1, 1)
-    Z_PARAM_LONG_OR_NULL(delay, is_null)
+    Z_PARAM_DOUBLE_OR_NULL(delay, is_null)
     ZEND_PARSE_PARAMETERS_END();
 
     php_driver_cluster_builder *self = PHP_DRIVER_GET_CLUSTER_BUILDER(getThis());
@@ -683,16 +655,16 @@ ZEND_METHOD(Cassandra_Cluster_Builder, withTCPKeepalive)
         RETURN_ZVAL(getThis(), 1, 0);
     }
 
-    if (delay < 1)
+    if (delay < 0)
     {
         zval val;
-        ZVAL_LONG(&val, delay);
+        ZVAL_DOUBLE(&val, delay);
         throw_invalid_argument(&val, "delay", "a positive number or null");
         return;
     }
 
     self->enable_tcp_keepalive = cass_true;
-    self->tcp_keepalive_delay = delay * 1000;
+    self->tcp_keepalive_delay = (uint32_t)ceil(delay * 1000);
 
     RETURN_ZVAL(getThis(), 1, 0);
 }
@@ -787,23 +759,8 @@ ZEND_METHOD(Cassandra_Cluster_Builder, withRandomizedContactPoints)
 
 ZEND_METHOD(Cassandra_Cluster_Builder, withConnectionHeartbeatInterval)
 {
-    zend_long interval = 0;
-
-    ZEND_PARSE_PARAMETERS_START(1, 1)
-    Z_PARAM_LONG(interval)
-    ZEND_PARSE_PARAMETERS_END();
-
-    if (interval < 0)
-    {
-        zval val;
-        ZVAL_LONG(&val, interval);
-        throw_invalid_argument(&val, "interval", "a positive number (or 0 to disable)");
-        return;
-    }
-
     php_driver_cluster_builder *self = PHP_DRIVER_GET_CLUSTER_BUILDER(getThis());
-    self->connection_heartbeat_interval = interval;
-    RETURN_ZVAL(getThis(), 1, 0);
+    php_driver_set_timeout(INTERNAL_FUNCTION_PARAM_PASSTHRU, &self->connection_heartbeat_interval);
 }
 
 void php_driver_define_ClusterBuilder()
