@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 # -*- coding: utf-8 -*-
 
-CFLAGS="-g -ggdb"
-CXXFLAGS="-g -ggdb"
+CFLAGS="-g3 -gdwarf-4 -fsanitize=address -fno-omit-frame-pointer"
+CXXFLAGS="-g3 -gdwarf-4 -fsanitize=address -fno-omit-frame-pointer"
 
 print_usage() {
     echo ""
@@ -44,6 +44,7 @@ compile_php() {
         --with-pgsql
         --with-sodium
         --with-pear
+        --enable-phar=shared
     )
 
     if [[ "$ZTS" == "yes" ]]; then
