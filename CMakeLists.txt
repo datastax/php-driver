@@ -40,6 +40,7 @@ else ()
     set(LIBUV_BUILD_SHARED ON)
 endif ()
 
+
 CPMAddPackage(
         NAME libuv
         VERSION 1.44.2
@@ -90,25 +91,26 @@ CPMAddPackage(
         "LIBUV_INCLUDE_DIR ${libuv_SOURCE_DIR}/include"
 )
 
-
-file(GLOB_RECURSE SRC_LIST FOLLOW_SYMLINKS src/*.c src/*.cpp)
-file(GLOB_RECURSE HEADERS_LIST FOLLOW_SYMLINKS include/*.h)
-set(php_scylladb_sources ${SRC_LIST} php_driver.c)
-
 add_subdirectory(ZendCPP)
 add_subdirectory(util)
+add_subdirectory(src)
+add_subdirectory(src/Cluster)
+add_subdirectory(src/Exception)
+add_subdirectory(src/RetryPolicy)
+add_subdirectory(src/SSLOptions)
+add_subdirectory(src/TimestampGenerator)
+add_subdirectory(src/Type)
+
+file(GLOB_RECURSE HEADERS_LIST FOLLOW_SYMLINKS include/*.h)
 
 add_library(ext_scylladb SHARED)
 target_optimize(ext_scylladb ${PHP_SCYLLADB_OPTIMISE_FOR_CURRENT_MACHINE})
-add_compile_options(
-        -fPIC -Wall -Wextra -Wno-long-long -Wno-deprecated-declarations -Wno-unused-parameter -Wno-unused-result -Wno-variadic-macros -Wno-extra-semi -pthread
-        $<$<CONFIG:DEBUG>:-ggdb3
-)
+add_compile_options(-fPIC -Wall -Wextra -Wno-long-long -Wimplicit-function-declaration -Wno-deprecated-declarations -Wno-unused-parameter -Wno-unused-result -Wno-variadic-macros -Wno-extra-semi -pthread)
 
 if (${CMAKE_BUILD_TYPE} STREQUAL "Debug")
     target_compile_definitions(ext_scylladb PRIVATE -DDEBUG)
 elseif (${CMAKE_BUILD_TYPE} STREQUAL "RelWithDebInfo" OR ${CMAKE_BUILD_TYPE} STREQUAL "Release")
-    target_compile_definitions(ext_scylladb PRIVATE -DRelease)
+    target_compile_definitions(ext_scylladb PRIVATE -DRELEASE)
 endif ()
 
 target_include_directories(
@@ -120,12 +122,16 @@ target_include_directories(
         ${PHP_INCLUDES}
 )
 target_sources(ext_scylladb PUBLIC FILE_SET headers TYPE HEADERS FILES "${HEADERS_LIST}" "${PROJECT_BINARY_DIR}/config.h")
-target_sources(ext_scylladb PRIVATE ${php_scylladb_sources})
+target_sources(ext_scylladb PRIVATE php_driver.c)
 
 target_link_libraries(
         ext_scylladb PRIVATE
         zend
+        ext_scylladb::src
         ext_scylladb::utils
+        ext_scylladb::exceptions
+        ext_scylladb::cluster::builder
+        ext_scylladb::retry_policy
 )
 
 if (PHP_SCYLLADB_LIBUV_STATIC)
