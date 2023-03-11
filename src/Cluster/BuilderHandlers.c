@@ -17,39 +17,39 @@ static HashTable *php_driver_cluster_builder_gc(zend_object *object, zval **tabl
 
 static HashTable *php_driver_cluster_builder_properties(zend_object *object)
 {
-    php5to7_zval contactPoints;
-    php5to7_zval loadBalancingPolicy;
-    php5to7_zval localDatacenter;
-    php5to7_zval hostPerRemoteDatacenter;
-    php5to7_zval useRemoteDatacenterForLocalConsistencies;
-    php5to7_zval useTokenAwareRouting;
-    php5to7_zval username;
-    php5to7_zval password;
-    php5to7_zval connectTimeout;
-    php5to7_zval requestTimeout;
-    php5to7_zval sslOptions;
-    php5to7_zval defaultConsistency;
-    php5to7_zval defaultPageSize;
-    php5to7_zval defaultTimeout;
-    php5to7_zval usePersistentSessions;
-    php5to7_zval protocolVersion;
-    php5to7_zval ioThreads;
-    php5to7_zval coreConnectionPerHost;
-    php5to7_zval maxConnectionsPerHost;
-    php5to7_zval reconnectInterval;
-    php5to7_zval latencyAwareRouting;
-    php5to7_zval tcpNodelay;
-    php5to7_zval tcpKeepalive;
-    php5to7_zval retryPolicy;
-    php5to7_zval blacklistHosts;
-    php5to7_zval whitelistHosts;
-    php5to7_zval blacklistDCs;
-    php5to7_zval whitelistDCs;
-    php5to7_zval timestampGen;
-    php5to7_zval schemaMetadata;
-    php5to7_zval hostnameResolution;
-    php5to7_zval randomizedContactPoints;
-    php5to7_zval connectionHeartbeatInterval;
+    zval contactPoints;
+    zval loadBalancingPolicy;
+    zval localDatacenter;
+    zval hostPerRemoteDatacenter;
+    zval useRemoteDatacenterForLocalConsistencies;
+    zval useTokenAwareRouting;
+    zval username;
+    zval password;
+    zval connectTimeout;
+    zval requestTimeout;
+    zval sslOptions;
+    zval defaultConsistency;
+    zval defaultPageSize;
+    zval defaultTimeout;
+    zval usePersistentSessions;
+    zval protocolVersion;
+    zval ioThreads;
+    zval coreConnectionPerHost;
+    zval maxConnectionsPerHost;
+    zval reconnectInterval;
+    zval latencyAwareRouting;
+    zval tcpNodelay;
+    zval tcpKeepalive;
+    zval retryPolicy;
+    zval blacklistHosts;
+    zval whitelistHosts;
+    zval blacklistDCs;
+    zval whitelistDCs;
+    zval timestampGen;
+    zval schemaMetadata;
+    zval hostnameResolution;
+    zval randomizedContactPoints;
+    zval connectionHeartbeatInterval;
 
     php_driver_cluster_builder *self = php_driver_cluster_builder_object_fetch(object);
     HashTable *props = zend_std_get_properties(object);
@@ -169,25 +169,21 @@ static HashTable *php_driver_cluster_builder_properties(zend_object *object)
         ZVAL_NULL(&whitelistDCs);
     }
 
-    if (!Z_ISUNDEF(self->timestamp_gen))
+    if (self->timestamp_gen != NULL)
     {
-        PHP5TO7_ZVAL_COPY(&timestampGen, &self->timestamp_gen);
+        ZVAL_OBJ_COPY(&timestampGen, &self->timestamp_gen->zval);
     }
     else
     {
         ZVAL_NULL(&timestampGen);
     }
 
-    PHP5TO7_ZVAL_MAYBE_MAKE(schemaMetadata);
     ZVAL_BOOL(&schemaMetadata, self->enable_schema);
 
-    PHP5TO7_ZVAL_MAYBE_MAKE(hostnameResolution);
     ZVAL_BOOL(&hostnameResolution, self->enable_hostname_resolution);
 
-    PHP5TO7_ZVAL_MAYBE_MAKE(randomizedContactPoints);
     ZVAL_BOOL(&randomizedContactPoints, self->enable_randomized_contact_points);
 
-    PHP5TO7_ZVAL_MAYBE_MAKE(connectionHeartbeatInterval);
     ZVAL_LONG(&connectionHeartbeatInterval, self->connection_heartbeat_interval);
 
     PHP5TO7_ZEND_HASH_UPDATE(props, "contactPoints", sizeof("contactPoints"), &contactPoints, sizeof(zval));
@@ -279,7 +275,7 @@ static void php_driver_cluster_builder_free(zend_object *object)
         self->whitelist_hosts = NULL;
     }
 
-    if (self->blacklist_hosts != zend_empty_string)
+    if (self->blacklist_hosts != NULL)
     {
         zend_string_release(self->blacklist_hosts);
         self->blacklist_hosts = NULL;
@@ -297,10 +293,28 @@ static void php_driver_cluster_builder_free(zend_object *object)
         self->whitelist_dcs = NULL;
     }
 
-    PHP5TO7_ZVAL_MAYBE_DESTROY(self->ssl_options);
-    PHP5TO7_ZVAL_MAYBE_DESTROY(self->default_timeout);
-    PHP5TO7_ZVAL_MAYBE_DESTROY(self->retry_policy);
-    PHP5TO7_ZVAL_MAYBE_DESTROY(self->timestamp_gen);
+    if (!Z_ISUNDEF(self->ssl_options))
+    {
+        zval_ptr_dtor(&self->ssl_options);
+        ZVAL_UNDEF(&self->ssl_options);
+    }
+
+    if (!Z_ISUNDEF(self->default_timeout))
+    {
+        zval_ptr_dtor(&self->default_timeout);
+        ZVAL_UNDEF(&self->default_timeout);
+    }
+
+    if (!Z_ISUNDEF(self->retry_policy))
+    {
+        zval_ptr_dtor(&self->retry_policy);
+        ZVAL_UNDEF(&self->retry_policy);
+    }
+
+    if (self->timestamp_gen)
+    {
+        zend_object_release(&self->timestamp_gen->zval);
+    }
 }
 
 php5to7_zend_object php_driver_cluster_builder_new(zend_class_entry *ce)
@@ -338,11 +352,11 @@ php5to7_zend_object php_driver_cluster_builder_new(zend_class_entry *ce)
     self->enable_hostname_resolution = 0;
     self->enable_randomized_contact_points = 1;
     self->connection_heartbeat_interval = 30;
+    self->timestamp_gen = NULL;
 
     ZVAL_UNDEF(&self->ssl_options);
     ZVAL_UNDEF(&self->default_timeout);
     ZVAL_UNDEF(&self->retry_policy);
-    ZVAL_UNDEF(&self->timestamp_gen);
 
     zend_object_std_init(&self->zval, ce);
     self->zval.handlers = &php_driver_cluster_builder_handlers;

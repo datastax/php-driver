@@ -7,8 +7,10 @@ if (NOT CMAKE_BUILD_TYPE OR CMAKE_BUILD_TYPE STREQUAL "")
 endif ()
 
 if (${CMAKE_BUILD_TYPE} STREQUAL "Debug")
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -static-libasan -static-libubsan -fsanitize=address -fsanitize=undefined -O0 -gdwarf-4 -fno-inline -fno-omit-frame-pointer")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=address -fsanitize=undefined -O0 -gdwarf-4 -fno-inline -fno-omit-frame-pointer -static-libasan -static-libubsan")
+    #    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g3 -ggdb -fno-inline -fno-omit-frame-pointer  -fsanitize=address")
+    #    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g3 -ggdb -fno-inline -fno-omit-frame-pointer -fsanitize=address")
+    #    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS}   -fsanitize=address -fsanitize=undefined -gdwarf-4 -fno-inline -fno-omit-frame-pointer")
+    #    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=address -fsanitize=undefined -gdwarf-4 -fno-inline -fno-omit-frame-pointer  ")
 endif ()
 
 include(GNUInstallDirs)
@@ -30,7 +32,7 @@ set(CMAKE_CXX_STANDARD 20)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${PROJECT_SOURCE_DIR}/cmake")
 
-option(PHP_SCYLLADB_ENABLE_SANITIZERS "Enable sanitizers" OFF)
+option(PHP_SCYLLADB_ENABLE_SANITIZERS "Enable sanitizers" ON)
 option(PHP_SCYLLADB_ENABLE_COVERAGE "Enable coverage" OFF)
 option(PHP_SCYLLADB_OPTIMISE_FOR_CURRENT_MACHINE "Optimise for current machine" OFF)
 
@@ -116,8 +118,18 @@ target_compile_options(ext_scylladb PRIVATE
 
 if (${CMAKE_BUILD_TYPE} STREQUAL "Debug")
     target_compile_definitions(ext_scylladb PRIVATE -DDEBUG)
+    target_compile_options(ext_scylladb PRIVATE -g3 -gdwarf-4 -fno-inline -fno-omit-frame-pointer)
 elseif (${CMAKE_BUILD_TYPE} STREQUAL "RelWithDebInfo" OR ${CMAKE_BUILD_TYPE} STREQUAL "Release")
     target_compile_definitions(ext_scylladb PRIVATE -DRELEASE)
+endif ()
+
+if (PHP_SCYLLADB_ENABLE_SANITIZERS)
+    target_compile_options(
+            ext_scylladb PRIVATE
+            -fsanitize=address
+            -fsanitize=undefined
+            -fno-omit-frame-pointer
+    )
 endif ()
 
 target_include_directories(
@@ -141,6 +153,7 @@ target_link_libraries(
         ext_scylladb::exceptions
         ext_scylladb::cluster::builder
         ext_scylladb::retry_policy
+        ext_scylladb::timestamp_generator
 )
 
 if (PHP_SCYLLADB_LIBUV_STATIC)

@@ -10,3 +10,15 @@ target_include_directories(
         ${CMAKE_CURRENT_SOURCE_DIR}
         ${PHP_INCLUDES}
 )
+
+
+if (PHP_SCYLLADB_ENABLE_SANITIZERS)
+    target_compile_options(
+            zend_strings PRIVATE
+            -fsanitize=address
+            -fsanitize=undefined
+            -fno-omit-frame-pointer
+
+
+    )
+endif ()

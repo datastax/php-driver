@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: ae9f1b30f7ab8c1ca7eb466332fb22bdbc67dc8d */
+ * Stub hash: a97ccbde66cce65296c03272d8609ee5d1ba361a */
 
 ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Cassandra_Cluster_Builder_withDefaultConsistency, 0, 1, Cassandra\\Cluster\\Builder, 0)
 	ZEND_ARG_TYPE_INFO(0, consistency, IS_LONG, 0)
@@ -94,13 +94,17 @@ ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Cassandra_Cluster_Builder_w
 	ZEND_ARG_OBJ_INFO(0, generator, Cassandra\\TimestampGenerator, 0)
 ZEND_END_ARG_INFO()
 
-#define arginfo_class_Cassandra_Cluster_Builder_withSchemaMetadata arginfo_class_Cassandra_Cluster_Builder_withTokenAwareRouting
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Cassandra_Cluster_Builder_withSchemaMetadata, 0, 0, Cassandra\\Cluster\\Builder, 0)
+	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, enabled, _IS_BOOL, 0, "true")
+ZEND_END_ARG_INFO()
 
-#define arginfo_class_Cassandra_Cluster_Builder_withHostnameResolution arginfo_class_Cassandra_Cluster_Builder_withTokenAwareRouting
+#define arginfo_class_Cassandra_Cluster_Builder_withHostnameResolution arginfo_class_Cassandra_Cluster_Builder_withSchemaMetadata
 
-#define arginfo_class_Cassandra_Cluster_Builder_withRandomizedContactPoints arginfo_class_Cassandra_Cluster_Builder_withTokenAwareRouting
+#define arginfo_class_Cassandra_Cluster_Builder_withRandomizedContactPoints arginfo_class_Cassandra_Cluster_Builder_withSchemaMetadata
 
-#define arginfo_class_Cassandra_Cluster_Builder_withConnectionHeartbeatInterval arginfo_class_Cassandra_Cluster_Builder_withReconnectInterval
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Cassandra_Cluster_Builder_withConnectionHeartbeatInterval, 0, 1, Cassandra\\Cluster\\Builder, 0)
+	ZEND_ARG_TYPE_INFO(0, interval, IS_LONG, 0)
+ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Cassandra_Cluster_Builder_build, 0, 0, Cassandra\\Cluster, 0)
 ZEND_END_ARG_INFO()

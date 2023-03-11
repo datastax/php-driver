@@ -369,6 +369,17 @@ static zend_always_inline php_driver_future_rows *php_driver_future_rows_object_
     return (php_driver_future_rows *)((char *)obj - ((size_t)(&(((php_driver_future_rows *)0)->zval))));
 }
 
+typedef struct php_driver_timestamp_gen_
+{
+    CassTimestampGen *gen;
+    zend_object zval;
+} php_driver_timestamp_gen;
+static zend_always_inline php_driver_timestamp_gen *php_driver_timestamp_gen_object_fetch(zend_object *obj)
+{
+    return (php_driver_timestamp_gen *)((char *)obj - ((size_t)(&(((php_driver_timestamp_gen *)0)->zval))));
+}
+
+
 typedef struct php_driver_cluster_builder_
 {
     char *contact_points;
@@ -382,10 +393,10 @@ typedef struct php_driver_cluster_builder_
     char *password;
     unsigned int connect_timeout;
     unsigned int request_timeout;
-    php5to7_zval ssl_options;
+    zval ssl_options;
     long default_consistency;
     int default_page_size;
-    php5to7_zval default_timeout;
+    zval default_timeout;
     cass_bool_t persist;
     int protocol_version;
     int io_threads;
@@ -396,8 +407,8 @@ typedef struct php_driver_cluster_builder_
     cass_bool_t enable_tcp_nodelay;
     cass_bool_t enable_tcp_keepalive;
     unsigned int tcp_keepalive_delay;
-    php5to7_zval retry_policy;
-    php5to7_zval timestamp_gen;
+    zval retry_policy;
+    php_driver_timestamp_gen* timestamp_gen;
     cass_bool_t enable_schema;
     zend_string *blacklist_hosts;
     zend_string *whitelist_hosts;
@@ -690,15 +701,6 @@ static zend_always_inline php_driver_retry_policy *php_driver_retry_policy_objec
     return (php_driver_retry_policy *)((char *)obj - ((size_t)(&(((php_driver_retry_policy *)0)->zval))));
 }
 
-typedef struct php_driver_timestamp_gen_
-{
-    CassTimestampGen *gen;
-    zend_object zval;
-} php_driver_timestamp_gen;
-static zend_always_inline php_driver_timestamp_gen *php_driver_timestamp_gen_object_fetch(zend_object *obj)
-{
-    return (php_driver_timestamp_gen *)((char *)obj - ((size_t)(&(((php_driver_timestamp_gen *)0)->zval))));
-}
 
 typedef unsigned (*php_driver_value_hash_t)(zval *obj TSRMLS_DC);
 

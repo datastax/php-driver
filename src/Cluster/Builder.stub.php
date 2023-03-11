@@ -115,19 +115,19 @@ namespace Cassandra\Cluster {
         {
         }
 
-        public function withSchemaMetadata(bool $enabled): Builder
+        public function withSchemaMetadata(bool $enabled = true): Builder
         {
         }
 
-        public function withHostnameResolution(bool $enabled): Builder
+        public function withHostnameResolution(bool $enabled = true): Builder
         {
         }
 
-        public function withRandomizedContactPoints(bool $enabled): Builder
+        public function withRandomizedContactPoints(bool $enabled = true): Builder
         {
         }
 
-        public function withConnectionHeartbeatInterval(float $interval): Builder
+        public function withConnectionHeartbeatInterval(int $interval): Builder
         {
         }
 

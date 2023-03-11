@@ -84,3 +84,14 @@ if (${CMAKE_BUILD_TYPE} STREQUAL "Debug")
 elseif (${CMAKE_BUILD_TYPE} STREQUAL "RelWithDebInfo" OR ${CMAKE_BUILD_TYPE} STREQUAL "Release")
     target_compile_definitions(src PRIVATE -DRELEASE)
 endif ()
+
+if (PHP_SCYLLADB_ENABLE_SANITIZERS)
+    target_compile_options(
+            src PRIVATE
+            -fsanitize=address
+            -fsanitize=undefined
+            -fno-omit-frame-pointer
+
+
+    )
+endif ()

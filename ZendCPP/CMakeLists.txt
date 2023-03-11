@@ -7,3 +7,15 @@ target_include_directories(zend PUBLIC ${PHP_INCLUDES})
 
 add_subdirectory(String)
 target_link_libraries(zend Zend::String)
+
+
+if (PHP_SCYLLADB_ENABLE_SANITIZERS)
+    target_compile_options(
+            zend PRIVATE
+            -fsanitize=address
+            -fsanitize=undefined
+            -fno-omit-frame-pointer
+
+
+    )
+endif ()
