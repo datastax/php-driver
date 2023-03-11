@@ -33,6 +33,7 @@ target_sources(
         FuturePreparedStatement.c
         FutureRows.c
         FutureSession.c
+        FutureClose.c
         FutureValue.c
         Index.c
         Inet.c
@@ -45,6 +46,7 @@ target_sources(
         Rows.c
         Schema.c
         Session.c
+        Set.c
         SimpleStatement.c
         Smallint.c
         SSLOptions.c

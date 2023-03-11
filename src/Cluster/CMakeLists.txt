@@ -1,4 +1,4 @@
-add_library(cluster_builder STATIC)
+add_library(cluster_builder STATIC BuilderHandlers.h)
 add_library(ext_scylladb::cluster::builder ALIAS cluster_builder)
 target_sources(
         cluster_builder

@@ -7,8 +7,8 @@ if (NOT CMAKE_BUILD_TYPE OR CMAKE_BUILD_TYPE STREQUAL "")
 endif ()
 
 if (${CMAKE_BUILD_TYPE} STREQUAL "Debug")
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fsanitize=address -O0 -gdwarf-4 -fno-inline -fno-omit-frame-pointer")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=address -O0 -gdwarf-4 -fno-inline -fno-omit-frame-pointer")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -static-libasan -static-libubsan -fsanitize=address -fsanitize=undefined -O0 -gdwarf-4 -fno-inline -fno-omit-frame-pointer")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=address -fsanitize=undefined -O0 -gdwarf-4 -fno-inline -fno-omit-frame-pointer -static-libasan -static-libubsan")
 endif ()
 
 include(GNUInstallDirs)
@@ -136,6 +136,8 @@ target_link_libraries(
         zend
         ext_scylladb::src
         ext_scylladb::utils
+        ext_scylladb::type
+        ext_scylladb::ssl_options
         ext_scylladb::exceptions
         ext_scylladb::cluster::builder
         ext_scylladb::retry_policy

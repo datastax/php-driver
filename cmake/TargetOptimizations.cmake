@@ -8,11 +8,10 @@ function(target_optimize target native_arch)
     endif ()
 
     if (${CMAKE_BUILD_TYPE} MATCHES "Release")
-        check_ipo_supported(RESULT LTO_SUPPORTED)
-
-        if (LTO_SUPPORTED)
-            set_property(TARGET ${target} PROPERTY INTERPROCEDURAL_OPTIMIZATION ON)
-        endif ()
+#        check_ipo_supported(RESULT LTO_SUPPORTED)
+#        if (LTO_SUPPORTED)
+#            set_property(TARGET ${target} PROPERTY INTERPROCEDURAL_OPTIMIZATION ON)
+#        endif ()
 
         if (native_arch)
             check_cxx_compiler_flag(-march=native SUPPORT_MARCH_NATIVE)

@@ -335,34 +335,36 @@ PHP_INI_MH(OnUpdateLogLevel)
         return SUCCESS;
     }
 
-    if (PHP5TO7_STRCMP(new_value, "CRITICAL") == 0)
+    if (strncasecmp(ZSTR_VAL(new_value), "critical", sizeof("critical")) == 0)
     {
         cass_log_set_level(CASS_LOG_DISABLED);
     }
-    else if (PHP5TO7_STRCMP(new_value, "ERROR") == 0)
+
+    else if (strncasecmp(ZSTR_VAL(new_value), "error", sizeof("error")) == 0)
     {
         cass_log_set_level(CASS_LOG_ERROR);
     }
-    else if (PHP5TO7_STRCMP(new_value, "WARN") == 0)
+    else if (strncasecmp(ZSTR_VAL(new_value), "warn", sizeof("warn")) == 0)
     {
         cass_log_set_level(CASS_LOG_WARN);
     }
-    else if (PHP5TO7_STRCMP(new_value, "INFO") == 0)
+    else if (strncasecmp(ZSTR_VAL(new_value), "info", sizeof("info")) == 0)
     {
         cass_log_set_level(CASS_LOG_INFO);
     }
-    else if (PHP5TO7_STRCMP(new_value, "DEBUG") == 0)
+    else if (strncasecmp(ZSTR_VAL(new_value), "debug", sizeof("debug")) == 0)
     {
         cass_log_set_level(CASS_LOG_DEBUG);
     }
-    else if (PHP5TO7_STRCMP(new_value, "TRACE") == 0)
+    else if (strncasecmp(ZSTR_VAL(new_value), "trace", sizeof("trace")) == 0)
     {
         cass_log_set_level(CASS_LOG_TRACE);
     }
     else
     {
-        php_error_docref(NULL TSRMLS_CC, E_NOTICE, PHP_DRIVER_NAME " | Unknown log level '%s', using 'ERROR'",
+        php_error_docref(NULL, E_NOTICE, PHP_DRIVER_NAME " | Unknown log level '%s', using 'ERROR'",
                          ZSTR_VAL(new_value));
+
         cass_log_set_level(CASS_LOG_ERROR);
     }
 
@@ -573,7 +575,6 @@ PHP_MSHUTDOWN_FUNCTION(php_driver)
 PHP_RINIT_FUNCTION(php_driver)
 {
 #define XX_SCALAR(name, value) PHP5TO7_ZVAL_UNDEF(PHP_DRIVER_G(type_##name));
-
     PHP_DRIVER_SCALAR_TYPES_MAP(XX_SCALAR)
 #undef XX_SCALAR
 
@@ -583,7 +584,6 @@ PHP_RINIT_FUNCTION(php_driver)
 PHP_RSHUTDOWN_FUNCTION(php_driver)
 {
 #define XX_SCALAR(name, value) PHP5TO7_ZVAL_MAYBE_DESTROY(PHP_DRIVER_G(type_##name));
-
     PHP_DRIVER_SCALAR_TYPES_MAP(XX_SCALAR)
 #undef XX_SCALAR
 
@@ -597,8 +597,7 @@ PHP_MINFO_FUNCTION(php_driver)
 
     php_info_print_table_row(2, PHP_DRIVER_NAMESPACE " support", "enabled");
 
-    snprintf(buf, sizeof(buf), "%d.%d.%d%s", CASS_VERSION_MAJOR, CASS_VERSION_MINOR, CASS_VERSION_PATCH,
-             (strlen(CASS_VERSION_SUFFIX) > 0 ? "-" CASS_VERSION_SUFFIX : ""));
+    snprintf(buf, sizeof(buf), "%d.%d.%d", CASS_VERSION_MAJOR, CASS_VERSION_MINOR, CASS_VERSION_PATCH);
     php_info_print_table_row(2, "C/C++ driver version", buf);
 
     php_info_print_table_row(2, "PHP driver extension", "customized for persistent prepared statements");
