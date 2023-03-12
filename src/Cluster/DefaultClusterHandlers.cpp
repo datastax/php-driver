@@ -58,8 +58,9 @@ zend_object *php_driver_default_cluster_new(zend_class_entry *ce)
     PHP5TO7_ZVAL_UNDEF(self->default_timeout);
 
     zend_object_std_init(&self->zval, ce);
+    self->zval.handlers = &php_driver_default_cluster_handlers;
 
-    PHP5TO7_ZEND_OBJECT_INIT_EX(cluster, default_cluster, self, ce);
+    return &self->zval;
 }
 
 END_EXTERN_C()

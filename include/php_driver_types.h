@@ -16,6 +16,9 @@
 
 #pragma once
 
+#include <php.h>
+#include <php_driver.h>
+
 BEGIN_EXTERN_C()
 
 #define PHP_DRIVER_GET_NUMERIC(obj) php_driver_numeric_object_fetch(Z_OBJ_P(obj))
@@ -437,7 +440,7 @@ typedef struct php_driver_cluster_builder_
     cass_bool_t persist;
     php_driver_retry_policy *retry_policy;
     php_driver_timestamp_gen *timestamp_gen;
-    php_driver_ssl* ssl_options;
+    php_driver_ssl *ssl_options;
     zval default_timeout;
 
     zend_object zval;
@@ -527,7 +530,6 @@ static zend_always_inline php_driver_session *php_driver_session_object_fetch(ze
 {
     return (php_driver_session *)((char *)obj - offsetof(php_driver_session, zval));
 }
-
 
 typedef struct php_driver_ssl_builder_
 {
