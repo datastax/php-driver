@@ -16,7 +16,6 @@
 #pragma once
 
 #include <cassandra.h>
-#include <stdint.h>
 
 #include "inline.h"
 
@@ -43,8 +42,6 @@ PHP_DRIVER_ALWAYS_INLINE int32_t php_driver_validate_consistency(uint32_t consis
 
 PHP_DRIVER_ALWAYS_INLINE int32_t php_driver_validate_serial_consistency(uint32_t serial_consistency)
 {
-    //    if (serial_consistency && Z_TYPE_P(serial_consistency) == IS_LONG)
-    //    {
     switch (serial_consistency)
     {
     case CASS_CONSISTENCY_SERIAL:
@@ -52,16 +49,5 @@ PHP_DRIVER_ALWAYS_INLINE int32_t php_driver_validate_serial_consistency(uint32_t
         return 0;
     default:
         return -1;
-
     }
-    //    }
-    //    else
-    //    {
-    //        INVALID_ARGUMENT_VALUE(
-    //            serial_consistency,
-    //            "either " PHP_DRIVER_NAMESPACE "::CONSISTENCY_SERIAL or Cassanra::CASS_CONSISTENCY_LOCAL_SERIAL",
-    //            FAILURE);
-    //    }
 }
-
-// int php_driver_get_serial_consistency(zval *serial_consistency, long *result);

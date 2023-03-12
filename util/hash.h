@@ -15,53 +15,51 @@
  */
 #pragma once
 
+#include "inline.h"
 #include <php_driver.h>
 
 #define uthash_malloc(sz) emalloc(sz)
 #define uthash_free(ptr, sz) efree(ptr)
 
-#define HASH_FUNCTION(key, keylen, num_bkts, hashv, bkt) \
-  hashv = php_driver_value_hash((zval*) key);            \
-  bkt   = (hashv) & (num_bkts - 1U)
-#define HASH_KEYCOMPARE(a, b, len) \
-  php_driver_value_compare((zval*) a, (zval*) b)
+#define HASH_FUNCTION(key, keylen, num_bkts, hashv, bkt)                                                               \
+    hashv = php_driver_value_hash((zval *)key);                                                                        \
+    bkt = (hashv) & (num_bkts - 1U)
+#define HASH_KEYCOMPARE(a, b, len) php_driver_value_compare((zval *)a, (zval *)b)
 
 #undef HASH_ADD /* Previously defined in Zend/zend_hash.h */
 
 #include "uthash.h"
 
-#define HASH_FIND_ZVAL(head, zvptr, out) \
-  HASH_FIND(hh, head, zvptr, 0, out)
+#define HASH_FIND_ZVAL(head, zvptr, out) HASH_FIND(hh, head, zvptr, 0, out)
 
-#define HASH_ADD_ZVAL(head, fieldname, add) \
-  HASH_ADD_KEYPTR(hh, head, PHP5TO7_ZVAL_MAYBE_P(((add)->fieldname)), 0, add)
+#define HASH_ADD_ZVAL(head, fieldname, add) HASH_ADD_KEYPTR(hh, head, PHP5TO7_ZVAL_MAYBE_P(((add)->fieldname)), 0, add)
 
-struct php_driver_map_entry_ {
-  php5to7_zval key;
-  php5to7_zval value;
-  UT_hash_handle hh;
+struct php_driver_map_entry_
+{
+    php5to7_zval key;
+    php5to7_zval value;
+    UT_hash_handle hh;
 };
 
-struct php_driver_set_entry_ {
-  php5to7_zval value;
-  UT_hash_handle hh;
+struct php_driver_set_entry_
+{
+    php5to7_zval value;
+    UT_hash_handle hh;
 };
 
 #define PHP_DRIVER_COMPARE(a, b) ((a) < (b) ? -1 : (a) > (b))
 
-uint32_t php_driver_value_hash(zval* zvalue);
-int32_t php_driver_value_compare(zval* zvalue1, zval* zvalue2);
-int32_t php_driver_data_compare(Bucket* a, Bucket* b);
+uint32_t php_driver_value_hash(zval *zvalue);
+int32_t php_driver_value_compare(zval *zvalue1, zval *zvalue2);
+int32_t php_driver_data_compare(Bucket *a, Bucket *b);
 uint32_t php_driver_mpz_hash(unsigned seed, mpz_t n);
 
-static zend_always_inline uint32_t
-php_driver_bigint_hash(cass_int64_t value)
+static PHP_DRIVER_ALWAYS_INLINE uint32_t php_driver_bigint_hash(cass_int64_t value)
 {
-  return (uint32_t) (value ^ (value >> 32));
+    return (uint32_t)(value ^ (value >> 32));
 }
 
-static inline unsigned
-php_driver_combine_hash(unsigned seed, unsigned hashv)
+static PHP_DRIVER_ALWAYS_INLINE uint32_t php_driver_combine_hash(unsigned seed, unsigned hashv)
 {
-  return seed ^ (hashv + 0x9e3779b9 + (seed << 6) + (seed >> 2));
+    return seed ^ (hashv + 0x9e3779b9 + (seed << 6) + (seed >> 2));
 }

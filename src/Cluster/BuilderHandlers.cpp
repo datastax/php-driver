@@ -10,11 +10,10 @@ static zend_object_handlers php_driver_cluster_builder_handlers;
 
 static HashTable *php_driver_cluster_builder_gc(zend_object *object, zval **table, int *n)
 {
-    *table = NULL;
+    *table = nullptr;
     *n = 0;
     return zend_std_get_properties(object);
 }
-
 static HashTable *php_driver_cluster_builder_properties(zend_object *object)
 {
     zval contactPoints;
@@ -86,7 +85,7 @@ static HashTable *php_driver_cluster_builder_properties(zend_object *object)
 
     ZVAL_DOUBLE(&connectTimeout, (double)self->connect_timeout / 1000);
     ZVAL_DOUBLE(&requestTimeout, (double)self->request_timeout / 1000);
-    if (self->ssl_options != NULL)
+    if (self->ssl_options != nullptr)
     {
         ZVAL_OBJ_COPY(&sslOptions, &self->ssl_options->zval);
     }
@@ -124,7 +123,7 @@ static HashTable *php_driver_cluster_builder_properties(zend_object *object)
         ZVAL_NULL(&tcpKeepalive);
     }
 
-    if (self->retry_policy != NULL)
+    if (self->retry_policy != nullptr)
     {
         ZVAL_OBJ_COPY(&retryPolicy, &self->retry_policy->zval);
     }
@@ -133,7 +132,7 @@ static HashTable *php_driver_cluster_builder_properties(zend_object *object)
         ZVAL_NULL(&retryPolicy);
     }
 
-    if (self->blacklist_hosts != NULL)
+    if (self->blacklist_hosts != nullptr)
     {
         ZVAL_STR(&blacklistHosts, self->blacklist_hosts);
     }
@@ -169,7 +168,7 @@ static HashTable *php_driver_cluster_builder_properties(zend_object *object)
         ZVAL_NULL(&whitelistDCs);
     }
 
-    if (self->timestamp_gen != NULL)
+    if (self->timestamp_gen != nullptr)
     {
         ZVAL_OBJ_COPY(&timestampGen, &self->timestamp_gen->zval);
     }
@@ -235,7 +234,6 @@ static HashTable *php_driver_cluster_builder_properties(zend_object *object)
 
     return props;
 }
-
 static int php_driver_cluster_builder_compare(zval *obj1, zval *obj2)
 {
     if (Z_OBJCE_P(obj1) != Z_OBJCE_P(obj2))
@@ -243,60 +241,59 @@ static int php_driver_cluster_builder_compare(zval *obj1, zval *obj2)
 
     return Z_OBJ_HANDLE_P(obj1) != Z_OBJ_HANDLE_P(obj1);
 }
-
 static void php_driver_cluster_builder_free(zend_object *object)
 {
     php_driver_cluster_builder *self = PHP5TO7_ZEND_OBJECT_GET(cluster_builder, object);
 
     zend_string_release(self->contact_points);
-    self->contact_points = NULL;
+    self->contact_points = nullptr;
 
-    if (self->local_dc != NULL)
+    if (self->local_dc != nullptr)
     {
         zend_string_release(self->local_dc);
-        self->local_dc = NULL;
+        self->local_dc = nullptr;
     }
 
     if (self->username)
     {
         zend_string_release(self->username);
-        self->username = NULL;
+        self->username = nullptr;
     }
 
     if (self->password)
     {
         zend_string_release(self->password);
-        self->password = NULL;
+        self->password = nullptr;
     }
 
-    if (self->whitelist_hosts != NULL)
+    if (self->whitelist_hosts != nullptr)
     {
         zend_string_release(self->whitelist_hosts);
-        self->whitelist_hosts = NULL;
+        self->whitelist_hosts = nullptr;
     }
 
-    if (self->blacklist_hosts != NULL)
+    if (self->blacklist_hosts != nullptr)
     {
         zend_string_release(self->blacklist_hosts);
-        self->blacklist_hosts = NULL;
+        self->blacklist_hosts = nullptr;
     }
 
     if (self->whitelist_dcs)
     {
         zend_string_release(self->whitelist_dcs);
-        self->whitelist_dcs = NULL;
+        self->whitelist_dcs = nullptr;
     }
 
     if (self->blacklist_dcs)
     {
         zend_string_release(self->blacklist_dcs);
-        self->whitelist_dcs = NULL;
+        self->whitelist_dcs = nullptr;
     }
 
-    if (self->ssl_options != NULL)
+    if (self->ssl_options != nullptr)
     {
         zend_object_release(&self->ssl_options->zval);
-        self->ssl_options = NULL;
+        self->ssl_options = nullptr;
     }
 
     if (!Z_ISUNDEF(self->default_timeout))
@@ -305,33 +302,32 @@ static void php_driver_cluster_builder_free(zend_object *object)
         ZVAL_UNDEF(&self->default_timeout);
     }
 
-    if (self->retry_policy != NULL)
+    if (self->retry_policy != nullptr)
     {
         zend_object_release(&self->retry_policy->zval);
-        self->retry_policy = NULL;
+        self->retry_policy = nullptr;
     }
 
     if (self->timestamp_gen)
     {
         zend_object_release(&self->timestamp_gen->zval);
-        self->timestamp_gen = NULL;
+        self->timestamp_gen = nullptr;
     }
 }
-
 php5to7_zend_object php_driver_cluster_builder_new(zend_class_entry *ce)
 {
-    php_driver_cluster_builder *self = static_cast<php_driver_cluster_builder *>(
+    auto *self = static_cast<php_driver_cluster_builder *>(
         emalloc(sizeof(php_driver_cluster_builder) + zend_object_properties_size(ce)));
 
     self->contact_points = zend_string_init_fast(ZEND_STRL("127.0.0.1"));
     self->port = 9042;
     self->load_balancing_policy = LOAD_BALANCING_DEFAULT;
-    self->local_dc = NULL;
+    self->local_dc = nullptr;
     self->used_hosts_per_remote_dc = 0;
     self->allow_remote_dcs_for_local_cl = cass_false;
     self->use_token_aware_routing = cass_true;
-    self->username = NULL;
-    self->password = NULL;
+    self->username = nullptr;
+    self->password = nullptr;
     self->connect_timeout = 5000;
     self->request_timeout = 12000;
     self->default_consistency = CASS_CONSISTENCY_LOCAL_ONE;
@@ -347,16 +343,16 @@ php5to7_zend_object php_driver_cluster_builder_new(zend_class_entry *ce)
     self->enable_tcp_keepalive = cass_false;
     self->tcp_keepalive_delay = 0;
     self->enable_schema = cass_true;
-    self->blacklist_hosts = NULL;
-    self->whitelist_hosts = NULL;
-    self->blacklist_dcs = NULL;
-    self->whitelist_dcs = NULL;
+    self->blacklist_hosts = nullptr;
+    self->whitelist_hosts = nullptr;
+    self->blacklist_dcs = nullptr;
+    self->whitelist_dcs = nullptr;
     self->enable_hostname_resolution = cass_false;
     self->enable_randomized_contact_points = cass_true;
     self->connection_heartbeat_interval = 30;
-    self->timestamp_gen = NULL;
-    self->retry_policy = NULL;
-    self->ssl_options = NULL;
+    self->timestamp_gen = nullptr;
+    self->retry_policy = nullptr;
+    self->ssl_options = nullptr;
 
     ZVAL_UNDEF(&self->default_timeout);
 
@@ -371,6 +367,8 @@ php5to7_zend_object php_driver_cluster_builder_new(zend_class_entry *ce)
     return &self->zval;
 }
 
+END_EXTERN_C()
+
 void php_driver_initialize_cluster_builder_handlers()
 {
     memcpy(&php_driver_cluster_builder_handlers, zend_get_std_object_handlers(), sizeof(zend_object_handlers));
@@ -380,5 +378,3 @@ void php_driver_initialize_cluster_builder_handlers()
     php_driver_cluster_builder_handlers.offset = XtOffsetOf(php_driver_cluster_builder, zval);
     php_driver_cluster_builder_handlers.free_obj = php_driver_cluster_builder_free;
 }
-
-END_EXTERN_C()

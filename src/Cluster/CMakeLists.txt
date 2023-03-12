@@ -7,6 +7,7 @@ target_sources(
         BuilderHandlers.cpp
         Cluster.cpp
         DefaultCluster.cpp
+        DefaultClusterHandlers.cpp
 )
 
 find_package(PHP REQUIRED)
