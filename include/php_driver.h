@@ -2,19 +2,10 @@
 
 #include <cassandra.h>
 #include <gmp.h>
-
-#ifdef __cplusplus
-extern "C" {
-#endif
+#include <version.h>
 
 #ifdef HAVE_CONFIG_H
 #include <config.h>
-#endif
-
-#include <math.h>
-
-#ifdef HAVE_STRING_H
-#include <string.h>
 #endif
 
 #ifdef HAVE_SYS_TYPES_H
@@ -25,17 +16,40 @@ extern "C" {
 #include <unistd.h>
 #endif
 
-#include <php.h>
-
+#ifdef HAVE_SYS_STAT_H
 #include <sys/stat.h>
-#include <sys/types.h>
+#endif
+
+#ifdef HAVE_UNISTD_H
 #include <unistd.h>
+#endif
+
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
+#include <math.h>
+
+#ifdef HAVE_STRING_H
+#include <string.h>
+#endif
+
+#ifdef HAVE_INTTYPES_H
+#include <inttypes.h>
+#endif
+
+#include <php.h>
 
 #include <Zend/zend_exceptions.h>
 #include <Zend/zend_interfaces.h>
 #include <Zend/zend_types.h>
 
+#ifdef _WIN32
+#define LL_FORMAT "%I64d"
+#else
 #define LL_FORMAT "%lld"
+#endif
 
 #if PHP_VERSION_ID < 80000
 #error PHP 8.0.0 or later is required in order to build the driver
@@ -53,8 +67,6 @@ extern "C" {
 
 #include <ext/spl/spl_exceptions.h>
 #include <ext/spl/spl_iterators.h>
-
-#include <version.h>
 
 #if defined(__GNUC__) && __GNUC__ >= 4
 #define PHP_DRIVER_API __attribute__((visibility("default")))
@@ -92,30 +104,28 @@ extern "C" {
 #define php5to7_zend_register_internal_class_ex(ce, parent_ce)                                                         \
     zend_register_internal_class_ex((ce), (parent_ce)TSRMLS_CC);
 
+    typedef zval php5to7_zval;
+    typedef zval *php5to7_zval_args;
+    typedef zend_string *php5to7_string;
+    typedef zend_long php5to7_long;
+    typedef zend_ulong php5to7_ulong;
+    typedef zval php5to7_zend_resource_le;
+    typedef zend_resource *php5to7_zend_resource;
+    typedef zend_object *php5to7_zend_object;
+    typedef zend_object php5to7_zend_object_free;
+    typedef zval **php5to7_zval_gc;
+    typedef zval *php5to7_dtor;
+    typedef size_t php5to7_size;
+    typedef unsigned long ulong;
 
-typedef zval php5to7_zval;
-typedef zval *php5to7_zval_args;
-typedef zval *php5to7_zval_arg;
-typedef zend_string *php5to7_string;
-typedef zend_long php5to7_long;
-typedef zend_ulong php5to7_ulong;
-typedef zval php5to7_zend_resource_le;
-typedef zend_resource *php5to7_zend_resource;
-typedef zend_object *php5to7_zend_object;
-typedef zend_object php5to7_zend_object_free;
-typedef zval **php5to7_zval_gc;
-typedef zval *php5to7_dtor;
-typedef size_t php5to7_size;
-typedef unsigned long ulong;
-
-static inline int php5to7_string_compare(php5to7_string s1, php5to7_string s2)
-{
-    if (s1->len != s2->len)
+    static inline int php5to7_string_compare(php5to7_string s1, php5to7_string s2)
     {
-        return s1->len < s2->len ? -1 : 1;
+        if (s1->len != s2->len)
+        {
+            return s1->len < s2->len ? -1 : 1;
+        }
+        return memcmp(s1->val, s2->val, s1->len);
     }
-    return memcmp(s1->val, s2->val, s1->len);
-}
 
 #define PHP5TO7_ZEND_OBJECT_GET(type_name, object) php_driver_##type_name##_object_fetch(object)
 
@@ -266,30 +276,32 @@ static inline int php5to7_string_compare(php5to7_string s1, php5to7_string s2)
 #define PHP5TO7_ZEND_LONG_MAX ZEND_LONG_MAX
 #define PHP5TO7_ZEND_LONG_MIN ZEND_LONG_MIN
 
-extern zend_module_entry php_driver_module_entry;
+    extern zend_module_entry php_driver_module_entry;
 #define phpext_cassandra_ptr &php_driver_module_entry
 
-PHP_MINIT_FUNCTION(php_driver);
-PHP_MSHUTDOWN_FUNCTION(php_driver);
-PHP_RINIT_FUNCTION(php_driver);
-PHP_RSHUTDOWN_FUNCTION(php_driver);
-PHP_MINFO_FUNCTION(php_driver);
+    PHP_MINIT_FUNCTION(php_driver);
+    PHP_MSHUTDOWN_FUNCTION(php_driver);
+    PHP_RINIT_FUNCTION(php_driver);
+    PHP_RSHUTDOWN_FUNCTION(php_driver);
+    PHP_MINFO_FUNCTION(php_driver);
 
-zend_class_entry *exception_class(CassError rc);
+    zend_class_entry *exception_class(CassError rc);
 
-void throw_invalid_argument(zval *object, const char *object_name, const char *expected_type TSRMLS_DC);
+    void throw_invalid_argument(zval *object, const char *object_name, const char *expected_type TSRMLS_DC);
 
 #define INVALID_ARGUMENT(object, expected)                                                                             \
-    do {                                                                                                                  \
+    do                                                                                                                 \
+    {                                                                                                                  \
         throw_invalid_argument(object, #object, expected TSRMLS_CC);                                                   \
         return;                                                                                                        \
-    }while(0)
+    } while (0)
 
 #define INVALID_ARGUMENT_VALUE(object, expected, failed_value)                                                         \
-    do{                                                                                                                  \
+    do                                                                                                                 \
+    {                                                                                                                  \
         throw_invalid_argument(object, #object, expected TSRMLS_CC);                                                   \
         return failed_value;                                                                                           \
-    }while(0)
+    } while (0)
 
 #define ASSERT_SUCCESS_BLOCK(rc, block)                                                                                \
     do                                                                                                                 \
@@ -310,8 +322,8 @@ void throw_invalid_argument(zval *object, const char *object_name, const char *e
 #define PHP_DRIVER_DEFAULT_LOG PHP_DRIVER_NAME ".log"
 #define PHP_DRIVER_DEFAULT_LOG_LEVEL "ERROR"
 
-PHP_INI_MH(OnUpdateLogLevel);
-PHP_INI_MH(OnUpdateLog);
+    PHP_INI_MH(OnUpdateLogLevel);
+    PHP_INI_MH(OnUpdateLog);
 
 #ifdef __cplusplus
 }
