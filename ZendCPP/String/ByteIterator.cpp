@@ -1,5 +1,7 @@
 #include "ByteIterator.h"
 
+#include <cstdint>
+
 using namespace Zend::Internal::String;
 
 ByteIterator::reference ByteIterator::operator*() {

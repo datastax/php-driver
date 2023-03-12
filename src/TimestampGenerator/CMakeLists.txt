@@ -1,25 +1,17 @@
-add_library(util STATIC)
-add_library(ext_scylladb::utils ALIAS util)
+add_library(timestamp_generator STATIC)
+add_library(ext_scylladb::timestamp_generator ALIAS timestamp_generator)
 target_sources(
-        util
+        timestamp_generator
         PRIVATE
-        src/bytes.c
-        src/collections.c
-        src/future.c
-        src/hash.c
-        src/inet.c
-        src/ref.c
-        src/result.c
-        src/types.c
-        src/uuid_gen.c
+        Monotonic.c
+        ServerSide.c
 )
 
 find_package(PHP REQUIRED)
-set_target_properties(util PROPERTIES POSITION_INDEPENDENT_CODE ON)
+set_target_properties(timestamp_generator PROPERTIES POSITION_INDEPENDENT_CODE ON)
 target_include_directories(
-        util
+        timestamp_generator
         PUBLIC
-        ${CMAKE_CURRENT_SOURCE_DIR}
         ${PHP_INCLUDES}
         ${PROJECT_SOURCE_DIR}/include
         ${PROJECT_BINARY_DIR}
@@ -28,14 +20,14 @@ target_include_directories(
 )
 
 if (${CMAKE_BUILD_TYPE} STREQUAL "Debug")
-    target_compile_definitions(util PRIVATE -DDEBUG)
+    target_compile_definitions(timestamp_generator PRIVATE -DDEBUG)
 elseif (${CMAKE_BUILD_TYPE} STREQUAL "RelWithDebInfo" OR ${CMAKE_BUILD_TYPE} STREQUAL "Release")
-    target_compile_definitions(util PRIVATE -DRELEASE)
+    target_compile_definitions(timestamp_generator PRIVATE -DRELEASE)
 endif ()
 
 if (PHP_SCYLLADB_ENABLE_SANITIZERS)
     target_compile_options(
-            util PRIVATE
+            timestamp_generator PRIVATE
             -fsanitize=address
             -fsanitize=undefined
             -fno-omit-frame-pointer

@@ -29,8 +29,8 @@ option(PHP_SCYLLADB_ENABLE_SANITIZERS "Enable sanitizers" OFF)
 option(PHP_SCYLLADB_ENABLE_COVERAGE "Enable coverage" OFF)
 option(PHP_SCYLLADB_OPTIMISE_FOR_CURRENT_MACHINE "Optimise for current machine" OFF)
 
-option(PHP_SCYLLADB_LIBUV_STATIC "Statically link libuv" ON)
-option(PHP_SCYLLADB_LIBSCYLLADB_STATIC "Statically link libscylladb" ON)
+option(PHP_SCYLLADB_LIBUV_STATIC "Statically link libuv" OFF)
+option(PHP_SCYLLADB_LIBSCYLLADB_STATIC "Statically link libscylladb" OFF)
 
 find_package(PHP REQUIRED)
 
@@ -39,6 +39,7 @@ if (PHP_SCYLLADB_LIBUV_STATIC)
 else ()
     set(LIBUV_BUILD_SHARED ON)
 endif ()
+
 
 CPMAddPackage(
         NAME libuv
@@ -51,7 +52,7 @@ CPMAddPackage(
         "LIBUV_BUILD_SHARED ${LIBUV_BUILD_SHARED}"
         "CMAKE_C_FLAGS ${CMAKE_C_FLAGS} -fPIC"
         "CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} -fPIC"
-        
+
 )
 
 set(LIBUV_ROOT_DIR ${libuv_BINARY_DIR})
@@ -90,21 +91,40 @@ CPMAddPackage(
         "LIBUV_INCLUDE_DIR ${libuv_SOURCE_DIR}/include"
 )
 
-
-
-file(GLOB_RECURSE SRC_LIST FOLLOW_SYMLINKS src/*.c)
-file(GLOB_RECURSE HEADERS_LIST FOLLOW_SYMLINKS include/*.h)
-set(php_scylladb_sources ${SRC_LIST} php_driver.c)
-
 add_subdirectory(ZendCPP)
 add_subdirectory(util)
+add_subdirectory(src)
+add_subdirectory(src/Cluster)
+add_subdirectory(src/Exception)
+add_subdirectory(src/RetryPolicy)
+add_subdirectory(src/SSLOptions)
+add_subdirectory(src/TimestampGenerator)
+add_subdirectory(src/Type)
+
+file(GLOB_RECURSE HEADERS_LIST FOLLOW_SYMLINKS include/*.h)
 
 add_library(ext_scylladb SHARED)
 target_optimize(ext_scylladb ${PHP_SCYLLADB_OPTIMISE_FOR_CURRENT_MACHINE})
-add_compile_options(
-        -fPIC -Wall -Wextra -Wno-long-long -Wno-deprecated-declarations -Wno-unused-parameter -Wno-unused-result -Wno-variadic-macros -Wno-extra-semi -pthread
-        $<$<CONFIG:DEBUG>:-ggdb3
-)
+target_compile_options(ext_scylladb PRIVATE
+        -fPIC -Wall -Wextra -Wno-long-long -Wno-deprecated-declarations -Wno-unused-parameter -Wno-unused-result -Wno-variadic-macros -Wno-extra-semi -pthread -Wimplicit-function-declaration
+        )
+
+if (${CMAKE_BUILD_TYPE} STREQUAL "Debug")
+    target_compile_definitions(ext_scylladb PRIVATE -DDEBUG)
+    target_compile_options(ext_scylladb PRIVATE -g3 -gdwarf-4 -fno-inline -fno-omit-frame-pointer)
+elseif (${CMAKE_BUILD_TYPE} STREQUAL "RelWithDebInfo" OR ${CMAKE_BUILD_TYPE} STREQUAL "Release")
+    target_compile_definitions(ext_scylladb PRIVATE -DRELEASE)
+endif ()
+
+if (PHP_SCYLLADB_ENABLE_SANITIZERS)
+    target_compile_options(
+            ext_scylladb PRIVATE
+            -fsanitize=address
+            -fsanitize=undefined
+            -fno-omit-frame-pointer
+    )
+endif ()
+
 target_include_directories(
         ext_scylladb PUBLIC
         ${PROJECT_SOURCE_DIR}/include
@@ -114,12 +134,18 @@ target_include_directories(
         ${PHP_INCLUDES}
 )
 target_sources(ext_scylladb PUBLIC FILE_SET headers TYPE HEADERS FILES "${HEADERS_LIST}" "${PROJECT_BINARY_DIR}/config.h")
-target_sources(ext_scylladb PRIVATE ${php_scylladb_sources})
+target_sources(ext_scylladb PRIVATE php_driver.c)
 
 target_link_libraries(
         ext_scylladb PRIVATE
-        zend
+        ext_scylladb::src
         ext_scylladb::utils
+        ext_scylladb::type
+        ext_scylladb::ssl_options
+        ext_scylladb::exceptions
+        ext_scylladb::cluster::builder
+        ext_scylladb::retry_policy
+        ext_scylladb::timestamp_generator
 )
 
 if (PHP_SCYLLADB_LIBUV_STATIC)

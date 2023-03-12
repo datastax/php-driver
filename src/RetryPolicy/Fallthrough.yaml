@@ -1,4 +1,0 @@
----
-RetryPolicy\Fallthrough:
-  comment: A retry policy that never retries and allows all errors to fallthrough.
-...

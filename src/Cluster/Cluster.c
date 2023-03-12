@@ -14,7 +14,10 @@
  * limitations under the License.
  */
 
-#include "php_driver.h"
+#include <php_driver.h>
+
+#include "Cluster.h"
+
 
 zend_class_entry *php_driver_cluster_ce = NULL;
 
@@ -28,7 +31,7 @@ static zend_function_entry php_driver_cluster_methods[] = {
   PHP_FE_END
 };
 
-void php_driver_define_Cluster(TSRMLS_D)
+void php_driver_define_Cluster()
 {
   zend_class_entry ce;
 

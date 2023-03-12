@@ -15,7 +15,53 @@
  */
 #pragma once
 
-#include <php.h>
+#include <cassandra.h>
+#include <stdint.h>
 
-int php_driver_get_consistency(zval* consistency, long* result);
-int php_driver_get_serial_consistency(zval* serial_consistency, long* result);
+#include "inline.h"
+
+PHP_DRIVER_ALWAYS_INLINE int32_t php_driver_validate_consistency(uint32_t consistency)
+{
+    switch (consistency)
+    {
+    case CASS_CONSISTENCY_ANY:
+    case CASS_CONSISTENCY_ONE:
+    case CASS_CONSISTENCY_TWO:
+    case CASS_CONSISTENCY_THREE:
+    case CASS_CONSISTENCY_QUORUM:
+    case CASS_CONSISTENCY_ALL:
+    case CASS_CONSISTENCY_LOCAL_QUORUM:
+    case CASS_CONSISTENCY_EACH_QUORUM:
+    case CASS_CONSISTENCY_SERIAL:
+    case CASS_CONSISTENCY_LOCAL_SERIAL:
+    case CASS_CONSISTENCY_LOCAL_ONE:
+        return 0;
+    default:
+        return -1;
+    }
+}
+
+PHP_DRIVER_ALWAYS_INLINE int32_t php_driver_validate_serial_consistency(uint32_t serial_consistency)
+{
+    //    if (serial_consistency && Z_TYPE_P(serial_consistency) == IS_LONG)
+    //    {
+    switch (serial_consistency)
+    {
+    case CASS_CONSISTENCY_SERIAL:
+    case CASS_CONSISTENCY_LOCAL_SERIAL:
+        return 0;
+    default:
+        return -1;
+
+    }
+    //    }
+    //    else
+    //    {
+    //        INVALID_ARGUMENT_VALUE(
+    //            serial_consistency,
+    //            "either " PHP_DRIVER_NAMESPACE "::CONSISTENCY_SERIAL or Cassanra::CASS_CONSISTENCY_LOCAL_SERIAL",
+    //            FAILURE);
+    //    }
+}
+
+// int php_driver_get_serial_consistency(zval *serial_consistency, long *result);

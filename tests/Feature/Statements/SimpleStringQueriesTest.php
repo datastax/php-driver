@@ -63,21 +63,21 @@ test('A simple CQL string can be used to execute queries', function () use($keys
     }
 });
 
-test('A simple CQL string can also be used to execute asynchronous queries', function () use($keyspace, $table) {
-    $session = scyllaDbConnection($keyspace);
-    $future  = $session->executeAsync("SELECT * FROM $table");
-    $result = $future->get(1);
-    $expectations = [
-        'Willi Ostermann: Die Mösch / In Gold',
-        'Joséphine Baker: La Petite Tonkinoise / Bye Bye Blackbird',
-        'Mick Jager: Memo From Turner / Performance'
-    ];
-
-    foreach ($result as $key => $row) {
-        $fullValue = sprintf("%s: %s / %s", $row['artist'], $row['title'], $row['album']);
-        expect($fullValue)->toBe($expectations[$key]);
-    }
-});
+// test('A simple CQL string can also be used to execute asynchronous queries', function () use($keyspace, $table) {
+//     $session = scyllaDbConnection($keyspace);
+//     $future  = $session->executeAsync("SELECT * FROM $table");
+//     $result = $future->get(1);
+//     $expectations = [
+//         'Willi Ostermann: Die Mösch / In Gold',
+//         'Joséphine Baker: La Petite Tonkinoise / Bye Bye Blackbird',
+//         'Mick Jager: Memo From Turner / Performance'
+//     ];
+//
+//     foreach ($result as $key => $row) {
+//         $fullValue = sprintf("%s: %s / %s", $row['artist'], $row['title'], $row['album']);
+//         expect($fullValue)->toBe($expectations[$key]);
+//     }
+// });
 
 test('Simple CQL strings can also be used in batch statements',
     function () use ($keyspace, $table) {

@@ -14,11 +14,13 @@
  * limitations under the License.
  */
 
-#include "php_driver.h"
-#include "php_driver_globals.h"
-#include "php_driver_types.h"
-#include "util/future.h"
-#include "util/ref.h"
+#include <php_driver.h>
+#include <php_driver_globals.h>
+#include <php_driver_types.h>
+#include <util/future.h>
+#include <util/ref.h>
+
+#include "Cluster.h"
 
 zend_class_entry *php_driver_default_cluster_ce = NULL;
 
@@ -283,7 +285,7 @@ php_driver_default_cluster_new(zend_class_entry *ce TSRMLS_DC)
   PHP5TO7_ZEND_OBJECT_INIT_EX(cluster, default_cluster, self, ce);
 }
 
-void php_driver_define_DefaultCluster(TSRMLS_D)
+void php_driver_define_DefaultCluster()
 {
   zend_class_entry ce;
 
