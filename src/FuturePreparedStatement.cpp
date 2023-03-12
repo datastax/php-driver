@@ -17,7 +17,7 @@
 #include "php_driver.h"
 #include "php_driver_types.h"
 #include "util/future.h"
-
+BEGIN_EXTERN_C()
 zend_class_entry *php_driver_future_prepared_statement_ce = NULL;
 
 PHP_METHOD(FuturePreparedStatement, get)
@@ -136,3 +136,4 @@ void php_driver_define_FuturePreparedStatement(TSRMLS_D)
 #endif
   php_driver_future_prepared_statement_handlers.clone_obj = NULL;
 }
+END_EXTERN_C()

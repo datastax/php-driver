@@ -24,12 +24,8 @@
 #include "DefaultMaterializedView.h"
 #include "DefaultTable.h"
 
-
-#if PHP_MAJOR_VERSION >= 7
+BEGIN_EXTERN_C()
 #include <zend_smart_str.h>
-#else
-#include <ext/standard/php_smart_str.h>
-#endif
 
 zend_class_entry *php_driver_default_keyspace_ce = NULL;
 
@@ -605,3 +601,4 @@ void php_driver_define_DefaultKeyspace(TSRMLS_D)
 #endif
   php_driver_default_keyspace_handlers.clone_obj = NULL;
 }
+END_EXTERN_C()

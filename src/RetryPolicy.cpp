@@ -17,7 +17,7 @@
 #include "php_driver.h"
 #include "php_driver_types.h"
 #include "util/types.h"
-
+BEGIN_EXTERN_C()
 zend_class_entry *php_driver_retry_policy_ce = NULL;
 
 static zend_function_entry php_driver_retry_policy_methods[] = {
@@ -32,3 +32,4 @@ void php_driver_define_RetryPolicy(TSRMLS_D)
   php_driver_retry_policy_ce = zend_register_internal_class(&ce TSRMLS_CC);
   php_driver_retry_policy_ce->ce_flags |= ZEND_ACC_INTERFACE;
 }
+END_EXTERN_C()

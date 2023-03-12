@@ -17,7 +17,7 @@
 #include "php_driver.h"
 #include "php_driver_types.h"
 #include "util/ref.h"
-
+BEGIN_EXTERN_C()
 zend_class_entry *php_driver_default_schema_ce = NULL;
 
 PHP_METHOD(DefaultSchema, keyspace)
@@ -182,3 +182,4 @@ void php_driver_define_DefaultSchema(TSRMLS_D)
 #endif
   php_driver_default_schema_handlers.clone_obj = NULL;
 }
+END_EXTERN_C()

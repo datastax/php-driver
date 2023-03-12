@@ -21,7 +21,7 @@
 #include "util/types.h"
 
 #include "DefaultFunction.h"
-
+BEGIN_EXTERN_C()
 zend_class_entry *php_driver_default_aggregate_ce = NULL;
 
 PHP_METHOD(DefaultAggregate, name)
@@ -321,3 +321,4 @@ void php_driver_define_DefaultAggregate(TSRMLS_D)
 #endif
   php_driver_default_aggregate_handlers.clone_obj = NULL;
 }
+END_EXTERN_C()

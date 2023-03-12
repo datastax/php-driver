@@ -16,6 +16,8 @@
 
 #include <php_driver.h>
 
+BEGIN_EXTERN_C()
+
 #include "Cluster.h"
 
 
@@ -39,3 +41,5 @@ void php_driver_define_Cluster()
   php_driver_cluster_ce = zend_register_internal_class(&ce TSRMLS_CC);
   php_driver_cluster_ce->ce_flags |= ZEND_ACC_INTERFACE;
 }
+
+END_EXTERN_C()

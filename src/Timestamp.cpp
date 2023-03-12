@@ -19,7 +19,7 @@
 #include "util/hash.h"
 #include "util/types.h"
 #include <ext/date/php_date.h>
-
+BEGIN_EXTERN_C()
 zend_class_entry *php_driver_timestamp_ce = NULL;
 
 void
@@ -309,3 +309,4 @@ void php_driver_define_Timestamp(TSRMLS_D)
   php_driver_timestamp_handlers.hash_value = php_driver_timestamp_hash_value;
   php_driver_timestamp_handlers.std.clone_obj = NULL;
 }
+END_EXTERN_C()

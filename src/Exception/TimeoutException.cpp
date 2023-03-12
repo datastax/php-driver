@@ -15,7 +15,7 @@
  */
 
 #include "php_driver.h"
-
+BEGIN_EXTERN_C()
 extern zend_class_entry* php_driver_runtime_exception_ce;
 
 zend_class_entry *php_driver_timeout_exception_ce = NULL;
@@ -31,3 +31,4 @@ void php_driver_define_TimeoutException(TSRMLS_D)
   INIT_CLASS_ENTRY(ce, PHP_DRIVER_NAMESPACE "\\Exception\\TimeoutException", TimeoutException_methods);
   php_driver_timeout_exception_ce = php5to7_zend_register_internal_class_ex(&ce, php_driver_runtime_exception_ce);
 }
+END_EXTERN_C()

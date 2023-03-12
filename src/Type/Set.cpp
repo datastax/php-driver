@@ -17,12 +17,9 @@
 #include "php_driver.h"
 #include "php_driver_types.h"
 #include "util/types.h"
-#if PHP_MAJOR_VERSION >= 7
-#include <zend_smart_str.h>
-#else
-#include <ext/standard/php_smart_str.h>
-#endif
 #include "src/Set.h"
+BEGIN_EXTERN_C()
+#include <zend_smart_str.h>
 
 zend_class_entry *php_driver_type_set_ce = NULL;
 
@@ -225,3 +222,4 @@ void php_driver_define_TypeSet(TSRMLS_D)
   php_driver_type_set_ce->ce_flags     |= PHP5TO7_ZEND_ACC_FINAL;
   php_driver_type_set_ce->create_object = php_driver_type_set_new;
 }
+END_EXTERN_C()

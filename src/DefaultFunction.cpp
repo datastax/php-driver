@@ -21,7 +21,7 @@
 #include "util/types.h"
 
 #include "DefaultFunction.h"
-
+BEGIN_EXTERN_C()
 zend_class_entry *php_driver_default_function_ce = NULL;
 
 php5to7_zval
@@ -310,3 +310,4 @@ void php_driver_define_DefaultFunction(TSRMLS_D)
 #endif
   php_driver_default_function_handlers.clone_obj = NULL;
 }
+END_EXTERN_C()

@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-#include "php_driver.h"
+#include <php_driver.h>
 
+BEGIN_EXTERN_C()
 zend_class_entry *php_driver_exception_ce = NULL;
 
 static zend_function_entry Exception_methods[] = {
@@ -30,3 +31,4 @@ void php_driver_define_Exception(TSRMLS_D)
   php_driver_exception_ce = zend_register_internal_class(&ce TSRMLS_CC);
   php_driver_exception_ce->ce_flags |= ZEND_ACC_INTERFACE;
 }
+END_EXTERN_C()

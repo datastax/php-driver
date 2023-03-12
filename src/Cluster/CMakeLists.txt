@@ -3,10 +3,10 @@ add_library(ext_scylladb::cluster::builder ALIAS cluster_builder)
 target_sources(
         cluster_builder
         PRIVATE
-        Builder.c
-        BuilderHandlers.c
-        Cluster.c
-        DefaultCluster.c
+        Builder.cpp
+        BuilderHandlers.cpp
+        Cluster.cpp
+        DefaultCluster.cpp
 )
 
 find_package(PHP REQUIRED)

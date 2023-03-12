@@ -1,10 +1,15 @@
 #pragma once
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
 
 #include <cassandra.h>
 #include <gmp.h>
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
 
 #include <math.h>
 
@@ -86,6 +91,7 @@
 
 #define php5to7_zend_register_internal_class_ex(ce, parent_ce)                                                         \
     zend_register_internal_class_ex((ce), (parent_ce)TSRMLS_CC);
+
 
 typedef zval php5to7_zval;
 typedef zval *php5to7_zval_args;
@@ -306,3 +312,7 @@ void throw_invalid_argument(zval *object, const char *object_name, const char *e
 
 PHP_INI_MH(OnUpdateLogLevel);
 PHP_INI_MH(OnUpdateLog);
+
+#ifdef __cplusplus
+}
+#endif

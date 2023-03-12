@@ -18,7 +18,7 @@
 #include "php_driver_types.h"
 
 #include <ext/standard/php_filestat.h>
-
+BEGIN_EXTERN_C()
 zend_class_entry *php_driver_ssl_builder_ce = NULL;
 
 static int
@@ -152,7 +152,7 @@ PHP_METHOD(SSLOptionsBuilder, withTrustedCerts)
   }
 
   builder->trusted_certs_cnt = argc;
-  builder->trusted_certs     = ecalloc(argc, sizeof(char*));
+  builder->trusted_certs     = static_cast<char **>(ecalloc(argc, sizeof(char*)));
 
   for (i = 0; i < argc; i++) {
     zval* path = PHP5TO7_ZVAL_ARG(args[i]);
@@ -373,3 +373,4 @@ void php_driver_define_SSLOptionsBuilder(TSRMLS_D)
   php_driver_ssl_builder_handlers.compare_objects = php_driver_ssl_builder_compare;
 #endif
 }
+END_EXTERN_C()

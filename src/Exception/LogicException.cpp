@@ -16,7 +16,7 @@
 
 #include "php_driver.h"
 #include "php_driver_types.h"
-
+BEGIN_EXTERN_C()
 zend_class_entry *php_driver_logic_exception_ce = NULL;
 
 static zend_function_entry LogicException_methods[] = {
@@ -31,3 +31,4 @@ void php_driver_define_LogicException(TSRMLS_D)
   php_driver_logic_exception_ce = php5to7_zend_register_internal_class_ex(&ce, spl_ce_LogicException);
   zend_class_implements(php_driver_logic_exception_ce TSRMLS_CC, 1, php_driver_exception_ce);
 }
+END_EXTERN_C()

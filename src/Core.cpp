@@ -16,7 +16,7 @@
 
 #include "php_driver.h"
 #include "php_driver_types.h"
-
+BEGIN_EXTERN_C()
 zend_class_entry* php_driver_core_ce = NULL;
 
 PHP_DRIVER_CORE_METHOD(cluster)
@@ -102,3 +102,4 @@ php_driver_define_Core(TSRMLS_D)
            strlen(CASS_VERSION_SUFFIX) > 0 ? "-" CASS_VERSION_SUFFIX : "");
   zend_declare_class_constant_string(php_driver_core_ce, ZEND_STRL("CPP_DRIVER_VERSION"), buf);
 }
+END_EXTERN_C()

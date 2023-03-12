@@ -22,7 +22,7 @@
 #include <util/types.h>
 
 #include "Collection.h"
-
+BEGIN_EXTERN_C()
 zend_class_entry *php_driver_collection_ce = NULL;
 
 void
@@ -507,3 +507,4 @@ void php_driver_define_Collection(TSRMLS_D)
   php_driver_collection_handlers.hash_value = php_driver_collection_hash_value;
   php_driver_collection_handlers.std.clone_obj = NULL;
 }
+END_EXTERN_C()

@@ -21,6 +21,7 @@
 #include "util/uuid_gen.h"
 
 #include <ext/date/php_date.h>
+BEGIN_EXTERN_C()
 
 zend_class_entry *php_driver_timeuuid_ce = NULL;
 
@@ -314,3 +315,4 @@ php_driver_define_Timeuuid(TSRMLS_D)
   php_driver_timeuuid_handlers.hash_value = php_driver_timeuuid_hash_value;
   php_driver_timeuuid_handlers.std.clone_obj = NULL;
 }
+END_EXTERN_C()

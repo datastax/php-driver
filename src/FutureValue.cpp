@@ -16,7 +16,7 @@
 
 #include "php_driver.h"
 #include "php_driver_types.h"
-
+BEGIN_EXTERN_C()
 zend_class_entry *php_driver_future_value_ce = NULL;
 
 PHP_METHOD(FutureValue, get)
@@ -113,3 +113,5 @@ void php_driver_define_FutureValue(TSRMLS_D)
 #endif
   php_driver_future_value_handlers.clone_obj = NULL;
 }
+
+END_EXTERN_C()

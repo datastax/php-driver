@@ -20,6 +20,8 @@
 #include <util/future.h>
 #include <util/ref.h>
 
+BEGIN_EXTERN_C()
+
 #include "Cluster.h"
 
 zend_class_entry *php_driver_default_cluster_ce = NULL;
@@ -277,7 +279,7 @@ php_driver_default_cluster_new(zend_class_entry *ce TSRMLS_DC)
   self->cluster             = NULL;
   self->default_consistency = PHP_DRIVER_DEFAULT_CONSISTENCY;
   self->default_page_size   = 5000;
-  self->persist             = 0;
+  self->persist             = cass_false;
   self->hash_key            = NULL;
 
   PHP5TO7_ZVAL_UNDEF(self->default_timeout);
@@ -303,3 +305,5 @@ void php_driver_define_DefaultCluster()
   php_driver_default_cluster_handlers.compare_objects = php_driver_default_cluster_compare;
 #endif
 }
+
+END_EXTERN_C()

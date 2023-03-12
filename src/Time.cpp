@@ -23,7 +23,6 @@
 #include <ext/date/php_date.h>
 #include <time.h>
 
-zend_class_entry *php_driver_time_ce = NULL;
 
 #if defined(_WIN32)
 #ifndef _WINSOCKAPI_
@@ -63,6 +62,10 @@ cass_int64_t php_driver_time_now_ns() {
 }
 
 #else
+
+BEGIN_EXTERN_C()
+zend_class_entry *php_driver_time_ce = NULL;
+
 
 cass_int64_t php_driver_time_now_ns() {
   struct timespec ts;
@@ -333,3 +336,4 @@ void php_driver_define_Time(TSRMLS_D)
 
   php_driver_time_handlers.hash_value = php_driver_time_hash_value;
 }
+END_EXTERN_C()

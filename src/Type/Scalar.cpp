@@ -17,7 +17,7 @@
 #include "php_driver.h"
 #include "php_driver_types.h"
 #include "util/types.h"
-
+BEGIN_EXTERN_C()
 zend_class_entry *php_driver_type_scalar_ce = NULL;
 
 PHP_METHOD(TypeScalar, __construct)
@@ -188,3 +188,4 @@ void php_driver_define_TypeScalar(TSRMLS_D)
   php_driver_type_scalar_ce->ce_flags     |= PHP5TO7_ZEND_ACC_FINAL;
   php_driver_type_scalar_ce->create_object = php_driver_type_scalar_new;
 }
+END_EXTERN_C()

@@ -17,6 +17,7 @@
 #include "php_driver.h"
 #include "php_driver_types.h"
 
+BEGIN_EXTERN_C()
 zend_class_entry *php_driver_is_bootstrapping_exception_ce = NULL;
 
 static zend_function_entry IsBootstrappingException_methods[] = {
@@ -30,3 +31,4 @@ void php_driver_define_IsBootstrappingException(TSRMLS_D)
   INIT_CLASS_ENTRY(ce, PHP_DRIVER_NAMESPACE "\\Exception\\IsBootstrappingException", IsBootstrappingException_methods);
   php_driver_is_bootstrapping_exception_ce = php5to7_zend_register_internal_class_ex(&ce, php_driver_server_exception_ce);
 }
+END_EXTERN_C()

@@ -15,7 +15,7 @@
  */
 
 #include "php_driver.h"
-
+BEGIN_EXTERN_C()
 zend_class_entry* php_driver_value_ce = NULL;
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_none, 0, ZEND_RETURN_VALUE, 0)
@@ -36,3 +36,4 @@ php_driver_define_Value(TSRMLS_D)
   php_driver_value_ce->ce_flags |= ZEND_ACC_INTERFACE;
 }
 
+END_EXTERN_C()

@@ -3,8 +3,8 @@ add_library(ext_scylladb::timestamp_generator ALIAS timestamp_generator)
 target_sources(
         timestamp_generator
         PRIVATE
-        Monotonic.c
-        ServerSide.c
+        Monotonic.cpp
+        ServerSide.cpp
 )
 
 find_package(PHP REQUIRED)

@@ -18,7 +18,7 @@
 #include "php_driver.h"
 #include "php_driver_types.h"
 #include "util/types.h"
-
+BEGIN_EXTERN_C()
 zend_class_entry *php_driver_inet_ce = NULL;
 
 void
@@ -224,3 +224,4 @@ void php_driver_define_Inet(TSRMLS_D)
   php_driver_inet_handlers.hash_value = php_driver_inet_hash_value;
   php_driver_inet_handlers.std.clone_obj = NULL;
 }
+END_EXTERN_C()

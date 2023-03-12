@@ -24,7 +24,7 @@
 #include "src/Tuple.h"
 
 #include <zend_hash.h>
-
+BEGIN_EXTERN_C()
 zend_class_entry *php_driver_tuple_ce = NULL;
 
 void
@@ -491,3 +491,4 @@ void php_driver_define_Tuple(TSRMLS_D)
   php_driver_tuple_handlers.hash_value = php_driver_tuple_hash_value;
   php_driver_tuple_handlers.std.clone_obj = NULL;
 }
+END_EXTERN_C()

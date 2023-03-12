@@ -17,7 +17,7 @@
 #include "php_driver.h"
 #include "php_driver_types.h"
 #include "util/types.h"
-
+BEGIN_EXTERN_C()
 zend_class_entry *php_driver_type_custom_ce = NULL;
 
 PHP_METHOD(TypeCustom, __construct)
@@ -186,3 +186,4 @@ void php_driver_define_TypeCustom(TSRMLS_D)
   php_driver_type_custom_ce->ce_flags     |= PHP5TO7_ZEND_ACC_FINAL;
   php_driver_type_custom_ce->create_object = php_driver_type_custom_new;
 }
+END_EXTERN_C()

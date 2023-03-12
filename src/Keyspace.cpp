@@ -15,7 +15,7 @@
  */
 
 #include "php_driver.h"
-
+BEGIN_EXTERN_C()
 zend_class_entry *php_driver_keyspace_ce = NULL;
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_name, 0, ZEND_RETURN_VALUE, 1)
@@ -56,3 +56,4 @@ void php_driver_define_Keyspace(TSRMLS_D)
   php_driver_keyspace_ce = zend_register_internal_class(&ce TSRMLS_CC);
   php_driver_keyspace_ce->ce_flags |= ZEND_ACC_INTERFACE;
 }
+END_EXTERN_C()

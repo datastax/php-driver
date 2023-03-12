@@ -20,7 +20,7 @@
 
 #include "src/Type/Tuple.h"
 #include "src/Type/UserType.h"
-
+BEGIN_EXTERN_C()
 zend_class_entry *php_driver_type_ce = NULL;
 
 #define XX_SCALAR_METHOD(name, value) PHP_METHOD(Type, name) \
@@ -243,3 +243,4 @@ void php_driver_define_Type(TSRMLS_D)
   php_driver_type_ce = zend_register_internal_class(&ce TSRMLS_CC);
   php_driver_type_ce->ce_flags |= ZEND_ACC_ABSTRACT;
 }
+END_EXTERN_C()

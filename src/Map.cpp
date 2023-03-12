@@ -21,7 +21,7 @@
 #include <util/types.h>
 
 #include "Map.h"
-
+BEGIN_EXTERN_C()
 zend_class_entry *php_driver_map_ce = NULL;
 
 int
@@ -670,3 +670,4 @@ void php_driver_define_Map(TSRMLS_D)
   php_driver_map_handlers.hash_value = php_driver_map_hash_value;
   php_driver_map_handlers.std.clone_obj = NULL;
 }
+END_EXTERN_C()

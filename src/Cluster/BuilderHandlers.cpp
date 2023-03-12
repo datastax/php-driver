@@ -293,7 +293,7 @@ static void php_driver_cluster_builder_free(zend_object *object)
         self->whitelist_dcs = NULL;
     }
 
-    if (self->ssl_options!=NULL)
+    if (self->ssl_options != NULL)
     {
         zend_object_release(&self->ssl_options->zval);
         self->ssl_options = NULL;
@@ -320,38 +320,39 @@ static void php_driver_cluster_builder_free(zend_object *object)
 
 php5to7_zend_object php_driver_cluster_builder_new(zend_class_entry *ce)
 {
-    php_driver_cluster_builder *self = emalloc(sizeof(php_driver_cluster_builder) + zend_object_properties_size(ce));
+    php_driver_cluster_builder *self = static_cast<php_driver_cluster_builder *>(
+        emalloc(sizeof(php_driver_cluster_builder) + zend_object_properties_size(ce)));
 
     self->contact_points = zend_string_init_fast(ZEND_STRL("127.0.0.1"));
     self->port = 9042;
     self->load_balancing_policy = LOAD_BALANCING_DEFAULT;
     self->local_dc = NULL;
     self->used_hosts_per_remote_dc = 0;
-    self->allow_remote_dcs_for_local_cl = 0;
-    self->use_token_aware_routing = 1;
+    self->allow_remote_dcs_for_local_cl = cass_false;
+    self->use_token_aware_routing = cass_true;
     self->username = NULL;
     self->password = NULL;
     self->connect_timeout = 5000;
     self->request_timeout = 12000;
     self->default_consistency = CASS_CONSISTENCY_LOCAL_ONE;
     self->default_page_size = 5000;
-    self->persist = 1;
+    self->persist = cass_true;
     self->protocol_version = 4;
     self->io_threads = 1;
     self->core_connections_per_host = 1;
     self->max_connections_per_host = 2;
     self->reconnect_interval = 2000;
-    self->enable_latency_aware_routing = 1;
-    self->enable_tcp_nodelay = 1;
-    self->enable_tcp_keepalive = 0;
+    self->enable_latency_aware_routing = cass_true;
+    self->enable_tcp_nodelay = cass_true;
+    self->enable_tcp_keepalive = cass_false;
     self->tcp_keepalive_delay = 0;
-    self->enable_schema = 1;
+    self->enable_schema = cass_true;
     self->blacklist_hosts = NULL;
     self->whitelist_hosts = NULL;
     self->blacklist_dcs = NULL;
     self->whitelist_dcs = NULL;
-    self->enable_hostname_resolution = 0;
-    self->enable_randomized_contact_points = 1;
+    self->enable_hostname_resolution = cass_false;
+    self->enable_randomized_contact_points = cass_true;
     self->connection_heartbeat_interval = 30;
     self->timestamp_gen = NULL;
     self->retry_policy = NULL;

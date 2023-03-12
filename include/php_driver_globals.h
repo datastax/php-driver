@@ -1,6 +1,7 @@
 #ifndef PHP_DRIVER_GLOBALS_H
 #define PHP_DRIVER_GLOBALS_H
 
+BEGIN_EXTERN_C()
 ZEND_BEGIN_MODULE_GLOBALS(php_driver)
   CassUuidGen  *uuid_gen;
   pid_t         uuid_gen_pid;
@@ -32,5 +33,7 @@ ZEND_BEGIN_MODULE_GLOBALS(php_driver)
 ZEND_END_MODULE_GLOBALS(php_driver)
 
 ZEND_EXTERN_MODULE_GLOBALS(php_driver)
+END_EXTERN_C()
 
 #endif /* PHP_DRIVER_GLOBALS_H */
+

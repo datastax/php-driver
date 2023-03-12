@@ -19,7 +19,7 @@
 #include <util/hash.h>
 #include <util/types.h>
 #include <util/uuid_gen.h>
-
+BEGIN_EXTERN_C()
 zend_class_entry *php_driver_uuid_ce = NULL;
 
 void
@@ -252,3 +252,4 @@ php_driver_define_Uuid(TSRMLS_D)
   php_driver_uuid_handlers.hash_value = php_driver_uuid_hash_value;
   php_driver_uuid_handlers.std.clone_obj = NULL;
 }
+END_EXTERN_C()

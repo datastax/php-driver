@@ -15,7 +15,7 @@
  */
 
 #include "php_driver.h"
-
+BEGIN_EXTERN_C()
 zend_class_entry *php_driver_session_ce = NULL;
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_execute, 0, ZEND_RETURN_VALUE, 1)
@@ -55,3 +55,4 @@ void php_driver_define_Session(TSRMLS_D)
   php_driver_session_ce = zend_register_internal_class(&ce TSRMLS_CC);
   php_driver_session_ce->ce_flags |= ZEND_ACC_INTERFACE;
 }
+END_EXTERN_C()

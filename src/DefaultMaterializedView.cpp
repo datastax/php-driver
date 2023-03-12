@@ -24,7 +24,7 @@
 #include "DefaultIndex.h"
 #include "DefaultTable.h"
 #include "Table.h"
-
+BEGIN_EXTERN_C()
 zend_class_entry *php_driver_default_materialized_view_ce = NULL;
 
 static void
@@ -682,3 +682,4 @@ void php_driver_define_DefaultMaterializedView(TSRMLS_D)
 #endif
   php_driver_default_materialized_view_handlers.clone_obj = NULL;
 }
+END_EXTERN_C()

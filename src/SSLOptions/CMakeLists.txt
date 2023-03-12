@@ -3,7 +3,7 @@ add_library(ext_scylladb::ssl_options ALIAS ssl_options)
 target_sources(
         ssl_options
         PRIVATE
-        Builder.c
+        Builder.cpp
 )
 
 find_package(PHP REQUIRED)

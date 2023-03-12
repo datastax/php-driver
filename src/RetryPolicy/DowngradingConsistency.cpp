@@ -18,6 +18,7 @@
 #include "php_driver_types.h"
 #include "util/types.h"
 
+BEGIN_EXTERN_C()
 zend_class_entry *php_driver_retry_policy_downgrading_consistency_ce = NULL;
 
 static zend_function_entry php_driver_retry_policy_downgrading_consistency_methods[] = {
@@ -59,3 +60,4 @@ void php_driver_define_RetryPolicyDowngradingConsistency(TSRMLS_D)
 
   memcpy(&php_driver_retry_policy_downgrading_consistency_handlers, zend_get_std_object_handlers(), sizeof(zend_object_handlers));
 }
+END_EXTERN_C()

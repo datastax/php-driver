@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-#include "php_driver.h"
-#include "php_driver_types.h"
+#include <php_driver.h>
+#include <php_driver_types.h>
 
+BEGIN_EXTERN_C()
 zend_class_entry *php_driver_divide_by_zero_exception_ce = NULL;
 
 static zend_function_entry DivideByZeroException_methods[] = {
@@ -31,3 +32,4 @@ void php_driver_define_DivideByZeroException(TSRMLS_D)
   php_driver_divide_by_zero_exception_ce = php5to7_zend_register_internal_class_ex(&ce, php_driver_range_exception_ce);
   zend_class_implements(php_driver_divide_by_zero_exception_ce TSRMLS_CC, 1, php_driver_exception_ce);
 }
+END_EXTERN_C()

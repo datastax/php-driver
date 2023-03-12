@@ -15,6 +15,7 @@
  */
 
 #include "php_driver.h"
+BEGIN_EXTERN_C()
 
 zend_class_entry *php_driver_future_ce = NULL;
 
@@ -35,3 +36,4 @@ void php_driver_define_Future(TSRMLS_D)
   php_driver_future_ce = zend_register_internal_class(&ce TSRMLS_CC);
   php_driver_future_ce->ce_flags |= ZEND_ACC_INTERFACE;
 }
+END_EXTERN_C()

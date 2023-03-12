@@ -21,7 +21,7 @@
 #include "util/result.h"
 
 #include "FutureRows.h"
-
+BEGIN_EXTERN_C()
 zend_class_entry *php_driver_rows_ce = NULL;
 
 static void free_result(void *result)
@@ -540,3 +540,4 @@ void php_driver_define_Rows(TSRMLS_D)
 #endif
     php_driver_rows_handlers.clone_obj = NULL;
 }
+END_EXTERN_C()

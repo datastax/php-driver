@@ -25,7 +25,7 @@
 #else
 #include <ext/standard/php_smart_str.h>
 #endif
-
+BEGIN_EXTERN_C()
 zend_class_entry *php_driver_type_user_type_ce = NULL;
 
 int php_driver_type_user_type_add(php_driver_type *type,
@@ -372,3 +372,4 @@ void php_driver_define_TypeUserType(TSRMLS_D)
   php_driver_type_user_type_ce->ce_flags     |= PHP5TO7_ZEND_ACC_FINAL;
   php_driver_type_user_type_ce->create_object = php_driver_type_user_type_new;
 }
+END_EXTERN_C()

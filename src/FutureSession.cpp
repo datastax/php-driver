@@ -19,7 +19,7 @@
 #include "php_driver_types.h"
 #include "util/future.h"
 #include "util/ref.h"
-
+BEGIN_EXTERN_C()
 zend_class_entry *php_driver_future_session_ce = NULL;
 
 PHP_METHOD(FutureSession, get)
@@ -152,11 +152,11 @@ php_driver_future_session_new(zend_class_entry *ce TSRMLS_DC)
   php_driver_future_session *self
       = PHP5TO7_ZEND_OBJECT_ECALLOC(future_session, ce);
 
-  self->session           = NULL;
-  self->future            = NULL;
-  self->exception_message = NULL;
-  self->hash_key          = NULL;
-  self->persist           = 0;
+  self->session           = nullptr;
+  self->future            = nullptr;
+  self->exception_message = nullptr;
+  self->hash_key          = nullptr;
+  self->persist           = cass_false;
 
   PHP5TO7_ZVAL_UNDEF(self->default_session);
 
@@ -180,5 +180,6 @@ void php_driver_define_FutureSession(TSRMLS_D)
 #else
   php_driver_future_session_handlers.compare_objects = php_driver_future_session_compare;
 #endif
-  php_driver_future_session_handlers.clone_obj = NULL;
+  php_driver_future_session_handlers.clone_obj = nullptr;
 }
+END_EXTERN_C()

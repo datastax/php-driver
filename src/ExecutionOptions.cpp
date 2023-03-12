@@ -18,7 +18,7 @@
 #include "php_driver_types.h"
 #include "util/consistency.h"
 #include "util/math.h"
-
+BEGIN_EXTERN_C()
 zend_class_entry *php_driver_execution_options_ce = NULL;
 
 static void init_execution_options(php_driver_execution_options *self)
@@ -387,3 +387,4 @@ void php_driver_define_ExecutionOptions(TSRMLS_D)
 #endif
     php_driver_execution_options_handlers.clone_obj = NULL;
 }
+END_EXTERN_C()

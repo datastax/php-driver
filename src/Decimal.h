@@ -14,9 +14,8 @@
  * limitations under the License.
  */
 
-#ifndef PHP_DRIVER_DECIMAL_H
-#define PHP_DRIVER_DECIMAL_H
+#pragma once
 
+BEGIN_EXTERN_C()
 void php_driver_decimal_init(INTERNAL_FUNCTION_PARAMETERS);
-
-#endif /* PHP_DRIVER_DECIMAL_H */
+END_EXTERN_C()

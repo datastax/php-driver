@@ -18,7 +18,7 @@
 #include "php_driver_types.h"
 #include "util/bytes.h"
 #include "util/types.h"
-
+BEGIN_EXTERN_C()
 zend_class_entry *php_driver_blob_ce = NULL;
 
 void
@@ -39,7 +39,7 @@ php_driver_blob_init(INTERNAL_FUNCTION_PARAMETERS)
     self = PHP_DRIVER_GET_BLOB(return_value);
   }
 
-  self->data = emalloc(string_len * sizeof(cass_byte_t));
+  self->data = static_cast<cass_byte_t*>(emalloc(string_len * sizeof(cass_byte_t)));
   self->size = string_len;
   memcpy(self->data, string, string_len);
 }
@@ -247,3 +247,4 @@ void php_driver_define_Blob(TSRMLS_D)
   php_driver_blob_handlers.hash_value = php_driver_blob_hash_value;
   php_driver_blob_handlers.std.clone_obj = NULL;
 }
+END_EXTERN_C()

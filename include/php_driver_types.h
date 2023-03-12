@@ -16,6 +16,8 @@
 
 #pragma once
 
+BEGIN_EXTERN_C()
+
 #define PHP_DRIVER_GET_NUMERIC(obj) php_driver_numeric_object_fetch(Z_OBJ_P(obj))
 #define PHP_DRIVER_GET_BLOB(obj) php_driver_blob_object_fetch(Z_OBJ_P(obj))
 #define PHP_DRIVER_GET_TIMESTAMP(obj) php_driver_timestamp_object_fetch(Z_OBJ_P(obj))
@@ -439,6 +441,7 @@ typedef struct php_driver_cluster_builder_
     zval default_timeout;
 
     zend_object zval;
+
 } php_driver_cluster_builder;
 static zend_always_inline php_driver_cluster_builder *php_driver_cluster_builder_object_fetch(zend_object *obj)
 {
@@ -931,3 +934,4 @@ void php_driver_define_TimestampGeneratorServerSide(TSRMLS_D);
 extern int php_le_php_driver_cluster();
 extern int php_le_php_driver_session();
 extern int php_le_php_driver_prepared_statement();
+END_EXTERN_C()

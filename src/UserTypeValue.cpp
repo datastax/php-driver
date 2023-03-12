@@ -22,7 +22,7 @@
 
 #include "src/Type/UserType.h"
 #include "src/UserTypeValue.h"
-
+BEGIN_EXTERN_C()
 zend_class_entry *php_driver_user_type_value_ce = NULL;
 
 void
@@ -532,3 +532,4 @@ void php_driver_define_UserTypeValue(TSRMLS_D)
   php_driver_user_type_value_handlers.hash_value = php_driver_user_type_value_hash_value;
   php_driver_user_type_value_handlers.std.clone_obj = NULL;
 }
+END_EXTERN_C()

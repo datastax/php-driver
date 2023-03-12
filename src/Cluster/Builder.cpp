@@ -25,10 +25,11 @@
 
 #include "Cluster.h"
 #include "BuilderHandlers.h"
-#include "Builder_arginfo.h"
 #include "zend_portability.h"
 
 BEGIN_EXTERN_C()
+#include "Builder_arginfo.h"
+
 zend_class_entry *php_driver_cluster_builder_ce = NULL;
 
 static zend_always_inline zend_string *php_driver_build_hosts_str(zval *args, size_t argc)
@@ -393,7 +394,7 @@ ZEND_METHOD(Cassandra_Cluster_Builder, withDatacenterAwareRoundRobinLoadBalancin
     self->load_balancing_policy = LOAD_BALANCING_DC_AWARE_ROUND_ROBIN;
     self->local_dc = local_dc;
     self->used_hosts_per_remote_dc = hostPerRemoteDatacenter;
-    self->allow_remote_dcs_for_local_cl = allow_remote_dcs_for_local_cl;
+    self->allow_remote_dcs_for_local_cl = static_cast<cass_bool_t>(allow_remote_dcs_for_local_cl);
 
     RETURN_ZVAL(getThis(), 1, 0);
 }
@@ -432,7 +433,7 @@ ZEND_METHOD(Cassandra_Cluster_Builder, withTokenAwareRouting)
     ZEND_PARSE_PARAMETERS_END();
 
     php_driver_cluster_builder *self = PHP_DRIVER_GET_CLUSTER_BUILDER(getThis());
-    self->use_token_aware_routing = enabled;
+    self->use_token_aware_routing = static_cast<cass_bool_t>(enabled);
 
     RETURN_ZVAL(getThis(), 1, 0);
 }
@@ -503,7 +504,7 @@ ZEND_METHOD(Cassandra_Cluster_Builder, withPersistentSessions)
     ZEND_PARSE_PARAMETERS_END();
 
     php_driver_cluster_builder *self = PHP_DRIVER_GET_CLUSTER_BUILDER(getThis());
-    self->persist = enabled;
+    self->persist = static_cast<cass_bool_t>(enabled);
 
     RETURN_ZVAL(getThis(), 1, 0);
 }
@@ -617,7 +618,7 @@ ZEND_METHOD(Cassandra_Cluster_Builder, withLatencyAwareRouting)
     ZEND_PARSE_PARAMETERS_END();
 
     php_driver_cluster_builder *self = PHP_DRIVER_GET_CLUSTER_BUILDER(getThis());
-    self->enable_latency_aware_routing = enabled;
+    self->enable_latency_aware_routing = static_cast<cass_bool_t>(enabled);
 
     RETURN_ZVAL(getThis(), 1, 0);
 }
@@ -632,7 +633,7 @@ ZEND_METHOD(Cassandra_Cluster_Builder, withTCPNodelay)
     ZEND_PARSE_PARAMETERS_END();
 
     php_driver_cluster_builder *self = PHP_DRIVER_GET_CLUSTER_BUILDER(getThis());
-    self->enable_tcp_nodelay = enabled;
+    self->enable_tcp_nodelay = static_cast<cass_bool_t>(enabled);
 
     RETURN_ZVAL(getThis(), 1, 0);
 }
@@ -721,7 +722,7 @@ ZEND_METHOD(Cassandra_Cluster_Builder, withSchemaMetadata)
     ZEND_PARSE_PARAMETERS_END();
 
     php_driver_cluster_builder *self = PHP_DRIVER_GET_CLUSTER_BUILDER(getThis());
-    self->enable_schema = enabled;
+    self->enable_schema = static_cast<cass_bool_t>(enabled);
 
     RETURN_ZVAL(getThis(), 1, 0);
 }
@@ -736,7 +737,7 @@ ZEND_METHOD(Cassandra_Cluster_Builder, withHostnameResolution)
     ZEND_PARSE_PARAMETERS_END();
 
     php_driver_cluster_builder *self = PHP_DRIVER_GET_CLUSTER_BUILDER(getThis());
-    self->enable_hostname_resolution = enabled;
+    self->enable_hostname_resolution = static_cast<cass_bool_t>(enabled);
 
     RETURN_ZVAL(getThis(), 1, 0);
 }
@@ -752,7 +753,7 @@ ZEND_METHOD(Cassandra_Cluster_Builder, withRandomizedContactPoints)
 
     php_driver_cluster_builder *self = PHP_DRIVER_GET_CLUSTER_BUILDER(getThis());
 
-    self->enable_randomized_contact_points = enabled;
+    self->enable_randomized_contact_points = static_cast<cass_bool_t>(enabled);
 
     RETURN_ZVAL(getThis(), 1, 0);
 }

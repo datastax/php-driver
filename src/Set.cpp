@@ -22,7 +22,7 @@
 #include <util/types.h>
 
 #include "src/Set.h"
-
+BEGIN_EXTERN_C()
 zend_class_entry* php_driver_set_ce = NULL;
 
 int
@@ -491,3 +491,5 @@ php_driver_define_Set(TSRMLS_D)
   php_driver_set_handlers.hash_value    = php_driver_set_hash_value;
   php_driver_set_handlers.std.clone_obj = NULL;
 }
+
+END_EXTERN_C()

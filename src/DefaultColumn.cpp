@@ -21,7 +21,7 @@
 #include "util/types.h"
 
 #include "DefaultColumn.h"
-
+BEGIN_EXTERN_C()
 zend_class_entry *php_driver_default_column_ce = NULL;
 
 php5to7_zval
@@ -317,3 +317,4 @@ void php_driver_define_DefaultColumn(TSRMLS_D)
 #endif
   php_driver_default_column_handlers.clone_obj = NULL;
 }
+END_EXTERN_C()

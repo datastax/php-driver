@@ -19,10 +19,10 @@
 #include "util/math.h"
 #include "util/types.h"
 #include <float.h>
-
+BEGIN_EXTERN_C()
 zend_class_entry *php_driver_float_ce = NULL;
 
-static int
+static zend_result
 to_string(zval *result, php_driver_numeric *flt TSRMLS_DC)
 {
   char *string;
@@ -463,13 +463,14 @@ php_driver_float_hash_value(zval *obj TSRMLS_DC)
   return float_to_bits(self->data.floating.value);
 }
 
-static int
-php_driver_float_cast(
-#if PHP_MAJOR_VERSION >= 8
-        zend_object *object,
+static
+#if PHP_VERSION_ID >= 80200
+    zend_result
 #else
-        zval *object,
+    int
 #endif
+php_driver_float_cast(
+        zend_object *object,
         zval *retval, int type TSRMLS_DC
 )
 {
@@ -538,3 +539,4 @@ void php_driver_define_Float(TSRMLS_D)
   php_driver_float_handlers.hash_value = php_driver_float_hash_value;
   php_driver_float_handlers.std.clone_obj = NULL;
 }
+END_EXTERN_C()

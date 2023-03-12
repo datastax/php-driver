@@ -19,7 +19,7 @@
 #include "util/future.h"
 #include "util/ref.h"
 #include "util/result.h"
-
+BEGIN_EXTERN_C()
 zend_class_entry *php_driver_future_rows_ce = NULL;
 
 static void
@@ -181,3 +181,4 @@ void php_driver_define_FutureRows(TSRMLS_D)
 #endif
   php_driver_future_rows_handlers.clone_obj = NULL;
 }
+END_EXTERN_C()

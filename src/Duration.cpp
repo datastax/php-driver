@@ -1,5 +1,4 @@
 #include "php_driver.h"
-#include "php_driver_globals.h"
 #include "php_driver_types.h"
 
 #include "util/hash.h"
@@ -12,6 +11,8 @@
 #  define INT32_MAX 2147483647L
 #  define INT32_MIN (-INT32_MAX-1)
 #endif
+
+BEGIN_EXTERN_C()
 
 zend_class_entry *php_driver_duration_ce = NULL;
 
@@ -352,3 +353,4 @@ void php_driver_define_Duration(TSRMLS_D)
   php_driver_duration_handlers.hash_value = php_driver_duration_hash_value;
   php_driver_duration_handlers.std.clone_obj = NULL;
 }
+END_EXTERN_C()

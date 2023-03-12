@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#pragma once
 
-#ifndef PHP_DRIVER_BIGINT_H
-#define PHP_DRIVER_BIGINT_H
+BEGIN_EXTERN_C()
 
 void php_driver_bigint_init(INTERNAL_FUNCTION_PARAMETERS);
 
-#endif /* PHP_DRIVER_BIGINT_H */
+END_EXTERN_C()

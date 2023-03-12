@@ -52,7 +52,7 @@ php_driver_future_wait_timed(CassFuture* future, zval* timeout)
 int
 php_driver_future_is_error(CassFuture* future TSRMLS_DC)
 {
-  int rc = cass_future_error_code(future);
+  CassError rc = cass_future_error_code(future);
   if (rc != CASS_OK) {
     const char* message;
     size_t message_len;

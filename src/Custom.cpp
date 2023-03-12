@@ -16,7 +16,7 @@
 
 #include "php_driver.h"
 #include "php_driver_types.h"
-
+BEGIN_EXTERN_C()
 zend_class_entry* php_driver_custom_ce = NULL;
 
 static zend_function_entry php_driver_custom_methods[] = {
@@ -33,3 +33,4 @@ php_driver_define_Custom(TSRMLS_D)
   zend_class_implements(php_driver_custom_ce TSRMLS_CC, 1, php_driver_value_ce);
   php_driver_custom_ce->ce_flags |= ZEND_ACC_ABSTRACT;
 }
+END_EXTERN_C()

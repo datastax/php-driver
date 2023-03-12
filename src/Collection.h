@@ -14,12 +14,10 @@
  * limitations under the License.
  */
 
-#ifndef PHP_DRIVER_COLLECTION_H
-#define PHP_DRIVER_COLLECTION_H
-
+#pragma once
 #include <php.h>
 #include <php_driver_types.h>
 
+BEGIN_EXTERN_C()
 void php_driver_collection_add(php_driver_collection* collection, zval* object);
-
-#endif /* PHP_DRIVER_COLLECTION_H */
+END_EXTERN_C()

@@ -16,7 +16,7 @@
 
 #include "php_driver.h"
 #include "php_driver_types.h"
-
+BEGIN_EXTERN_C()
 zend_class_entry *php_driver_materialized_view_ce = NULL;
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_none, 0, ZEND_RETURN_VALUE, 0)
@@ -36,3 +36,5 @@ void php_driver_define_MaterializedView(TSRMLS_D)
   zend_class_implements(php_driver_materialized_view_ce TSRMLS_CC, 1, php_driver_table_ce);
   php_driver_materialized_view_ce->ce_flags |= ZEND_ACC_ABSTRACT;
 }
+
+END_EXTERN_C()

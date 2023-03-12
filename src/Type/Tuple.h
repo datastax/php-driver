@@ -14,11 +14,7 @@
  * limitations under the License.
  */
 
-#ifndef PHP_DRIVER_TYPE_TUPLE_H
-#define PHP_DRIVER_TYPE_TUPLE_H
-
-int php_driver_type_tuple_add(php_driver_type *type,
-                                 zval *zsub_type TSRMLS_DC);
-
-#endif /* PHP_DRIVER_TYPE_TUPLE_H */
-
+#pragma once
+BEGIN_EXTERN_C()
+int php_driver_type_tuple_add(php_driver_type *type, zval *zsub_type TSRMLS_DC);
+END_EXTERN_C()

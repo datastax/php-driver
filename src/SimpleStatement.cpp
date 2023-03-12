@@ -16,7 +16,7 @@
 
 #include "php_driver.h"
 #include "php_driver_types.h"
-
+BEGIN_EXTERN_C()
 zend_class_entry *php_driver_simple_statement_ce = NULL;
 
 PHP_METHOD(SimpleStatement, __construct)
@@ -119,3 +119,5 @@ void php_driver_define_SimpleStatement(TSRMLS_D)
 #endif
   php_driver_simple_statement_handlers.clone_obj = NULL;
 }
+
+END_EXTERN_C()

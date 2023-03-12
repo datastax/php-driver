@@ -17,7 +17,7 @@
 #include "php_driver.h"
 
 #include "util/result.h"
-
+BEGIN_EXTERN_C()
 zend_class_entry *php_driver_table_ce = NULL;
 
 php5to7_zval
@@ -102,3 +102,4 @@ void php_driver_define_Table(TSRMLS_D)
   php_driver_table_ce = zend_register_internal_class(&ce TSRMLS_CC);
   php_driver_table_ce->ce_flags |= ZEND_ACC_INTERFACE;
 }
+END_EXTERN_C()

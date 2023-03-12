@@ -22,7 +22,7 @@
 #include <util/types.h>
 
 #include "src/Tuple.h"
-
+BEGIN_EXTERN_C()
 zend_class_entry* php_driver_type_tuple_ce = NULL;
 
 int
@@ -263,3 +263,4 @@ php_driver_define_TypeTuple(TSRMLS_D)
   php_driver_type_tuple_ce->ce_flags |= PHP5TO7_ZEND_ACC_FINAL;
   php_driver_type_tuple_ce->create_object = php_driver_type_tuple_new;
 }
+END_EXTERN_C()

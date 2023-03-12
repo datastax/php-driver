@@ -20,7 +20,7 @@
 #include "util/types.h"
 #include <ext/date/php_date.h>
 #include <time.h>
-
+BEGIN_EXTERN_C()
 zend_class_entry *php_driver_date_ce = NULL;
 
 void
@@ -308,3 +308,4 @@ void php_driver_define_Date(TSRMLS_D)
 
   php_driver_date_handlers.hash_value = php_driver_date_hash_value;
 }
+END_EXTERN_C()

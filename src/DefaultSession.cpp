@@ -25,7 +25,7 @@
 #include <util/result.h>
 
 #include "ExecutionOptions.h"
-
+BEGIN_EXTERN_C()
 zend_class_entry* php_driver_default_session_ce = NULL;
 
 #define CHECK_RESULT(rc)               \
@@ -514,7 +514,7 @@ create_single(php_driver_statement* statement, HashTable* arguments, CassConsist
   rc = cass_statement_set_consistency(stmt, consistency);
 
   if (rc == CASS_OK && serial_consistency >= 0)
-    rc = cass_statement_set_serial_consistency(stmt, serial_consistency);
+    rc = cass_statement_set_serial_consistency(stmt, static_cast<CassConsistency>(serial_consistency));
 
   if (rc == CASS_OK && page_size >= 0)
     rc = cass_statement_set_paging_size(stmt, page_size);
@@ -579,7 +579,7 @@ PHP_METHOD(DefaultSession, execute)
     INVALID_ARGUMENT(statement, "a string or an instance of " PHP_DRIVER_NAMESPACE "\\Statement");
   }
 
-  consistency = self->default_consistency;
+  consistency = static_cast<CassConsistency>(self->default_consistency);
   page_size   = self->default_page_size;
   timeout     = PHP5TO7_ZVAL_MAYBE_P(self->default_timeout);
 
@@ -728,7 +728,7 @@ PHP_METHOD(DefaultSession, executeAsync)
     INVALID_ARGUMENT(statement, "a string or an instance of " PHP_DRIVER_NAMESPACE "\\Statement");
   }
 
-  consistency = self->default_consistency;
+  consistency = static_cast<CassConsistency>(self->default_consistency);
   page_size   = self->default_page_size;
 
   if (options) {
@@ -1157,7 +1157,7 @@ php_driver_default_session_new(zend_class_entry* ce TSRMLS_DC)
     PHP5TO7_ZEND_OBJECT_ECALLOC(session, ce);
 
   self->session             = NULL;
-  self->persist             = 0;
+  self->persist             = cass_false;
   self->default_consistency = PHP_DRIVER_DEFAULT_CONSISTENCY;
   self->default_page_size   = 5000;
   self->keyspace            = NULL;
@@ -1187,3 +1187,4 @@ php_driver_define_DefaultSession(TSRMLS_D)
 #endif
   php_driver_default_session_handlers.clone_obj = NULL;
 }
+END_EXTERN_C()

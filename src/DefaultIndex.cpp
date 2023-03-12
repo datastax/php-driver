@@ -21,7 +21,7 @@
 #include "util/types.h"
 
 #include "DefaultIndex.h"
-
+BEGIN_EXTERN_C()
 zend_class_entry *php_driver_default_index_ce = NULL;
 
 php5to7_zval
@@ -334,3 +334,4 @@ void php_driver_define_DefaultIndex(TSRMLS_D)
 #endif
   php_driver_default_index_handlers.clone_obj = NULL;
 }
+END_EXTERN_C()

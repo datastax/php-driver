@@ -69,7 +69,7 @@ php_driver_from_hex(const char* hex, size_t hex_length)
   if ((hex_length & 1) == 1) { /* Invalid if not divisible by 2 */
     return NULL;
   }
-  result = emalloc(size + 1);
+  result = static_cast<char*>(emalloc(size + 1));
   for (i = 0; i < size; ++i) {
     int half0 = hex_value(hex[i * 2]);
     int half1 = hex_value(hex[i * 2 + 1]);
@@ -956,7 +956,7 @@ static struct node_s*
 php_driver_parse_node_new()
 {
   struct node_s* node;
-  node               = emalloc(sizeof(struct node_s));
+  node               = static_cast<node_s*>(emalloc(sizeof(struct node_s)));
   node->parent       = NULL;
   node->name         = NULL;
   node->name_length  = 0;
@@ -1305,9 +1305,9 @@ php_driver_parse_column_type(const char* validator,
                              php5to7_zval* type_out TSRMLS_DC)
 {
   struct node_s* root;
-  struct node_s* node  = NULL;
-  cass_bool_t reversed = 0;
-  cass_bool_t frozen   = 0;
+  struct node_s* node  = nullptr;
+  cass_bool_t reversed = cass_false;
+  cass_bool_t frozen   = cass_false;
 
   if (php_driver_parse_class_name(validator, validator_len, &root TSRMLS_CC) == FAILURE) {
     return FAILURE;
@@ -1317,13 +1317,13 @@ php_driver_parse_column_type(const char* validator,
 
   while (node) {
     if (strncmp("org.apache.cassandra.db.marshal.ReversedType", node->name, node->name_length) == 0) {
-      reversed = 1;
+      reversed = cass_true;
       node     = node->first_child;
       continue;
     }
 
     if (strncmp("org.apache.cassandra.db.marshal.FrozenType", node->name, node->name_length) == 0) {
-      frozen = 1;
+      frozen = cass_true;
       node   = node->first_child;
       continue;
     }
@@ -1336,7 +1336,7 @@ php_driver_parse_column_type(const char* validator,
     break;
   }
 
-  if (node == NULL) {
+  if (node == nullptr) {
     php_driver_parse_node_free(root);
     zend_throw_exception_ex(php_driver_invalid_argument_exception_ce, 0 TSRMLS_CC,
                             "Invalid type");

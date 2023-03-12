@@ -16,7 +16,7 @@
 
 #include "php_driver.h"
 #include "php_driver_types.h"
-
+BEGIN_EXTERN_C()
 zend_class_entry *php_driver_ssl_ce = NULL;
 
 static zend_function_entry php_driver_ssl_methods[] = {
@@ -91,3 +91,4 @@ void php_driver_define_SSLOptions(TSRMLS_D)
 #endif
   php_driver_ssl_handlers.clone_obj = NULL;
 }
+END_EXTERN_C()

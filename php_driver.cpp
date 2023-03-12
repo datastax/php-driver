@@ -29,6 +29,8 @@
 #include <time.h>
 #include <uv.h>
 
+BEGIN_EXTERN_C()
+
 /* Resources */
 #define PHP_DRIVER_CLUSTER_RES_NAME PHP_DRIVER_NAMESPACE " Cluster"
 #define PHP_DRIVER_SESSION_RES_NAME PHP_DRIVER_NAMESPACE " Session"
@@ -200,7 +202,7 @@ static void php_driver_log(const CassLogMessage *message, void *data)
             needed = snprintf(NULL, 0, "%s [%s] %s (%s:%d)%s", log_time_str, cass_log_level_string(message->severity),
                               message->message, message->file, message->line, PHP_EOL);
 
-            tmp = malloc(needed + 1);
+            tmp = (char*)malloc(needed + 1);
             sprintf(tmp, "%s [%s] %s (%s:%d)%s", log_time_str, cass_log_level_string(message->severity),
                     message->message, message->file, message->line, PHP_EOL);
 
@@ -615,3 +617,4 @@ PHP_MINFO_FUNCTION(php_driver)
 
     DISPLAY_INI_ENTRIES();
 }
+END_EXTERN_C()

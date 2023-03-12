@@ -1,6 +1,5 @@
-#ifndef PHP_DRIVER_DURATION_H
-#define PHP_DRIVER_DURATION_H
+#pragma once
 
+BEGIN_EXTERN_C()
 void php_driver_duration_init(INTERNAL_FUNCTION_PARAMETERS);
-
-#endif
+END_EXTERN_C()

@@ -3,30 +3,30 @@ add_library(ext_scylladb::exceptions ALIAS exceptions)
 target_sources(
         exceptions
         PRIVATE
-        AlreadyExistsException.c
-        AuthenticationException.c
-        ConfigurationException.c
-        DivideByZeroException.c
-        DomainException.c
-        ExecutionException.c
-        InvalidArgumentException.c
-        InvalidQueryException.c
-        InvalidSyntaxException.c
-        IsBootstrappingException.c
-        LogicException.c
-        OverloadedException.c
-        ProtocolException.c
-        RangeException.c
-        ReadTimeoutException.c
-        RuntimeException.c
-        ServerException.c
-        TimeoutException.c
-        TruncateException.c
-        UnauthorizedException.c
-        UnavailableException.c
-        UnpreparedException.c
-        ValidationException.c
-        WriteTimeoutException.c
+        AlreadyExistsException.cpp
+        AuthenticationException.cpp
+        ConfigurationException.cpp
+        DivideByZeroException.cpp
+        DomainException.cpp
+        ExecutionException.cpp
+        InvalidArgumentException.cpp
+        InvalidQueryException.cpp
+        InvalidSyntaxException.cpp
+        IsBootstrappingException.cpp
+        LogicException.cpp
+        OverloadedException.cpp
+        ProtocolException.cpp
+        RangeException.cpp
+        ReadTimeoutException.cpp
+        RuntimeException.cpp
+        ServerException.cpp
+        TimeoutException.cpp
+        TruncateException.cpp
+        UnauthorizedException.cpp
+        UnavailableException.cpp
+        UnpreparedException.cpp
+        ValidationException.cpp
+        WriteTimeoutException.cpp
 )
 
 find_package(PHP REQUIRED)

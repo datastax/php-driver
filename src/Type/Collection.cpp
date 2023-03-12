@@ -23,7 +23,7 @@
 #include <zend_smart_str.h>
 
 #include "src/Collection.h"
-
+BEGIN_EXTERN_C()
 zend_class_entry* php_driver_type_collection_ce = NULL;
 
 PHP_METHOD(TypeCollection, __construct)
@@ -232,3 +232,4 @@ php_driver_define_TypeCollection(TSRMLS_D)
   php_driver_type_collection_ce->ce_flags |= PHP5TO7_ZEND_ACC_FINAL;
   php_driver_type_collection_ce->create_object = php_driver_type_collection_new;
 }
+END_EXTERN_C()
