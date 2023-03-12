@@ -22,7 +22,7 @@ zend_class_entry *php_driver_type_custom_ce = NULL;
 
 PHP_METHOD(TypeCustom, __construct)
 {
-  zend_throw_exception_ex(php_driver_logic_exception_ce, 0 TSRMLS_CC,
+  zend_throw_exception_ex(php_driver_logic_exception_ce, 0 ,
     "Instantiation of a " PHP_DRIVER_NAMESPACE "\\Type\\Custom type is not supported."
   );
   return;
@@ -56,7 +56,7 @@ PHP_METHOD(TypeCustom, __toString)
 
 PHP_METHOD(TypeCustom, create)
 {
-  zend_throw_exception_ex(php_driver_logic_exception_ce, 0 TSRMLS_CC,
+  zend_throw_exception_ex(php_driver_logic_exception_ce, 0 ,
     "Instantiation of a " PHP_DRIVER_NAMESPACE "\\Type\\Custom instance is not supported."
   );
   return;
@@ -93,12 +93,12 @@ php_driver_type_custom_gc(
 #else
         zval *object,
 #endif
-        php5to7_zval_gc table, int *n TSRMLS_DC
+        php5to7_zval_gc table, int *n
 )
 {
   *table = NULL;
   *n = 0;
-  return zend_std_get_properties(object TSRMLS_CC);
+  return zend_std_get_properties(object );
 }
 
 static HashTable *
@@ -106,7 +106,7 @@ php_driver_type_custom_properties(
 #if PHP_MAJOR_VERSION >= 8
         zend_object *object
 #else
-        zval *object TSRMLS_DC
+        zval *object
 #endif
 )
 {
@@ -117,7 +117,7 @@ php_driver_type_custom_properties(
 #else
   php_driver_type *self  = PHP_DRIVER_GET_TYPE(object);
 #endif
-  HashTable      *props = zend_std_get_properties(object TSRMLS_CC);
+  HashTable      *props = zend_std_get_properties(object );
 
   PHP5TO7_ZVAL_MAYBE_MAKE(name);
   PHP5TO7_ZVAL_STRING(PHP5TO7_ZVAL_MAYBE_P(name), self->data.custom.class_name);
@@ -129,7 +129,7 @@ php_driver_type_custom_properties(
 }
 
 static int
-php_driver_type_custom_compare(zval *obj1, zval *obj2 TSRMLS_DC)
+php_driver_type_custom_compare(zval *obj1, zval *obj2 )
 {
 #if PHP_MAJOR_VERSION >= 8
   ZEND_COMPARE_OBJECTS_FALLBACK(obj1, obj2);
@@ -137,11 +137,11 @@ php_driver_type_custom_compare(zval *obj1, zval *obj2 TSRMLS_DC)
   php_driver_type* type1 = PHP_DRIVER_GET_TYPE(obj1);
   php_driver_type* type2 = PHP_DRIVER_GET_TYPE(obj2);
 
-  return php_driver_type_compare(type1, type2 TSRMLS_CC);
+  return php_driver_type_compare(type1, type2 );
 }
 
 static void
-php_driver_type_custom_free(php5to7_zend_object_free *object TSRMLS_DC)
+php_driver_type_custom_free(php5to7_zend_object_free *object )
 {
   php_driver_type *self = PHP5TO7_ZEND_OBJECT_GET(type, object);
 
@@ -151,12 +151,12 @@ php_driver_type_custom_free(php5to7_zend_object_free *object TSRMLS_DC)
     self->data.custom.class_name = NULL;
   }
 
-  zend_object_std_dtor(&self->zval TSRMLS_CC);
+  zend_object_std_dtor(&self->zval );
   PHP5TO7_MAYBE_EFREE(self);
 }
 
 static php5to7_zend_object
-php_driver_type_custom_new(zend_class_entry *ce TSRMLS_DC)
+php_driver_type_custom_new(zend_class_entry *ce )
 {
   php_driver_type *self = PHP5TO7_ZEND_OBJECT_ECALLOC(type, ce);
 
@@ -167,7 +167,7 @@ php_driver_type_custom_new(zend_class_entry *ce TSRMLS_DC)
   PHP5TO7_ZEND_OBJECT_INIT_EX(type, type_custom, self, ce);
 }
 
-void php_driver_define_TypeCustom(TSRMLS_D)
+void php_driver_define_TypeCustom()
 {
   zend_class_entry ce;
 

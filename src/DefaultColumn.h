@@ -17,5 +17,5 @@
 #include <php_driver.h>
 
 BEGIN_EXTERN_C()
-php5to7_zval php_driver_create_column(php_driver_ref *schema, const CassColumnMeta *meta TSRMLS_DC);
+php5to7_zval php_driver_create_column(php_driver_ref *schema, const CassColumnMeta *meta );
 END_EXTERN_C()

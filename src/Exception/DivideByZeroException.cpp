@@ -24,12 +24,12 @@ static zend_function_entry DivideByZeroException_methods[] = {
   PHP_FE_END
 };
 
-void php_driver_define_DivideByZeroException(TSRMLS_D)
+void php_driver_define_DivideByZeroException()
 {
   zend_class_entry ce;
 
   INIT_CLASS_ENTRY(ce, PHP_DRIVER_NAMESPACE "\\Exception\\DivideByZeroException", DivideByZeroException_methods);
-  php_driver_divide_by_zero_exception_ce = php5to7_zend_register_internal_class_ex(&ce, php_driver_range_exception_ce);
-  zend_class_implements(php_driver_divide_by_zero_exception_ce TSRMLS_CC, 1, php_driver_exception_ce);
+  php_driver_divide_by_zero_exception_ce = zend_register_internal_class_ex(&ce, php_driver_range_exception_ce);
+  zend_class_implements(php_driver_divide_by_zero_exception_ce , 1, php_driver_exception_ce);
 }
 END_EXTERN_C()

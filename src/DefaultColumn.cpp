@@ -26,7 +26,7 @@ zend_class_entry *php_driver_default_column_ce = NULL;
 
 php5to7_zval
 php_driver_create_column(php_driver_ref *schema,
-                         const CassColumnMeta *meta TSRMLS_DC)
+                         const CassColumnMeta *meta )
 {
   php5to7_zval result;
   php_driver_column *column;
@@ -62,7 +62,7 @@ php_driver_create_column(php_driver_ref *schema,
 
     if (php_driver_parse_column_type(validator, validator_length,
                                         &column->reversed, &column->frozen,
-                                        &column->type TSRMLS_CC) == FAILURE) {
+                                        &column->type ) == FAILURE) {
       zval_ptr_dtor(&result);
       PHP5TO7_ZVAL_UNDEF(result);
       return result;
@@ -72,7 +72,7 @@ php_driver_create_column(php_driver_ref *schema,
     if (data_type) {
       const char *clustering_order;
       size_t clustering_order_length;
-      column->type = php_driver_type_from_data_type(data_type TSRMLS_CC);
+      column->type = php_driver_type_from_data_type(data_type );
 
 #if CURRENT_CPP_DRIVER_VERSION > CPP_DRIVER_VERSION(2, 2, 0)
       column->frozen = cass_data_type_is_frozen(data_type);
@@ -82,7 +82,7 @@ php_driver_create_column(php_driver_ref *schema,
 
       value = cass_column_meta_field_by_name(meta, "clustering_order");
       if (!value) {
-        zend_throw_exception_ex(php_driver_runtime_exception_ce, 0 TSRMLS_CC,
+        zend_throw_exception_ex(php_driver_runtime_exception_ce, 0 ,
                                 "Unable to get column field \"clustering_order\"");
         zval_ptr_dtor(&result);
         PHP5TO7_ZVAL_UNDEF(result);
@@ -185,7 +185,7 @@ PHP_METHOD(DefaultColumn, indexName)
 
   self = PHP_DRIVER_GET_COLUMN(getThis());
 
-  php_driver_get_column_field(self->meta, "index_name", &value TSRMLS_CC);
+  php_driver_get_column_field(self->meta, "index_name", &value );
   RETURN_ZVAL(PHP5TO7_ZVAL_MAYBE_P(value), 0, 1);
 }
 
@@ -200,7 +200,7 @@ PHP_METHOD(DefaultColumn, indexOptions)
 
   self = PHP_DRIVER_GET_COLUMN(getThis());
 
-  php_driver_get_column_field(self->meta, "index_options", &value TSRMLS_CC);
+  php_driver_get_column_field(self->meta, "index_options", &value );
   RETURN_ZVAL(PHP5TO7_ZVAL_MAYBE_P(value), 0, 1);
 }
 
@@ -227,12 +227,12 @@ php_driver_type_default_column_gc(
 #else
         zval *object,
 #endif
-        php5to7_zval_gc table, int *n TSRMLS_DC
+        php5to7_zval_gc table, int *n
 )
 {
   *table = NULL;
   *n = 0;
-  return zend_std_get_properties(object TSRMLS_CC);
+  return zend_std_get_properties(object );
 }
 
 static HashTable *
@@ -240,17 +240,17 @@ php_driver_default_column_properties(
 #if PHP_MAJOR_VERSION >= 8
         zend_object *object
 #else
-        zval *object TSRMLS_DC
+        zval *object
 #endif
 )
 {
-  HashTable *props = zend_std_get_properties(object TSRMLS_CC);
+  HashTable *props = zend_std_get_properties(object );
 
   return props;
 }
 
 static int
-php_driver_default_column_compare(zval *obj1, zval *obj2 TSRMLS_DC)
+php_driver_default_column_compare(zval *obj1, zval *obj2 )
 {
 #if PHP_MAJOR_VERSION >= 8
   ZEND_COMPARE_OBJECTS_FALLBACK(obj1, obj2);
@@ -262,7 +262,7 @@ php_driver_default_column_compare(zval *obj1, zval *obj2 TSRMLS_DC)
 }
 
 static void
-php_driver_default_column_free(php5to7_zend_object_free *object TSRMLS_DC)
+php_driver_default_column_free(php5to7_zend_object_free *object )
 {
   php_driver_column *self = PHP5TO7_ZEND_OBJECT_GET(column, object);
 
@@ -275,12 +275,12 @@ php_driver_default_column_free(php5to7_zend_object_free *object TSRMLS_DC)
   }
   self->meta = NULL;
 
-  zend_object_std_dtor(&self->zval TSRMLS_CC);
+  zend_object_std_dtor(&self->zval );
   PHP5TO7_MAYBE_EFREE(self);
 }
 
 static php5to7_zend_object
-php_driver_default_column_new(zend_class_entry *ce TSRMLS_DC)
+php_driver_default_column_new(zend_class_entry *ce )
 {
   php_driver_column *self =
       PHP5TO7_ZEND_OBJECT_ECALLOC(column, ce);
@@ -295,13 +295,13 @@ php_driver_default_column_new(zend_class_entry *ce TSRMLS_DC)
   PHP5TO7_ZEND_OBJECT_INIT_EX(column, default_column, self, ce);
 }
 
-void php_driver_define_DefaultColumn(TSRMLS_D)
+void php_driver_define_DefaultColumn()
 {
   zend_class_entry ce;
 
   INIT_CLASS_ENTRY(ce, PHP_DRIVER_NAMESPACE "\\DefaultColumn", php_driver_default_column_methods);
-  php_driver_default_column_ce = zend_register_internal_class(&ce TSRMLS_CC);
-  zend_class_implements(php_driver_default_column_ce TSRMLS_CC, 1, php_driver_column_ce);
+  php_driver_default_column_ce = zend_register_internal_class(&ce );
+  zend_class_implements(php_driver_default_column_ce , 1, php_driver_column_ce);
   php_driver_default_column_ce->ce_flags     |= PHP5TO7_ZEND_ACC_FINAL;
   php_driver_default_column_ce->create_object = php_driver_default_column_new;
 

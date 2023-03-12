@@ -27,7 +27,7 @@
 #include "src/Tuple.h"
 #include "src/UserTypeValue.h"
 
-int php_driver_value(const CassValue *value, const CassDataType *data_type, php5to7_zval *out TSRMLS_DC)
+int php_driver_value(const CassValue *value, const CassDataType *data_type, php5to7_zval *out)
 {
     const char *v_string;
     size_t v_string_len;
@@ -185,7 +185,7 @@ int php_driver_value(const CassValue *value, const CassDataType *data_type, php5
         collection = PHP_DRIVER_GET_COLLECTION(PHP5TO7_ZVAL_MAYBE_DEREF(out));
 
         primary_type = cass_data_type_sub_data_type(data_type, 0);
-        collection->type = php_driver_type_from_data_type(data_type TSRMLS_CC);
+        collection->type = php_driver_type_from_data_type(data_type);
 
         iterator = cass_iterator_from_collection(value);
 
@@ -193,14 +193,14 @@ int php_driver_value(const CassValue *value, const CassDataType *data_type, php5
         {
             php5to7_zval v;
 
-            if (php_driver_value(cass_iterator_get_value(iterator), primary_type, &v TSRMLS_CC) == FAILURE)
+            if (php_driver_value(cass_iterator_get_value(iterator), primary_type, &v) == FAILURE)
             {
                 cass_iterator_free(iterator);
                 zval_ptr_dtor(out);
                 return FAILURE;
             }
 
-            php_driver_collection_add(collection, PHP5TO7_ZVAL_MAYBE_P(v) TSRMLS_CC);
+            php_driver_collection_add(collection, PHP5TO7_ZVAL_MAYBE_P(v));
             zval_ptr_dtor(&v);
         }
 
@@ -212,7 +212,7 @@ int php_driver_value(const CassValue *value, const CassDataType *data_type, php5
 
         primary_type = cass_data_type_sub_data_type(data_type, 0);
         secondary_type = cass_data_type_sub_data_type(data_type, 1);
-        map->type = php_driver_type_from_data_type(data_type TSRMLS_CC);
+        map->type = php_driver_type_from_data_type(data_type);
 
         iterator = cass_iterator_from_map(value);
 
@@ -221,15 +221,15 @@ int php_driver_value(const CassValue *value, const CassDataType *data_type, php5
             php5to7_zval k;
             php5to7_zval v;
 
-            if (php_driver_value(cass_iterator_get_map_key(iterator), primary_type, &k TSRMLS_CC) == FAILURE ||
-                php_driver_value(cass_iterator_get_map_value(iterator), secondary_type, &v TSRMLS_CC) == FAILURE)
+            if (php_driver_value(cass_iterator_get_map_key(iterator), primary_type, &k) == FAILURE ||
+                php_driver_value(cass_iterator_get_map_value(iterator), secondary_type, &v) == FAILURE)
             {
                 cass_iterator_free(iterator);
                 zval_ptr_dtor(out);
                 return FAILURE;
             }
 
-            php_driver_map_set(map, PHP5TO7_ZVAL_MAYBE_P(k), PHP5TO7_ZVAL_MAYBE_P(v) TSRMLS_CC);
+            php_driver_map_set(map, PHP5TO7_ZVAL_MAYBE_P(k), PHP5TO7_ZVAL_MAYBE_P(v));
             zval_ptr_dtor(&k);
             zval_ptr_dtor(&v);
         }
@@ -241,7 +241,7 @@ int php_driver_value(const CassValue *value, const CassDataType *data_type, php5
         set = PHP_DRIVER_GET_SET(PHP5TO7_ZVAL_MAYBE_DEREF(out));
 
         primary_type = cass_data_type_sub_data_type(data_type, 0);
-        set->type = php_driver_type_from_data_type(data_type TSRMLS_CC);
+        set->type = php_driver_type_from_data_type(data_type);
 
         iterator = cass_iterator_from_collection(value);
 
@@ -249,14 +249,14 @@ int php_driver_value(const CassValue *value, const CassDataType *data_type, php5
         {
             php5to7_zval v;
 
-            if (php_driver_value(cass_iterator_get_value(iterator), primary_type, &v TSRMLS_CC) == FAILURE)
+            if (php_driver_value(cass_iterator_get_value(iterator), primary_type, &v) == FAILURE)
             {
                 cass_iterator_free(iterator);
                 zval_ptr_dtor(out);
                 return FAILURE;
             }
 
-            php_driver_set_add(set, PHP5TO7_ZVAL_MAYBE_P(v) TSRMLS_CC);
+            php_driver_set_add(set, PHP5TO7_ZVAL_MAYBE_P(v));
             zval_ptr_dtor(&v);
         }
 
@@ -266,7 +266,7 @@ int php_driver_value(const CassValue *value, const CassDataType *data_type, php5
         object_init_ex(PHP5TO7_ZVAL_MAYBE_DEREF(out), php_driver_tuple_ce);
         tuple = PHP_DRIVER_GET_TUPLE(PHP5TO7_ZVAL_MAYBE_DEREF(out));
 
-        tuple->type = php_driver_type_from_data_type(data_type TSRMLS_CC);
+        tuple->type = php_driver_type_from_data_type(data_type);
 
         iterator = cass_iterator_from_tuple(value);
 
@@ -280,14 +280,14 @@ int php_driver_value(const CassValue *value, const CassDataType *data_type, php5
                 php5to7_zval v;
 
                 primary_type = cass_data_type_sub_data_type(data_type, index);
-                if (php_driver_value(value, primary_type, &v TSRMLS_CC) == FAILURE)
+                if (php_driver_value(value, primary_type, &v) == FAILURE)
                 {
                     cass_iterator_free(iterator);
                     zval_ptr_dtor(out);
                     return FAILURE;
                 }
 
-                php_driver_tuple_set(tuple, index, PHP5TO7_ZVAL_MAYBE_P(v) TSRMLS_CC);
+                php_driver_tuple_set(tuple, index, PHP5TO7_ZVAL_MAYBE_P(v));
                 zval_ptr_dtor(&v);
             }
 
@@ -300,7 +300,7 @@ int php_driver_value(const CassValue *value, const CassDataType *data_type, php5
         object_init_ex(PHP5TO7_ZVAL_MAYBE_DEREF(out), php_driver_user_type_value_ce);
         user_type_value = PHP_DRIVER_GET_USER_TYPE_VALUE(PHP5TO7_ZVAL_MAYBE_DEREF(out));
 
-        user_type_value->type = php_driver_type_from_data_type(data_type TSRMLS_CC);
+        user_type_value->type = php_driver_type_from_data_type(data_type);
 
         iterator = cass_iterator_fields_from_user_type(value);
 
@@ -316,7 +316,7 @@ int php_driver_value(const CassValue *value, const CassDataType *data_type, php5
                 php5to7_zval v;
 
                 primary_type = cass_data_type_sub_data_type(data_type, index);
-                if (php_driver_value(value, primary_type, &v TSRMLS_CC) == FAILURE)
+                if (php_driver_value(value, primary_type, &v) == FAILURE)
                 {
                     cass_iterator_free(iterator);
                     zval_ptr_dtor(out);
@@ -324,7 +324,7 @@ int php_driver_value(const CassValue *value, const CassDataType *data_type, php5
                 }
 
                 cass_iterator_get_user_type_field_name(iterator, &name, &name_length);
-                php_driver_user_type_value_set(user_type_value, name, name_length, PHP5TO7_ZVAL_MAYBE_P(v) TSRMLS_CC);
+                php_driver_user_type_value_set(user_type_value, name, name_length, PHP5TO7_ZVAL_MAYBE_P(v));
                 zval_ptr_dtor(&v);
             }
 
@@ -341,7 +341,7 @@ int php_driver_value(const CassValue *value, const CassDataType *data_type, php5
     return SUCCESS;
 }
 
-int php_driver_get_keyspace_field(const CassKeyspaceMeta *metadata, const char *field_name, php5to7_zval *out TSRMLS_DC)
+int php_driver_get_keyspace_field(const CassKeyspaceMeta *metadata, const char *field_name, php5to7_zval *out)
 {
     const CassValue *value;
 
@@ -354,10 +354,10 @@ int php_driver_get_keyspace_field(const CassKeyspaceMeta *metadata, const char *
         return SUCCESS;
     }
 
-    return php_driver_value(value, cass_value_data_type(value), out TSRMLS_CC);
+    return php_driver_value(value, cass_value_data_type(value), out);
 }
 
-int php_driver_get_table_field(const CassTableMeta *metadata, const char *field_name, php5to7_zval *out TSRMLS_DC)
+int php_driver_get_table_field(const CassTableMeta *metadata, const char *field_name, php5to7_zval *out)
 {
     const CassValue *value;
 
@@ -370,10 +370,10 @@ int php_driver_get_table_field(const CassTableMeta *metadata, const char *field_
         return SUCCESS;
     }
 
-    return php_driver_value(value, cass_value_data_type(value), out TSRMLS_CC);
+    return php_driver_value(value, cass_value_data_type(value), out);
 }
 
-int php_driver_get_column_field(const CassColumnMeta *metadata, const char *field_name, php5to7_zval *out TSRMLS_DC)
+int php_driver_get_column_field(const CassColumnMeta *metadata, const char *field_name, php5to7_zval *out)
 {
     const CassValue *value;
 
@@ -386,10 +386,10 @@ int php_driver_get_column_field(const CassColumnMeta *metadata, const char *fiel
         return SUCCESS;
     }
 
-    return php_driver_value(value, cass_value_data_type(value), out TSRMLS_CC);
+    return php_driver_value(value, cass_value_data_type(value), out);
 }
 
-int php_driver_get_result(const CassResult *result, php5to7_zval *out TSRMLS_DC)
+int php_driver_get_result(const CassResult *result, php5to7_zval *out)
 {
     php5to7_zval rows;
     php5to7_zval row;
@@ -430,7 +430,7 @@ int php_driver_get_result(const CassResult *result, php5to7_zval *out TSRMLS_DC)
             column_type = cass_result_column_data_type(result, i);
             column_value = cass_row_get_column(cass_row, i);
 
-            if (php_driver_value(column_value, column_type, &value TSRMLS_CC) == FAILURE)
+            if (php_driver_value(column_value, column_type, &value) == FAILURE)
             {
                 zval_ptr_dtor(&row);
                 zval_ptr_dtor(&rows);

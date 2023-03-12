@@ -95,7 +95,7 @@ int php_le_php_driver_cluster()
 {
     return le_php_driver_cluster_res;
 }
-static void php_driver_cluster_dtor(php5to7_zend_resource rsrc TSRMLS_DC)
+static void php_driver_cluster_dtor(php5to7_zend_resource rsrc )
 {
     CassCluster *cluster = (CassCluster *)rsrc->ptr;
 
@@ -113,7 +113,7 @@ int php_le_php_driver_session()
 {
     return le_php_driver_session_res;
 }
-static void php_driver_session_dtor(php5to7_zend_resource rsrc TSRMLS_DC)
+static void php_driver_session_dtor(php5to7_zend_resource rsrc )
 {
     php_driver_psession *psession = (php_driver_psession *)rsrc->ptr;
 
@@ -133,7 +133,7 @@ int php_le_php_driver_prepared_statement()
 {
     return le_php_driver_prepared_statement_res;
 }
-static void php_driver_prepared_statement_dtor(php5to7_zend_resource rsrc TSRMLS_DC)
+static void php_driver_prepared_statement_dtor(php5to7_zend_resource rsrc )
 {
     php_driver_pprepared_statement *preparedStmt = (php_driver_pprepared_statement *)rsrc->ptr;
 
@@ -293,37 +293,37 @@ zend_class_entry *exception_class(CassError rc)
     }
 }
 
-void throw_invalid_argument(zval *object, const char *object_name, const char *expected_type TSRMLS_DC)
+void throw_invalid_argument(zval *object, const char *object_name, const char *expected_type )
 {
     if (Z_TYPE_P(object) == IS_OBJECT)
     {
         const char *cls_name = NULL;
         size_t cls_len;
 
-        zend_string *str = Z_OBJ_HANDLER_P(object, get_class_name)(Z_OBJ_P(object) TSRMLS_CC);
+        zend_string *str = Z_OBJ_HANDLER_P(object, get_class_name)(Z_OBJ_P(object) );
         cls_name = str->val;
         cls_len = str->len;
         if (cls_name)
         {
-            zend_throw_exception_ex(php_driver_invalid_argument_exception_ce, 0 TSRMLS_CC,
+            zend_throw_exception_ex(php_driver_invalid_argument_exception_ce, 0 ,
                                     "%s must be %s, an instance of %.*s given", object_name, expected_type,
                                     (int)cls_len, cls_name);
             zend_string_release(str);
         }
         else
         {
-            zend_throw_exception_ex(php_driver_invalid_argument_exception_ce, 0 TSRMLS_CC,
+            zend_throw_exception_ex(php_driver_invalid_argument_exception_ce, 0 ,
                                     "%s must be %s, an instance of Unknown Class given", object_name, expected_type);
         }
     }
     else if (Z_TYPE_P(object) == IS_STRING)
     {
-        zend_throw_exception_ex(php_driver_invalid_argument_exception_ce, 0 TSRMLS_CC, "%s must be %s, '%Z' given",
+        zend_throw_exception_ex(php_driver_invalid_argument_exception_ce, 0 , "%s must be %s, '%Z' given",
                                 object_name, expected_type, object);
     }
     else
     {
-        zend_throw_exception_ex(php_driver_invalid_argument_exception_ce, 0 TSRMLS_CC, "%s must be %s, %Z given",
+        zend_throw_exception_ex(php_driver_invalid_argument_exception_ce, 0 , "%s must be %s, %Z given",
                                 object_name, expected_type, object);
     }
 }
@@ -456,113 +456,113 @@ PHP_MINIT_FUNCTION(php_driver)
     le_php_driver_prepared_statement_res = zend_register_list_destructors_ex(
         NULL, php_driver_prepared_statement_dtor, PHP_DRIVER_PREPARED_STATEMENT_RES_NAME, module_number);
 
-    php_driver_define_Exception(TSRMLS_C);
-    php_driver_define_InvalidArgumentException(TSRMLS_C);
-    php_driver_define_DomainException(TSRMLS_C);
-    php_driver_define_RuntimeException(TSRMLS_C);
-    php_driver_define_TimeoutException(TSRMLS_C);
-    php_driver_define_LogicException(TSRMLS_C);
-    php_driver_define_ExecutionException(TSRMLS_C);
-    php_driver_define_ReadTimeoutException(TSRMLS_C);
-    php_driver_define_WriteTimeoutException(TSRMLS_C);
-    php_driver_define_UnavailableException(TSRMLS_C);
-    php_driver_define_TruncateException(TSRMLS_C);
-    php_driver_define_ValidationException(TSRMLS_C);
-    php_driver_define_InvalidQueryException(TSRMLS_C);
-    php_driver_define_InvalidSyntaxException(TSRMLS_C);
-    php_driver_define_UnauthorizedException(TSRMLS_C);
-    php_driver_define_UnpreparedException(TSRMLS_C);
-    php_driver_define_ConfigurationException(TSRMLS_C);
-    php_driver_define_AlreadyExistsException(TSRMLS_C);
-    php_driver_define_AuthenticationException(TSRMLS_C);
-    php_driver_define_ProtocolException(TSRMLS_C);
-    php_driver_define_ServerException(TSRMLS_C);
-    php_driver_define_IsBootstrappingException(TSRMLS_C);
-    php_driver_define_OverloadedException(TSRMLS_C);
-    php_driver_define_RangeException(TSRMLS_C);
-    php_driver_define_DivideByZeroException(TSRMLS_C);
+    php_driver_define_Exception();
+    php_driver_define_InvalidArgumentException();
+    php_driver_define_DomainException();
+    php_driver_define_RuntimeException();
+    php_driver_define_TimeoutException();
+    php_driver_define_LogicException();
+    php_driver_define_ExecutionException();
+    php_driver_define_ReadTimeoutException();
+    php_driver_define_WriteTimeoutException();
+    php_driver_define_UnavailableException();
+    php_driver_define_TruncateException();
+    php_driver_define_ValidationException();
+    php_driver_define_InvalidQueryException();
+    php_driver_define_InvalidSyntaxException();
+    php_driver_define_UnauthorizedException();
+    php_driver_define_UnpreparedException();
+    php_driver_define_ConfigurationException();
+    php_driver_define_AlreadyExistsException();
+    php_driver_define_AuthenticationException();
+    php_driver_define_ProtocolException();
+    php_driver_define_ServerException();
+    php_driver_define_IsBootstrappingException();
+    php_driver_define_OverloadedException();
+    php_driver_define_RangeException();
+    php_driver_define_DivideByZeroException();
 
-    php_driver_define_Value(TSRMLS_C);
-    php_driver_define_Numeric(TSRMLS_C);
-    php_driver_define_Bigint(TSRMLS_C);
-    php_driver_define_Smallint(TSRMLS_C);
-    php_driver_define_Tinyint(TSRMLS_C);
-    php_driver_define_Blob(TSRMLS_C);
-    php_driver_define_Decimal(TSRMLS_C);
-    php_driver_define_Float(TSRMLS_C);
-    php_driver_define_Inet(TSRMLS_C);
-    php_driver_define_Timestamp(TSRMLS_C);
-    php_driver_define_Date(TSRMLS_C);
-    php_driver_define_Time(TSRMLS_C);
-    php_driver_define_UuidInterface(TSRMLS_C);
-    php_driver_define_Timeuuid(TSRMLS_C);
-    php_driver_define_Uuid(TSRMLS_C);
-    php_driver_define_Varint(TSRMLS_C);
-    php_driver_define_Custom(TSRMLS_C);
-    php_driver_define_Duration(TSRMLS_C);
+    php_driver_define_Value();
+    php_driver_define_Numeric();
+    php_driver_define_Bigint();
+    php_driver_define_Smallint();
+    php_driver_define_Tinyint();
+    php_driver_define_Blob();
+    php_driver_define_Decimal();
+    php_driver_define_Float();
+    php_driver_define_Inet();
+    php_driver_define_Timestamp();
+    php_driver_define_Date();
+    php_driver_define_Time();
+    php_driver_define_UuidInterface();
+    php_driver_define_Timeuuid();
+    php_driver_define_Uuid();
+    php_driver_define_Varint();
+    php_driver_define_Custom();
+    php_driver_define_Duration();
 
-    php_driver_define_Set(TSRMLS_C);
-    php_driver_define_Map(TSRMLS_C);
-    php_driver_define_Collection(TSRMLS_C);
-    php_driver_define_Tuple(TSRMLS_C);
-    php_driver_define_UserTypeValue(TSRMLS_C);
+    php_driver_define_Set();
+    php_driver_define_Map();
+    php_driver_define_Collection();
+    php_driver_define_Tuple();
+    php_driver_define_UserTypeValue();
 
-    php_driver_define_Core(TSRMLS_C);
-    php_driver_define_Cluster(TSRMLS_C);
-    php_driver_define_DefaultCluster(TSRMLS_C);
+    php_driver_define_Core();
+    php_driver_define_Cluster();
+    php_driver_define_DefaultCluster();
     php_driver_define_ClusterBuilder();
-    php_driver_define_Future(TSRMLS_C);
-    php_driver_define_FuturePreparedStatement(TSRMLS_C);
-    php_driver_define_FutureRows(TSRMLS_C);
-    php_driver_define_FutureSession(TSRMLS_C);
-    php_driver_define_FutureValue(TSRMLS_C);
-    php_driver_define_FutureClose(TSRMLS_C);
-    php_driver_define_Session(TSRMLS_C);
-    php_driver_define_DefaultSession(TSRMLS_C);
-    php_driver_define_SSLOptions(TSRMLS_C);
-    php_driver_define_SSLOptionsBuilder(TSRMLS_C);
-    php_driver_define_Statement(TSRMLS_C);
-    php_driver_define_SimpleStatement(TSRMLS_C);
-    php_driver_define_PreparedStatement(TSRMLS_C);
-    php_driver_define_BatchStatement(TSRMLS_C);
-    php_driver_define_ExecutionOptions(TSRMLS_C);
-    php_driver_define_Rows(TSRMLS_C);
+    php_driver_define_Future();
+    php_driver_define_FuturePreparedStatement();
+    php_driver_define_FutureRows();
+    php_driver_define_FutureSession();
+    php_driver_define_FutureValue();
+    php_driver_define_FutureClose();
+    php_driver_define_Session();
+    php_driver_define_DefaultSession();
+    php_driver_define_SSLOptions();
+    php_driver_define_SSLOptionsBuilder();
+    php_driver_define_Statement();
+    php_driver_define_SimpleStatement();
+    php_driver_define_PreparedStatement();
+    php_driver_define_BatchStatement();
+    php_driver_define_ExecutionOptions();
+    php_driver_define_Rows();
 
-    php_driver_define_Schema(TSRMLS_C);
-    php_driver_define_DefaultSchema(TSRMLS_C);
-    php_driver_define_Keyspace(TSRMLS_C);
-    php_driver_define_DefaultKeyspace(TSRMLS_C);
-    php_driver_define_Table(TSRMLS_C);
-    php_driver_define_DefaultTable(TSRMLS_C);
-    php_driver_define_Column(TSRMLS_C);
-    php_driver_define_DefaultColumn(TSRMLS_C);
-    php_driver_define_Index(TSRMLS_C);
-    php_driver_define_DefaultIndex(TSRMLS_C);
-    php_driver_define_MaterializedView(TSRMLS_C);
-    php_driver_define_DefaultMaterializedView(TSRMLS_C);
-    php_driver_define_Function(TSRMLS_C);
-    php_driver_define_DefaultFunction(TSRMLS_C);
-    php_driver_define_Aggregate(TSRMLS_C);
-    php_driver_define_DefaultAggregate(TSRMLS_C);
+    php_driver_define_Schema();
+    php_driver_define_DefaultSchema();
+    php_driver_define_Keyspace();
+    php_driver_define_DefaultKeyspace();
+    php_driver_define_Table();
+    php_driver_define_DefaultTable();
+    php_driver_define_Column();
+    php_driver_define_DefaultColumn();
+    php_driver_define_Index();
+    php_driver_define_DefaultIndex();
+    php_driver_define_MaterializedView();
+    php_driver_define_DefaultMaterializedView();
+    php_driver_define_Function();
+    php_driver_define_DefaultFunction();
+    php_driver_define_Aggregate();
+    php_driver_define_DefaultAggregate();
 
-    php_driver_define_Type(TSRMLS_C);
-    php_driver_define_TypeScalar(TSRMLS_C);
-    php_driver_define_TypeCollection(TSRMLS_C);
-    php_driver_define_TypeSet(TSRMLS_C);
-    php_driver_define_TypeMap(TSRMLS_C);
-    php_driver_define_TypeTuple(TSRMLS_C);
-    php_driver_define_TypeUserType(TSRMLS_C);
-    php_driver_define_TypeCustom(TSRMLS_C);
+    php_driver_define_Type();
+    php_driver_define_TypeScalar();
+    php_driver_define_TypeCollection();
+    php_driver_define_TypeSet();
+    php_driver_define_TypeMap();
+    php_driver_define_TypeTuple();
+    php_driver_define_TypeUserType();
+    php_driver_define_TypeCustom();
 
-    php_driver_define_RetryPolicy(TSRMLS_C);
-    php_driver_define_RetryPolicyDefault(TSRMLS_C);
-    php_driver_define_RetryPolicyDowngradingConsistency(TSRMLS_C);
-    php_driver_define_RetryPolicyFallthrough(TSRMLS_C);
-    php_driver_define_RetryPolicyLogging(TSRMLS_C);
+    php_driver_define_RetryPolicy();
+    php_driver_define_RetryPolicyDefault();
+    php_driver_define_RetryPolicyDowngradingConsistency();
+    php_driver_define_RetryPolicyFallthrough();
+    php_driver_define_RetryPolicyLogging();
 
-    php_driver_define_TimestampGenerator(TSRMLS_C);
-    php_driver_define_TimestampGeneratorMonotonic(TSRMLS_C);
-    php_driver_define_TimestampGeneratorServerSide(TSRMLS_C);
+    php_driver_define_TimestampGenerator();
+    php_driver_define_TimestampGeneratorMonotonic();
+    php_driver_define_TimestampGeneratorServerSide();
 
     return SUCCESS;
 }

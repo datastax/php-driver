@@ -26,7 +26,7 @@ BEGIN_EXTERN_C()
 zend_class_entry *php_driver_collection_ce = NULL;
 
 void
-php_driver_collection_add(php_driver_collection *collection, zval *object TSRMLS_DC)
+php_driver_collection_add(php_driver_collection *collection, zval *object)
 {
   PHP5TO7_ZEND_HASH_NEXT_INDEX_INSERT(&collection->values, object, sizeof(zval *));
   Z_TRY_ADDREF_P(object);
@@ -56,13 +56,13 @@ php_driver_collection_get(php_driver_collection *collection, ulong index, php5to
 }
 
 static int
-php_driver_collection_find(php_driver_collection *collection, zval *object, long *index TSRMLS_DC)
+php_driver_collection_find(php_driver_collection *collection, zval *object, long *index)
 {
   php5to7_ulong num_key;
   php5to7_zval *current;
   PHP5TO7_ZEND_HASH_FOREACH_NUM_KEY_VAL(&collection->values, num_key, current) {
     zval compare;
-    is_equal_function(&compare, object, PHP5TO7_ZVAL_MAYBE_DEREF(current) TSRMLS_CC);
+    is_equal_function(&compare, object, PHP5TO7_ZVAL_MAYBE_DEREF(current));
     if (PHP5TO7_ZVAL_IS_TRUE_P(&compare)) {
       *index = (long) num_key;
       return 1;
@@ -90,22 +90,22 @@ PHP_METHOD(Collection, __construct)
   php_driver_collection *self;
   zval *type;
 
-  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z", &type) == FAILURE)
+  if (zend_parse_parameters(ZEND_NUM_ARGS(), "z", &type) == FAILURE)
     return;
 
   self = PHP_DRIVER_GET_COLLECTION(getThis());
 
   if (Z_TYPE_P(type) == IS_STRING) {
     CassValueType value_type;
-    if (!php_driver_value_type(Z_STRVAL_P(type), &value_type TSRMLS_CC))
+    if (!php_driver_value_type(Z_STRVAL_P(type), &value_type))
       return;
-    self->type = php_driver_type_collection_from_value_type(value_type TSRMLS_CC);
+    self->type = php_driver_type_collection_from_value_type(value_type);
   } else if (Z_TYPE_P(type) == IS_OBJECT &&
-             instanceof_function(Z_OBJCE_P(type), php_driver_type_ce TSRMLS_CC)) {
-    if (!php_driver_type_validate(type, "type" TSRMLS_CC)) {
+             instanceof_function(Z_OBJCE_P(type), php_driver_type_ce)) {
+    if (!php_driver_type_validate(type, "type")) {
       return;
     }
-    self->type = php_driver_type_collection(type TSRMLS_CC);
+    self->type = php_driver_type_collection(type);
     Z_ADDREF_P(type);
   } else {
     INVALID_ARGUMENT(type, "a string or an instance of " PHP_DRIVER_NAMESPACE "\\Type");
@@ -138,7 +138,7 @@ PHP_METHOD(Collection, add)
   int argc = 0, i;
   php_driver_type *type;
 
-  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "+", &args, &argc) == FAILURE)
+  if (zend_parse_parameters(ZEND_NUM_ARGS(), "+", &args, &argc) == FAILURE)
     return;
 
   self = PHP_DRIVER_GET_COLLECTION(getThis());
@@ -147,20 +147,20 @@ PHP_METHOD(Collection, add)
   for (i = 0; i < argc; i++) {
     if (Z_TYPE_P(PHP5TO7_ZVAL_ARG(args[i])) == IS_NULL) {
       PHP5TO7_MAYBE_EFREE(args);
-      zend_throw_exception_ex(php_driver_invalid_argument_exception_ce, 0 TSRMLS_CC,
+      zend_throw_exception_ex(php_driver_invalid_argument_exception_ce, 0,
                               "Invalid value: null is not supported inside collections");
       RETURN_FALSE;
     }
 
     if (!php_driver_validate_object(PHP5TO7_ZVAL_ARG(args[i]),
-                                    PHP5TO7_ZVAL_MAYBE_P(type->data.collection.value_type) TSRMLS_CC)) {
+                                    PHP5TO7_ZVAL_MAYBE_P(type->data.collection.value_type))) {
       PHP5TO7_MAYBE_EFREE(args);
       RETURN_FALSE;
     }
   }
 
   for (i = 0; i < argc; i++) {
-    php_driver_collection_add(self, PHP5TO7_ZVAL_ARG(args[i]) TSRMLS_CC);
+    php_driver_collection_add(self, PHP5TO7_ZVAL_ARG(args[i]));
   }
 
   PHP5TO7_MAYBE_EFREE(args);
@@ -175,7 +175,7 @@ PHP_METHOD(Collection, get)
   php_driver_collection *self = NULL;
   php5to7_zval value;
 
-  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &key) == FAILURE)
+  if (zend_parse_parameters(ZEND_NUM_ARGS(), "l", &key) == FAILURE)
     return;
 
   self = PHP_DRIVER_GET_COLLECTION(getThis());
@@ -192,12 +192,12 @@ PHP_METHOD(Collection, find)
   php_driver_collection *collection = NULL;
   long index;
 
-  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z", &object) == FAILURE)
+  if (zend_parse_parameters(ZEND_NUM_ARGS(), "z", &object) == FAILURE)
     return;
 
   collection = PHP_DRIVER_GET_COLLECTION(getThis());
 
-  if (php_driver_collection_find(collection, object, &index TSRMLS_CC))
+  if (php_driver_collection_find(collection, object, &index))
     RETURN_LONG(index);
 }
 /* }}} */
@@ -263,7 +263,7 @@ PHP_METHOD(Collection, remove)
   long index;
   php_driver_collection *collection = NULL;
 
-  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &index) == FAILURE) {
+  if (zend_parse_parameters(ZEND_NUM_ARGS(), "l", &index) == FAILURE) {
     return;
   }
 
@@ -348,11 +348,11 @@ php_driver_collection_gc(
 #else
         zval *object,
 #endif
-        php5to7_zval_gc table, int *n TSRMLS_DC)
+        php5to7_zval_gc table, int *n)
 {
   *table = NULL;
   *n = 0;
-  return zend_std_get_properties(object TSRMLS_CC);
+  return zend_std_get_properties(object);
 }
 
 static HashTable *
@@ -360,7 +360,7 @@ php_driver_collection_properties(
 #if PHP_MAJOR_VERSION >= 8
         zend_object *object
 #else
-        zval *object TSRMLS_DC
+        zval *object
 #endif
 )
 {
@@ -371,7 +371,7 @@ php_driver_collection_properties(
 #else
   php_driver_collection  *self = PHP_DRIVER_GET_COLLECTION(object);
 #endif
-  HashTable             *props = zend_std_get_properties(object TSRMLS_CC);
+  HashTable             *props = zend_std_get_properties(object);
 
   PHP5TO7_ZEND_HASH_UPDATE(props,
                            "type", sizeof("type"),
@@ -387,7 +387,7 @@ php_driver_collection_properties(
 }
 
 static int
-php_driver_collection_compare(zval *obj1, zval *obj2 TSRMLS_DC)
+php_driver_collection_compare(zval *obj1, zval *obj2)
 {
 #if PHP_MAJOR_VERSION >= 8
   ZEND_COMPARE_OBJECTS_FALLBACK(obj1, obj2);
@@ -411,7 +411,7 @@ php_driver_collection_compare(zval *obj1, zval *obj2 TSRMLS_DC)
   type1 = PHP_DRIVER_GET_TYPE(PHP5TO7_ZVAL_MAYBE_P(collection1->type));
   type2 = PHP_DRIVER_GET_TYPE(PHP5TO7_ZVAL_MAYBE_P(collection2->type));
 
-  result = php_driver_type_compare(type1, type2 TSRMLS_CC);
+  result = php_driver_type_compare(type1, type2);
   if (result != 0) return result;
 
   if (zend_hash_num_elements(&collection1->values) != zend_hash_num_elements(&collection2->values)) {
@@ -424,7 +424,7 @@ php_driver_collection_compare(zval *obj1, zval *obj2 TSRMLS_DC)
   while (PHP5TO7_ZEND_HASH_GET_CURRENT_DATA_EX(&collection1->values, current1, &pos1) &&
          PHP5TO7_ZEND_HASH_GET_CURRENT_DATA_EX(&collection2->values, current2, &pos2)) {
     result = php_driver_value_compare(PHP5TO7_ZVAL_MAYBE_DEREF(current1),
-                                         PHP5TO7_ZVAL_MAYBE_DEREF(current2) TSRMLS_CC);
+                                         PHP5TO7_ZVAL_MAYBE_DEREF(current2));
     if (result != 0) return result;
     zend_hash_move_forward_ex(&collection1->values, &pos1);
     zend_hash_move_forward_ex(&collection2->values, &pos2);
@@ -434,7 +434,7 @@ php_driver_collection_compare(zval *obj1, zval *obj2 TSRMLS_DC)
 }
 
 static unsigned
-php_driver_collection_hash_value(zval *obj TSRMLS_DC)
+php_driver_collection_hash_value(zval *obj)
 {
   php5to7_zval *current;
   unsigned hashv = 0;
@@ -444,7 +444,7 @@ php_driver_collection_hash_value(zval *obj TSRMLS_DC)
 
   PHP5TO7_ZEND_HASH_FOREACH_VAL(&self->values, current) {
     hashv = php_driver_combine_hash(hashv,
-                                       php_driver_value_hash(PHP5TO7_ZVAL_MAYBE_DEREF(current) TSRMLS_CC));
+                                       php_driver_value_hash(PHP5TO7_ZVAL_MAYBE_DEREF(current)));
   } PHP5TO7_ZEND_HASH_FOREACH_END(&self->values);
 
   self->hashv = hashv;
@@ -454,7 +454,7 @@ php_driver_collection_hash_value(zval *obj TSRMLS_DC)
 }
 
 static void
-php_driver_collection_free(php5to7_zend_object_free *object TSRMLS_DC)
+php_driver_collection_free(php5to7_zend_object_free *object)
 {
   php_driver_collection *self =
       PHP5TO7_ZEND_OBJECT_GET(collection, object);
@@ -462,12 +462,12 @@ php_driver_collection_free(php5to7_zend_object_free *object TSRMLS_DC)
   zend_hash_destroy(&self->values);
   PHP5TO7_ZVAL_MAYBE_DESTROY(self->type);
 
-  zend_object_std_dtor(&self->zval TSRMLS_CC);
+  zend_object_std_dtor(&self->zval);
   PHP5TO7_MAYBE_EFREE(self);
 }
 
 static php5to7_zend_object
-php_driver_collection_new(zend_class_entry *ce TSRMLS_DC)
+php_driver_collection_new(zend_class_entry *ce)
 {
   php_driver_collection *self =
       PHP5TO7_ZEND_OBJECT_ECALLOC(collection, ce);
@@ -479,13 +479,13 @@ php_driver_collection_new(zend_class_entry *ce TSRMLS_DC)
   PHP5TO7_ZEND_OBJECT_INIT(collection, self, ce);
 }
 
-void php_driver_define_Collection(TSRMLS_D)
+void php_driver_define_Collection()
 {
   zend_class_entry ce;
 
   INIT_CLASS_ENTRY(ce, PHP_DRIVER_NAMESPACE "\\Collection", php_driver_collection_methods);
-  php_driver_collection_ce = zend_register_internal_class(&ce TSRMLS_CC);
-  zend_class_implements(php_driver_collection_ce TSRMLS_CC, 1, php_driver_value_ce);
+  php_driver_collection_ce = zend_register_internal_class(&ce);
+  zend_class_implements(php_driver_collection_ce, 1, php_driver_value_ce);
   memcpy(&php_driver_collection_handlers, zend_get_std_object_handlers(), sizeof(zend_object_handlers));
   php_driver_collection_handlers.std.get_properties  = php_driver_collection_properties;
 #if PHP_VERSION_ID >= 50400
@@ -499,9 +499,9 @@ void php_driver_define_Collection(TSRMLS_D)
   php_driver_collection_ce->ce_flags |= PHP5TO7_ZEND_ACC_FINAL;
   php_driver_collection_ce->create_object = php_driver_collection_new;
 #if PHP_VERSION_ID < 80100
-  zend_class_implements(php_driver_collection_ce TSRMLS_CC, 2, spl_ce_Countable, zend_ce_iterator);
+  zend_class_implements(php_driver_collection_ce, 2, spl_ce_Countable, zend_ce_iterator);
 #else
-  zend_class_implements(php_driver_collection_ce TSRMLS_CC, 2, zend_ce_countable, zend_ce_iterator);
+  zend_class_implements(php_driver_collection_ce, 2, zend_ce_countable, zend_ce_iterator);
 #endif
 
   php_driver_collection_handlers.hash_value = php_driver_collection_hash_value;

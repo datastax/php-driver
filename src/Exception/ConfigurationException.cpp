@@ -25,7 +25,7 @@ static zend_function_entry ConfigurationException_methods[] = {
   PHP_FE_END
 };
 
-void php_driver_define_ConfigurationException(TSRMLS_D)
+void php_driver_define_ConfigurationException()
 {
   zend_class_entry ce;
 

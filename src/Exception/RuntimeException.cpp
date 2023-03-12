@@ -23,12 +23,12 @@ static zend_function_entry RuntimeException_methods[] = {
   PHP_FE_END
 };
 
-void php_driver_define_RuntimeException(TSRMLS_D)
+void php_driver_define_RuntimeException()
 {
   zend_class_entry ce;
 
   INIT_CLASS_ENTRY(ce, PHP_DRIVER_NAMESPACE "\\Exception\\RuntimeException", RuntimeException_methods);
   php_driver_runtime_exception_ce = php5to7_zend_register_internal_class_ex(&ce, spl_ce_RuntimeException);
-  zend_class_implements(php_driver_runtime_exception_ce TSRMLS_CC, 1, php_driver_exception_ce);
+  zend_class_implements(php_driver_runtime_exception_ce , 1, php_driver_exception_ce);
 }
 END_EXTERN_C()

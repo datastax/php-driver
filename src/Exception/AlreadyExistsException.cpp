@@ -25,7 +25,7 @@ static zend_function_entry AlreadyExistsException_methods[] = {
   PHP_FE_END
 };
 
-void php_driver_define_AlreadyExistsException(TSRMLS_D)
+void php_driver_define_AlreadyExistsException()
 {
   zend_class_entry ce;
 

@@ -70,7 +70,7 @@ PHP_METHOD(DefaultAggregate, argumentTypes)
     for (i = 0; i < count; ++i) {
       const CassDataType* data_type = cass_aggregate_meta_argument_type(self->meta, i);
       if (data_type) {
-        php5to7_zval type = php_driver_type_from_data_type(data_type TSRMLS_CC);
+        php5to7_zval type = php_driver_type_from_data_type(data_type );
         if (!PHP5TO7_ZVAL_IS_UNDEF(type)) {
           add_next_index_zval(PHP5TO7_ZVAL_MAYBE_P(self->argument_types),
                               PHP5TO7_ZVAL_MAYBE_P(type));
@@ -96,7 +96,7 @@ PHP_METHOD(DefaultAggregate, stateFunction)
       return;
     }
     self->state_function =
-        php_driver_create_function(self->schema, function TSRMLS_CC);
+        php_driver_create_function(self->schema, function );
   }
 
   RETURN_ZVAL(PHP5TO7_ZVAL_MAYBE_P(self->state_function), 1, 0);
@@ -116,7 +116,7 @@ PHP_METHOD(DefaultAggregate, finalFunction)
       return;
     }
     self->final_function =
-        php_driver_create_function(self->schema, function TSRMLS_CC);
+        php_driver_create_function(self->schema, function );
   }
 
   RETURN_ZVAL(PHP5TO7_ZVAL_MAYBE_P(self->final_function), 1, 0);
@@ -140,7 +140,7 @@ PHP_METHOD(DefaultAggregate, initialCondition)
     if (!data_type) {
       return;
     }
-    php_driver_value(value, data_type, &self->initial_condition TSRMLS_CC);
+    php_driver_value(value, data_type, &self->initial_condition );
   }
 
   RETURN_ZVAL(PHP5TO7_ZVAL_MAYBE_P(self->initial_condition), 1, 0);
@@ -159,7 +159,7 @@ PHP_METHOD(DefaultAggregate, stateType)
     if (!data_type) {
       return;
     }
-    self->state_type = php_driver_type_from_data_type(data_type TSRMLS_CC);
+    self->state_type = php_driver_type_from_data_type(data_type );
   }
 
   RETURN_ZVAL(PHP5TO7_ZVAL_MAYBE_P(self->state_type), 1, 0);
@@ -178,7 +178,7 @@ PHP_METHOD(DefaultAggregate, returnType)
     if (!data_type) {
       return;
     }
-    self->return_type = php_driver_type_from_data_type(data_type TSRMLS_CC);
+    self->return_type = php_driver_type_from_data_type(data_type );
   }
 
   RETURN_ZVAL(PHP5TO7_ZVAL_MAYBE_P(self->return_type), 1, 0);
@@ -220,12 +220,12 @@ php_driver_type_default_aggregate_gc(
 #else
         zval *object,
 #endif
-        php5to7_zval_gc table, int *n TSRMLS_DC
+        php5to7_zval_gc table, int *n
 )
 {
   *table = NULL;
   *n = 0;
-  return zend_std_get_properties(object TSRMLS_CC);
+  return zend_std_get_properties(object );
 }
 
 static HashTable *
@@ -233,17 +233,17 @@ php_driver_default_aggregate_properties(
 #if PHP_MAJOR_VERSION >= 8
         zend_object *object
 #else
-        zval *object TSRMLS_DC
+        zval *object
 #endif
 )
 {
-  HashTable *props = zend_std_get_properties(object TSRMLS_CC);
+  HashTable *props = zend_std_get_properties(object );
 
   return props;
 }
 
 static int
-php_driver_default_aggregate_compare(zval *obj1, zval *obj2 TSRMLS_DC)
+php_driver_default_aggregate_compare(zval *obj1, zval *obj2 )
 {
 #if PHP_MAJOR_VERSION >= 8
   ZEND_COMPARE_OBJECTS_FALLBACK(obj1, obj2);
@@ -255,7 +255,7 @@ php_driver_default_aggregate_compare(zval *obj1, zval *obj2 TSRMLS_DC)
 }
 
 static void
-php_driver_default_aggregate_free(php5to7_zend_object_free *object TSRMLS_DC)
+php_driver_default_aggregate_free(php5to7_zend_object_free *object )
 {
   php_driver_aggregate *self = PHP5TO7_ZEND_OBJECT_GET(aggregate, object);
 
@@ -274,12 +274,12 @@ php_driver_default_aggregate_free(php5to7_zend_object_free *object TSRMLS_DC)
   }
   self->meta = NULL;
 
-  zend_object_std_dtor(&self->zval TSRMLS_CC);
+  zend_object_std_dtor(&self->zval );
   PHP5TO7_MAYBE_EFREE(self);
 }
 
 static php5to7_zend_object
-php_driver_default_aggregate_new(zend_class_entry *ce TSRMLS_DC)
+php_driver_default_aggregate_new(zend_class_entry *ce )
 {
   php_driver_aggregate *self =
       PHP5TO7_ZEND_OBJECT_ECALLOC(aggregate, ce);
@@ -299,13 +299,13 @@ php_driver_default_aggregate_new(zend_class_entry *ce TSRMLS_DC)
   PHP5TO7_ZEND_OBJECT_INIT_EX(aggregate, default_aggregate, self, ce);
 }
 
-void php_driver_define_DefaultAggregate(TSRMLS_D)
+void php_driver_define_DefaultAggregate()
 {
   zend_class_entry ce;
 
   INIT_CLASS_ENTRY(ce, PHP_DRIVER_NAMESPACE "\\DefaultAggregate", php_driver_default_aggregate_methods);
-  php_driver_default_aggregate_ce = zend_register_internal_class(&ce TSRMLS_CC);
-  zend_class_implements(php_driver_default_aggregate_ce TSRMLS_CC, 1, php_driver_aggregate_ce);
+  php_driver_default_aggregate_ce = zend_register_internal_class(&ce );
+  zend_class_implements(php_driver_default_aggregate_ce , 1, php_driver_aggregate_ce);
   php_driver_default_aggregate_ce->ce_flags     |= PHP5TO7_ZEND_ACC_FINAL;
   php_driver_default_aggregate_ce->create_object = php_driver_default_aggregate_new;
 

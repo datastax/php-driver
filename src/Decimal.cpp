@@ -149,7 +149,7 @@ static void from_double(php_driver_numeric *result, double value)
     }
 }
 
-static zend_result to_double(zval *result, php_driver_numeric *decimal TSRMLS_DC)
+static zend_result to_double(zval *result, php_driver_numeric *decimal)
 {
     mpf_t value;
     mpf_init(value);
@@ -157,14 +157,14 @@ static zend_result to_double(zval *result, php_driver_numeric *decimal TSRMLS_DC
 
     if (mpf_cmp_d(value, -DBL_MAX) < 0)
     {
-        zend_throw_exception_ex(php_driver_range_exception_ce, 0 TSRMLS_CC, "Value is too small");
+        zend_throw_exception_ex(php_driver_range_exception_ce, 0, "Value is too small");
         mpf_clear(value);
         return FAILURE;
     }
 
     if (mpf_cmp_d(value, DBL_MAX) > 0)
     {
-        zend_throw_exception_ex(php_driver_range_exception_ce, 0 TSRMLS_CC, "Value is too big");
+        zend_throw_exception_ex(php_driver_range_exception_ce, 0, "Value is too big");
         mpf_clear(value);
         return FAILURE;
     }
@@ -174,7 +174,7 @@ static zend_result to_double(zval *result, php_driver_numeric *decimal TSRMLS_DC
     return SUCCESS;
 }
 
-static zend_result to_long(zval *result, php_driver_numeric *decimal TSRMLS_DC)
+static zend_result to_long(zval *result, php_driver_numeric *decimal)
 {
     mpf_t value;
     mpf_init(value);
@@ -182,14 +182,14 @@ static zend_result to_long(zval *result, php_driver_numeric *decimal TSRMLS_DC)
 
     if (mpf_cmp_si(value, LONG_MIN) < 0)
     {
-        zend_throw_exception_ex(php_driver_range_exception_ce, 0 TSRMLS_CC, "Value is too small");
+        zend_throw_exception_ex(php_driver_range_exception_ce, 0, "Value is too small");
         mpf_clear(value);
         return FAILURE;
     }
 
     if (mpf_cmp_si(value, LONG_MAX) > 0)
     {
-        zend_throw_exception_ex(php_driver_range_exception_ce, 0 TSRMLS_CC, "Value is too big");
+        zend_throw_exception_ex(php_driver_range_exception_ce, 0, "Value is too big");
         mpf_clear(value);
         return FAILURE;
     }
@@ -199,7 +199,7 @@ static zend_result to_long(zval *result, php_driver_numeric *decimal TSRMLS_DC)
     return SUCCESS;
 }
 
-static zend_result to_string(zval *result, php_driver_numeric *decimal TSRMLS_DC)
+static zend_result to_string(zval *result, php_driver_numeric *decimal)
 {
     char *string;
     int string_len;
@@ -233,12 +233,12 @@ void php_driver_decimal_init(INTERNAL_FUNCTION_PARAMETERS)
     php_driver_numeric *self;
     zval *value;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z", &value) == FAILURE)
+    if (zend_parse_parameters(ZEND_NUM_ARGS(), "z", &value) == FAILURE)
     {
         return;
     }
 
-    if (getThis() && instanceof_function(Z_OBJCE_P(getThis()), php_driver_decimal_ce TSRMLS_CC))
+    if (getThis() && instanceof_function(Z_OBJCE_P(getThis()), php_driver_decimal_ce))
     {
         self = PHP_DRIVER_GET_NUMERIC(getThis());
     }
@@ -258,7 +258,7 @@ void php_driver_decimal_init(INTERNAL_FUNCTION_PARAMETERS)
         double val = Z_DVAL_P(value);
         if (zend_isnan(val) || zend_isinf(val))
         {
-            zend_throw_exception_ex(php_driver_invalid_argument_exception_ce, 0 TSRMLS_CC,
+            zend_throw_exception_ex(php_driver_invalid_argument_exception_ce, 0,
                                     "Value of NaN or +/- infinity is not supported");
             return;
         }
@@ -267,12 +267,12 @@ void php_driver_decimal_init(INTERNAL_FUNCTION_PARAMETERS)
     else if (Z_TYPE_P(value) == IS_STRING)
     {
         if (!php_driver_parse_decimal(Z_STRVAL_P(value), Z_STRLEN_P(value), &self->data.decimal.value,
-                                      &self->data.decimal.scale TSRMLS_CC))
+                                      &self->data.decimal.scale))
         {
             return;
         }
     }
-    else if (Z_TYPE_P(value) == IS_OBJECT && instanceof_function(Z_OBJCE_P(value), php_driver_decimal_ce TSRMLS_CC))
+    else if (Z_TYPE_P(value) == IS_OBJECT && instanceof_function(Z_OBJCE_P(value), php_driver_decimal_ce))
     {
         php_driver_numeric *decimal = PHP_DRIVER_GET_NUMERIC(value);
         mpz_set(self->data.decimal.value, decimal->data.decimal.value);
@@ -296,14 +296,14 @@ PHP_METHOD(Decimal, __toString)
 {
     php_driver_numeric *self = PHP_DRIVER_GET_NUMERIC(getThis());
 
-    to_string(return_value, self TSRMLS_CC);
+    to_string(return_value, self);
 }
 /* }}} */
 
 /* {{{ Decimal::type() */
 PHP_METHOD(Decimal, type)
 {
-    php5to7_zval type = php_driver_type_scalar(CASS_VALUE_TYPE_DECIMAL TSRMLS_CC);
+    php5to7_zval type = php_driver_type_scalar(CASS_VALUE_TYPE_DECIMAL);
     RETURN_ZVAL(PHP5TO7_ZVAL_MAYBE_P(type), 1, 1);
 }
 /* }}} */
@@ -335,12 +335,12 @@ PHP_METHOD(Decimal, add)
     zval *num;
     php_driver_numeric *result = NULL;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z", &num) == FAILURE)
+    if (zend_parse_parameters(ZEND_NUM_ARGS(), "z", &num) == FAILURE)
     {
         return;
     }
 
-    if (Z_TYPE_P(num) == IS_OBJECT && instanceof_function(Z_OBJCE_P(num), php_driver_decimal_ce TSRMLS_CC))
+    if (Z_TYPE_P(num) == IS_OBJECT && instanceof_function(Z_OBJCE_P(num), php_driver_decimal_ce))
     {
         php_driver_numeric *self = PHP_DRIVER_GET_NUMERIC(getThis());
         php_driver_numeric *decimal = PHP_DRIVER_GET_NUMERIC(num);
@@ -365,12 +365,12 @@ PHP_METHOD(Decimal, sub)
     zval *num;
     php_driver_numeric *result = NULL;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z", &num) == FAILURE)
+    if (zend_parse_parameters(ZEND_NUM_ARGS(), "z", &num) == FAILURE)
     {
         return;
     }
 
-    if (Z_TYPE_P(num) == IS_OBJECT && instanceof_function(Z_OBJCE_P(num), php_driver_decimal_ce TSRMLS_CC))
+    if (Z_TYPE_P(num) == IS_OBJECT && instanceof_function(Z_OBJCE_P(num), php_driver_decimal_ce))
     {
         php_driver_numeric *self = PHP_DRIVER_GET_NUMERIC(getThis());
         php_driver_numeric *decimal = PHP_DRIVER_GET_NUMERIC(num);
@@ -395,12 +395,12 @@ PHP_METHOD(Decimal, mul)
     zval *num;
     php_driver_numeric *result = NULL;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z", &num) == FAILURE)
+    if (zend_parse_parameters(ZEND_NUM_ARGS(), "z", &num) == FAILURE)
     {
         return;
     }
 
-    if (Z_TYPE_P(num) == IS_OBJECT && instanceof_function(Z_OBJCE_P(num), php_driver_decimal_ce TSRMLS_CC))
+    if (Z_TYPE_P(num) == IS_OBJECT && instanceof_function(Z_OBJCE_P(num), php_driver_decimal_ce))
     {
         php_driver_numeric *self = PHP_DRIVER_GET_NUMERIC(getThis());
         php_driver_numeric *decimal = PHP_DRIVER_GET_NUMERIC(num);
@@ -422,7 +422,7 @@ PHP_METHOD(Decimal, mul)
 PHP_METHOD(Decimal, div)
 {
     /* TODO: Implementation of this a bit more difficult than anticipated. */
-    zend_throw_exception_ex(php_driver_runtime_exception_ce, 0 TSRMLS_CC, "Not implemented");
+    zend_throw_exception_ex(php_driver_runtime_exception_ce, 0, "Not implemented");
 }
 /* }}} */
 
@@ -430,7 +430,7 @@ PHP_METHOD(Decimal, div)
 PHP_METHOD(Decimal, mod)
 {
     /* TODO: We could implement a remainder method */
-    zend_throw_exception_ex(php_driver_runtime_exception_ce, 0 TSRMLS_CC, "Not implemented");
+    zend_throw_exception_ex(php_driver_runtime_exception_ce, 0, "Not implemented");
 }
 
 /* {{{ Decimal::abs() */
@@ -464,7 +464,7 @@ PHP_METHOD(Decimal, neg)
 /* {{{ Decimal::sqrt() */
 PHP_METHOD(Decimal, sqrt)
 {
-    zend_throw_exception_ex(php_driver_runtime_exception_ce, 0 TSRMLS_CC, "Not implemented");
+    zend_throw_exception_ex(php_driver_runtime_exception_ce, 0, "Not implemented");
 #if 0
   php_driver_numeric *self = PHP_DRIVER_GET_NUMERIC(getThis());
 
@@ -496,7 +496,7 @@ PHP_METHOD(Decimal, toInt)
 {
     php_driver_numeric *self = PHP_DRIVER_GET_NUMERIC(getThis());
 
-    to_long(return_value, self TSRMLS_CC);
+    to_long(return_value, self);
 }
 /* }}} */
 
@@ -505,7 +505,7 @@ PHP_METHOD(Decimal, toDouble)
 {
     php_driver_numeric *self = PHP_DRIVER_GET_NUMERIC(getThis());
 
-    to_double(return_value, self TSRMLS_CC);
+    to_double(return_value, self);
 }
 /* }}} */
 
@@ -548,18 +548,18 @@ static HashTable *php_driver_decimal_gc(
 #else
     zval *object,
 #endif
-    php5to7_zval_gc table, int *n TSRMLS_DC)
+    php5to7_zval_gc table, int *n)
 {
     *table = NULL;
     *n = 0;
-    return zend_std_get_properties(object TSRMLS_CC);
+    return zend_std_get_properties(object);
 }
 
 static HashTable *php_driver_decimal_properties(
 #if PHP_MAJOR_VERSION >= 8
     zend_object *object
 #else
-    zval *object TSRMLS_DC
+    zval *object
 #endif
 )
 {
@@ -574,9 +574,9 @@ static HashTable *php_driver_decimal_properties(
 #else
     php_driver_numeric *self = PHP_DRIVER_GET_NUMERIC(object);
 #endif
-    HashTable *props = zend_std_get_properties(object TSRMLS_CC);
+    HashTable *props = zend_std_get_properties(object);
 
-    type = php_driver_type_scalar(CASS_VALUE_TYPE_DECIMAL TSRMLS_CC);
+    type = php_driver_type_scalar(CASS_VALUE_TYPE_DECIMAL);
     PHP5TO7_ZEND_HASH_UPDATE(props, "type", sizeof("type"), PHP5TO7_ZVAL_MAYBE_P(type), sizeof(zval));
 
     php_driver_format_integer(self->data.decimal.value, &string, &string_len);
@@ -592,7 +592,7 @@ static HashTable *php_driver_decimal_properties(
     return props;
 }
 
-static int php_driver_decimal_compare(zval *obj1, zval *obj2 TSRMLS_DC)
+static int php_driver_decimal_compare(zval *obj1, zval *obj2)
 {
 #if PHP_MAJOR_VERSION >= 8
     ZEND_COMPARE_OBJECTS_FALLBACK(obj1, obj2);
@@ -620,7 +620,7 @@ static int php_driver_decimal_compare(zval *obj1, zval *obj2 TSRMLS_DC)
     }
 }
 
-static unsigned php_driver_decimal_hash_value(zval *obj TSRMLS_DC)
+static unsigned php_driver_decimal_hash_value(zval *obj)
 {
     php_driver_numeric *self = PHP_DRIVER_GET_NUMERIC(obj);
     return php_driver_mpz_hash((unsigned)self->data.decimal.scale, self->data.decimal.value);
@@ -643,27 +643,27 @@ static
     switch (type)
     {
     case IS_LONG:
-        return to_long(retval, self TSRMLS_CC);
+        return to_long(retval, self);
     case IS_DOUBLE:
-        return to_double(retval, self TSRMLS_CC);
+        return to_double(retval, self);
     case IS_STRING:
-        return to_string(retval, self TSRMLS_CC);
+        return to_string(retval, self);
     default:
         return FAILURE;
     }
 }
 
-static void php_driver_decimal_free(php5to7_zend_object_free *object TSRMLS_DC)
+static void php_driver_decimal_free(php5to7_zend_object_free *object)
 {
     php_driver_numeric *self = PHP5TO7_ZEND_OBJECT_GET(numeric, object);
 
     mpz_clear(self->data.decimal.value);
 
-    zend_object_std_dtor(&self->zval TSRMLS_CC);
+    zend_object_std_dtor(&self->zval);
     PHP5TO7_MAYBE_EFREE(self);
 }
 
-static php5to7_zend_object php_driver_decimal_new(zend_class_entry *ce TSRMLS_DC)
+static php5to7_zend_object php_driver_decimal_new(zend_class_entry *ce)
 {
     php_driver_numeric *self = PHP5TO7_ZEND_OBJECT_ECALLOC(numeric, ce);
 
@@ -674,13 +674,13 @@ static php5to7_zend_object php_driver_decimal_new(zend_class_entry *ce TSRMLS_DC
     PHP5TO7_ZEND_OBJECT_INIT_EX(numeric, decimal, self, ce);
 }
 
-void php_driver_define_Decimal(TSRMLS_D)
+void php_driver_define_Decimal()
 {
     zend_class_entry ce;
 
     INIT_CLASS_ENTRY(ce, PHP_DRIVER_NAMESPACE "\\Decimal", php_driver_decimal_methods);
-    php_driver_decimal_ce = zend_register_internal_class(&ce TSRMLS_CC);
-    zend_class_implements(php_driver_decimal_ce TSRMLS_CC, 2, php_driver_value_ce, php_driver_numeric_ce);
+    php_driver_decimal_ce = zend_register_internal_class(&ce);
+    zend_class_implements(php_driver_decimal_ce, 2, php_driver_value_ce, php_driver_numeric_ce);
     php_driver_decimal_ce->ce_flags |= PHP5TO7_ZEND_ACC_FINAL;
     php_driver_decimal_ce->create_object = php_driver_decimal_new;
 

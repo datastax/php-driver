@@ -28,18 +28,18 @@ php_driver_inet_init(INTERNAL_FUNCTION_PARAMETERS)
   char *string;
   php5to7_size string_len;
 
-  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &string, &string_len) == FAILURE) {
+  if (zend_parse_parameters(ZEND_NUM_ARGS() , "s", &string, &string_len) == FAILURE) {
     return;
   }
 
-  if (getThis() && instanceof_function(Z_OBJCE_P(getThis()), php_driver_inet_ce TSRMLS_CC)) {
+  if (getThis() && instanceof_function(Z_OBJCE_P(getThis()), php_driver_inet_ce )) {
     self = PHP_DRIVER_GET_INET(getThis());
   } else {
     object_init_ex(return_value, php_driver_inet_ce);
     self = PHP_DRIVER_GET_INET(return_value);
   }
 
-  if (!php_driver_parse_ip_address(string, &self->inet TSRMLS_CC)) {
+  if (!php_driver_parse_ip_address(string, &self->inet )) {
     return;
   }
 }
@@ -66,7 +66,7 @@ PHP_METHOD(Inet, __toString)
 /* {{{ Inet::type() */
 PHP_METHOD(Inet, type)
 {
-  php5to7_zval type = php_driver_type_scalar(CASS_VALUE_TYPE_INET TSRMLS_CC);
+  php5to7_zval type = php_driver_type_scalar(CASS_VALUE_TYPE_INET );
   RETURN_ZVAL(PHP5TO7_ZVAL_MAYBE_P(type), 1, 1);
 }
 /* }}} */
@@ -114,12 +114,12 @@ php_driver_inet_gc(
 #else
         zval *object,
 #endif
-        php5to7_zval_gc table, int *n TSRMLS_DC
+        php5to7_zval_gc table, int *n
 )
 {
   *table = NULL;
   *n = 0;
-  return zend_std_get_properties(object TSRMLS_CC);
+  return zend_std_get_properties(object );
 }
 
 static HashTable *
@@ -127,7 +127,7 @@ php_driver_inet_properties(
 #if PHP_MAJOR_VERSION >= 8
         zend_object *object
 #else
-        zval *object TSRMLS_DC
+        zval *object
 #endif
 )
 {
@@ -140,9 +140,9 @@ php_driver_inet_properties(
 #else
   php_driver_inet *self = PHP_DRIVER_GET_INET(object);
 #endif
-  HashTable      *props = zend_std_get_properties(object TSRMLS_CC);
+  HashTable      *props = zend_std_get_properties(object );
 
-  type = php_driver_type_scalar(CASS_VALUE_TYPE_INET TSRMLS_CC);
+  type = php_driver_type_scalar(CASS_VALUE_TYPE_INET );
   PHP5TO7_ZEND_HASH_UPDATE(props, "type", sizeof("type"), PHP5TO7_ZVAL_MAYBE_P(type), sizeof(zval));
 
   php_driver_format_address(self->inet, &string);
@@ -155,7 +155,7 @@ php_driver_inet_properties(
 }
 
 static int
-php_driver_inet_compare(zval *obj1, zval *obj2 TSRMLS_DC)
+php_driver_inet_compare(zval *obj1, zval *obj2 )
 {
 #if PHP_MAJOR_VERSION >= 8
   ZEND_COMPARE_OBJECTS_FALLBACK(obj1, obj2);
@@ -176,7 +176,7 @@ php_driver_inet_compare(zval *obj1, zval *obj2 TSRMLS_DC)
 }
 
 static unsigned
-php_driver_inet_hash_value(zval *obj TSRMLS_DC)
+php_driver_inet_hash_value(zval *obj )
 {
   php_driver_inet *self = PHP_DRIVER_GET_INET(obj);
   return zend_inline_hash_func((const char *) self->inet.address,
@@ -184,16 +184,16 @@ php_driver_inet_hash_value(zval *obj TSRMLS_DC)
 }
 
 static void
-php_driver_inet_free(php5to7_zend_object_free *object TSRMLS_DC)
+php_driver_inet_free(php5to7_zend_object_free *object )
 {
   php_driver_inet *self = PHP5TO7_ZEND_OBJECT_GET(inet, object);
 
-  zend_object_std_dtor(&self->zval TSRMLS_CC);
+  zend_object_std_dtor(&self->zval );
   PHP5TO7_MAYBE_EFREE(self);
 }
 
 static php5to7_zend_object
-php_driver_inet_new(zend_class_entry *ce TSRMLS_DC)
+php_driver_inet_new(zend_class_entry *ce )
 {
   php_driver_inet *self =
       PHP5TO7_ZEND_OBJECT_ECALLOC(inet, ce);
@@ -201,13 +201,13 @@ php_driver_inet_new(zend_class_entry *ce TSRMLS_DC)
   PHP5TO7_ZEND_OBJECT_INIT(inet, self, ce);
 }
 
-void php_driver_define_Inet(TSRMLS_D)
+void php_driver_define_Inet()
 {
   zend_class_entry ce;
 
   INIT_CLASS_ENTRY(ce, PHP_DRIVER_NAMESPACE "\\Inet", php_driver_inet_methods);
-  php_driver_inet_ce = zend_register_internal_class(&ce TSRMLS_CC);
-  zend_class_implements(php_driver_inet_ce TSRMLS_CC, 1, php_driver_value_ce);
+  php_driver_inet_ce = zend_register_internal_class(&ce );
+  zend_class_implements(php_driver_inet_ce , 1, php_driver_value_ce);
   memcpy(&php_driver_inet_handlers, zend_get_std_object_handlers(), sizeof(zend_object_handlers));
   php_driver_inet_handlers.std.get_properties  = php_driver_inet_properties;
 #if PHP_VERSION_ID >= 50400

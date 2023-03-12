@@ -23,7 +23,7 @@ static zend_function_entry WriteTimeoutException_methods[] = {
   PHP_FE_END
 };
 
-void php_driver_define_WriteTimeoutException(TSRMLS_D)
+void php_driver_define_WriteTimeoutException()
 {
   zend_class_entry ce;
 

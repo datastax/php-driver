@@ -16,26 +16,25 @@
 
 #include <php_driver.h>
 #include <php_driver_types.h>
-#include <stdlib.h>
 
 #include "collections.h"
 #include "hash.h"
-#include "math.h"
+#include <math.h>
 #include "types.h"
 
 #define EXPECTING_VALUE(expected)                                   \
   do {                                                              \
-    throw_invalid_argument(object, "argument", expected TSRMLS_CC); \
+    throw_invalid_argument(object, "argument", expected); \
     return 0;                                                       \
   } while (0)
 
 #define INSTANCE_OF(cls) \
-  (Z_TYPE_P(object) == IS_OBJECT && instanceof_function(Z_OBJCE_P(object), cls TSRMLS_CC))
+  (Z_TYPE_P(object) == IS_OBJECT && instanceof_function(Z_OBJCE_P(object), cls))
 
 #define CHECK_ERROR(rc) ASSERT_SUCCESS_BLOCK(rc, result = 0;)
 
 int
-php_driver_validate_object(zval* object, zval* ztype TSRMLS_DC)
+php_driver_validate_object(zval* object, zval* ztype)
 {
   php_driver_type* type;
 
@@ -162,7 +161,7 @@ php_driver_validate_object(zval* object, zval* ztype TSRMLS_DC)
     } else {
       php_driver_map* map       = PHP_DRIVER_GET_MAP(object);
       php_driver_type* map_type = PHP_DRIVER_GET_TYPE(PHP5TO7_ZVAL_MAYBE_P(map->type));
-      if (php_driver_type_compare(map_type, type TSRMLS_CC) != 0) {
+      if (php_driver_type_compare(map_type, type) != 0) {
         return 0;
       }
     }
@@ -174,7 +173,7 @@ php_driver_validate_object(zval* object, zval* ztype TSRMLS_DC)
     } else {
       php_driver_set* set       = PHP_DRIVER_GET_SET(object);
       php_driver_type* set_type = PHP_DRIVER_GET_TYPE(PHP5TO7_ZVAL_MAYBE_P(set->type));
-      if (php_driver_type_compare(set_type, type TSRMLS_CC) != 0) {
+      if (php_driver_type_compare(set_type, type) != 0) {
         return 0;
       }
     }
@@ -186,7 +185,7 @@ php_driver_validate_object(zval* object, zval* ztype TSRMLS_DC)
     } else {
       php_driver_collection* collection = PHP_DRIVER_GET_COLLECTION(object);
       php_driver_type* collection_type  = PHP_DRIVER_GET_TYPE(PHP5TO7_ZVAL_MAYBE_P(collection->type));
-      if (php_driver_type_compare(collection_type, type TSRMLS_CC) != 0) {
+      if (php_driver_type_compare(collection_type, type) != 0) {
         return 0;
       }
     }
@@ -198,7 +197,7 @@ php_driver_validate_object(zval* object, zval* ztype TSRMLS_DC)
     } else {
       php_driver_tuple* tuple     = PHP_DRIVER_GET_TUPLE(object);
       php_driver_type* tuple_type = PHP_DRIVER_GET_TYPE(PHP5TO7_ZVAL_MAYBE_P(tuple->type));
-      if (php_driver_type_compare(tuple_type, type TSRMLS_CC) != 0) {
+      if (php_driver_type_compare(tuple_type, type) != 0) {
         return 0;
       }
     }
@@ -210,7 +209,7 @@ php_driver_validate_object(zval* object, zval* ztype TSRMLS_DC)
     } else {
       php_driver_user_type_value* user_type_value = PHP_DRIVER_GET_USER_TYPE_VALUE(object);
       php_driver_type* user_type                  = PHP_DRIVER_GET_TYPE(PHP5TO7_ZVAL_MAYBE_P(user_type_value->type));
-      if (php_driver_type_compare(user_type, type TSRMLS_CC) != 0) {
+      if (php_driver_type_compare(user_type, type) != 0) {
         return 0;
       }
     }
@@ -224,7 +223,7 @@ php_driver_validate_object(zval* object, zval* ztype TSRMLS_DC)
 }
 
 int
-php_driver_value_type(char* type, CassValueType* value_type TSRMLS_DC)
+php_driver_value_type(char* type, CassValueType* value_type)
 {
   if (strcmp("ascii", type) == 0) {
     *value_type = CASS_VALUE_TYPE_ASCII;
@@ -269,7 +268,7 @@ php_driver_value_type(char* type, CassValueType* value_type TSRMLS_DC)
   } else if (strcmp("inet", type) == 0) {
     *value_type = CASS_VALUE_TYPE_INET;
   } else {
-    zend_throw_exception_ex(php_driver_invalid_argument_exception_ce, 0 TSRMLS_CC,
+    zend_throw_exception_ex(php_driver_invalid_argument_exception_ce, 0,
                             "Unsupported type '%s'", type);
     return 0;
   }
@@ -278,7 +277,7 @@ php_driver_value_type(char* type, CassValueType* value_type TSRMLS_DC)
 }
 
 static int
-php_driver_collection_append(CassCollection* collection, zval* value, CassValueType type TSRMLS_DC)
+php_driver_collection_append(CassCollection* collection, zval* value, CassValueType type)
 {
   int result = 1;
   php_driver_blob* blob;
@@ -379,36 +378,36 @@ php_driver_collection_append(CassCollection* collection, zval* value, CassValueT
     break;
   case CASS_VALUE_TYPE_LIST:
     coll = PHP_DRIVER_GET_COLLECTION(value);
-    if (!php_driver_collection_from_collection(coll, &sub_collection TSRMLS_CC))
+    if (!php_driver_collection_from_collection(coll, &sub_collection))
       return 0;
     CHECK_ERROR(cass_collection_append_collection(collection, sub_collection));
     break;
   case CASS_VALUE_TYPE_MAP:
     map = PHP_DRIVER_GET_MAP(value);
-    if (!php_driver_collection_from_map(map, &sub_collection TSRMLS_CC))
+    if (!php_driver_collection_from_map(map, &sub_collection))
       return 0;
     CHECK_ERROR(cass_collection_append_collection(collection, sub_collection));
     break;
   case CASS_VALUE_TYPE_SET:
     set = PHP_DRIVER_GET_SET(value);
-    if (!php_driver_collection_from_set(set, &sub_collection TSRMLS_CC))
+    if (!php_driver_collection_from_set(set, &sub_collection))
       return 0;
     CHECK_ERROR(cass_collection_append_collection(collection, sub_collection));
     break;
   case CASS_VALUE_TYPE_TUPLE:
     tup = PHP_DRIVER_GET_TUPLE(value);
-    if (!php_driver_tuple_from_tuple(tup, &sub_tuple TSRMLS_CC))
+    if (!php_driver_tuple_from_tuple(tup, &sub_tuple))
       return 0;
     CHECK_ERROR(cass_collection_append_tuple(collection, sub_tuple));
     break;
   case CASS_VALUE_TYPE_UDT:
     user_type_value = PHP_DRIVER_GET_USER_TYPE_VALUE(value);
-    if (!php_driver_user_type_from_user_type_value(user_type_value, &sub_ut TSRMLS_CC))
+    if (!php_driver_user_type_from_user_type_value(user_type_value, &sub_ut))
       return 0;
     CHECK_ERROR(cass_collection_append_user_type(collection, sub_ut));
     break;
   default:
-    zend_throw_exception_ex(php_driver_runtime_exception_ce, 0 TSRMLS_CC, "Unsupported collection type");
+    zend_throw_exception_ex(php_driver_runtime_exception_ce, 0, "Unsupported collection type");
     return 0;
   }
 
@@ -416,7 +415,7 @@ php_driver_collection_append(CassCollection* collection, zval* value, CassValueT
 }
 
 static int
-php_driver_tuple_set(CassTuple* tuple, php5to7_ulong index, zval* value, CassValueType type TSRMLS_DC)
+php_driver_tuple_set(CassTuple* tuple, php5to7_ulong index, zval* value, CassValueType type)
 {
   int result = 1;
   php_driver_blob* blob;
@@ -522,36 +521,36 @@ php_driver_tuple_set(CassTuple* tuple, php5to7_ulong index, zval* value, CassVal
     break;
   case CASS_VALUE_TYPE_LIST:
     coll = PHP_DRIVER_GET_COLLECTION(value);
-    if (!php_driver_collection_from_collection(coll, &sub_collection TSRMLS_CC))
+    if (!php_driver_collection_from_collection(coll, &sub_collection))
       return 0;
     CHECK_ERROR(cass_tuple_set_collection(tuple, index, sub_collection));
     break;
   case CASS_VALUE_TYPE_MAP:
     map = PHP_DRIVER_GET_MAP(value);
-    if (!php_driver_collection_from_map(map, &sub_collection TSRMLS_CC))
+    if (!php_driver_collection_from_map(map, &sub_collection))
       return 0;
     CHECK_ERROR(cass_tuple_set_collection(tuple, index, sub_collection));
     break;
   case CASS_VALUE_TYPE_SET:
     set = PHP_DRIVER_GET_SET(value);
-    if (!php_driver_collection_from_set(set, &sub_collection TSRMLS_CC))
+    if (!php_driver_collection_from_set(set, &sub_collection))
       return 0;
     CHECK_ERROR(cass_tuple_set_collection(tuple, index, sub_collection));
     break;
   case CASS_VALUE_TYPE_TUPLE:
     tup = PHP_DRIVER_GET_TUPLE(value);
-    if (!php_driver_tuple_from_tuple(tup, &sub_tuple TSRMLS_CC))
+    if (!php_driver_tuple_from_tuple(tup, &sub_tuple))
       return 0;
     CHECK_ERROR(cass_tuple_set_tuple(tuple, index, sub_tuple));
     break;
   case CASS_VALUE_TYPE_UDT:
     user_type_value = PHP_DRIVER_GET_USER_TYPE_VALUE(value);
-    if (!php_driver_user_type_from_user_type_value(user_type_value, &sub_ut TSRMLS_CC))
+    if (!php_driver_user_type_from_user_type_value(user_type_value, &sub_ut))
       return 0;
     CHECK_ERROR(cass_tuple_set_user_type(tuple, index, sub_ut));
     break;
   default:
-    zend_throw_exception_ex(php_driver_runtime_exception_ce, 0 TSRMLS_CC, "Unsupported collection type");
+    zend_throw_exception_ex(php_driver_runtime_exception_ce, 0, "Unsupported collection type");
     return 0;
   }
 
@@ -562,7 +561,7 @@ static int
 php_driver_user_type_set(CassUserType* ut,
                          const char* name,
                          zval* value,
-                         CassValueType type TSRMLS_DC)
+                         CassValueType type)
 {
   int result = 1;
   php_driver_blob* blob;
@@ -668,36 +667,36 @@ php_driver_user_type_set(CassUserType* ut,
     break;
   case CASS_VALUE_TYPE_LIST:
     coll = PHP_DRIVER_GET_COLLECTION(value);
-    if (!php_driver_collection_from_collection(coll, &sub_collection TSRMLS_CC))
+    if (!php_driver_collection_from_collection(coll, &sub_collection))
       return 0;
     CHECK_ERROR(cass_user_type_set_collection_by_name(ut, name, sub_collection));
     break;
   case CASS_VALUE_TYPE_MAP:
     map = PHP_DRIVER_GET_MAP(value);
-    if (!php_driver_collection_from_map(map, &sub_collection TSRMLS_CC))
+    if (!php_driver_collection_from_map(map, &sub_collection))
       return 0;
     CHECK_ERROR(cass_user_type_set_collection_by_name(ut, name, sub_collection));
     break;
   case CASS_VALUE_TYPE_SET:
     set = PHP_DRIVER_GET_SET(value);
-    if (!php_driver_collection_from_set(set, &sub_collection TSRMLS_CC))
+    if (!php_driver_collection_from_set(set, &sub_collection))
       return 0;
     CHECK_ERROR(cass_user_type_set_collection_by_name(ut, name, sub_collection));
     break;
   case CASS_VALUE_TYPE_TUPLE:
     tuple = PHP_DRIVER_GET_TUPLE(value);
-    if (!php_driver_tuple_from_tuple(tuple, &sub_tup TSRMLS_CC))
+    if (!php_driver_tuple_from_tuple(tuple, &sub_tup))
       return 0;
     CHECK_ERROR(cass_user_type_set_tuple_by_name(ut, name, sub_tup));
     break;
   case CASS_VALUE_TYPE_UDT:
     user_type_value = PHP_DRIVER_GET_USER_TYPE_VALUE(value);
-    if (!php_driver_user_type_from_user_type_value(user_type_value, &sub_ut TSRMLS_CC))
+    if (!php_driver_user_type_from_user_type_value(user_type_value, &sub_ut))
       return 0;
     CHECK_ERROR(cass_user_type_set_user_type_by_name(ut, name, sub_ut));
     break;
   default:
-    zend_throw_exception_ex(php_driver_runtime_exception_ce, 0 TSRMLS_CC, "Unsupported collection type");
+    zend_throw_exception_ex(php_driver_runtime_exception_ce, 0, "Unsupported collection type");
     return 0;
   }
 
@@ -705,7 +704,7 @@ php_driver_user_type_set(CassUserType* ut,
 }
 
 int
-php_driver_collection_from_set(php_driver_set* set, CassCollection** collection_ptr TSRMLS_DC)
+php_driver_collection_from_set(php_driver_set* set, CassCollection** collection_ptr)
 {
   int result                 = 1;
   CassCollection* collection = NULL;
@@ -727,7 +726,7 @@ php_driver_collection_from_set(php_driver_set* set, CassCollection** collection_
   {
     if (!php_driver_collection_append(collection,
                                       PHP5TO7_ZVAL_MAYBE_P(curr->value),
-                                      value_type->type TSRMLS_CC)) {
+                                      value_type->type)) {
       result = 0;
       break;
     }
@@ -742,7 +741,7 @@ php_driver_collection_from_set(php_driver_set* set, CassCollection** collection_
 }
 
 int
-php_driver_collection_from_collection(php_driver_collection* coll, CassCollection** collection_ptr TSRMLS_DC)
+php_driver_collection_from_collection(php_driver_collection* coll, CassCollection** collection_ptr)
 {
   int result = 1;
   php5to7_zval* current;
@@ -762,7 +761,7 @@ php_driver_collection_from_collection(php_driver_collection* coll, CassCollectio
 
   PHP5TO7_ZEND_HASH_FOREACH_VAL(&coll->values, current)
   {
-    if (!php_driver_collection_append(collection, PHP5TO7_ZVAL_MAYBE_DEREF(current), value_type->type TSRMLS_CC)) {
+    if (!php_driver_collection_append(collection, PHP5TO7_ZVAL_MAYBE_DEREF(current), value_type->type)) {
       result = 0;
       break;
     }
@@ -778,7 +777,7 @@ php_driver_collection_from_collection(php_driver_collection* coll, CassCollectio
 }
 
 int
-php_driver_collection_from_map(php_driver_map* map, CassCollection** collection_ptr TSRMLS_DC)
+php_driver_collection_from_map(php_driver_map* map, CassCollection** collection_ptr)
 {
   int result = 1;
   CassCollection* collection;
@@ -802,13 +801,13 @@ php_driver_collection_from_map(php_driver_map* map, CassCollection** collection_
   {
     if (!php_driver_collection_append(collection,
                                       PHP5TO7_ZVAL_MAYBE_P(curr->key),
-                                      key_type->type TSRMLS_CC)) {
+                                      key_type->type)) {
       result = 0;
       break;
     }
     if (!php_driver_collection_append(collection,
                                       PHP5TO7_ZVAL_MAYBE_P(curr->value),
-                                      value_type->type TSRMLS_CC)) {
+                                      value_type->type)) {
       result = 0;
       break;
     }
@@ -838,13 +837,13 @@ php_driver_tuple_from_tuple(php_driver_tuple* tuple, CassTuple** output)
   {
     php5to7_zval* zsub_type;
     php_driver_type* sub_type;
-    if (!PHP5TO7_ZEND_HASH_INDEX_FIND(&type->data.tuple.types, num_key, zsub_type) || !php_driver_validate_object(PHP5TO7_ZVAL_MAYBE_DEREF(current), PHP5TO7_ZVAL_MAYBE_DEREF(zsub_type) TSRMLS_CC)) {
+    if (!PHP5TO7_ZEND_HASH_INDEX_FIND(&type->data.tuple.types, num_key, zsub_type) || !php_driver_validate_object(PHP5TO7_ZVAL_MAYBE_DEREF(current), PHP5TO7_ZVAL_MAYBE_DEREF(zsub_type))) {
       result = 0;
       break;
     }
     sub_type = PHP_DRIVER_GET_TYPE(PHP5TO7_ZVAL_MAYBE_DEREF(zsub_type));
     if (!php_driver_tuple_set(tup, num_key,
-                              PHP5TO7_ZVAL_MAYBE_DEREF(current), sub_type->type TSRMLS_CC)) {
+                              PHP5TO7_ZVAL_MAYBE_DEREF(current), sub_type->type)) {
       result = 0;
       break;
     }
@@ -861,7 +860,7 @@ php_driver_tuple_from_tuple(php_driver_tuple* tuple, CassTuple** output)
 
 int
 php_driver_user_type_from_user_type_value(php_driver_user_type_value* user_type_value,
-                                          CassUserType** output TSRMLS_DC)
+                                          CassUserType** output)
 {
   int result = 1;
   char* name;
@@ -876,7 +875,7 @@ php_driver_user_type_from_user_type_value(php_driver_user_type_value* user_type_
   {
     php5to7_zval* zsub_type;
     php_driver_type* sub_type;
-    if (!PHP5TO7_ZEND_HASH_FIND(&type->data.udt.types, name, strlen(name) + 1, zsub_type) || !php_driver_validate_object(PHP5TO7_ZVAL_MAYBE_DEREF(current), PHP5TO7_ZVAL_MAYBE_DEREF(zsub_type) TSRMLS_CC)) {
+    if (!PHP5TO7_ZEND_HASH_FIND(&type->data.udt.types, name, strlen(name) + 1, zsub_type) || !php_driver_validate_object(PHP5TO7_ZVAL_MAYBE_DEREF(current), PHP5TO7_ZVAL_MAYBE_DEREF(zsub_type))) {
       result = 0;
       break;
     }
@@ -884,7 +883,7 @@ php_driver_user_type_from_user_type_value(php_driver_user_type_value* user_type_
     if (!php_driver_user_type_set(ut,
                                   name,
                                   PHP5TO7_ZVAL_MAYBE_DEREF(current),
-                                  sub_type->type TSRMLS_CC)) {
+                                  sub_type->type)) {
       result = 0;
       break;
     }

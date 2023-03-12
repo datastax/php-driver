@@ -23,12 +23,12 @@ static zend_function_entry Exception_methods[] = {
   PHP_FE_END
 };
 
-void php_driver_define_Exception(TSRMLS_D)
+void php_driver_define_Exception()
 {
   zend_class_entry ce;
 
   INIT_CLASS_ENTRY(ce, PHP_DRIVER_NAMESPACE "\\Exception", Exception_methods);
-  php_driver_exception_ce = zend_register_internal_class(&ce TSRMLS_CC);
+  php_driver_exception_ce = zend_register_internal_class(&ce );
   php_driver_exception_ce->ce_flags |= ZEND_ACC_INTERFACE;
 }
 END_EXTERN_C()

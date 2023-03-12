@@ -71,7 +71,7 @@ double_compare(cass_double_t d1, cass_double_t d2)
 }
 
 int
-php_driver_value_compare(zval* zvalue1, zval* zvalue2 TSRMLS_DC)
+php_driver_value_compare(zval* zvalue1, zval* zvalue2)
 {
   if (zvalue1 == zvalue2)
     return 0;

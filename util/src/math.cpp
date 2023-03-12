@@ -56,7 +56,7 @@ prepare_string_conversion(char* in, int* pos, int* negative)
 }
 
 int
-php_driver_parse_float(char* in, int in_len, cass_float_t* number TSRMLS_DC)
+php_driver_parse_float(char* in, int in_len, cass_float_t* number )
 {
   char* end;
   errno = 0;
@@ -64,17 +64,17 @@ php_driver_parse_float(char* in, int in_len, cass_float_t* number TSRMLS_DC)
   *number = (cass_float_t) strtof(in, &end);
 
   if (errno == ERANGE) {
-    zend_throw_exception_ex(php_driver_range_exception_ce, 0 TSRMLS_CC, "Value is too small or too big for float: '%s'", in);
+    zend_throw_exception_ex(php_driver_range_exception_ce, 0 , "Value is too small or too big for float: '%s'", in);
     return 0;
   }
 
   if (errno || end == in) {
-    zend_throw_exception_ex(php_driver_invalid_argument_exception_ce, 0 TSRMLS_CC, "Invalid float value: '%s'", in);
+    zend_throw_exception_ex(php_driver_invalid_argument_exception_ce, 0 , "Invalid float value: '%s'", in);
     return 0;
   }
 
   if (end != &in[in_len]) {
-    zend_throw_exception_ex(php_driver_invalid_argument_exception_ce, 0 TSRMLS_CC, "Invalid characters were found in value: '%s'", in);
+    zend_throw_exception_ex(php_driver_invalid_argument_exception_ce, 0 , "Invalid characters were found in value: '%s'", in);
     return 0;
   }
 
@@ -82,7 +82,7 @@ php_driver_parse_float(char* in, int in_len, cass_float_t* number TSRMLS_DC)
 }
 
 int
-php_driver_parse_double(char* in, int in_len, cass_double_t* number TSRMLS_DC)
+php_driver_parse_double(char* in, int in_len, cass_double_t* number )
 {
   char* end;
   errno = 0;
@@ -90,17 +90,17 @@ php_driver_parse_double(char* in, int in_len, cass_double_t* number TSRMLS_DC)
   *number = (cass_double_t) strtod(in, &end);
 
   if (errno == ERANGE) {
-    zend_throw_exception_ex(php_driver_range_exception_ce, 0 TSRMLS_CC, "Value is too small or too big for double: '%s'", in);
+    zend_throw_exception_ex(php_driver_range_exception_ce, 0 , "Value is too small or too big for double: '%s'", in);
     return 0;
   }
 
   if (errno || end == in) {
-    zend_throw_exception_ex(php_driver_invalid_argument_exception_ce, 0 TSRMLS_CC, "Invalid double value: '%s'", in);
+    zend_throw_exception_ex(php_driver_invalid_argument_exception_ce, 0 , "Invalid double value: '%s'", in);
     return 0;
   }
 
   if (end != &in[in_len]) {
-    zend_throw_exception_ex(php_driver_invalid_argument_exception_ce, 0 TSRMLS_CC, "Invalid characters were found in value: '%s'", in);
+    zend_throw_exception_ex(php_driver_invalid_argument_exception_ce, 0 , "Invalid characters were found in value: '%s'", in);
     return 0;
   }
 
@@ -108,7 +108,7 @@ php_driver_parse_double(char* in, int in_len, cass_double_t* number TSRMLS_DC)
 }
 
 int
-php_driver_parse_int(char* in, int in_len, cass_int32_t* number TSRMLS_DC)
+php_driver_parse_int(char* in, int in_len, cass_int32_t* number )
 {
   char* end          = NULL;
   int pos            = 0;
@@ -139,18 +139,18 @@ php_driver_parse_int(char* in, int in_len, cass_int32_t* number TSRMLS_DC)
   }
 
   if (errno == ERANGE) {
-    zend_throw_exception_ex(php_driver_range_exception_ce, 0 TSRMLS_CC,
+    zend_throw_exception_ex(php_driver_range_exception_ce, 0 ,
                             "value must be between %d and %d, %s given", INT_MIN, INT_MAX, in);
     return 0;
   }
 
   if (errno || end == &in[pos]) {
-    zend_throw_exception_ex(php_driver_invalid_argument_exception_ce, 0 TSRMLS_CC, "Invalid integer value: '%s'", in);
+    zend_throw_exception_ex(php_driver_invalid_argument_exception_ce, 0 , "Invalid integer value: '%s'", in);
     return 0;
   }
 
   if (end != &in[in_len]) {
-    zend_throw_exception_ex(php_driver_invalid_argument_exception_ce, 0 TSRMLS_CC, "Invalid characters were found in value: '%s'", in);
+    zend_throw_exception_ex(php_driver_invalid_argument_exception_ce, 0 , "Invalid characters were found in value: '%s'", in);
     return 0;
   }
 
@@ -158,7 +158,7 @@ php_driver_parse_int(char* in, int in_len, cass_int32_t* number TSRMLS_DC)
 }
 
 int
-php_driver_parse_bigint(char* in, int in_len, cass_int64_t* number TSRMLS_DC)
+php_driver_parse_bigint(char* in, int in_len, cass_int64_t* number )
 {
   char* end          = NULL;
   int pos            = 0;
@@ -189,18 +189,18 @@ php_driver_parse_bigint(char* in, int in_len, cass_int64_t* number TSRMLS_DC)
   }
 
   if (errno == ERANGE) {
-    zend_throw_exception_ex(php_driver_range_exception_ce, 0 TSRMLS_CC,
+    zend_throw_exception_ex(php_driver_range_exception_ce, 0 ,
                             "value must be between " LL_FORMAT " and " LL_FORMAT ", %s given", INT64_MIN, INT64_MAX, in);
     return 0;
   }
 
   if (errno || end == &in[pos]) {
-    zend_throw_exception_ex(php_driver_invalid_argument_exception_ce, 0 TSRMLS_CC, "Invalid integer value: '%s'", in);
+    zend_throw_exception_ex(php_driver_invalid_argument_exception_ce, 0 , "Invalid integer value: '%s'", in);
     return 0;
   }
 
   if (end != &in[in_len]) {
-    zend_throw_exception_ex(php_driver_invalid_argument_exception_ce, 0 TSRMLS_CC, "Invalid characters were found in value: '%s'", in);
+    zend_throw_exception_ex(php_driver_invalid_argument_exception_ce, 0 , "Invalid characters were found in value: '%s'", in);
     return 0;
   }
 
@@ -208,7 +208,7 @@ php_driver_parse_bigint(char* in, int in_len, cass_int64_t* number TSRMLS_DC)
 }
 
 int
-php_driver_parse_varint(char* in, int in_len, mpz_t* number TSRMLS_DC)
+php_driver_parse_varint(char* in, int in_len, mpz_t* number )
 {
   int pos      = 0;
   int negative = 0;
@@ -217,7 +217,7 @@ php_driver_parse_varint(char* in, int in_len, mpz_t* number TSRMLS_DC)
   base = prepare_string_conversion(in, &pos, &negative);
 
   if (mpz_set_str(*number, &in[pos], base) == -1) {
-    zend_throw_exception_ex(php_driver_invalid_argument_exception_ce, 0 TSRMLS_CC, "Invalid integer value: '%s'", in);
+    zend_throw_exception_ex(php_driver_invalid_argument_exception_ce, 0 , "Invalid integer value: '%s'", in);
     return 0;
   }
 
@@ -228,7 +228,7 @@ php_driver_parse_varint(char* in, int in_len, mpz_t* number TSRMLS_DC)
 }
 
 int
-php_driver_parse_decimal(char* in, int in_len, mpz_t* number, long* scale TSRMLS_DC)
+php_driver_parse_decimal(char* in, int in_len, mpz_t* number, long* scale )
 {
   /*  start is the index into the char array where the significand starts */
   int start = 0;
@@ -295,7 +295,7 @@ php_driver_parse_decimal(char* in, int in_len, mpz_t* number, long* scale TSRMLS
   /* Hex or binary */
   if (maybe_octal && (in[point + 1] == 'b' || in[point + 1] == 'x')) {
     *scale = 0;
-    return php_driver_parse_varint(in, in_len, number TSRMLS_CC);
+    return php_driver_parse_varint(in, in_len, number );
   }
 
   /*
@@ -308,7 +308,7 @@ php_driver_parse_decimal(char* in, int in_len, mpz_t* number, long* scale TSRMLS
     if (c == '.') {
       /* If dot != -1 then we've seen more than one decimal point. */
       if (dot != -1) {
-        zend_throw_exception_ex(php_driver_invalid_argument_exception_ce, 0 TSRMLS_CC, "Multiple '.' (dots) in the number '%s'", in);
+        zend_throw_exception_ex(php_driver_invalid_argument_exception_ce, 0 , "Multiple '.' (dots) in the number '%s'", in);
         return 0;
       }
 
@@ -322,7 +322,7 @@ php_driver_parse_decimal(char* in, int in_len, mpz_t* number, long* scale TSRMLS
      * exponent and is not a hexadecimal digit.
      */
     else if (!isxdigit(c)) {
-      zend_throw_exception_ex(php_driver_invalid_argument_exception_ce, 0 TSRMLS_CC, "Unrecognized character '%c' at position %d", c, point);
+      zend_throw_exception_ex(php_driver_invalid_argument_exception_ce, 0 , "Unrecognized character '%c' at position %d", c, point);
       return 0;
     }
 
@@ -332,7 +332,7 @@ php_driver_parse_decimal(char* in, int in_len, mpz_t* number, long* scale TSRMLS
   /* Octal number */
   if (maybe_octal && dot == -1) {
     *scale = 0;
-    return php_driver_parse_varint(in, in_len, number TSRMLS_CC);
+    return php_driver_parse_varint(in, in_len, number );
   }
 
   /* Prepend a negative sign if necessary. */
@@ -360,12 +360,12 @@ php_driver_parse_decimal(char* in, int in_len, mpz_t* number, long* scale TSRMLS
   }
 
   if (out_len == 0) {
-    zend_throw_exception_ex(php_driver_invalid_argument_exception_ce, 0 TSRMLS_CC, "No digits seen in value: '%s'", in);
+    zend_throw_exception_ex(php_driver_invalid_argument_exception_ce, 0 , "No digits seen in value: '%s'", in);
     return 0;
   }
 
   if (mpz_set_str(*number, out, 10) == -1) {
-    zend_throw_exception_ex(php_driver_invalid_argument_exception_ce, 0 TSRMLS_CC, "Unable to extract integer part of decimal value: '%s', %s", in, out);
+    zend_throw_exception_ex(php_driver_invalid_argument_exception_ce, 0 , "Unable to extract integer part of decimal value: '%s', %s", in, out);
     efree(out);
     return 0;
   }
@@ -390,12 +390,12 @@ php_driver_parse_decimal(char* in, int in_len, mpz_t* number, long* scale TSRMLS
      * or 'E'.
      */
     if (point >= in_len) {
-      zend_throw_exception_ex(php_driver_invalid_argument_exception_ce, 0 TSRMLS_CC, "No exponent following e or E in value: '%s'", in);
+      zend_throw_exception_ex(php_driver_invalid_argument_exception_ce, 0 , "No exponent following e or E in value: '%s'", in);
       return 0;
     }
 
     if (!sscanf(&in[point], "%d", &diff)) {
-      zend_throw_exception_ex(php_driver_invalid_argument_exception_ce, 0 TSRMLS_CC, "Malformed exponent in value: '%s'", in);
+      zend_throw_exception_ex(php_driver_invalid_argument_exception_ce, 0 , "Malformed exponent in value: '%s'", in);
       return 0;
     }
 

@@ -24,12 +24,12 @@ static zend_function_entry php_driver_retry_policy_methods[] = {
   PHP_FE_END
 };
 
-void php_driver_define_RetryPolicy(TSRMLS_D)
+void php_driver_define_RetryPolicy()
 {
   zend_class_entry ce;
 
   INIT_CLASS_ENTRY(ce, PHP_DRIVER_NAMESPACE "\\RetryPolicy", php_driver_retry_policy_methods);
-  php_driver_retry_policy_ce = zend_register_internal_class(&ce TSRMLS_CC);
+  php_driver_retry_policy_ce = zend_register_internal_class(&ce );
   php_driver_retry_policy_ce->ce_flags |= ZEND_ACC_INTERFACE;
 }
 END_EXTERN_C()

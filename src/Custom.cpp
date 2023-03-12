@@ -24,13 +24,13 @@ static zend_function_entry php_driver_custom_methods[] = {
 };
 
 void
-php_driver_define_Custom(TSRMLS_D)
+php_driver_define_Custom()
 {
   zend_class_entry ce;
 
   INIT_CLASS_ENTRY(ce, PHP_DRIVER_NAMESPACE "\\Custom", php_driver_custom_methods);
-  php_driver_custom_ce = zend_register_internal_class(&ce TSRMLS_CC);
-  zend_class_implements(php_driver_custom_ce TSRMLS_CC, 1, php_driver_value_ce);
+  php_driver_custom_ce = zend_register_internal_class(&ce);
+  zend_class_implements(php_driver_custom_ce, 1, php_driver_value_ce);
   php_driver_custom_ce->ce_flags |= ZEND_ACC_ABSTRACT;
 }
 END_EXTERN_C()

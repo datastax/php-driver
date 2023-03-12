@@ -29,13 +29,13 @@ static void free_result(void *result)
     cass_result_free((CassResult *)result);
 }
 
-static void php_driver_rows_create(php_driver_rows *current, zval *result TSRMLS_DC)
+static void php_driver_rows_create(php_driver_rows *current, zval *result )
 {
     php_driver_rows *rows;
 
     if (PHP5TO7_ZVAL_IS_UNDEF(current->next_rows))
     {
-        if (php_driver_get_result((const CassResult *)current->next_result->data, &current->next_rows TSRMLS_CC) ==
+        if (php_driver_get_result((const CassResult *)current->next_result->data, &current->next_rows ) ==
             FAILURE)
         {
             PHP5TO7_ZVAL_MAYBE_DESTROY(current->next_rows);
@@ -58,7 +58,7 @@ static void php_driver_rows_create(php_driver_rows *current, zval *result TSRMLS
 
 PHP_METHOD(Rows, __construct)
 {
-    zend_throw_exception_ex(php_driver_logic_exception_ce, 0 TSRMLS_CC,
+    zend_throw_exception_ex(php_driver_logic_exception_ce, 0 ,
                             "Instantiation of a " PHP_DRIVER_NAMESPACE "\\Rows objects directly is not supported, "
                             "call " PHP_DRIVER_NAMESPACE "\\Session::execute() or " PHP_DRIVER_NAMESPACE
                             "\\FutureRows::get() instead.");
@@ -154,7 +154,7 @@ PHP_METHOD(Rows, offsetExists)
     zval *offset;
     php_driver_rows *self = NULL;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z", &offset) == FAILURE)
+    if (zend_parse_parameters(ZEND_NUM_ARGS() , "z", &offset) == FAILURE)
         return;
 
     if (Z_TYPE_P(offset) != IS_LONG || Z_LVAL_P(offset) < 0)
@@ -173,7 +173,7 @@ PHP_METHOD(Rows, offsetGet)
     php5to7_zval *value;
     php_driver_rows *self = NULL;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z", &offset) == FAILURE)
+    if (zend_parse_parameters(ZEND_NUM_ARGS() , "z", &offset) == FAILURE)
         return;
 
     if (Z_TYPE_P(offset) != IS_LONG || Z_LVAL_P(offset) < 0)
@@ -193,7 +193,7 @@ PHP_METHOD(Rows, offsetSet)
     if (zend_parse_parameters_none() == FAILURE)
         return;
 
-    zend_throw_exception_ex(php_driver_domain_exception_ce, 0 TSRMLS_CC,
+    zend_throw_exception_ex(php_driver_domain_exception_ce, 0 ,
                             "Cannot overwrite a row at a given offset, rows are immutable.");
     return;
 }
@@ -203,7 +203,7 @@ PHP_METHOD(Rows, offsetUnset)
     if (zend_parse_parameters_none() == FAILURE)
         return;
 
-    zend_throw_exception_ex(php_driver_domain_exception_ce, 0 TSRMLS_CC,
+    zend_throw_exception_ex(php_driver_domain_exception_ce, 0 ,
                             "Cannot delete a row at a given offset, rows are immutable.");
     return;
 }
@@ -230,7 +230,7 @@ PHP_METHOD(Rows, nextPage)
     zval *timeout = NULL;
     php_driver_rows *self = PHP_DRIVER_GET_ROWS(getThis());
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "|z", &timeout) == FAILURE)
+    if (zend_parse_parameters(ZEND_NUM_ARGS() , "|z", &timeout) == FAILURE)
     {
         return;
     }
@@ -242,15 +242,15 @@ PHP_METHOD(Rows, nextPage)
             php_driver_future_rows *future_rows = NULL;
 
             if (!instanceof_function(PHP5TO7_Z_OBJCE_MAYBE_P(self->future_next_page),
-                                     php_driver_future_rows_ce TSRMLS_CC))
+                                     php_driver_future_rows_ce ))
             {
-                zend_throw_exception_ex(php_driver_runtime_exception_ce, 0 TSRMLS_CC, "Unexpected future instance.");
+                zend_throw_exception_ex(php_driver_runtime_exception_ce, 0 , "Unexpected future instance.");
                 return;
             }
 
             future_rows = PHP_DRIVER_GET_FUTURE_ROWS(PHP5TO7_ZVAL_MAYBE_P(self->future_next_page));
 
-            if (php_driver_future_rows_get_result(future_rows, timeout TSRMLS_CC) == FAILURE)
+            if (php_driver_future_rows_get_result(future_rows, timeout ) == FAILURE)
             {
                 return;
             }
@@ -272,12 +272,12 @@ PHP_METHOD(Rows, nextPage)
 
             future = cass_session_execute((CassSession *)self->session->data, (CassStatement *)self->statement->data);
 
-            if (php_driver_future_wait_timed(future, timeout TSRMLS_CC) == FAILURE)
+            if (php_driver_future_wait_timed(future, timeout ) == FAILURE)
             {
                 return;
             }
 
-            if (php_driver_future_is_error(future TSRMLS_CC) == FAILURE)
+            if (php_driver_future_is_error(future ) == FAILURE)
             {
                 return;
             }
@@ -286,7 +286,7 @@ PHP_METHOD(Rows, nextPage)
             if (!result)
             {
                 cass_future_free(future);
-                zend_throw_exception_ex(php_driver_runtime_exception_ce, 0 TSRMLS_CC,
+                zend_throw_exception_ex(php_driver_runtime_exception_ce, 0 ,
                                         "Future doesn't contain a result.");
                 return;
             }
@@ -300,7 +300,7 @@ PHP_METHOD(Rows, nextPage)
     /* Always create a new rows object to avoid creating a linked list of
      * objects.
      */
-    php_driver_rows_create(self, return_value TSRMLS_CC);
+    php_driver_rows_create(self, return_value );
 }
 
 PHP_METHOD(Rows, nextPageAsync)
@@ -325,7 +325,7 @@ PHP_METHOD(Rows, nextPageAsync)
         object_init_ex(PHP5TO7_ZVAL_MAYBE_P(self->future_next_page), php_driver_future_value_ce);
         future_value = PHP_DRIVER_GET_FUTURE_VALUE(PHP5TO7_ZVAL_MAYBE_P(self->future_next_page));
         PHP5TO7_ZVAL_MAYBE_MAKE(future_value->value);
-        php_driver_rows_create(self, PHP5TO7_ZVAL_MAYBE_P(future_value->value) TSRMLS_CC);
+        php_driver_rows_create(self, PHP5TO7_ZVAL_MAYBE_P(future_value->value) );
         RETURN_ZVAL(PHP5TO7_ZVAL_MAYBE_P(self->future_next_page), 1, 0);
     }
 
@@ -469,16 +469,16 @@ static HashTable *php_driver_rows_properties(
 #if PHP_MAJOR_VERSION >= 8
     zend_object *object
 #else
-    zval *object TSRMLS_DC
+    zval *object
 #endif
 )
 {
-    HashTable *props = zend_std_get_properties(object TSRMLS_CC);
+    HashTable *props = zend_std_get_properties(object );
 
     return props;
 }
 
-static int php_driver_rows_compare(zval *obj1, zval *obj2 TSRMLS_DC)
+static int php_driver_rows_compare(zval *obj1, zval *obj2 )
 {
 #if PHP_MAJOR_VERSION >= 8
     ZEND_COMPARE_OBJECTS_FALLBACK(obj1, obj2);
@@ -489,7 +489,7 @@ static int php_driver_rows_compare(zval *obj1, zval *obj2 TSRMLS_DC)
     return Z_OBJ_HANDLE_P(obj1) != Z_OBJ_HANDLE_P(obj1);
 }
 
-static void php_driver_rows_free(php5to7_zend_object_free *object TSRMLS_DC)
+static void php_driver_rows_free(php5to7_zend_object_free *object )
 {
     php_driver_rows *self = PHP5TO7_ZEND_OBJECT_GET(rows, object);
 
@@ -502,11 +502,11 @@ static void php_driver_rows_free(php5to7_zend_object_free *object TSRMLS_DC)
     PHP5TO7_ZVAL_MAYBE_DESTROY(self->next_rows);
     PHP5TO7_ZVAL_MAYBE_DESTROY(self->future_next_page);
 
-    zend_object_std_dtor(&self->zval TSRMLS_CC);
+    zend_object_std_dtor(&self->zval );
     PHP5TO7_MAYBE_EFREE(self);
 }
 
-static php5to7_zend_object php_driver_rows_new(zend_class_entry *ce TSRMLS_DC)
+static php5to7_zend_object php_driver_rows_new(zend_class_entry *ce )
 {
     php_driver_rows *self = PHP5TO7_ZEND_OBJECT_ECALLOC(rows, ce);
 
@@ -521,13 +521,13 @@ static php5to7_zend_object php_driver_rows_new(zend_class_entry *ce TSRMLS_DC)
     PHP5TO7_ZEND_OBJECT_INIT(rows, self, ce);
 }
 
-void php_driver_define_Rows(TSRMLS_D)
+void php_driver_define_Rows()
 {
     zend_class_entry ce;
 
     INIT_CLASS_ENTRY(ce, PHP_DRIVER_NAMESPACE "\\Rows", php_driver_rows_methods);
-    php_driver_rows_ce = zend_register_internal_class(&ce TSRMLS_CC);
-    zend_class_implements(php_driver_rows_ce TSRMLS_CC, 2, zend_ce_iterator, zend_ce_arrayaccess);
+    php_driver_rows_ce = zend_register_internal_class(&ce );
+    zend_class_implements(php_driver_rows_ce , 2, zend_ce_iterator, zend_ce_arrayaccess);
     php_driver_rows_ce->ce_flags |= PHP5TO7_ZEND_ACC_FINAL;
     php_driver_rows_ce->create_object = php_driver_rows_new;
 

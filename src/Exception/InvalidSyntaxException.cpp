@@ -23,7 +23,7 @@ static zend_function_entry InvalidSyntaxException_methods[] = {
   PHP_FE_END
 };
 
-void php_driver_define_InvalidSyntaxException(TSRMLS_D)
+void php_driver_define_InvalidSyntaxException()
 {
   zend_class_entry ce;
 

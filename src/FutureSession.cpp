@@ -29,7 +29,7 @@ PHP_METHOD(FutureSession, get)
   php_driver_session *session = NULL;
   php_driver_future_session *self = NULL;
 
-  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "|z", &timeout) == FAILURE) {
+  if (zend_parse_parameters(ZEND_NUM_ARGS() , "|z", &timeout) == FAILURE) {
     return;
   }
 
@@ -37,7 +37,7 @@ PHP_METHOD(FutureSession, get)
 
   if (self->exception_message) {
     zend_throw_exception_ex(exception_class(self->exception_code),
-                            self->exception_code TSRMLS_CC, "%s", self->exception_message);
+                            self->exception_code , "%s", self->exception_message);
     return;
   }
 
@@ -51,7 +51,7 @@ PHP_METHOD(FutureSession, get)
   session->session = php_driver_add_ref(self->session);
   session->persist = self->persist;
 
-  if (php_driver_future_wait_timed(self->future, timeout TSRMLS_CC) == FAILURE) {
+  if (php_driver_future_wait_timed(self->future, timeout ) == FAILURE) {
     return;
   }
 
@@ -71,11 +71,11 @@ PHP_METHOD(FutureSession, get)
       }
 
       zend_throw_exception_ex(exception_class(self->exception_code),
-                              self->exception_code TSRMLS_CC, "%s", self->exception_message);
+                              self->exception_code , "%s", self->exception_message);
       return;
     }
 
-    zend_throw_exception_ex(exception_class(rc), rc TSRMLS_CC,
+    zend_throw_exception_ex(exception_class(rc), rc ,
                             "%.*s", (int) message_len, message);
     return;
   }
@@ -99,17 +99,17 @@ php_driver_future_session_properties(
 #if PHP_MAJOR_VERSION >= 8
         zend_object *object
 #else
-        zval *object TSRMLS_DC
+        zval *object
 #endif
 )
 {
-  HashTable *props = zend_std_get_properties(object TSRMLS_CC);
+  HashTable *props = zend_std_get_properties(object );
 
   return props;
 }
 
 static int
-php_driver_future_session_compare(zval *obj1, zval *obj2 TSRMLS_DC)
+php_driver_future_session_compare(zval *obj1, zval *obj2 )
 {
 #if PHP_MAJOR_VERSION >= 8
   ZEND_COMPARE_OBJECTS_FALLBACK(obj1, obj2);
@@ -121,7 +121,7 @@ php_driver_future_session_compare(zval *obj1, zval *obj2 TSRMLS_DC)
 }
 
 static void
-php_driver_future_session_free(php5to7_zend_object_free *object TSRMLS_DC)
+php_driver_future_session_free(php5to7_zend_object_free *object )
 {
   php_driver_future_session *self =
       PHP5TO7_ZEND_OBJECT_GET(future_session, object);
@@ -142,12 +142,12 @@ php_driver_future_session_free(php5to7_zend_object_free *object TSRMLS_DC)
 
   PHP5TO7_ZVAL_MAYBE_DESTROY(self->default_session);
 
-  zend_object_std_dtor(&self->zval TSRMLS_CC);
+  zend_object_std_dtor(&self->zval );
   PHP5TO7_MAYBE_EFREE(self);
 }
 
 static php5to7_zend_object
-php_driver_future_session_new(zend_class_entry *ce TSRMLS_DC)
+php_driver_future_session_new(zend_class_entry *ce )
 {
   php_driver_future_session *self
       = PHP5TO7_ZEND_OBJECT_ECALLOC(future_session, ce);
@@ -163,13 +163,13 @@ php_driver_future_session_new(zend_class_entry *ce TSRMLS_DC)
   PHP5TO7_ZEND_OBJECT_INIT(future_session, self, ce);
 }
 
-void php_driver_define_FutureSession(TSRMLS_D)
+void php_driver_define_FutureSession()
 {
   zend_class_entry ce;
 
   INIT_CLASS_ENTRY(ce, PHP_DRIVER_NAMESPACE "\\FutureSession", php_driver_future_session_methods);
-  php_driver_future_session_ce = zend_register_internal_class(&ce TSRMLS_CC);
-  zend_class_implements(php_driver_future_session_ce TSRMLS_CC, 1, php_driver_future_ce);
+  php_driver_future_session_ce = zend_register_internal_class(&ce );
+  zend_class_implements(php_driver_future_session_ce , 1, php_driver_future_ce);
   php_driver_future_session_ce->ce_flags     |= PHP5TO7_ZEND_ACC_FINAL;
   php_driver_future_session_ce->create_object = php_driver_future_session_new;
 

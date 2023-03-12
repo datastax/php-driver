@@ -18,5 +18,5 @@
 #include "php_driver.h"
 
 BEGIN_EXTERN_C()
-php5to7_zval php_driver_table_build_options(CassIterator *iterator TSRMLS_DC);
+php5to7_zval php_driver_table_build_options(CassIterator *iterator );
 END_EXTERN_C()

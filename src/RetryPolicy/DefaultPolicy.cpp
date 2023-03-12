@@ -29,18 +29,18 @@ static zend_function_entry php_driver_retry_policy_default_methods[] = {
 static zend_object_handlers php_driver_retry_policy_default_handlers;
 
 static void
-php_driver_retry_policy_default_free(php5to7_zend_object_free *object TSRMLS_DC)
+php_driver_retry_policy_default_free(php5to7_zend_object_free *object )
 {
   php_driver_retry_policy *self = PHP5TO7_ZEND_OBJECT_GET(retry_policy, object);
 
   cass_retry_policy_free(self->policy);
 
-  zend_object_std_dtor(&self->zval TSRMLS_CC);
+  zend_object_std_dtor(&self->zval );
   PHP5TO7_MAYBE_EFREE(self);
 }
 
 static php5to7_zend_object
-php_driver_retry_policy_default_new(zend_class_entry *ce TSRMLS_DC)
+php_driver_retry_policy_default_new(zend_class_entry *ce )
 {
   php_driver_retry_policy *self = PHP5TO7_ZEND_OBJECT_ECALLOC(retry_policy, ce);
 
@@ -49,13 +49,13 @@ php_driver_retry_policy_default_new(zend_class_entry *ce TSRMLS_DC)
   PHP5TO7_ZEND_OBJECT_INIT_EX(retry_policy, retry_policy_default, self, ce);
 }
 
-void php_driver_define_RetryPolicyDefault(TSRMLS_D)
+void php_driver_define_RetryPolicyDefault()
 {
   zend_class_entry ce;
 
   INIT_CLASS_ENTRY(ce, PHP_DRIVER_NAMESPACE "\\RetryPolicy\\DefaultPolicy", php_driver_retry_policy_default_methods);
-  php_driver_retry_policy_default_ce = zend_register_internal_class(&ce TSRMLS_CC);
-  zend_class_implements(php_driver_retry_policy_default_ce TSRMLS_CC, 1, php_driver_retry_policy_ce);
+  php_driver_retry_policy_default_ce = zend_register_internal_class(&ce );
+  zend_class_implements(php_driver_retry_policy_default_ce , 1, php_driver_retry_policy_ce);
   php_driver_retry_policy_default_ce->ce_flags     |= PHP5TO7_ZEND_ACC_FINAL;
   php_driver_retry_policy_default_ce->create_object = php_driver_retry_policy_default_new;
 

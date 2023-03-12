@@ -25,12 +25,12 @@ static zend_function_entry AuthenticationException_methods[] = {
   PHP_FE_END
 };
 
-void php_driver_define_AuthenticationException(TSRMLS_D)
+void php_driver_define_AuthenticationException()
 {
   zend_class_entry ce;
 
   INIT_CLASS_ENTRY(ce, PHP_DRIVER_NAMESPACE "\\Exception\\AuthenticationException", AuthenticationException_methods);
-  php_driver_authentication_exception_ce = php5to7_zend_register_internal_class_ex(&ce, php_driver_runtime_exception_ce);
+  php_driver_authentication_exception_ce = zend_register_internal_class_ex(&ce, php_driver_runtime_exception_ce);
 }
 
 END_EXTERN_C()

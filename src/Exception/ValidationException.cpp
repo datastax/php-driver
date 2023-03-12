@@ -23,7 +23,7 @@ static zend_function_entry ValidationException_methods[] = {
   PHP_FE_END
 };
 
-void php_driver_define_ValidationException(TSRMLS_D)
+void php_driver_define_ValidationException()
 {
   zend_class_entry ce;
 

@@ -24,7 +24,7 @@ static zend_function_entry ProtocolException_methods[] = {
   PHP_FE_END
 };
 
-void php_driver_define_ProtocolException(TSRMLS_D)
+void php_driver_define_ProtocolException()
 {
   zend_class_entry ce;
 

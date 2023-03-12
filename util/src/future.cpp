@@ -41,7 +41,7 @@ php_driver_future_wait_timed(CassFuture* future, zval* timeout)
   }
 
   if (!cass_future_wait_timed(future, timeout_us)) {
-    zend_throw_exception_ex(php_driver_timeout_exception_ce, 0 TSRMLS_CC,
+    zend_throw_exception_ex(php_driver_timeout_exception_ce, 0,
                             "Future hasn't resolved within %f seconds", timeout_us / 1000000.0);
     return FAILURE;
   }
@@ -50,14 +50,14 @@ php_driver_future_wait_timed(CassFuture* future, zval* timeout)
 }
 
 int
-php_driver_future_is_error(CassFuture* future TSRMLS_DC)
+php_driver_future_is_error(CassFuture* future)
 {
   CassError rc = cass_future_error_code(future);
   if (rc != CASS_OK) {
     const char* message;
     size_t message_len;
     cass_future_error_message(future, &message, &message_len);
-    zend_throw_exception_ex(exception_class(rc), rc TSRMLS_CC,
+    zend_throw_exception_ex(exception_class(rc), rc,
                             "%.*s", (int) message_len, message);
     return FAILURE;
   }

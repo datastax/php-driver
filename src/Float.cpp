@@ -23,7 +23,7 @@ BEGIN_EXTERN_C()
 zend_class_entry *php_driver_float_ce = NULL;
 
 static zend_result
-to_string(zval *result, php_driver_numeric *flt TSRMLS_DC)
+to_string(zval *result, php_driver_numeric *flt )
 {
   char *string;
   spprintf(&string, 0, "%.*F", (int) EG(precision), flt->data.floating.value);
@@ -38,11 +38,11 @@ php_driver_float_init(INTERNAL_FUNCTION_PARAMETERS)
   php_driver_numeric *self;
   zval *value;
 
-  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z", &value) == FAILURE) {
+  if (zend_parse_parameters(ZEND_NUM_ARGS() , "z", &value) == FAILURE) {
     return;
   }
 
-  if (getThis() && instanceof_function(Z_OBJCE_P(getThis()), php_driver_float_ce TSRMLS_CC)) {
+  if (getThis() && instanceof_function(Z_OBJCE_P(getThis()), php_driver_float_ce )) {
     self = PHP_DRIVER_GET_NUMERIC(getThis());
   } else {
     object_init_ex(return_value, php_driver_float_ce);
@@ -55,11 +55,11 @@ php_driver_float_init(INTERNAL_FUNCTION_PARAMETERS)
     self->data.floating.value = (cass_float_t) Z_DVAL_P(value);
   } else if (Z_TYPE_P(value) == IS_STRING) {
     if (!php_driver_parse_float(Z_STRVAL_P(value), Z_STRLEN_P(value),
-                                   &self->data.floating.value TSRMLS_CC)) {
+                                   &self->data.floating.value )) {
       return;
     }
   } else if (Z_TYPE_P(value) == IS_OBJECT &&
-             instanceof_function(Z_OBJCE_P(value), php_driver_float_ce TSRMLS_CC)) {
+             instanceof_function(Z_OBJCE_P(value), php_driver_float_ce )) {
     php_driver_numeric *flt = PHP_DRIVER_GET_NUMERIC(return_value);
     self->data.floating.value = flt->data.floating.value;
   } else {
@@ -80,14 +80,14 @@ PHP_METHOD(Float, __toString)
 {
   php_driver_numeric *self = PHP_DRIVER_GET_NUMERIC(getThis());
 
-  to_string(return_value, self TSRMLS_CC);
+  to_string(return_value, self );
 }
 /* }}} */
 
 /* {{{ Float::type() */
 PHP_METHOD(Float, type)
 {
-  php5to7_zval type = php_driver_type_scalar(CASS_VALUE_TYPE_FLOAT TSRMLS_CC);
+  php5to7_zval type = php_driver_type_scalar(CASS_VALUE_TYPE_FLOAT );
   RETURN_ZVAL(PHP5TO7_ZVAL_MAYBE_P(type), 1, 1);
 }
 /* }}} */
@@ -130,12 +130,12 @@ PHP_METHOD(Float, add)
   zval *num;
   php_driver_numeric *result = NULL;
 
-  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z", &num) == FAILURE) {
+  if (zend_parse_parameters(ZEND_NUM_ARGS() , "z", &num) == FAILURE) {
     return;
   }
 
   if (Z_TYPE_P(num) == IS_OBJECT &&
-      instanceof_function(Z_OBJCE_P(num), php_driver_float_ce TSRMLS_CC)) {
+      instanceof_function(Z_OBJCE_P(num), php_driver_float_ce )) {
     php_driver_numeric *self = PHP_DRIVER_GET_NUMERIC(getThis());
     php_driver_numeric *flt = PHP_DRIVER_GET_NUMERIC(num);
 
@@ -155,12 +155,12 @@ PHP_METHOD(Float, sub)
   zval *num;
   php_driver_numeric *result = NULL;
 
-  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z", &num) == FAILURE) {
+  if (zend_parse_parameters(ZEND_NUM_ARGS() , "z", &num) == FAILURE) {
     return;
   }
 
   if (Z_TYPE_P(num) == IS_OBJECT &&
-      instanceof_function(Z_OBJCE_P(num), php_driver_float_ce TSRMLS_CC)) {
+      instanceof_function(Z_OBJCE_P(num), php_driver_float_ce )) {
     php_driver_numeric *self = PHP_DRIVER_GET_NUMERIC(getThis());
     php_driver_numeric *flt = PHP_DRIVER_GET_NUMERIC(num);
 
@@ -180,12 +180,12 @@ PHP_METHOD(Float, mul)
   zval *num;
   php_driver_numeric *result = NULL;
 
-  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z", &num) == FAILURE) {
+  if (zend_parse_parameters(ZEND_NUM_ARGS() , "z", &num) == FAILURE) {
     return;
   }
 
   if (Z_TYPE_P(num) == IS_OBJECT &&
-      instanceof_function(Z_OBJCE_P(num), php_driver_float_ce TSRMLS_CC)) {
+      instanceof_function(Z_OBJCE_P(num), php_driver_float_ce )) {
     php_driver_numeric *self = PHP_DRIVER_GET_NUMERIC(getThis());
     php_driver_numeric *flt = PHP_DRIVER_GET_NUMERIC(num);
 
@@ -205,12 +205,12 @@ PHP_METHOD(Float, div)
   zval *num;
   php_driver_numeric *result = NULL;
 
-  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z", &num) == FAILURE) {
+  if (zend_parse_parameters(ZEND_NUM_ARGS() , "z", &num) == FAILURE) {
     return;
   }
 
   if (Z_TYPE_P(num) == IS_OBJECT &&
-      instanceof_function(Z_OBJCE_P(num), php_driver_float_ce TSRMLS_CC)) {
+      instanceof_function(Z_OBJCE_P(num), php_driver_float_ce )) {
     php_driver_numeric *self = PHP_DRIVER_GET_NUMERIC(getThis());
     php_driver_numeric *flt = PHP_DRIVER_GET_NUMERIC(num);
 
@@ -218,7 +218,7 @@ PHP_METHOD(Float, div)
     result = PHP_DRIVER_GET_NUMERIC(return_value);
 
     if (flt->data.floating.value == 0) {
-      zend_throw_exception_ex(php_driver_divide_by_zero_exception_ce, 0 TSRMLS_CC, "Cannot divide by zero");
+      zend_throw_exception_ex(php_driver_divide_by_zero_exception_ce, 0 , "Cannot divide by zero");
       return;
     }
 
@@ -235,12 +235,12 @@ PHP_METHOD(Float, mod)
   zval *num;
   php_driver_numeric *result = NULL;
 
-  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z", &num) == FAILURE) {
+  if (zend_parse_parameters(ZEND_NUM_ARGS() , "z", &num) == FAILURE) {
     return;
   }
 
   if (Z_TYPE_P(num) == IS_OBJECT &&
-      instanceof_function(Z_OBJCE_P(num), php_driver_float_ce TSRMLS_CC)) {
+      instanceof_function(Z_OBJCE_P(num), php_driver_float_ce )) {
     php_driver_numeric *self = PHP_DRIVER_GET_NUMERIC(getThis());
     php_driver_numeric *flt = PHP_DRIVER_GET_NUMERIC(num);
 
@@ -248,7 +248,7 @@ PHP_METHOD(Float, mod)
     result = PHP_DRIVER_GET_NUMERIC(return_value);
 
     if (flt->data.floating.value == 0) {
-      zend_throw_exception_ex(php_driver_divide_by_zero_exception_ce, 0 TSRMLS_CC, "Cannot divide by zero");
+      zend_throw_exception_ex(php_driver_divide_by_zero_exception_ce, 0 , "Cannot divide by zero");
       return;
     }
 
@@ -287,7 +287,7 @@ PHP_METHOD(Float, sqrt)
   php_driver_numeric *self = PHP_DRIVER_GET_NUMERIC(getThis());
 
   if (self->data.floating.value < 0) {
-    zend_throw_exception_ex(php_driver_range_exception_ce, 0 TSRMLS_CC,
+    zend_throw_exception_ex(php_driver_range_exception_ce, 0 ,
                             "Cannot take a square root of a negative number");
   }
 
@@ -385,12 +385,12 @@ php_driver_float_gc(
 #else
         zval *object,
 #endif
-        php5to7_zval_gc table, int *n TSRMLS_DC
+        php5to7_zval_gc table, int *n
 )
 {
   *table = NULL;
   *n = 0;
-  return zend_std_get_properties(object TSRMLS_CC);
+  return zend_std_get_properties(object );
 }
 
 static HashTable *
@@ -398,7 +398,7 @@ php_driver_float_properties(
 #if PHP_MAJOR_VERSION >= 8
         zend_object *object
 #else
-        zval *object TSRMLS_DC
+        zval *object
 #endif
 )
 {
@@ -410,13 +410,13 @@ php_driver_float_properties(
 #else
   php_driver_numeric *self = PHP_DRIVER_GET_NUMERIC(object);
 #endif
-  HashTable         *props = zend_std_get_properties(object TSRMLS_CC);
+  HashTable         *props = zend_std_get_properties(object );
 
-  type = php_driver_type_scalar(CASS_VALUE_TYPE_FLOAT TSRMLS_CC);
+  type = php_driver_type_scalar(CASS_VALUE_TYPE_FLOAT );
   PHP5TO7_ZEND_HASH_UPDATE(props, "type", sizeof("type"), PHP5TO7_ZVAL_MAYBE_P(type), sizeof(zval));
 
   PHP5TO7_ZVAL_MAYBE_MAKE(value);
-  to_string(PHP5TO7_ZVAL_MAYBE_P(value), self TSRMLS_CC);
+  to_string(PHP5TO7_ZVAL_MAYBE_P(value), self );
   PHP5TO7_ZEND_HASH_UPDATE(props, "value", sizeof("value"), PHP5TO7_ZVAL_MAYBE_P(value), sizeof(zval));
 
   return props;
@@ -431,7 +431,7 @@ float_to_bits(cass_float_t value) {
 }
 
 static int
-php_driver_float_compare(zval *obj1, zval *obj2 TSRMLS_DC)
+php_driver_float_compare(zval *obj1, zval *obj2 )
 {
 #if PHP_MAJOR_VERSION >= 8
   ZEND_COMPARE_OBJECTS_FALLBACK(obj1, obj2);
@@ -457,7 +457,7 @@ php_driver_float_compare(zval *obj1, zval *obj2 TSRMLS_DC)
 }
 
 static unsigned
-php_driver_float_hash_value(zval *obj TSRMLS_DC)
+php_driver_float_hash_value(zval *obj )
 {
   php_driver_numeric *self = PHP_DRIVER_GET_NUMERIC(obj);
   return float_to_bits(self->data.floating.value);
@@ -471,7 +471,7 @@ static
 #endif
 php_driver_float_cast(
         zend_object *object,
-        zval *retval, int type TSRMLS_DC
+        zval *retval, int type
 )
 {
 #if PHP_MAJOR_VERSION >= 8
@@ -488,7 +488,7 @@ php_driver_float_cast(
       ZVAL_DOUBLE(retval, (double) self->data.floating.value);
       return SUCCESS;
   case IS_STRING:
-      return to_string(retval, self TSRMLS_CC);
+      return to_string(retval, self );
   default:
      return FAILURE;
   }
@@ -497,16 +497,16 @@ php_driver_float_cast(
 }
 
 static void
-php_driver_float_free(php5to7_zend_object_free *object TSRMLS_DC)
+php_driver_float_free(php5to7_zend_object_free *object )
 {
   php_driver_numeric *self = PHP5TO7_ZEND_OBJECT_GET(numeric, object);
 
-  zend_object_std_dtor(&self->zval TSRMLS_CC);
+  zend_object_std_dtor(&self->zval );
   PHP5TO7_MAYBE_EFREE(self);
 }
 
 static php5to7_zend_object
-php_driver_float_new(zend_class_entry *ce TSRMLS_DC)
+php_driver_float_new(zend_class_entry *ce )
 {
   php_driver_numeric *self =
       PHP5TO7_ZEND_OBJECT_ECALLOC(numeric, ce);
@@ -514,13 +514,13 @@ php_driver_float_new(zend_class_entry *ce TSRMLS_DC)
   PHP5TO7_ZEND_OBJECT_INIT_EX(numeric, float, self, ce);
 }
 
-void php_driver_define_Float(TSRMLS_D)
+void php_driver_define_Float()
 {
   zend_class_entry ce;
 
   INIT_CLASS_ENTRY(ce, PHP_DRIVER_NAMESPACE "\\Float", php_driver_float_methods);
-  php_driver_float_ce = zend_register_internal_class(&ce TSRMLS_CC);
-  zend_class_implements(php_driver_float_ce TSRMLS_CC, 2, php_driver_value_ce, php_driver_numeric_ce);
+  php_driver_float_ce = zend_register_internal_class(&ce );
+  zend_class_implements(php_driver_float_ce , 2, php_driver_value_ce, php_driver_numeric_ce);
   php_driver_float_ce->ce_flags     |= PHP5TO7_ZEND_ACC_FINAL;
   php_driver_float_ce->create_object = php_driver_float_new;
 

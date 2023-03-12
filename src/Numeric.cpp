@@ -40,12 +40,12 @@ static zend_function_entry php_driver_numeric_methods[] = {
 };
 
 void
-php_driver_define_Numeric(TSRMLS_D)
+php_driver_define_Numeric()
 {
   zend_class_entry ce;
 
   INIT_CLASS_ENTRY(ce, PHP_DRIVER_NAMESPACE "\\Numeric", php_driver_numeric_methods);
-  php_driver_numeric_ce = zend_register_internal_class(&ce TSRMLS_CC);
+  php_driver_numeric_ce = zend_register_internal_class(&ce );
   php_driver_numeric_ce->ce_flags |= ZEND_ACC_INTERFACE;
 }
 END_EXTERN_C()

@@ -45,7 +45,7 @@ PHP_METHOD(DefaultCluster, connect)
   php_driver_psession *psession;
 
 
-  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "|sz", &keyspace, &keyspace_len, &timeout) == FAILURE) {
+  if (zend_parse_parameters(ZEND_NUM_ARGS() , "|sz", &keyspace, &keyspace_len, &timeout) == FAILURE) {
     return;
   }
 
@@ -111,7 +111,7 @@ PHP_METHOD(DefaultCluster, connect)
     }
   }
 
-  if (php_driver_future_wait_timed(future, timeout TSRMLS_CC) == FAILURE) {
+  if (php_driver_future_wait_timed(future, timeout ) == FAILURE) {
     if (session->persist) {
       efree(hash_key);
     } else {
@@ -121,7 +121,7 @@ PHP_METHOD(DefaultCluster, connect)
     return;
   }
 
-  if (php_driver_future_is_error(future TSRMLS_CC) == FAILURE) {
+  if (php_driver_future_is_error(future ) == FAILURE) {
     if (session->persist) {
       (void) PHP5TO7_ZEND_HASH_DEL(&EG(persistent_list), hash_key, hash_key_len + 1);
       efree(hash_key);
@@ -145,7 +145,7 @@ PHP_METHOD(DefaultCluster, connectAsync)
   php_driver_cluster *self = NULL;
   php_driver_future_session *future = NULL;
 
-  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "|s", &keyspace, &keyspace_len) == FAILURE) {
+  if (zend_parse_parameters(ZEND_NUM_ARGS() , "|s", &keyspace, &keyspace_len) == FAILURE) {
     return;
   }
 
@@ -230,17 +230,17 @@ php_driver_default_cluster_properties(
 #if PHP_MAJOR_VERSION >= 8
         zend_object *object
 #else
-        zval *object TSRMLS_DC
+        zval *object
 #endif
 )
 {
-  HashTable *props = zend_std_get_properties(object TSRMLS_CC);
+  HashTable *props = zend_std_get_properties(object );
 
   return props;
 }
 
 static int
-php_driver_default_cluster_compare(zval *obj1, zval *obj2 TSRMLS_DC)
+php_driver_default_cluster_compare(zval *obj1, zval *obj2 )
 {
 #if PHP_MAJOR_VERSION >= 8
   ZEND_COMPARE_OBJECTS_FALLBACK(obj1, obj2);
@@ -252,7 +252,7 @@ php_driver_default_cluster_compare(zval *obj1, zval *obj2 TSRMLS_DC)
 }
 
 static void
-php_driver_default_cluster_free(php5to7_zend_object_free *object TSRMLS_DC)
+php_driver_default_cluster_free(php5to7_zend_object_free *object )
 {
   php_driver_cluster *self = PHP5TO7_ZEND_OBJECT_GET(cluster, object);
 
@@ -266,12 +266,12 @@ php_driver_default_cluster_free(php5to7_zend_object_free *object TSRMLS_DC)
 
   PHP5TO7_ZVAL_MAYBE_DESTROY(self->default_timeout);
 
-  zend_object_std_dtor(&self->zval TSRMLS_CC);
+  zend_object_std_dtor(&self->zval );
   PHP5TO7_MAYBE_EFREE(self);
 }
 
 static php5to7_zend_object
-php_driver_default_cluster_new(zend_class_entry *ce TSRMLS_DC)
+php_driver_default_cluster_new(zend_class_entry *ce )
 {
   php_driver_cluster *self =
       PHP5TO7_ZEND_OBJECT_ECALLOC(cluster, ce);
@@ -292,8 +292,8 @@ void php_driver_define_DefaultCluster()
   zend_class_entry ce;
 
   INIT_CLASS_ENTRY(ce, PHP_DRIVER_NAMESPACE "\\DefaultCluster", php_driver_default_cluster_methods);
-  php_driver_default_cluster_ce = zend_register_internal_class(&ce TSRMLS_CC);
-  zend_class_implements(php_driver_default_cluster_ce TSRMLS_CC, 1, php_driver_cluster_ce);
+  php_driver_default_cluster_ce = zend_register_internal_class(&ce );
+  zend_class_implements(php_driver_default_cluster_ce , 1, php_driver_cluster_ce);
   php_driver_default_cluster_ce->ce_flags     |= PHP5TO7_ZEND_ACC_FINAL;
   php_driver_default_cluster_ce->create_object = php_driver_default_cluster_new;
 

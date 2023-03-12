@@ -24,7 +24,7 @@ static zend_function_entry OverloadedException_methods[] = {
   PHP_FE_END
 };
 
-void php_driver_define_OverloadedException(TSRMLS_D)
+void php_driver_define_OverloadedException()
 {
   zend_class_entry ce;
 

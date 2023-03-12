@@ -23,7 +23,7 @@ static zend_function_entry TruncateException_methods[] = {
   PHP_FE_END
 };
 
-void php_driver_define_TruncateException(TSRMLS_D)
+void php_driver_define_TruncateException()
 {
   zend_class_entry ce;
 

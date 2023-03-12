@@ -38,7 +38,7 @@ void php_driver_define_Cluster()
   zend_class_entry ce;
 
   INIT_CLASS_ENTRY(ce, PHP_DRIVER_NAMESPACE "\\Cluster", php_driver_cluster_methods);
-  php_driver_cluster_ce = zend_register_internal_class(&ce TSRMLS_CC);
+  php_driver_cluster_ce = zend_register_internal_class(&ce );
   php_driver_cluster_ce->ce_flags |= ZEND_ACC_INTERFACE;
 }
 

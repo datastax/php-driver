@@ -39,7 +39,7 @@ static zend_function_entry core_methods[] = {
 };
 
 void
-php_driver_define_Core(TSRMLS_D)
+php_driver_define_Core()
 {
   zend_class_entry ce;
   char buf[64];

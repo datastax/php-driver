@@ -29,14 +29,14 @@ BEGIN_EXTERN_C()
 zend_class_entry *php_driver_default_table_ce = NULL;
 
 static void
-populate_partition_key(php_driver_table *table, zval *result TSRMLS_DC)
+populate_partition_key(php_driver_table *table, zval *result )
 {
   size_t i, count = cass_table_meta_partition_key_count(table->meta);
   for (i = 0; i < count; ++i) {
     const CassColumnMeta *column =
       cass_table_meta_partition_key(table->meta, i);
     if (column) {
-      php5to7_zval zcolumn = php_driver_create_column(table->schema, column TSRMLS_CC);
+      php5to7_zval zcolumn = php_driver_create_column(table->schema, column );
       if (!PHP5TO7_ZVAL_IS_UNDEF(zcolumn)) {
         add_next_index_zval(result, PHP5TO7_ZVAL_MAYBE_P(zcolumn));
       }
@@ -45,14 +45,14 @@ populate_partition_key(php_driver_table *table, zval *result TSRMLS_DC)
 }
 
 static void
-populate_clustering_key(php_driver_table *table, zval *result TSRMLS_DC)
+populate_clustering_key(php_driver_table *table, zval *result )
 {
   size_t i, count = cass_table_meta_clustering_key_count(table->meta);
   for (i = 0; i < count; ++i) {
     const CassColumnMeta *column =
         cass_table_meta_clustering_key(table->meta, i);
     if (column) {
-      php5to7_zval zcolumn = php_driver_create_column(table->schema, column TSRMLS_CC);
+      php5to7_zval zcolumn = php_driver_create_column(table->schema, column );
       if (!PHP5TO7_ZVAL_IS_UNDEF(zcolumn)) {
         add_next_index_zval(result, PHP5TO7_ZVAL_MAYBE_P(zcolumn));
       }
@@ -62,7 +62,7 @@ populate_clustering_key(php_driver_table *table, zval *result TSRMLS_DC)
 
 php5to7_zval
 php_driver_create_table(php_driver_ref* schema,
-                           const CassTableMeta *meta TSRMLS_DC)
+                           const CassTableMeta *meta )
 {
   php5to7_zval result;
   php_driver_table *table;
@@ -86,20 +86,20 @@ php_driver_create_table(php_driver_ref* schema,
 }
 
 void
-php_driver_default_table_build_options(php_driver_table *table TSRMLS_DC) {
+php_driver_default_table_build_options(php_driver_table *table ) {
   CassIterator *iterator =
       cass_iterator_fields_from_table_meta(table->meta);
-  table->options = php_driver_table_build_options(iterator TSRMLS_CC);
+  table->options = php_driver_table_build_options(iterator );
   cass_iterator_free(iterator);
 }
 
 void
 php_driver_table_get_option(php_driver_table *table,
                                const char *name,
-                               zval *result TSRMLS_DC) {
+                               zval *result ) {
   zval *zvalue;
   if (PHP5TO7_ZVAL_IS_UNDEF(table->options)) {
-    php_driver_default_table_build_options(table TSRMLS_CC);
+    php_driver_default_table_build_options(table );
   }
 
   if (!PHP5TO7_ZEND_HASH_FIND(PHP5TO7_Z_ARRVAL_MAYBE_P(table->options),
@@ -130,14 +130,14 @@ PHP_METHOD(DefaultTable, option)
   php_driver_table *self;
   php5to7_zval* result;
 
-  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s",
+  if (zend_parse_parameters(ZEND_NUM_ARGS() , "s",
                             &name, &name_len) == FAILURE) {
     return;
   }
 
   self = PHP_DRIVER_GET_TABLE(getThis());
   if (PHP5TO7_ZVAL_IS_UNDEF(self->options)) {
-    php_driver_default_table_build_options(self TSRMLS_CC);
+    php_driver_default_table_build_options(self );
   }
 
   if (PHP5TO7_ZEND_HASH_FIND(PHP5TO7_Z_ARRVAL_MAYBE_P(self->options),
@@ -157,7 +157,7 @@ PHP_METHOD(DefaultTable, options)
 
   self = PHP_DRIVER_GET_TABLE(getThis());
   if (PHP5TO7_ZVAL_IS_UNDEF(self->options)) {
-    php_driver_default_table_build_options(self TSRMLS_CC);
+    php_driver_default_table_build_options(self );
   }
 
   RETURN_ZVAL(PHP5TO7_ZVAL_MAYBE_P(self->options), 1, 0);
@@ -172,7 +172,7 @@ PHP_METHOD(DefaultTable, comment)
 
   self = PHP_DRIVER_GET_TABLE(getThis());
 
-  php_driver_table_get_option(self, "comment", return_value TSRMLS_CC);
+  php_driver_table_get_option(self, "comment", return_value );
 }
 
 PHP_METHOD(DefaultTable, readRepairChance)
@@ -184,7 +184,7 @@ PHP_METHOD(DefaultTable, readRepairChance)
 
   self = PHP_DRIVER_GET_TABLE(getThis());
 
-  php_driver_table_get_option(self, "read_repair_chance", return_value TSRMLS_CC);
+  php_driver_table_get_option(self, "read_repair_chance", return_value );
 }
 
 PHP_METHOD(DefaultTable, localReadRepairChance)
@@ -196,7 +196,7 @@ PHP_METHOD(DefaultTable, localReadRepairChance)
 
   self = PHP_DRIVER_GET_TABLE(getThis());
 
-  php_driver_table_get_option(self, "local_read_repair_chance", return_value TSRMLS_CC);
+  php_driver_table_get_option(self, "local_read_repair_chance", return_value );
 }
 
 PHP_METHOD(DefaultTable, gcGraceSeconds)
@@ -208,7 +208,7 @@ PHP_METHOD(DefaultTable, gcGraceSeconds)
 
   self = PHP_DRIVER_GET_TABLE(getThis());
 
-  php_driver_table_get_option(self, "gc_grace_seconds", return_value TSRMLS_CC);
+  php_driver_table_get_option(self, "gc_grace_seconds", return_value );
 }
 
 PHP_METHOD(DefaultTable, caching)
@@ -220,7 +220,7 @@ PHP_METHOD(DefaultTable, caching)
 
   self = PHP_DRIVER_GET_TABLE(getThis());
 
-  php_driver_table_get_option(self, "caching", return_value TSRMLS_CC);
+  php_driver_table_get_option(self, "caching", return_value );
 }
 
 PHP_METHOD(DefaultTable, bloomFilterFPChance)
@@ -232,7 +232,7 @@ PHP_METHOD(DefaultTable, bloomFilterFPChance)
 
   self = PHP_DRIVER_GET_TABLE(getThis());
 
-  php_driver_table_get_option(self, "bloom_filter_fp_chance", return_value TSRMLS_CC);
+  php_driver_table_get_option(self, "bloom_filter_fp_chance", return_value );
 }
 
 PHP_METHOD(DefaultTable, memtableFlushPeriodMs)
@@ -244,7 +244,7 @@ PHP_METHOD(DefaultTable, memtableFlushPeriodMs)
 
   self = PHP_DRIVER_GET_TABLE(getThis());
 
-  php_driver_table_get_option(self, "memtable_flush_period_in_ms", return_value TSRMLS_CC);
+  php_driver_table_get_option(self, "memtable_flush_period_in_ms", return_value );
 }
 
 PHP_METHOD(DefaultTable, defaultTTL)
@@ -256,7 +256,7 @@ PHP_METHOD(DefaultTable, defaultTTL)
 
   self = PHP_DRIVER_GET_TABLE(getThis());
 
-  php_driver_table_get_option(self, "default_time_to_live", return_value TSRMLS_CC);
+  php_driver_table_get_option(self, "default_time_to_live", return_value );
 }
 
 PHP_METHOD(DefaultTable, speculativeRetry)
@@ -268,7 +268,7 @@ PHP_METHOD(DefaultTable, speculativeRetry)
 
   self = PHP_DRIVER_GET_TABLE(getThis());
 
-  php_driver_table_get_option(self, "speculative_retry", return_value TSRMLS_CC);
+  php_driver_table_get_option(self, "speculative_retry", return_value );
 }
 
 PHP_METHOD(DefaultTable, indexInterval)
@@ -280,7 +280,7 @@ PHP_METHOD(DefaultTable, indexInterval)
 
   self = PHP_DRIVER_GET_TABLE(getThis());
 
-  php_driver_table_get_option(self, "index_interval", return_value TSRMLS_CC);
+  php_driver_table_get_option(self, "index_interval", return_value );
 }
 
 PHP_METHOD(DefaultTable, compactionStrategyClassName)
@@ -292,7 +292,7 @@ PHP_METHOD(DefaultTable, compactionStrategyClassName)
 
   self = PHP_DRIVER_GET_TABLE(getThis());
 
-  php_driver_table_get_option(self, "compaction_strategy_class", return_value TSRMLS_CC);
+  php_driver_table_get_option(self, "compaction_strategy_class", return_value );
 }
 
 PHP_METHOD(DefaultTable, compactionStrategyOptions)
@@ -304,7 +304,7 @@ PHP_METHOD(DefaultTable, compactionStrategyOptions)
 
   self = PHP_DRIVER_GET_TABLE(getThis());
 
-  php_driver_table_get_option(self, "compaction_strategy_options", return_value TSRMLS_CC);
+  php_driver_table_get_option(self, "compaction_strategy_options", return_value );
 }
 
 PHP_METHOD(DefaultTable, compressionParameters)
@@ -316,7 +316,7 @@ PHP_METHOD(DefaultTable, compressionParameters)
 
   self = PHP_DRIVER_GET_TABLE(getThis());
 
-  php_driver_table_get_option(self, "compression_parameters", return_value TSRMLS_CC);
+  php_driver_table_get_option(self, "compression_parameters", return_value );
 }
 
 PHP_METHOD(DefaultTable, populateIOCacheOnFlush)
@@ -328,7 +328,7 @@ PHP_METHOD(DefaultTable, populateIOCacheOnFlush)
 
   self = PHP_DRIVER_GET_TABLE(getThis());
 
-  php_driver_table_get_option(self, "populate_io_cache_on_flush", return_value TSRMLS_CC);
+  php_driver_table_get_option(self, "populate_io_cache_on_flush", return_value );
 }
 
 PHP_METHOD(DefaultTable, replicateOnWrite)
@@ -340,7 +340,7 @@ PHP_METHOD(DefaultTable, replicateOnWrite)
 
   self = PHP_DRIVER_GET_TABLE(getThis());
 
-  php_driver_table_get_option(self, "replicate_on_write", return_value TSRMLS_CC);
+  php_driver_table_get_option(self, "replicate_on_write", return_value );
 }
 
 PHP_METHOD(DefaultTable, maxIndexInterval)
@@ -352,7 +352,7 @@ PHP_METHOD(DefaultTable, maxIndexInterval)
 
   self = PHP_DRIVER_GET_TABLE(getThis());
 
-  php_driver_table_get_option(self, "max_index_interval", return_value TSRMLS_CC);
+  php_driver_table_get_option(self, "max_index_interval", return_value );
 }
 
 PHP_METHOD(DefaultTable, minIndexInterval)
@@ -364,7 +364,7 @@ PHP_METHOD(DefaultTable, minIndexInterval)
 
   self = PHP_DRIVER_GET_TABLE(getThis());
 
-  php_driver_table_get_option(self, "min_index_interval", return_value TSRMLS_CC);
+  php_driver_table_get_option(self, "min_index_interval", return_value );
 }
 
 
@@ -376,7 +376,7 @@ PHP_METHOD(DefaultTable, column)
   php5to7_zval column;
   const CassColumnMeta *meta;
 
-  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &name, &name_len) == FAILURE) {
+  if (zend_parse_parameters(ZEND_NUM_ARGS() , "s", &name, &name_len) == FAILURE) {
     return;
   }
 
@@ -386,7 +386,7 @@ PHP_METHOD(DefaultTable, column)
     RETURN_FALSE;
   }
 
-  column = php_driver_create_column(self->schema, meta TSRMLS_CC);
+  column = php_driver_create_column(self->schema, meta );
 
   if (PHP5TO7_ZVAL_IS_UNDEF(column)) {
     return;
@@ -413,7 +413,7 @@ PHP_METHOD(DefaultTable, columns)
     php_driver_column *column;
 
     meta    = cass_iterator_get_column_meta(iterator);
-    zcolumn = php_driver_create_column(self->schema, meta TSRMLS_CC);
+    zcolumn = php_driver_create_column(self->schema, meta );
 
     if (!PHP5TO7_ZVAL_IS_UNDEF(zcolumn)) {
       column = PHP_DRIVER_GET_COLUMN(PHP5TO7_ZVAL_MAYBE_P(zcolumn));
@@ -443,7 +443,7 @@ PHP_METHOD(DefaultTable, partitionKey)
   if (PHP5TO7_ZVAL_IS_UNDEF(self->partition_key)) {
     PHP5TO7_ZVAL_MAYBE_MAKE(self->partition_key);
     array_init(PHP5TO7_ZVAL_MAYBE_P(self->partition_key));
-    populate_partition_key(self, PHP5TO7_ZVAL_MAYBE_P(self->partition_key) TSRMLS_CC);
+    populate_partition_key(self, PHP5TO7_ZVAL_MAYBE_P(self->partition_key) );
   }
 
   RETURN_ZVAL(PHP5TO7_ZVAL_MAYBE_P(self->partition_key), 1, 0);
@@ -460,8 +460,8 @@ PHP_METHOD(DefaultTable, primaryKey)
   if (PHP5TO7_ZVAL_IS_UNDEF(self->primary_key)) {
     PHP5TO7_ZVAL_MAYBE_MAKE(self->primary_key);
     array_init(PHP5TO7_ZVAL_MAYBE_P(self->primary_key));
-    populate_partition_key(self, PHP5TO7_ZVAL_MAYBE_P(self->primary_key) TSRMLS_CC);
-    populate_clustering_key(self, PHP5TO7_ZVAL_MAYBE_P(self->primary_key) TSRMLS_CC);
+    populate_partition_key(self, PHP5TO7_ZVAL_MAYBE_P(self->primary_key) );
+    populate_clustering_key(self, PHP5TO7_ZVAL_MAYBE_P(self->primary_key) );
   }
 
   RETURN_ZVAL(PHP5TO7_ZVAL_MAYBE_P(self->primary_key), 1, 0);
@@ -478,7 +478,7 @@ PHP_METHOD(DefaultTable, clusteringKey)
   if (PHP5TO7_ZVAL_IS_UNDEF(self->clustering_key)) {
     PHP5TO7_ZVAL_MAYBE_MAKE(self->clustering_key);
     array_init(PHP5TO7_ZVAL_MAYBE_P(self->clustering_key));
-    populate_clustering_key(self, PHP5TO7_ZVAL_MAYBE_P(self->clustering_key) TSRMLS_CC);
+    populate_clustering_key(self, PHP5TO7_ZVAL_MAYBE_P(self->clustering_key) );
   }
 
   RETURN_ZVAL(PHP5TO7_ZVAL_MAYBE_P(self->clustering_key), 1, 0);
@@ -524,7 +524,7 @@ PHP_METHOD(DefaultTable, index)
   php5to7_zval index;
   const CassIndexMeta *meta;
 
-  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &name, &name_len) == FAILURE) {
+  if (zend_parse_parameters(ZEND_NUM_ARGS() , "s", &name, &name_len) == FAILURE) {
     return;
   }
 
@@ -534,7 +534,7 @@ PHP_METHOD(DefaultTable, index)
     RETURN_FALSE;
   }
 
-  index = php_driver_create_index(self->schema, meta TSRMLS_CC);
+  index = php_driver_create_index(self->schema, meta );
   if (PHP5TO7_ZVAL_IS_UNDEF(index)) {
     return;
   }
@@ -559,7 +559,7 @@ PHP_METHOD(DefaultTable, indexes)
     php5to7_zval zindex;
 
     meta   = cass_iterator_get_index_meta(iterator);
-    zindex = php_driver_create_index(self->schema, meta TSRMLS_CC);
+    zindex = php_driver_create_index(self->schema, meta );
 
     if (!PHP5TO7_ZVAL_IS_UNDEF(zindex)) {
       php_driver_index *index = PHP_DRIVER_GET_INDEX(PHP5TO7_ZVAL_MAYBE_P(zindex));
@@ -586,7 +586,7 @@ PHP_METHOD(DefaultTable, materializedView)
   php5to7_zval zview;
   const CassMaterializedViewMeta *meta;
 
-  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &name, &name_len) == FAILURE) {
+  if (zend_parse_parameters(ZEND_NUM_ARGS() , "s", &name, &name_len) == FAILURE) {
     return;
   }
 
@@ -597,7 +597,7 @@ PHP_METHOD(DefaultTable, materializedView)
     RETURN_FALSE;
   }
 
-  zview = php_driver_create_materialized_view(self->schema, meta TSRMLS_CC);
+  zview = php_driver_create_materialized_view(self->schema, meta );
   if (PHP5TO7_ZVAL_IS_UNDEF(zview)) {
     return;
   }
@@ -623,7 +623,7 @@ PHP_METHOD(DefaultTable, materializedViews)
     php_driver_materialized_view *view;
 
     meta  = cass_iterator_get_materialized_view_meta(iterator);
-    zview = php_driver_create_materialized_view(self->schema, meta TSRMLS_CC);
+    zview = php_driver_create_materialized_view(self->schema, meta );
 
     if (!PHP5TO7_ZVAL_IS_UNDEF(zview)) {
       view = PHP_DRIVER_GET_MATERIALIZED_VIEW(PHP5TO7_ZVAL_MAYBE_P(zview));
@@ -692,12 +692,12 @@ php_driver_type_default_table_gc(
 #else
         zval *object,
 #endif
-        php5to7_zval_gc table, int *n TSRMLS_DC
+        php5to7_zval_gc table, int *n
 )
 {
   *table = NULL;
   *n = 0;
-  return zend_std_get_properties(object TSRMLS_CC);
+  return zend_std_get_properties(object );
 }
 
 static HashTable *
@@ -705,17 +705,17 @@ php_driver_default_table_properties(
 #if PHP_MAJOR_VERSION >= 8
         zend_object *object
 #else
-        zval *object TSRMLS_DC
+        zval *object
 #endif
 )
 {
-  HashTable *props = zend_std_get_properties(object TSRMLS_CC);
+  HashTable *props = zend_std_get_properties(object );
 
   return props;
 }
 
 static int
-php_driver_default_table_compare(zval *obj1, zval *obj2 TSRMLS_DC)
+php_driver_default_table_compare(zval *obj1, zval *obj2 )
 {
 #if PHP_MAJOR_VERSION >= 8
   ZEND_COMPARE_OBJECTS_FALLBACK(obj1, obj2);
@@ -727,7 +727,7 @@ php_driver_default_table_compare(zval *obj1, zval *obj2 TSRMLS_DC)
 }
 
 static void
-php_driver_default_table_free(php5to7_zend_object_free *object TSRMLS_DC)
+php_driver_default_table_free(php5to7_zend_object_free *object )
 {
   php_driver_table *self = PHP5TO7_ZEND_OBJECT_GET(table, object);
 
@@ -744,12 +744,12 @@ php_driver_default_table_free(php5to7_zend_object_free *object TSRMLS_DC)
   }
   self->meta = NULL;
 
-  zend_object_std_dtor(&self->zval TSRMLS_CC);
+  zend_object_std_dtor(&self->zval );
   PHP5TO7_MAYBE_EFREE(self);
 }
 
 static php5to7_zend_object
-php_driver_default_table_new(zend_class_entry *ce TSRMLS_DC)
+php_driver_default_table_new(zend_class_entry *ce )
 {
   php_driver_table *self =
       PHP5TO7_ZEND_OBJECT_ECALLOC(table, ce);
@@ -767,13 +767,13 @@ php_driver_default_table_new(zend_class_entry *ce TSRMLS_DC)
   PHP5TO7_ZEND_OBJECT_INIT_EX(table, default_table, self, ce);
 }
 
-void php_driver_define_DefaultTable(TSRMLS_D)
+void php_driver_define_DefaultTable()
 {
   zend_class_entry ce;
 
   INIT_CLASS_ENTRY(ce, PHP_DRIVER_NAMESPACE "\\DefaultTable", php_driver_default_table_methods);
-  php_driver_default_table_ce = zend_register_internal_class(&ce TSRMLS_CC);
-  zend_class_implements(php_driver_default_table_ce TSRMLS_CC, 1, php_driver_table_ce);
+  php_driver_default_table_ce = zend_register_internal_class(&ce );
+  zend_class_implements(php_driver_default_table_ce , 1, php_driver_table_ce);
   php_driver_default_table_ce->ce_flags     |= PHP5TO7_ZEND_ACC_FINAL;
   php_driver_default_table_ce->create_object = php_driver_default_table_new;
 

@@ -25,14 +25,14 @@ PHP_METHOD(Logging, __construct)
   zval *child_policy = NULL;
   php_driver_retry_policy *self, *retry_policy;
 
-  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "O",
+  if (zend_parse_parameters(ZEND_NUM_ARGS() , "O",
                             &child_policy, php_driver_retry_policy_ce) == FAILURE) {
     return;
   }
 
   if (instanceof_function(Z_OBJCE_P(child_policy),
-                           php_driver_retry_policy_logging_ce TSRMLS_CC)) {
-    zend_throw_exception_ex(php_driver_invalid_argument_exception_ce, 0 TSRMLS_CC,
+                           php_driver_retry_policy_logging_ce )) {
+    zend_throw_exception_ex(php_driver_invalid_argument_exception_ce, 0 ,
                             "Cannot add a " PHP_DRIVER_NAMESPACE "\\Logging as child policy of " PHP_DRIVER_NAMESPACE "\\Logging");
     return;
   }
@@ -54,7 +54,7 @@ static zend_function_entry php_driver_retry_policy_logging_methods[] = {
 static zend_object_handlers php_driver_retry_policy_logging_handlers;
 
 static void
-php_driver_retry_policy_logging_free(php5to7_zend_object_free *object TSRMLS_DC)
+php_driver_retry_policy_logging_free(php5to7_zend_object_free *object )
 {
   php_driver_retry_policy *self = PHP5TO7_ZEND_OBJECT_GET(retry_policy, object);
 
@@ -62,12 +62,12 @@ php_driver_retry_policy_logging_free(php5to7_zend_object_free *object TSRMLS_DC)
     cass_retry_policy_free(self->policy);
   }
 
-  zend_object_std_dtor(&self->zval TSRMLS_CC);
+  zend_object_std_dtor(&self->zval );
   PHP5TO7_MAYBE_EFREE(self);
 }
 
 static php5to7_zend_object
-php_driver_retry_policy_logging_new(zend_class_entry *ce TSRMLS_DC)
+php_driver_retry_policy_logging_new(zend_class_entry *ce )
 {
   php_driver_retry_policy *self = PHP5TO7_ZEND_OBJECT_ECALLOC(retry_policy, ce);
 
@@ -76,13 +76,13 @@ php_driver_retry_policy_logging_new(zend_class_entry *ce TSRMLS_DC)
   PHP5TO7_ZEND_OBJECT_INIT_EX(retry_policy, retry_policy_logging, self, ce);
 }
 
-void php_driver_define_RetryPolicyLogging(TSRMLS_D)
+void php_driver_define_RetryPolicyLogging()
 {
   zend_class_entry ce;
 
   INIT_CLASS_ENTRY(ce, PHP_DRIVER_NAMESPACE "\\RetryPolicy\\Logging", php_driver_retry_policy_logging_methods);
-  php_driver_retry_policy_logging_ce = zend_register_internal_class(&ce TSRMLS_CC);
-  zend_class_implements(php_driver_retry_policy_logging_ce TSRMLS_CC, 1, php_driver_retry_policy_ce);
+  php_driver_retry_policy_logging_ce = zend_register_internal_class(&ce );
+  zend_class_implements(php_driver_retry_policy_logging_ce , 1, php_driver_retry_policy_ce);
   php_driver_retry_policy_logging_ce->ce_flags     |= PHP5TO7_ZEND_ACC_FINAL;
   php_driver_retry_policy_logging_ce->create_object = php_driver_retry_policy_logging_new;
 

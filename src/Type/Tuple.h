@@ -16,5 +16,5 @@
 
 #pragma once
 BEGIN_EXTERN_C()
-int php_driver_type_tuple_add(php_driver_type *type, zval *zsub_type TSRMLS_DC);
+int php_driver_type_tuple_add(php_driver_type *type, zval *zsub_type);
 END_EXTERN_C()

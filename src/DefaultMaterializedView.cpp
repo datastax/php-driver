@@ -28,14 +28,14 @@ BEGIN_EXTERN_C()
 zend_class_entry *php_driver_default_materialized_view_ce = NULL;
 
 static void
-populate_partition_key(php_driver_materialized_view *view, zval *result TSRMLS_DC)
+populate_partition_key(php_driver_materialized_view *view, zval *result )
 {
   size_t i, count = cass_materialized_view_meta_partition_key_count(view->meta);
   for (i = 0; i < count; ++i) {
     const CassColumnMeta *column =
         cass_materialized_view_meta_partition_key(view->meta, i);
     if (column) {
-      php5to7_zval zcolumn = php_driver_create_column(view->schema, column TSRMLS_CC);
+      php5to7_zval zcolumn = php_driver_create_column(view->schema, column );
       if (!PHP5TO7_ZVAL_IS_UNDEF(zcolumn)) {
         add_next_index_zval(result, PHP5TO7_ZVAL_MAYBE_P(zcolumn));
       }
@@ -44,14 +44,14 @@ populate_partition_key(php_driver_materialized_view *view, zval *result TSRMLS_D
 }
 
 static void
-populate_clustering_key(php_driver_materialized_view *view, zval *result TSRMLS_DC)
+populate_clustering_key(php_driver_materialized_view *view, zval *result )
 {
   size_t i, count = cass_materialized_view_meta_clustering_key_count(view->meta);
   for (i = 0; i < count; ++i) {
     const CassColumnMeta *column =
         cass_materialized_view_meta_clustering_key(view->meta, i);
     if (column) {
-      php5to7_zval zcolumn = php_driver_create_column(view->schema, column TSRMLS_CC);
+      php5to7_zval zcolumn = php_driver_create_column(view->schema, column );
       if (!PHP5TO7_ZVAL_IS_UNDEF(zcolumn)) {
         add_next_index_zval(result, PHP5TO7_ZVAL_MAYBE_P(zcolumn));
       }
@@ -61,7 +61,7 @@ populate_clustering_key(php_driver_materialized_view *view, zval *result TSRMLS_
 
 php5to7_zval
 php_driver_create_materialized_view(php_driver_ref* schema,
-                                       const CassMaterializedViewMeta *meta TSRMLS_DC)
+                                       const CassMaterializedViewMeta *meta )
 {
   php5to7_zval result;
   php_driver_materialized_view *view;
@@ -85,21 +85,21 @@ php_driver_create_materialized_view(php_driver_ref* schema,
 }
 
 void
-php_driver_default_materialized_view_build_options(php_driver_materialized_view *view TSRMLS_DC) {
+php_driver_default_materialized_view_build_options(php_driver_materialized_view *view ) {
   CassIterator *iterator =
       cass_iterator_fields_from_materialized_view_meta(view->meta);
   view->options =
-      php_driver_table_build_options(iterator TSRMLS_CC);
+      php_driver_table_build_options(iterator );
   cass_iterator_free(iterator);
 }
 
 void
 php_driver_materialized_view_get_option(php_driver_materialized_view *view,
                                            const char *name,
-                                           zval *result TSRMLS_DC) {
+                                           zval *result ) {
   zval *zvalue;
   if (PHP5TO7_ZVAL_IS_UNDEF(view->options)) {
-    php_driver_default_materialized_view_build_options(view TSRMLS_CC);
+    php_driver_default_materialized_view_build_options(view );
   }
 
   if (!PHP5TO7_ZEND_HASH_FIND(PHP5TO7_Z_ARRVAL_MAYBE_P(view->options),
@@ -130,14 +130,14 @@ PHP_METHOD(DefaultMaterializedView, option)
   php_driver_materialized_view *self;
   php5to7_zval* result;
 
-  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s",
+  if (zend_parse_parameters(ZEND_NUM_ARGS() , "s",
                             &name, &name_len) == FAILURE) {
     return;
   }
 
   self = PHP_DRIVER_GET_MATERIALIZED_VIEW(getThis());
   if (PHP5TO7_ZVAL_IS_UNDEF(self->options)) {
-    php_driver_default_materialized_view_build_options(self TSRMLS_CC);
+    php_driver_default_materialized_view_build_options(self );
   }
 
   if (PHP5TO7_ZEND_HASH_FIND(PHP5TO7_Z_ARRVAL_MAYBE_P(self->options),
@@ -157,7 +157,7 @@ PHP_METHOD(DefaultMaterializedView, options)
 
   self = PHP_DRIVER_GET_MATERIALIZED_VIEW(getThis());
   if (PHP5TO7_ZVAL_IS_UNDEF(self->options)) {
-    php_driver_default_materialized_view_build_options(self TSRMLS_CC);
+    php_driver_default_materialized_view_build_options(self );
   }
 
   RETURN_ZVAL(PHP5TO7_ZVAL_MAYBE_P(self->options), 1, 0);
@@ -172,7 +172,7 @@ PHP_METHOD(DefaultMaterializedView, comment)
 
   self = PHP_DRIVER_GET_MATERIALIZED_VIEW(getThis());
 
-  php_driver_materialized_view_get_option(self, "comment", return_value TSRMLS_CC);
+  php_driver_materialized_view_get_option(self, "comment", return_value );
 }
 
 PHP_METHOD(DefaultMaterializedView, readRepairChance)
@@ -184,7 +184,7 @@ PHP_METHOD(DefaultMaterializedView, readRepairChance)
 
   self = PHP_DRIVER_GET_MATERIALIZED_VIEW(getThis());
 
-  php_driver_materialized_view_get_option(self, "read_repair_chance", return_value TSRMLS_CC);
+  php_driver_materialized_view_get_option(self, "read_repair_chance", return_value );
 }
 
 PHP_METHOD(DefaultMaterializedView, localReadRepairChance)
@@ -196,7 +196,7 @@ PHP_METHOD(DefaultMaterializedView, localReadRepairChance)
 
   self = PHP_DRIVER_GET_MATERIALIZED_VIEW(getThis());
 
-  php_driver_materialized_view_get_option(self, "local_read_repair_chance", return_value TSRMLS_CC);
+  php_driver_materialized_view_get_option(self, "local_read_repair_chance", return_value );
 }
 
 PHP_METHOD(DefaultMaterializedView, gcGraceSeconds)
@@ -208,7 +208,7 @@ PHP_METHOD(DefaultMaterializedView, gcGraceSeconds)
 
   self = PHP_DRIVER_GET_MATERIALIZED_VIEW(getThis());
 
-  php_driver_materialized_view_get_option(self, "gc_grace_seconds", return_value TSRMLS_CC);
+  php_driver_materialized_view_get_option(self, "gc_grace_seconds", return_value );
 }
 
 PHP_METHOD(DefaultMaterializedView, caching)
@@ -220,7 +220,7 @@ PHP_METHOD(DefaultMaterializedView, caching)
 
   self = PHP_DRIVER_GET_MATERIALIZED_VIEW(getThis());
 
-  php_driver_materialized_view_get_option(self, "caching", return_value TSRMLS_CC);
+  php_driver_materialized_view_get_option(self, "caching", return_value );
 }
 
 PHP_METHOD(DefaultMaterializedView, bloomFilterFPChance)
@@ -232,7 +232,7 @@ PHP_METHOD(DefaultMaterializedView, bloomFilterFPChance)
 
   self = PHP_DRIVER_GET_MATERIALIZED_VIEW(getThis());
 
-  php_driver_materialized_view_get_option(self, "bloom_filter_fp_chance", return_value TSRMLS_CC);
+  php_driver_materialized_view_get_option(self, "bloom_filter_fp_chance", return_value );
 }
 
 PHP_METHOD(DefaultMaterializedView, memtableFlushPeriodMs)
@@ -244,7 +244,7 @@ PHP_METHOD(DefaultMaterializedView, memtableFlushPeriodMs)
 
   self = PHP_DRIVER_GET_MATERIALIZED_VIEW(getThis());
 
-  php_driver_materialized_view_get_option(self, "memtable_flush_period_in_ms", return_value TSRMLS_CC);
+  php_driver_materialized_view_get_option(self, "memtable_flush_period_in_ms", return_value );
 }
 
 PHP_METHOD(DefaultMaterializedView, defaultTTL)
@@ -256,7 +256,7 @@ PHP_METHOD(DefaultMaterializedView, defaultTTL)
 
   self = PHP_DRIVER_GET_MATERIALIZED_VIEW(getThis());
 
-  php_driver_materialized_view_get_option(self, "default_time_to_live", return_value TSRMLS_CC);
+  php_driver_materialized_view_get_option(self, "default_time_to_live", return_value );
 }
 
 PHP_METHOD(DefaultMaterializedView, speculativeRetry)
@@ -268,7 +268,7 @@ PHP_METHOD(DefaultMaterializedView, speculativeRetry)
 
   self = PHP_DRIVER_GET_MATERIALIZED_VIEW(getThis());
 
-  php_driver_materialized_view_get_option(self, "speculative_retry", return_value TSRMLS_CC);
+  php_driver_materialized_view_get_option(self, "speculative_retry", return_value );
 }
 
 PHP_METHOD(DefaultMaterializedView, indexInterval)
@@ -280,7 +280,7 @@ PHP_METHOD(DefaultMaterializedView, indexInterval)
 
   self = PHP_DRIVER_GET_MATERIALIZED_VIEW(getThis());
 
-  php_driver_materialized_view_get_option(self, "index_interval", return_value TSRMLS_CC);
+  php_driver_materialized_view_get_option(self, "index_interval", return_value );
 }
 
 PHP_METHOD(DefaultMaterializedView, compactionStrategyClassName)
@@ -292,7 +292,7 @@ PHP_METHOD(DefaultMaterializedView, compactionStrategyClassName)
 
   self = PHP_DRIVER_GET_MATERIALIZED_VIEW(getThis());
 
-  php_driver_materialized_view_get_option(self, "compaction_strategy_class", return_value TSRMLS_CC);
+  php_driver_materialized_view_get_option(self, "compaction_strategy_class", return_value );
 }
 
 PHP_METHOD(DefaultMaterializedView, compactionStrategyOptions)
@@ -304,7 +304,7 @@ PHP_METHOD(DefaultMaterializedView, compactionStrategyOptions)
 
   self = PHP_DRIVER_GET_MATERIALIZED_VIEW(getThis());
 
-  php_driver_materialized_view_get_option(self, "compaction_strategy_options", return_value TSRMLS_CC);
+  php_driver_materialized_view_get_option(self, "compaction_strategy_options", return_value );
 }
 
 PHP_METHOD(DefaultMaterializedView, compressionParameters)
@@ -316,7 +316,7 @@ PHP_METHOD(DefaultMaterializedView, compressionParameters)
 
   self = PHP_DRIVER_GET_MATERIALIZED_VIEW(getThis());
 
-  php_driver_materialized_view_get_option(self, "compression_parameters", return_value TSRMLS_CC);
+  php_driver_materialized_view_get_option(self, "compression_parameters", return_value );
 }
 
 PHP_METHOD(DefaultMaterializedView, populateIOCacheOnFlush)
@@ -328,7 +328,7 @@ PHP_METHOD(DefaultMaterializedView, populateIOCacheOnFlush)
 
   self = PHP_DRIVER_GET_MATERIALIZED_VIEW(getThis());
 
-  php_driver_materialized_view_get_option(self, "populate_io_cache_on_flush", return_value TSRMLS_CC);
+  php_driver_materialized_view_get_option(self, "populate_io_cache_on_flush", return_value );
 }
 
 PHP_METHOD(DefaultMaterializedView, replicateOnWrite)
@@ -340,7 +340,7 @@ PHP_METHOD(DefaultMaterializedView, replicateOnWrite)
 
   self = PHP_DRIVER_GET_MATERIALIZED_VIEW(getThis());
 
-  php_driver_materialized_view_get_option(self, "replicate_on_write", return_value TSRMLS_CC);
+  php_driver_materialized_view_get_option(self, "replicate_on_write", return_value );
 }
 
 PHP_METHOD(DefaultMaterializedView, maxIndexInterval)
@@ -352,7 +352,7 @@ PHP_METHOD(DefaultMaterializedView, maxIndexInterval)
 
   self = PHP_DRIVER_GET_MATERIALIZED_VIEW(getThis());
 
-  php_driver_materialized_view_get_option(self, "max_index_interval", return_value TSRMLS_CC);
+  php_driver_materialized_view_get_option(self, "max_index_interval", return_value );
 }
 
 PHP_METHOD(DefaultMaterializedView, minIndexInterval)
@@ -364,7 +364,7 @@ PHP_METHOD(DefaultMaterializedView, minIndexInterval)
 
   self = PHP_DRIVER_GET_MATERIALIZED_VIEW(getThis());
 
-  php_driver_materialized_view_get_option(self, "min_index_interval", return_value TSRMLS_CC);
+  php_driver_materialized_view_get_option(self, "min_index_interval", return_value );
 }
 
 
@@ -376,7 +376,7 @@ PHP_METHOD(DefaultMaterializedView, column)
   php5to7_zval column;
   const CassColumnMeta *meta;
 
-  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &name, &name_len) == FAILURE) {
+  if (zend_parse_parameters(ZEND_NUM_ARGS() , "s", &name, &name_len) == FAILURE) {
     return;
   }
 
@@ -386,7 +386,7 @@ PHP_METHOD(DefaultMaterializedView, column)
     RETURN_FALSE;
   }
 
-  column = php_driver_create_column(self->schema, meta TSRMLS_CC);
+  column = php_driver_create_column(self->schema, meta );
   if (PHP5TO7_ZVAL_IS_UNDEF(column)) {
     return;
   }
@@ -412,7 +412,7 @@ PHP_METHOD(DefaultMaterializedView, columns)
     php_driver_column *column;
 
     meta    = cass_iterator_get_column_meta(iterator);
-    zcolumn = php_driver_create_column(self->schema, meta TSRMLS_CC);
+    zcolumn = php_driver_create_column(self->schema, meta );
 
     if (!PHP5TO7_ZVAL_IS_UNDEF(zcolumn)) {
       column = PHP_DRIVER_GET_COLUMN(PHP5TO7_ZVAL_MAYBE_P(zcolumn));
@@ -442,7 +442,7 @@ PHP_METHOD(DefaultMaterializedView, partitionKey)
   if (PHP5TO7_ZVAL_IS_UNDEF(self->partition_key)) {
     PHP5TO7_ZVAL_MAYBE_MAKE(self->partition_key);
     array_init(PHP5TO7_ZVAL_MAYBE_P(self->partition_key));
-    populate_partition_key(self, PHP5TO7_ZVAL_MAYBE_P(self->partition_key) TSRMLS_CC);
+    populate_partition_key(self, PHP5TO7_ZVAL_MAYBE_P(self->partition_key) );
   }
 
   RETURN_ZVAL(PHP5TO7_ZVAL_MAYBE_P(self->partition_key), 1, 0);
@@ -459,8 +459,8 @@ PHP_METHOD(DefaultMaterializedView, primaryKey)
   if (PHP5TO7_ZVAL_IS_UNDEF(self->primary_key)) {
     PHP5TO7_ZVAL_MAYBE_MAKE(self->primary_key);
     array_init(PHP5TO7_ZVAL_MAYBE_P(self->primary_key));
-    populate_partition_key(self, PHP5TO7_ZVAL_MAYBE_P(self->primary_key) TSRMLS_CC);
-    populate_clustering_key(self, PHP5TO7_ZVAL_MAYBE_P(self->primary_key) TSRMLS_CC);
+    populate_partition_key(self, PHP5TO7_ZVAL_MAYBE_P(self->primary_key) );
+    populate_clustering_key(self, PHP5TO7_ZVAL_MAYBE_P(self->primary_key) );
   }
 
   RETURN_ZVAL(PHP5TO7_ZVAL_MAYBE_P(self->primary_key), 1, 0);
@@ -477,7 +477,7 @@ PHP_METHOD(DefaultMaterializedView, clusteringKey)
   if (PHP5TO7_ZVAL_IS_UNDEF(self->clustering_key)) {
     PHP5TO7_ZVAL_MAYBE_MAKE(self->clustering_key);
     array_init(PHP5TO7_ZVAL_MAYBE_P(self->clustering_key));
-    populate_clustering_key(self, PHP5TO7_ZVAL_MAYBE_P(self->clustering_key) TSRMLS_CC);
+    populate_clustering_key(self, PHP5TO7_ZVAL_MAYBE_P(self->clustering_key) );
   }
 
   RETURN_ZVAL(PHP5TO7_ZVAL_MAYBE_P(self->clustering_key), 1, 0);
@@ -530,7 +530,7 @@ PHP_METHOD(DefaultMaterializedView, baseTable)
       return;
     }
     self->base_table = php_driver_create_table(self->schema,
-                                                  table TSRMLS_CC);
+                                                  table );
   }
 
   RETURN_ZVAL(PHP5TO7_ZVAL_MAYBE_P(self->base_table), 1, 0);
@@ -584,12 +584,12 @@ php_driver_type_default_materialized_view_gc(
 #else
         zval *object,
 #endif
-        php5to7_zval_gc table, int *n TSRMLS_DC
+        php5to7_zval_gc table, int *n
 )
 {
   *table = NULL;
   *n = 0;
-  return zend_std_get_properties(object TSRMLS_CC);
+  return zend_std_get_properties(object );
 }
 
 static HashTable *
@@ -597,17 +597,17 @@ php_driver_default_materialized_view_properties(
 #if PHP_MAJOR_VERSION >= 8
         zend_object *object
 #else
-        zval *object TSRMLS_DC
+        zval *object
 #endif
 )
 {
-  HashTable *props = zend_std_get_properties(object TSRMLS_CC);
+  HashTable *props = zend_std_get_properties(object );
 
   return props;
 }
 
 static int
-php_driver_default_materialized_view_compare(zval *obj1, zval *obj2 TSRMLS_DC)
+php_driver_default_materialized_view_compare(zval *obj1, zval *obj2 )
 {
 #if PHP_MAJOR_VERSION >= 8
   ZEND_COMPARE_OBJECTS_FALLBACK(obj1, obj2);
@@ -619,7 +619,7 @@ php_driver_default_materialized_view_compare(zval *obj1, zval *obj2 TSRMLS_DC)
 }
 
 static void
-php_driver_default_materialized_view_free(php5to7_zend_object_free *object TSRMLS_DC)
+php_driver_default_materialized_view_free(php5to7_zend_object_free *object )
 {
   php_driver_materialized_view *self = PHP5TO7_ZEND_OBJECT_GET(materialized_view, object);
 
@@ -637,12 +637,12 @@ php_driver_default_materialized_view_free(php5to7_zend_object_free *object TSRML
   }
   self->meta = NULL;
 
-  zend_object_std_dtor(&self->zval TSRMLS_CC);
+  zend_object_std_dtor(&self->zval );
   PHP5TO7_MAYBE_EFREE(self);
 }
 
 static php5to7_zend_object
-php_driver_default_materialized_view_new(zend_class_entry *ce TSRMLS_DC)
+php_driver_default_materialized_view_new(zend_class_entry *ce )
 {
   php_driver_materialized_view *self =
       PHP5TO7_ZEND_OBJECT_ECALLOC(materialized_view, ce);
@@ -661,12 +661,12 @@ php_driver_default_materialized_view_new(zend_class_entry *ce TSRMLS_DC)
   PHP5TO7_ZEND_OBJECT_INIT_EX(materialized_view, default_materialized_view, self, ce);
 }
 
-void php_driver_define_DefaultMaterializedView(TSRMLS_D)
+void php_driver_define_DefaultMaterializedView()
 {
   zend_class_entry ce;
 
   INIT_CLASS_ENTRY(ce, PHP_DRIVER_NAMESPACE "\\DefaultMaterializedView", php_driver_default_materialized_view_methods);
-  php_driver_default_materialized_view_ce = php5to7_zend_register_internal_class_ex(&ce, php_driver_materialized_view_ce);
+  php_driver_default_materialized_view_ce = zend_register_internal_class_ex(&ce, php_driver_materialized_view_ce);
   php_driver_default_materialized_view_ce->ce_flags     |= PHP5TO7_ZEND_ACC_FINAL;
   php_driver_default_materialized_view_ce->create_object = php_driver_default_materialized_view_new;
 

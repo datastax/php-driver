@@ -53,7 +53,7 @@ free_schema(void* schema)
 }
 
 static int
-bind_argument_by_index(CassStatement* statement, size_t index, zval* value TSRMLS_DC)
+bind_argument_by_index(CassStatement* statement, size_t index, zval* value )
 {
   if (Z_TYPE_P(value) == IS_NULL)
     CHECK_RESULT(cass_statement_bind_null(statement, index));
@@ -74,47 +74,47 @@ bind_argument_by_index(CassStatement* statement, size_t index, zval* value TSRML
     CHECK_RESULT(cass_statement_bind_bool(statement, index, cass_false));
 
   if (Z_TYPE_P(value) == IS_OBJECT) {
-    if (instanceof_function(Z_OBJCE_P(value), php_driver_float_ce TSRMLS_CC)) {
+    if (instanceof_function(Z_OBJCE_P(value), php_driver_float_ce )) {
       php_driver_numeric* float_number = PHP_DRIVER_GET_NUMERIC(value);
       CHECK_RESULT(cass_statement_bind_float(statement, index, float_number->data.floating.value));
     }
 
-    if (instanceof_function(Z_OBJCE_P(value), php_driver_bigint_ce TSRMLS_CC)) {
+    if (instanceof_function(Z_OBJCE_P(value), php_driver_bigint_ce )) {
       php_driver_numeric* bigint = PHP_DRIVER_GET_NUMERIC(value);
       CHECK_RESULT(cass_statement_bind_int64(statement, index, bigint->data.bigint.value));
     }
 
-    if (instanceof_function(Z_OBJCE_P(value), php_driver_smallint_ce TSRMLS_CC)) {
+    if (instanceof_function(Z_OBJCE_P(value), php_driver_smallint_ce )) {
       php_driver_numeric* smallint = PHP_DRIVER_GET_NUMERIC(value);
       CHECK_RESULT(cass_statement_bind_int16(statement, index, smallint->data.smallint.value));
     }
 
-    if (instanceof_function(Z_OBJCE_P(value), php_driver_tinyint_ce TSRMLS_CC)) {
+    if (instanceof_function(Z_OBJCE_P(value), php_driver_tinyint_ce )) {
       php_driver_numeric* tinyint = PHP_DRIVER_GET_NUMERIC(value);
       CHECK_RESULT(cass_statement_bind_int8(statement, index, tinyint->data.tinyint.value));
     }
 
-    if (instanceof_function(Z_OBJCE_P(value), php_driver_timestamp_ce TSRMLS_CC)) {
+    if (instanceof_function(Z_OBJCE_P(value), php_driver_timestamp_ce )) {
       php_driver_timestamp* timestamp = PHP_DRIVER_GET_TIMESTAMP(value);
       CHECK_RESULT(cass_statement_bind_int64(statement, index, timestamp->timestamp));
     }
 
-    if (instanceof_function(Z_OBJCE_P(value), php_driver_date_ce TSRMLS_CC)) {
+    if (instanceof_function(Z_OBJCE_P(value), php_driver_date_ce )) {
       php_driver_date* date = PHP_DRIVER_GET_DATE(value);
       CHECK_RESULT(cass_statement_bind_uint32(statement, index, date->date));
     }
 
-    if (instanceof_function(Z_OBJCE_P(value), php_driver_time_ce TSRMLS_CC)) {
+    if (instanceof_function(Z_OBJCE_P(value), php_driver_time_ce )) {
       php_driver_time* time = PHP_DRIVER_GET_TIME(value);
       CHECK_RESULT(cass_statement_bind_int64(statement, index, time->time));
     }
 
-    if (instanceof_function(Z_OBJCE_P(value), php_driver_blob_ce TSRMLS_CC)) {
+    if (instanceof_function(Z_OBJCE_P(value), php_driver_blob_ce )) {
       php_driver_blob* blob = PHP_DRIVER_GET_BLOB(value);
       CHECK_RESULT(cass_statement_bind_bytes(statement, index, blob->data, blob->size));
     }
 
-    if (instanceof_function(Z_OBJCE_P(value), php_driver_varint_ce TSRMLS_CC)) {
+    if (instanceof_function(Z_OBJCE_P(value), php_driver_varint_ce )) {
       php_driver_numeric* varint = PHP_DRIVER_GET_NUMERIC(value);
       size_t size;
       cass_byte_t* data = export_twos_complement(varint->data.varint.value, &size);
@@ -123,7 +123,7 @@ bind_argument_by_index(CassStatement* statement, size_t index, zval* value TSRML
       CHECK_RESULT(rc);
     }
 
-    if (instanceof_function(Z_OBJCE_P(value), php_driver_decimal_ce TSRMLS_CC)) {
+    if (instanceof_function(Z_OBJCE_P(value), php_driver_decimal_ce )) {
       php_driver_numeric* decimal = PHP_DRIVER_GET_NUMERIC(value);
       size_t size;
       cass_byte_t* data = (cass_byte_t*) export_twos_complement(decimal->data.decimal.value, &size);
@@ -132,28 +132,28 @@ bind_argument_by_index(CassStatement* statement, size_t index, zval* value TSRML
       CHECK_RESULT(rc);
     }
 
-    if (instanceof_function(Z_OBJCE_P(value), php_driver_uuid_interface_ce TSRMLS_CC)) {
+    if (instanceof_function(Z_OBJCE_P(value), php_driver_uuid_interface_ce )) {
       php_driver_uuid* uuid = PHP_DRIVER_GET_UUID(value);
       CHECK_RESULT(cass_statement_bind_uuid(statement, index, uuid->uuid));
     }
 
-    if (instanceof_function(Z_OBJCE_P(value), php_driver_inet_ce TSRMLS_CC)) {
+    if (instanceof_function(Z_OBJCE_P(value), php_driver_inet_ce )) {
       php_driver_inet* inet = PHP_DRIVER_GET_INET(value);
       CHECK_RESULT(cass_statement_bind_inet(statement, index, inet->inet));
     }
 
-    if (instanceof_function(Z_OBJCE_P(value), php_driver_duration_ce TSRMLS_CC)) {
+    if (instanceof_function(Z_OBJCE_P(value), php_driver_duration_ce )) {
       php_driver_duration* duration = PHP_DRIVER_GET_DURATION(value);
       CHECK_RESULT(cass_statement_bind_duration(statement,
                                                 index,
                                                 duration->months, duration->days, duration->nanos));
     }
 
-    if (instanceof_function(Z_OBJCE_P(value), php_driver_set_ce TSRMLS_CC)) {
+    if (instanceof_function(Z_OBJCE_P(value), php_driver_set_ce )) {
       CassError rc;
       CassCollection* collection;
       php_driver_set* set = PHP_DRIVER_GET_SET(value);
-      if (!php_driver_collection_from_set(set, &collection TSRMLS_CC))
+      if (!php_driver_collection_from_set(set, &collection ))
         return FAILURE;
 
       rc = cass_statement_bind_collection(statement, index, collection);
@@ -161,11 +161,11 @@ bind_argument_by_index(CassStatement* statement, size_t index, zval* value TSRML
       CHECK_RESULT(rc);
     }
 
-    if (instanceof_function(Z_OBJCE_P(value), php_driver_map_ce TSRMLS_CC)) {
+    if (instanceof_function(Z_OBJCE_P(value), php_driver_map_ce )) {
       CassError rc;
       CassCollection* collection;
       php_driver_map* map = PHP_DRIVER_GET_MAP(value);
-      if (!php_driver_collection_from_map(map, &collection TSRMLS_CC))
+      if (!php_driver_collection_from_map(map, &collection ))
         return FAILURE;
 
       rc = cass_statement_bind_collection(statement, index, collection);
@@ -173,11 +173,11 @@ bind_argument_by_index(CassStatement* statement, size_t index, zval* value TSRML
       CHECK_RESULT(rc);
     }
 
-    if (instanceof_function(Z_OBJCE_P(value), php_driver_collection_ce TSRMLS_CC)) {
+    if (instanceof_function(Z_OBJCE_P(value), php_driver_collection_ce )) {
       CassError rc;
       CassCollection* collection;
       php_driver_collection* coll = PHP_DRIVER_GET_COLLECTION(value);
-      if (!php_driver_collection_from_collection(coll, &collection TSRMLS_CC))
+      if (!php_driver_collection_from_collection(coll, &collection ))
         return FAILURE;
 
       rc = cass_statement_bind_collection(statement, index, collection);
@@ -185,11 +185,11 @@ bind_argument_by_index(CassStatement* statement, size_t index, zval* value TSRML
       CHECK_RESULT(rc);
     }
 
-    if (instanceof_function(Z_OBJCE_P(value), php_driver_tuple_ce TSRMLS_CC)) {
+    if (instanceof_function(Z_OBJCE_P(value), php_driver_tuple_ce )) {
       CassError rc;
       CassTuple* tup;
       php_driver_tuple* tuple = PHP_DRIVER_GET_TUPLE(value);
-      if (!php_driver_tuple_from_tuple(tuple, &tup TSRMLS_CC))
+      if (!php_driver_tuple_from_tuple(tuple, &tup ))
         return FAILURE;
 
       rc = cass_statement_bind_tuple(statement, index, tup);
@@ -197,11 +197,11 @@ bind_argument_by_index(CassStatement* statement, size_t index, zval* value TSRML
       CHECK_RESULT(rc);
     }
 
-    if (instanceof_function(Z_OBJCE_P(value), php_driver_user_type_value_ce TSRMLS_CC)) {
+    if (instanceof_function(Z_OBJCE_P(value), php_driver_user_type_value_ce )) {
       CassError rc;
       CassUserType* ut;
       php_driver_user_type_value* user_type_value = PHP_DRIVER_GET_USER_TYPE_VALUE(value);
-      if (!php_driver_user_type_from_user_type_value(user_type_value, &ut TSRMLS_CC))
+      if (!php_driver_user_type_from_user_type_value(user_type_value, &ut ))
         return FAILURE;
 
       rc = cass_statement_bind_user_type(statement, index, ut);
@@ -214,7 +214,7 @@ bind_argument_by_index(CassStatement* statement, size_t index, zval* value TSRML
 }
 
 static int
-bind_argument_by_name(CassStatement* statement, const char* name, zval* value TSRMLS_DC)
+bind_argument_by_name(CassStatement* statement, const char* name, zval* value )
 {
   if (Z_TYPE_P(value) == IS_NULL) {
     CHECK_RESULT(cass_statement_bind_null_by_name(statement, name));
@@ -236,47 +236,47 @@ bind_argument_by_name(CassStatement* statement, const char* name, zval* value TS
     CHECK_RESULT(cass_statement_bind_bool_by_name(statement, name, cass_false));
 
   if (Z_TYPE_P(value) == IS_OBJECT) {
-    if (instanceof_function(Z_OBJCE_P(value), php_driver_float_ce TSRMLS_CC)) {
+    if (instanceof_function(Z_OBJCE_P(value), php_driver_float_ce )) {
       php_driver_numeric* float_number = PHP_DRIVER_GET_NUMERIC(value);
       CHECK_RESULT(cass_statement_bind_float_by_name(statement, name, float_number->data.floating.value));
     }
 
-    if (instanceof_function(Z_OBJCE_P(value), php_driver_bigint_ce TSRMLS_CC)) {
+    if (instanceof_function(Z_OBJCE_P(value), php_driver_bigint_ce )) {
       php_driver_numeric* bigint = PHP_DRIVER_GET_NUMERIC(value);
       CHECK_RESULT(cass_statement_bind_int64_by_name(statement, name, bigint->data.bigint.value));
     }
 
-    if (instanceof_function(Z_OBJCE_P(value), php_driver_smallint_ce TSRMLS_CC)) {
+    if (instanceof_function(Z_OBJCE_P(value), php_driver_smallint_ce )) {
       php_driver_numeric* smallint = PHP_DRIVER_GET_NUMERIC(value);
       CHECK_RESULT(cass_statement_bind_int16_by_name(statement, name, smallint->data.smallint.value));
     }
 
-    if (instanceof_function(Z_OBJCE_P(value), php_driver_tinyint_ce TSRMLS_CC)) {
+    if (instanceof_function(Z_OBJCE_P(value), php_driver_tinyint_ce )) {
       php_driver_numeric* tinyint = PHP_DRIVER_GET_NUMERIC(value);
       CHECK_RESULT(cass_statement_bind_int8_by_name(statement, name, tinyint->data.tinyint.value));
     }
 
-    if (instanceof_function(Z_OBJCE_P(value), php_driver_timestamp_ce TSRMLS_CC)) {
+    if (instanceof_function(Z_OBJCE_P(value), php_driver_timestamp_ce )) {
       php_driver_timestamp* timestamp = PHP_DRIVER_GET_TIMESTAMP(value);
       CHECK_RESULT(cass_statement_bind_int64_by_name(statement, name, timestamp->timestamp));
     }
 
-    if (instanceof_function(Z_OBJCE_P(value), php_driver_date_ce TSRMLS_CC)) {
+    if (instanceof_function(Z_OBJCE_P(value), php_driver_date_ce )) {
       php_driver_date* date = PHP_DRIVER_GET_DATE(value);
       CHECK_RESULT(cass_statement_bind_uint32_by_name(statement, name, date->date));
     }
 
-    if (instanceof_function(Z_OBJCE_P(value), php_driver_time_ce TSRMLS_CC)) {
+    if (instanceof_function(Z_OBJCE_P(value), php_driver_time_ce )) {
       php_driver_time* time = PHP_DRIVER_GET_TIME(value);
       CHECK_RESULT(cass_statement_bind_int64_by_name(statement, name, time->time));
     }
 
-    if (instanceof_function(Z_OBJCE_P(value), php_driver_blob_ce TSRMLS_CC)) {
+    if (instanceof_function(Z_OBJCE_P(value), php_driver_blob_ce )) {
       php_driver_blob* blob = PHP_DRIVER_GET_BLOB(value);
       CHECK_RESULT(cass_statement_bind_bytes_by_name(statement, name, blob->data, blob->size));
     }
 
-    if (instanceof_function(Z_OBJCE_P(value), php_driver_varint_ce TSRMLS_CC)) {
+    if (instanceof_function(Z_OBJCE_P(value), php_driver_varint_ce )) {
       php_driver_numeric* varint = PHP_DRIVER_GET_NUMERIC(value);
       size_t size;
       cass_byte_t* data = (cass_byte_t*) export_twos_complement(varint->data.varint.value, &size);
@@ -285,7 +285,7 @@ bind_argument_by_name(CassStatement* statement, const char* name, zval* value TS
       CHECK_RESULT(rc);
     }
 
-    if (instanceof_function(Z_OBJCE_P(value), php_driver_decimal_ce TSRMLS_CC)) {
+    if (instanceof_function(Z_OBJCE_P(value), php_driver_decimal_ce )) {
       php_driver_numeric* decimal = PHP_DRIVER_GET_NUMERIC(value);
       size_t size;
       cass_byte_t* data = (cass_byte_t*) export_twos_complement(decimal->data.decimal.value, &size);
@@ -294,28 +294,28 @@ bind_argument_by_name(CassStatement* statement, const char* name, zval* value TS
       CHECK_RESULT(rc);
     }
 
-    if (instanceof_function(Z_OBJCE_P(value), php_driver_uuid_interface_ce TSRMLS_CC)) {
+    if (instanceof_function(Z_OBJCE_P(value), php_driver_uuid_interface_ce )) {
       php_driver_uuid* uuid = PHP_DRIVER_GET_UUID(value);
       CHECK_RESULT(cass_statement_bind_uuid_by_name(statement, name, uuid->uuid));
     }
 
-    if (instanceof_function(Z_OBJCE_P(value), php_driver_inet_ce TSRMLS_CC)) {
+    if (instanceof_function(Z_OBJCE_P(value), php_driver_inet_ce )) {
       php_driver_inet* inet = PHP_DRIVER_GET_INET(value);
       CHECK_RESULT(cass_statement_bind_inet_by_name(statement, name, inet->inet));
     }
 
-    if (instanceof_function(Z_OBJCE_P(value), php_driver_duration_ce TSRMLS_CC)) {
+    if (instanceof_function(Z_OBJCE_P(value), php_driver_duration_ce )) {
       php_driver_duration* duration = PHP_DRIVER_GET_DURATION(value);
       CHECK_RESULT(cass_statement_bind_duration_by_name(statement,
                                                         name,
                                                         duration->months, duration->days, duration->nanos));
     }
 
-    if (instanceof_function(Z_OBJCE_P(value), php_driver_set_ce TSRMLS_CC)) {
+    if (instanceof_function(Z_OBJCE_P(value), php_driver_set_ce )) {
       CassError rc;
       CassCollection* collection;
       php_driver_set* set = PHP_DRIVER_GET_SET(value);
-      if (!php_driver_collection_from_set(set, &collection TSRMLS_CC))
+      if (!php_driver_collection_from_set(set, &collection ))
         return FAILURE;
 
       rc = cass_statement_bind_collection_by_name(statement, name, collection);
@@ -323,11 +323,11 @@ bind_argument_by_name(CassStatement* statement, const char* name, zval* value TS
       CHECK_RESULT(rc);
     }
 
-    if (instanceof_function(Z_OBJCE_P(value), php_driver_map_ce TSRMLS_CC)) {
+    if (instanceof_function(Z_OBJCE_P(value), php_driver_map_ce )) {
       CassError rc;
       CassCollection* collection;
       php_driver_map* map = PHP_DRIVER_GET_MAP(value);
-      if (!php_driver_collection_from_map(map, &collection TSRMLS_CC))
+      if (!php_driver_collection_from_map(map, &collection ))
         return FAILURE;
 
       rc = cass_statement_bind_collection_by_name(statement, name, collection);
@@ -335,11 +335,11 @@ bind_argument_by_name(CassStatement* statement, const char* name, zval* value TS
       CHECK_RESULT(rc);
     }
 
-    if (instanceof_function(Z_OBJCE_P(value), php_driver_collection_ce TSRMLS_CC)) {
+    if (instanceof_function(Z_OBJCE_P(value), php_driver_collection_ce )) {
       CassError rc;
       CassCollection* collection;
       php_driver_collection* coll = PHP_DRIVER_GET_COLLECTION(value);
-      if (!php_driver_collection_from_collection(coll, &collection TSRMLS_CC))
+      if (!php_driver_collection_from_collection(coll, &collection ))
         return FAILURE;
 
       rc = cass_statement_bind_collection_by_name(statement, name, collection);
@@ -347,11 +347,11 @@ bind_argument_by_name(CassStatement* statement, const char* name, zval* value TS
       CHECK_RESULT(rc);
     }
 
-    if (instanceof_function(Z_OBJCE_P(value), php_driver_tuple_ce TSRMLS_CC)) {
+    if (instanceof_function(Z_OBJCE_P(value), php_driver_tuple_ce )) {
       CassError rc;
       CassTuple* tup;
       php_driver_tuple* tuple = PHP_DRIVER_GET_TUPLE(value);
-      if (!php_driver_tuple_from_tuple(tuple, &tup TSRMLS_CC))
+      if (!php_driver_tuple_from_tuple(tuple, &tup ))
         return FAILURE;
 
       rc = cass_statement_bind_tuple_by_name(statement, name, tup);
@@ -359,11 +359,11 @@ bind_argument_by_name(CassStatement* statement, const char* name, zval* value TS
       CHECK_RESULT(rc);
     }
 
-    if (instanceof_function(Z_OBJCE_P(value), php_driver_user_type_value_ce TSRMLS_CC)) {
+    if (instanceof_function(Z_OBJCE_P(value), php_driver_user_type_value_ce )) {
       CassError rc;
       CassUserType* ut;
       php_driver_user_type_value* user_type_value = PHP_DRIVER_GET_USER_TYPE_VALUE(value);
-      if (!php_driver_user_type_from_user_type_value(user_type_value, &ut TSRMLS_CC))
+      if (!php_driver_user_type_from_user_type_value(user_type_value, &ut ))
         return FAILURE;
 
       rc = cass_statement_bind_user_type_by_name(statement, name, ut);
@@ -376,7 +376,7 @@ bind_argument_by_name(CassStatement* statement, const char* name, zval* value TS
 }
 
 static int
-bind_arguments(CassStatement* statement, HashTable* arguments TSRMLS_DC)
+bind_arguments(CassStatement* statement, HashTable* arguments )
 {
   int rc = SUCCESS;
 
@@ -389,7 +389,7 @@ bind_arguments(CassStatement* statement, HashTable* arguments TSRMLS_DC)
   {
     if (key) {
       rc = bind_argument_by_name(statement, key->val,
-                                 PHP5TO7_ZVAL_MAYBE_DEREF(current) TSRMLS_CC);
+                                 PHP5TO7_ZVAL_MAYBE_DEREF(current) );
 #else
   char* str_key;
   uint str_len;
@@ -397,10 +397,10 @@ bind_arguments(CassStatement* statement, HashTable* arguments TSRMLS_DC)
   {
     if (str_key) {
       rc = bind_argument_by_name(statement, str_key,
-                                 PHP5TO7_ZVAL_MAYBE_DEREF(current) TSRMLS_CC);
+                                 PHP5TO7_ZVAL_MAYBE_DEREF(current) );
 #endif
     } else {
-      rc = bind_argument_by_index(statement, num_key, PHP5TO7_ZVAL_MAYBE_DEREF(current) TSRMLS_CC);
+      rc = bind_argument_by_index(statement, num_key, PHP5TO7_ZVAL_MAYBE_DEREF(current) );
     }
     if (rc == FAILURE)
       break;
@@ -411,7 +411,7 @@ bind_arguments(CassStatement* statement, HashTable* arguments TSRMLS_DC)
 }
 
 static CassStatement*
-create_statement(php_driver_statement* statement, HashTable* arguments TSRMLS_DC)
+create_statement(php_driver_statement* statement, HashTable* arguments )
 {
   CassStatement* stmt;
   uint32_t count;
@@ -429,12 +429,12 @@ create_statement(php_driver_statement* statement, HashTable* arguments TSRMLS_DC
     stmt = cass_prepared_bind(statement->data.prepared.prepared);
     break;
   default:
-    zend_throw_exception_ex(php_driver_runtime_exception_ce, 0 TSRMLS_CC,
+    zend_throw_exception_ex(php_driver_runtime_exception_ce, 0 ,
                             "Unsupported statement type.");
     return NULL;
   }
 
-  if (arguments && bind_arguments(stmt, arguments TSRMLS_CC) == FAILURE) {
+  if (arguments && bind_arguments(stmt, arguments ) == FAILURE) {
     cass_statement_free(stmt);
     return NULL;
   }
@@ -446,7 +446,7 @@ static CassBatch*
 create_batch(php_driver_statement* batch,
              CassConsistency consistency,
              CassRetryPolicy* retry_policy,
-             cass_int64_t timestamp TSRMLS_DC)
+             cass_int64_t timestamp )
 {
   CassBatch* cass_batch = cass_batch_new(batch->data.batch.type);
   CassError rc          = CASS_OK;
@@ -475,7 +475,7 @@ create_batch(php_driver_statement* batch,
 
     arguments = !PHP5TO7_ZVAL_IS_UNDEF(batch_statement_entry->arguments) ? Z_ARRVAL_P(PHP5TO7_ZVAL_MAYBE_P(batch_statement_entry->arguments)) : NULL;
 
-    stmt = create_statement(statement, arguments TSRMLS_CC);
+    stmt = create_statement(statement, arguments );
     if (!stmt) {
       cass_batch_free(cass_batch);
       return NULL;
@@ -504,10 +504,10 @@ create_batch(php_driver_statement* batch,
 }
 
 static CassStatement*
-create_single(php_driver_statement* statement, HashTable* arguments, CassConsistency consistency, long serial_consistency, int page_size, const char* paging_state_token, size_t paging_state_token_size, CassRetryPolicy* retry_policy, cass_int64_t timestamp TSRMLS_DC)
+create_single(php_driver_statement* statement, HashTable* arguments, CassConsistency consistency, long serial_consistency, int page_size, const char* paging_state_token, size_t paging_state_token_size, CassRetryPolicy* retry_policy, cass_int64_t timestamp )
 {
   CassError rc        = CASS_OK;
-  CassStatement* stmt = create_statement(statement, arguments TSRMLS_CC);
+  CassStatement* stmt = create_statement(statement, arguments );
   if (!stmt)
     return NULL;
 
@@ -533,7 +533,7 @@ create_single(php_driver_statement* statement, HashTable* arguments, CassConsist
 
   if (rc != CASS_OK) {
     cass_statement_free(stmt);
-    zend_throw_exception_ex(exception_class(rc), rc TSRMLS_CC,
+    zend_throw_exception_ex(exception_class(rc), rc ,
                             "%s", cass_error_desc(rc));
     return NULL;
   }
@@ -563,7 +563,7 @@ PHP_METHOD(DefaultSession, execute)
   CassStatement* single = NULL;
   CassBatch* batch      = NULL;
 
-  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z|z", &statement, &options) == FAILURE) {
+  if (zend_parse_parameters(ZEND_NUM_ARGS() , "z|z", &statement, &options) == FAILURE) {
     return;
   }
 
@@ -573,7 +573,7 @@ PHP_METHOD(DefaultSession, execute)
     simple_statement.type            = PHP_DRIVER_SIMPLE_STATEMENT;
     simple_statement.data.simple.cql = Z_STRVAL_P(statement);
     stmt                             = &simple_statement;
-  } else if (Z_TYPE_P(statement) == IS_OBJECT && instanceof_function(Z_OBJCE_P(statement), php_driver_statement_ce TSRMLS_CC)) {
+  } else if (Z_TYPE_P(statement) == IS_OBJECT && instanceof_function(Z_OBJCE_P(statement), php_driver_statement_ce )) {
     stmt = PHP_DRIVER_GET_STATEMENT(statement);
   } else {
     INVALID_ARGUMENT(statement, "a string or an instance of " PHP_DRIVER_NAMESPACE "\\Statement");
@@ -584,14 +584,14 @@ PHP_METHOD(DefaultSession, execute)
   timeout     = PHP5TO7_ZVAL_MAYBE_P(self->default_timeout);
 
   if (options) {
-    if (Z_TYPE_P(options) != IS_ARRAY && (Z_TYPE_P(options) != IS_OBJECT || !instanceof_function(Z_OBJCE_P(options), php_driver_execution_options_ce TSRMLS_CC))) {
+    if (Z_TYPE_P(options) != IS_ARRAY && (Z_TYPE_P(options) != IS_OBJECT || !instanceof_function(Z_OBJCE_P(options), php_driver_execution_options_ce ))) {
       INVALID_ARGUMENT(options, "an instance of " PHP_DRIVER_NAMESPACE "\\ExecutionOptions or an array or null");
     }
 
     if (Z_TYPE_P(options) == IS_OBJECT) {
       opts = PHP_DRIVER_GET_EXECUTION_OPTIONS(options);
     } else {
-      if (php_driver_execution_options_build_local_from_array(&local_opts, options TSRMLS_CC) == FAILURE) {
+      if (php_driver_execution_options_build_local_from_array(&local_opts, options ) == FAILURE) {
         return;
       }
       opts = &local_opts;
@@ -629,7 +629,7 @@ PHP_METHOD(DefaultSession, execute)
     single = create_single(stmt, arguments, consistency,
                            serial_consistency, page_size,
                            paging_state_token, paging_state_token_size,
-                           retry_policy, timestamp TSRMLS_CC);
+                           retry_policy, timestamp );
 
     if (!single)
       return;
@@ -637,7 +637,7 @@ PHP_METHOD(DefaultSession, execute)
     future = cass_session_execute((CassSession*) self->session->data, single);
     break;
   case PHP_DRIVER_BATCH_STATEMENT:
-    batch = create_batch(stmt, consistency, retry_policy, timestamp TSRMLS_CC);
+    batch = create_batch(stmt, consistency, retry_policy, timestamp );
 
     if (!batch)
       return;
@@ -654,14 +654,14 @@ PHP_METHOD(DefaultSession, execute)
     const CassResult* result = NULL;
     php_driver_rows* rows    = NULL;
 
-    if (php_driver_future_wait_timed(future, timeout TSRMLS_CC) == FAILURE || php_driver_future_is_error(future TSRMLS_CC) == FAILURE)
+    if (php_driver_future_wait_timed(future, timeout ) == FAILURE || php_driver_future_is_error(future ) == FAILURE)
       break;
 
     result = cass_future_get_result(future);
     cass_future_free(future);
 
     if (!result) {
-      zend_throw_exception_ex(php_driver_runtime_exception_ce, 0 TSRMLS_CC,
+      zend_throw_exception_ex(php_driver_runtime_exception_ce, 0 ,
                               "Future doesn't contain a result.");
       break;
     }
@@ -669,7 +669,7 @@ PHP_METHOD(DefaultSession, execute)
     object_init_ex(return_value, php_driver_rows_ce);
     rows = PHP_DRIVER_GET_ROWS(return_value);
 
-    if (php_driver_get_result(result, &rows->rows TSRMLS_CC) == FAILURE) {
+    if (php_driver_get_result(result, &rows->rows ) == FAILURE) {
       cass_result_free(result);
       break;
     }
@@ -712,7 +712,7 @@ PHP_METHOD(DefaultSession, executeAsync)
   CassStatement* single               = NULL;
   CassBatch* batch                    = NULL;
 
-  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z|z", &statement, &options) == FAILURE) {
+  if (zend_parse_parameters(ZEND_NUM_ARGS() , "z|z", &statement, &options) == FAILURE) {
     return;
   }
 
@@ -722,7 +722,7 @@ PHP_METHOD(DefaultSession, executeAsync)
     simple_statement.type            = PHP_DRIVER_SIMPLE_STATEMENT;
     simple_statement.data.simple.cql = Z_STRVAL_P(statement);
     stmt                             = &simple_statement;
-  } else if (Z_TYPE_P(statement) == IS_OBJECT && instanceof_function(Z_OBJCE_P(statement), php_driver_statement_ce TSRMLS_CC)) {
+  } else if (Z_TYPE_P(statement) == IS_OBJECT && instanceof_function(Z_OBJCE_P(statement), php_driver_statement_ce )) {
     stmt = PHP_DRIVER_GET_STATEMENT(statement);
   } else {
     INVALID_ARGUMENT(statement, "a string or an instance of " PHP_DRIVER_NAMESPACE "\\Statement");
@@ -732,14 +732,14 @@ PHP_METHOD(DefaultSession, executeAsync)
   page_size   = self->default_page_size;
 
   if (options) {
-    if (Z_TYPE_P(options) != IS_ARRAY && (Z_TYPE_P(options) != IS_OBJECT || !instanceof_function(Z_OBJCE_P(options), php_driver_execution_options_ce TSRMLS_CC))) {
+    if (Z_TYPE_P(options) != IS_ARRAY && (Z_TYPE_P(options) != IS_OBJECT || !instanceof_function(Z_OBJCE_P(options), php_driver_execution_options_ce ))) {
       INVALID_ARGUMENT(options, "an instance of " PHP_DRIVER_NAMESPACE "\\ExecutionOptions or an array or null");
     }
 
     if (Z_TYPE_P(options) == IS_OBJECT) {
       opts = PHP_DRIVER_GET_EXECUTION_OPTIONS(options);
     } else {
-      if (php_driver_execution_options_build_local_from_array(&local_opts, options TSRMLS_CC) == FAILURE) {
+      if (php_driver_execution_options_build_local_from_array(&local_opts, options ) == FAILURE) {
         return;
       }
       opts = &local_opts;
@@ -777,7 +777,7 @@ PHP_METHOD(DefaultSession, executeAsync)
     single = create_single(stmt, arguments, consistency,
                            serial_consistency, page_size,
                            paging_state_token, paging_state_token_size,
-                           retry_policy, timestamp TSRMLS_CC);
+                           retry_policy, timestamp );
 
     if (!single)
       return;
@@ -787,7 +787,7 @@ PHP_METHOD(DefaultSession, executeAsync)
     future_rows->session   = php_driver_add_ref(self->session);
     break;
   case PHP_DRIVER_BATCH_STATEMENT:
-    batch = create_batch(stmt, consistency, retry_policy, timestamp TSRMLS_CC);
+    batch = create_batch(stmt, consistency, retry_policy, timestamp );
 
     if (!batch)
       return;
@@ -822,21 +822,21 @@ PHP_METHOD(DefaultSession, prepare)
   php_driver_statement* prepared_statement            = NULL;
   php_driver_pprepared_statement* pprepared_statement = NULL;
 
-  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z|z", &cql, &options) == FAILURE) {
+  if (zend_parse_parameters(ZEND_NUM_ARGS() , "z|z", &cql, &options) == FAILURE) {
     return;
   }
 
   self = PHP_DRIVER_GET_SESSION(getThis());
 
   if (options) {
-    if (Z_TYPE_P(options) != IS_ARRAY && (Z_TYPE_P(options) != IS_OBJECT || !instanceof_function(Z_OBJCE_P(options), php_driver_execution_options_ce TSRMLS_CC))) {
+    if (Z_TYPE_P(options) != IS_ARRAY && (Z_TYPE_P(options) != IS_OBJECT || !instanceof_function(Z_OBJCE_P(options), php_driver_execution_options_ce ))) {
       INVALID_ARGUMENT(options, "an instance of " PHP_DRIVER_NAMESPACE "\\ExecutionOptions or an array or null");
     }
 
     if (Z_TYPE_P(options) == IS_OBJECT) {
       opts = PHP_DRIVER_GET_EXECUTION_OPTIONS(options);
     } else {
-      if (php_driver_execution_options_build_local_from_array(&local_opts, options TSRMLS_CC) == FAILURE) {
+      if (php_driver_execution_options_build_local_from_array(&local_opts, options ) == FAILURE) {
         return;
       }
       opts = &local_opts;
@@ -867,7 +867,7 @@ PHP_METHOD(DefaultSession, prepare)
     future = cass_session_prepare_n((CassSession*) self->session->data,
                                     Z_STRVAL_P(cql), Z_STRLEN_P(cql));
 
-    if (php_driver_future_wait_timed(future, timeout TSRMLS_CC) == SUCCESS && php_driver_future_is_error(future TSRMLS_CC) == SUCCESS) {
+    if (php_driver_future_wait_timed(future, timeout ) == SUCCESS && php_driver_future_is_error(future ) == SUCCESS) {
       object_init_ex(return_value, php_driver_prepared_statement_ce);
       prepared_statement                         = PHP_DRIVER_GET_STATEMENT(return_value);
       prepared_statement->data.prepared.prepared = cass_future_get_prepared(future);
@@ -895,7 +895,7 @@ PHP_METHOD(DefaultSession, prepare)
   }
 
   if (self->persist) {
-    if (php_driver_future_is_error(future TSRMLS_CC) == FAILURE) {
+    if (php_driver_future_is_error(future ) == FAILURE) {
       (void) PHP5TO7_ZEND_HASH_DEL(&EG(persistent_list), hash_key, hash_key_len + 1);
     }
     efree(hash_key);
@@ -912,7 +912,7 @@ PHP_METHOD(DefaultSession, prepareAsync)
   CassFuture* future                                    = NULL;
   php_driver_future_prepared_statement* future_prepared = NULL;
 
-  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z|z", &cql, &options) == FAILURE) {
+  if (zend_parse_parameters(ZEND_NUM_ARGS() , "z|z", &cql, &options) == FAILURE) {
     return;
   }
 
@@ -933,7 +933,7 @@ PHP_METHOD(DefaultSession, close)
   CassFuture* future = NULL;
   php_driver_session* self;
 
-  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "|z", &timeout) == FAILURE) {
+  if (zend_parse_parameters(ZEND_NUM_ARGS() , "|z", &timeout) == FAILURE) {
     return;
   }
 
@@ -944,8 +944,8 @@ PHP_METHOD(DefaultSession, close)
 
   future = cass_session_close((CassSession*) self->session->data);
 
-  if (php_driver_future_wait_timed(future, timeout TSRMLS_CC) == SUCCESS)
-    php_driver_future_is_error(future TSRMLS_CC);
+  if (php_driver_future_wait_timed(future, timeout ) == SUCCESS)
+    php_driver_future_is_error(future );
 
   cass_future_free(future);
 }
@@ -1117,17 +1117,17 @@ php_driver_default_session_properties(
 #if PHP_MAJOR_VERSION >= 8
   zend_object* object
 #else
-  zval* object TSRMLS_DC
+  zval* object
 #endif
 )
 {
-  HashTable* props = zend_std_get_properties(object TSRMLS_CC);
+  HashTable* props = zend_std_get_properties(object );
 
   return props;
 }
 
 static int
-php_driver_default_session_compare(zval* obj1, zval* obj2 TSRMLS_DC)
+php_driver_default_session_compare(zval* obj1, zval* obj2 )
 {
 #if PHP_MAJOR_VERSION >= 8
   ZEND_COMPARE_OBJECTS_FALLBACK(obj1, obj2);
@@ -1139,19 +1139,19 @@ php_driver_default_session_compare(zval* obj1, zval* obj2 TSRMLS_DC)
 }
 
 static void
-php_driver_default_session_free(php5to7_zend_object_free* object TSRMLS_DC)
+php_driver_default_session_free(php5to7_zend_object_free* object )
 {
   php_driver_session* self = PHP5TO7_ZEND_OBJECT_GET(session, object);
 
   php_driver_del_peref(&self->session, 1);
   PHP5TO7_ZVAL_MAYBE_DESTROY(self->default_timeout);
 
-  zend_object_std_dtor(&self->zval TSRMLS_CC);
+  zend_object_std_dtor(&self->zval );
   PHP5TO7_MAYBE_EFREE(self);
 }
 
 static php5to7_zend_object
-php_driver_default_session_new(zend_class_entry* ce TSRMLS_DC)
+php_driver_default_session_new(zend_class_entry* ce )
 {
   php_driver_session* self =
     PHP5TO7_ZEND_OBJECT_ECALLOC(session, ce);
@@ -1168,13 +1168,13 @@ php_driver_default_session_new(zend_class_entry* ce TSRMLS_DC)
 }
 
 void
-php_driver_define_DefaultSession(TSRMLS_D)
+php_driver_define_DefaultSession()
 {
   zend_class_entry ce;
 
   INIT_CLASS_ENTRY(ce, PHP_DRIVER_NAMESPACE "\\DefaultSession", php_driver_default_session_methods);
-  php_driver_default_session_ce = zend_register_internal_class(&ce TSRMLS_CC);
-  zend_class_implements(php_driver_default_session_ce TSRMLS_CC, 1, php_driver_session_ce);
+  php_driver_default_session_ce = zend_register_internal_class(&ce );
+  zend_class_implements(php_driver_default_session_ce , 1, php_driver_session_ce);
   php_driver_default_session_ce->ce_flags |= PHP5TO7_ZEND_ACC_FINAL;
   php_driver_default_session_ce->create_object = php_driver_default_session_new;
 

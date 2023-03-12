@@ -21,7 +21,7 @@ BEGIN_EXTERN_C()
 zend_class_entry *php_driver_table_ce = NULL;
 
 php5to7_zval
-php_driver_table_build_options(CassIterator* iterator TSRMLS_DC) {
+php_driver_table_build_options(CassIterator* iterator ) {
   const char *name;
   size_t name_length;
   php5to7_zval zoptions;
@@ -44,7 +44,7 @@ php_driver_table_build_options(CassIterator* iterator TSRMLS_DC) {
           PHP5TO7_ZVAL_UNDEF(zvalue);
           if (php_driver_value(value,
                                   data_type,
-                                  &zvalue TSRMLS_CC) == SUCCESS) {
+                                  &zvalue ) == SUCCESS) {
             PHP5TO7_ADD_ASSOC_ZVAL_EX(PHP5TO7_ZVAL_MAYBE_P(zoptions),
                                       name, name_length + 1,
                                       PHP5TO7_ZVAL_MAYBE_P(zvalue));
@@ -94,12 +94,12 @@ static zend_function_entry php_driver_table_methods[] = {
   PHP_FE_END
 };
 
-void php_driver_define_Table(TSRMLS_D)
+void php_driver_define_Table()
 {
   zend_class_entry ce;
 
   INIT_CLASS_ENTRY(ce, PHP_DRIVER_NAMESPACE "\\Table", php_driver_table_methods);
-  php_driver_table_ce = zend_register_internal_class(&ce TSRMLS_CC);
+  php_driver_table_ce = zend_register_internal_class(&ce );
   php_driver_table_ce->ce_flags |= ZEND_ACC_INTERFACE;
 }
 END_EXTERN_C()

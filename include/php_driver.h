@@ -55,15 +55,6 @@ extern "C"
 #error PHP 8.0.0 or later is required in order to build the driver
 #endif
 
-#if PHP_MAJOR_VERSION >= 8
-#ifndef TSRMLS_D
-#define TSRMLS_D void
-#define TSRMLS_DC
-#define TSRMLS_C
-#define TSRMLS_CC
-#define TSRMLS_FETCH()
-#endif
-#endif
 
 #include <ext/spl/spl_exceptions.h>
 #include <ext/spl/spl_iterators.h>
@@ -102,7 +93,7 @@ extern "C"
 #define CURRENT_CPP_DRIVER_VERSION CPP_DRIVER_VERSION(CASS_VERSION_MAJOR, CASS_VERSION_MINOR, CASS_VERSION_PATCH)
 
 #define php5to7_zend_register_internal_class_ex(ce, parent_ce)                                                         \
-    zend_register_internal_class_ex((ce), (parent_ce)TSRMLS_CC);
+    zend_register_internal_class_ex((ce), (parent_ce));
 
     typedef zval php5to7_zval;
     typedef zval *php5to7_zval_args;
@@ -149,7 +140,7 @@ extern "C"
 #define PHP5TO7_ZEND_OBJECT_INIT_EX(type_name, name, self, ce)                                                         \
     do                                                                                                                 \
     {                                                                                                                  \
-        zend_object_std_init(&self->zval, ce TSRMLS_CC);                                                               \
+        zend_object_std_init(&self->zval, ce);                                                               \
         ((zend_object_handlers *)&php_driver_##name##_handlers)->offset = XtOffsetOf(php_driver_##type_name, zval);    \
         ((zend_object_handlers *)&php_driver_##name##_handlers)->free_obj = php_driver_##name##_free;                  \
         self->zval.handlers = (zend_object_handlers *)&php_driver_##name##_handlers;                                   \
@@ -234,7 +225,7 @@ extern "C"
 
 #define PHP5TO7_ZEND_HASH_ZVAL_COPY(dst, src) zend_hash_copy((dst), (src), (copy_ctor_func_t)zval_add_ref);
 
-#define PHP5TO7_ZEND_HASH_SORT(ht, compare_func, renumber) zend_hash_sort(ht, compare_func, renumber TSRMLS_CC)
+#define PHP5TO7_ZEND_HASH_SORT(ht, compare_func, renumber) zend_hash_sort(ht, compare_func, renumber)
 
 #define PHP5TO7_ZVAL_COPY(zv1, zv2) ZVAL_COPY(zv1, zv2)
 #define PHP5TO7_ZVAL_IS_UNDEF(zv) Z_ISUNDEF(zv)
@@ -287,19 +278,19 @@ extern "C"
 
     zend_class_entry *exception_class(CassError rc);
 
-    void throw_invalid_argument(zval *object, const char *object_name, const char *expected_type TSRMLS_DC);
+    void throw_invalid_argument(zval *object, const char *object_name, const char *expected_type);
 
 #define INVALID_ARGUMENT(object, expected)                                                                             \
     do                                                                                                                 \
     {                                                                                                                  \
-        throw_invalid_argument(object, #object, expected TSRMLS_CC);                                                   \
+        throw_invalid_argument(object, #object, expected);                                                   \
         return;                                                                                                        \
     } while (0)
 
 #define INVALID_ARGUMENT_VALUE(object, expected, failed_value)                                                         \
     do                                                                                                                 \
     {                                                                                                                  \
-        throw_invalid_argument(object, #object, expected TSRMLS_CC);                                                   \
+        throw_invalid_argument(object, #object, expected);                                                   \
         return failed_value;                                                                                           \
     } while (0)
 
@@ -308,7 +299,7 @@ extern "C"
     {                                                                                                                  \
         if (rc != CASS_OK)                                                                                             \
         {                                                                                                              \
-            zend_throw_exception_ex(exception_class(rc), rc TSRMLS_CC, "%s", cass_error_desc(rc));                     \
+            zend_throw_exception_ex(exception_class(rc), rc, "%s", cass_error_desc(rc));                     \
             block                                                                                                      \
         }                                                                                                              \
     } while (0)

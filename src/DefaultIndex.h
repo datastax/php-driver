@@ -18,5 +18,5 @@
 
 #include <php_driver.h>
 BEGIN_EXTERN_C()
-php5to7_zval php_driver_create_index(php_driver_ref *schema, const CassIndexMeta *meta TSRMLS_DC);
+php5to7_zval php_driver_create_index(php_driver_ref *schema, const CassIndexMeta *meta);
 END_EXTERN_C()

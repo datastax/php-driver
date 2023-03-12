@@ -23,7 +23,7 @@ static zend_function_entry ServerException_methods[] = {
   PHP_FE_END
 };
 
-void php_driver_define_ServerException(TSRMLS_D)
+void php_driver_define_ServerException()
 {
   zend_class_entry ce;
 

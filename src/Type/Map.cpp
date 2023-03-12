@@ -29,7 +29,7 @@ zend_class_entry *php_driver_type_map_ce = NULL;
 
 PHP_METHOD(TypeMap, __construct)
 {
-  zend_throw_exception_ex(php_driver_logic_exception_ce, 0 TSRMLS_CC,
+  zend_throw_exception_ex(php_driver_logic_exception_ce, 0 ,
     "Instantiation of a " PHP_DRIVER_NAMESPACE "\\Type\\Map type is not supported."
   );
   return;
@@ -79,7 +79,7 @@ PHP_METHOD(TypeMap, __toString)
 
   self = PHP_DRIVER_GET_TYPE(getThis());
 
-  php_driver_type_string(self, &string TSRMLS_CC);
+  php_driver_type_string(self, &string );
   smart_str_0(&string);
 
   PHP5TO7_RETVAL_STRING(PHP5TO7_SMART_STR_VAL(string));
@@ -92,14 +92,14 @@ PHP_METHOD(TypeMap, create)
   php5to7_zval_args args = NULL;
   int argc = 0, i;
 
-  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "*",
+  if (zend_parse_parameters(ZEND_NUM_ARGS() , "*",
                             &args, &argc) == FAILURE) {
     return;
   }
 
   if (argc % 2 == 1) {
     PHP5TO7_MAYBE_EFREE(args);
-    zend_throw_exception_ex(php_driver_invalid_argument_exception_ce, 0 TSRMLS_CC,
+    zend_throw_exception_ex(php_driver_invalid_argument_exception_ce, 0 ,
                             "Not enough values, maps can only be created " \
                             "from an even number of values, where each odd " \
                             "value is a key and each even value is a value, " \
@@ -116,7 +116,7 @@ PHP_METHOD(TypeMap, create)
     for (i = 0; i < argc; i += 2) {
       if (!php_driver_map_set(map,
                               PHP5TO7_ZVAL_ARG(args[i]),
-                              PHP5TO7_ZVAL_ARG(args[i + 1]) TSRMLS_CC)) {
+                              PHP5TO7_ZVAL_ARG(args[i + 1]) )) {
         PHP5TO7_MAYBE_EFREE(args);
         return;
       }
@@ -162,12 +162,12 @@ php_driver_type_map_gc(
 #else
         zval *object,
 #endif
-        php5to7_zval_gc table, int *n TSRMLS_DC
+        php5to7_zval_gc table, int *n
 )
 {
   *table = NULL;
   *n = 0;
-  return zend_std_get_properties(object TSRMLS_CC);
+  return zend_std_get_properties(object );
 }
 
 static HashTable *
@@ -175,7 +175,7 @@ php_driver_type_map_properties(
 #if PHP_MAJOR_VERSION >= 8
         zend_object *object
 #else
-        zval *object TSRMLS_DC
+        zval *object
 #endif
 )
 {
@@ -184,7 +184,7 @@ php_driver_type_map_properties(
 #else
   php_driver_type *self  = PHP_DRIVER_GET_TYPE(object);
 #endif
-  HashTable      *props = zend_std_get_properties(object TSRMLS_CC);
+  HashTable      *props = zend_std_get_properties(object );
 
   PHP5TO7_ZEND_HASH_UPDATE(props,
                            "keyType", sizeof("keyType"),
@@ -200,7 +200,7 @@ php_driver_type_map_properties(
 }
 
 static int
-php_driver_type_map_compare(zval *obj1, zval *obj2 TSRMLS_DC)
+php_driver_type_map_compare(zval *obj1, zval *obj2 )
 {
 #if PHP_MAJOR_VERSION >= 8
   ZEND_COMPARE_OBJECTS_FALLBACK(obj1, obj2);
@@ -208,11 +208,11 @@ php_driver_type_map_compare(zval *obj1, zval *obj2 TSRMLS_DC)
   php_driver_type* type1 = PHP_DRIVER_GET_TYPE(obj1);
   php_driver_type* type2 = PHP_DRIVER_GET_TYPE(obj2);
 
-  return php_driver_type_compare(type1, type2 TSRMLS_CC);
+  return php_driver_type_compare(type1, type2 );
 }
 
 static void
-php_driver_type_map_free(php5to7_zend_object_free *object TSRMLS_DC)
+php_driver_type_map_free(php5to7_zend_object_free *object )
 {
   php_driver_type *self = PHP5TO7_ZEND_OBJECT_GET(type, object);
 
@@ -220,12 +220,12 @@ php_driver_type_map_free(php5to7_zend_object_free *object TSRMLS_DC)
   PHP5TO7_ZVAL_MAYBE_DESTROY(self->data.map.key_type);
   PHP5TO7_ZVAL_MAYBE_DESTROY(self->data.map.value_type);
 
-  zend_object_std_dtor(&self->zval TSRMLS_CC);
+  zend_object_std_dtor(&self->zval );
   PHP5TO7_MAYBE_EFREE(self);
 }
 
 static php5to7_zend_object
-php_driver_type_map_new(zend_class_entry *ce TSRMLS_DC)
+php_driver_type_map_new(zend_class_entry *ce )
 {
   php_driver_type *self =
       PHP5TO7_ZEND_OBJECT_ECALLOC(type, ce);
@@ -238,7 +238,7 @@ php_driver_type_map_new(zend_class_entry *ce TSRMLS_DC)
   PHP5TO7_ZEND_OBJECT_INIT_EX(type, type_map, self, ce);
 }
 
-void php_driver_define_TypeMap(TSRMLS_D)
+void php_driver_define_TypeMap()
 {
   zend_class_entry ce;
 

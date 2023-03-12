@@ -29,11 +29,11 @@ php_driver_uuid_init(INTERNAL_FUNCTION_PARAMETERS)
   php5to7_size value_len;
   php_driver_uuid *self;
 
-  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "|s", &value, &value_len) == FAILURE) {
+  if (zend_parse_parameters(ZEND_NUM_ARGS() , "|s", &value, &value_len) == FAILURE) {
     return;
   }
 
-  if (getThis() && instanceof_function(Z_OBJCE_P(getThis()), php_driver_uuid_ce TSRMLS_CC)) {
+  if (getThis() && instanceof_function(Z_OBJCE_P(getThis()), php_driver_uuid_ce )) {
     self = PHP_DRIVER_GET_UUID(getThis());
   } else {
     object_init_ex(return_value, php_driver_uuid_ce);
@@ -41,10 +41,10 @@ php_driver_uuid_init(INTERNAL_FUNCTION_PARAMETERS)
   }
 
   if (ZEND_NUM_ARGS() == 0) {
-    php_driver_uuid_generate_random(&self->uuid TSRMLS_CC);
+    php_driver_uuid_generate_random(&self->uuid );
   } else {
     if (cass_uuid_from_string(value, &self->uuid) != CASS_OK) {
-      zend_throw_exception_ex(php_driver_invalid_argument_exception_ce, 0 TSRMLS_CC,
+      zend_throw_exception_ex(php_driver_invalid_argument_exception_ce, 0 ,
                               "Invalid UUID: '%.*s'", value_len, value);
       return;
     }
@@ -75,7 +75,7 @@ PHP_METHOD(Uuid, __toString)
 /* {{{ Uuid::type() */
 PHP_METHOD(Uuid, type)
 {
-  php5to7_zval type = php_driver_type_scalar(CASS_VALUE_TYPE_UUID TSRMLS_CC);
+  php5to7_zval type = php_driver_type_scalar(CASS_VALUE_TYPE_UUID );
   RETURN_ZVAL(PHP5TO7_ZVAL_MAYBE_P(type), 1, 1);
 }
 /* }}} */
@@ -133,12 +133,12 @@ php_driver_uuid_gc(
 #else
         zval *object,
 #endif
-        php5to7_zval_gc table, int *n TSRMLS_DC
+        php5to7_zval_gc table, int *n
 )
 {
   *table = NULL;
   *n = 0;
-  return zend_std_get_properties(object TSRMLS_CC);
+  return zend_std_get_properties(object );
 }
 
 static HashTable *
@@ -146,7 +146,7 @@ php_driver_uuid_properties(
 #if PHP_MAJOR_VERSION >= 8
         zend_object *object
 #else
-        zval *object TSRMLS_DC
+        zval *object
 #endif
 )
 {
@@ -160,11 +160,11 @@ php_driver_uuid_properties(
 #else
   php_driver_uuid *self = PHP_DRIVER_GET_UUID(object);
 #endif
-  HashTable      *props = zend_std_get_properties(object TSRMLS_CC);
+  HashTable      *props = zend_std_get_properties(object );
 
   cass_uuid_string(self->uuid, string);
 
-  type = php_driver_type_scalar(CASS_VALUE_TYPE_UUID TSRMLS_CC);
+  type = php_driver_type_scalar(CASS_VALUE_TYPE_UUID );
   PHP5TO7_ZEND_HASH_UPDATE(props, "type", sizeof("type"), PHP5TO7_ZVAL_MAYBE_P(type), sizeof(zval));
 
   PHP5TO7_ZVAL_MAYBE_MAKE(uuid);
@@ -179,7 +179,7 @@ php_driver_uuid_properties(
 }
 
 static int
-php_driver_uuid_compare(zval *obj1, zval *obj2 TSRMLS_DC)
+php_driver_uuid_compare(zval *obj1, zval *obj2 )
 {
 #if PHP_MAJOR_VERSION >= 8
   ZEND_COMPARE_OBJECTS_FALLBACK(obj1, obj2);
@@ -202,7 +202,7 @@ php_driver_uuid_compare(zval *obj1, zval *obj2 TSRMLS_DC)
 }
 
 static unsigned
-php_driver_uuid_hash_value(zval *obj TSRMLS_DC)
+php_driver_uuid_hash_value(zval *obj )
 {
   php_driver_uuid *self = PHP_DRIVER_GET_UUID(obj);
   return php_driver_combine_hash(php_driver_bigint_hash(self->uuid.time_and_version),
@@ -211,16 +211,16 @@ php_driver_uuid_hash_value(zval *obj TSRMLS_DC)
 }
 
 static void
-php_driver_uuid_free(php5to7_zend_object_free *object TSRMLS_DC)
+php_driver_uuid_free(php5to7_zend_object_free *object )
 {
   php_driver_uuid *self = PHP5TO7_ZEND_OBJECT_GET(uuid, object);
 
-  zend_object_std_dtor(&self->zval TSRMLS_CC);
+  zend_object_std_dtor(&self->zval );
   PHP5TO7_MAYBE_EFREE(self);
 }
 
 static php5to7_zend_object
-php_driver_uuid_new(zend_class_entry *ce TSRMLS_DC)
+php_driver_uuid_new(zend_class_entry *ce )
 {
   php_driver_uuid *self =
       PHP5TO7_ZEND_OBJECT_ECALLOC(uuid, ce);
@@ -229,13 +229,13 @@ php_driver_uuid_new(zend_class_entry *ce TSRMLS_DC)
 }
 
 void
-php_driver_define_Uuid(TSRMLS_D)
+php_driver_define_Uuid()
 {
   zend_class_entry ce;
 
   INIT_CLASS_ENTRY(ce, PHP_DRIVER_NAMESPACE "\\Uuid", php_driver_uuid_methods);
-  php_driver_uuid_ce = zend_register_internal_class(&ce TSRMLS_CC);
-  zend_class_implements(php_driver_uuid_ce TSRMLS_CC, 2, php_driver_value_ce, php_driver_uuid_interface_ce);
+  php_driver_uuid_ce = zend_register_internal_class(&ce );
+  zend_class_implements(php_driver_uuid_ce , 2, php_driver_value_ce, php_driver_uuid_interface_ce);
   memcpy(&php_driver_uuid_handlers, zend_get_std_object_handlers(), sizeof(zend_object_handlers));
   php_driver_uuid_handlers.std.get_properties  = php_driver_uuid_properties;
 #if PHP_VERSION_ID >= 50400

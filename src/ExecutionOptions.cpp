@@ -369,7 +369,7 @@ static php5to7_zend_object php_driver_execution_options_new(zend_class_entry *ce
     PHP5TO7_ZEND_OBJECT_INIT(execution_options, self, ce);
 }
 
-void php_driver_define_ExecutionOptions(TSRMLS_D)
+void php_driver_define_ExecutionOptions()
 {
     zend_class_entry ce;
 

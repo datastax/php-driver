@@ -29,22 +29,22 @@ free_result(void *result)
 }
 
 int
-php_driver_future_rows_get_result(php_driver_future_rows *future_rows, zval *timeout TSRMLS_DC)
+php_driver_future_rows_get_result(php_driver_future_rows *future_rows, zval *timeout )
 {
   if (!future_rows->result) {
     const CassResult *result = NULL;
 
-    if (php_driver_future_wait_timed(future_rows->future, timeout TSRMLS_CC) == FAILURE) {
+    if (php_driver_future_wait_timed(future_rows->future, timeout ) == FAILURE) {
       return FAILURE;
     }
 
-    if (php_driver_future_is_error(future_rows->future TSRMLS_CC) == FAILURE) {
+    if (php_driver_future_is_error(future_rows->future ) == FAILURE) {
       return FAILURE;
     }
 
     result = cass_future_get_result(future_rows->future);
     if (!result) {
-      zend_throw_exception_ex(php_driver_runtime_exception_ce, 0 TSRMLS_CC,
+      zend_throw_exception_ex(php_driver_runtime_exception_ce, 0 ,
                               "Future doesn't contain a result.");
       return FAILURE;
     }
@@ -62,17 +62,17 @@ PHP_METHOD(FutureRows, get)
 
   php_driver_future_rows *self = PHP_DRIVER_GET_FUTURE_ROWS(getThis());
 
-  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "|z", &timeout) == FAILURE) {
+  if (zend_parse_parameters(ZEND_NUM_ARGS() , "|z", &timeout) == FAILURE) {
     return;
   }
 
-  if (php_driver_future_rows_get_result(self, timeout TSRMLS_CC) == FAILURE) {
+  if (php_driver_future_rows_get_result(self, timeout ) == FAILURE) {
     return;
   }
 
   if (PHP5TO7_ZVAL_IS_UNDEF(self->rows)) {
     if (php_driver_get_result((const CassResult *) self->result->data,
-                                 &self->rows TSRMLS_CC) == FAILURE) {
+                                 &self->rows ) == FAILURE) {
       PHP5TO7_ZVAL_MAYBE_DESTROY(self->rows);
       return;
     }
@@ -107,17 +107,17 @@ php_driver_future_rows_properties(
 #if PHP_MAJOR_VERSION >= 8
         zend_object *object
 #else
-        zval *object TSRMLS_DC
+        zval *object
 #endif
 )
 {
-  HashTable *props = zend_std_get_properties(object TSRMLS_CC);
+  HashTable *props = zend_std_get_properties(object );
 
   return props;
 }
 
 static int
-php_driver_future_rows_compare(zval *obj1, zval *obj2 TSRMLS_DC)
+php_driver_future_rows_compare(zval *obj1, zval *obj2 )
 {
 #if PHP_MAJOR_VERSION >= 8
   ZEND_COMPARE_OBJECTS_FALLBACK(obj1, obj2);
@@ -129,7 +129,7 @@ php_driver_future_rows_compare(zval *obj1, zval *obj2 TSRMLS_DC)
 }
 
 static void
-php_driver_future_rows_free(php5to7_zend_object_free *object TSRMLS_DC)
+php_driver_future_rows_free(php5to7_zend_object_free *object )
 {
   php_driver_future_rows *self = PHP5TO7_ZEND_OBJECT_GET(future_rows, object);
 
@@ -143,12 +143,12 @@ php_driver_future_rows_free(php5to7_zend_object_free *object TSRMLS_DC)
     cass_future_free(self->future);
   }
 
-  zend_object_std_dtor(&self->zval TSRMLS_CC);
+  zend_object_std_dtor(&self->zval );
   PHP5TO7_MAYBE_EFREE(self);
 }
 
 static php5to7_zend_object
-php_driver_future_rows_new(zend_class_entry *ce TSRMLS_DC)
+php_driver_future_rows_new(zend_class_entry *ce )
 {
   php_driver_future_rows *self =
       PHP5TO7_ZEND_OBJECT_ECALLOC(future_rows, ce);
@@ -162,13 +162,13 @@ php_driver_future_rows_new(zend_class_entry *ce TSRMLS_DC)
   PHP5TO7_ZEND_OBJECT_INIT(future_rows, self, ce);
 }
 
-void php_driver_define_FutureRows(TSRMLS_D)
+void php_driver_define_FutureRows()
 {
   zend_class_entry ce;
 
   INIT_CLASS_ENTRY(ce, PHP_DRIVER_NAMESPACE "\\FutureRows", php_driver_future_rows_methods);
-  php_driver_future_rows_ce = zend_register_internal_class(&ce TSRMLS_CC);
-  zend_class_implements(php_driver_future_rows_ce TSRMLS_CC, 1, php_driver_future_ce);
+  php_driver_future_rows_ce = zend_register_internal_class(&ce );
+  zend_class_implements(php_driver_future_rows_ce , 1, php_driver_future_ce);
   php_driver_future_rows_ce->ce_flags     |= PHP5TO7_ZEND_ACC_FINAL;
   php_driver_future_rows_ce->create_object = php_driver_future_rows_new;
 

@@ -24,7 +24,7 @@ static zend_function_entry TimeoutException_methods[] = {
   PHP_FE_END
 };
 
-void php_driver_define_TimeoutException(TSRMLS_D)
+void php_driver_define_TimeoutException()
 {
   zend_class_entry ce;
 

@@ -29,7 +29,7 @@ zend_class_entry *php_driver_type_ce = NULL;
   if (zend_parse_parameters_none() == FAILURE) { \
     return; \
   } \
-  ztype = php_driver_type_scalar(value TSRMLS_CC); \
+  ztype = php_driver_type_scalar(value ); \
   RETURN_ZVAL(PHP5TO7_ZVAL_MAYBE_P(ztype), 1, 1); \
 }
 
@@ -41,16 +41,16 @@ PHP_METHOD(Type, collection)
   php5to7_zval ztype;
   zval *value_type;
 
-  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "O",
+  if (zend_parse_parameters(ZEND_NUM_ARGS() , "O",
                             &value_type, php_driver_type_ce) == FAILURE) {
     return;
   }
 
-  if (!php_driver_type_validate(value_type, "type" TSRMLS_CC)) {
+  if (!php_driver_type_validate(value_type, "type" )) {
     return;
   }
 
-  ztype  = php_driver_type_collection(value_type TSRMLS_CC);
+  ztype  = php_driver_type_collection(value_type );
   Z_ADDREF_P(value_type);
   RETURN_ZVAL(PHP5TO7_ZVAL_MAYBE_P(ztype), 0, 1);
 }
@@ -62,25 +62,25 @@ PHP_METHOD(Type, tuple)
   php5to7_zval_args args = NULL;
   int argc = 0, i;
 
-  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "+",
+  if (zend_parse_parameters(ZEND_NUM_ARGS() , "+",
                             &args, &argc) == FAILURE) {
     return;
   }
 
   for (i = 0; i < argc; ++i) {
     zval *sub_type = PHP5TO7_ZVAL_ARG(args[i]);
-    if (!php_driver_type_validate(sub_type, "type" TSRMLS_CC)) {
+    if (!php_driver_type_validate(sub_type, "type" )) {
       PHP5TO7_MAYBE_EFREE(args);
       return;
     }
   }
 
-  ztype = php_driver_type_tuple(TSRMLS_C);
+  ztype = php_driver_type_tuple();
   type = PHP_DRIVER_GET_TYPE(PHP5TO7_ZVAL_MAYBE_P(ztype));
 
   for (i = 0; i < argc; ++i) {
     zval *sub_type = PHP5TO7_ZVAL_ARG(args[i]);
-    if (php_driver_type_tuple_add(type, sub_type TSRMLS_CC)) {
+    if (php_driver_type_tuple_add(type, sub_type )) {
       Z_ADDREF_P(sub_type);
     } else {
       break;
@@ -98,13 +98,13 @@ PHP_METHOD(Type, userType)
   php5to7_zval_args args = NULL;
   int argc = 0, i;
 
-  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "+",
+  if (zend_parse_parameters(ZEND_NUM_ARGS() , "+",
                             &args, &argc) == FAILURE) {
     return;
   }
 
   if (argc % 2 == 1) {
-    zend_throw_exception_ex(php_driver_invalid_argument_exception_ce, 0 TSRMLS_CC,
+    zend_throw_exception_ex(php_driver_invalid_argument_exception_ce, 0 ,
                             "Not enough name/type pairs, user types can only be created " \
                             "from an even number of name/type pairs, where each odd " \
                             "argument is a name and each even argument is a type, " \
@@ -117,18 +117,18 @@ PHP_METHOD(Type, userType)
     zval *name = PHP5TO7_ZVAL_ARG(args[i]);
     zval *sub_type = PHP5TO7_ZVAL_ARG(args[i + 1]);
     if (Z_TYPE_P(name) != IS_STRING) {
-      zend_throw_exception_ex(php_driver_invalid_argument_exception_ce, 0 TSRMLS_CC,
+      zend_throw_exception_ex(php_driver_invalid_argument_exception_ce, 0 ,
                               "Argument %d is not a string", i + 1);
       PHP5TO7_MAYBE_EFREE(args);
       return;
     }
-    if (!php_driver_type_validate(sub_type, "type" TSRMLS_CC)) {
+    if (!php_driver_type_validate(sub_type, "type" )) {
       PHP5TO7_MAYBE_EFREE(args);
       return;
     }
   }
 
-  ztype = php_driver_type_user_type(TSRMLS_C);
+  ztype = php_driver_type_user_type();
   type = PHP_DRIVER_GET_TYPE(PHP5TO7_ZVAL_MAYBE_P(ztype));
 
   for (i = 0; i < argc; i += 2) {
@@ -136,7 +136,7 @@ PHP_METHOD(Type, userType)
     zval *sub_type = PHP5TO7_ZVAL_ARG(args[i + 1]);
     if (php_driver_type_user_type_add(type,
                                          Z_STRVAL_P(name), Z_STRLEN_P(name),
-                                         sub_type TSRMLS_CC)) {
+                                         sub_type )) {
       Z_ADDREF_P(sub_type);
     } else {
       break;
@@ -153,16 +153,16 @@ PHP_METHOD(Type, set)
   php5to7_zval ztype;
   zval *value_type;
 
-  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "O",
+  if (zend_parse_parameters(ZEND_NUM_ARGS() , "O",
                             &value_type, php_driver_type_ce) == FAILURE) {
     return;
   }
 
-  if (!php_driver_type_validate(value_type, "type" TSRMLS_CC)) {
+  if (!php_driver_type_validate(value_type, "type" )) {
     return;
   }
 
-  ztype = php_driver_type_set(value_type TSRMLS_CC);
+  ztype = php_driver_type_set(value_type );
   Z_ADDREF_P(value_type);
   RETURN_ZVAL(PHP5TO7_ZVAL_MAYBE_P(ztype), 0, 1);
 }
@@ -173,21 +173,21 @@ PHP_METHOD(Type, map)
   zval *key_type;
   zval *value_type;
 
-  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "OO",
+  if (zend_parse_parameters(ZEND_NUM_ARGS() , "OO",
                             &key_type, php_driver_type_ce,
                             &value_type, php_driver_type_ce) == FAILURE) {
     return;
   }
 
-  if (!php_driver_type_validate(key_type, "keyType" TSRMLS_CC)) {
+  if (!php_driver_type_validate(key_type, "keyType" )) {
     return;
   }
 
-  if (!php_driver_type_validate(value_type, "valueType" TSRMLS_CC)) {
+  if (!php_driver_type_validate(value_type, "valueType" )) {
     return;
   }
 
-  ztype = php_driver_type_map(key_type, value_type TSRMLS_CC);
+  ztype = php_driver_type_map(key_type, value_type );
   Z_ADDREF_P(key_type);
   Z_ADDREF_P(value_type);
   RETURN_ZVAL(PHP5TO7_ZVAL_MAYBE_P(ztype), 0, 1);
@@ -235,12 +235,12 @@ static zend_function_entry php_driver_type_methods[] = {
   PHP_FE_END
 };
 
-void php_driver_define_Type(TSRMLS_D)
+void php_driver_define_Type()
 {
   zend_class_entry ce;
 
   INIT_CLASS_ENTRY(ce, PHP_DRIVER_NAMESPACE "\\Type", php_driver_type_methods);
-  php_driver_type_ce = zend_register_internal_class(&ce TSRMLS_CC);
+  php_driver_type_ce = zend_register_internal_class(&ce );
   php_driver_type_ce->ce_flags |= ZEND_ACC_ABSTRACT;
 }
 END_EXTERN_C()
