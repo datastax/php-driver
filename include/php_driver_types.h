@@ -264,7 +264,7 @@ typedef struct php_driver_cluster_
 } php_driver_cluster;
 static zend_always_inline php_driver_cluster *php_driver_cluster_object_fetch(zend_object *obj)
 {
-    return (php_driver_cluster *)((char *)obj - ((size_t)(&(((php_driver_cluster *)0)->zval))));
+    return (php_driver_cluster *)((char *)obj - offsetof(php_driver_cluster, zval));
 }
 
 typedef enum
@@ -442,7 +442,7 @@ typedef struct php_driver_cluster_builder_
 } php_driver_cluster_builder;
 static zend_always_inline php_driver_cluster_builder *php_driver_cluster_builder_object_fetch(zend_object *obj)
 {
-    return (php_driver_cluster_builder *)((char *)obj - ((size_t)(&(((php_driver_cluster_builder *)0)->zval))));
+    return (php_driver_cluster_builder *)((char *)obj - offsetof(php_driver_cluster_builder, zval));
 }
 
 typedef struct php_driver_future_prepared_statement_
@@ -522,7 +522,7 @@ typedef struct php_driver_session_
 } php_driver_session;
 static zend_always_inline php_driver_session *php_driver_session_object_fetch(zend_object *obj)
 {
-    return (php_driver_session *)((char *)obj - ((size_t)(&(((php_driver_session *)0)->zval))));
+    return (php_driver_session *)((char *)obj - offsetof(php_driver_session, zval));
 }
 
 
