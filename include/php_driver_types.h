@@ -128,7 +128,7 @@ typedef struct php_driver_time_
 } php_driver_time;
 static zend_always_inline php_driver_time *php_driver_time_object_fetch(zend_object *obj)
 {
-    return (php_driver_time *)((char *)obj - ((size_t)(&(((php_driver_time *)0)->zval))));
+    return (php_driver_time *)((char *)obj - offsetof(php_driver_time, zval));
 }
 
 typedef struct php_driver_blob_
@@ -839,8 +839,6 @@ extern PHP_DRIVER_API zend_class_entry *php_driver_execution_options_ce;
 extern PHP_DRIVER_API zend_class_entry *php_driver_rows_ce;
 
 void php_driver_define_Core(TSRMLS_D);
-void php_driver_define_Cluster(TSRMLS_D);
-void php_driver_define_DefaultCluster(TSRMLS_D);
 void php_driver_define_Future(TSRMLS_D);
 void php_driver_define_FuturePreparedStatement(TSRMLS_D);
 void php_driver_define_FutureRows(TSRMLS_D);

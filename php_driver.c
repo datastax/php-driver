@@ -42,7 +42,7 @@ static uv_rwlock_t log_lock;
 #error C/C++ driver version 2.16.2 or greater required
 #endif
 
-#include "src/Cluster/Builder.h"
+#include "src/Cluster/Cluster.h"
 
 ZEND_DECLARE_MODULE_GLOBALS(php_driver)
 

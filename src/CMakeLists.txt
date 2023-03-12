@@ -7,7 +7,6 @@ target_sources(
         BatchStatement.c
         Bigint.c
         Blob.c
-        Cluster.c
         Collection.c
         Column.c
         Core.c
@@ -15,7 +14,6 @@ target_sources(
         Date.c
         Decimal.c
         DefaultAggregate.c
-        DefaultCluster.c
         DefaultColumn.c
         DefaultFunction.c
         DefaultIndex.c

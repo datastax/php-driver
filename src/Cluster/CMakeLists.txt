@@ -5,6 +5,8 @@ target_sources(
         PRIVATE
         Builder.c
         BuilderHandlers.c
+        Cluster.c
+        DefaultCluster.c
 )
 
 find_package(PHP REQUIRED)

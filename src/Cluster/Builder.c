@@ -23,7 +23,7 @@
 #include "php_driver_types.h"
 #include "util/consistency.h"
 
-#include "Builder.h"
+#include "Cluster.h"
 #include "BuilderHandlers.h"
 #include "Builder_arginfo.h"
 #include "zend_portability.h"
@@ -134,7 +134,7 @@ ZEND_METHOD(Cassandra_Cluster_Builder, build)
             SAFE_ZEND_STRING(self->whitelist_dcs), SAFE_ZEND_STRING(self->blacklist_hosts),
             SAFE_ZEND_STRING(self->blacklist_dcs));
 
-        php5to7_zend_resource_le *le;
+        zval *le;
 
         if (PHP5TO7_ZEND_HASH_FIND(&EG(persistent_list), cluster->hash_key, cluster->hash_key_len + 1, le))
         {
