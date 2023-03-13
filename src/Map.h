@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-#ifndef PHP_DRIVER_MAP_H
-#define PHP_DRIVER_MAP_H
+#pragma once
 
 #include <php.h>
 #include <php_driver_types.h>
 
-int php_driver_map_set(php_driver_map* map, zval* zkey, zval* zvalue);
 
-#endif /* PHP_DRIVER_MAP_H */
+BEGIN_EXTERN_C()
+int php_driver_map_set(php_driver_map* map, zval* zkey, zval* zvalue);
+END_EXTERN_C()

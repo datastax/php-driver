@@ -14,9 +14,7 @@
  * limitations under the License.
  */
 
-#ifndef PHP_DRIVER_FLOAT_H
-#define PHP_DRIVER_FLOAT_H
-
+#pragma once
+BEGIN_EXTERN_C()
 void php_driver_float_init(INTERNAL_FUNCTION_PARAMETERS);
-
-#endif /* PHP_DRIVER_FLOAT_H */
+END_EXTERN_C()

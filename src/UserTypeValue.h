@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
-#ifndef PHP_DRIVER_USER_TYPE_VALUE_H
-#define PHP_DRIVER_USER_TYPE_VALUE_H
+#pragma once
 
-void php_driver_user_type_value_set(php_driver_user_type_value *user_type_value,
-                                    const char *name, size_t name_length,
-                                    zval *object TSRMLS_DC);
+BEGIN_EXTERN_C()
+void php_driver_user_type_value_set(php_driver_user_type_value *user_type_value, const char *name, size_t name_length,
+                                    zval *object);
 
-#endif /* PHP_DRIVER_USER_TYPE_VALUE_H */
+END_EXTERN_C()

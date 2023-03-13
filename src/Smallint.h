@@ -14,9 +14,7 @@
  * limitations under the License.
  */
 
-#ifndef PHP_DRIVER_SMALLINT_H
-#define PHP_DRIVER_SMALLINT_H
-
+#pragma once
+BEGIN_EXTERN_C()
 void php_driver_smallint_init(INTERNAL_FUNCTION_PARAMETERS);
-
-#endif /* PHP_DRIVER_SMALLINT_H */
+END_EXTERN_C()

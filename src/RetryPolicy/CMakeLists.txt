@@ -3,10 +3,10 @@ add_library(ext_scylladb::retry_policy ALIAS retry_policy)
 target_sources(
         retry_policy
         PRIVATE
-        DefaultPolicy.c
-        DowngradingConsistency.c
-        Logging.c
-        Fallthrough.c
+        DefaultPolicy.cpp
+        DowngradingConsistency.cpp
+        Logging.cpp
+        Fallthrough.cpp
 )
 
 find_package(PHP REQUIRED)

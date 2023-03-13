@@ -14,13 +14,9 @@
  * limitations under the License.
  */
 
-#ifndef PHP_DRIVER_DEFAULT_INDEX_H
-#define PHP_DRIVER_DEFAULT_INDEX_H
+#pragma once
 
-#include "php_driver.h"
-
-php5to7_zval
-php_driver_create_index(php_driver_ref* schema,
-                           const CassIndexMeta *meta TSRMLS_DC);
-
-#endif /* PHP_DRIVER_DEFAULT_INDEX_H */
+#include <php_driver.h>
+BEGIN_EXTERN_C()
+php5to7_zval php_driver_create_index(php_driver_ref *schema, const CassIndexMeta *meta);
+END_EXTERN_C()

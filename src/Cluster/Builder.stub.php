@@ -87,7 +87,7 @@ namespace Cassandra\Cluster {
         {
         }
 
-        public function withConnectionsPerHost(int $core, int $max): Builder
+        public function withConnectionsPerHost(int $core, int $max = 2): Builder
         {
         }
 

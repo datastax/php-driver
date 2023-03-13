@@ -14,12 +14,10 @@
  * limitations under the License.
  */
 
-#ifndef PHP_DRIVER_SET_H
-#define PHP_DRIVER_SET_H
+#pragma once
 
 #include <php.h>
 #include <php_driver_types.h>
-
-int php_driver_set_add(php_driver_set* set, zval* object);
-
-#endif /* PHP_DRIVER_SET_H */
+BEGIN_EXTERN_C()
+int php_driver_set_add(php_driver_set *set, zval *object);
+END_EXTERN_C()

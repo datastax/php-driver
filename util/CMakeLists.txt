@@ -3,15 +3,15 @@ add_library(ext_scylladb::utils ALIAS util)
 target_sources(
         util
         PRIVATE
-        src/bytes.c
-        src/collections.c
-        src/future.c
-        src/hash.c
-        src/inet.c
-        src/ref.c
-        src/result.c
-        src/types.c
-        src/uuid_gen.c
+        src/bytes.cpp
+        src/collections.cpp
+        src/future.cpp
+        src/hash.cpp
+        src/inet.cpp
+        src/ref.cpp
+        src/result.cpp
+        src/types.cpp
+        src/uuid_gen.cpp
 )
 
 find_package(PHP REQUIRED)

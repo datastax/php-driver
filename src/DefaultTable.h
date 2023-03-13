@@ -14,13 +14,9 @@
  * limitations under the License.
  */
 
-#ifndef PHP_DRIVER_DEFAULT_TABLE_H
-#define PHP_DRIVER_DEFAULT_TABLE_H
+#pragma once
+#include <php_driver.h>
 
-#include "php_driver.h"
-
-php5to7_zval
-php_driver_create_table(php_driver_ref* schema,
-                           const CassTableMeta *meta TSRMLS_DC);
-
-#endif /* PHP_DRIVER_DEFAULT_TABLE_H */
+BEGIN_EXTERN_C()
+php5to7_zval php_driver_create_table(php_driver_ref *schema, const CassTableMeta *meta );
+END_EXTERN_C()

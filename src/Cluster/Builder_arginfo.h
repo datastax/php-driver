@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: ccf696ea4cffbb74f51beec4f88cd86f67d2a778 */
+ * Stub hash: 88510613e9529786580a45dfd1b522ed24011b77 */
 
 ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Cassandra_Cluster_Builder_withDefaultConsistency, 0, 1, Cassandra\\Cluster\\Builder, 0)
 	ZEND_ARG_TYPE_INFO(0, consistency, IS_LONG, 0)
@@ -69,9 +69,9 @@ ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Cassandra_Cluster_Builder_w
 	ZEND_ARG_TYPE_INFO(0, count, IS_LONG, 0)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Cassandra_Cluster_Builder_withConnectionsPerHost, 0, 2, Cassandra\\Cluster\\Builder, 0)
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Cassandra_Cluster_Builder_withConnectionsPerHost, 0, 1, Cassandra\\Cluster\\Builder, 0)
 	ZEND_ARG_TYPE_INFO(0, core, IS_LONG, 0)
-	ZEND_ARG_TYPE_INFO(0, max, IS_LONG, 0)
+	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, max, IS_LONG, 0, "2")
 ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_class_Cassandra_Cluster_Builder_withReconnectInterval, 0, 1, Cassandra\\Cluster\\Builder, 0)

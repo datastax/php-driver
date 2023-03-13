@@ -14,10 +14,8 @@
  * limitations under the License.
  */
 
-#ifndef PHP_DRIVER_FUTURE_ROWS_H
-#define PHP_DRIVER_FUTURE_ROWS_H
+#pragma once
 
-int
-php_driver_future_rows_get_result(php_driver_future_rows *future_rows, zval *timeout TSRMLS_DC);
-
-#endif /* PHP_DRIVER_FUTURE_ROWS_H */
+BEGIN_EXTERN_C()
+int php_driver_future_rows_get_result(php_driver_future_rows *future_rows, zval *timeout );
+END_EXTERN_C()

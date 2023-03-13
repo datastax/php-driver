@@ -134,7 +134,7 @@ target_include_directories(
         ${PHP_INCLUDES}
 )
 target_sources(ext_scylladb PUBLIC FILE_SET headers TYPE HEADERS FILES "${HEADERS_LIST}" "${PROJECT_BINARY_DIR}/config.h")
-target_sources(ext_scylladb PRIVATE php_driver.c)
+target_sources(ext_scylladb PRIVATE php_driver.cpp)
 
 target_link_libraries(
         ext_scylladb PRIVATE

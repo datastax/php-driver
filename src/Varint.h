@@ -14,11 +14,9 @@
  * limitations under the License.
  */
 
-#ifndef PHP_DRIVER_VARINT_H
-#define PHP_DRIVER_VARINT_H
-
+#pragma once
 #include <php.h>
 
+BEGIN_EXTERN_C()
 void php_driver_varint_init(INTERNAL_FUNCTION_PARAMETERS);
-
-#endif /* PHP_DRIVER_VARINT_H */
+END_EXTERN_C()

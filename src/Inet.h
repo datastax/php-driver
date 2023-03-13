@@ -13,10 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#pragma once
 
-#ifndef PHP_DRIVER_INET_H
-#define PHP_DRIVER_INET_H
-
+BEGIN_EXTERN_C()
 void php_driver_inet_init(INTERNAL_FUNCTION_PARAMETERS);
-
-#endif /* PHP_DRIVER_INET_H */
+END_EXTERN_C()

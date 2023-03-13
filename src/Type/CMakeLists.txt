@@ -3,13 +3,13 @@ add_library(ext_scylladb::type ALIAS type)
 target_sources(
         type
         PRIVATE
-        Collection.c
-        Custom.c
-        Map.c
-        Scalar.c
-        Set.c
-        Tuple.c
-        UserType.c
+        Collection.cpp
+        Custom.cpp
+        Map.cpp
+        Scalar.cpp
+        Set.cpp
+        Tuple.cpp
+        UserType.cpp
 )
 
 find_package(PHP REQUIRED)
