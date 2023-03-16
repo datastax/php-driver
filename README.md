@@ -1,57 +1,65 @@
 
 # ScyllaDB/CassandraDB Driver for PHP
 
-[![Build Status: Linux](https://travis-ci.org/datastax/php-driver.svg)](https://travis-ci.org/datastax/php-driver)
-[![Build Status: Windows](https://ci.appveyor.com/api/projects/status/8vrxpkfl4xm2f3nm?svg=true)](https://ci.appveyor.com/project/DataStax/php-driver)
+[![Build Status](https://github.com/he4rt/scylladb-php-driver/actions/workflows/tests.yml/badge.svg?branch=v1.3.x)](https://github.com/he4rt/scylladb-php-driver/actions/workflows/tests.yml)
 
-A modern, [feature-rich][Features] and highly tunable PHP client library for
+A modern, [feature-rich][Features] and highly tunable PHP client library for [ScyllaDB](https://github.com/scylladb/scylladb) and
 [Apache Cassandra] 3.0+ using exclusively Cassandra's binary protocol. 
 
-This is a wrapper around the [DataStax C/C++ Driver for Apache Cassandra].
+This is a wrapper around the [ScyllaDB C/C++ Driver].
 
-__Note__: DataStax products do not support big-endian systems.
 
 ## Getting the Driver
 
-Binary versions of the driver, available for multiple operating systems and
-multiple versions of PHP, can be obtained from [DataStax download server]. 
+Binary versions of the driver, available for Linux systems and officialy supported versions of PHP (8.1 and 8.2), can be obtained from GitHub Releases (soon).
+
 You're also can compile the driver by yourself or use Dockerfile with a pre-set environment to run your tests.
 
 
 ## What's new in v1.2.0/v1.3.8
 
+* ScyllaDB C/C++ Shard Aware driver implemented
 * Support for [`duration`]
 * `Session::execute()` and `Session::executeAsync()` now support a
-  [simple string] for the query CQL and a simple array for the query execution
-  option
+  [simple string] for the query CQL and a simple array for the query execution option
 * Full support for Apache Cassandra  3.0+
 * Support for [`tinyint` and `smallint`]
 * Support for [`date`] and [`time`]
 * Support for [user-defined function and aggregate] metadata
 * Support for [secondary index] and [materialized view] metadata
 
+## Last Development Status
+### v1.3.8
+- Migration from C to C++
+- Removing PHP Build system in favor of CMake
+- Upgraded `Cassandra\Cluster\Builder` class to new PHP argument parsing API
+- Reduce memory usage from `Cassandra\Cluster\Builder`
+- Migrate from Behat to PestPHP
+- Migrated from TravisCI to Github Actions.
+
 ## Compatibility
 
 This driver works exclusively with the Cassandra Query Language v3 (CQL3) and
 Cassandra's native protocol. The current version works with:
 
+* ScyllaDB 4.4.x and 5.x +
 * Apache Cassandra versions 3.0+
-* PHP 8.0, 8.1 and 8.2 
+* PHP 8.1 and 8.2 
 * 64-bit (x64)
 * Thread safe (TS) and non-thread safe (NTS)
 * Compilers: GCC 10.0+ and Clang 14+
 
 
-## Documentation
+<!-- ## Documentation
 
 * [Home]
 * [API]
-* [Features]
+* [Features] -->
 
 ## Getting Help
 
 * If you're able to fix a bug yourself, you can [fork the repository](https://help.github.com/articles/fork-a-repo/) and [submit a pull request](https://help.github.com/articles/using-pull-requests/) with the fix.
-* If you're not able fix a bug yourself, please [open an issue](https://github.com/nano-interactive/ext-cassandra/issues) , describe it with the most details possible and wait until one of our maintainers join the conversation. 
+* If you're not able fix a bug yourself, please [open an issue](https://github.com/he4rt/scylladb-php-driver/issues) , describe it with the most details possible and wait until one of our maintainers join the conversation. 
 
 ## Quick Start
 
@@ -74,29 +82,52 @@ foreach ($result as $row) {                       // results and rows implement 
 
 ## Installation
 
+Today we have support to build the release version 
 
-[Read detailed instructions on building and installing the
-extension][installing-details]
+### Compiling Release Build
 
+need the php-dev to build it (right version for your environment)
 
+```shell
+apt update -y 
+apt upgrade -y 
+apt install -y python3 python3-pip unzip mlocate build-essential ninja-build libssl-dev libgmp-dev zlib1g-dev openssl libpcre3-dev php-dev && pip3 install cmake
 
-Or if you want to use a older version (PHP 7.1) use the command below
-```bash
-pecl install cassandra
+cmake --preset Release  && cd out/Release && sudo ninja install
 ```
 
+> ninja install needs to be running at sudo
+
+move the cassandra.ini into your php environment
+
+### Compiling Development Build
+
+```shell
+
+apt update -y && apt upgrade -y && apt install -y python3 python3-pip unzip mlocate build-essential ninja-build libssl-dev libgmp-dev zlib1g-dev openssl libpcre3-dev && pip3 install cmake cqlsh && install-php-extensions intl zip pcntl gmp composer && apt-get clean
+
+cmake --preset Debug && cd out/Debug && ninja
+
+php -d "extension=$(pwd)/out/Debug/cassandra.so" debug.php
+```
+
+### Compiling XTREME optimization (pls be careful so powerful)
+
+need the php-dev to build it (right version for your environment)
+perfect for your cpu < 
+
+```shell
+apt update -y 
+apt upgrade -y 
+apt install -y python3 python3-pip unzip mlocate build-essential ninja-build libssl-dev libgmp-dev zlib1g-dev openssl libpcre3-dev php-dev && pip3 install cmake
+
+cmake --preset Release -DPHP_SCYLLADB_OPTIMISE_FOR_CURRENT_MACHINE=ON && cd out/Release && sudo ninja install
+```
 
 ## Contributing
 
 [Read our contribution policy][contribution-policy] for a detailed description
 of the process.
-
-## Code examples
-
-The DataStax PHP Driver uses the amazing [Behat Framework] for both end-to-end,
-or acceptance testing and documentation. All of the features supported by the
-driver have appropriate acceptance tests with [easy-to-copy code examples in
-the `features/` directory][Features].
 
 ## Running tests
 

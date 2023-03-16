@@ -3,7 +3,6 @@
 
 CFLAGS="-g3 -gdwarf-4 -fsanitize=address -fno-omit-frame-pointer"
 CXXFLAGS="-g3 -gdwarf-4 -fsanitize=address -fno-omit-frame-pointer"
-
 print_usage() {
     echo ""
     echo "Usage: compile-debug-php.sh [OPTION] [ARG]"
@@ -11,6 +10,9 @@ print_usage() {
     echo "-o ARG output path, default: $HOME"
     echo "-z Use ZTS"
     echo "-s Use Memory and Undefined Sanitizers"
+    echo "----------"
+    echo "Example: compiling PHP 8.2.3 in debug mode"
+    echo "./compile-php-debug.sh -v 8.2.3 -s"
     echo ""
 }
 
@@ -36,10 +38,16 @@ is_linux() {
     return 1
 }
 
+# install bison re2c libxml2-dev libicu-dev libsqlite3-dev libbzip2-dev libcurl4-openssl-dev
 install_deps() {
-    if which_linux "Ubunut"; then
+    if which_linux "Ubuntu"; then
+    
         sudo apt-get install \
             libssl-dev \
+            bison \
+            re2c \
+            libxml2-dev \
+            libicu-dev \
             libsqlite3-dev \
             zlib1g-dev \
             libcurl4-openssl-dev \
@@ -49,7 +57,6 @@ install_deps() {
             libbz2-dev \
             libsodium-dev \
             libgmp-dev \
-            libpq-dev \
             libzip-dev -y >>/dev/null || exit 1
     fi
 
@@ -65,7 +72,6 @@ install_deps() {
             bzip2-devel \
             libsodium-devel \
             gmp-devel \
-            postgresql-devel \
             libzip-devel -y >>/dev/null || exit 1
     fi
 }
@@ -97,7 +103,6 @@ compile_php() {
         --with-gmp
         --with-gettext
         --with-mysqli
-        --with-pgsql
         --with-sodium
         --enable-phar=shared
     )
