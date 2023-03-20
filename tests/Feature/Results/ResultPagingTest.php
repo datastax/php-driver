@@ -17,7 +17,29 @@ namespace Cassandra\Tests\Feature\Results;
  */
 $keyspace = 'result_paginator';
 $table = 'paging_entries';
-beforeAll(function () use ($keyspace, $table) {
+$dataProvider = [
+    'a' => 0,
+    'b' => 1,
+    'c' => 2,
+    'd' => 3,
+    'e' => 4,
+    'f' => 5,
+    'g' => 6,
+    'h' => 7,
+    'i' => 8,
+    'j' => 9,
+    'k' => 10,
+    'l' => 11,
+    'm' => 12,
+];
+
+
+beforeAll(function () use ($keyspace, $table, $dataProvider) {
+    $insertQuery = '';
+    foreach ($dataProvider as $key => $value) {
+        $insertQuery .= "INSERT INTO $table (key, value) VALUES ('$key', $value);" . PHP_EOL;
+    }
+
     migrateKeyspace(<<<CQL
     CREATE KEYSPACE $keyspace WITH replication = {
         'class': 'SimpleStrategy',
@@ -25,38 +47,26 @@ beforeAll(function () use ($keyspace, $table) {
       };
       USE $keyspace;
       CREATE TABLE $table (key text, value int, PRIMARY KEY(key, value));
-      INSERT INTO $table (key, value) VALUES ('a', 0);
-      INSERT INTO $table (key, value) VALUES ('b', 1);
-      INSERT INTO $table (key, value) VALUES ('c', 2);
-      INSERT INTO $table (key, value) VALUES ('d', 3);
-      INSERT INTO $table (key, value) VALUES ('e', 4);
-      INSERT INTO $table (key, value) VALUES ('f', 5);
-      INSERT INTO $table (key, value) VALUES ('g', 6);
-      INSERT INTO $table (key, value) VALUES ('h', 7);
-      INSERT INTO $table (key, value) VALUES ('i', 8);
-      INSERT INTO $table (key, value) VALUES ('j', 9);
-      INSERT INTO $table (key, value) VALUES ('k', 10);
-      INSERT INTO $table (key, value) VALUES ('l', 11);
-      INSERT INTO $table (key, value) VALUES ('m', 12);
+      $insertQuery
     CQL
-);
+    );
 });
 
 afterAll(function () use ($keyspace) {
     dropKeyspace($keyspace);
 });
 
-it('Paging through results synchronously', function () use ($keyspace) {
+it('Paging through results synchronously', function () use ($keyspace, $dataProvider) {
     $session = scyllaDbConnection($keyspace);
 
-    $options   = ['page_size' => 5];
-    $rows      = $session->execute("SELECT * FROM paging_entries", $options);
+    $options = ['page_size' => 5];
+    $rows = $session->execute("SELECT * FROM paging_entries", $options);
+
+    expect($rows->count())->toBe(5);
 
     while (true) {
-        echo "entries in page: " . $rows->count() . "\n";
-
         foreach ($rows as $row) {
-            echo "key: " . $row['key'] . ", value: " . $row['value'] . "\n";
+            expect($row['value'])->toBe($dataProvider[$row['key']]);
         }
 
         if ($rows->isLastPage()) {
