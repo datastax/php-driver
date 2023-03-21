@@ -76,3 +76,55 @@ it('Paging through results synchronously', function () use ($keyspace, $dataProv
         $rows = $rows->nextPage();
     }
 });
+
+it('Accessing page info after loading next one', function () use ($keyspace, $dataProvider) {
+    $session = scyllaDbConnection($keyspace);
+
+    $options = ['page_size' => 10];
+    $firstPageRows = $session->execute("SELECT * FROM paging_entries", $options);
+    $secondPageRows = $firstPageRows->nextPage();
+
+    expect($firstPageRows->isLastPage())->toBeFalse()
+        ->and($secondPageRows->isLastPage())->toBeTrue()
+        ->and($firstPageRows->count())->toBe(10)
+        ->and($secondPageRows->count())->toBe(3);
+
+});
+
+it('Use paging state token to get next result', function () use ($keyspace, $dataProvider) {
+    $session = scyllaDbConnection($keyspace);
+
+    $query = 'SELECT * FROM paging_entries';
+    $options = ['page_size' => 2];
+    $result = $session->execute($query, $options);
+
+    $resultedRows = [];
+    while ($result->pagingStateToken()) {
+        $options = array(
+            'page_size' => 2,
+            'paging_state_token' => $result->pagingStateToken()
+        );
+
+        $result = $session->execute($query, $options);
+
+        foreach ($result as $row) {
+            $resultedRows[$row['key']] = $row['value'];
+        }
+    }
+
+    $expectedResult = [
+        'm' => 12,
+        'f' => 5,
+        'g' => 6,
+        'e' => 4,
+        'd' => 3,
+        'h' => 7,
+        'l' => 11,
+        'j' => 9,
+        'i' => 8,
+        'k' => 10,
+        'b' => 1,
+    ];
+
+    expect($resultedRows)->toEqual($expectedResult);
+});
