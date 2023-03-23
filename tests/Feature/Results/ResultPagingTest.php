@@ -56,11 +56,11 @@ afterAll(function () use ($keyspace) {
     dropKeyspace($keyspace);
 });
 
-it('Paging through results synchronously', function () use ($keyspace, $dataProvider) {
+it('Paging through results synchronously', function () use ($table, $keyspace, $dataProvider) {
     $session = scyllaDbConnection($keyspace);
 
     $options = ['page_size' => 5];
-    $rows = $session->execute("SELECT * FROM paging_entries", $options);
+    $rows = $session->execute("SELECT * FROM $table", $options);
 
     expect($rows->count())->toBe(5);
 
@@ -77,11 +77,11 @@ it('Paging through results synchronously', function () use ($keyspace, $dataProv
     }
 });
 
-it('Accessing page info after loading next one', function () use ($keyspace, $dataProvider) {
+it('Accessing page info after loading next one', function () use ($table, $keyspace, $dataProvider) {
     $session = scyllaDbConnection($keyspace);
 
     $options = ['page_size' => 10];
-    $firstPageRows = $session->execute("SELECT * FROM paging_entries", $options);
+    $firstPageRows = $session->execute("SELECT * FROM $table", $options);
     $secondPageRows = $firstPageRows->nextPage();
 
     expect($firstPageRows->isLastPage())->toBeFalse()
@@ -91,10 +91,10 @@ it('Accessing page info after loading next one', function () use ($keyspace, $da
 
 });
 
-it('Use paging state token to get next result', function () use ($keyspace, $dataProvider) {
+it('Use paging state token to get next result', function () use ($table, $keyspace, $dataProvider) {
     $session = scyllaDbConnection($keyspace);
 
-    $query = 'SELECT * FROM paging_entries';
+    $query = "SELECT * FROM $table";
     $options = ['page_size' => 2];
     $result = $session->execute($query, $options);
 
