@@ -99,7 +99,7 @@ class CollectionTest extends \PHPUnit_Framework_TestCase
         return array(
             array(Type::ascii(), "ascii"),
             array(Type::bigint(), new Bigint("9223372036854775807")),
-            array(Type::blob(), new Blob("blob")),
+            array(Type::blob(), "blob"),
             array(Type::boolean(), true),
             array(Type::counter(), new Bigint(123)),
             array(Type::decimal(), new Decimal("3.14159265359")),

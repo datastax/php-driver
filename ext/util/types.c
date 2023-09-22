@@ -26,7 +26,6 @@
 #include "src/Bigint.h"
 #include "src/Smallint.h"
 #include "src/Tinyint.h"
-#include "src/Blob.h"
 #include "src/Decimal.h"
 #include "src/Duration.h"
 #include "src/Float.h"
@@ -564,6 +563,12 @@ php_driver_varchar_init(INTERNAL_FUNCTION_PARAMETERS)
 
 static void
 php_driver_ascii_init(INTERNAL_FUNCTION_PARAMETERS)
+{
+  php_driver_varchar_init(INTERNAL_FUNCTION_PARAM_PASSTHRU);
+}
+
+static void
+php_driver_blob_init(INTERNAL_FUNCTION_PARAMETERS)
 {
   php_driver_varchar_init(INTERNAL_FUNCTION_PARAM_PASSTHRU);
 }
