@@ -16,6 +16,7 @@ skip_commits:
     - docs.yaml
     - doxyfile
     - doxygen.rb
+    - Jenkinsfile
     - Rakefile
     - Vagrantfile
 branches:
