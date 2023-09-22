@@ -1,0 +1,7 @@
+**/.git
+Dockerfile
+Makefile
+ext/configure.ac
+.github
+bin
+vendor

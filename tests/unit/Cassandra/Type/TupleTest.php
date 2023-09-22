@@ -19,11 +19,12 @@
 namespace Cassandra\Type;
 
 use Cassandra\Type;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @requires extension cassandra
  */
-class TupleTest extends \PHPUnit_Framework_TestCase
+class TupleTest extends TestCase
 {
     public function testDefinesTupleType()
     {
@@ -62,22 +63,17 @@ class TupleTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($tuple->get(2), null);
     }
 
-    /**
-     * @expectedException        InvalidArgumentException
-     * @expectedExceptionMessage argument must be a string, 1 given
-     */
     public function testPreventsCreatingTupleWithInvalidType()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage("argument must be a string, 1 given");
         Type::tuple(Type::varchar())->create(1);
     }
 
-    /**
-     * @expectedException        InvalidArgumentException
-     * @expectedExceptionMessage type must be a valid Cassandra\Type,
-     *                           an instance of Cassandra\Type\UnsupportedType given
-     */
     public function testPreventsDefiningTuplesWithUnsupportedTypes()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage("type must be a valid Cassandra\Type, an instance of Cassandra\Type\UnsupportedType given");
         Type::tuple(new UnsupportedType());
     }
 

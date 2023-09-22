@@ -18,7 +18,7 @@ __NOTE__: The build procedures only need to be performed for driver development
 
 ## Compatibility
 
-* PHP 5.6, PHP 7.0, and PHP 7.1
+* PHP 5.6, PHP 7.0, PHP 7.1 and PHP 8.1
   * 32-bit (x86) and 64-bit (x64)
   * Thread safe (TS) and non-thread safe (NTS)
 * Compilers: GCC 4.1.2+, Clang 3.4+, and MSVC 2012/2015
@@ -90,7 +90,7 @@ add-apt-repository ppa:ondrej/php
 apt-get update
 ```
 
-Once completed PHP v5.6.x, v7.0.x, or v7.1.x can be installed:
+Once completed PHP v5.6.x, v7.0.x, v7.1.x, or v8.1.x can be installed:
 
 ```bash
 apt-get install build-essential cmake git libpcre3-dev php7.1-dev

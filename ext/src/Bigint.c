@@ -394,7 +394,7 @@ static zend_function_entry php_driver_bigint_methods[] = {
 static php_driver_value_handlers php_driver_bigint_handlers;
 
 static HashTable *
-php_driver_bigint_gc(zval *object, php5to7_zval_gc table, int *n TSRMLS_DC)
+php_driver_bigint_gc(php7to8_object *object, php5to7_zval_gc table, int *n TSRMLS_DC)
 {
   *table = NULL;
   *n = 0;
@@ -402,12 +402,16 @@ php_driver_bigint_gc(zval *object, php5to7_zval_gc table, int *n TSRMLS_DC)
 }
 
 static HashTable *
-php_driver_bigint_properties(zval *object TSRMLS_DC)
+php_driver_bigint_properties(php7to8_object *object TSRMLS_DC)
 {
   php5to7_zval type;
   php5to7_zval value;
 
+#if PHP_MAJOR_VERSION >= 8
+  php_driver_numeric *self = PHP5TO7_ZEND_OBJECT_GET(numeric, object);
+#else
   php_driver_numeric *self = PHP_DRIVER_GET_NUMERIC(object);
+#endif
   HashTable         *props = zend_std_get_properties(object TSRMLS_CC);
 
   type = php_driver_type_scalar(CASS_VALUE_TYPE_BIGINT TSRMLS_CC);
@@ -423,6 +427,7 @@ php_driver_bigint_properties(zval *object TSRMLS_DC)
 static int
 php_driver_bigint_compare(zval *obj1, zval *obj2 TSRMLS_DC)
 {
+  PHP7TO8_MAYBE_COMPARE_OBJECTS_FALLBACK(obj1, obj2);
   php_driver_numeric *bigint1 = NULL;
   php_driver_numeric *bigint2 = NULL;
 
@@ -448,9 +453,13 @@ php_driver_bigint_hash_value(zval *obj TSRMLS_DC)
 }
 
 static int
-php_driver_bigint_cast(zval *object, zval *retval, int type TSRMLS_DC)
+php_driver_bigint_cast(php7to8_object *object, zval *retval, int type TSRMLS_DC)
 {
+#if PHP_MAJOR_VERSION >= 8
+  php_driver_numeric *self = PHP5TO7_ZEND_OBJECT_GET(numeric, object);
+#else
   php_driver_numeric *self = PHP_DRIVER_GET_NUMERIC(object);
+#endif
 
   switch (type) {
   case IS_LONG:
@@ -501,7 +510,7 @@ void php_driver_define_Bigint(TSRMLS_D)
 #if PHP_VERSION_ID >= 50400
   php_driver_bigint_handlers.std.get_gc          = php_driver_bigint_gc;
 #endif
-  php_driver_bigint_handlers.std.compare_objects = php_driver_bigint_compare;
+  PHP7TO8_COMPARE(php_driver_bigint_handlers.std, php_driver_bigint_compare);
   php_driver_bigint_handlers.std.cast_object     = php_driver_bigint_cast;
 
   php_driver_bigint_handlers.hash_value = php_driver_bigint_hash_value;

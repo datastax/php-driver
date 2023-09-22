@@ -53,6 +53,8 @@ PHP_METHOD(DefaultCluster, connect)
   session->default_consistency = self->default_consistency;
   session->default_page_size   = self->default_page_size;
   session->persist             = self->persist;
+  session->hash_key            = self->hash_key;
+  session->keyspace            = keyspace;
 
   if (!PHP5TO7_ZVAL_IS_UNDEF(session->default_timeout)) {
     PHP5TO7_ZVAL_COPY(PHP5TO7_ZVAL_MAYBE_P(session->default_timeout),
@@ -156,8 +158,10 @@ PHP_METHOD(DefaultCluster, connectAsync)
     hash_key_len = spprintf(&hash_key, 0, "%s:session:%s",
                             self->hash_key, SAFE_STR(keyspace));
 
-    future->hash_key     = hash_key;
-    future->hash_key_len = hash_key_len;
+    future->session_hash_key  = self->hash_key;
+    future->session_keyspace  = keyspace;
+    future->hash_key          = hash_key;
+    future->hash_key_len      = hash_key_len;
 
     if (PHP5TO7_ZEND_HASH_FIND(&EG(persistent_list), hash_key, hash_key_len + 1, le) &&
         Z_RES_P(le)->type == php_le_php_driver_session()) {
@@ -218,7 +222,7 @@ static zend_function_entry php_driver_default_cluster_methods[] = {
 static zend_object_handlers php_driver_default_cluster_handlers;
 
 static HashTable *
-php_driver_default_cluster_properties(zval *object TSRMLS_DC)
+php_driver_default_cluster_properties(php7to8_object *object TSRMLS_DC)
 {
   HashTable *props = zend_std_get_properties(object TSRMLS_CC);
 
@@ -228,6 +232,7 @@ php_driver_default_cluster_properties(zval *object TSRMLS_DC)
 static int
 php_driver_default_cluster_compare(zval *obj1, zval *obj2 TSRMLS_DC)
 {
+  PHP7TO8_MAYBE_COMPARE_OBJECTS_FALLBACK(obj1, obj2);
   if (Z_OBJCE_P(obj1) != Z_OBJCE_P(obj2))
     return 1; /* different classes */
 
@@ -282,5 +287,5 @@ void php_driver_define_DefaultCluster(TSRMLS_D)
 
   memcpy(&php_driver_default_cluster_handlers, zend_get_std_object_handlers(), sizeof(zend_object_handlers));
   php_driver_default_cluster_handlers.get_properties  = php_driver_default_cluster_properties;
-  php_driver_default_cluster_handlers.compare_objects = php_driver_default_cluster_compare;
+  PHP7TO8_COMPARE(php_driver_default_cluster_handlers, php_driver_default_cluster_compare);
 }

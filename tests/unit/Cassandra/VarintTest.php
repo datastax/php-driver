@@ -18,10 +18,12 @@
 
 namespace Cassandra;
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * @requires extension cassandra
  */
-class VarintTest extends \PHPUnit_Framework_TestCase {
+class VarintTest extends TestCase {
     public function testAddLarge()
     {
         $varint1 = new Varint("9223372036854775807");

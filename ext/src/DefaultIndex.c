@@ -235,7 +235,7 @@ static zend_function_entry php_driver_default_index_methods[] = {
 static zend_object_handlers php_driver_default_index_handlers;
 
 static HashTable *
-php_driver_type_default_index_gc(zval *object, php5to7_zval_gc table, int *n TSRMLS_DC)
+php_driver_type_default_index_gc(php7to8_object *object, php5to7_zval_gc table, int *n TSRMLS_DC)
 {
   *table = NULL;
   *n = 0;
@@ -243,7 +243,7 @@ php_driver_type_default_index_gc(zval *object, php5to7_zval_gc table, int *n TSR
 }
 
 static HashTable *
-php_driver_default_index_properties(zval *object TSRMLS_DC)
+php_driver_default_index_properties(php7to8_object *object TSRMLS_DC)
 {
   HashTable *props = zend_std_get_properties(object TSRMLS_CC);
 
@@ -253,6 +253,7 @@ php_driver_default_index_properties(zval *object TSRMLS_DC)
 static int
 php_driver_default_index_compare(zval *obj1, zval *obj2 TSRMLS_DC)
 {
+  PHP7TO8_MAYBE_COMPARE_OBJECTS_FALLBACK(obj1, obj2);
   if (Z_OBJCE_P(obj1) != Z_OBJCE_P(obj2))
     return 1; /* different classes */
 
@@ -311,6 +312,6 @@ void php_driver_define_DefaultIndex(TSRMLS_D)
 #if PHP_VERSION_ID >= 50400
   php_driver_default_index_handlers.get_gc          = php_driver_type_default_index_gc;
 #endif
-  php_driver_default_index_handlers.compare_objects = php_driver_default_index_compare;
+  PHP7TO8_COMPARE(php_driver_default_index_handlers, php_driver_default_index_compare);
   php_driver_default_index_handlers.clone_obj = NULL;
 }

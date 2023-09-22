@@ -54,7 +54,7 @@ class RetryPolicyIntegrationTest extends BasicIntegrationTest {
     /**
      * Setup the retry policy for multiple nodes.
      */
-    public function setUp() {
+    protected function setUp(): void {
         // Ensure RF = 3 (anything greater than 1 is good)
         $this->replicationFactor = 3;
 
@@ -224,11 +224,11 @@ class RetryPolicyIntegrationTest extends BasicIntegrationTest {
      * @ticket PHP-60
      *
      * @cassandra-version-2.0
-     *
-     * @expectedException \Cassandra\Exception\UnavailableException
-     * @expectedExceptionMessageRegExp |Cannot achieve consistency level .*|
      */
     public function testFallThroughPolicyWrite() {
+        $this->expectException(\Cassandra\Exception\UnavailableException::class);
+        $this->expectExceptionMessageMatches('/Cannot achieve consistency level .*/');
+
         // Create the retry policy (RF = 3 with 1 node)
         $policy = new RetryPolicy\Fallthrough();
 
@@ -260,11 +260,11 @@ class RetryPolicyIntegrationTest extends BasicIntegrationTest {
      * @ticket PHP-60
      *
      * @cassandra-version-2.0
-     *
-     * @expectedException \Cassandra\Exception\UnavailableException
-     * @expectedExceptionMessageRegExp |Cannot achieve consistency level .*|
      */
     public function testFallThroughPolicyRead() {
+        $this->expectException(\Cassandra\Exception\UnavailableException::class);
+        $this->expectExceptionMessageMatches('/Cannot achieve consistency level .*/');
+
         // Create the retry policy (RF = 3 with 1 node)
         $policy = new RetryPolicy\Fallthrough();
 

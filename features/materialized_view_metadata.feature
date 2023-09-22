@@ -13,7 +13,7 @@ Feature: Materialized View Metadata
       } AND DURABLE_WRITES = false;
       USE simplex;
       CREATE TABLE users (id int PRIMARY KEY, name text);
-      CREATE MATERIALIZED VIEW IF NOT EXISTS users_view AS SELECT name FROM users WHERE name IS NOT NULL PRIMARY KEY(name, id);
+      CREATE MATERIALIZED VIEW IF NOT EXISTS users_view AS SELECT * FROM users WHERE name IS NOT NULL AND id IS NOT NULL PRIMARY KEY(name, id);
       """
 
   Scenario: Getting a materialized view
@@ -57,7 +57,7 @@ Feature: Materialized View Metadata
         ),
          'values' =>
         array (
-          0 => '64',
+          0 => '16',
           1 => 'org.apache.cassandra.io.compress.LZ4Compressor',
         ),
       ))

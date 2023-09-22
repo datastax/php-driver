@@ -18,36 +18,31 @@
 
 namespace Cassandra;
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * @requires extension cassandra
  */
-class CollectionTest extends \PHPUnit_Framework_TestCase
+class CollectionTest extends TestCase
 {
-    /**
-     * @expectedException         InvalidArgumentException
-     * @expectedExceptionMessage  type must be a string or an instance of Cassandra\Type, an instance of stdClass given
-     */
     public function testInvalidType()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('type must be a string or an instance of Cassandra\Type, an instance of stdClass given');
         new Collection(new \stdClass());
     }
 
-    /**
-     * @expectedException         InvalidArgumentException
-     * @expectedExceptionMessage  Unsupported type 'custom type'
-     */
     public function testUnsupportedStringType()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage("Unsupported type 'custom type'");
         new Collection('custom type');
     }
 
-    /**
-     * @expectedException        InvalidArgumentException
-     * @expectedExceptionMessage type must be a valid Cassandra\Type,
-     *                           an instance of Cassandra\Type\UnsupportedType given
-     */
     public function testUnsupportedType()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage("type must be a valid Cassandra\Type, an instance of Cassandra\Type\UnsupportedType given");
         new Collection(new Type\UnsupportedType());
     }
 
@@ -150,22 +145,18 @@ class CollectionTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    /**
-     * @expectedException         InvalidArgumentException
-     * @expectedExceptionMessage  argument must be an instance of Cassandra\Varint, an instance of Cassandra\Decimal given
-     */
     public function testValidatesTypesOfElements()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage("argument must be an instance of Cassandra\Varint, an instance of Cassandra\Decimal given");
         $list = new Collection(\Cassandra::TYPE_VARINT);
         $list->add(new Decimal('123'));
     }
 
-    /**
-     * @expectedException         InvalidArgumentException
-     * @expectedExceptionMessage  Invalid value: null is not supported inside collections
-     */
     public function testSupportsNullValues()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage("Invalid value: null is not supported inside collections");
         $list = new Collection(\Cassandra::TYPE_VARINT);
         $list->add(null);
     }

@@ -18,10 +18,12 @@
 
 namespace Cassandra;
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * @requires extension cassandra
  */
-class BlobTest extends \PHPUnit_Framework_TestCase
+class BlobTest extends TestCase
 {
     public function testHexEncodesString()
     {

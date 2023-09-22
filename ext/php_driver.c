@@ -39,6 +39,7 @@
 /* Resources */
 #define PHP_DRIVER_CLUSTER_RES_NAME PHP_DRIVER_NAMESPACE " Cluster"
 #define PHP_DRIVER_SESSION_RES_NAME PHP_DRIVER_NAMESPACE " Session"
+#define PHP_DRIVER_PREPARED_STATEMENT_RES_NAME PHP_DRIVER_NAMESPACE " PreparedStatement"
 
 static uv_once_t log_once = UV_ONCE_INIT;
 static char *log_location = NULL;
@@ -130,6 +131,26 @@ php_driver_session_dtor(php5to7_zend_resource rsrc TSRMLS_DC)
     php_driver_del_peref(&psession->session, 1);
     pefree(psession, 1);
     PHP_DRIVER_G(persistent_sessions)--;
+    rsrc->ptr = NULL;
+  }
+}
+
+static int le_php_driver_prepared_statement_res;
+int
+php_le_php_driver_prepared_statement()
+{
+  return le_php_driver_prepared_statement_res;
+}
+static void
+php_driver_prepared_statement_dtor(php5to7_zend_resource rsrc TSRMLS_DC)
+{
+  php_driver_pprepared_statement *preparedStmt = (php_driver_pprepared_statement*) rsrc->ptr;
+
+  if (preparedStmt) {
+    cass_future_free(preparedStmt->future);
+    php_driver_del_peref(&preparedStmt->ref, 1);
+    pefree(preparedStmt, 1);
+    PHP_DRIVER_G(persistent_prepared_statements)--;
     rsrc->ptr = NULL;
   }
 }
@@ -414,6 +435,7 @@ static PHP_GINIT_FUNCTION(php_driver)
   php_driver_globals->uuid_gen_pid        = 0;
   php_driver_globals->persistent_clusters = 0;
   php_driver_globals->persistent_sessions = 0;
+  php_driver_globals->persistent_prepared_statements = 0;
   PHP5TO7_ZVAL_UNDEF(php_driver_globals->type_varchar);
   PHP5TO7_ZVAL_UNDEF(php_driver_globals->type_text);
   PHP5TO7_ZVAL_UNDEF(php_driver_globals->type_blob);
@@ -452,6 +474,11 @@ PHP_MINIT_FUNCTION(php_driver)
   le_php_driver_session_res =
   zend_register_list_destructors_ex(NULL, php_driver_session_dtor,
                                     PHP_DRIVER_SESSION_RES_NAME,
+                                    module_number);
+
+  le_php_driver_prepared_statement_res =
+  zend_register_list_destructors_ex(NULL, php_driver_prepared_statement_dtor,
+                                    PHP_DRIVER_PREPARED_STATEMENT_RES_NAME,
                                     module_number);
 
   php_driver_define_Exception(TSRMLS_C);
@@ -598,18 +625,24 @@ PHP_MINFO_FUNCTION(php_driver)
 {
   char buf[256];
   php_info_print_table_start();
-  php_info_print_table_header(2, PHP_DRIVER_NAMESPACE " support", "enabled");
+
+  php_info_print_table_row(2, PHP_DRIVER_NAMESPACE " support", "enabled");
 
   snprintf(buf, sizeof(buf), "%d.%d.%d%s",
            CASS_VERSION_MAJOR, CASS_VERSION_MINOR, CASS_VERSION_PATCH,
-           strlen(CASS_VERSION_SUFFIX) > 0 ? "-" CASS_VERSION_SUFFIX : "");
+           (strlen(CASS_VERSION_SUFFIX) > 0 ? "-" CASS_VERSION_SUFFIX : ""));
   php_info_print_table_row(2, "C/C++ driver version", buf);
+
+  php_info_print_table_row(2, "PHP driver extension", "customized for persistent prepared statements");
 
   snprintf(buf, sizeof(buf), "%d", PHP_DRIVER_G(persistent_clusters));
   php_info_print_table_row(2, "Persistent Clusters", buf);
 
   snprintf(buf, sizeof(buf), "%d", PHP_DRIVER_G(persistent_sessions));
   php_info_print_table_row(2, "Persistent Sessions", buf);
+
+  snprintf(buf, sizeof(buf), "%d", PHP_DRIVER_G(persistent_prepared_statements));
+  php_info_print_table_row(2, "Persistent Prepared Statements", buf);
 
   php_info_print_table_end();
 

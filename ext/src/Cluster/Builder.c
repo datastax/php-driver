@@ -1063,7 +1063,7 @@ static zend_function_entry php_driver_cluster_builder_methods[] = {
 static zend_object_handlers php_driver_cluster_builder_handlers;
 
 static HashTable*
-php_driver_cluster_builder_gc(zval *object, php5to7_zval_gc table, int *n TSRMLS_DC)
+php_driver_cluster_builder_gc(php7to8_object *object, php5to7_zval_gc table, int *n TSRMLS_DC)
 {
   *table = NULL;
   *n = 0;
@@ -1071,7 +1071,7 @@ php_driver_cluster_builder_gc(zval *object, php5to7_zval_gc table, int *n TSRMLS
 }
 
 static HashTable*
-php_driver_cluster_builder_properties(zval *object TSRMLS_DC)
+php_driver_cluster_builder_properties(php7to8_object *object TSRMLS_DC)
 {
   php5to7_zval contactPoints;
   php5to7_zval loadBalancingPolicy;
@@ -1107,7 +1107,12 @@ php_driver_cluster_builder_properties(zval *object TSRMLS_DC)
   php5to7_zval randomizedContactPoints;
   php5to7_zval connectionHeartbeatInterval;
 
+#if PHP_MAJOR_VERSION >= 8
+  php_driver_cluster_builder *self = PHP5TO7_ZEND_OBJECT_GET(cluster_builder, object);
+#else
   php_driver_cluster_builder *self = PHP_DRIVER_GET_CLUSTER_BUILDER(object);
+#endif
+
   HashTable *props = zend_std_get_properties(object TSRMLS_CC);
 
   PHP5TO7_ZVAL_MAYBE_MAKE(contactPoints);
@@ -1442,5 +1447,5 @@ void php_driver_define_ClusterBuilder(TSRMLS_D)
 #if PHP_VERSION_ID >= 50400
   php_driver_cluster_builder_handlers.get_gc          = php_driver_cluster_builder_gc;
 #endif
-  php_driver_cluster_builder_handlers.compare_objects = php_driver_cluster_builder_compare;
+  PHP7TO8_COMPARE(php_driver_cluster_builder_handlers, php_driver_cluster_builder_compare);
 }

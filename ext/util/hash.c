@@ -115,10 +115,18 @@ php_driver_value_compare(zval* zvalue1, zval* zvalue2 TSRMLS_DC) {
 
 #if PHP_MAJOR_VERSION >= 7
   case IS_OBJECT:
-    return Z_OBJ_P(zvalue1)->handlers->compare_objects(zvalue1, zvalue2 TSRMLS_CC);
+    #if PHP_MAJOR_VERSION >= 8
+      return Z_OBJ_P(zvalue1)->handlers->compare(zvalue1, zvalue2);
+    #else
+      return Z_OBJ_P(zvalue1)->handlers->compare_objects(zvalue1, zvalue2 TSRMLS_CC);
+    #endif
 #else
   case IS_OBJECT:
-    return Z_OBJVAL_P(zvalue1).handlers->compare_objects(zvalue1, zvalue2 TSRMLS_CC);
+    #if PHP_MAJOR_VERSION >= 8
+      return Z_OBJVAL_P(zvalue1).handlers->compare(zvalue1, zvalue2);
+    #else
+      return Z_OBJVAL_P(zvalue1).handlers->compare_objects(zvalue1, zvalue2 TSRMLS_CC);
+    #endif
 #endif
 
   default:

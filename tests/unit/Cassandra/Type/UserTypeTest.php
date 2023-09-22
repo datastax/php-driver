@@ -19,11 +19,12 @@
 namespace Cassandra\Type;
 
 use Cassandra\Type;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @requires extension cassandra
  */
-class UserTypeTest extends \PHPUnit_Framework_TestCase
+class UserTypeTest extends TestCase
 {
     public function testDefinesUserTypeType()
     {
@@ -60,53 +61,32 @@ class UserTypeTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($udt->get('c'), null);
     }
 
-    /**
-     * @expectedException        InvalidArgumentException
-     * @expectedExceptionMessage Not enough name/type pairs,
-     *                           udts can only be created from an even
-     *                           number of name/type pairs, where each
-     *                           odd argument is a name and each even
-     *                           argument is a type,
-     *                           e.g udt(name, type, name, type, name, type)'
-     *                           contains 'argument must be a string, 1 given
-     */
     public function testPreventsCreatingUserTypeTypeWithInvalidName()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Not enough name/type pairs, user types can only be created from an even number of name/type pairs, where each odd argument is a name and each even argument is a type, e.g userType(name, type, name, type, name, type)');
         Type::userType(Type::varchar());
     }
 
-    /**
-     * @expectedException        InvalidArgumentException
-     * @expectedExceptionMessage Not enough name/value pairs,
-     *                           udts can only be created from an even
-     *                           number of name/value pairs, where each
-     *                           odd argument is a name and each even
-     *                           argument is a value,
-     *                           e.g udt(name, value, name, value, name, value)'
-     *                           contains 'argument must be a string, 1 given'.
-     */
     public function testPreventsCreatingUserTypeWithInvalidName()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Not enough name/value pairs, user_types can only be created from an even number of name/value pairs, where each odd argument is a name and each even argument is a value, e.g user_type(name, value, name, value, name, value)');
         Type::userType('a', Type::varchar())->create(1);
     }
 
 
-    /**
-     * @expectedException        InvalidArgumentException
-     * @expectedExceptionMessage argument must be a string, 1 given
-     */
     public function testPreventsCreatingUserTypeWithUnsupportedTypes()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage("argument must be a string, 1 given");
         Type::userType('a', Type::varchar())->create('a', 1);
     }
 
-    /**
-     * @expectedException        InvalidArgumentException
-     * @expectedExceptionMessage type must be a valid Cassandra\Type, an
-     *                           instance of Cassandra\Type\UnsupportedType given
-     */
     public function testPreventsDefiningUserTypesWithUnsupportedTypes()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage("type must be a valid Cassandra\Type, an instance of Cassandra\Type\UnsupportedType given");
         Type::userType('a', new UnsupportedType());
     }
 

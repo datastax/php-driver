@@ -113,7 +113,7 @@ static zend_function_entry php_driver_blob_methods[] = {
 static php_driver_value_handlers php_driver_blob_handlers;
 
 static HashTable *
-php_driver_blob_gc(zval *object, php5to7_zval_gc table, int *n TSRMLS_DC)
+php_driver_blob_gc(php7to8_object *object, php5to7_zval_gc table, int *n TSRMLS_DC)
 {
   *table = NULL;
   *n = 0;
@@ -121,14 +121,18 @@ php_driver_blob_gc(zval *object, php5to7_zval_gc table, int *n TSRMLS_DC)
 }
 
 static HashTable *
-php_driver_blob_properties(zval *object TSRMLS_DC)
+php_driver_blob_properties(php7to8_object *object TSRMLS_DC)
 {
   char *hex;
   int hex_len;
   php5to7_zval type;
   php5to7_zval bytes;
 
+#if PHP_MAJOR_VERSION >= 8
+  php_driver_blob *self = PHP5TO7_ZEND_OBJECT_GET(blob, object);
+#else
   php_driver_blob *self = PHP_DRIVER_GET_BLOB(object);
+#endif
   HashTable      *props = zend_std_get_properties(object TSRMLS_CC);
 
   type = php_driver_type_scalar(CASS_VALUE_TYPE_BLOB TSRMLS_CC);
@@ -146,6 +150,7 @@ php_driver_blob_properties(zval *object TSRMLS_DC)
 static int
 php_driver_blob_compare(zval *obj1, zval *obj2 TSRMLS_DC)
 {
+  PHP7TO8_MAYBE_COMPARE_OBJECTS_FALLBACK(obj1, obj2);
   php_driver_blob *blob1 = NULL;
   php_driver_blob *blob2 = NULL;
 
@@ -205,7 +210,7 @@ void php_driver_define_Blob(TSRMLS_D)
 #if PHP_VERSION_ID >= 50400
   php_driver_blob_handlers.std.get_gc          = php_driver_blob_gc;
 #endif
-  php_driver_blob_handlers.std.compare_objects = php_driver_blob_compare;
+  PHP7TO8_COMPARE(php_driver_blob_handlers.std, php_driver_blob_compare);
   php_driver_blob_ce->ce_flags |= PHP5TO7_ZEND_ACC_FINAL;
   php_driver_blob_ce->create_object = php_driver_blob_new;
 

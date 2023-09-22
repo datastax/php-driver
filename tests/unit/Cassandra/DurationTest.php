@@ -7,144 +7,118 @@
 
 namespace Cassandra;
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * @requires extension cassandra
  */
-class DurationTest extends \PHPUnit_Framework_TestCase
+class DurationTest extends TestCase
 {
-    /**
-     * @expectedException InvalidArgumentException
-     * @expectedExceptionMessage months must be a long, a double, a numeric string or a Cassandra\Bigint, 1 given
-     */
     public function testMonthsArgWrongType()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage("months must be a long, a double, a numeric string or a Cassandra\Bigint, 1 given");
         new Duration(true, 2, 3);
     }
 
-    /**
-     * @expectedException InvalidArgumentException
-     * @expectedExceptionMessage days must be a long, a double, a numeric string or a Cassandra\Bigint, 1 given
-     */
     public function testDaysArgWrongType()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage("days must be a long, a double, a numeric string or a Cassandra\Bigint, 1 given");
         new Duration(1, true, 3);
     }
 
-    /**
-     * @expectedException InvalidArgumentException
-     * @expectedExceptionMessage nanos must be a long, a double, a numeric string or a Cassandra\Bigint, 1 given
-     */
     public function testNanosArgWrongType()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage("nanos must be a long, a double, a numeric string or a Cassandra\Bigint, 1 given");
         new Duration(1, 2, true);
     }
 
-    /**
-     * @expectedException InvalidArgumentException
-     * @expectedExceptionMessage Invalid integer value: 'ab'
-     */
     public function testStringArgParseError()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage("Invalid integer value: 'ab'");
         new Duration(1, 2, "ab");
     }
 
-    /**
-     * @expectedException RangeException
-     * @expectedExceptionMessage value must be between -9223372036854775808 and 9223372036854775807, 9223372036854775808 given
-     */
     public function testString64BitArgOverflowError()
     {
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage("value must be between -9223372036854775808 and 9223372036854775807, 9223372036854775808 given");
         new Duration(1, 2, "9223372036854775808");
     }
 
-    /**
-     * @expectedException RangeException
-     * @expectedExceptionMessage value must be between -9223372036854775808 and 9223372036854775807, -9223372036854775809 given
-     */
     public function testString64BitArgUnderflowError()
     {
+        $this->expectException(\RangeException::class);
+        $this->expectExceptionMessage("value must be between -9223372036854775808 and 9223372036854775807, -9223372036854775809 given");
         new Duration(1, 2, "-9223372036854775809");
     }
 
-    /**
-     * @expectedException InvalidArgumentException
-     * @expectedExceptionMessage nanos must be between -9223372036854775808 and 9223372036854775807, 1.84467e+19 given
-     */
     public function testDouble64BitArgOverflowError()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage("nanos must be between -9223372036854775808 and 9223372036854775807, 1.84467e+19 given");
         new Duration(1, 2, pow(2, 64));
     }
 
-    /**
-     * @expectedException InvalidArgumentException
-     * @expectedExceptionMessage nanos must be between -9223372036854775808 and 9223372036854775807, -1.84467e+19 given
-     */
     public function testDouble64BitArgUnderflowError()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage("nanos must be between -9223372036854775808 and 9223372036854775807, -1.84467e+19 given");
         new Duration(1, 2, -pow(2, 64));
     }
 
-    /**
-     * @expectedException InvalidArgumentException
-     * @expectedExceptionMessage days must be between -2147483648 and 2147483647, 2147483648 given
-     */
     public function testString32BitArgOverflowError()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage("days must be between -2147483648 and 2147483647, 2147483648 given");
         new Duration(1, "2147483648", 0);
     }
 
-    /**
-     * @expectedException InvalidArgumentException
-     * @expectedExceptionMessage days must be between -2147483648 and 2147483647, -2147483649 given
-     */
     public function testString32BitArgUnderflowError()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage("days must be between -2147483648 and 2147483647, -2147483649 given");
         new Duration(1, "-2147483649", 0);
     }
 
-    /**
-     * @expectedException InvalidArgumentException
-     * @expectedExceptionMessageRegExp /days must be between -2147483648 and 2147483647, 8\.?58993.* given/
-     */
     public function testLong32BitArgOverflowError()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessageMatches("/days must be between -2147483648 and 2147483647, 8\.?58993.* given/");
         new Duration(1, 8589934592, 2);
     }
 
-    /**
-     * @expectedException InvalidArgumentException
-     * @expectedExceptionMessageRegExp /days must be between -2147483648 and 2147483647, -8\.?58993.* given/
-     */
     public function testLong32BitArgUnderflowError()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessageMatches("/days must be between -2147483648 and 2147483647, -8\.?58993.* given/");
         new Duration(1, -8589934592, 2);
     }
 
-    /**
-     * @expectedException InvalidArgumentException
-     * @expectedExceptionMessage months must be between -2147483648 and 2147483647, 8.58993e+9 given
-     */
     public function testDouble32BitArgOverflowError()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage("months must be between -2147483648 and 2147483647, 8.58993e+9 given");
         new Duration(8589934592.5, 1, 2);
     }
 
-    /**
-     * @expectedException InvalidArgumentException
-     * @expectedExceptionMessage months must be between -2147483648 and 2147483647, -8.58993e+9 given
-     */
     public function testDouble32BitArgUnderflowError()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage("months must be between -2147483648 and 2147483647, -8.58993e+9 given");
         new Duration(-8589934592.5, 1, 2);
     }
 
     /**
-     * @expectedException BadFunctionCallException
-     * @expectedExceptionMessage A duration must have all non-negative or non-positive attributes
      * @dataProvider mixedSigns
      */
     public function testMixedSignError($months, $days, $nanos)
     {
+        $this->expectException(\BadFunctionCallException::class);
+        $this->expectExceptionMessage("A duration must have all non-negative or non-positive attributes");
         new Duration($months, $days, $nanos);
     }
 

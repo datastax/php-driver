@@ -18,36 +18,31 @@
 
 namespace Cassandra;
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * @requires extension cassandra
  */
-class SetTest extends \PHPUnit_Framework_TestCase
+class SetTest extends TestCase
 {
-    /**
-     * @expectedException         InvalidArgumentException
-     * @expectedExceptionMessage  type must be a string or an instance of Cassandra\Type, an instance of stdClass given
-     */
     public function testInvalidType()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage("type must be a string or an instance of Cassandra\Type, an instance of stdClass given");
         new Set(new \stdClass());
     }
 
-    /**
-     * @expectedException         InvalidArgumentException
-     * @expectedExceptionMessage  Unsupported type 'custom type'
-     */
     public function testUnsupportedStringType()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage("Unsupported type 'custom type'");
         new Set('custom type');
     }
 
-    /**
-     * @expectedException        InvalidArgumentException
-     * @expectedExceptionMessage type must be a valid Cassandra\Type,
-     *                           an instance of Cassandra\Type\UnsupportedType given
-     */
     public function testUnsupportedType()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage("type must be a valid Cassandra\Type, an instance of Cassandra\Type\UnsupportedType given");
         new Set(new Type\UnsupportedType());
     }
 
@@ -138,12 +133,10 @@ class SetTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    /**
-     * @expectedException         InvalidArgumentException
-     * @expectedExceptionMessage  Unsupported type 'some custom type'
-     */
     public function testSupportsOnlyCassandraTypes()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage("Unsupported type 'some custom type'");
         new Set('some custom type');
     }
 
@@ -152,7 +145,8 @@ class SetTest extends \PHPUnit_Framework_TestCase
      */
     public function testSupportsAllCassandraTypes($type)
     {
-        new Set($type);
+        $var = new Set($type);
+        $this->assertEquals("set<$type>", (string)$var->type());
     }
 
     /**
@@ -186,22 +180,18 @@ class SetTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    /**
-     * @expectedException         InvalidArgumentException
-     * @expectedExceptionMessage  argument must be an instance of Cassandra\Varint, an instance of Cassandra\Decimal given
-     */
     public function testValidatesTypesOfElements()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage("argument must be an instance of Cassandra\Varint, an instance of Cassandra\Decimal given");
         $set = new Set(\Cassandra::TYPE_VARINT);
         $set->add(new Decimal('123'));
     }
 
-    /**
-     * @expectedException         InvalidArgumentException
-     * @expectedExceptionMessage  Invalid value: null is not supported inside sets
-     */
     public function testSupportsNullValues()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage("Invalid value: null is not supported inside sets");
         $set = new Set(\Cassandra::TYPE_VARINT);
         $set->add(null);
     }

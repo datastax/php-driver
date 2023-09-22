@@ -207,7 +207,7 @@ static zend_function_entry php_driver_default_function_methods[] = {
 static zend_object_handlers php_driver_default_function_handlers;
 
 static HashTable *
-php_driver_type_default_function_gc(zval *object, php5to7_zval_gc table, int *n TSRMLS_DC)
+php_driver_type_default_function_gc(php7to8_object *object, php5to7_zval_gc table, int *n TSRMLS_DC)
 {
   *table = NULL;
   *n = 0;
@@ -215,7 +215,7 @@ php_driver_type_default_function_gc(zval *object, php5to7_zval_gc table, int *n 
 }
 
 static HashTable *
-php_driver_default_function_properties(zval *object TSRMLS_DC)
+php_driver_default_function_properties(php7to8_object *object TSRMLS_DC)
 {
   HashTable *props = zend_std_get_properties(object TSRMLS_CC);
 
@@ -225,6 +225,7 @@ php_driver_default_function_properties(zval *object TSRMLS_DC)
 static int
 php_driver_default_function_compare(zval *obj1, zval *obj2 TSRMLS_DC)
 {
+  PHP7TO8_MAYBE_COMPARE_OBJECTS_FALLBACK(obj1, obj2);
   if (Z_OBJCE_P(obj1) != Z_OBJCE_P(obj2))
     return 1; /* different classes */
 
@@ -287,6 +288,6 @@ void php_driver_define_DefaultFunction(TSRMLS_D)
 #if PHP_VERSION_ID >= 50400
   php_driver_default_function_handlers.get_gc          = php_driver_type_default_function_gc;
 #endif
-  php_driver_default_function_handlers.compare_objects = php_driver_default_function_compare;
+  PHP7TO8_COMPARE(php_driver_default_function_handlers, php_driver_default_function_compare);
   php_driver_default_function_handlers.clone_obj = NULL;
 }

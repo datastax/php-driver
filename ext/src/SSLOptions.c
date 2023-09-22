@@ -26,7 +26,7 @@ static zend_function_entry php_driver_ssl_methods[] = {
 static zend_object_handlers php_driver_ssl_handlers;
 
 static HashTable *
-php_driver_ssl_properties(zval *object TSRMLS_DC)
+php_driver_ssl_properties(php7to8_object *object TSRMLS_DC)
 {
   HashTable *props = zend_std_get_properties(object TSRMLS_CC);
 
@@ -36,6 +36,7 @@ php_driver_ssl_properties(zval *object TSRMLS_DC)
 static int
 php_driver_ssl_compare(zval *obj1, zval *obj2 TSRMLS_DC)
 {
+  PHP7TO8_MAYBE_COMPARE_OBJECTS_FALLBACK(obj1, obj2);
   if (Z_OBJCE_P(obj1) != Z_OBJCE_P(obj2))
     return 1; /* different classes */
 
@@ -75,6 +76,6 @@ void php_driver_define_SSLOptions(TSRMLS_D)
 
   memcpy(&php_driver_ssl_handlers, zend_get_std_object_handlers(), sizeof(zend_object_handlers));
   php_driver_ssl_handlers.get_properties  = php_driver_ssl_properties;
-  php_driver_ssl_handlers.compare_objects = php_driver_ssl_compare;
+  PHP7TO8_COMPARE(php_driver_ssl_handlers, php_driver_ssl_compare);
   php_driver_ssl_handlers.clone_obj = NULL;
 }

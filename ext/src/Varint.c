@@ -371,7 +371,7 @@ static zend_function_entry php_driver_varint_methods[] = {
 static php_driver_value_handlers php_driver_varint_handlers;
 
 static HashTable *
-php_driver_varint_gc(zval *object, php5to7_zval_gc table, int *n TSRMLS_DC)
+php_driver_varint_gc(php7to8_object *object, php5to7_zval_gc table, int *n TSRMLS_DC)
 {
   *table = NULL;
   *n = 0;
@@ -379,14 +379,18 @@ php_driver_varint_gc(zval *object, php5to7_zval_gc table, int *n TSRMLS_DC)
 }
 
 static HashTable *
-php_driver_varint_properties(zval *object TSRMLS_DC)
+php_driver_varint_properties(php7to8_object *object TSRMLS_DC)
 {
   char *string;
   int string_len;
   php5to7_zval type;
   php5to7_zval value;
 
+#if PHP_MAJOR_VERSION >= 8
+  php_driver_numeric *self = PHP5TO7_ZEND_OBJECT_GET(numeric, object);
+#else
   php_driver_numeric *self = PHP_DRIVER_GET_NUMERIC(object);
+#endif
   HashTable         *props = zend_std_get_properties(object TSRMLS_CC);
 
   php_driver_format_integer(self->data.varint.value, &string, &string_len);
@@ -405,6 +409,7 @@ php_driver_varint_properties(zval *object TSRMLS_DC)
 static int
 php_driver_varint_compare(zval *obj1, zval *obj2 TSRMLS_DC)
 {
+  PHP7TO8_MAYBE_COMPARE_OBJECTS_FALLBACK(obj1, obj2);
   php_driver_numeric *varint1 = NULL;
   php_driver_numeric *varint2 = NULL;
 
@@ -425,9 +430,13 @@ php_driver_varint_hash_value(zval *obj TSRMLS_DC)
 }
 
 static int
-php_driver_varint_cast(zval *object, zval *retval, int type TSRMLS_DC)
+php_driver_varint_cast(php7to8_object *object, zval *retval, int type TSRMLS_DC)
 {
+#if PHP_MAJOR_VERSION >= 8
+  php_driver_numeric *self = PHP5TO7_ZEND_OBJECT_GET(numeric, object);
+#else
   php_driver_numeric *self = PHP_DRIVER_GET_NUMERIC(object);
+#endif
 
   switch (type) {
   case IS_LONG:
@@ -480,7 +489,7 @@ void php_driver_define_Varint(TSRMLS_D)
 #if PHP_VERSION_ID >= 50400
   php_driver_varint_handlers.std.get_gc          = php_driver_varint_gc;
 #endif
-  php_driver_varint_handlers.std.compare_objects = php_driver_varint_compare;
+  PHP7TO8_COMPARE(php_driver_varint_handlers.std, php_driver_varint_compare);
   php_driver_varint_handlers.std.cast_object = php_driver_varint_cast;
 
   php_driver_varint_handlers.hash_value = php_driver_varint_hash_value;

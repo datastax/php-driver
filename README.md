@@ -43,7 +43,7 @@ This driver works exclusively with the Cassandra Query Language v3 (CQL3) and
 Cassandra's native protocol. The current version works with:
 
 * Apache Cassandra versions 2.1, 2.2 and 3.0+
-* PHP 5.6, PHP 7.0, and PHP 7.1
+* PHP 5.6, PHP 7.0, PHP 7.1 and PHP 8.1
   * 32-bit (x86) and 64-bit (x64)
   * Thread safe (TS) and non-thread safe (NTS)
 * Compilers: GCC 4.1.2+, Clang 3.4+, and MSVC 2010/2012/2013/2015

@@ -18,10 +18,12 @@
 
 namespace Cassandra;
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * @requires extension cassandra
  */
-class DateTest extends \PHPUnit_Framework_TestCase
+class DateTest extends TestCase
 {
     const SECONDS_PER_DAY = 86400;
 
@@ -40,7 +42,7 @@ class DateTest extends \PHPUnit_Framework_TestCase
     public function testConstructNow()
     {
         $date = new Date();
-        $this->assertEquals($date->seconds(), (int) (time() / self::SECONDS_PER_DAY) * self::SECONDS_PER_DAY, "", 1);
+        $this->assertEqualsWithDelta($date->seconds(), (int) (time() / self::SECONDS_PER_DAY) * self::SECONDS_PER_DAY, 1);
     }
 
     public function testFromDateTime()

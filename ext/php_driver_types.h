@@ -367,6 +367,8 @@ PHP_DRIVER_BEGIN_OBJECT_TYPE(future_session)
   int hash_key_len;
   char *exception_message;
   CassError exception_code;
+  char* session_keyspace;
+  char* session_hash_key;
 PHP_DRIVER_END_OBJECT_TYPE(future_session)
 
 typedef struct {
@@ -374,10 +376,17 @@ typedef struct {
   php_driver_ref *session;
 } php_driver_psession;
 
+typedef struct {
+  CassFuture *future;
+  php_driver_ref *ref;
+} php_driver_pprepared_statement;
+
 PHP_DRIVER_BEGIN_OBJECT_TYPE(session)
   php_driver_ref *session;
   long default_consistency;
   int default_page_size;
+  char* keyspace;
+  char* hash_key;
   php5to7_zval default_timeout;
   cass_bool_t persist;
 PHP_DRIVER_END_OBJECT_TYPE(session)
@@ -734,5 +743,6 @@ void php_driver_define_TimestampGeneratorServerSide(TSRMLS_D);
 
 extern int php_le_php_driver_cluster();
 extern int php_le_php_driver_session();
+extern int php_le_php_driver_prepared_statement();
 
 #endif /* PHP_DRIVER_TYPES_H */

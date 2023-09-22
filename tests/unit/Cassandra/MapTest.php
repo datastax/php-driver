@@ -19,65 +19,52 @@
 namespace Cassandra;
 
 use Cassandra\Type;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @requires extension cassandra
  */
-class MapTest extends \PHPUnit_Framework_TestCase
+class MapTest extends TestCase
 {
-    /**
-     * @expectedException         InvalidArgumentException
-     * @expectedExceptionMessage  keyType must be a string or an instance of Cassandra\Type, an instance of stdClass given
-     */
     public function testInvalidKeyType()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage("keyType must be a string or an instance of Cassandra\Type, an instance of stdClass given");
         new Map(new \stdClass(), \Cassandra::TYPE_VARCHAR);
     }
 
-    /**
-     * @expectedException         InvalidArgumentException
-     * @expectedExceptionMessage  Unsupported type 'custom type'
-     */
     public function testUnsupportedStringKeyType()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage("Unsupported type 'custom type'");
         new Map('custom type', \Cassandra::TYPE_VARCHAR);
     }
 
-    /**
-     * @expectedException        InvalidArgumentException
-     * @expectedExceptionMessage keyType must be a valid Cassandra\Type,
-     *                           an instance of Cassandra\Type\UnsupportedType given
-     */
     public function testUnsupportedKeyType()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage("keyType must be a valid Cassandra\Type, an instance of Cassandra\Type\UnsupportedType given");
         new Map(new Type\UnsupportedType(), Type::varchar());
     }
 
-    /**
-     * @expectedException         InvalidArgumentException
-     * @expectedExceptionMessage  valueType must be a string or an instance of Cassandra\Type, an instance of stdClass given
-     */
     public function testInvalidValueType()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage("valueType must be a string or an instance of Cassandra\Type, an instance of stdClass given");
         new Map(\Cassandra::TYPE_VARCHAR, new \stdClass());
     }
 
-    /**
-     * @expectedException         InvalidArgumentException
-     * @expectedExceptionMessage  Unsupported type 'custom type'
-     */
     public function testUnsupportedStringValueType()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage("Unsupported type 'custom type'");
         new Map(\Cassandra::TYPE_VARCHAR, 'custom type');
     }
 
-    /**
-     * @expectedException        InvalidArgumentException
-     * @expectedExceptionMessage valueType must be a valid Cassandra\Type,
-     *                           an instance of Cassandra\Type\UnsupportedType given
-     */
     public function testUnsupportedValueType()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage("valueType must be a valid Cassandra\Type, an instance of Cassandra\Type\UnsupportedType given");
         new Map(Type::varchar(), new Type\UnsupportedType());
     }
 
@@ -172,40 +159,32 @@ class MapTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    /**
-     * @expectedException         InvalidArgumentException
-     * @expectedExceptionMessage  Unsupported type 'custom type'
-     */
     public function testSupportsOnlyCassandraTypesForKeys()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage("Unsupported type 'custom type'");
         new Map('custom type', \Cassandra::TYPE_VARINT);
     }
 
-    /**
-     * @expectedException         InvalidArgumentException
-     * @expectedExceptionMessage  Unsupported type 'another custom type'
-     */
     public function testSupportsOnlyCassandraTypesForValues()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage("Unsupported type 'another custom type'");
         new Map(\Cassandra::TYPE_VARINT, 'another custom type');
     }
 
-    /**
-     * @expectedException         InvalidArgumentException
-     * @expectedExceptionMessage  Invalid value: null is not supported inside maps
-     */
     public function testSupportsNullValues()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage("Invalid value: null is not supported inside maps");
         $map = new Map(\Cassandra::TYPE_VARCHAR, \Cassandra::TYPE_VARCHAR);
         $map->set("test", null);
     }
 
-    /**
-     * @expectedException         InvalidArgumentException
-     * @expectedExceptionMessage  Invalid key: null is not supported inside maps
-     */
     public function testSupportsNullKeys()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage("Invalid key: null is not supported inside maps");
         $map = new Map(\Cassandra::TYPE_VARCHAR, \Cassandra::TYPE_VARCHAR);
         $map->set(null, "test");
     }

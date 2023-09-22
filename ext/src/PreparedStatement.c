@@ -23,15 +23,18 @@ PHP_METHOD(PreparedStatement, __construct)
 {
 }
 
+ZEND_BEGIN_ARG_INFO_EX(arginfo_none, 0, ZEND_RETURN_VALUE, 0)
+ZEND_END_ARG_INFO()
+
 static zend_function_entry php_driver_prepared_statement_methods[] = {
-  PHP_ME(PreparedStatement, __construct, NULL, ZEND_ACC_PRIVATE | ZEND_ACC_CTOR)
+  PHP_ME(PreparedStatement, __construct, arginfo_none, ZEND_ACC_PRIVATE | ZEND_ACC_CTOR)
   PHP_FE_END
 };
 
 static zend_object_handlers php_driver_prepared_statement_handlers;
 
 static HashTable *
-php_driver_prepared_statement_properties(zval *object TSRMLS_DC)
+php_driver_prepared_statement_properties(php7to8_object *object TSRMLS_DC)
 {
   HashTable *props = zend_std_get_properties(object TSRMLS_CC);
 
@@ -41,6 +44,7 @@ php_driver_prepared_statement_properties(zval *object TSRMLS_DC)
 static int
 php_driver_prepared_statement_compare(zval *obj1, zval *obj2 TSRMLS_DC)
 {
+  PHP7TO8_MAYBE_COMPARE_OBJECTS_FALLBACK(obj1, obj2);
   if (Z_OBJCE_P(obj1) != Z_OBJCE_P(obj2))
     return 1; /* different classes */
 
@@ -83,6 +87,6 @@ void php_driver_define_PreparedStatement(TSRMLS_D)
 
   memcpy(&php_driver_prepared_statement_handlers, zend_get_std_object_handlers(), sizeof(zend_object_handlers));
   php_driver_prepared_statement_handlers.get_properties  = php_driver_prepared_statement_properties;
-  php_driver_prepared_statement_handlers.compare_objects = php_driver_prepared_statement_compare;
+  PHP7TO8_COMPARE(php_driver_prepared_statement_handlers, php_driver_prepared_statement_compare);
   php_driver_prepared_statement_handlers.clone_obj = NULL;
 }

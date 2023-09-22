@@ -212,9 +212,10 @@ class TupleIntegrationTest extends CollectionsIntegrationTest {
      *
      * @test
      * @ticket PHP-58
-     * @expectedException \Cassandra\Exception\InvalidQueryException
      */
     public function testInvalidType() {
+        $this->expectException(\Cassandra\Exception\InvalidQueryException::class);
+
         $validType = Type::tuple(Type::int());
         $invalidType = Type::tuple(Type::varchar());
 

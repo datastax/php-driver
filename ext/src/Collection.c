@@ -279,9 +279,7 @@ ZEND_BEGIN_ARG_INFO_EX(arginfo__construct, 0, ZEND_RETURN_VALUE, 1)
   ZEND_ARG_INFO(0, type)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_value, 0, ZEND_RETURN_VALUE, 1)
-  ZEND_ARG_INFO(0, value)
-ZEND_END_ARG_INFO()
+PHP7TO8_ARG_INFO_MIXED(arginfo_value, value)
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_index, 0, ZEND_RETURN_VALUE, 1)
   ZEND_ARG_INFO(0, index)
@@ -290,6 +288,11 @@ ZEND_END_ARG_INFO()
 ZEND_BEGIN_ARG_INFO_EX(arginfo_none, 0, ZEND_RETURN_VALUE, 0)
 ZEND_END_ARG_INFO()
 
+PHP7TO8_ARG_INFO_VOID_RETURN(arginfo_void_return)
+PHP7TO8_ARG_INFO_BOOL_RETURN(arginfo_bool_return)
+PHP7TO8_ARG_INFO_MIXED_RETURN(arginfo_mixed_return)
+PHP7TO8_ARG_INFO_LONG_RETURN(arginfo_long_return)
+
 static zend_function_entry php_driver_collection_methods[] = {
   PHP_ME(Collection, __construct, arginfo__construct, ZEND_ACC_CTOR|ZEND_ACC_PUBLIC)
   PHP_ME(Collection, type, arginfo_none, ZEND_ACC_PUBLIC)
@@ -297,22 +300,22 @@ static zend_function_entry php_driver_collection_methods[] = {
   PHP_ME(Collection, add, arginfo_value, ZEND_ACC_PUBLIC)
   PHP_ME(Collection, get, arginfo_index, ZEND_ACC_PUBLIC)
   PHP_ME(Collection, find, arginfo_value, ZEND_ACC_PUBLIC)
-  /* Countable */
-  PHP_ME(Collection, count, arginfo_none, ZEND_ACC_PUBLIC)
-  /* Iterator */
-  PHP_ME(Collection, current, arginfo_none, ZEND_ACC_PUBLIC)
-  PHP_ME(Collection, key, arginfo_none, ZEND_ACC_PUBLIC)
-  PHP_ME(Collection, next, arginfo_none, ZEND_ACC_PUBLIC)
-  PHP_ME(Collection, valid, arginfo_none, ZEND_ACC_PUBLIC)
-  PHP_ME(Collection, rewind, arginfo_none, ZEND_ACC_PUBLIC)
   PHP_ME(Collection, remove, arginfo_index, ZEND_ACC_PUBLIC)
+  /* Countable */
+  PHP_ME(Collection, count, arginfo_long_return, ZEND_ACC_PUBLIC)
+  /* Iterator */
+  PHP_ME(Collection, current, arginfo_mixed_return, ZEND_ACC_PUBLIC)
+  PHP_ME(Collection, key, arginfo_mixed_return, ZEND_ACC_PUBLIC)
+  PHP_ME(Collection, next, arginfo_void_return, ZEND_ACC_PUBLIC)
+  PHP_ME(Collection, rewind, arginfo_void_return, ZEND_ACC_PUBLIC)
+  PHP_ME(Collection, valid, arginfo_bool_return, ZEND_ACC_PUBLIC)
   PHP_FE_END
 };
 
 static php_driver_value_handlers php_driver_collection_handlers;
 
 static HashTable *
-php_driver_collection_gc(zval *object, php5to7_zval_gc table, int *n TSRMLS_DC)
+php_driver_collection_gc(php7to8_object *object, php5to7_zval_gc table, int *n TSRMLS_DC)
 {
   *table = NULL;
   *n = 0;
@@ -320,11 +323,15 @@ php_driver_collection_gc(zval *object, php5to7_zval_gc table, int *n TSRMLS_DC)
 }
 
 static HashTable *
-php_driver_collection_properties(zval *object TSRMLS_DC)
+php_driver_collection_properties(php7to8_object *object TSRMLS_DC)
 {
   php5to7_zval values;
 
+#if PHP_MAJOR_VERSION >= 8
+  php_driver_collection  *self = PHP5TO7_ZEND_OBJECT_GET(collection, object);
+#else
   php_driver_collection  *self = PHP_DRIVER_GET_COLLECTION(object);
+#endif
   HashTable             *props = zend_std_get_properties(object TSRMLS_CC);
 
   PHP5TO7_ZEND_HASH_UPDATE(props,
@@ -343,6 +350,7 @@ php_driver_collection_properties(zval *object TSRMLS_DC)
 static int
 php_driver_collection_compare(zval *obj1, zval *obj2 TSRMLS_DC)
 {
+  PHP7TO8_MAYBE_COMPARE_OBJECTS_FALLBACK(obj1, obj2);
   HashPosition pos1;
   HashPosition pos2;
   php5to7_zval *current1;
@@ -442,10 +450,10 @@ void php_driver_define_Collection(TSRMLS_D)
 #if PHP_VERSION_ID >= 50400
   php_driver_collection_handlers.std.get_gc          = php_driver_collection_gc;
 #endif
-  php_driver_collection_handlers.std.compare_objects = php_driver_collection_compare;
+  PHP7TO8_COMPARE(php_driver_collection_handlers.std, php_driver_collection_compare);
   php_driver_collection_ce->ce_flags |= PHP5TO7_ZEND_ACC_FINAL;
   php_driver_collection_ce->create_object = php_driver_collection_new;
-  zend_class_implements(php_driver_collection_ce TSRMLS_CC, 2, spl_ce_Countable, zend_ce_iterator);
+  zend_class_implements(php_driver_collection_ce TSRMLS_CC, 2, PHP7TO8_COUNTABLE, zend_ce_iterator);
 
   php_driver_collection_handlers.hash_value = php_driver_collection_hash_value;
   php_driver_collection_handlers.std.clone_obj = NULL;

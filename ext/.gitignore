@@ -30,6 +30,5 @@ libtool
 ltmain.sh
 missing
 /autom4te.cache/
-ex*.php
 debug.ini
 cassandra.log
