@@ -24,6 +24,7 @@
 #define IPV6             2
 #define TOKEN_MAX_LEN    4
 #define IP_MAX_ADDRLEN   50
+#pragma GCC diagnostic ignored "-Wmultistatement-macros"
 #define EXPECTING_TOKEN(expected) \
   zend_throw_exception_ex(php_driver_invalid_argument_exception_ce, 0 TSRMLS_CC, \
     "Unexpected %s at position %d in address \"%s\", expected " expected, \
